@@ -1,5 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="SharedTemplates.xml"/>
+    <Include file ="bank.xml"/>
     <Script file ="itemButtons.lua"/>
+    <Script file ="bank.lua"/>
     <Script file ="autoSell.lua"/>
 </Ui>

@@ -12,6 +12,21 @@ local function openAllBankBags()
     end
 end
 
+-- parks the blizzard bank frame off screen; we only use its open/close lifecycle
+local function parkBlizzardBank()
+    BankFrame:ClearAllPoints()
+    if GW.Mists then
+        -- the mists frame is clamped to the screen and would snap back
+        BankFrame:SetClampedToScreen(false)
+    end
+    BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+    if GW.Mists then
+        BankSlotsFrame:GwKill()
+    else
+        BankSlotsFrame:Hide()
+    end
+end
+
 -- sets the bank header names in separate bags mode: custom name, bag item name or the bank default
 local function setBankHeaders(frame)
     for i = 1, NUM_BANKBAGSLOTS do
@@ -255,7 +270,6 @@ local function updateBagBar(f)
     local bank_slots, full = GetNumBankSlots()
     for bag_idx = 1, NUM_BANKBAGSLOTS do
         local b = f.bags[bag_idx]
-        b.tooltipText = nil
         local bag_id = b:GetBagID()
         local inv_id = b:GetInventorySlot()
         local bag_tex = GetInventoryItemTexture("player", inv_id)
@@ -269,10 +283,11 @@ local function updateBagBar(f)
         end
 
         b.icon:Show()
-        b.icon:SetDesaturated(false)
         b.gwHasBag = false -- flag used by OnClick hook to pop up context menu when valid
+        b.tooltipText = nil
         local norm = b:GetNormalTexture()
         norm:SetVertexColor(1, 1, 1, 0.75)
+        b.icon:SetDesaturated(false)
         if bag_tex ~= nil then
             b.gwHasBag = true
             if not IsBagOpen(bag_id) then
@@ -332,6 +347,15 @@ local function setBankItemSize(value)
     return size
 end
 
+local function setBankItemSpacing(settingKey, normalizeFunc, value)
+    local spacing = normalizeFunc(value)
+    if GW.settings[settingKey] ~= spacing then
+        GW.settings[settingKey] = spacing
+        inv.resizeInventory()
+    end
+    return spacing
+end
+
 local function addBankSliderControl(rootDescription, title, config, getValueFunc, setValueFunc)
     GW.AddMenuSliderDescription(rootDescription, {
         title = title,
@@ -341,15 +365,6 @@ local function addBankSliderControl(rootDescription, title, config, getValueFunc
         getValue = getValueFunc,
         setValue = setValueFunc
     })
-end
-
-local function setBankItemSpacing(settingKey, normalizeFunc, value)
-    local spacing = normalizeFunc(value)
-    if GW.settings[settingKey] ~= spacing then
-        GW.settings[settingKey] = spacing
-        inv.resizeInventory()
-    end
-    return spacing
 end
 
 
@@ -364,10 +379,7 @@ local function bank_OnShow(self)
     self:RegisterEvent("BAG_UPDATE_COOLDOWN")
     self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
 
-    -- hide the bank frame off screen
-    BankFrame:ClearAllPoints()
-    BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankSlotsFrame:Hide()
+    parkBlizzardBank()
 
     OpenAllBags(self)
     updateBagBar(self.ItemFrame)
@@ -531,7 +543,7 @@ local function LoadBank(helpers)
     f:SetWidth(GW.settings.BANK_WIDTH)
     onBankFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
-	f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
+    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
 
     -- setup show/hide
     f:SetScript("OnShow", bank_OnShow)
@@ -539,11 +551,17 @@ local function LoadBank(helpers)
     f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
 
     -- re-hide the BankFrame any time it gets repositioned by UIParent stuff
-    hooksecurefunc(BankFrame, "Raise", function()
-        BankFrame:ClearAllPoints()
-        BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-        BankSlotsFrame:Hide()
-    end)
+    hooksecurefunc(BankFrame, "Raise", parkBlizzardBank)
+    if GW.Mists then
+        hooksecurefunc(BankFrame, "SetPoint", function()
+            if not BankFrame.gwSkipSetPoint then
+                BankFrame.gwSkipSetPoint = true
+                BankFrame:ClearAllPoints()
+                BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+                BankFrame.gwSkipSetPoint = false
+            end
+        end)
+    end
 
     -- setup movable stuff
     local pos = GW.settings.BANK_POSITION
@@ -560,9 +578,11 @@ local function LoadBank(helpers)
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
 
-    -- setup bagheader stuff
-    for i = 0, NUM_BANKBAGSLOTS do
-        local header = f["bagHeader" .. i]
+    -- setup bagheader stuff; the template ships headers for the largest flavor,
+    -- flavors with fewer bank bags simply never show the leftover ones
+    local headerIndex = 0
+    while f["bagHeader" .. headerIndex] do
+        local header = f["bagHeader" .. headerIndex]
         header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         header.nameString:SetTextColor(1, 1, 1)
         header.nameString:SetShadowColor(0, 0, 0, 0)
@@ -571,6 +591,7 @@ local function LoadBank(helpers)
         header:SetScript("OnClick", bankHeader_OnClick)
         header:SetScript("OnEnter", bankHeader_OnEnter)
         header:SetScript("OnLeave", GameTooltip_Hide)
+        headerIndex = headerIndex + 1
     end
 
     -- take the original search box
@@ -578,8 +599,7 @@ local function LoadBank(helpers)
     inv.reskinSearchBox(BankItemSearchBox)
     inv.relocateSearchBox(BankItemSearchBox, f)
 
-    -- when we take ownership of ItemButtons, we need parent containers with IDs
-    -- set to the ID (bagId) of the original ContainerFrame we stole it from, in order
+    -- our own item buttons need parent containers with IDs set to the bagId, in order
     -- for all of the inherited ItemButton functionality to work normally
     f.ItemFrame.Containers = {}
     for i = 1, NUM_BANKBAGSLOTS + 1 do
@@ -598,7 +618,7 @@ local function LoadBank(helpers)
         f.ItemFrame.Containers[bag_id] = cf
     end
 
-    -- anytime a ContainerFrame is populated with a bank bagId, we take its buttons
+    -- anytime a ContainerFrame is populated with a bank bagId, we rescan our buttons
     hooksecurefunc("ContainerFrame_GenerateFrame", function(_, _, id)
         if id > NUM_BAG_SLOTS and id <= NUM_BAG_SLOTS + NUM_BANKBAGSLOTS then
             rescanBankContainers(f)
