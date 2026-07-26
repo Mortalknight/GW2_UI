@@ -19,6 +19,7 @@ addChange("10.15.0", {
     {GW.Enum.ChangelogType.feature, [=[Bank (Classic/TBC/Wrath/Mists): the bank got its own icon size and slot spacing settings, previously it shared them with the bags; the current bag values are carried over once so nothing changes visually]=]},
     {GW.Enum.ChangelogType.feature, [=[Bank (Classic/TBC/Wrath/Mists): new "Separate bags" option like the bags already have it - the main bank and each bank bag get their own section with a collapsible header that can be renamed via right click; also the "Reverse Bag Order" toggle of the bank applies immediately again]=]},
     {GW.Enum.ChangelogType.feature, [=[Bags (Classic/TBC/Wrath): new "Separate keyring" option - in the combined bag view the keyring starts on its own row with a gap as separation, so it is visible that these slots do not belong to the bags]=]},
+    {GW.Enum.ChangelogType.change, [=[Bags & Bank (Classic/TBC/Wrath/Mists): the per game version duplicated bag, bank and inventory code moved into one shared implementation - fixes only need to be made once now; the bag bar uses blizzards real bag slot buttons on all flavors like era already did, the bag slot skin uses the era version everywhere, the bag sort keybind names resolve on every flavor and flavor extras like the mists currency display plug in as small modules]=]},
 })
 
 addChange("10.14.3", {

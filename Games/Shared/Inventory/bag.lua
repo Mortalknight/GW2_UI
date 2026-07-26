@@ -6,30 +6,64 @@ local UpdateMoney = GW.UpdateMoney
 local EnableTooltip = GW.EnableTooltip
 local inv
 
-local NUM_TOTAL_EQUIPPED_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or 5
+-- the keyring only exists up to wrath, mists (and later retail) have none
+local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath
+
+--[[
+    Flavor modules.
+
+    The shared bag core drives the bag bar, layout, events, settings and the frame itself.
+    Flavor extras (e.g. the currency display on mists) plug in as modules, registered at
+    file scope from the flavors inventory folder (the shared code loads before the flavor
+    folders):
+
+        GW.RegisterBagModule({
+            onLoadBag = function(f, core) end,                       -- extras once the bag frame exists
+            onMenu    = function(f, rootDescription, addCheck) end,  -- extra settings menu entries
+        })
+
+    core hands the modules the shared machinery: layoutItems, snapFrameSize, updateBagContainers,
+    rescanBagContainers and (from LoadBag on) the inv helpers.
+]]
+local bagModules = {}
+local function RegisterBagModule(module)
+    bagModules[#bagModules + 1] = module
+end
+GW.RegisterBagModule = RegisterBagModule
+
+local function callBagModules(hook, ...)
+    for i = 1, #bagModules do
+        local fn = bagModules[i][hook]
+        if fn then
+            fn(...)
+        end
+    end
+end
+
+local core = {}
 
 local function setBagHeaders(frame)
-    for i = 1, 5 do
+    for i = 1, NUM_BAG_SLOTS do
         local customBagHeaderName = GW.settings["BAG_HEADER_NAME" .. i]
         local header = frame["bagHeader" .. i]
-        if i < 5 then
-            local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
-            local itemID = GetInventoryItemID("player", slotID)
+        local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
+        local itemID = GetInventoryItemID("player", slotID)
 
-            if itemID then
-                local r, g, b = 1, 1, 1
-                local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
-                if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
+        if itemID then
+            local r, g, b = 1, 1, 1
+            local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
+            if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
 
-                header.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName and itemName or UNKNOWN)
-                header.nameString:SetTextColor(r, g, b, 1)
-            else
-                header:Hide()
-            end
+            header.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName and itemName or UNKNOWN)
+            header.nameString:SetTextColor(r, g, b, 1)
         else
-            header.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or KEYRING)
-            header.nameString:SetTextColor(1, 1, 1, 1)
+            header:Hide()
         end
+    end
+    if HAS_KEYRING then
+        local customBagHeaderName = GW.settings.BAG_HEADER_NAME5
+        frame.bagHeader5.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or KEYRING)
+        frame.bagHeader5.nameString:SetTextColor(1, 1, 1, 1)
     end
     local customBagHeaderName = GW.settings.BAG_HEADER_NAME0
     frame.bagHeader0.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BACKPACK_TOOLTIP)
@@ -43,7 +77,7 @@ local function layoutBagItems(f)
     local rev = GW.settings.BAG_REVERSE_SORT
     local sep = GW.settings.BAG_SEPARATE_BAGS
     -- in combined mode the keyring can be set off to its own rows with a gap as separation
-    local keyringGap = not sep and GW.settings.BAG_SEPARATE_KEYRING and IsBagOpen(KEYRING_CONTAINER)
+    local keyringGap = HAS_KEYRING and not sep and GW.settings.BAG_SEPARATE_KEYRING and IsBagOpen(KEYRING_CONTAINER)
     local row = sep and 1 or 0
     local item_off_x = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_X
     local item_off_y = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_Y
@@ -51,11 +85,11 @@ local function layoutBagItems(f)
     local finishedRows = 0
 
     local iS = BACKPACK_CONTAINER
-    local iE = NUM_BAG_SLOTS + 1
+    local iE = HAS_KEYRING and (NUM_BAG_SLOTS + 1) or NUM_BAG_SLOTS
     local iD = 1
     if rev then
         iE = iS
-        iS = NUM_BAG_SLOTS + 1
+        iS = HAS_KEYRING and (NUM_BAG_SLOTS + 1) or NUM_BAG_SLOTS
         iD = -1
     end
     parent.unfinishedRow = 0
@@ -64,7 +98,7 @@ local function layoutBagItems(f)
     for i = iS, iE, iD do
         local bag_id = i
         local itemID
-        local cf = IsBagOpen(KEYRING_CONTAINER) and bag_id == 5 and f.Containers[KEYRING_CONTAINER] or f.Containers[bag_id]
+        local cf = (bag_id == 5 and IsBagOpen(KEYRING_CONTAINER)) and f.Containers[KEYRING_CONTAINER] or f.Containers[bag_id]
         local header = parent["bagHeader" .. i]
         if sep then
             if bag_id == 5 and not rev then
@@ -86,7 +120,7 @@ local function layoutBagItems(f)
         end
         if cf then
             if sep and cf.shouldShow then
-                if IsBagOpen(KEYRING_CONTAINER) and bag_id == 5 then
+                if bag_id == 5 and IsBagOpen(KEYRING_CONTAINER) then
                     if col ~= 0 then col = 0 end
                 end
                 col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off_x, item_off_y)
@@ -197,44 +231,15 @@ end
 
 -- rescan ALL bag ItemButtons
 local function rescanBagContainers(f)
-    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS + 1 do
-        if bag_id <= NUM_BAG_SLOTS then
-            GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id)
-        else
-            GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[KEYRING_CONTAINER], KEYRING_CONTAINER)
-        end
+    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+        GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id)
+    end
+    if HAS_KEYRING then
+        GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[KEYRING_CONTAINER], KEYRING_CONTAINER)
     end
     updateBagContainers(f)
 end
 
--- draws the backpack bag slots in the correct order
-local function setBagBarOrder(f)
-    local x = -40
-    local bag_size = 28
-    local bag_padding = 4
-    local rev = GW.settings.BAG_REVERSE_SORT
-    local y = rev and (NUM_TOTAL_EQUIPPED_BAG_SLOTS - ((bag_size + bag_padding) * NUM_TOTAL_EQUIPPED_BAG_SLOTS)) or NUM_TOTAL_EQUIPPED_BAG_SLOTS
-
-    f.setBagBarOrderInProgress = true
-
-    for bag_idx = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
-        local b = f.bags[bag_idx]
-        b.ClearAllPoints = nil
-        b.SetPoint = nil
-        b:ClearAllPoints()
-        b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
-        if rev then
-            y = y + bag_size + bag_padding
-        else
-            y = y - bag_size - bag_padding
-        end
-        b.ClearAllPoints = GW.NoOp
-        b.SetPoint = GW.NoOp
-        b:Show()
-    end
-
-    f.setBagBarOrderInProgress = false
-end
 
 local function bag_OnClick(self, button)
     -- on left click, ensure that the bag stays open despite default toggle behavior
@@ -246,50 +251,24 @@ local function bag_OnClick(self, button)
 end
 
 
--- creates the bag slot icons for the ItemFrame
-local function createBagBar(f)
-    local parent = f:GetParent()
-    f.bags = {}
-
-    -- steal the existing main backpack button
-    local bp = MainMenuBarBackpackButton
-    bp:SetParent(f)
-    inv.reskinBagBar(bp)
-    bp:RegisterForClicks("LeftButtonUp")
-    bp:SetChecked(false)
-    bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
-    bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
-    f.bags[BACKPACK_CONTAINER] = bp
-    hooksecurefunc(
-        "MainMenuBarBackpackButton_UpdateFreeSlots",
-        function()
-            bp.Count:SetText(bp.freeSlots)
-        end
-    )
-    SetItemButtonQuality(bp, 1, nil)
-
-    -- create bag slot buttons for equippable bags
-    for bag_idx = 1, NUM_BAG_SLOTS do
-        local b = _G["CharacterBag" .. bag_idx - 1 .. "Slot"]
-        b:SetParent(f)
-        b:SetChecked(false)
-        b:RegisterForClicks("LeftButtonUp")
-        b:SetScript("OnClick", bag_OnClick)
-        b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
-
-        inv.reskinBagBar(b)
-        local invID = C_Container.ContainerIDToInventoryID(bag_idx)
-        local bagLink = GetInventoryItemLink("player", invID)
-        if bagLink then
-            GW.SetItemButtonQualityForBags(b, select(3, C_Item.GetItemInfo(bagLink)))
-        else
-            GW.SetItemButtonQualityForBags(b, 1)
-        end
-
-        f.bags[bag_idx] = b
+-- syncs the keyring buttons pressed state with the keyrings open state
+local function updateKeyringButtonState()
+    if not HAS_KEYRING or not GWkeyringbutton then
+        return
     end
+    if IsBagOpen(KEYRING_CONTAINER) then
+        GWkeyringbutton.border:Show()
+        GWkeyringbutton.IconBorder:Hide()
+    else
+        GWkeyringbutton.border:Hide()
+        GWkeyringbutton.IconBorder:Show()
+    end
+end
 
-    --Add Keyringbutton here
+
+-- creates the keyring toggle button for a flavors bag bar, positioning is up to the caller
+local function createKeyringButton(f)
+    local parent = f:GetParent()
     local b = CreateFrame("Button", "GWkeyringbutton", f, "GwKeyRingButtonTemp")
     b:SetHighlightTexture('Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png')
     GW.SetItemButtonQualityForBags(b, 1)
@@ -313,7 +292,85 @@ local function createBagBar(f)
             parent.bagHeader5.icon2:SetShown(not isKeyringBagOpen)
         end
     )
-    f.bags[NUM_BAG_SLOTS + 1] = b
+    return b
+end
+
+
+-- draws the backpack bag slots in the correct order
+local function setBagBarOrder(f)
+    local x = -40
+    local bag_size = 28
+    local bag_padding = 4
+    local rev = GW.settings.BAG_REVERSE_SORT
+    local last = HAS_KEYRING and (NUM_BAG_SLOTS + 1) or NUM_BAG_SLOTS
+    local y = rev and (5 - ((bag_size + bag_padding) * last)) or 5
+
+    for bag_idx = BACKPACK_CONTAINER, last do
+        local b = f.bags[bag_idx]
+        b.ClearAllPoints = nil
+        b.SetPoint = nil
+        b:ClearAllPoints()
+        b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
+        if rev then
+            y = y + bag_size + bag_padding
+        else
+            y = y - bag_size - bag_padding
+        end
+        -- blizzards bags bar relayouts its bag slot buttons on login and edit mode
+        -- updates, lock the stolen buttons in place
+        b.ClearAllPoints = GW.NoOp
+        b.SetPoint = GW.NoOp
+        b:Show()
+    end
+end
+
+
+-- creates the bag slot icons for the ItemFrame by stealing blizzards real bag
+-- slot buttons, like on retail
+local function createBagBar(f)
+    f.bags = {}
+
+    -- steal the existing main backpack button
+    local bp = MainMenuBarBackpackButton
+    bp:SetParent(f)
+    inv.reskinBagBar(bp)
+    bp:RegisterForClicks("LeftButtonUp")
+    bp:SetChecked(false)
+    bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
+    bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
+    f.bags[BACKPACK_CONTAINER] = bp
+    hooksecurefunc(
+        "MainMenuBarBackpackButton_UpdateFreeSlots",
+        function()
+            bp.Count:SetText(bp.freeSlots)
+        end
+    )
+    SetItemButtonQuality(bp, 1, nil)
+
+    -- steal the bag slot buttons for equippable bags
+    for bag_idx = 1, NUM_BAG_SLOTS do
+        local b = _G["CharacterBag" .. bag_idx - 1 .. "Slot"]
+        b:SetParent(f)
+        b:SetChecked(false)
+        b:RegisterForClicks("LeftButtonUp")
+        b:SetScript("OnClick", bag_OnClick)
+        b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
+
+        inv.reskinBagBar(b)
+        local invID = C_Container.ContainerIDToInventoryID(bag_idx)
+        local bagLink = GetInventoryItemLink("player", invID)
+        if bagLink then
+            GW.SetItemButtonQualityForBags(b, select(3, C_Item.GetItemInfo(bagLink)))
+        else
+            GW.SetItemButtonQualityForBags(b, 1)
+        end
+
+        f.bags[bag_idx] = b
+    end
+
+    if HAS_KEYRING then
+        f.bags[NUM_BAG_SLOTS + 1] = createKeyringButton(f)
+    end
 
     setBagBarOrder(f)
 end
@@ -323,7 +380,7 @@ end
 local function updateBagBar(f)
     for bag_idx = 1, NUM_BAG_SLOTS do
         local b = f.bags[bag_idx]
-        local inv_id = C_Container.ContainerIDToInventoryID(bag_idx) --b:GetInventorySlot()
+        local inv_id = C_Container.ContainerIDToInventoryID(bag_idx)
         local bag_tex = GetInventoryItemTexture("player", inv_id)
         local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
 
@@ -355,63 +412,6 @@ local function updateBagBar(f)
             GW.SetItemButtonQualityForBags(b, 1)
         end
     end
-    if IsBagOpen(KEYRING_CONTAINER) then
-        GWkeyringbutton.border:Show()
-        GWkeyringbutton.IconBorder:Hide()
-    else
-        GWkeyringbutton.border:Hide()
-        GWkeyringbutton.IconBorder:Show()
-    end
-end
-
-
-local function onBagResizeStop(self)
-    GW.settings.BAG_WIDTH = self:GetWidth()
-    GwBagFrame.Header:SetWidth(GW.settings.BAG_WIDTH)
-    inv.onMoved(self, "BAG_POSITION", snapFrameSize)
-end
-
-
-local function onBagFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SPACING_X, self:GetWidth())
-
-    self.Header:SetWidth(self:GetWidth())
-    if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
-        self.gw_bag_cols = cols
-        if not skip then
-            layoutItems(self)
-        end
-    end
-end
-
-
-local function setBagItemSize(value)
-    local size = inv.normalizeBagItemSize(value)
-    if GW.settings.BAG_ITEM_SIZE ~= size then
-        GW.settings.BAG_ITEM_SIZE = size
-        inv.resizeInventory()
-    end
-    return size
-end
-
-local function setBagItemSpacing(settingKey, normalizeFunc, value)
-    local spacing = normalizeFunc(value)
-    if GW.settings[settingKey] ~= spacing then
-        GW.settings[settingKey] = spacing
-        inv.resizeInventory()
-    end
-    return spacing
-end
-
-local function addBagSliderControl(rootDescription, title, config, getValueFunc, setValueFunc)
-    GW.AddMenuSliderDescription(rootDescription, {
-        title = title,
-        minValue = config.minValue,
-        maxValue = config.maxValue,
-        step = config.step,
-        getValue = getValueFunc,
-        setValue = setValueFunc
-    })
 end
 
 
@@ -481,13 +481,7 @@ local function bag_OnShow(self)
             OpenBag(i)
         end
     end
-    if IsBagOpen(KEYRING_CONTAINER) then
-        GWkeyringbutton.border:Show()
-        GWkeyringbutton.IconBorder:Hide()
-    else
-        GWkeyringbutton.border:Hide()
-        GWkeyringbutton.IconBorder:Show()
-    end
+    updateKeyringButtonState()
     updateBagBar(self.ItemFrame)
     rescanBagContainers(self)
 end
@@ -504,7 +498,7 @@ local function bag_OnHide(self)
     if IsBagOpen(BACKPACK_CONTAINER) then
         CloseBackpack()
     end
-    if IsBagOpen(KEYRING_CONTAINER) then
+    if HAS_KEYRING and IsBagOpen(KEYRING_CONTAINER) then
         CloseBag(KEYRING_CONTAINER)
     end
 end
@@ -513,7 +507,7 @@ end
 local function getEventContainer(self, bag)
     if bag and bag >= BACKPACK_CONTAINER and bag <= NUM_BAG_SLOTS then
         return self.ItemFrame.Containers[bag]
-    elseif bag == KEYRING_CONTAINER then
+    elseif HAS_KEYRING and bag == KEYRING_CONTAINER then
         return self.ItemFrame.Containers[KEYRING_CONTAINER]
     end
     return nil
@@ -543,7 +537,7 @@ local function bag_OnEvent(self, event, ...)
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
-        if (bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER) or bag_id == KEYRING_CONTAINER then
+        if (bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER) or (HAS_KEYRING and bag_id == KEYRING_CONTAINER) then
             self.gw_need_bag_update = true
         end
     elseif event == "BAG_UPDATE_DELAYED" then
@@ -553,10 +547,11 @@ local function bag_OnEvent(self, event, ...)
                     OpenBag(bag_id)
                 end
             end
-            if not IsBagOpen(KEYRING_CONTAINER) then
+            if HAS_KEYRING and not IsBagOpen(KEYRING_CONTAINER) then
                 OpenBag(KEYRING_CONTAINER)
             end
             updateBagBar(self.ItemFrame)
+            updateKeyringButtonState()
         end
         if self.gw_need_bag_rescan or self.gw_need_bag_update then
             rescanBagContainers(self)
@@ -578,7 +573,7 @@ end
 local function bagHeader_OnClick(self, btn)
     local bag_id = self:GetID()
     if btn == "LeftButton" then
-        if bag_id == 5 then
+        if HAS_KEYRING and bag_id == 5 then
             if IsBagOpen(KEYRING_CONTAINER) then
                 self:GetParent().ItemFrame.Containers[KEYRING_CONTAINER].shouldShow = false
                 CloseBag(KEYRING_CONTAINER)
@@ -660,8 +655,65 @@ local function bagHeader_OnEnter(self)
     GameTooltip:Show()
 end
 
+-- the shared machinery handed to the flavor modules
+core.layoutItems = layoutItems
+core.snapFrameSize = snapFrameSize
+core.updateBagContainers = updateBagContainers
+core.rescanBagContainers = rescanBagContainers
+
+local function onBagResizeStop(self)
+    GW.settings.BAG_WIDTH = self:GetWidth()
+    GwBagFrame.Header:SetWidth(GW.settings.BAG_WIDTH)
+    inv.onMoved(self, "BAG_POSITION", snapFrameSize)
+end
+
+
+local function onBagFrameChangeSize(self, _, _, skip)
+    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SPACING_X, self:GetWidth())
+
+    self.Header:SetWidth(self:GetWidth())
+    if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
+        self.gw_bag_cols = cols
+        if not skip then
+            layoutItems(self)
+        end
+    end
+end
+
+
+local function setBagItemSize(value)
+    local size = inv.normalizeBagItemSize(value)
+    if GW.settings.BAG_ITEM_SIZE ~= size then
+        GW.settings.BAG_ITEM_SIZE = size
+        inv.resizeInventory()
+    end
+    return size
+end
+
+local function setBagItemSpacing(settingKey, normalizeFunc, value)
+    local spacing = normalizeFunc(value)
+    if GW.settings[settingKey] ~= spacing then
+        GW.settings[settingKey] = spacing
+        inv.resizeInventory()
+    end
+    return spacing
+end
+
+local function addBagSliderControl(rootDescription, title, config, getValueFunc, setValueFunc)
+    GW.AddMenuSliderDescription(rootDescription, {
+        title = title,
+        minValue = config.minValue,
+        maxValue = config.maxValue,
+        step = config.step,
+        getValue = getValueFunc,
+        setValue = setValueFunc
+    })
+end
+
+
 local function LoadBag(helpers)
     inv = helpers
+    core.inv = helpers
 
     GW.settings.BAG_ITEM_SIZE = inv.normalizeBagItemSize(GW.settings.BAG_ITEM_SIZE)
     GW.settings.BAG_ITEM_SPACING_X = inv.normalizeBagItemSpacingX(GW.settings.BAG_ITEM_SPACING_X)
@@ -670,13 +722,12 @@ local function LoadBag(helpers)
     -- create bag frame, restore its saved size, and init its many pieces
     local f = CreateFrame("Frame", "GwBagFrame", UIParent, "GwBagFrameTemplate")
     tinsert(UISpecialFrames, "GwBagFrame")
-    f.gw_state = "closed"
     f:ClearAllPoints()
     f:SetWidth(GW.settings.BAG_WIDTH)
     f.Header:SetWidth(GW.settings.BAG_WIDTH)
     onBagFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
-	f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
+    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
 
     -- setup show/hide
     f:SetScript("OnShow", bag_OnShow)
@@ -698,25 +749,28 @@ local function LoadBag(helpers)
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
 
-    -- setup bagheader stuff
-    for i = 0, 5 do
-        local header = f["bagHeader" .. i]
+    -- setup bagheader stuff; the template ships a keyring header, flavors
+    -- without a keyring simply never show it
+    local headerIndex = 0
+    while f["bagHeader" .. headerIndex] do
+        local header = f["bagHeader" .. headerIndex]
         header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         header.nameString:SetTextColor(1, 1, 1)
         header.nameString:SetShadowColor(0, 0, 0, 0)
-        if i == 5 then
+        if HAS_KEYRING and headerIndex == 5 then
             header.icon:Hide()
             header.icon2:Show()
         else
             header.icon2:Hide()
         end
+        header:Hide()
         header:SetScript("OnClick", bagHeader_OnClick)
         header:SetScript("OnEnter", bagHeader_OnEnter)
         header:SetScript("OnLeave", GameTooltip_Hide)
+        headerIndex = headerIndex + 1
     end
 
     -- take the original search box
-    -- Create bag item search box
     local BagItemSearchBox = CreateFrame("EditBox", "BagItemSearchBox", f, "BagSearchBoxTemplate")
     inv.reskinSearchBox(BagItemSearchBox)
     hooksecurefunc(
@@ -727,36 +781,36 @@ local function LoadBag(helpers)
     )
     inv.relocateSearchBox(BagItemSearchBox, f)
 
-    -- when we take ownership of ItemButtons, we need parent containers with IDs
-    -- set to the ID (bagId) of the original ContainerFrame we stole it from, in order
+    -- our own item buttons need parent containers with IDs set to the bagId, in order
     -- for all of the inherited ItemButton functionality to work normally
     f.ItemFrame.Containers = {}
-    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS + 1 do
+    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
         local cf = CreateFrame("Frame", nil, f.ItemFrame)
         cf.gw_items = {}
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
-        cf.shouldShow = bag_id <= NUM_BAG_SLOTS
-        f.ItemFrame.Containers[(bag_id <= NUM_BAG_SLOTS and bag_id or KEYRING_CONTAINER)] = cf
+        cf.shouldShow = true
+        f.ItemFrame.Containers[bag_id] = cf
     end
 
-    --Keyring Button here to Containers
-    local cf = CreateFrame("Frame", nil, f.ItemFrame)
-    cf.gw_items = {}
-    cf.gw_num_slots = 0
-    cf:SetAllPoints(f.ItemFrame)
-    cf:SetID(KEYRING_CONTAINER)
-    f.ItemFrame.Containers[KEYRING_CONTAINER] = cf
+    if HAS_KEYRING then
+        local cf = CreateFrame("Frame", nil, f.ItemFrame)
+        cf.gw_items = {}
+        cf.gw_num_slots = 0
+        cf:SetAllPoints(f.ItemFrame)
+        cf:SetID(KEYRING_CONTAINER)
+        f.ItemFrame.Containers[KEYRING_CONTAINER] = cf
+    end
 
-    -- anytime a ContainerFrame is populated with a backpack bagId, we take its buttons
+    -- anytime a ContainerFrame is populated with a backpack bagId, we rescan our buttons
     hooksecurefunc("ContainerFrame_GenerateFrame", function(_, _, id)
-        if (id >= BACKPACK_CONTAINER and id <= NUM_BAG_SLOTS) or id == KEYRING_CONTAINER then
+        if (id >= BACKPACK_CONTAINER and id <= NUM_BAG_SLOTS) or (HAS_KEYRING and id == KEYRING_CONTAINER) then
             rescanBagContainers(f)
         end
     end)
 
-    -- anytime a ContainerFrame shown we set it to unchecked and set the border
+    -- anytime a ContainerFrame is shown we set the stolen backpack button back to unchecked
     hooksecurefunc("ContainerFrame_OnShow", function()
         MainMenuBarBackpackButton:SetChecked(false)
         GW.SetItemButtonQualityForBags(MainMenuBarBackpackButton, 1)
@@ -828,15 +882,21 @@ local function LoadBag(helpers)
                      function() GW.settings.BAG_PROFESSION_BAG_COLOR = not GW.settings.BAG_PROFESSION_BAG_COLOR; ContainerFrame_UpdateAll() end)
             addCheck(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.BAG_SHOW_ILVL end,
                      function() GW.settings.BAG_SHOW_ILVL = not GW.settings.BAG_SHOW_ILVL; ContainerFrame_UpdateAll() end)
+
+            -- flavor specific entries (e.g. equipment set names on mists)
+            callBagModules("onMenu", f, rootDescription, addCheck)
+
             addCheck(L["Separate bags"], function() return GW.settings.BAG_SEPARATE_BAGS end,
                      function() local ns = not GW.settings.BAG_SEPARATE_BAGS; GW.settings.BAG_SEPARATE_BAGS = ns; layoutItems(f); snapFrameSize(f) end)
-            local keyringCheck = addCheck(L["Separate keyring"], function() return GW.settings.BAG_SEPARATE_KEYRING end,
-                     function() local ns = not GW.settings.BAG_SEPARATE_KEYRING; GW.settings.BAG_SEPARATE_KEYRING = ns; layoutItems(f); snapFrameSize(f) end)
-            keyringCheck:SetEnabled(function() return not GW.settings.BAG_SEPARATE_BAGS end)
-            keyringCheck:SetTooltip(function(tooltip, elementDescription)
-                tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
-                tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
-            end)
+            if HAS_KEYRING then
+                local keyringCheck = addCheck(L["Separate keyring"], function() return GW.settings.BAG_SEPARATE_KEYRING end,
+                         function() local ns = not GW.settings.BAG_SEPARATE_KEYRING; GW.settings.BAG_SEPARATE_KEYRING = ns; layoutItems(f); snapFrameSize(f) end)
+                keyringCheck:SetEnabled(function() return not GW.settings.BAG_SEPARATE_BAGS end)
+                keyringCheck:SetTooltip(function(tooltip, elementDescription)
+                    tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
+                    tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
+                end)
+            end
         end)
     end)
 
@@ -861,16 +921,13 @@ local function LoadBag(helpers)
     f.moneyFrame:RegisterEvent("PLAYER_MONEY")
     updateMoney(f)
 
+    -- flavor specific extras once the frame is complete
+    callBagModules("onLoadBag", f, core)
+
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
         layoutItems(f)
         snapFrameSize(f)
-        -- TODO: update the text on the compact icons config option
-    end
-
-    if KeyRingButton then
-        KeyRingButton:Hide()
-        hooksecurefunc(KeyRingButton, "Show", GW.Self_Hide)
     end
 
     -- Create sell junk banner

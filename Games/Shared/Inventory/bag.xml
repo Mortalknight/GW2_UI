@@ -240,4 +240,31 @@
         </Scripts>
     </Button>
 
+
+    <Button name="GwBagWatchedCurrencyTemplate" virtual="true">
+        <Size x="50" y="40"></Size>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="value" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="100" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-12" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="icon" file="Interface/MoneyFrame/UI-GoldIcon">
+                    <Size x="11" y="11"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="0" y="15"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+        </Scripts>
+    </Button>
+
 </Ui>

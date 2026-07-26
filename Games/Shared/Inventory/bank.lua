@@ -177,14 +177,13 @@ end
 
 -- draws the bank bag slots in the correct order
 local function setBagBarOrder(f)
-    local x, y = -40, nil
+    local x = -40
+    local y = 5
     local bag_size = 28
     local bag_padding = 4
     local rev = GW.settings.BANK_REVERSE_SORT
     if rev then
         y = 5 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
-    else
-        y = 5
     end
 
     for bag_idx = 0, NUM_BANKBAGSLOTS do
