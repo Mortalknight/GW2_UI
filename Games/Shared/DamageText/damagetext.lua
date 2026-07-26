@@ -567,6 +567,7 @@ end
 
 local function onNamePlateRemoved(_, _, unitID)
     local guid = unitToGuid[unitID]
+    if not guid then return end
     unitToGuid[unitID] = nil
     guidToUnit[guid] = nil
     freeClassicGrid(unitID)
@@ -583,7 +584,7 @@ end
 
 local function RescanAllNameplates()
     for _, frame in pairs(C_NamePlate_GetNamePlates(false)) do
-        local guid = UnitGUID(frame.namePlateUnitToken)
+        local guid = frame.namePlateUnitToken and UnitGUID(frame.namePlateUnitToken)
         if guid then
             unitToGuid[frame.namePlateUnitToken] = guid
             guidToUnit[guid] = frame.namePlateUnitToken
