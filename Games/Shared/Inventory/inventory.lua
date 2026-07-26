@@ -509,12 +509,27 @@ local function reskinBagBar(b, ha)
         b.Count:SetJustifyH("RIGHT")
     end
 
+    -- the retail bag bar buttons are round: drop the circle mask, restore the icons
+    -- real Show method (blizzard overrides it there) and swap the round hud backpack
+    -- art for the classic backpack icon
+    if b.CircleMask then
+        b.CircleMask:Hide()
+    end
+    if GW.Retail and b.icon then
+        b.icon.Show = nil
+        local tex = b.icon:GetTexture()
+        if not tex or tex == 1721259 then
+            b.icon:SetTexture(130716)
+        end
+    end
+
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAlpha(0.75)
     b.icon:Show()
 
     local norm = b:GetNormalTexture()
     norm:SetTexture(nil)
+    norm:SetAlpha(0)
 
     local pushed = b:GetPushedTexture()
     if pushed then
