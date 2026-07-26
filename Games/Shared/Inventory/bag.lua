@@ -363,18 +363,18 @@ local function createBagBar(f)
     bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
     bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
     f.bags[BACKPACK_CONTAINER] = bp
-    if MainMenuBarBackpackButton_UpdateFreeSlots then
-        hooksecurefunc(
-            "MainMenuBarBackpackButton_UpdateFreeSlots",
-            function()
-                bp.Count:SetText(bp.freeSlots)
-            end
-        )
-    else
-        hooksecurefunc(bp, "UpdateFreeSlots", function()
-            bp.Count:SetText(bp.freeSlots)
-        end)
+    -- the count is our free slots display inside the bag frame, keep it visible
+    -- regardless of blizzards displayFreeBagSlots cvar handling
+    local function updateBackpackFreeSlots()
+        bp.Count:SetText(bp.freeSlots)
+        bp.Count:Show()
     end
+    if MainMenuBarBackpackButton_UpdateFreeSlots then
+        hooksecurefunc("MainMenuBarBackpackButton_UpdateFreeSlots", updateBackpackFreeSlots)
+    else
+        hooksecurefunc(bp, "UpdateFreeSlots", updateBackpackFreeSlots)
+    end
+    updateBackpackFreeSlots()
     SetItemButtonQuality(bp, 1, nil)
 
     -- steal the bag slot buttons for equippable bags

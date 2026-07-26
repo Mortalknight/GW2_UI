@@ -393,7 +393,9 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
         end
 
         t:Show()
-        if GetItemButtonIconTexture then
+        -- the empty slot icon toggle only applies to our own container item buttons,
+        -- not to the (stolen) bag bar buttons that also carry the gw backdrop
+        if button.gwOwnItemButton and GetItemButtonIconTexture then
             GetItemButtonIconTexture(button):Show()
         end
     else
@@ -404,7 +406,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
             button.itemlevel:SetText("")
             button.__gwLastItemLink = nil
         end
-        if GetItemButtonIconTexture then
+        if button.gwOwnItemButton and GetItemButtonIconTexture then
             GetItemButtonIconTexture(button):Hide()
         end
     end
