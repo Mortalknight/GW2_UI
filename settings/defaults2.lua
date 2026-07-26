@@ -263,6 +263,7 @@ GW.globalDefault = {
         BAG_ITEM_SCRAP_ICON_SHOW= false,
         BAG_ITEM_UPGRADE_ICON_SHOW= false,
         BAG_PROFESSION_BAG_COLOR= true,
+        BAG_PROFESSION_BAG_QUALITY_COLOR= false,
         BAG_VENDOR_GRAYS= false,
         BAG_SHOW_ILVL= false,
         BAG_SEPARATE_BAGS= false,

@@ -978,6 +978,8 @@ local function LoadBag(helpers)
                      function() GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(L["Show Profession Bag Coloring"], function() return GW.settings.BAG_PROFESSION_BAG_COLOR end,
                      function() GW.settings.BAG_PROFESSION_BAG_COLOR = not GW.settings.BAG_PROFESSION_BAG_COLOR; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Show Quality Color for Profession Bags"], function() return GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR end,
+                     function() GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR = not GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.BAG_SHOW_ILVL end,
                      function() GW.settings.BAG_SHOW_ILVL = not GW.settings.BAG_SHOW_ILVL; GW.UpdateAllOwnBagItemButtons() end)
 

@@ -24,6 +24,7 @@ addChange("10.15.0", {
     {GW.Enum.ChangelogType.feature, [=[Bank (Retail): the bank got its own icon size and slot spacing settings like the classic flavors, previously it shared them with the bags; the current bag values are carried over once so nothing changes visually]=]},
     {GW.Enum.ChangelogType.change, [=[Bags (all): more retail goodies for every flavor - the retail styled money icons, the localized gold number format, the account money in the money tooltip updates, the skinned stack split popup and a uniform minimum frame size; the watched currency displays (retail/mists) now show as many currencies as fit the bag width instead of a fixed number]=]},
     {GW.Enum.ChangelogType.change, [=[Bags (all): one central item button skin for every flavor - quest items are marked with the same golden quest icon everywhere now (the retail look, replacing the per flavor quest banners) and the retail extras (azerite/corruption overlays, scrap icon) plug in as decorators; the retail bag right click menus use the new bank tab types]=]},
+    {GW.Enum.ChangelogType.feature, [=[Bags (all): the profession bag coloring now wins over an items quality color on every flavor by default; the new option "Show Quality Color for Profession Bags" flips that, so the quality color wins inside profession bags again]=]},
 })
 
 addChange("10.14.3", {

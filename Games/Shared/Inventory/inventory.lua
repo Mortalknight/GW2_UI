@@ -338,8 +338,10 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
 
     button.bagID = bag_id
 
-    if (GW.Mists or GW.Retail) and (GW.settings.BAG_PROFESSION_BAG_COLOR or isReagentBag) and professionColors then
-        -- mists and retail tint profession bags first, so an items quality color wins over it
+    -- by default the profession bag tint wins over an items quality color; with the
+    -- quality-over-profession option the tint is applied first so the quality color wins
+    local qualityWinsOverProfession = GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR
+    if qualityWinsOverProfession and (GW.settings.BAG_PROFESSION_BAG_COLOR or isReagentBag) and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
@@ -407,8 +409,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
         end
     end
 
-    if not GW.Mists and not GW.Retail and GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then
-        -- the old classic flavors tint profession bags last, the tint wins over quality colors
+    if not qualityWinsOverProfession and (GW.settings.BAG_PROFESSION_BAG_COLOR or isReagentBag) and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
