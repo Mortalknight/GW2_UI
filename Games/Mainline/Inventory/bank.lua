@@ -47,7 +47,7 @@ local function UpdateBankItemButtons(self)
         itemButton:Hide()
     end
 
-    cf:SetShown((tabID and tabID > 0) == true)
+    cf:SetShown(tabID and tabID > 0)
 
     if tabID and tabID > 0 then
         cf:SetID(tabID)
