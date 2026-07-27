@@ -248,6 +248,10 @@ end
 
 -- rescan ALL bag ItemButtons
 local function rescanBagContainers(f)
+    if f.gw_suppressRescan then
+        -- a batch of bags is being opened, whoever opens them rescans once at the end
+        return
+    end
     for bag_id = BACKPACK_CONTAINER, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
         GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id)
     end
@@ -512,6 +516,10 @@ local function bag_OnShow(self)
     self:RegisterEvent("BAG_UPDATE_DELAYED")
     self:RegisterEvent("BAG_UPDATE_COOLDOWN")
     self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
+    -- every OpenBag makes blizzard build its container frame, and our hook on that
+    -- answers with a full rescan of all containers - opening the whole set would rescan
+    -- everything once per bag before the single rescan below does it once more
+    self.gw_suppressRescan = true
     if not IsBagOpen(BACKPACK_CONTAINER) then
         OpenBackpack()
     end
@@ -520,6 +528,8 @@ local function bag_OnShow(self)
             OpenBag(i)
         end
     end
+    self.gw_suppressRescan = false
+
     updateKeyringButtonState()
     updateBagBar(self.ItemFrame)
     rescanBagContainers(self)
@@ -529,6 +539,8 @@ end
 local function bag_OnHide(self)
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
     self:UnregisterAllEvents()
+    -- should an error ever leave the batch flag set, closing the bag recovers from it
+    self.gw_suppressRescan = false
     for i = 1, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
         if IsBagOpen(i) then
             CloseBag(i)
@@ -577,6 +589,7 @@ local function bag_OnEvent(self, event, ...)
         end
     elseif event == "BAG_UPDATE_DELAYED" then
         if self.gw_need_bag_rescan then
+            self.gw_suppressRescan = true
             for bag_id = 1, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
                 if not IsBagOpen(bag_id) then
                     OpenBag(bag_id)
@@ -585,6 +598,8 @@ local function bag_OnEvent(self, event, ...)
             if HAS_KEYRING and not IsBagOpen(KEYRING_CONTAINER) then
                 OpenBag(KEYRING_CONTAINER)
             end
+            self.gw_suppressRescan = false
+
             updateBagBar(self.ItemFrame)
             updateKeyringButtonState()
         end
