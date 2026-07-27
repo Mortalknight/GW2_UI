@@ -10,10 +10,14 @@ local GW = select(2, ...)
     and the module passes in the flavor specific parts.
 ]]
 
--- as many watched currency displays as fit between the currency button
--- on the left and the money display on the right
+local CURRENCY_DISPLAY_STRIDE = 60 -- one display plus the gap to the next one
+local CURRENCY_FOOTER_RESERVED = 273 -- the money display on the right and the currency button on the left
+
+-- how many watched currency displays fit into OUR bag footer. This is a display
+-- capacity only - how many currencies the game lets the player watch is a separate
+-- limit that each flavor reports (and, on retail, that we align to this number).
 local function maxCurrencySlots(f)
-    return math.max(1, math.floor((f:GetWidth() - 273) / 60) + 1)
+    return math.max(1, math.floor((f:GetWidth() - CURRENCY_FOOTER_RESERVED) / CURRENCY_DISPLAY_STRIDE) + 1)
 end
 
 local function getCurrencyFrame(f, index, opts)
@@ -23,7 +27,7 @@ local function getCurrencyFrame(f, index, opts)
     end
 
     currencyFrame = CreateFrame("Button", nil, f, "GwBagWatchedCurrencyTemplate")
-    currencyFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -183 - ((index - 1) * 60), -40)
+    currencyFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -183 - ((index - 1) * CURRENCY_DISPLAY_STRIDE), -40)
     currencyFrame.value:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     currencyFrame.value:SetTextColor(1, 1, 1)
     -- the handlers read the entry the flavor produced from currencyFrame.gwCurrency
@@ -49,13 +53,21 @@ end
         onClick   = function(self) end,          -- optional click behavior
         onRefresh = function(refresh) end,       -- optional, register additional hooks
                                                  -- that have to refresh the displays
+        setWatchLimit = function(capacity) end,  -- optional, gets our footer capacity so
+                                                 -- a flavor can align the games own limit
+                                                 -- on how many currencies may be watched
 ]]
 local function SetupBagCurrencyDisplay(f, opts)
     f.gwCurrencyFrames = {}
 
     local function refresh()
+        local capacity = maxCurrencySlots(f)
+        if opts.setWatchLimit then
+            opts.setWatchLimit(capacity)
+        end
+
         local entries = opts.enumerate() or {}
-        local shown = math.min(#entries, maxCurrencySlots(f))
+        local shown = math.min(#entries, capacity)
 
         for i = 1, shown do
             local entry = entries[i]

@@ -33,13 +33,18 @@ GW.RegisterItemButtonDecorator(function(button, _, itemIDOrLink)
     end
 end)
 
--- the classic currency list mixes headers and unwatched entries into one flat list
+-- the classic currency list mixes headers and unwatched entries into one flat list, and
+-- the game never watches more than MAX_WATCHED_TOKENS of them. The list index is kept
+-- because the tooltip is built from it.
 local function enumerateWatchedCurrencies()
     local watched = {}
     for i = 1, GetCurrencyListSize() do
         local _, isHeader, _, _, isWatched, count, icon = GetCurrencyListInfo(i)
         if not isHeader and isWatched then
             watched[#watched + 1] = {quantity = count, icon = icon, listIndex = i}
+            if #watched >= MAX_WATCHED_TOKENS then
+                break
+            end
         end
     end
     return watched
