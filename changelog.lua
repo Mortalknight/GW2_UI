@@ -13,6 +13,12 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.16.0", {
+    {GW.Enum.ChangelogType.feature, [=[Bags: new "Item Level Threshold" setting - the item level is only drawn on items at or above the chosen value, so low level gear stays clean; 0 keeps showing it on everything as before]=]},
+    {GW.Enum.ChangelogType.feature, [=[Bags: new "Mark New Items" setting - newly received items get a small marker in the lower left corner of their slot until the bags are closed; the marker reads Blizzards own new item state, so it disappears exactly when Blizzard considers the item seen]=]},
+    {GW.Enum.ChangelogType.change, [=[Bags: the search filter is dropped when the bags close - a forgotten filter no longer hides items on the next open]=]},
+})
+
 addChange("10.15.1", {
     {GW.Enum.ChangelogType.bug, [=[Bags (Retail): fixed "AddOn 'GW2_UI' tried to call the protected function 'UseContainerItem()'" when using an item from the bags or selling it to a vendor, after which the bags stopped responding until a reload - the bag id was stored on the item buttons under the same field name Blizzards own item button mixin reads, so Blizzard got our value instead of its own and refused the interaction; the item state fields go through Blizzards setters now]=]},
     {GW.Enum.ChangelogType.bug, [=[Chat: fixed an error when switching chat tabs while a chat frame had lines that Blizzard had not laid out yet]=]},

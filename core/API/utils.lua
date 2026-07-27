@@ -1011,7 +1011,8 @@ local function IsItemEligibleForItemLevelDisplay(itemInput)
 end
 GW.IsItemEligibleForItemLevelDisplay = IsItemEligibleForItemLevelDisplay
 
-local function SetItemLevel(button, quality, itemInput, slot)
+-- minItemLevel hides the number below that value, the bags offer it as a setting
+local function SetItemLevel(button, quality, itemInput, slot, minItemLevel)
     if not itemInput or itemInput == "" then
         button.itemlevel:SetText("")
         button.__gwLastItemLink = nil
@@ -1021,7 +1022,7 @@ local function SetItemLevel(button, quality, itemInput, slot)
     if button.__gwLastItemLink == itemInput then return end
 
     local function applyItemLevel(ilvl, color, usedLink)
-        if not ilvl or ilvl <= 0 then
+        if not ilvl or ilvl <= 0 or (minItemLevel and ilvl < minItemLevel) then
             button.itemlevel:SetText("")
             button.__gwLastItemLink = nil
             return

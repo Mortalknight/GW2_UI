@@ -539,6 +539,17 @@ end
 local function bag_OnHide(self)
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
     self:UnregisterAllEvents()
+    if C_NewItems and C_NewItems.ClearAll then
+        -- blizzards container frames did this on hide, ours have to now
+        C_NewItems.ClearAll()
+    end
+    if BagItemSearchBox then
+        -- blizzard leaves the filter active when the bags close, which then hides items
+        -- on the next open with no visible reason; SetText drives the templates
+        -- OnTextChanged so the item search is really dropped, not just the display
+        BagItemSearchBox:SetText("")
+        BagItemSearchBox:ClearFocus()
+    end
     -- should an error ever leave the batch flag set, closing the bag recovers from it
     self.gw_suppressRescan = false
     for i = 1, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
@@ -927,6 +938,10 @@ local function LoadBag(helpers)
                      function() GW.settings.BAG_REVERSE_SORT = not GW.settings.BAG_REVERSE_SORT; layoutItems(f); snapFrameSize(f) end)
             addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end,
                      function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; GW.UpdateAllOwnBagItemButtons() end)
+            if C_NewItems and C_NewItems.IsNewItem then
+                addCheck(L["Mark New Items"], function() return GW.settings.BAG_ITEM_NEW_ITEM_SHOW end,
+                         function() GW.settings.BAG_ITEM_NEW_ITEM_SHOW = not GW.settings.BAG_ITEM_NEW_ITEM_SHOW; GW.UpdateAllOwnBagItemButtons() end)
+            end
             addCheck(L["Show Junk Icon"], function() return GW.settings.BAG_ITEM_JUNK_ICON_SHOW end,
                      function() GW.settings.BAG_ITEM_JUNK_ICON_SHOW = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(L["Show Upgrade Icon"], function() return GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW end,
@@ -937,6 +952,21 @@ local function LoadBag(helpers)
                      function() GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR = not GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.BAG_SHOW_ILVL end,
                      function() GW.settings.BAG_SHOW_ILVL = not GW.settings.BAG_SHOW_ILVL; GW.UpdateAllOwnBagItemButtons() end)
+            GW.AddMenuSliderDescription(rootDescription, {
+                title = L["Item Level Threshold"],
+                minValue = 0,
+                maxValue = 1000,
+                step = 10,
+                getValue = function() return GW.settings.BAG_ITEM_LEVEL_THRESHOLD end,
+                setValue = function(value)
+                    value = math.floor(value + 0.5)
+                    if GW.settings.BAG_ITEM_LEVEL_THRESHOLD ~= value then
+                        GW.settings.BAG_ITEM_LEVEL_THRESHOLD = value
+                        GW.UpdateAllOwnBagItemButtons()
+                    end
+                    return value
+                end
+            })
 
             -- flavor specific entries (e.g. equipment set names on mists)
             callBagModules("onMenu", f, rootDescription, addCheck)

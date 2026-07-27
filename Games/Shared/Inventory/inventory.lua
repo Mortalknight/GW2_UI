@@ -133,6 +133,16 @@ local function reskinItemButton(b, overrideIconSize)
         b.flash:SetAllPoints(b)
     end
 
+    -- the bottom left corner is the only one no other overlay uses
+    if not b.gwNewItem then
+        b.gwNewItem = b:CreateTexture(nil, "OVERLAY", nil, 2)
+        b.gwNewItem:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
+        b.gwNewItem:SetVertexColor(221 / 255, 198 / 255, 68 / 255, 1)
+        b.gwNewItem:SetSize(8, 8)
+        b.gwNewItem:SetPoint("BOTTOMLEFT", 1, 1)
+        b.gwNewItem:Hide()
+    end
+
     if not b.junkIcon then
         b.junkIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
         b.junkIcon:SetAtlas("bags-junkcoin", true)
@@ -379,6 +389,14 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
             end
         end
 
+        -- Show the new item marker if active; C_NewItems is the only state holder, we just
+        -- read it, and closing the bags clears it like blizzards container frames used to
+        if button.gwNewItem then
+            local isNew = GW.settings.BAG_ITEM_NEW_ITEM_SHOW and C_NewItems and C_NewItems.IsNewItem
+                and C_NewItems.IsNewItem(bag_id, button:GetID())
+            button.gwNewItem:SetShown(isNew == true)
+        end
+
         -- Show upgrade icon if active
         if itemInfo and itemInfo.hyperlink and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
             GW.RegisterPawnUpgradeIcon(button, itemInfo.hyperlink)
@@ -390,7 +408,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
         if button.itemlevel and showItemLevel then
             local canShowItemLevel = GW.IsItemEligibleForItemLevelDisplay(itemIDOrLink)
             if canShowItemLevel then
-                GW.SetItemLevel(button, quality, itemIDOrLink)
+                GW.SetItemLevel(button, quality, itemIDOrLink, nil, GW.settings.BAG_ITEM_LEVEL_THRESHOLD)
             else
                 button.itemlevel:SetText("")
                 button.__gwLastItemLink = nil
