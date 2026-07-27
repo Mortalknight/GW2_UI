@@ -13,9 +13,8 @@ local GW = select(2, ...)
 local CURRENCY_DISPLAY_STRIDE = 60 -- one display plus the gap to the next one
 local CURRENCY_FOOTER_RESERVED = 273 -- the money display on the right and the currency button on the left
 
--- how many watched currency displays fit into OUR bag footer. This is a display
--- capacity only - how many currencies the game lets the player watch is a separate
--- limit that each flavor reports (and, on retail, that we align to this number).
+-- how many watched currency displays fit into our bag footer; how many currencies the
+-- game lets the player watch at all is a separate, smaller limit that the flavor applies
 local function maxCurrencySlots(f)
     return math.max(1, math.floor((f:GetWidth() - CURRENCY_FOOTER_RESERVED) / CURRENCY_DISPLAY_STRIDE) + 1)
 end
@@ -53,21 +52,13 @@ end
         onClick   = function(self) end,          -- optional click behavior
         onRefresh = function(refresh) end,       -- optional, register additional hooks
                                                  -- that have to refresh the displays
-        setWatchLimit = function(capacity) end,  -- optional, gets our footer capacity so
-                                                 -- a flavor can align the games own limit
-                                                 -- on how many currencies may be watched
 ]]
 local function SetupBagCurrencyDisplay(f, opts)
     f.gwCurrencyFrames = {}
 
     local function refresh()
-        local capacity = maxCurrencySlots(f)
-        if opts.setWatchLimit then
-            opts.setWatchLimit(capacity)
-        end
-
         local entries = opts.enumerate() or {}
-        local shown = math.min(#entries, capacity)
+        local shown = math.min(#entries, maxCurrencySlots(f))
 
         for i = 1, shown do
             local entry = entries[i]

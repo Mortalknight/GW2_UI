@@ -2,36 +2,7 @@
 local GW = select(2, ...)
 local L = GW.L
 
--- Blizzard derives how many currencies may be watched from the width of its own
--- BackpackTokenFrame. Our layout never sizes that frame, so it keeps the width of 1 from
--- its template, GetMaxTokensWatched falls back to the approximated container width and
--- the player is stuck at four no matter how wide our bag is. Size it to our own footer
--- capacity instead - the same number then caps the watch toggle in the token ui and the
--- loop below.
-local function setWatchLimit(capacity)
-    local tokenFrame = BackpackTokenFrame
-    if not tokenFrame then
-        return
-    end
-    if not tokenFrame.tokenWidth then
-        tokenFrame:GetMaxTokensWatched() -- fills in the cached token width
-    end
-    -- half a token of slack: blizzard divides the width by the token width and floors
-    -- it, and SetWidth does not store the value bit exact (a requested 350 reads back as
-    -- 349.9999), which would round the last slot away
-    local tokenWidth = tokenFrame.tokenWidth or 50
-    local width = (capacity + 0.5) * tokenWidth
-    if math.abs((tokenFrame:GetWidth() or 0) - width) > 0.5 then
-        if not tokenFrame.gwUnanchored then
-            -- it is anchored inside blizzards parked container frame, so a width of
-            -- our own would not survive its next layout pass
-            tokenFrame.gwUnanchored = true
-            tokenFrame:ClearAllPoints()
-        end
-        tokenFrame:SetWidth(width)
-    end
-end
-
+-- blizzard caps how many currencies may be watched, GetMaxTokensWatched is that limit
 local function enumerateWatchedCurrencies()
     local watched = {}
     if not BackpackTokenFrame then
@@ -119,7 +90,6 @@ GW.RegisterBagModule({
             enumerate = enumerateWatchedCurrencies,
             onEnter = currency_OnEnter,
             onClick = currency_OnClick,
-            setWatchLimit = setWatchLimit,
             onRefresh = function(refresh)
                 hooksecurefunc(C_CurrencyInfo, "SetCurrencyBackpack", refresh)
                 hooksecurefunc(C_CurrencyInfo, "SetCurrencyBackpackByID", refresh)
