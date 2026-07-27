@@ -47,6 +47,8 @@ local function UpdateBankItemButtons(self)
         itemButton:Hide()
     end
 
+    cf:SetShown((tabID and tabID > 0) == true)
+
     if tabID and tabID > 0 then
         cf:SetID(tabID)
         GW.SetupOwnContainerItemButtons(cf, tabID, GW.settings.BANK_ITEM_SIZE, true, BANK_BUTTON_OPTS)
@@ -472,6 +474,12 @@ local function LoadBank(helpers)
 
     hooksecurefunc(f.BankPanel.Header, "SetShown", function(self) self:Hide() end)
     hooksecurefunc(f.BankPanel, "GenerateItemSlotsForSelectedTab", UpdateBankItemButtons)
+    -- RefreshBankPanel returns early once a prompt takes over, so the item slots are never
+    -- generated and our buttons would keep covering the purchase and lock prompts; follow
+    -- blizzards own item area switch, it is called for both prompts and the normal path
+    hooksecurefunc(f.BankPanel, "SetItemDisplayEnabled", function(self, enable)
+        self.gw_container:SetShown(enable)
+    end)
 
     f.BankPanel.RefreshBankTabs = RefreshBankTabs
 
