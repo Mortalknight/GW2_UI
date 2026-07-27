@@ -27,7 +27,7 @@ GW.RegisterItemButtonDecorator(function(button, _, _)
         return
     end
     if GW.settings.BAG_ITEM_SCRAP_ICON_SHOW then
-        local itemLoc = ItemLocation:CreateFromBagAndSlot(button.bagID, button:GetID())
+        local itemLoc = ItemLocation:CreateFromBagAndSlot(button.gwBagID or button:GetBagID(), button:GetID())
         if itemLoc and itemLoc ~= "" then
             if C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc) then
                 button.scrapIcon:SetShown(itemLoc)

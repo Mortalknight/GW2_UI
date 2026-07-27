@@ -13,6 +13,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.15.1", {
+    {GW.Enum.ChangelogType.bug, [=[Bags (Retail): fixed "AddOn 'GW2_UI' tried to call the protected function 'UseContainerItem()'" when using an item from the bags or selling it to a vendor, after which the bags stopped responding until a reload - the bag id was stored on the item buttons under the same field name Blizzards own item button mixin reads, so Blizzard got our value instead of its own and refused the interaction; the item state fields go through Blizzards setters now]=]},
+    {GW.Enum.ChangelogType.bug, [=[Chat: fixed an error when switching chat tabs while a chat frame had lines that Blizzard had not laid out yet]=]},
+})
+
 addChange("10.15.0", {
     {GW.Enum.ChangelogType.change, [=[Bags & Bank: complete rework on every game version - bags and bank use their own item buttons now instead of taking Blizzards multi purpose buttons, which ends the fights with Blizzards layout and update code (anchor errors, misplaced buttons); Blizzards container and bank frames are made inert at load, so they no longer update in the background or play their own open/close sounds. All behavior, settings and the resize handling stay the same]=]},
     {GW.Enum.ChangelogType.change, [=[Bags & Bank: the per game version duplicated code moved into one shared implementation - fixes only need to be made once now; the bag bar uses Blizzards real bag slot buttons everywhere, one central item button skin marks quest items with the same golden quest icon on every flavor, and flavor extras (currency display, azerite/corruption/scrap, equipment set names) plug in as small modules]=]},

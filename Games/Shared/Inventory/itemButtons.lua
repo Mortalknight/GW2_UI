@@ -77,18 +77,23 @@ local function UpdateOwnContainerItemButton(button)
 
     if texture then
         updateCooldown(bagID, button)
-        button.hasItem = 1
-    else
-        if button.cooldown then
-            button.cooldown:Hide()
-        end
-        button.hasItem = nil
+    elseif button.cooldown then
+        button.cooldown:Hide()
     end
-    -- the retail button mixin tracks its item state itself
+
+    -- go through the mixin setters where they exist and only write the fields directly on
+    -- the flavors without them: hasItem and readable are mixin state like bagID, and an own
+    -- value on a retail button taints every protected item interaction
     if button.SetHasItem then
         button:SetHasItem(texture)
+    else
+        button.hasItem = texture and 1 or nil
     end
-    button.readable = readable
+    if button.SetReadable then
+        button:SetReadable(readable)
+    else
+        button.readable = readable
+    end
 
     if GameTooltip:IsOwned(button) then
         if not info then

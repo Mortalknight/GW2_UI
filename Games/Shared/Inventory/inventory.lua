@@ -350,7 +350,11 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
         or GW.Colors.ProfessionBagColors[container.gw_bag_family or select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
 
-    button.bagID = bag_id
+    -- never store this as button.bagID: blizzards ContainerFrameItemButtonMixin:GetBagID
+    -- returns self.bagID before falling back to the parents id, so an own value there taints
+    -- every protected item interaction (using an item, selling to a vendor) with
+    -- ADDON_ACTION_FORBIDDEN - blizzard routes its own id through SetAttribute for that reason
+    button.gwBagID = bag_id
 
     -- by default the profession bag tint wins over an items quality color; with the
     -- quality-over-profession option the tint is applied first so the quality color wins
