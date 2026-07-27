@@ -181,8 +181,14 @@ local function AdjustChatLines(frame)
     for index, fontString in ipairs(visibleLines) do
         if index == 1 then
             local point, relativeTo, relativePoint, _, yOfs = fontString:GetPoint(1)
-            if point then
-                fontString:SetPoint(point, relativeTo, relativePoint, -offset, yOfs or 0)
+            -- only rebuild the anchor when GetPoint handed back a complete one: a line
+            -- that the engine has not anchored yet (fresh out of the pool while the dock
+            -- switches tabs) reports no relative point, and passing that nil on to
+            -- SetPoint makes it reject the whole argument list
+            if point and relativePoint then
+                -- an explicit parent is what a nil relativeTo means anyway, and it keeps
+                -- SetPoint from having to guess at a nil in the middle of the arguments
+                fontString:SetPoint(point, relativeTo or fontString:GetParent(), relativePoint, -offset, yOfs or 0)
             end
         end
         fontString:SetWidth(width)
