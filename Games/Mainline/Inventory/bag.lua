@@ -16,8 +16,12 @@ local function setWatchLimit(capacity)
     if not tokenFrame.tokenWidth then
         tokenFrame:GetMaxTokensWatched() -- fills in the cached token width
     end
-    local width = capacity * (tokenFrame.tokenWidth or 50)
-    if math.floor(tokenFrame:GetWidth() or 0) ~= math.floor(width) then
+    -- half a token of slack: blizzard divides the width by the token width and floors
+    -- it, and SetWidth does not store the value bit exact (a requested 350 reads back as
+    -- 349.9999), which would round the last slot away
+    local tokenWidth = tokenFrame.tokenWidth or 50
+    local width = (capacity + 0.5) * tokenWidth
+    if math.abs((tokenFrame:GetWidth() or 0) - width) > 0.5 then
         if not tokenFrame.gwUnanchored then
             -- it is anchored inside blizzards parked container frame, so a width of
             -- our own would not survive its next layout pass
