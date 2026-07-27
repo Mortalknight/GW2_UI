@@ -40,19 +40,6 @@ GW.RegisterItemButtonDecorator(function(button, _, _)
     end
 end)
 
-local function getContainerFrame(bag_id)
-    -- ContainerFrame assignment is not guaranteed; only safe approach is to
-    -- search every ContainerFrame and check its ID for a match.
-    for i = 1, NUM_CONTAINER_FRAMES do
-        local cf = _G["ContainerFrame" .. i]
-        if cf and cf:GetID() == bag_id then
-            return cf
-        end
-    end
-
-    return nil
-end
-
 local function ContainerFrame_IsHeldBag(id)
     return id >= Enum.BagIndex.Backpack and id <= NUM_TOTAL_BAG_FRAMES;
 end
@@ -163,7 +150,7 @@ local function bag_OnMouseDown(self, button)
 
     local bag_id = self:GetBagID()
     if self.gwHasBag or bag_id == BACKPACK_CONTAINER then
-        local cf = getContainerFrame(bag_id)
+        local cf = GW.GetBagContainerFrame(bag_id)
         if cf then
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
                 rootDescription:SetMinimumWidth(1)

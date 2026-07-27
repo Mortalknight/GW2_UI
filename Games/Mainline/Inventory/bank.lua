@@ -5,6 +5,7 @@ local EnableTooltip = GW.EnableTooltip
 local inv
 
 local PURCHASE_TAB_ID = -1
+local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutAccountBankItems(cf)
@@ -47,9 +48,10 @@ local function UpdateBankItemButtons(self)
         itemButton:Hide()
     end
 
-    cf:SetShown(tabID and tabID > 0)
+    local hasTab = tabID and tabID > 0
+    cf:SetShown(hasTab)
 
-    if tabID and tabID > 0 then
+    if hasTab then
         cf:SetID(tabID)
         GW.SetupOwnContainerItemButtons(cf, tabID, GW.settings.BANK_ITEM_SIZE, true, BANK_BUTTON_OPTS)
     else
@@ -61,7 +63,7 @@ local function UpdateBankItemButtons(self)
 
     layoutAccountBankItems(cf)
     snapFrameSize(f)
-    if tabID and tabID > 0 then
+    if hasTab then
         inv.updateFreeSlots(f.spaceString, tabID, tabID)
     end
 end
@@ -73,16 +75,10 @@ local function reskinAccountBagBar(b)
 
     b.Border:Hide()
 
-    if b.Icon then
-        b.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        b.Icon:SetAlpha(0.75)
-        b.Icon:Show()
-    end
-
-    if b.icon then
-        b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        b.icon:SetAlpha(0.75)
-        b.icon:Show()
+    for _, icon in next, {b.Icon, b.icon} do
+        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        icon:SetAlpha(0.75)
+        icon:Show()
     end
 
     local norm = b:GetNormalTexture()
@@ -95,7 +91,7 @@ local function reskinAccountBagBar(b)
     end
 
     b.IconBorder:SetAllPoints(b)
-    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    b.IconBorder:SetTexture(BORDER_TEXTURE)
     b.IconBorder:Show()
 
     b.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border.png")
@@ -105,8 +101,8 @@ local function reskinAccountBagBar(b)
         -- these hooks must only be added once, the pooled tab buttons run through
         -- this skin again on every tab refresh
         hooksecurefunc(b.IconBorder, "SetTexture", function()
-            if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() > 0 and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
-                b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+            if b.IconBorder:GetTexture() ~= BORDER_TEXTURE then
+                b.IconBorder:SetTexture(BORDER_TEXTURE)
             end
         end)
         hooksecurefunc(b, "OnClick", function(self)
@@ -117,7 +113,7 @@ local function reskinAccountBagBar(b)
     end
 
     local high = b:GetHighlightTexture()
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    high:SetTexture(BORDER_TEXTURE)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
     high:SetSize(bag_size, bag_size)
@@ -141,11 +137,14 @@ local function RefreshBankTabs(f)
     local lastButton
     f.bankTabPool:ReleaseAll()
 
+    f.gwGetBankPanel = f.gwGetBankPanel or function() return f end
+    f.gwGetActiveBankType = f.gwGetActiveBankType or function() return f:GetActiveBankType() end
+
     if f.purchasedBankTabData then
         for _, bankTabData in ipairs(f.purchasedBankTabData) do
             local b = f.bankTabPool:Acquire()
-            b.GetBankPanel = function() return f end
-            b.GetActiveBankType = function() return f:GetActiveBankType() end
+            b.GetBankPanel = f.gwGetBankPanel
+            b.GetActiveBankType = f.gwGetActiveBankType
             b:Init(bankTabData)
 
             b:RegisterForClicks("AnyUp")
@@ -166,8 +165,8 @@ local function RefreshBankTabs(f)
     -- ...followed by the button to purchase a new tab (if applicable)
     local showPurchaseTab = not f:IsBankTypeLocked() and not C_Bank.HasMaxBankTabs(f.bankType)
     if showPurchaseTab then
-        f.PurchaseTab.GetBankPanel = function() return f end
-        f.PurchaseTab.GetActiveBankType = function() return f:GetActiveBankType() end
+        f.PurchaseTab.GetBankPanel = f.gwGetBankPanel
+        f.PurchaseTab.GetActiveBankType = f.gwGetActiveBankType
         f.PurchaseTab:Init({ ID = PURCHASE_TAB_ID, bankType = f.bankType })
         reskinAccountBagBar(f.PurchaseTab)
         f.PurchaseTab:SetParent(f)
@@ -202,45 +201,15 @@ local function onBankFrameChangeSize(self)
     end
     local cols = inv.colCount(size, spacing, self:GetWidth())
 
-    if not self.gw_bank_cols or self.gw_bank_cols ~= cols then
-        self.gw_bank_cols = cols
-    end
+    self.gw_bank_cols = cols
 end
 
-local function setBankItemSize(value)
-    local size = inv.normalizeBankItemSize(value)
-
-    if GW.settings.BANK_ITEM_SIZE ~= size then
-        GW.settings.BANK_ITEM_SIZE = size
-        inv.resizeInventory()
-    end
-
-    return size
-end
-
-local function setBankItemSpacing(settingKey, normalizeFunc, value)
-    local spacing = normalizeFunc(value)
-    if GW.settings[settingKey] ~= spacing then
-        GW.settings[settingKey] = spacing
-        inv.resizeInventory()
-    end
-    return spacing
-end
-
-local function addBankSliderControl(rootDescription, title, config, getValueFunc, setValueFunc)
-    GW.AddMenuSliderDescription(rootDescription, {
-        title = title,
-        minValue = config.minValue,
-        maxValue = config.maxValue,
-        step = config.step,
-        getValue = getValueFunc,
-        setValue = setValueFunc
-    })
-end
-
+local BANK_WATCH_EVENTS = {"ITEM_LOCK_CHANGED", "BAG_UPDATE", "BAG_UPDATE_COOLDOWN", "INVENTORY_SEARCH_UPDATE"}
 
 local function OnShow(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+
+    FrameUtil.RegisterFrameForEvents(self.gw_watcher, BANK_WATCH_EVENTS)
 
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
@@ -258,6 +227,7 @@ end
 
 local function OnHide(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
+    FrameUtil.UnregisterFrameForEvents(self.gw_watcher, BANK_WATCH_EVENTS)
     self:UnregisterAllEvents()
     self:RegisterEvent("BANKFRAME_OPENED")
     self:RegisterEvent("BANKFRAME_CLOSED")
@@ -324,14 +294,6 @@ end
 local function LoadBank(helpers)
     inv = helpers
 
-    GW.settings.BANK_ITEM_SIZE = inv.normalizeBankItemSize(GW.settings.BANK_ITEM_SIZE)
-    GW.settings.BANK_ITEM_SPACING_X = inv.normalizeBankItemSpacingX(GW.settings.BANK_ITEM_SPACING_X)
-    GW.settings.BANK_ITEM_SPACING_Y = inv.normalizeBankItemSpacingY(GW.settings.BANK_ITEM_SPACING_Y)
-
-    GW.settings.BAG_ITEM_SIZE = inv.normalizeBagItemSize(GW.settings.BAG_ITEM_SIZE)
-    GW.settings.BAG_ITEM_SPACING_X = inv.normalizeBagItemSpacingX(GW.settings.BAG_ITEM_SPACING_X)
-    GW.settings.BAG_ITEM_SPACING_Y = inv.normalizeBagItemSpacingY(GW.settings.BAG_ITEM_SPACING_Y)
-
     -- create bank frame, restore its saved size, and init its many pieces
     local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplateMainline")
     tinsert(UISpecialFrames, "GwBankFrame")
@@ -380,14 +342,12 @@ local function LoadBank(helpers)
     cf.GetBagID = cf.GetID
     f.BankPanel.gw_container = cf
 
-    -- keep our own buttons in sync outside of blizzards panel refreshes
+    -- keep our own buttons in sync outside of blizzards panel refreshes; only while the
+    -- bank is open, these events fire constantly during normal play
     local watcher = CreateFrame("Frame")
-    watcher:RegisterEvent("ITEM_LOCK_CHANGED")
-    watcher:RegisterEvent("BAG_UPDATE")
-    watcher:RegisterEvent("BAG_UPDATE_COOLDOWN")
-    watcher:RegisterEvent("INVENTORY_SEARCH_UPDATE")
+    f.gw_watcher = watcher
     watcher:SetScript("OnEvent", function(_, event, ...)
-        if not f:IsShown() or cf.gw_num_slots == 0 then
+        if cf.gw_num_slots == 0 then
             return
         end
         if event == "ITEM_LOCK_CHANGED" then
@@ -529,9 +489,7 @@ local function LoadBank(helpers)
     f.buttonSettings:SetScript("OnClick", function(self)
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
             rootDescription:SetMinimumWidth(1)
-            addBankSliderControl(rootDescription, L["Icon Size"], inv.bankItemSizeConfig, function() return GW.settings.BANK_ITEM_SIZE end, setBankItemSize)
-            addBankSliderControl(rootDescription, L["Slot Spacing X"], inv.bankItemSpacingXConfig, function() return GW.settings.BANK_ITEM_SPACING_X end, function(value) return setBankItemSpacing("BANK_ITEM_SPACING_X", inv.normalizeBankItemSpacingX, value) end)
-            addBankSliderControl(rootDescription, L["Slot Spacing Y"], inv.bankItemSpacingYConfig, function() return GW.settings.BANK_ITEM_SPACING_Y end, function(value) return setBankItemSpacing("BANK_ITEM_SPACING_Y", inv.normalizeBankItemSpacingY, value) end)
+            inv.addItemSizeMenuEntries(rootDescription, "BANK")
 
             local check = rootDescription:CreateCheckbox(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; f.BankPanel:Reset() end)
             check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)

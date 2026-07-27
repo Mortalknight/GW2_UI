@@ -42,8 +42,8 @@ local function updateCooldown(bagID, button)
 end
 
 local function GetQuestTexture(button)
-    if not button.IconQuestTexture then
-        button.IconQuestTexture = _G[button:GetName() .. "IconQuestTexture"]
+    if button.IconQuestTexture == nil then
+        button.IconQuestTexture = _G[button:GetName() .. "IconQuestTexture"] or false
     end
     return button.IconQuestTexture
 end
@@ -62,14 +62,16 @@ local function UpdateOwnContainerItemButton(button)
     local itemID = info and info.itemID
 
     SetItemButtonTexture(button, texture)
-    SetItemButtonQuality(button, quality, itemID)
+    button.gwItemInfo = info
+    SetItemButtonQuality(button, quality, info and info.hyperlink or itemID)
+    button.gwItemInfo = nil
     SetItemButtonCount(button, itemCount)
     SetItemButtonDesaturated(button, locked)
 
     -- toggle the quest icon (the skin owns the textures look)
     local questTexture = GetQuestTexture(button)
     if questTexture then
-        local questInfo = C_Container.GetContainerItemQuestInfo(bagID, slotID)
+        local questInfo = info and C_Container.GetContainerItemQuestInfo(bagID, slotID)
         questTexture:SetShown(questInfo and (questInfo.questID ~= nil or questInfo.isQuestItem == true) or false)
     end
 
@@ -166,6 +168,7 @@ local function SetupOwnContainerItemButtons(cf, bagID, iconSize, straightIDs, op
         numSlots = C_Container.GetContainerNumSlots(bagID)
     end
     cf.gw_num_slots = numSlots
+    cf.gw_bag_family = select(2, C_Container.GetContainerNumFreeSlots(bagID))
 
     for i = 1, numSlots do
         local button = EnsureItemButton(cf, i, iconSize, opts)
@@ -252,12 +255,8 @@ end
 GW.ForEachOwnBagItemButton = ForEachOwnBagItemButton
 
 -- central refresh for the bag/bank setting callbacks and integrations (e.g. pawn): updates
--- all visible own item buttons and keeps blizzards (parked) container frames in sync where
--- the function still exists; hidden buttons get rebuilt on the next open anyway
+-- all visible own item buttons; hidden buttons get rebuilt on the next open anyway
 local function UpdateAllOwnBagItemButtons()
-    if ContainerFrame_UpdateAll then
-        ContainerFrame_UpdateAll()
-    end
     for i = 1, #allItemButtons do
         local button = allItemButtons[i]
         if button:IsVisible() then

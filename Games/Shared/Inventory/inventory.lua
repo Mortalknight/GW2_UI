@@ -1,5 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
+local L = GW.L
 
 local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
 
@@ -7,15 +8,6 @@ local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
 local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath
 local HAS_REAGENT_BAG = GW.Retail
 
--- retail provides this table natively (keyed by Enum.BagSlotFlags), the classic flavors dont
-if LE_BAG_FILTER_FLAG_EQUIPMENT then
-    BAG_FILTER_LABELS = {
-        [LE_BAG_FILTER_FLAG_EQUIPMENT] = BAG_FILTER_EQUIPMENT,
-        [LE_BAG_FILTER_FLAG_CONSUMABLES] = BAG_FILTER_CONSUMABLES,
-        [LE_BAG_FILTER_FLAG_TRADE_GOODS] = BAG_FILTER_TRADE_GOODS,
-        [LE_BAG_FILTER_FLAG_JUNK] = BAG_FILTER_JUNK,
-    }
-end
 local BAG_ITEM_SIZE_CONFIG = {
     defaultValue = GW.globalDefault.profile.BAG_ITEM_SIZE,
     minValue = 26,
@@ -191,8 +183,8 @@ local function updateItemVisuals(b, overrideIconSize)
         b:SetSize(iconSize, iconSize)
     end
 
-    local L, R, T, B = b.icon:GetTexCoord()
-    if L ~= 0.07 or R ~= 0.93 or T ~= 0.07 or B ~= 0.93 then
+    local left, right, top, bottom = b.icon:GetTexCoord()
+    if left ~= 0.07 or right ~= 0.93 or top ~= 0.07 or bottom ~= 0.93 then
         b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     end
     if b.icon:GetAlpha() ~= 0.9 then
@@ -251,6 +243,8 @@ local function getContainerFrame(bag_id)
 
     return nil
 end
+-- flavor files need this at file scope, where the helpers table does not exist yet
+GW.GetBagContainerFrame = getContainerFrame
 
 
 local function reskinItemButtons()
@@ -347,16 +341,13 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
     t:SetAlpha(0.9)
     t:SetVertexColor(colorCommon.r, colorCommon.g, colorCommon.b)
 
-    if not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW then
-        t:SetVertexColor(colorCommon.r, colorCommon.g, colorCommon.b)
-    end
-
-    local bag_id = button:GetParent():GetID()
+    local container = button:GetParent()
+    local bag_id = container:GetID()
     local keyring = HAS_KEYRING and bag_id == KEYRING_CONTAINER
     local isReagentBag = HAS_REAGENT_BAG and bag_id == 5
     local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN]
         or isReagentBag and GW.GetBagItemQualityColor(Enum.ItemQuality.Artifact)
-        or GW.Colors.ProfessionBagColors[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
+        or GW.Colors.ProfessionBagColors[container.gw_bag_family or select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
 
     button.bagID = bag_id
@@ -372,8 +363,8 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
     if itemIDOrLink then
         if quality == nil then quality = 0 end
 
-        -- Show junk icon if active
-        local itemInfo = C_Container.GetContainerItemInfo(bag_id, button:GetID())
+        -- Show junk icon if active; the factory hands over the record it just fetched
+        local itemInfo = button.gwItemInfo or C_Container.GetContainerItemInfo(bag_id, button:GetID())
         button.isJunk = itemInfo and ((itemInfo.quality and itemInfo.quality == Enum.ItemQuality.Poor) and not itemInfo.hasNoValue) or false
 
         if button.junkIcon then
@@ -454,43 +445,61 @@ local function NormalizeByConfig(value, config)
     return math.max(config.minValue, math.min(config.maxValue, normalized))
 end
 
-local function NormalizeBagItemSize(value)
-    return NormalizeByConfig(value, BAG_ITEM_SIZE_CONFIG)
-end
+-- the bag and both bank frames offer the very same three sliders, only the setting
+-- prefix differs, so the settings, their limits and their menu entries live in one table
+local ITEM_SIZE_SETTINGS = {
+    BAG = {
+        {key = "BAG_ITEM_SIZE", title = "Icon Size", config = BAG_ITEM_SIZE_CONFIG},
+        {key = "BAG_ITEM_SPACING_X", title = "Slot Spacing X", config = BAG_ITEM_SPACING_X_CONFIG},
+        {key = "BAG_ITEM_SPACING_Y", title = "Slot Spacing Y", config = BAG_ITEM_SPACING_Y_CONFIG},
+    },
+    BANK = {
+        {key = "BANK_ITEM_SIZE", title = "Icon Size", config = BANK_ITEM_SIZE_CONFIG},
+        {key = "BANK_ITEM_SPACING_X", title = "Slot Spacing X", config = BANK_ITEM_SPACING_X_CONFIG},
+        {key = "BANK_ITEM_SPACING_Y", title = "Slot Spacing Y", config = BANK_ITEM_SPACING_Y_CONFIG},
+    },
+}
 
-local function NormalizeBagItemSpacingX(value)
-    return NormalizeByConfig(value, BAG_ITEM_SPACING_X_CONFIG)
-end
-
-local function NormalizeBagItemSpacingY(value)
-    return NormalizeByConfig(value, BAG_ITEM_SPACING_Y_CONFIG)
-end
-
-local function NormalizeBankItemSize(value)
-    return NormalizeByConfig(value, BANK_ITEM_SIZE_CONFIG)
-end
-
-local function NormalizeBankItemSpacingX(value)
-    return NormalizeByConfig(value, BANK_ITEM_SPACING_X_CONFIG)
-end
-
-local function NormalizeBankItemSpacingY(value)
-    return NormalizeByConfig(value, BANK_ITEM_SPACING_Y_CONFIG)
+-- acedb can hand out values from an older profile or from a detached default, so every
+-- entry point clamps all six settings before anything is laid out with them
+local function normalizeItemSizeSettings()
+    for _, entries in next, ITEM_SIZE_SETTINGS do
+        for _, entry in ipairs(entries) do
+            GW.settings[entry.key] = NormalizeByConfig(GW.settings[entry.key], entry.config)
+        end
+    end
 end
 
 local function resizeInventory()
-    GW.settings.BAG_ITEM_SIZE = NormalizeBagItemSize(GW.settings.BAG_ITEM_SIZE)
-    GW.settings.BAG_ITEM_SPACING_X = NormalizeBagItemSpacingX(GW.settings.BAG_ITEM_SPACING_X)
-    GW.settings.BAG_ITEM_SPACING_Y = NormalizeBagItemSpacingY(GW.settings.BAG_ITEM_SPACING_Y)
-    GW.settings.BANK_ITEM_SIZE = NormalizeBankItemSize(GW.settings.BANK_ITEM_SIZE)
-    GW.settings.BANK_ITEM_SPACING_X = NormalizeBankItemSpacingX(GW.settings.BANK_ITEM_SPACING_X)
-    GW.settings.BANK_ITEM_SPACING_Y = NormalizeBankItemSpacingY(GW.settings.BANK_ITEM_SPACING_Y)
+    normalizeItemSizeSettings()
     reskinItemButtons()
     if bag_resize then
         bag_resize()
     end
     if bank_resize then
         bank_resize()
+    end
+end
+
+
+-- builds the icon size and slot spacing sliders of a bag or bank settings menu
+local function addItemSizeMenuEntries(rootDescription, prefix)
+    for _, entry in ipairs(ITEM_SIZE_SETTINGS[prefix]) do
+        GW.AddMenuSliderDescription(rootDescription, {
+            title = L[entry.title],
+            minValue = entry.config.minValue,
+            maxValue = entry.config.maxValue,
+            step = entry.config.step,
+            getValue = function() return GW.settings[entry.key] end,
+            setValue = function(value)
+                local normalized = NormalizeByConfig(value, entry.config)
+                if GW.settings[entry.key] ~= normalized then
+                    GW.settings[entry.key] = normalized
+                    resizeInventory()
+                end
+                return normalized
+            end
+        })
     end
 end
 
@@ -529,13 +538,6 @@ local function reskinBagBar(b, ha)
         -- restore our look after every repaint
         b.gwUpdateTexturesHooked = true
         hooksecurefunc(b, "UpdateTextures", function(self)
-            local norm = self:GetNormalTexture()
-            if norm then
-                norm:SetAlpha(0)
-            end
-            if self.NormalTexture then
-                self.NormalTexture:Hide()
-            end
             local pushedTex = self:GetPushedTexture()
             if pushedTex then
                 pushedTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
@@ -554,11 +556,6 @@ local function reskinBagBar(b, ha)
             end
         end)
 
-        b:HookScript("OnDragStart", function()
-            b.NormalTexture:Hide()
-            print("asd")
-        end)
-
         b:UpdateTextures()
     end
 
@@ -567,17 +564,29 @@ local function reskinBagBar(b, ha)
     b.icon:Show()
 
     local norm = b:GetNormalTexture()
+    if norm and not norm.gwKilled then
+        -- the round retail slot ring keeps coming back: blizzards UpdateTextures paints
+        -- it with SetAtlas (not SetTexture), and hiding the texture does not stick either
+        -- because the buttons state machine shows its normal texture again on every click
+        -- and after the bag drop fly-in. So blank it at the source instead of fighting
+        -- its visibility, and leave it shown but empty.
+        norm.gwKilled = true
+        local function blankNormalTexture(self)
+            if self:GetTexture() or (self.GetAtlas and self:GetAtlas()) then
+                self:SetTexture(nil)
+            end
+        end
+        if norm.SetAtlas then
+            hooksecurefunc(norm, "SetAtlas", blankNormalTexture)
+        end
+        hooksecurefunc(norm, "SetTexture", function(self, texture)
+            if texture then
+                blankNormalTexture(self)
+            end
+        end)
+    end
     norm:SetTexture(nil)
     norm:SetAlpha(0)
-    if b.NormalTexture then
-        -- on retail the round slot ring lives on this separate parent key texture and
-        -- the bag drop fly-in animation shows it again, keep it dead for good
-        b.NormalTexture:Hide()
-        if not b.NormalTexture.gwKilled then
-            b.NormalTexture.gwKilled = true
-            hooksecurefunc(b.NormalTexture, "SetTexture", b.NormalTexture.Hide)
-        end
-    end
 
     local pushed = b:GetPushedTexture()
     if pushed then
@@ -813,8 +822,8 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
                 end
             end
         end
-        f.finishedRow = f.finishedRow and f.finishedRow or 0
-        f.unfinishedRow = f.unfinishedRow and f.unfinishedRow or 0
+        f.finishedRow = f.finishedRow or 0
+        f.unfinishedRow = f.unfinishedRow or 0
         rows = f.finishedRow + headers + f.unfinishedRow
     else
         -- the layout stores its actual row usage when it deviates from the plain flow (keyring gap)
@@ -922,20 +931,10 @@ local function LoadInventory()
         GW.SetBagItemButtonQualitySkin(...)
     end)
 
-    -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
-    for i = 1, NUM_CONTAINER_FRAMES do
-        local cf = _G["ContainerFrame" .. i]
-        if cf then
-            cf:UnregisterEvent("BAG_OPEN")
-        end
-    end
-
     local helpers = {}
-    -- resolved through GW so a flavor can override them (retail does)
-    helpers.reskinItemButton = function(...) return GW.SkinBagItemButton(...) end
+    -- resolved through GW so a flavor can override it (retail does)
     helpers.bag_OnMouseDown = function(...) return GW.BagSlotOnMouseDown(...) end
-    helpers.resizeInventory = resizeInventory
-    helpers.getContainerFrame = getContainerFrame
+    helpers.addItemSizeMenuEntries = addItemSizeMenuEntries
     helpers.reskinBagBar = reskinBagBar
     helpers.reskinSearchBox = reskinSearchBox
     helpers.relocateSearchBox = relocateSearchBox
@@ -949,18 +948,8 @@ local function LoadInventory()
     helpers.onSizerMouseUp = onSizerMouseUp
     helpers.onMoverDragStart = onMoverDragStart
     helpers.onMoverDragStop = onMoverDragStop
-    helpers.bagItemSizeConfig = BAG_ITEM_SIZE_CONFIG
-    helpers.bagItemSpacingXConfig = BAG_ITEM_SPACING_X_CONFIG
-    helpers.bagItemSpacingYConfig = BAG_ITEM_SPACING_Y_CONFIG
-    helpers.normalizeBagItemSize = NormalizeBagItemSize
-    helpers.normalizeBagItemSpacingX = NormalizeBagItemSpacingX
-    helpers.normalizeBagItemSpacingY = NormalizeBagItemSpacingY
-    helpers.bankItemSizeConfig = BANK_ITEM_SIZE_CONFIG
-    helpers.bankItemSpacingXConfig = BANK_ITEM_SPACING_X_CONFIG
-    helpers.bankItemSpacingYConfig = BANK_ITEM_SPACING_Y_CONFIG
-    helpers.normalizeBankItemSize = NormalizeBankItemSize
-    helpers.normalizeBankItemSpacingX = NormalizeBankItemSpacingX
-    helpers.normalizeBankItemSpacingY = NormalizeBankItemSpacingY
+    -- clamp every size setting once, before the two frames lay anything out with them
+    normalizeItemSizeSettings()
 
     bag_resize = GW.LoadBag(helpers)
     bank_resize = GW.LoadBank(helpers)

@@ -24,7 +24,7 @@ local function setBankHeaders(frame)
             local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
             if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
 
-            header.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName and itemName or UNKNOWN)
+            header.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName or UNKNOWN)
             header.nameString:SetTextColor(r, g, b, 1)
         else
             header:Hide()
@@ -333,36 +333,6 @@ local function onBankFrameChangeSize(self, _, _, skip)
 end
 
 
-local function setBankItemSize(value)
-    local size = inv.normalizeBankItemSize(value)
-    if GW.settings.BANK_ITEM_SIZE ~= size then
-        GW.settings.BANK_ITEM_SIZE = size
-        inv.resizeInventory()
-    end
-    return size
-end
-
-local function setBankItemSpacing(settingKey, normalizeFunc, value)
-    local spacing = normalizeFunc(value)
-    if GW.settings[settingKey] ~= spacing then
-        GW.settings[settingKey] = spacing
-        inv.resizeInventory()
-    end
-    return spacing
-end
-
-local function addBankSliderControl(rootDescription, title, config, getValueFunc, setValueFunc)
-    GW.AddMenuSliderDescription(rootDescription, {
-        title = title,
-        minValue = config.minValue,
-        maxValue = config.maxValue,
-        step = config.step,
-        getValue = getValueFunc,
-        setValue = setValueFunc
-    })
-end
-
-
 local function bank_OnShow(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
     self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
@@ -525,10 +495,6 @@ end
 local function LoadBank(helpers)
     inv = helpers
 
-    GW.settings.BANK_ITEM_SIZE = inv.normalizeBankItemSize(GW.settings.BANK_ITEM_SIZE)
-    GW.settings.BANK_ITEM_SPACING_X = inv.normalizeBankItemSpacingX(GW.settings.BANK_ITEM_SPACING_X)
-    GW.settings.BANK_ITEM_SPACING_Y = inv.normalizeBankItemSpacingY(GW.settings.BANK_ITEM_SPACING_Y)
-
     -- create bank frame, restore its saved size, and init its many pieces
     local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplate")
     tinsert(UISpecialFrames, "GwBankFrame")
@@ -662,9 +628,7 @@ local function LoadBank(helpers)
                 end)
             end
 
-            addBankSliderControl(rootDescription, L["Icon Size"], inv.bankItemSizeConfig, function() return GW.settings.BANK_ITEM_SIZE end, setBankItemSize)
-            addBankSliderControl(rootDescription, L["Slot Spacing X"], inv.bankItemSpacingXConfig, function() return GW.settings.BANK_ITEM_SPACING_X end, function(value) return setBankItemSpacing("BANK_ITEM_SPACING_X", inv.normalizeBankItemSpacingX, value) end)
-            addBankSliderControl(rootDescription, L["Slot Spacing Y"], inv.bankItemSpacingYConfig, function() return GW.settings.BANK_ITEM_SPACING_Y end, function(value) return setBankItemSpacing("BANK_ITEM_SPACING_Y", inv.normalizeBankItemSpacingY, value) end)
+            inv.addItemSizeMenuEntries(rootDescription, "BANK")
             addCheck(L["Reverse Bag Order"], function() return GW.settings.BANK_REVERSE_SORT end,
                      function() GW.settings.BANK_REVERSE_SORT = not GW.settings.BANK_REVERSE_SORT; setBagBarOrder(f.ItemFrame); layoutItems(f); snapFrameSize(f) end)
             addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; GW.UpdateAllOwnBagItemButtons() end)
