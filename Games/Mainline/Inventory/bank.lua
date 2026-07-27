@@ -100,10 +100,16 @@ local function reskinAccountBagBar(b)
         b.gwHooked = true
         -- these hooks must only be added once, the pooled tab buttons run through
         -- this skin again on every tab refresh
-        hooksecurefunc(b.IconBorder, "SetTexture", function()
-            if b.IconBorder:GetTexture() ~= BORDER_TEXTURE then
-                b.IconBorder:SetTexture(BORDER_TEXTURE)
+        -- compare the argument, not GetTexture: it does not necessarily hand back the
+        -- path that was set, so a comparison against it never matches and the hook
+        -- calls itself until the stack blows. The re-entrancy flag guards the rest.
+        hooksecurefunc(b.IconBorder, "SetTexture", function(self, texture)
+            if texture == BORDER_TEXTURE or b.gwSettingIconBorder then
+                return
             end
+            b.gwSettingIconBorder = true
+            self:SetTexture(BORDER_TEXTURE)
+            b.gwSettingIconBorder = false
         end)
         hooksecurefunc(b, "OnClick", function(self)
             for btn in self:GetParent().bankTabPool:EnumerateActive() do

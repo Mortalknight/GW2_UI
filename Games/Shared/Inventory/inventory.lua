@@ -598,12 +598,20 @@ local function reskinBagBar(b, ha)
     b.IconBorder:SetTexture(BORDER_TEXTURE)
     b.IconBorder:SetVertexColor(1, 1, 1)
     b.IconBorder:Show()
-    hooksecurefunc(b.IconBorder, "SetTexture", function()
-        local t = b.IconBorder:GetTexture()
-        if t and t > 0 and t ~= BORDER_TEXTURE then
-            b.IconBorder:SetTexture(BORDER_TEXTURE)
-        end
-    end)
+    if not b.gwIconBorderHooked then
+        -- compare the argument, not GetTexture: it does not necessarily hand back the
+        -- path that was set, so a comparison against it never matches and the hook
+        -- calls itself until the stack blows. The re-entrancy flag guards the rest.
+        b.gwIconBorderHooked = true
+        hooksecurefunc(b.IconBorder, "SetTexture", function(self, texture)
+            if texture == BORDER_TEXTURE or b.gwSettingIconBorder then
+                return
+            end
+            b.gwSettingIconBorder = true
+            self:SetTexture(BORDER_TEXTURE)
+            b.gwSettingIconBorder = false
+        end)
+    end
 
     local high = b:GetHighlightTexture()
     high:SetTexture(BORDER_TEXTURE)
