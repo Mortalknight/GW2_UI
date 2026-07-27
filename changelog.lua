@@ -15,6 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("10.16.0", {
     {GW.Enum.ChangelogType.feature, [=[Bags: new "Item Level Threshold" setting - the item level is only drawn on items at or above the chosen value, so low level gear stays clean; 0 keeps showing it on everything as before]=]},
+    {GW.Enum.ChangelogType.feature, [=[Bags: new "Hide Empty Slots" setting - the empty slots are left out of the layout, and a placeholder showing the number of free slots closes the flow instead; items can still be dropped onto it and land in a slot that accepts them, so profession bags keep their restrictions. The bags and, on Retail, the reagent bag each get their own placeholder with their own count. Only available in the combined bag view, since a bag could otherwise collapse away entirely]=]},
     {GW.Enum.ChangelogType.feature, [=[Bags: new "Mark New Items" setting - newly received items get a small marker in the lower left corner of their slot until the bags are closed; the marker reads Blizzards own new item state, so it disappears exactly when Blizzard considers the item seen]=]},
     {GW.Enum.ChangelogType.change, [=[Bags: the search filter is dropped when the bags close - a forgotten filter no longer hides items on the next open]=]},
 })

@@ -267,6 +267,7 @@ GW.globalDefault = {
         BAG_VENDOR_GRAYS= false,
         BAG_ITEM_LEVEL_THRESHOLD= 0,
         BAG_ITEM_NEW_ITEM_SHOW= false,
+        BAG_COMPACT_EMPTY_SLOTS= false,
         BAG_SHOW_ILVL= false,
         BAG_SEPARATE_BAGS= false,
         BAG_SEPARATE_KEYRING= false,

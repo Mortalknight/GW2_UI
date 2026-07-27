@@ -751,14 +751,21 @@ local function layoutContainerFrame(cf, max_col, row, col, rev, item_off_x, item
     for n = nS, nE, nD do
         local item = cf.gw_items[n]
         if item then
-            item:ClearAllPoints()
-            item:SetPoint("TOPLEFT", cf, "TOPLEFT", col * item_off_x, -row * item_off_y)
-            col = col + 1
-            if col >= max_col then
-                col = 0
-                row = row + 1
-                finishedRows = finishedRows + 1
-                startNewRow = true
+            -- gw_compact leaves the empty slots out of the flow entirely, the caller shows
+            -- a single placeholder with the free slot count instead
+            if cf.gw_compact and not item.hasItem then
+                item:Hide()
+            else
+                item:Show()
+                item:ClearAllPoints()
+                item:SetPoint("TOPLEFT", cf, "TOPLEFT", col * item_off_x, -row * item_off_y)
+                col = col + 1
+                if col >= max_col then
+                    col = 0
+                    row = row + 1
+                    finishedRows = finishedRows + 1
+                    startNewRow = true
+                end
             end
         end
     end

@@ -78,6 +78,105 @@ local function setBagHeaders(frame)
     frame.bagHeader0.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BACKPACK_TOOLTIP)
 end
 
+-- the placeholders are always given an explicit bag range: the keyring is not a bag and
+-- must never be a drop target, and bag index 5 would be a bank bag on the classic flavors
+-- a free slot that actually accepts what is on the cursor: profession bags and the
+-- reagent bag only take their own item family, family 0 means a plain bag
+local function findFreeSlotForCursor(fromBag, toBag)
+    local cursorType, cursorItemID = GetCursorInfo()
+    local itemFamily = (cursorType == "item" and cursorItemID) and C_Item.GetItemFamily(cursorItemID) or 0
+
+    for bag = fromBag, toBag do
+        local free, family = C_Container.GetContainerNumFreeSlots(bag)
+        if free and free > 0 and (not family or family == 0 or (itemFamily and itemFamily > 0 and bit.band(itemFamily, family) > 0)) then
+            local slots = C_Container.GetContainerFreeSlots(bag)
+            if slots and slots[1] then
+                return bag, slots[1]
+            end
+        end
+    end
+end
+
+local function countFreeSlots(fromBag, toBag)
+    local free = 0
+    for bag = fromBag, toBag do
+        free = free + (C_Container.GetContainerNumFreeSlots(bag) or 0)
+    end
+    return free
+end
+
+-- each placeholder only serves its own section, so a drop lands where it belongs
+local function emptySlot_OnClick(self)
+    if not GetCursorInfo() then
+        return
+    end
+    local bag, slot = findFreeSlotForCursor(self.gwFromBag, self.gwToBag)
+    if bag then
+        C_Container.PickupContainerItem(bag, slot)
+    end
+end
+
+local function emptySlot_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:ClearLines()
+    GameTooltip_SetTitle(GameTooltip, L["Free Slots"])
+    GameTooltip:AddLine(tostring(countFreeSlots(self.gwFromBag, self.gwToBag)), 1, 1, 1)
+    GameTooltip:Show()
+end
+
+-- one placeholder per section, created on first use: the bags get theirs at the end of
+-- the bag rows, the reagent bag its own one behind its own rows
+local function getEmptySlot(f, key)
+    local slot = f[key]
+    if slot then
+        return slot
+    end
+
+    slot = CreateFrame("Button", nil, f)
+    slot:RegisterForClicks("LeftButtonUp")
+    slot.backdrop = slot:CreateTexture(nil, "BACKGROUND")
+    slot.backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop.png")
+    slot.backdrop:SetAllPoints(slot)
+    slot.border = slot:CreateTexture(nil, "ARTWORK")
+    slot.border:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    slot.border:SetAllPoints(slot)
+    slot.count = slot:CreateFontString(nil, "OVERLAY")
+    slot.count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
+    slot.count:SetPoint("CENTER", slot, "CENTER", 0, 0)
+    slot:SetScript("OnClick", emptySlot_OnClick)
+    slot:SetScript("OnReceiveDrag", emptySlot_OnClick)
+    slot:SetScript("OnEnter", emptySlot_OnEnter)
+    slot:SetScript("OnLeave", GameTooltip_Hide)
+
+    f[key] = slot
+    return slot
+end
+
+-- closes a section with half a slot of air as separation, returns the new flow position
+local function placeEmptySlot(f, key, fromBag, toBag, col, row, max_col, item_off_x, item_off_y)
+    local slot = getEmptySlot(f, key)
+    local gapX = item_off_x * 0.5
+    if col >= max_col then
+        col = 0
+        row = row + 1
+        gapX = 0
+    end
+
+    slot.gwFromBag, slot.gwToBag = fromBag, toBag
+    slot:SetSize(GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SIZE)
+    slot:ClearAllPoints()
+    slot:SetPoint("TOPLEFT", f, "TOPLEFT", col * item_off_x + gapX, -row * item_off_y)
+    slot.count:SetText(countFreeSlots(fromBag, toBag))
+    slot:Show()
+
+    col = col + 1
+    if col >= max_col then
+        col = 0
+        row = row + 1
+    end
+    return col, row
+end
+
 -- adjusts the ItemButton layout flow when the bag window size changes (or on open)
 local function layoutBagItems(f)
     local parent = f:GetParent()
@@ -91,6 +190,10 @@ local function layoutBagItems(f)
         (HAS_KEYRING and GW.settings.BAG_SEPARATE_KEYRING and IsBagOpen(KEYRING_CONTAINER))
         or (HAS_REAGENT_BAG and GW.settings.BAG_SEPARATE_REAGENT_BAG and f.Containers[5] and f.Containers[5].gw_num_slots > 0)
     )
+    -- an empty bag would collapse to nothing in the separate view and leave a header
+    -- with no slots under it, so the compact flow only applies to the combined one
+    local compact = GW.settings.BAG_COMPACT_EMPTY_SLOTS == true and not sep
+    local bagSlotPlaced = false
     local row = sep and 1 or 0
     if not GW.settings.BAG_ITEM_SIZE or not GW.settings.BAG_ITEM_SPACING_X or not GW.settings.BAG_ITEM_SPACING_Y then
         -- acedb can have the profile defaults detached (logout, profile operations)
@@ -136,6 +239,7 @@ local function layoutBagItems(f)
             row = 2
         end
         if cf then
+            cf.gw_compact = compact
             if sep and cf.shouldShow then
                 if bag_id == 5 and IsBagOpen(KEYRING_CONTAINER) then
                     if col ~= 0 then col = 0 end
@@ -146,7 +250,12 @@ local function layoutBagItems(f)
                 cf:Hide()
             elseif not sep then
                 if extraBagGap and bag_id == 5 and not rev then
-                    -- the extra bag comes last: finish the bag rows and leave a gap above it
+                    -- the extra bag comes last: close the bag rows with their own
+                    -- placeholder first, then leave a gap above the extra section
+                    if compact then
+                        col, row = placeEmptySlot(f, "gwEmptySlot", BACKPACK_CONTAINER, NUM_BAG_SLOTS, col, row, max_col, item_off_x, item_off_y)
+                        bagSlotPlaced = true
+                    end
                     if col ~= 0 then
                         col = 0
                         row = row + 1
@@ -155,6 +264,9 @@ local function layoutBagItems(f)
                 end
                 col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off_x, item_off_y)
                 cf:Show()
+                if compact and HAS_REAGENT_BAG and bag_id == 5 and cf.gw_num_slots > 0 then
+                    col, row = placeEmptySlot(f, "gwEmptyReagentSlot", NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + 1, col, row, max_col, item_off_x, item_off_y)
+                end
                 if extraBagGap and bag_id == 5 and rev then
                     -- the extra bag comes first: finish its rows and leave a gap below it
                     if col ~= 0 then
@@ -185,9 +297,19 @@ local function layoutBagItems(f)
         end
     end
 
+    if compact and not bagSlotPlaced then
+        col, row = placeEmptySlot(f, "gwEmptySlot", BACKPACK_CONTAINER, NUM_BAG_SLOTS, col, row, max_col, item_off_x, item_off_y)
+    end
+    if not compact then
+        if f.gwEmptySlot then f.gwEmptySlot:Hide() end
+        if f.gwEmptyReagentSlot then f.gwEmptyReagentSlot:Hide() end
+    elseif f.gwEmptyReagentSlot and not (HAS_REAGENT_BAG and f.Containers[5] and f.Containers[5].gw_num_slots > 0) then
+        f.gwEmptyReagentSlot:Hide()
+    end
+
     -- with the extra bag set off, the plain slots/columns row count of snapFrameSize
     -- no longer matches - store the rows the layout actually used
-    parent.gw_combined_rows = extraBagGap and (row + (col > 0 and 1 or 0)) or nil
+    parent.gw_combined_rows = (extraBagGap or compact) and (row + (col > 0 and 1 or 0)) or nil
 
     if GW.settings.BAG_SEPARATE_BAGS then
         setBagHeaders(parent)
@@ -929,15 +1051,21 @@ local function LoadBag(helpers)
                 return check
             end
 
+            rootDescription:CreateTitle(L["Layout"])
             inv.addItemSizeMenuEntries(rootDescription, "BAG")
-            addCheck(L["Loot to leftmost Bag"], function() return GW.settings.BAG_REVERSE_NEW_LOOT end,
-                     function() local ns = not GW.settings.BAG_REVERSE_NEW_LOOT; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.BAG_REVERSE_NEW_LOOT = ns end)
-            addCheck(L["Sort to Last Bag"], function() return GW.settings.BAG_ITEMS_REVERSE_SORT end,
-                     function() local ns = not GW.settings.BAG_ITEMS_REVERSE_SORT; if GW.Retail then C_Container.SetSortBagsRightToLeft(ns) end; GW.settings.BAG_ITEMS_REVERSE_SORT = ns end)
             addCheck(L["Reverse Bag Order"], function() return GW.settings.BAG_REVERSE_SORT end,
                      function() GW.settings.BAG_REVERSE_SORT = not GW.settings.BAG_REVERSE_SORT; layoutItems(f); snapFrameSize(f) end)
+
+            rootDescription:CreateTitle(L["Item Display"])
             addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end,
                      function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; GW.UpdateAllOwnBagItemButtons() end)
+            local compactCheck = addCheck(L["Hide Empty Slots"], function() return GW.settings.BAG_COMPACT_EMPTY_SLOTS end,
+                     function() GW.settings.BAG_COMPACT_EMPTY_SLOTS = not GW.settings.BAG_COMPACT_EMPTY_SLOTS; layoutItems(f); snapFrameSize(f) end)
+            compactCheck:SetEnabled(function() return not GW.settings.BAG_SEPARATE_BAGS end)
+            compactCheck:SetTooltip(function(tooltip, elementDescription)
+                tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
+                tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
+            end)
             if C_NewItems and C_NewItems.IsNewItem then
                 addCheck(L["Mark New Items"], function() return GW.settings.BAG_ITEM_NEW_ITEM_SHOW end,
                          function() GW.settings.BAG_ITEM_NEW_ITEM_SHOW = not GW.settings.BAG_ITEM_NEW_ITEM_SHOW; GW.UpdateAllOwnBagItemButtons() end)
@@ -968,9 +1096,18 @@ local function LoadBag(helpers)
                 end
             })
 
+
+            rootDescription:CreateTitle(L["Loot & Sorting"])
+            addCheck(L["Loot to leftmost Bag"], function() return GW.settings.BAG_REVERSE_NEW_LOOT end,
+                     function() local ns = not GW.settings.BAG_REVERSE_NEW_LOOT; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.BAG_REVERSE_NEW_LOOT = ns end)
+            addCheck(L["Sort to Last Bag"], function() return GW.settings.BAG_ITEMS_REVERSE_SORT end,
+                     function() local ns = not GW.settings.BAG_ITEMS_REVERSE_SORT; if GW.Retail then C_Container.SetSortBagsRightToLeft(ns) end; GW.settings.BAG_ITEMS_REVERSE_SORT = ns end)
+
             -- flavor specific entries (e.g. equipment set names on mists)
             callBagModules("onMenu", f, rootDescription, addCheck)
 
+
+            rootDescription:CreateTitle(L["Bag Sections"])
             addCheck(L["Separate bags"], function() return GW.settings.BAG_SEPARATE_BAGS end,
                      function() local ns = not GW.settings.BAG_SEPARATE_BAGS; GW.settings.BAG_SEPARATE_BAGS = ns; layoutItems(f); snapFrameSize(f) end)
             if HAS_KEYRING then
