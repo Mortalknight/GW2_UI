@@ -407,15 +407,23 @@ local function LoadBank(helpers)
     f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
     f.BankPanel:SetBankType(Enum.BankType.Character) -- always start with this one
 
-    f.BankPanel.TabSettingsMenu = CreateFrame("Frame", nil, f, "BankPanelTabSettingsMenuTemplate")
-    f.BankPanel.TabSettingsMenu.GetBankPanel = function() return f.BankPanel end
-    f.BankPanel.TabSettingsMenu:Hide()
-    f.BankPanel.TabSettingsMenu:OnLoad()
-    f.BankPanel.TabSettingsMenu:SetScript("OnShow", function()
-        f.BankPanel.TabSettingsMenu:OnShow()
-        SkinAccountBankTabMenu(f.BankPanel.TabSettingsMenu)
-    end)
-    f.BankPanel.TabSettingsMenu:SetScript("OnHide", f.BankPanel.TabSettingsMenu.OnHide)
+    -- take blizzards own tab settings menu instead of building a second one from the
+    -- template: creating it ourselves runs the templates OnLoad, so a manual OnLoad on
+    -- top of it wired the icon selector and the callback registry twice, which left the
+    -- icon preview out of sync and made OK save the default question mark icon
+    local tabSettingsMenu = BankFrame.BankPanel and BankFrame.BankPanel.TabSettingsMenu
+    f.BankPanel.TabSettingsMenu = tabSettingsMenu
+    if tabSettingsMenu then
+        tabSettingsMenu.GetBankPanel = function() return f.BankPanel end
+        tabSettingsMenu:SetParent(f)
+        tabSettingsMenu:ClearAllPoints()
+        tabSettingsMenu:SetPoint("TOPLEFT", f, "TOPRIGHT", 40, 5)
+        tabSettingsMenu:EnableMouse(true) -- lets the player drop an icon onto the menu
+        tabSettingsMenu:HookScript("OnShow", SkinAccountBankTabMenu)
+        -- its OnLoad registered this against blizzards panel, ours needs it too so that
+        -- picking another tab while the menu is open retargets the menu
+        tabSettingsMenu:AddDynamicEventMethod(f.BankPanel, BankPanelMixin.Event.NewBankTabSelected, tabSettingsMenu.OnNewBankTabSelected)
+    end
 
     f.BankPanel.AutoDepositFrame.DepositButton:GwSkinButton(false, true)
     f.BankPanel.AutoDepositFrame.DepositButton:ClearAllPoints()
