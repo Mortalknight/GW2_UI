@@ -53,6 +53,80 @@ local function HandleFrame(frame, doNotReparent)
 end
 
 
+-- The compact party/raid member frames are protected: reparenting or otherwise touching
+-- them from here taints them, and blizzards own CompactUnitFrame_UpdateAll then gets its
+-- SetSize refused with ADDON_ACTION_BLOCKED
+local compactPatterns = {}
+local compactSetUpUnits = {}
+local compactHooked = {}
+local allowedCompactSetup = _G.DefaultCompactUnitFrameSetup and {[_G.DefaultCompactUnitFrameSetup] = true} or {}
+
+local function compactFrameShown(frame, shown)
+    if shown then
+        frame:Hide()
+    end
+end
+
+local function disableCompactFrame(frame)
+    frame:UnregisterAllEvents()
+    frame:Hide()
+
+    for _, child in next, {
+        frame.HealthBarsContainer and frame.HealthBarsContainer.healthBar,
+        frame.healthBar or frame.healthbar or frame.HealthBar,
+        frame.manabar or frame.ManaBar,
+        frame.castBar or frame.spellbar,
+        frame.powerBarAlt or frame.PowerBarAlt,
+        frame.totFrame,
+        frame.BuffFrame or frame.AurasFrame,
+        frame.DebuffFrame
+    } do
+        child:UnregisterAllEvents()
+    end
+end
+
+-- silences a container and marks its members by name pattern; no SetParent anywhere
+local function hideCompactFrame(frame, pattern)
+    if not frame then return end
+
+    disableCompactFrame(frame)
+    compactPatterns[frame] = pattern
+
+    if not compactHooked[frame] then
+        compactHooked[frame] = true
+        hooksecurefunc(frame, "Show", frame.Hide)
+        hooksecurefunc(frame, "SetShown", compactFrameShown)
+    end
+end
+
+local function compactSetUpFrame(self, func)
+    if not allowedCompactSetup[func] then return end
+
+    local name = (not self.IsForbidden or not self:IsForbidden()) and self:GetDebugName()
+    if GW.IsSecretValue(name) or not name then return end
+
+    for _, pattern in next, compactPatterns do
+        if strmatch(name, pattern) then
+            compactSetUpUnits[self] = true
+        end
+    end
+end
+
+local function compactSetUnit(self, token)
+    if compactSetUpUnits[self] and token ~= nil then
+        self:SetScript("OnEvent", nil)
+        self:SetScript("OnUpdate", nil)
+    end
+end
+
+if CompactUnitFrame_SetUpFrame then
+    hooksecurefunc("CompactUnitFrame_SetUpFrame", compactSetUpFrame)
+end
+if CompactUnitFrame_SetUnit then
+    hooksecurefunc("CompactUnitFrame_SetUnit", compactSetUnit)
+end
+
+
 local function DisableBlizzardFrames()
     local ourPartyFrames = GW.settings.PARTY_FRAMES
     local ourRaidFrames = GW.settings.RAID_FRAMES
@@ -74,12 +148,10 @@ local function DisableBlizzardFrames()
         UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")
     end
 
-    -- shutdown some background updates on default unitframes
-    if ourPartyFrames and CompactPartyFrame then
-        CompactPartyFrame:UnregisterAllEvents()
-    end
-
     if ourPartyFrames then
+        -- shutdown some background updates on default unitframes
+        hideCompactFrame(CompactPartyFrame, "^CompactPartyFrameMember%d+$")
+
         if PartyFrame then
             HandleFrame(PartyFrame, 1)
             PartyFrame:UnregisterAllEvents()
@@ -90,22 +162,18 @@ local function DisableBlizzardFrames()
             end
         end
 
+        -- only the classic style member frames here, the compact ones are handled by
+        -- the pattern above and must never be reparented
         for i = 1, MAX_PARTY do
             HandleFrame("PartyMemberFrame" .. i)
-            HandleFrame("CompactPartyFrameMember" .. i)
         end
     end
 
     if ourRaidFrames then
-        if CompactRaidFrameContainer then
-            CompactRaidFrameContainer:UnregisterAllEvents()
-        end
+        hideCompactFrame(CompactRaidFrameContainer, "^CompactRaidGroup%d+Member%d+$")
 
         -- Raid Utility
-        if not CompactRaidFrameManager_SetSetting then
-            StaticPopup_Show("WARNING_BLIZZARD_ADDONS")
-            GW.ShowPopup({text = GW.L["It appears one of your AddOns have disabled the AddOn Blizzard_CompactRaidFrames. This can cause errors and other issues. The AddOn will now be re-enabled."], OnAccept = function() C_AddOns.EnableAddOn("Blizzard_CompactRaidFrames"); ReloadUI() end, button1 = OKAY})
-        else
+        if CompactRaidFrameManager_SetSetting then
             CompactRaidFrameManager_SetSetting("IsShown", "0")
         end
 
@@ -114,7 +182,6 @@ local function DisableBlizzardFrames()
             CompactRaidFrameManager:SetParent(GW.HiddenFrame)
         end
 
-        CompactRaidFrameContainer:HookScript("OnShow", function() CompactRaidFrameContainer:Hide() end)
         if CompactRaidFrameContainer then
             CompactRaidFrameContainer:GwKillEditMode()
         end
