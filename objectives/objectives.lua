@@ -1389,7 +1389,7 @@ local function LoadQuestTracker()
     GW.LoadBonusFrame()
     --GW.LoadRecipeTracking(fRecipe)
     --GW.LoadMonthlyActivitiesTracking(fMonthlyActivity)
-    GW.LoadWQTAddonSkin()
+    --GW.LoadWQTAddonSkin()
 
     GW.ToggleCollapseObjectivesInChallangeMode()
 

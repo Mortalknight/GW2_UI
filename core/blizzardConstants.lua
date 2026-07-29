@@ -36,6 +36,7 @@ C_DateAndTime                                               = {}
 --C_MountJournal = {}
 C_TooltipInfo                                               = {}
 C_SpecializationInfo                                        = {}
+C_SuperTrack                                               = {}
 C_Spell                                                     = {}
 
 BACKPACK_CONTAINER                                          = 0
@@ -101,6 +102,46 @@ local function gw_artifact_points()
     return numPoints, totalXP, xpForNextPoint;
 end
 
+local function checkWorldQuest(questID)
+    if not questID then
+        return false
+    end
+    local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
+    local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
+
+    QuestCache.quests[questID] = {
+        questID = questID,
+        title = title,
+        level = level,
+        suggestedGroup = suggestedGroup,
+        isHeader = isHeader,
+        isCollapsed = isCollapsed,
+        frequency = frequency,
+        displayQuestID = displayQuestID,
+        isHidden = isHidden,
+        isScaling = isScaling,
+        questLogIndex = questLogIndex,
+        numObjectives = numObjectives,
+        requiredMoney = requiredMoney,
+        iscomplete = isComplete,
+        startEvent = startEvent,
+        isAutoComplete = isAutoComplete,
+        failureTime = failureTime,
+        timeElapsed = timeElapsed,
+        questType = questType,
+        isTask = true,
+        isBounty = isBounty,
+        isStory = isStory,
+        isOnMap = isOnMap,
+        hasLocalPOI = hasLocalPOI,
+        IsCampaign = QuestCache.IsCampaign,
+        GetQuestLogIndex = QuestCache.GetQuestLogIndex,
+        GetID = QuestCache.GetID,
+        IsComplete = QuestCache.IsComplete,
+        IsOnMap = QuestCache.IsOnMap
+    }
+end
+
 function QuestCache.Get(self, QuestID)
     if not QuestCache.quests[QuestID] then
         local max = C_QuestLog.GetNumQuestWatches()
@@ -112,7 +153,10 @@ function QuestCache.Get(self, QuestID)
             C_QuestLog.GetQuestIDForQuestWatchIndex(i)
         end
     end
-
+    if not QuestCache.quests[QuestID] then 
+        checkWorldQuest(QuestID)
+    end
+    
     return QuestCache.quests[QuestID]
 end
 
@@ -140,6 +184,12 @@ end
 function QuestCache.IsComplete(self)
     if self.iscomplete ~= nil then
         return self.iscomplete
+    end
+    return false
+end
+function QuestCache.IsOnMap(self)
+    if self.isOnMap ~= nil then
+        return self.isOnMap, self.hasLocalPOI
     end
     return false
 end
@@ -182,13 +232,39 @@ function C_CVar.GetCVar(v)
     return GetCVar(v)
 end
 
+
 function C_Map.GetBestMapForUnit(unit)
     HBD = LibStub("HereBeDragons-1.0")
-    HBD:GetPlayerZone()
+   --print("zone",HBD:GetPlayerZone())
+    return HBD:GetPlayerZone()
 end
+function C_Map.GetPlayerMapPosition()
+    --print("Player map position",GetPlayerMapPosition())
+    local worldPosition = {}
+    worldPosition.x, worldPosition.y = GetPlayerMapPosition("player")
+    
+    if  worldPosition.x==nil then
+        return
+    end
 
+     local worldPosition = CreateVector2D(worldPosition.x, worldPosition.y)
+     
+     return worldPosition;
+end
 function C_Map.GetMapInfo(mapID)
     return GetMapInfo(mapID)
+end
+function C_Map.GetWorldPosFromMapPos(uiMapID, mapPosition)
+    HBD = LibStub("HereBeDragons-1.0")
+    local continentID
+    local worldPosition = {}
+    worldPosition.x, worldPosition.y, continentID = HBD:GetWorldCoordinatesFromZone(mapPosition.x, mapPosition.y, uiMapID)
+ --   print("uiMapID",uiMapID,"continentID",continentID,"worldPosition.x",worldPosition.x,"worldPosition.y",worldPosition.y)
+    if not x then
+        return
+    end
+    local worldPosition = CreateVector2D(worldPosition.x, worldPosition.y)
+    return continentID, worldPosition
 end
 
 function C_ChatInfo.ReplaceIconAndGroupExpressions(input, noIconReplacement, noGroupReplacement)
@@ -215,7 +291,21 @@ function QuestUtils_ShouldDisplayExpirationWarning(questID)
 end
 
 function C_QuestLog.GetNumQuestLogEntries()
-    return nil --GetNumQuestWatches()
+
+    return GetNumQuestLogEntries()
+    
+end
+
+function C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
+     
+  local _, _, _, _, _, _, _, questID, _, _, _, _, _, _, _, _, _ =
+        GetQuestLogTitle(questLogIndex)
+           if isHeader then
+        return 0
+    end
+
+    return questID or 0
+    --   return GetQuestID(questLogIndex)
 end
 
 function C_QuestLog.GetNumQuestWatches()
@@ -278,6 +368,7 @@ function C_QuestLog.GetQuestIDForQuestWatchIndex(i)
         GetQuestLogIndex = QuestCache.GetQuestLogIndex,
         GetID = QuestCache.GetID,
         IsComplete = QuestCache.IsComplete,
+        IsOnMap = QuestCache.IsOnMap
     }
 
     return questID
@@ -315,6 +406,21 @@ function C_QuestLog.GetNextWaypointText(questID)
     return nil
 end
 
+function GW_GetDistanceSqToQuest(questID)
+    local _, qx, qy = QuestPOIGetIconInfo(questID)
+    local px, py = GetPlayerMapPosition("player")
+
+    if qx and px then
+        local dx = px - qx
+        local dy = py - qy
+        return dx * dx + dy * dy, true
+    end
+    return math.huge, false
+
+end
+function C_QuestLog.GetDistanceSqToQuest(questID)
+    return C_TaskQuest.GetDistanceSqToQuest(questID)
+end
 function C_Container.GetContainerNumFreeSlots(i)
     return GetContainerNumFreeSlots(i)
 end
@@ -474,6 +580,9 @@ end
 
 function C_SpecializationInfo.GetSpellsDisplay(specializationID)
     return nil --NYI
+end
+function C_SuperTrack.GetSuperTrackedQuestID(questID)
+    return GetSuperTrackedQuestID(questID)
 end
 function C_Spell.GetSpellInfo(spellID)
     return GetSpellInfo(spellID)

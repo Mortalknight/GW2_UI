@@ -312,7 +312,7 @@ local function updatePetData(self, event, unit)
         GetTime(),
         0.2,
         function()
-            self.health:SetValue(animations["petBarAnimation"].progress)
+            self.health:SetValue(GW.animations["petBarAnimation"].progress)
         end
     )
     self.health.animationCurrent = healthprec

@@ -67,15 +67,14 @@ do
     end
 
     local function CoordsUpdate()
-        if lib.locationData.mapID then
-            lib.locationData.x, lib.locationData.y = GetPlayerMapPos(lib.locationData.mapID)
-        else
-            lib.locationData.x, lib.locationData.y = nil, nil
-        end
+        local pos= C_Map.GetPlayerMapPosition(lib.locationData.mapID)
+         lib.locationData.x, lib.locationData.y = pos.x,pos.y
+     
 
-        if lib.locationData.x and lib.locationData.y then
+        if lib.locationData.x~=nil and lib.locationData.y~=nil then
             lib.locationData.xText = tonumber(string.format("%.2f", 100 * lib.locationData.x))
             lib.locationData.yText = tonumber(string.format("%.2f", 100 * lib.locationData.y))
+            
         else
             lib.locationData.xText, lib.locationData.yText = nil, nil
         end

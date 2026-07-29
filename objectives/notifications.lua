@@ -77,7 +77,8 @@ local function getNearestQuestPOI()
 
     local numTrackedQuests = C_QuestLog.GetNumQuestWatches()
     local numTrackedWQ = C_QuestLog.GetNumWorldQuestWatches()
-    local numQuests = C_QuestLog.GetNumQuestLogEntries()
+   local numEntries, numQuests = GetNumQuestLogEntries()
+
     local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
 
     if (x == nil or y == nil) and (numTrackedQuests == 0 or numTrackedWQ == 0 or numQuests == 0) then
@@ -92,8 +93,10 @@ local function getNearestQuestPOI()
     -- first check for nearest tracker WQ
     for i = 1, numTrackedWQ do
         local watchedWorldQuestID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
+ 
         if watchedWorldQuestID then
             local distanceSq = C_QuestLog.GetDistanceSqToQuest(watchedWorldQuestID)
+   
             if distanceSq and distanceSq <= minDistSqr then
                 minDistSqr = distanceSq;
                 closestQuestID = watchedWorldQuestID
@@ -115,14 +118,21 @@ local function getNearestQuestPOI()
 
     -- If nothing with POI data is being tracked expand search to quest log
     if not closestQuestID then
-        for questLogIndex = 1, numQuests do
+        for questLogIndex = 1, numEntries do
+  
             local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
-            local isOnMap, hasLocalPOI = QuestCache:Get(questID):IsOnMap()
-            if questID and isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
-                local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
-                if onContinent and distSqr <= minDistSqr then
-                    minDistSqr = distSqr
-                    closestQuestID = questID
+
+              if questID and questID > 0 then
+                local QCache = QuestCache:Get(questID)
+                if QCache~=nil then
+                    local isOnMap, hasLocalPOI = QCache:IsOnMap()
+                    if questID and isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
+                        local distSqr, onContinent = GW_GetDistanceSqToQuest(questID)
+                        if onContinent and distSqr <= minDistSqr then
+                            minDistSqr = distSqr
+                            closestQuestID = questID
+                        end
+                    end
                 end
             end
         end
@@ -135,6 +145,7 @@ local function getNearestQuestPOI()
         end
 
         if poiX then
+
             local objectiveText = isWQ and ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
             local isCampaign = QuestCache:Get(closestQuestID):IsCampaign()
             local isFrequent = QuestCache:Get(closestQuestID).frequency and QuestCache:Get(closestQuestID).frequency > 0

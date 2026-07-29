@@ -575,9 +575,10 @@ local function evPlayerLogin(self)
     Debug("OK~EVENT~PLAYER_LOGIN; loaded:", loaded)
     if loaded then
         GW.UpdateCharData()
+        
         return
     end
-
+   -- GW.InitLocationDataHandler()
     -- Remove old debuffs from db
     GW.RemoveOldRaidDebuffsFormProfiles()
     GW.DisableBlizzardFrames()
@@ -680,16 +681,17 @@ local function evPlayerLogin(self)
     GW.LoadTimeManagerSkin()
 
 
-    GW.LoadDetailsSkin()
+    
     GW.LoadImmersionAddonSkin()
 
     GW.SkinAndEnhanceColorPicker()
-    GW.AddCoordsToWorldMap()
     
+    
+    GW.LoadDetailsSkin()
 
     GW.WidgetUISetup()
     ]]
-
+    GW.AddCoordsToWorldMap()
 
     --Create hud art
     hudArtFrame = GW.LoadHudArt()
