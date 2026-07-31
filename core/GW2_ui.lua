@@ -734,7 +734,7 @@ local function evPlayerLogin(self)
 
     -- create buff frame
     if GW.settings.PLAYER_BUFFS_ENABLED then
-        --GW.LoadPlayerAuras(lm)
+        GW.LoadPlayerAuras(lm)
     end
 
     GW.LoadAFKAnimation()

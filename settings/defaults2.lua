@@ -1406,15 +1406,6 @@ GW.globalDefault = {
         },
         PlayerDebuffFrame_scale= 1,
 
-        PlayerPrivateAuras= {
-            point= "TOPRIGHT",
-            relativePoint= "TOPRIGHT",
-            xOfs= -500,
-            yOfs= -173,
-            hasMoved= false,
-        },
-        PlayerPrivateAuras_scale= 1,
-
         AchievementWindow= {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",

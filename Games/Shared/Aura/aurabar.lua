@@ -1,10 +1,13 @@
 ---@class GW2
 local GW = select(2, ...)
+
+-- Retail nutzt seit 12.1 das AuraContainer-System (Games/Mainline/Auras/aurabar.lua),
+-- SecureAuraHeaderTemplate existiert dort nicht mehr — diese Datei ist Classic-only
+if GW.Retail then return end
+
 local Debug = GW.Debug
 local BadDispels = GW.Libs.Dispel:GetBadList()
 local RegisterMovableFrame = GW.RegisterMovableFrame
-
-local debuffColorCurve
 
 local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
     UPR = 1,
@@ -106,17 +109,6 @@ local function setShortCD(self, expires, duration, stackCount)
     self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 end
 
-local function setRetailCooldown(self, auraData, durationObject)
-    if durationObject then
-        self.cooldown:SetCooldownFromDurationObject(durationObject)
-        self.cooldown:SetAlphaFromBoolean(C_UnitAuras.DoesAuraHaveExpirationTime("player", auraData.auraInstanceID), 1, 0)
-    else
-        self.cooldown:SetCooldown(auraData.expirationTime - auraData.duration, auraData.duration)
-        self.cooldown:SetAlpha(1)
-        self.cooldown:SetDrawSwipe(not self.auraType == 2)
-    end
-end
-
 local function SetTooltip(self)
     GameTooltip:ClearLines()
 
@@ -131,15 +123,7 @@ local function AuraOnEnter(self)
     if(GameTooltip:IsForbidden() or not self:IsVisible()) then return end
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", -5, -5)
 
-    if GW.Retail then
-        if self:GetAttribute("target-slot") then
-            GameTooltip:SetInventoryItem("player", self:GetID())
-        else
-            GameTooltip:SetUnitAura("player", self:GetID(), self:GetFilter())
-        end
-    else
-        self.elapsed = 1
-    end
+    self.elapsed = 1
 end
 
 local function AuraOnShow(self)
@@ -225,9 +209,7 @@ local function ClearAuraTime(self)
     self.status.duration:SetText("")
     self.cooldown:SetAlpha(0)
 
-    if not GW.Retail then
-        setLongCD(self, 0) -- to reset border and timer
-    end
+    setLongCD(self, 0) -- to reset border and timer
 end
 
 local function UpdateTime(self, expires)
@@ -237,7 +219,7 @@ local function UpdateTime(self, expires)
 end
 GW.UpdateTime = UpdateTime
 
-local function SetCD(self, auraData, auraType, durationObject)
+local function SetCD(self, auraData, auraType)
     local oldEnd = self.endTime
     self.endTime = auraData.expirationTime
     self.auraType = auraType
@@ -247,16 +229,12 @@ local function SetCD(self, auraData, auraType, durationObject)
     self.auraInstanceID = auraData.auraInstanceID
     self.duration = auraData.duration
 
-    if not GW.Retail and oldEnd ~= self.endTime then
+    if oldEnd ~= self.endTime then
         self.nextUpdate = 0
     end
 
-    if GW.Retail then
-        setRetailCooldown(self, auraData, durationObject)
-    else
-        UpdateTime(self, self.endTime)
-        self.elapsed = 0
-    end
+    UpdateTime(self, self.endTime)
+    self.elapsed = 0
 end
 
 local function SetCount(self, auraData)
@@ -264,11 +242,7 @@ local function SetCount(self, auraData)
         return
     end
 
-    if GW.Retail then
-        self.status.stacks:SetText(C_UnitAuras.GetAuraApplicationDisplayCount("player", auraData.auraInstanceID, 2, 999))
-    else
-        self.status.stacks:SetText(auraData.applications > 1 and auraData.applications or "")
-    end
+    self.status.stacks:SetText(auraData.applications > 1 and auraData.applications or "")
 end
 
 local function SetIcon(self, icon, dtype, auraType, spellId)
@@ -280,14 +254,10 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
 
     local color
     if auraType == 0 then -- Debuff
-        if GW.Retail then
-            color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
+        if dtype and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(dtype) then
+            color = GW.Colors.DebuffColors.BadDispel
         else
-            if dtype and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(dtype) then
-                color = GW.Colors.DebuffColors.BadDispel
-            else
-                color = GW.Colors.DebuffColors[dtype]
-            end
+            color = GW.Colors.DebuffColors[dtype]
         end
         if not color then
             color = GW.Colors.DebuffColors.None
@@ -314,19 +284,10 @@ local function UpdateAura(self, index)
     self:SetIcon(auraData.icon, auraData.dispelName, auraType, auraData.spellId)
     self:SetCount(auraData)
 
-    if GW.Retail then
-        local durationObject = C_UnitAuras.GetAuraDuration("player", auraData.auraInstanceID)
-        if durationObject then
-			self:SetCD(auraData, auraType, durationObject)
-		else
-			ClearAuraTime(self)
-		end
+    if auraData.duration > 0 and auraData.expirationTime then
+        self:SetCD(auraData, auraType)
     else
-        if auraData.duration > 0 and auraData.expirationTime then
-            self:SetCD(auraData, auraType)
-        else
-            ClearAuraTime(self)
-        end
+        ClearAuraTime(self)
     end
 end
 
@@ -448,7 +409,7 @@ function GwAuraTmpl_OnLoad(self)
     self.cooldown:SetDrawEdge(false)
     self.cooldown:SetDrawSwipe(true)
     self.cooldown:SetReverse(false)
-    self.cooldown:SetHideCountdownNumbers(not GW.Retail)
+    self.cooldown:SetHideCountdownNumbers(true)
 
     self.SetCD = SetCD
     self.SetCount = SetCount
@@ -477,42 +438,11 @@ function GwAuraTmpl_OnLoad(self)
     a2:SetScaleTo(1.0, 1.0)
 
     -- add mouseover handlers
-    if not GW.Retail then
-        self:SetScript("OnUpdate", AuraButton_OnUpdate)
-    end
+    self:SetScript("OnUpdate", AuraButton_OnUpdate)
     self:SetScript("OnEnter", AuraOnEnter)
     self:SetScript("OnShow", AuraOnShow)
     self:SetScript("OnHide", AuraOnHide)
     self:SetScript("OnLeave", GameTooltip_Hide)
-
-        -- for retail get cooldown font string and curve debuff color
-    if GW.Retail then
-        local r = {self.cooldown:GetRegions()}
-        for _, c in pairs(r) do
-            if c:GetObjectType() == "FontString" then
-                self.cooldown.durationString = c
-                self.cooldown.durationString:SetPoint("TOP", self.status, "BOTTOM", 0, -4)
-                self.cooldown.durationString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW", -1)
-                break
-            end
-        end
-
-        self.UpdateTooltip = AuraOnEnter
-
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOWOUTLINE")
-
-        self.status:ClearAllPoints()
-        self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4)
-        self.status:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -4, 4)
-
-        self.border:ClearAllPoints()
-        self.border:SetPoint("TOPLEFT", self, "TOPLEFT", 2, -2)
-        self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 2)
-
-        if self.cooldown.SetCountdownFormatter then
-            self.cooldown:SetCountdownFormatter(GW.cooldownNumberFormatter)
-        end
-    end
 
     UpdateIcon(self)
 
@@ -624,7 +554,7 @@ local function newHeader(filter)
     h.visibility.frame = h
     h.name = name
 
-    if GW.Retail or GW.TBC or GW.Wrath then
+    if GW.TBC or GW.Wrath then
         h.visibility:RegisterEvent("WEAPON_ENCHANT_CHANGED")
     end
 
@@ -683,81 +613,16 @@ local function loadAuras(lm)
     if PetBattleFrame then
         PetBattleFrame:SetFrameLevel(hb:GetFrameLevel() + 5)
     end
-
-    if GW.Retail then
-        -- creating a mover for private auras (2 atm) -- TODO: Maybe in a future update there is a skinning way
-        local privateAurasheader = CreateFrame("Frame", nil, UIParent)
-        privateAurasheader:SetSize(240, 40)
-        RegisterMovableFrame(privateAurasheader, GW.L["Private Auras"], "PlayerPrivateAuras", "Blizzard,Aura", nil, {"default", "scaleable"}, true)
-        privateAurasheader:ClearAllPoints()
-        privateAurasheader:SetPoint("TOPLEFT", privateAurasheader.gwMover)
-
-        for i = 1, 6 do
-            local aura = privateAurasheader["privateAuraAnchor" .. i]
-            aura = CreateFrame("Frame", nil, privateAurasheader, "GwPrivateAuraTmpl")
-            aura.auraIndex = i
-            aura:SetPoint("BOTTOMRIGHT", privateAurasheader, (28 * (i - 1)), 28 * 2)
-            local auraAnchor = {
-                isContainer = false,
-                unitToken = "player",
-                auraIndex = aura.auraIndex,
-                -- The parent frame of an aura anchor must have a valid rect with a non-zero
-                -- size. Each private aura will anchor to all points on its parent,
-                -- providing a tooltip when mouseovered.
-                parent = aura,
-                -- An optional cooldown spiral can be configured to represent duration.
-                showCountdownFrame = false,
-                showCountdownNumbers = true,
-                -- An optional icon can be created and shown for the aura. Omitting this
-                -- will display no icon.
-                iconInfo = {
-                    iconWidth = aura.status:GetWidth(),
-                    iconHeight = aura.status:GetHeight(),
-                    iconAnchor = {
-                        point = "CENTER",
-                        relativeTo = aura.status,
-                        relativePoint = "CENTER",
-                        offsetX = 0,
-                        offsetY = 0,
-                    },
-                },
-                -- An optional icon duration fontstring can also be configured.
-                durationAnchor = {
-                    point = "TOP",
-                    relativeTo = aura.status,
-                    relativePoint = "BOTTOM",
-                    offsetX = 0,
-                    offsetY = -4,
-                },
-            }
-            -- Anchors can be removed (and the aura hidden) via the RemovePrivateAuraAnchor
-            -- API, passing it the anchor index returned from the Add function.
-            aura.anchorIndex = C_UnitAuras.AddPrivateAuraAnchor(auraAnchor)
-        end
-    end
 end
 
 local function LoadPlayerAuras(lm)
     -- hide default buffs
     BuffFrame:GwKill()
-    if DebuffFrame then
-        DebuffFrame:GwKill()
-    end
     if TemporaryEnchantFrame then
         TemporaryEnchantFrame:GwKill()
     end
     if ConsolidatedBuffs then
         ConsolidatedBuffs:GwKill()
-    end
-
-    if C_CurveUtil then
-        debuffColorCurve = C_CurveUtil.CreateColorCurve()
-        debuffColorCurve:SetType(Enum.LuaCurveType.Step)
-        for _, dispelIndex in next, GW.Enum.DispelType do
-            if GW.Colors.DebuffColors[dispelIndex] then
-                debuffColorCurve:AddPoint(dispelIndex, GW.Colors.DebuffColors[dispelIndex])
-            end
-        end
     end
 
     loadAuras(lm)
