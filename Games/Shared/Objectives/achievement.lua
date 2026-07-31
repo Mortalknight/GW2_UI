@@ -156,7 +156,8 @@ function GwAchievementTrackerContainerMixin:BlockOnClick(mouseButton)
                     AttemptToOpenAchievement(self.id, true)
                     CloseDefaultWindow()
                 else
-                    OpenAchievementFrameToAchievement(self.id)
+                    AchievementFrame_ToggleAchievementFrame()
+                    AchievementFrame_SelectAchievement(self.id)
                 end
             end)
             rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()

@@ -203,7 +203,8 @@ function GwObjectivesCollectionContainerMixin:BlockOnClick(button)
             elseif (self.trackableType == Enum.ContentTrackingType.Appearance) and IsModifiedClick("DRESSUP") then
                 DressUpVisual(self.trackableID);
             elseif self.targetType == Enum.ContentTrackingTargetType.Achievement then
-                OpenAchievementFrameToAchievement(self.targetID)
+                AchievementFrame_ToggleAchievementFrame()
+                AchievementFrame_SelectAchievement(targetID)
             elseif self.targetType == Enum.ContentTrackingTargetType.Profession then
                 AdventureObjectiveTrackerMixin:ClickProfessionTarget(self.targetID)
             else

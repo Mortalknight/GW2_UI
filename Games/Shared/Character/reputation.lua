@@ -175,7 +175,7 @@ local function CollectFactionData(fetchData)
                             if hasRewardPending then hasPendingParagonReward = true end
                         end
                     elseif not data.isHeader then
-                        local standingText = getglobal("FACTION_STANDING_LABEL" .. data.reaction)
+                        local standingText = _G["FACTION_STANDING_LABEL" .. data.reaction]
                         cMax = cMax + 8
                         cCur = cCur + data.reaction
                         addToFactionTable(factionTbl, data.reaction, standingText, false, data.name, hasRewardPending, pendingParagonRewardFactions)

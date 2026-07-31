@@ -749,21 +749,6 @@ GW.globalDefault = {
         ROLE_BAR_pos_scale= 1,
         ROLE_BAR= "IN_RAID",
 
-        MISSING_RAID_BUFF_pos= {
-            point= "TOPLEFT",
-            relativePoint= "TOPLEFT",
-            xOfs= 2,
-            yOfs= -30,
-            hasMoved= false,
-        },
-        MISSING_RAID_BUFF_pos_scale= 1,
-        MISSING_RAID_BUFF= "IN_RAID",
-        MISSING_RAID_BUFF_INVERT= false,
-        MISSING_RAID_BUFF_animated= true,
-        MISSING_RAID_BUFF_dimmed= true,
-        MISSING_RAID_BUFF_grayed_out= true,
-        MISSING_RAID_BUFF_custom_id= "",
-
         CHAT_FIND_URL= true,
         CHAT_HYPERLINK_TOOLTIP= true,
         CHAT_SHORT_CHANNEL_NAMES= false,

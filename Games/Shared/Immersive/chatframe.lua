@@ -19,6 +19,7 @@ local GetChannelShortcutForChannelID = C_ChatInfo.GetChannelShortcutForChannelID
 local C_GuildInfo_GetMOTD = C_GuildInfo and C_GuildInfo.GetMOTD or GetGuildRosterMOTD
 local GetGroupMembers = C_SocialQueue and C_SocialQueue.GetGroupMembers
 local GetGroupQueues = C_SocialQueue and C_SocialQueue.GetGroupQueues
+local TimeUtil_BetterDate = TimeUtil and TimeUtil.BetterDate or BetterDate
 
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
@@ -1454,7 +1455,7 @@ local function AddMessageEdits(frame, msg, alwaysAddTimestamp, isHistory, histor
     if isHistory == "GW2UI_ChatHistory" then historyTimestamp = historyTime end
 
     if GW.settings.timeStampFormat and GW.settings.timeStampFormat ~= "NONE" and (GW.settings.CHAT_ADD_TIMESTAMP_TO_ALL or alwaysAddTimestamp) then
-        local timeStamp = BetterDate(GW.settings.timeStampFormat, historyTimestamp or time())
+        local timeStamp = TimeUtil_BetterDate(GW.settings.timeStampFormat, historyTimestamp or time())
         timeStamp = gsub(timeStamp, " ", "")
         timeStamp = gsub(timeStamp, "AM", " AM")
         timeStamp = gsub(timeStamp, "PM", " PM")
@@ -2896,7 +2897,9 @@ local function SocialQueueEvent(guid, numAddedItems)
 end
 
 local function PetBattleFrame_Display()
-    RemoveFrameLock("PETBATTLES")
+    if RemoveFrameLock then
+        RemoveFrameLock("PETBATTLES")
+    end
 
     -- we want to display the pet battle tab now since it is faded initially without mousing over
     for _, frameName in ipairs(CHAT_FRAMES) do

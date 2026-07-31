@@ -4,6 +4,8 @@ local L = GW.L
 local EnableTooltip = GW.EnableTooltip
 local inv
 
+local GetInventorySlotInfo = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlotInfo or GetInventorySlotInfo
+
 local function openAllBankBags()
     for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
         if not IsBagOpen(i) then

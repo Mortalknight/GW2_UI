@@ -50,9 +50,21 @@ local function applyButtonStyle(b)
     b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton.png")
     b:ClearHighlightTexture()
     if b.GetFontString and b:GetFontString() then
-        b:GetFontString():ClearAllPoints()
-        b:GetFontString():SetPoint("LEFT", b, "LEFT", 32,0)
-        b:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+        local fontString = b:GetFontString()
+        fontString:ClearAllPoints()
+        fontString:SetPoint("LEFT", b, "LEFT", 32, 0)
+        fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+
+        -- Der Button setzt bei jedem State-Wechsel (Hover/Pressed/Disabled) sein
+        -- NormalFont/HighlightFont-Objekt (GameFontHighlightLarge) auf den FontString
+        -- und überschreibt damit unsere Schrift — daher alle State-Fonts auf das
+        -- von GwSetFontTemplate erzeugte FontObject umbiegen
+        local gwFontObject = fontString.GetFontObject and fontString:GetFontObject()
+        if gwFontObject then
+            b:SetNormalFontObject(gwFontObject)
+            b:SetHighlightFontObject(gwFontObject)
+            b:SetDisabledFontObject(gwFontObject)
+        end
     end
     b:SetSize(180, 25)
     if b:GetNormalTexture() then

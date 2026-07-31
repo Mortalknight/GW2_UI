@@ -4,7 +4,6 @@
     <Include file ="Objectives\Load.xml"/>
     <Include file ="Statusbar\Load.xml"/>
     <Include file ="Animation\Load.xml"/>
-    <Include file ="Social\Load.xml"/>
     <Include file ="Mainbar\Load.xml"/>
     <Include file ="DataInfo\Load.xml"/>
     <Include file ="Aura\Load.xml"/>

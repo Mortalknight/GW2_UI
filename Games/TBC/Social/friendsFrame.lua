@@ -1,10 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-
-
-
-
 local moveDistance, socialFrameX, socialFrameY, socialFrameLeft, socialFrameTop, socialFrameNormalScale, socialFrameEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 local friendsFrameTabsAdded = 0
 

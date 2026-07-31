@@ -99,7 +99,6 @@ local function selectBg(self)
         if not GW.Retail then
             for spellID, auraData in pairs(actionHudPlayerAuras) do
                 if C_UnitAuras.GetPlayerAuraBySpellID(spellID) then
-                    C_UnitAuras.GetPlayerAuraBySpellID(375087)
                     right = auraData.right
                     left = auraData.left
                     modelFX = auraData.modelFX

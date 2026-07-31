@@ -82,7 +82,7 @@ function GW.SkinRecruitAFriendList()
     RecruitAFriendRewardsFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     RecruitAFriendRewardsFrame.Background:SetAlpha(0)
     RecruitAFriendRewardsFrame.Watermark:SetAlpha(0)
-    RecruitAFriendRewardsFrame.Title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    RecruitAFriendRewardsFrame.Title.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
     hooksecurefunc(RecruitAFriendRewardsFrame, "UpdateRewards", RAFRewards)
     RAFRewards()

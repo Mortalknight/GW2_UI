@@ -1155,46 +1155,59 @@ local function skinAchevement()
     AchievementFrameSummary:SetPoint("TOPLEFT", AchievementFrame, "TOPLEFT", 251, 0)
     AchievementFrameSummary:SetSize(612, 621)
 
-    AchievementFrame.SearchBox:ClearAllPoints()
-    AchievementFrame.SearchBox:SetPoint("BOTTOMLEFT", AchievementFrameCategories, "TOPLEFT", 0, 10)
-    AchievementFrame.SearchBox:SetWidth(237)
-    AchievementFrame.SearchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    GW.SkinTextBox(AchievementFrame.SearchBox.Middle, AchievementFrame.SearchBox.Left, AchievementFrame.SearchBox.Right)
-    AchievementFrame.SearchBox:SetHeight(26)
-    AchievementFrame.SearchBox.searchIcon:Hide()
-    AchievementFrame.SearchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    AchievementFrame.SearchBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    AchievementFrame.SearchBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+    local searchBox = AchievementFrame.HeaderDetails.Filters.SearchBox
+    searchBox:ClearAllPoints()
+    searchBox:SetPoint("BOTTOMLEFT", AchievementFrameCategories, "TOPLEFT", 0, 5)
+    searchBox.ClearAllPoints = GW.NoOp
+    searchBox.SetPoint = GW.NoOp
+    searchBox:SetWidth(237)
+    searchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    GW.SkinTextBox(searchBox.Middle, searchBox.Left, searchBox.Right)
+    searchBox:SetHeight(26)
+    searchBox.searchIcon:Hide()
+    searchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    searchBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    searchBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
-    AchievementFrame.SearchPreviewContainer:GwStripTextures()
-    AchievementFrame.SearchPreviewContainer:ClearAllPoints()
-    AchievementFrame.SearchPreviewContainer:SetPoint("TOPLEFT", AchievementFrame.SearchBox, "BOTTOMLEFT", 0, 0)
-    AchievementFrame.SearchPreviewContainer:SetPoint("TOPRIGHT", AchievementFrame.SearchBox, "BOTTOMRIGHT", 0, 0)
+    searchBox.SearchPreviewContainer:GwStripTextures()
+    searchBox.SearchPreviewContainer:ClearAllPoints()
+    searchBox.SearchPreviewContainer:SetPoint("TOPLEFT", searchBox, "BOTTOMLEFT", 0, 0)
+    searchBox.SearchPreviewContainer:SetPoint("TOPRIGHT", searchBox, "BOTTOMRIGHT", 0, 0)
 
     for i = 1,5 do
-        local sp = AchievementFrame.SearchPreviewContainer["SearchPreview" ..i ]
+        local sp = searchBox.SearchPreviewContainer["SearchPreview" ..i ]
         if sp then
-            sp:SetWidth(AchievementFrame.SearchPreviewContainer:GetWidth())
+            sp:SetWidth(searchBox.SearchPreviewContainer:GetWidth())
             sp.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         end
     end
 
-    AchievementFrameFilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
-    AchievementFrameFilterDropdown:ClearAllPoints()
-    AchievementFrameFilterDropdown:SetPoint("BOTTOMLEFT", AchievementFrame.SearchBox, "TOPLEFT", 0, 10)
-    AchievementFrameFilterDropdown:SetPoint("BOTTOMRIGHT", AchievementFrame.SearchBox, "TOPRIGHT", 0, 10)
-    AchievementFrameFilterDropdown:SetHeight(26)
+    local filterDropdown = AchievementFrame.HeaderDetails.Filters.FilterDropdown
+    filterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+    filterDropdown:ClearAllPoints()
+    filterDropdown:SetPoint("BOTTOMLEFT", searchBox, "TOPLEFT", 0, 5)
+    filterDropdown:SetPoint("BOTTOMRIGHT", searchBox, "TOPRIGHT", 0, 5)
+    filterDropdown:SetHeight(26)
+    filterDropdown.ClearAllPoints = GW.NoOp
+    filterDropdown.SetPoint = GW.NoOp
 
-    AchievementFrameFilterDropdown.backdrop:ClearAllPoints()
-    AchievementFrameFilterDropdown.backdrop:SetPoint("TOPLEFT", AchievementFrameFilterDropdown, "TOPLEFT", 0, 0)
-    AchievementFrameFilterDropdown.backdrop:SetPoint("BOTTOMRIGHT", AchievementFrameFilterDropdown, "BOTTOMRIGHT", 0, 0)
-    AchievementFrameFilterDropdown.backdrop:SetAlpha(0.5)
+    filterDropdown.backdrop:ClearAllPoints()
+    filterDropdown.backdrop:SetPoint("TOPLEFT", filterDropdown, "TOPLEFT", 0, 0)
+    filterDropdown.backdrop:SetPoint("BOTTOMRIGHT", filterDropdown, "BOTTOMRIGHT", 0, 0)
+    filterDropdown.backdrop:SetAlpha(0.5)
+
+    local backButton = AchievementFrame.HeaderDetails.Back
+    backButton:GwSkinButton(false, true)
+    backButton:ClearAllPoints()
+    backButton:SetPoint("BOTTOMLEFT", filterDropdown, "TOPLEFT", 0, 5)
+    backButton:SetPoint("BOTTOMRIGHT", filterDropdown, "TOPRIGHT", 0, 5)
+
 
     --create dummy frame
     local dropdownDummyFrame = CreateFrame("Frame", AchievementFrame)
     GW.AchievementFrameFilterDropDownDummy = dropdownDummyFrame -- make that frame "global" for Krowi
     dropdownDummyFrame:SetParent(AchievementFrame)
-    dropdownDummyFrame:SetSize(AchievementFrameFilterDropdown:GetSize())
+    dropdownDummyFrame:SetSize(filterDropdown:GetSize())
     dropdownDummyFrame:SetAlpha(0.3)
 
     dropdownDummyFrame.bg = dropdownDummyFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -1208,13 +1221,13 @@ local function skinAchevement()
     dropdownDummyFrame.arrow:SetPoint("RIGHT", dropdownDummyFrame, "RIGHT", -12, 0)
     dropdownDummyFrame.arrow:SetSize(23, 23)
 
-    dropdownDummyFrame:SetPoint("BOTTOMLEFT", AchievementFrame.SearchBox, "TOPLEFT", 0, 10)
-    dropdownDummyFrame:SetPoint("BOTTOMRIGHT", AchievementFrame.SearchBox, "TOPRIGHT", 0, 10)
+    dropdownDummyFrame:SetPoint("BOTTOMLEFT", searchBox, "TOPLEFT", 0, 5)
+    dropdownDummyFrame:SetPoint("BOTTOMRIGHT", searchBox, "TOPRIGHT", 0, 5)
 
-    AchievementFrameFilterDropdown:HookScript("OnShow", function()
+    filterDropdown:HookScript("OnShow", function()
         dropdownDummyFrame:Hide()
     end)
-    AchievementFrameFilterDropdown:HookScript("OnHide", function()
+    filterDropdown:HookScript("OnHide", function()
         dropdownDummyFrame:Show()
     end)
 
@@ -1499,12 +1512,6 @@ local function skinAchevement()
         AchievementFrameSummaryAchievement3:SetWidth(width)
         AchievementFrameSummaryAchievement3:SetHeight(height)
         updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement3, select(3, ...))
-
-        AchievementFrameSummaryAchievement4:ClearAllPoints()
-        AchievementFrameSummaryAchievement4:SetPoint("TOPLEFT", AchievementFrameSummaryAchievement3, "TOPRIGHT", 5, 0)
-        AchievementFrameSummaryAchievement4:SetWidth(width)
-        AchievementFrameSummaryAchievement4:SetHeight(height)
-        updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement4, select(4, ...))
     end)
     -- make the frame movable
     GW.MakeFrameMovable(AchievementFrame, nil, "AchievementWindow", true)

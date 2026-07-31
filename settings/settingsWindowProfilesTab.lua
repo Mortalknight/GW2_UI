@@ -361,7 +361,7 @@ end
 
 
 local function item_OnLeave(self)
-    if MouseIsOver(self) then return end
+    if self:IsMouseOver() then return end
     if self.canActivate then
         self.activateButton:GetScript("OnLeave")(self.activateButton, true)
     end
