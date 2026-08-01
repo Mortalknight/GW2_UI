@@ -12,9 +12,9 @@ local function ReskinWhoFrameButton(button)
     end
 end
 
--- 12.1: Das Who-Fenster lebt weiterhin im alten FriendsFrame — ist die SocialUI aktiv,
--- blendet Blizzard dort alle Tabs außer "Wer" aus. Das legacy Fenster bekommt daher hier
--- seinen GW-Header.
+-- 12.1: The Who window still lives in the old FriendsFrame — when the SocialUI is active,
+-- Blizzard hides all tabs there except "Who". The legacy window therefore gets
+-- its GW header here.
 local function SkinLegacyFriendsFrame()
     GW.HandlePortraitFrame(FriendsFrame)
     if FriendsFrameIcon then

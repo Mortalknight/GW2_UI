@@ -1,7 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 
--- 12.1: RecentAlliesSocialCardTemplate — die FontStrings liegen direkt am Card-Button
+-- 12.1: RecentAlliesSocialCardTemplate — the FontStrings live directly on the card button
 local function ReskinRecentAllyCard(button)
     if button.gwSkinned then return end
     button.gwSkinned = true

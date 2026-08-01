@@ -1,8 +1,8 @@
 ---@class GW2
 local GW = select(2, ...)
 
--- 12.1: Blizzard aktualisiert den QuickJoin-Zähler selbst über tabData.countGenerator -> tab:SetCount().
--- Wir leiten den Wert nur noch in unser Benachrichtigungs-Badge um (GwNotifyRed/GwNotifyText aus HandleTabs).
+-- 12.1: Blizzard updates the QuickJoin counter itself via tabData.countGenerator -> tab:SetCount().
+-- We only redirect the value into our notification badge (GwNotifyRed/GwNotifyText from HandleTabs).
 local function HandleTabCount(tab, count)
     local isQuickJoin = tab.tabData and tab.tabData.tabType == SocialUITabType.QuickJoin
     local hasCount = isQuickJoin and count and count > 0
@@ -18,7 +18,7 @@ local function HandleTabCount(tab, count)
 end
 
 local function HookTabCounters()
-    -- Tabs kommen aus einem Pool und können bei RefreshTabs neu zugewiesen werden
+    -- tabs come from a pool and can be reassigned on RefreshTabs
     for tab in SocialUIFrame:EnumerateTabs() do
         if not tab.GwCountHooked then
             tab.GwCountHooked = true

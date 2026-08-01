@@ -26,7 +26,7 @@ local function RAFRewards()
 end
 
 function GW.SkinRecruitAFriendList()
-    -- 12.1: Die RAF-Liste ist eine SocialUI-View, nur die beiden Dialoge sind noch globale Frames
+    -- 12.1: the RAF list is a SocialUI view, only the two dialogs are still global frames
     local RecruitAFriend = SocialUIFrame.RecruitAFriendFrame
     if not RecruitAFriend then return end
 
@@ -62,7 +62,7 @@ function GW.SkinRecruitAFriendList()
         RewardClaiming.ClaimOrViewRewardButton:GwSkinButton(false, true)
     end
 
-    -- Link-Dialog (StaticPopupSpecial, weiterhin global)
+    -- link dialog (StaticPopupSpecial, still global)
     RecruitAFriendRecruitmentFrame:GwStripTextures()
     RecruitAFriendRecruitmentFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
     GW.SkinTextBox(RecruitAFriendRecruitmentFrame.EditBox.Middle, RecruitAFriendRecruitmentFrame.EditBox.Left, RecruitAFriendRecruitmentFrame.EditBox.Right)
@@ -70,7 +70,7 @@ function GW.SkinRecruitAFriendList()
     RecruitAFriendRecruitmentFrame.CloseButton:GwSkinButton(true)
     RecruitAFriendRecruitmentFrame.CloseButton:SetSize(15, 15)
 
-    -- Belohnungsübersicht (weiterhin global)
+    -- rewards overview (still global)
     RecruitAFriendRewardsFrame.CloseButton:GwSkinButton(true)
     RecruitAFriendRewardsFrame.CloseButton:SetSize(20, 20)
     RecruitAFriendRewardsFrame:GwStripTextures()

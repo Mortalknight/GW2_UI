@@ -23,7 +23,7 @@ local function SkinRaidInfoSideWindow()
 end
 
 function GW.SkinRaidList()
-    -- 12.1: Der Schlachtzugs-Tab ist eine SocialUI-View (RaidFrameSocialTemplate)
+    -- 12.1: the raid tab is a SocialUI view (RaidFrameSocialTemplate)
     local RaidView = SocialUIFrame.RaidFrame
     if not RaidView then return end
 

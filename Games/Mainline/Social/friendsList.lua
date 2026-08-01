@@ -183,8 +183,8 @@ local function HandleInviteTexDisabled(self)
     self:SetDesaturated(true)
 end
 
--- Einklappbare Listen-Header (SocialUIScrollableHeaderTemplate) im Currency-Frame-Look:
--- Pill-Textur weg, GW-Backdrop + Trenner, Pfeil statt Plus/Minus
+-- Collapsible list headers (SocialUIScrollableHeaderTemplate) in the currency frame look:
+-- pill texture removed, GW backdrop + separator, arrow instead of plus/minus
 local function UpdateHeaderCollapseIcon(collapseButton)
     collapseButton.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
     collapseButton.Icon:SetSize(16, 16)
@@ -201,7 +201,7 @@ local function ReskinListHeader(header)
     if header.gwSkinned then return end
     header.gwSkinned = true
 
-    -- der PTR-Client hat hier zusätzlich eine Background-Textur (Pill) — alles wegstrippen
+    -- the PTR client additionally has a background texture (pill) here — strip everything
     header:GwStripTextures()
     header:SetNormalTexture("")
     header:SetHighlightTexture("")
@@ -227,8 +227,8 @@ local function ReskinListHeaders(scrollBox)
     end)
 end
 
--- Gemeinsames Grundgerüst aller SocialUI-Tabs (SocialUIContactsFrameTemplate):
--- FilterBar (SearchBar + Filterdropdown), ScrollBox/ScrollBar und ActionButton
+-- Shared base structure of all SocialUI tabs (SocialUIContactsFrameTemplate):
+-- FilterBar (SearchBar + filter dropdown), ScrollBox/ScrollBar and ActionButton
 local function SkinSocialContactsView(view)
     if not view or view.gwContactsViewSkinned then return end
     view.gwContactsViewSkinned = true
@@ -457,9 +457,9 @@ function GW.SkinFriendList()
     BNetBar.BattleNetBackground:SetAlpha(0)
     BattleNetBar.Background:SetAlpha(0)
 
-    -- Blizzard verankert die BattleNetBar nur zentriert mit fester Breite (413) und hängt alle
-    -- Tab-Inhalte an ihre linke Kante — nach unserem Resize auf 500 muss die Bar deshalb die volle
-    -- Fensterbreite aufspannen, sonst rutscht der komplette Inhalt nach rechts
+    -- Blizzard only anchors the BattleNetBar centered with a fixed width (413) and attaches all
+    -- tab contents to its left edge — after our resize to 500 the bar therefore has to span the
+    -- full window width, otherwise the entire content shifts to the right
     BattleNetBar:ClearAllPoints()
     BattleNetBar:SetPoint("TOPLEFT", SocialUIFrame.gwHeader, "BOTTOMLEFT", 0, 0)
     BattleNetBar:SetPoint("TOPRIGHT", SocialUIFrame.gwHeader, "BOTTOMRIGHT", 0, 0)
@@ -470,7 +470,7 @@ function GW.SkinFriendList()
     BNetBar.OnlineStatusDropdown:SetPoint("LEFT", BNetBar, "LEFT", 10, 0)
     BNetBar.OnlineStatusDropdown.Background:SetAlpha(0)
 
-    -- kleiner quadratischer Icon-Button rechts, das Menü-Icon bleibt erhalten
+    -- small square icon button on the right, the menu icon is kept
     BNetBar.BattleNetMenuButton:GwSkinButton(false, nil, nil, nil, nil, true)
     BNetBar.BattleNetMenuButton:SetSize(24, 24)
     BNetBar.BattleNetMenuButton:ClearAllPoints()
@@ -501,8 +501,8 @@ function GW.SkinFriendList()
 
     button:SetScript("OnClick", function() BNetBar.BattleNetMenuButton:SocialUIRequestToggleSideWindow(SocialUISideWindowType.BattleNetBroadcastFrame) end)
 
-    -- Der Overlay-Button liegt als eigenes Frame über dem BattleTag-Text und würde ihn beim
-    -- Hovern übermalen — Text auf den Button umhängen, damit er immer obenauf liegt
+    -- The overlay button sits as its own frame above the BattleTag text and would paint
+    -- over it on hover — reparent the text to the button so it always stays on top
     BNetBar.PersonalBattleTagDisplay.DisplayText:SetParent(button)
     BNetBar.PersonalBattleTagDisplay.DisplayText:SetDrawLayer("OVERLAY", 7)
     if BNetBar.PersonalBattleTagDisplay.CopyBattleTagToClipboardButton then
