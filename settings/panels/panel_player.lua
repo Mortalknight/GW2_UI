@@ -88,7 +88,7 @@ local function LoadPlayerPanel(sWindow)
     totemBar.breadcrumb:SetText(L["Totem Bar"])
 
     p_player:AddOption(ENABLE, L["Enable the health bar replacement."], {getterSetter = "HEALTHGLOBE_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    p_player:AddOption(L["Power Bar"], L["Replace the default mana/power bar."], {getterSetter = "POWERBAR_ENABLED", callback = function() if GwPlayerPowerBar then GwPlayerPowerBar:ToggleBar(); GW.UpdateClassPowerExtraManabar() end end, isMasterToggle = true})
+    p_player:AddOption(L["Power Bar"], L["Replace the default mana/power bar."], {getterSetter = "POWERBAR_ENABLED", callback = function() if GwPlayerPowerBar then GwPlayerPowerBar:ToggleBar(); GW.ClassPowers.UpdateExtraManabar() end end, isMasterToggle = true})
     p_player:AddOption(L["Player frame in target frame style"], nil, {getterSetter = "PLAYER_AS_TARGET_FRAME", callback = function() GW.ShowRlPopup = true end, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
     p_player:AddOption(L["Show alternative background texture"], nil, {getterSetter = "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
     p_player:AddOption(L["Show absorb bar"], nil, {getterSetter = "PLAYER_SHOW_ABSORB_BAR", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
@@ -154,10 +154,13 @@ local function LoadPlayerPanel(sWindow)
 
     -- AURAS
     p_player_aura:AddOption(ENABLE, L["Move and resize the player auras."], {getterSetter = "PLAYER_BUFFS_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
+    p_player_aura:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "PLAYER_IGNORED_AURAS", callback = function()
+        GW.UpdateAuraHeader(GW2UIPlayerBuffs)
+        GW.UpdateAuraHeader(GW2UIPlayerDebuffs)
+    end, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, hidden = not GW.Retail})
     p_player_aura:AddGroupHeader(L["Buffs"])
     p_player_aura:AddOptionDropdown(L["Player Buff Growth Direction"], nil, { getterSetter = "PlayerBuffs.GrowDirection", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, optionsList = auraGrowthOptions, optionNames = auraGrowthOptionNames, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"]})
-    p_player_aura:AddOptionDropdown(L["Sort Method"], L["Defines how the group is sorted."], { getterSetter = "PlayerBuffs.SortMethod", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, optionsList = {"INDEX", "TIME", "NAME"}, optionNames = {L["Index"], L["Time"], NAME}, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"]})
-    p_player_aura:AddOptionDropdown(L["Sort Direction"], L["Defines the sort order of the selected sort method."], { getterSetter = "PlayerBuffs.SortDir", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, optionsList = {"+", "-"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"]})
+    p_player_aura:AddOptionDropdown(L["Aura Sorting"], L["Set the sorting order of the auras."], { getterSetter = "PlayerBuffs.Sort", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"]})
     p_player_aura:AddOptionDropdown(L["Seperate"], L["Indicate whether buffs you cast yourself should be separated before or after."], { getterSetter = "PlayerBuffs.Seperate", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, optionsList = {-1, 0, 1}, optionNames = {L["Other's First"], L["No Sorting"], L["Your Auras First"]}, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"]})
     p_player_aura:AddOptionSlider(L["Auras per row"], nil, { getterSetter = "PlayerBuffs.WrapAfter", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 1, max = 20, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"]})
     p_player_aura:AddOptionSlider(L["Horizontal Spacing"], nil, { getterSetter = "PlayerBuffs.HorizontalSpacing", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = -20, max = 50, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"]})
@@ -166,13 +169,12 @@ local function LoadPlayerPanel(sWindow)
     p_player_aura:AddOptionSlider(L["Size"], nil, { getterSetter = "PlayerBuffs.IconSize", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"]})
     p_player_aura:AddOptionSlider(L["Height"], nil, { getterSetter = "PlayerBuffs.IconHeight", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true, ["PlayerBuffs.KeepSizeRatio"] = false}, groupHeaderName = L["Buffs"]})
     p_player_aura:AddOption(L["Keep Size Ratio"], nil, {getterSetter = "PlayerBuffs.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("PlayerBuffs.IconSize"); widget.title:SetText(value == true and L["Size"] or L["Width"]); GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"]})
-    -- Auf Retail nicht mehr umsetzbar: das AuraContainer-System blockiert OnShow-Handler auf Aura-Buttons (Secret Aspects)
+    -- No longer feasible on Retail: the AuraContainer system blocks OnShow handlers on aura buttons (secret aspects)
     p_player_aura:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "PlayerBuffs.NewAuraAnimation", dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = GW.Retail})
 
     p_player_aura:AddGroupHeader(L["Debuffs"])
     p_player_aura:AddOptionDropdown(L["Player Debuffs Growth Direction"], nil, { getterSetter = "PlayerDebuffs.GrowDirection", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame") end, optionsList = auraGrowthOptions, optionNames = auraGrowthOptionNames, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
-    p_player_aura:AddOptionDropdown(L["Sort Method"], L["Defines how the group is sorted."], { getterSetter = "PlayerDebuffs.SortMethod", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, optionsList = {"INDEX", "TIME", "NAME"}, optionNames = {L["Index"], L["Time"], NAME}, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
-    p_player_aura:AddOptionDropdown(L["Sort Direction"], L["Defines the sort order of the selected sort method."], { getterSetter = "PlayerDebuffs.SortDir", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, optionsList = {"+", "-"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
+    p_player_aura:AddOptionDropdown(L["Aura Sorting"], L["Set the sorting order of the auras."], { getterSetter = "PlayerDebuffs.Sort", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
     p_player_aura:AddOptionDropdown(L["Seperate"], L["Indicate whether buffs you cast yourself should be separated before or after."], { getterSetter = "PlayerDebuffs.Seperate", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, optionsList = {-1, 0, 1}, optionNames = {L["Other's First"], L["No Sorting"], L["Your Auras First"]}, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
     p_player_aura:AddOptionSlider(L["Auras per row"], nil, { getterSetter = "PlayerDebuffs.WrapAfter", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = 1, max = 20, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
     p_player_aura:AddOptionSlider(L["Horizontal Spacing"], nil, { getterSetter = "PlayerDebuffs.HorizontalSpacing", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = -20, max = 50, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
@@ -193,12 +195,12 @@ local function LoadPlayerPanel(sWindow)
 
     -- Classpower
     classpower:AddOption(ENABLE, L["Enable the alternate class powers."], {getterSetter = "CLASS_POWER", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    classpower:AddOption(GW.NewSign .. L["Show value on bar"], nil, {getterSetter = "CLASSPOWER_SHOW_VALUE", callback = function() GW.UpdateClasspowerSetting(GwPlayerClassPower); GwPlayerPowerBar:ToggleSettings(); if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["CLASS_POWER"] = true}})
+    classpower:AddOption(GW.NewSign .. L["Show value on bar"], nil, {getterSetter = "CLASSPOWER_SHOW_VALUE", callback = function() GW.ClassPowers.UpdateSettings(GwPlayerClassPower); GwPlayerPowerBar:ToggleSettings(); if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["CLASS_POWER"] = true}})
     classpower:AddOptionDropdown(GW.NewSign .. L["Class power anchor"], L["Controls how the class power bar is anchored to its mover."], {
         getterSetter = "CLASSPOWER_ANCHOR_MODE",
         callback = function()
             if GwPlayerClassPower then
-                GW.UpdateClasspowerSetting(GwPlayerClassPower)
+                GW.ClassPowers.UpdateSettings(GwPlayerClassPower)
             end
             if GwPlayerPowerBar then
                 GwPlayerPowerBar:ToggleSettings()
@@ -212,7 +214,7 @@ local function LoadPlayerPanel(sWindow)
         getterSetter = "CLASSPOWER_CUSTOMRESOURCEBAR_SIDE",
         callback = function()
             if GwPlayerClassPower then
-                GW.UpdateClasspowerSetting(GwPlayerClassPower)
+                GW.ClassPowers.UpdateSettings(GwPlayerClassPower)
             end
         end,
         optionsList = {"AUTO", "LEFT", "RIGHT"},
@@ -223,7 +225,7 @@ local function LoadPlayerPanel(sWindow)
         getterSetter = "CLASSPOWER_ANCHOR_OFFSET_X",
         callback = function()
             if GwPlayerClassPower then
-                GW.UpdateClasspowerSetting(GwPlayerClassPower)
+                GW.ClassPowers.UpdateSettings(GwPlayerClassPower)
             end
         end,
         min = -200,
@@ -236,7 +238,7 @@ local function LoadPlayerPanel(sWindow)
         getterSetter = "CLASSPOWER_ANCHOR_OFFSET_Y",
         callback = function()
             if GwPlayerClassPower then
-                GW.UpdateClasspowerSetting(GwPlayerClassPower)
+                GW.ClassPowers.UpdateSettings(GwPlayerClassPower)
             end
         end,
         min = -200,
@@ -249,7 +251,7 @@ local function LoadPlayerPanel(sWindow)
         getterSetter = "CLASSPOWER_CUSTOMRESOURCEBAR_GAP",
         callback = function()
             if GwPlayerClassPower then
-                GW.UpdateClasspowerSetting(GwPlayerClassPower)
+                GW.ClassPowers.UpdateSettings(GwPlayerClassPower)
             end
         end,
         min = 0,
@@ -258,11 +260,11 @@ local function LoadPlayerPanel(sWindow)
         step = 1,
         dependence = {["CLASS_POWER"] = true},
     })
-    classpower:AddOption(L["Show classpower bar only in combat"], nil, {getterSetter = "CLASSPOWER_ONLY_SHOW_IN_COMBAT", callback = function() GW.UpdateClassPowerVisibilitySetting(GwPlayerClassPower, true) end, dependence = {["CLASS_POWER"] = true}})
+    classpower:AddOption(L["Show classpower bar only in combat"], nil, {getterSetter = "CLASSPOWER_ONLY_SHOW_IN_COMBAT", callback = function() GW.ClassPowers.UpdateVisibilitySetting(GwPlayerClassPower, true) end, dependence = {["CLASS_POWER"] = true}})
     classpower:AddOption(L["Energy/Mana Ticker"], nil, {getterSetter = "PLAYER_ENERGY_MANA_TICK", callback = GW.Update5SrHot,  dependence = {["POWERBAR_ENABLED"] = true}, hidden = GW.Retail or GW.Mists})
     classpower:AddOption(L["5 second rule: display remaining time"], nil, {getterSetter = "PLAYER_5SR_TIMER", callback = GW.Update5SrHot,  dependence = {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true}, hidden = GW.Retail or GW.Mists})
     classpower:AddOption(L["Show Energy/Mana Ticker only in combat"], nil, {getterSetter = "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", callback = GW.Update5SrHot,  dependence = {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true}, hidden = GW.Retail or GW.Mists})
-    classpower:AddOption(L["Show an additional resource bar"], nil, {getterSetter = "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", callback = function() GwPlayerPowerBar:ToggleBar(); GW.UpdateClassPowerExtraManabar() end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true}})
+    classpower:AddOption(L["Show an additional resource bar"], nil, {getterSetter = "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", callback = function() GwPlayerPowerBar:ToggleBar(); GW.ClassPowers.UpdateExtraManabar() end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true}})
 
 
     --TOTEMBAR

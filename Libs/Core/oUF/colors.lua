@@ -176,11 +176,6 @@ if(ns.settings or not customClassColors()) then
 	]]
 end
 
--- MAYBE FOR NONE RETAIL?
---for debuffType, color in next, _G.DebuffTypeColor do
---	colors.debuff[debuffType] = oUF:CreateColor(color.r, color.g, color.b)
---end
-
 -- copy of DEBUFF_DISPLAY_INFO from AuraUtil
 colors.dispel[oUF.Enum.DispelType.None] = _G.DEBUFF_TYPE_NONE_COLOR
 colors.dispel[oUF.Enum.DispelType.Magic] = _G.DEBUFF_TYPE_MAGIC_COLOR

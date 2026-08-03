@@ -48,7 +48,11 @@ local function Resize(popup)
     popup.cancelButton:SetPoint("TOPRIGHT", buttonAnchor, "BOTTOMRIGHT", 0, -spacingToButtons)
 
     popup.acceptButton:ClearAllPoints()
-    popup.acceptButton:SetPoint("TOPRIGHT", popup.cancelButton, "TOPLEFT", -10, 0)
+    if popup.info.hideCancel then
+        popup.acceptButton:SetPoint("TOPRIGHT", buttonAnchor, "BOTTOMRIGHT", 0, -spacingToButtons)
+    else
+        popup.acceptButton:SetPoint("TOPRIGHT", popup.cancelButton, "TOPLEFT", -10, 0)
+    end
 
     local height = topPadding + popup.string:GetStringHeight()
     if popup.info.hasEditBox then
@@ -95,6 +99,7 @@ local function ShowPopup(info, data)
     popup.OnCancel = info.OnCancel
     popup.EditBoxOnEnterPressed = info.EditBoxOnEnterPressed
     popup.EditBoxOnEscapePressed = info.EditBoxOnEscapePressed
+    popup.EditBoxOnTextChanged = info.EditBoxOnTextChanged
     popup.OnShow = info.OnShow
     popup.OnHide = info.OnHide
     popup.notHideOnAccept = info.notHideOnAccept
@@ -103,17 +108,21 @@ local function ShowPopup(info, data)
     popup.info = info
     popup.acceptButton:SetText(info.button1 or ACCEPT)
     popup.cancelButton:SetText(info.button2 or CANCEL)
+    popup.cancelButton:SetShown(not info.hideCancel)
     -- re-apply the ready check button look for the current label (icon fit is measured)
     GW.SetPopupButtonScheme(popup.acceptButton, "confirm")
     GW.SetPopupButtonScheme(popup.cancelButton, "cancel")
     if info.hasEditBox then
         popup.input:Show()
-        popup.input:SetText(info.inputText or "")
+        -- apply the letter limit BEFORE SetText: the pooled EditBox still carries the
+        -- limit of its previous use, which would silently truncate longer texts
+        -- (e.g. a profile export string after a 256-limit rename popup)
         if info.maxLetters then
             popup.input:SetMaxLetters(info.maxLetters)
         else
             popup.input:SetMaxLetters(256)
         end
+        popup.input:SetText(info.inputText or "")
     else
         popup.input:Hide()
     end
@@ -127,6 +136,9 @@ local function ShowPopup(info, data)
 
     SetUpPosition()
     popup:Show()
+    if info.hasEditBox and info.highlightInput then
+        popup.input:HighlightText()
+    end
     Resize(popup)
     -- re-run once the text layout has settled; wrapped font strings can report a
     -- too small height on the frame they are shown
@@ -215,6 +227,12 @@ local function CreatePopupFrame()
         popup:SetScript("OnHide", OnHide)
         popup.input:SetScript("OnEscapePressed", EditBoxOnEscapePressed)
         popup.input:SetScript("OnEnterPressed", EditBoxOnEnterPressed)
+        popup.input:SetScript("OnTextChanged", function(input, userInput)
+            local pp = input:GetParent()
+            if pp.EditBoxOnTextChanged then
+                pp.EditBoxOnTextChanged(pp, userInput)
+            end
+        end)
         popup.input:SetScript("OnEditFocusGained", nil)
         popup.input:SetScript("OnEditFocusLost", nil)
         popup.acceptButton:SetScript("OnClick", OnAccept)

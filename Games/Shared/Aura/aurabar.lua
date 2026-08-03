@@ -1,8 +1,8 @@
 ---@class GW2
 local GW = select(2, ...)
 
--- Retail nutzt seit 12.1 das AuraContainer-System (Games/Mainline/Auras/aurabar.lua),
--- SecureAuraHeaderTemplate existiert dort nicht mehr — diese Datei ist Classic-only
+-- Since 12.1 Retail uses the AuraContainer system (Games/Mainline/Auras/aurabar.lua),
+-- SecureAuraHeaderTemplate no longer exists there — this file is Classic-only
 if GW.Retail then return end
 
 local Debug = GW.Debug
@@ -449,6 +449,16 @@ function GwAuraTmpl_OnLoad(self)
     self.gwInit = true
 end
 
+-- shared sort presets (same setting values as the Retail container sorting) mapped
+-- onto the SecureAuraHeader sortMethod/sortDirection attributes
+local SECURE_SORT_PRESETS = {
+    DEFAULT = { method = "INDEX", direction = "+" },
+    EXPIRATION_ASC = { method = "TIME", direction = "+" },
+    EXPIRATION_DESC = { method = "TIME", direction = "-" },
+    NAME_ASC = { method = "NAME", direction = "+" },
+    NAME_DESC = { method = "NAME", direction = "-" },
+}
+
 local function UpdateAuraHeader(header)
     if not header then return end
 
@@ -487,8 +497,11 @@ local function UpdateAuraHeader(header)
     header:SetAttribute("config-height", height)
     header:SetAttribute("template", "GwAuraTmpl")
     header:SetAttribute("weaponTemplate", header.filter == "HELPFUL" and "GwAuraTmpl" or nil)
-    header:SetAttribute("sortMethod", db.SortMethod)
-    header:SetAttribute("sortDirection", db.SortDir)
+    -- shared sort presets (same values as the Retail container sorting) mapped onto
+    -- the SecureAuraHeader attributes
+    local sort = SECURE_SORT_PRESETS[db.Sort] or SECURE_SORT_PRESETS.DEFAULT
+    header:SetAttribute("sortMethod", sort.method)
+    header:SetAttribute("sortDirection", sort.direction)
     header:SetAttribute("separateOwn", db.Seperate)
     header:SetAttribute("wrapAfter", wrapAfter)
     header:SetAttribute("maxWraps", maxWraps)

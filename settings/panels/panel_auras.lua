@@ -36,6 +36,7 @@ local function LoadAurasPanel(sWindow)
         {name = L["Raid Indicators"], frame = p_indicator}
     }
 
+    --TODO: per grid
     p_auras:AddOptionText(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "AURAS_IGNORED", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, hidden = GW.Retail})
     p_auras:AddOptionText(L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], { getterSetter = "AURAS_MISSING", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, hidden = GW.Retail})
 
@@ -51,8 +52,20 @@ local function LoadAurasPanel(sWindow)
             GW.ImportantRaidDebuff[spellID] = settingstable[spellID] == nil and true or settingstable[spellID]
         end
     end
-    p_auras:AddOptionDropdown(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], { getterSetter = "RAIDDEBUFFS", callback = function(toSet, id) GW.ImportantRaidDebuff[id] = toSet end, optionsList = raidDebuffKeys, optionNames = raidDebuffValues, tooltipType = "spell", checkbox = true, hidden = GW.Retail})
-    p_auras:AddOptionSlider(L["Set important Dungeon & Raid debuff scale"], nil, { getterSetter = "RAIDDEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, hidden = GW.Retail})
+    p_auras:AddOptionDropdown(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], { getterSetter = "RAIDDEBUFFS", callback = function(toSet, id)
+        GW.ImportantRaidDebuff[id] = toSet
+        -- the AuraContainers hold a securecopy of the includeSpellIDs map — the central
+        -- refresh re-applies every registered container (party, later grids, ...)
+        if GW.RefreshAllAuraContainers then
+            GW.RefreshAllAuraContainers()
+        end
+    end, optionsList = raidDebuffKeys, optionNames = raidDebuffValues, tooltipType = "spell", checkbox = true})
+    p_auras:AddOptionSlider(L["Set important Dungeon & Raid debuff scale"], nil, { getterSetter = "RAIDDEBUFFS_Scale", callback = function()
+        GW.UpdateGridSettings("ALL", false)
+        if GW.RefreshAllAuraContainers then
+            GW.RefreshAllAuraContainers()
+        end
+    end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
     p_auras:AddOptionSlider(L["Set dispellable debuff scale"], nil, { getterSetter = "DISPELL_DEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
     p_auras:AddOptionDropdown(L["Important & dispellable debuff scale priority"], L["If both scales could apply to a debuff, which one should be used"], { getterSetter = "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO", optionsList = {"DISPELL", "IMPORTANT", "OFF"}, optionNames = {L["Dispell > Important"], L["Important > Dispell"], OFF}})
 

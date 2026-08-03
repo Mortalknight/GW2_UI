@@ -784,7 +784,9 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         self:UpdateRaidMarkers()
         if secondaryFrame then secondaryFrame:UpdateRaidMarkers() end
 
-        self.auras:ForceUpdate()
+        if self.auras.ForceUpdate then -- Classic path; the Retail container refreshes via its own event watcher
+            self.auras:ForceUpdate()
+        end
 
         if IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_FOCUS_CHANGED") then
             if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
@@ -917,6 +919,7 @@ function GwUnitFrameMixin:ToggleSettings()
 
     self.auras.smallSize = GW.settings[unit .. "AuraSmallSize"]
     self.auras.bigSize = GW.settings[unit .. "AuraBigSize"]
+    self.auras.ignoredAuraSpellIDs = GW.settings[unit .. "_IGNORED_AURAS"] -- Classic engine; Retail runs via container excludeSpellIDs
 
     self.shortendHealthValues = GW.settings[unit .. "_SHORT_VALUES"]
 
@@ -994,6 +997,55 @@ function GwUnitFrameMixin:ToggleSettings()
     self.auras:SetWidth(self.healthContainer:GetWidth() + 4)
     self.auras.maxWidth = self.healthContainer:GetWidth() + 4
 
+    if GW.Retail and self.aurasContainer then
+        local cfg = self.aurasContainer.gwConfig
+        local debuffCfg = self.debuffsContainer.gwConfig
+        local buffFilter = GW.settings[unit .. "_Buff_Filter"]
+
+        -- growth direction: inverted frames grow to the left, "auras on top" grows upward
+        -- (the auras frame extends DOWNWARD from its anchor, so when growing up the
+        -- container's bottom sits on the auras frame's top edge — like the old engine)
+        local growLeft = self.frameInvert and true or false
+        local growUp = self.auraPositionTop and true or false
+        local side = growLeft and "RIGHT" or "LEFT"
+        local anchorPoint = (growUp and "BOTTOM" or "TOP") .. side
+
+        for _, containerCfg in next, { cfg, debuffCfg } do
+            containerCfg.growLeft = growLeft
+            containerCfg.growUp = growUp
+            containerCfg.anchorPoint = anchorPoint
+            containerCfg.maximumLineSize = self.healthContainer:GetWidth() + 4
+        end
+
+        self.aurasContainer:ClearAllPoints()
+        self.aurasContainer:SetPoint(anchorPoint, self.auras, "TOP" .. side)
+
+        -- the debuff block hangs below the buff container (above it when growing up);
+        -- the buff container sizes itself to its content, so the debuff block follows
+        -- the buff line count automatically. With buffs disabled it takes their place.
+        self.debuffsContainer:ClearAllPoints()
+        if buffFilter == "none" then
+            self.debuffsContainer:SetPoint(anchorPoint, self.auras, "TOP" .. side)
+        elseif growUp then
+            self.debuffsContainer:SetPoint("BOTTOM" .. side, self.aurasContainer, "TOP" .. side, 0, 4)
+        else
+            self.debuffsContainer:SetPoint("TOP" .. side, self.aurasContainer, "BOTTOM" .. side, 0, -4)
+        end
+
+        -- filters/sizes/sort/ignore list (triggers the layout — growth fields above
+        -- have to be in place already)
+        GW.ApplyAuraContainerSettings(self.aurasContainer, self.debuffsContainer, {
+            smallSize = GW.settings[unit .. "AuraSmallSize"],
+            bigSize = GW.settings[unit .. "AuraBigSize"],
+            buffFilter = buffFilter,
+            debuffFilter = GW.settings[unit .. "_Debuff_Filter"],
+            buffAdvanced = GW.settings[unit .. "_Buff_Filter_advanced"],
+            debuffAdvanced = GW.settings[unit .. "_Debuff_Filter_advanced"],
+            sort = GW.settings[unit .. "_AURA_SORT"],
+            excludeSpellIDs = GW.settings[unit .. "_IGNORED_AURAS"],
+        })
+    end
+
     self:OnEvent("FORCE_UPDATE")
 
     --frame fader
@@ -1019,7 +1071,7 @@ function GwUnitFrameMixin:ToggleSettings()
     end
 
     if GwPlayerClassPower then
-        GW.UpdateClasspowerSetting(GwPlayerClassPower)
+        GW.ClassPowers.UpdateSettings(GwPlayerClassPower)
     end
 
     if unit == "target" then
@@ -1043,7 +1095,49 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe.unit = unit
     unitframe.type = "NormalTarget"
 
-    LoadAuras(unitframe)
+    if GW.Retail then
+        -- 12.1: unit frame auras run through the AuraContainer factory; sizes, filters,
+        -- direction and anchoring are applied in ToggleSettings right below.
+        -- The container only refreshes on UNIT_AURA — a target/focus switch changes
+        -- the unit BEHIND the token, so it needs an explicit UpdateAllAuras trigger
+        local refreshEvents = { unit == "target" and "PLAYER_TARGET_CHANGED" or "PLAYER_FOCUS_CHANGED", "PLAYER_ENTERING_WORLD" }
+
+        unitframe.aurasContainer = GW.CreateUnitAuraContainer({
+            name = "Gw" .. unit .. "AuraContainer",
+            unit = unit,
+            parent = unitframe,
+            tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
+            refreshEvents = refreshEvents,
+            elementSpacing = 3,
+            lineSpacing = 4,
+            groups = {
+                -- "own" split via the PLAYER filter token (cast by the player/their pet) —
+                -- the isFromPlayerOrPlayerPet aura data field behaves relative to the UNIT
+                { key = "buffsOwn", filter = "HELPFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 32 },
+                { key = "buffs", filter = "HELPFUL|!PLAYER", size = 20, maxFrameCount = 32 },
+            },
+        })
+        -- Debuffs live in their OWN container anchored below the buff container (which
+        -- sizes itself to its content): the debuff block always starts on its own line
+        -- while own and other debuffs flow together like the buffs do. The flow layout
+        -- cannot express a line break on "whichever debuff group has content first",
+        -- and counting auras from insecure code is blocked while auras are secret.
+        unitframe.debuffsContainer = GW.CreateUnitAuraContainer({
+            name = "Gw" .. unit .. "DebuffContainer",
+            unit = unit,
+            parent = unitframe,
+            tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
+            refreshEvents = refreshEvents,
+            elementSpacing = 3,
+            lineSpacing = 4,
+            groups = {
+                { key = "debuffsOwn", filter = "HARMFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 40, isDebuff = true },
+                { key = "debuffs", filter = "HARMFUL|!PLAYER", size = 20, maxFrameCount = 40, isDebuff = true },
+            },
+        })
+    else
+        LoadAuras(unitframe)
+    end
 
     RegisterMovableFrame(unitframe, unit == "target" and TARGET or FOCUS, unit .. "_pos", "Unitframe", nil, {"default"})
 
@@ -1083,7 +1177,9 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:RegisterUnitEvent("UNIT_TARGET", unit)
     unitframe:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
     unitframe:RegisterUnitEvent("UNIT_MAXPOWER", unit)
-    unitframe:RegisterUnitEvent("UNIT_AURA", unit)
+    if not GW.Retail then -- on Retail the AuraContainer handles aura updates itself
+        unitframe:RegisterUnitEvent("UNIT_AURA", unit)
+    end
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_START", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", unit)

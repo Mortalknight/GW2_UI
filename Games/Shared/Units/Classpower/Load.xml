@@ -1,0 +1,17 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="shared.lua"/>
+    <Script file ="warrior.lua"/>
+    <Script file ="paladin.lua"/>
+    <Script file ="hunter.lua"/>
+    <Script file ="rogue.lua"/>
+    <Script file ="priest.lua"/>
+    <Script file ="deathknight.lua"/>
+    <Script file ="shaman.lua"/>
+    <Script file ="mage.lua"/>
+    <Script file ="warlock.lua"/>
+    <Script file ="monk.lua"/>
+    <Script file ="druid.lua"/>
+    <Script file ="demonhunter.lua"/>
+    <Script file ="evoker.lua"/>
+    <Script file ="classpowers.lua"/>
+</Ui>

@@ -49,8 +49,68 @@ local function GetVisiblePartyFrameCount()
     return GW.settings.PARTY_PLAYER_FRAME and 5 or 4
 end
 
+-- 12.1 Retail: syncs the AuraContainer with the current layout fields on frame.auras
+-- (smallSize, gwButtonsPerRow, gwGrowUp, maxWidth are written by UpdateAuraDisplaySettings
+-- before) and refreshes its data. On Classic the old engine's ForceUpdate runs instead.
+local function UpdatePartyAuraContainer(frame)
+    local container = frame.aurasContainer
+    local element = frame.auras
+    local cfg = container.gwConfig
+    local orientation = GW.settings.PARTY_FRAME_ORIENTATION or "VERTICAL"
+    local size = element.smallSize or GW.settings.PARTY_SHOW_AURA_ICON_SIZE or PARTY_VERTICAL_AURA_SIZE
+
+    -- growth mirrors the old AuraSetPoint: buttons overlap by 1px (stride size-1),
+    -- rows are 2px apart (stride size+2)
+    cfg.elementSpacing = -1
+    cfg.lineSpacing = 2
+    cfg.growLeft = false
+    cfg.excludeSpellIDs = GW.settings.PARTY_IGNORED_AURAS
+    if orientation == "HORIZONTAL" then
+        cfg.growUp = element.gwGrowUp and true or false
+        cfg.anchorPoint = cfg.growUp and "BOTTOMLEFT" or "TOPLEFT"
+        cfg.maximumLineSize = element.maxWidth or element:GetWidth()
+    else
+        cfg.growUp = true
+        cfg.anchorPoint = "BOTTOMLEFT"
+        cfg.maximumLineSize = (element.gwButtonsPerRow or 11) * (size - 1) + 1
+    end
+
+    local showDebuffs = GW.settings.PARTY_SHOW_DEBUFFS
+    local onlyDispellable = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS
+    local showImportant = GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF
+
+    for _, group in next, cfg.groups do
+        group.size = size
+        if group.key == "buffs" then
+            group.maxFrameCount = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
+        elseif group.key == "debuffs" then
+            group.maxFrameCount = showDebuffs and 40 or 0
+            -- "only dispellable" is exactly the RAID_PLAYER_DISPELLABLE filter token
+            group.filter = onlyDispellable and "HARMFUL|RAID_PLAYER_DISPELLABLE" or "HARMFUL"
+        elseif group.key == "importantDebuffs" then
+            -- GW.ImportantRaidDebuff via includeSpellIDs (set at creation); only adds
+            -- debuffs the regular debuff group does not already show — with all debuffs
+            -- visible the group stays off, with "only dispellable" it fills in the
+            -- non-dispellable important ones (disjoint via "!" negation)
+            local active = showImportant and (not showDebuffs or onlyDispellable)
+            group.maxFrameCount = active and 40 or 0
+            group.filter = (showDebuffs and onlyDispellable) and "HARMFUL|!RAID_PLAYER_DISPELLABLE" or "HARMFUL"
+            group.size = GW.RoundInt(size * (GW.settings.RAIDDEBUFFS_Scale or 1))
+        end
+    end
+
+    container:SetUnit(frame.unit)
+    container:ClearAllPoints()
+    container:SetPoint(cfg.anchorPoint, element, cfg.anchorPoint)
+    container:GwUpdateLayout()
+    container:UpdateAllAuras()
+end
+
 local function ForceUpdateAuras(frame)
-    if frame and frame.auras and frame.auras.ForceUpdate then
+    if not frame then return end
+    if GW.Retail and frame.aurasContainer then
+        UpdatePartyAuraContainer(frame)
+    elseif frame.auras and frame.auras.ForceUpdate then
         frame.auras:ForceUpdate()
     end
 end
@@ -74,7 +134,15 @@ end
 local function SyncAuraContainerHeight(frame)
     if not frame or not frame.auras then return 0 end
 
-    local auraHeight = frame.auras.gwContentHeight or 0
+    local auraHeight
+    if GW.Retail and frame.aurasContainer then
+        -- the container sizes itself via its flow layout; the height can be a secret
+        -- value in combat — fall back to a single row then
+        local height = frame.aurasContainer:GetHeight()
+        auraHeight = (not GW.IsSecretValue(height) and height) or 0
+    else
+        auraHeight = frame.auras.gwContentHeight or 0
+    end
     frame.auras:SetHeight(math.max(auraHeight, frame.auras.smallSize or 1))
 
     return auraHeight
@@ -455,7 +523,7 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
 
     if event == "load" then
         self:UpdateFrame()
-        self.auras:ForceUpdate()
+        ForceUpdateAuras(self)
     end
 
     if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_HEAL_PREDICTION" or event == "UNIT_ABSORB_AMOUNT_CHANGED" or event == "UNIT_HEAL_ABSORB_AMOUNT_CHANGED" then
@@ -464,7 +532,7 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
         self:UpdatePowerBar()
     elseif IsIn(event, "UNIT_LEVEL", "GROUP_ROSTER_UPDATE", "UNIT_MODEL_CHANGED", "UNIT_PET") then
         self:UpdateFrame()
-        self.auras:ForceUpdate()
+        ForceUpdateAuras(self)
     elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
         self:UpdateAwayData()
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
@@ -518,9 +586,11 @@ local function UpdatePartyFrames()
         frame.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Friendly:GetRGB())
         frame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
         frame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
+        frame.auras.ignoredAuraSpellIDs = GW.settings.PARTY_IGNORED_AURAS -- Classic engine; Retail runs via container excludeSpellIDs
         frame:OnEvent("load")
         frame.PetFrame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
         frame.PetFrame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
+        frame.PetFrame.auras.ignoredAuraSpellIDs = GW.settings.PARTY_IGNORED_AURAS
         frame.PetFrame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
         frame.PetFrame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
         frame.PetFrame.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Friendly:GetRGB())
@@ -778,7 +848,26 @@ local function CreatePartyFrame(i, isPlayer)
     petFrame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
     petFrame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
     petFrame.auras.hideDuration = true
-    GW.LoadAuras(petFrame)
+    if GW.Retail then
+        -- 12.1: party auras run through the AuraContainer factory; layout/filters
+        -- are applied in UpdatePartyAuraContainer (buffs and debuffs share one flow,
+        -- so no forceNewLine here)
+        petFrame.aurasContainer = GW.CreateUnitAuraContainer({
+            unit = petUnit,
+            parent = petFrame,
+            tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
+            elementSpacing = -1,
+            lineSpacing = 2,
+            onSettingsRefresh = function() UpdatePartyAuraContainer(petFrame) end,
+            groups = {
+                { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 32, hideDuration = true },
+                { key = "debuffs", filter = "HARMFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true },
+                { key = "importantDebuffs", filter = "HARMFUL", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+            },
+        })
+    else
+        GW.LoadAuras(petFrame)
+    end
 
     petFrame:ClearAllPoints()
     petFrame:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 15, -17)
@@ -797,7 +886,9 @@ local function CreatePartyFrame(i, isPlayer)
     end
     petFrame:RegisterUnitEvent("UNIT_PET", registerUnit)
     for _, ev in ipairs({ "UNIT_AURA", "UNIT_LEVEL", "UNIT_PHASE", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_POWER_UPDATE", "UNIT_MAXPOWER", "UNIT_NAME_UPDATE", "UNIT_HEAL_PREDICTION" }) do
-        petFrame:RegisterUnitEvent(ev, petUnit)
+        if ev ~= "UNIT_AURA" or not GW.Retail then -- on Retail the AuraContainer handles aura updates itself
+            petFrame:RegisterUnitEvent(ev, petUnit)
+        end
     end
     petFrame:OnEvent("load")
 
@@ -826,7 +917,23 @@ local function CreatePartyFrame(i, isPlayer)
     frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
     frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
     frame.auras.debuffFilter = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS and "RAID|HARMFUL" or "HARMFUL" --TESTING
-    GW.LoadAuras(frame)
+    if GW.Retail then
+        frame.aurasContainer = GW.CreateUnitAuraContainer({
+            unit = registerUnit,
+            parent = frame,
+            tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
+            elementSpacing = -1,
+            lineSpacing = 2,
+            onSettingsRefresh = function() UpdatePartyAuraContainer(frame) end,
+            groups = {
+                { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 32, hideDuration = true },
+                { key = "debuffs", filter = "HARMFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 40, isDebuff = true, hideDuration = true },
+                { key = "importantDebuffs", filter = "HARMFUL", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+            },
+        })
+    else
+        GW.LoadAuras(frame)
+    end
 
     RegisterStateDriver(frame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format(registerUnit))
     frame:EnableMouse(true)
@@ -843,7 +950,9 @@ local function CreatePartyFrame(i, isPlayer)
         frame:RegisterEvent(ev)
     end
     for _, ev in ipairs({ "UNIT_AURA", "UNIT_LEVEL", "UNIT_PHASE", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_POWER_FREQUENT", "UNIT_MAXPOWER", "UNIT_NAME_UPDATE", "UNIT_MODEL_CHANGED", "UNIT_HEAL_PREDICTION", "UNIT_THREAT_SITUATION_UPDATE", "UNIT_PORTRAIT_UPDATE" }) do
-        frame:RegisterUnitEvent(ev, registerUnit)
+        if ev ~= "UNIT_AURA" or not GW.Retail then -- on Retail the AuraContainer handles aura updates itself
+            frame:RegisterUnitEvent(ev, registerUnit)
+        end
     end
     frame:SetScript("OnEvent", frame.OnEvent)
 
@@ -858,37 +967,8 @@ local function CreatePartyFrame(i, isPlayer)
         frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
     end
 
-    -- create private auras for retail
-    if GW.Retail then
-        frame.privateAuraFrames = {}
-        for k = 1, 6 do
-            local privateAura = CreateFrame("Frame", nil, frame.auras, "GwPrivateAuraTmpl")
-            privateAura:SetPoint("BOTTOMRIGHT", frame.auras, (28 * (k - 1)), 28 * 2)
-            privateAura.auraIndex = k
-            privateAura:SetSize(24, 24)
-            local auraAnchor = {
-                isContainer = false,
-                unitToken = registerUnit,
-                auraIndex = privateAura.auraIndex,
-                parent = privateAura,
-                showCountdownFrame = true,
-                showCountdownNumbers = true,
-                iconInfo = {
-                    iconWidth = 24,
-                    iconHeight = 24,
-                    iconAnchor = {
-                        point = "CENTER",
-                        relativeTo = privateAura.status,
-                        relativePoint = "CENTER",
-                        offsetX = 0,
-                        offsetY = 0,
-                    },
-                },
-            }
-            privateAura.anchorIndex = C_UnitAuras.AddPrivateAuraAnchor(auraAnchor)
-            frame.privateAuraFrames[k] = privateAura
-        end
-    end
+    -- 12.1: private auras no longer need their own anchors —
+    -- the AuraContainer shows them as part of the regular debuffs
 
     frame:OnEvent("load")
 

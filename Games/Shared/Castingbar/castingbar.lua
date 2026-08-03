@@ -178,7 +178,10 @@ function GwCastingBarMixin:Init(unit, showTradeSkills)
     end
     if unit == "pet" then
         self:RegisterEvent("UNIT_PET")
-        self.showCastbar = UnitIsPossessed("pet")
+        -- UnitIsPossessed can return a secret boolean (12.1) — a later boolean test
+        -- on it would throw for tainted code, fall back to hidden then
+        local possessed = UnitIsPossessed("pet")
+        self.showCastbar = not GW.IsSecretValue(possessed) and possessed
     end
 end
 
@@ -483,7 +486,8 @@ end
 function GwCastingBarMixin:OnPetEvent(event, unit, ...)
     if event == "UNIT_PET" then
         if unit == "player" then
-            self.showCastbar = UnitIsPossessed("pet")
+            local possessed = UnitIsPossessed("pet")
+            self.showCastbar = not GW.IsSecretValue(possessed) and possessed
         end
         return
     end

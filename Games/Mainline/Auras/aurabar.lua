@@ -1,15 +1,14 @@
 ---@class GW2
 local GW = select(2, ...)
 local RegisterMovableFrame = GW.RegisterMovableFrame
+local GetDebuffColorCurve = GW.GetDebuffColorCurve
 
--- 12.1: Player-Buff-/Debuff-Leisten auf Basis des neuen AuraContainer-Systems
--- (CustomAuraContainerTemplate, laeuft in Blizzards Secure Environment).
--- Ersetzt auf Retail die SecureAuraHeaderTemplate-basierte aurabar aus Games/Shared/Aura.
--- Der Container uebernimmt: sichere Aura-Zuordnung, Sortierung, Layout, Rechtsklick-Cancel,
--- Tooltips sowie saemtliche Anzeige-Updates (Icon, Dauer, Stacks, Dispel-Farbe) ueber die
--- Setter-API von CustomAuraButtonSharedMixin.
-
-local debuffColorCurve
+-- 12.1: player buff/debuff bars based on the new AuraContainer system
+-- (CustomAuraContainerTemplate, runs in Blizzard's secure environment).
+-- On Retail this replaces the SecureAuraHeaderTemplate-based aurabar from Games/Shared/Aura.
+-- The container takes care of: secure aura assignment, sorting, layout, right-click cancel,
+-- tooltips as well as all display updates (icon, duration, stacks, dispel color) via the
+-- setter API of CustomAuraButtonSharedMixin.
 
 local DIRECTION_TO_POINT = {
     DOWNR = "TOPLEFT",
@@ -62,16 +61,10 @@ local DIRECTION_TO_DEBUFF_ANCHOR = {
     DOWNR_COLUMN = "BOTTOMLEFT",
 }
 
-local SORT_METHOD_MAP = {
-    INDEX = AuraContainerSortMethod.Default,
-    NAME = AuraContainerSortMethod.NameOnly,
-    TIME = AuraContainerSortMethod.ExpirationOnly,
-}
-
--- Zwei feste Gruppen pro Container: "eigene" und "fremde" Auras.
--- Damit bilden wir das alte separateOwn (Seperate -1/0/1) ab, da Gruppen nachtraeglich
--- nicht entfernt werden koennen (ClearAuraGroups ist nicht Teil der Inbound-API):
---  Seperate  1: own vor others |  -1: others vor own |  0: own deaktiviert (maxFrameCount 0), others zeigt alles
+-- Two fixed groups per container: "own" and "others" auras.
+-- This maps the old separateOwn (Seperate -1/0/1), since groups cannot be removed
+-- after the fact (ClearAuraGroups is not part of the Inbound API):
+--  Seperate  1: own before others |  -1: others before own |  0: own disabled (maxFrameCount 0), others shows everything
 local GROUP_OWN = "GwAurasOwn"
 local GROUP_OTHERS = "GwAurasOthers"
 
@@ -81,18 +74,17 @@ local function GetButtonMainAxisSize(db)
     return DIRECTION_IS_COLUMN_LAYOUT[db.GrowDirection] and height or width, width, height
 end
 
--- Groesse + Icon-Zuschnitt pro Button (analog UpdateIcon der alten aurabar).
--- WICHTIG: Das Flow-Layout des Containers nutzt elementWidth/Height nur zum Rechnen
--- (GetElementSize) und setzt nur Ankerpunkte (ApplyElementLayout) — die Framegroesse
--- muessen wir selbst setzen, sonst sind die Buttons 0x0 und unsichtbar
-local function UpdateButtonSizeAndCrop(button, db)
-    local width = db.IconSize
-    local height = db.KeepSizeRatio and width or db.IconHeight
+-- Size + icon crop per button (analogous to UpdateIcon of the old aurabar).
+-- IMPORTANT: The container's flow layout uses elementWidth/Height only for calculations
+-- (GetElementSize) and only sets anchor points (ApplyElementLayout) — we have to set
+-- the frame size ourselves, otherwise the buttons are 0x0 and invisible
+local function ApplyButtonSizeAndCrop(button, width, height, keepSizeRatio)
+    button.gwVisual:SetSize(width, height)
     button:SetSize(width, height)
 
     if not button.status or not button.status.icon then return end
 
-    if db.KeepSizeRatio then
+    if keepSizeRatio then
         button.status.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
     else
         local left, right, top, bottom = GW.CropRatio(width, height)
@@ -100,21 +92,31 @@ local function UpdateButtonSizeAndCrop(button, db)
     end
 end
 
--- Aufbau der GW-Optik pro Aura-Button (ersetzt GwAuraSecureTmpl aus aurabar.xml).
--- Wird einmalig pro Frame vom Container aufgerufen (batched erstellt, Zugriff in Combat
--- kann durch Secret Values eingeschraenkt sein — deshalb hier NUR Regionen bauen und
--- an die Mixin-Setter uebergeben, keine eigenen Aura-Daten lesen!)
+local function UpdateButtonSizeAndCrop(button, db)
+    local width = db.IconSize
+    local height = db.KeepSizeRatio and width or db.IconHeight
+    -- best-effort: while auras are secret the access restriction denies tainted
+    -- access to the whole button subtree (incl. our own child frames) — failed
+    -- buttons keep their previous size until the next update outside that state
+    pcall(ApplyButtonSizeAndCrop, button, width, height, db.KeepSizeRatio)
+end
+
+-- Builds the GW look per aura button (replaces GwAuraSecureTmpl from aurabar.xml).
+-- Called once per frame by the container (created in batches, access in combat
+-- can be restricted by secret values — therefore ONLY build regions here and
+-- hand them to the mixin setters, never read aura data yourself!)
 local function InitializeAuraButton(button, header, isDebuff, isEnchant)
-    -- Der Button selbst ist forbidden (HookScript/Animationen darauf sind durch
-    -- Secret Aspects gesperrt) — deshalb haengt die gesamte GW-Optik an einem
-    -- eigenen Wrapper-Frame: dessen OnShow feuert mit, wenn der Container den
-    -- Button einblendet, und Animationen darauf sind erlaubt
+    -- The button itself is forbidden (HookScript/animations on it are blocked
+    -- by secret aspects) — therefore the entire GW look is attached to a
+    -- separate wrapper frame. It is anchored by CENTER and explicitly sized:
+    -- the button only accepts SetSize during initializeFrame (access restrictions
+    -- are applied afterwards), later size changes are carried by our own frame
     local visual = CreateFrame("Frame", nil, button)
-    visual:SetAllPoints(button)
+    visual:SetPoint("CENTER", button, "CENTER")
     visual:SetFrameLevel(button:GetFrameLevel() + 1)
     button.gwVisual = visual
 
-    -- Rahmen
+    -- border
     local border = CreateFrame("Frame", nil, visual)
     border:SetFrameLevel(visual:GetFrameLevel())
     border:SetPoint("TOPLEFT", visual, "TOPLEFT", 2, -2)
@@ -132,9 +134,9 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant)
     border.inner:SetPoint("BOTTOMRIGHT", border, "BOTTOMRIGHT", -1, 1)
     button.border = border
 
-    -- Cooldown-Swipe: sichtbar ist nur der 2px-Ring zwischen Icon (Inset 4) und
-    -- Cooldown (Inset 2) — dafuer braucht der Swipe die deckend weisse Textur
-    -- (entspricht dem SwipeTexture-Color-Block aus dem alten GwAuraSecureTmpl)
+    -- Cooldown swipe: only the 2px ring between icon (inset 4) and
+    -- cooldown (inset 2) is visible — the swipe needs the opaque white texture for that
+    -- (corresponds to the SwipeTexture color block from the old GwAuraSecureTmpl)
     local cooldown = CreateFrame("Cooldown", nil, visual, "CooldownFrameTemplate")
     cooldown:SetFrameLevel(visual:GetFrameLevel() + 1)
     cooldown:SetPoint("TOPLEFT", visual, "TOPLEFT", 2, -2)
@@ -143,11 +145,11 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant)
     cooldown:SetDrawEdge(false)
     cooldown:SetDrawSwipe(true)
     cooldown:SetReverse(false)
-    cooldown:SetHideCountdownNumbers(true) -- Dauer-Text kommt als eigener FontString unters Icon
+    cooldown:SetHideCountdownNumbers(true) -- duration text comes as its own FontString below the icon
     cooldown:SetSwipeTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png", 1, 1, 1, 1)
     button.cooldown = cooldown
 
-    -- Icon + Overlay + Texte
+    -- icon + overlay + texts
     local status = CreateFrame("Frame", nil, visual)
     status:SetFrameLevel(visual:GetFrameLevel() + 2)
     status:SetPoint("TOPLEFT", visual, "TOPLEFT", 4, -4)
@@ -174,45 +176,47 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant)
     status.duration:SetPoint("TOP", status, "BOTTOM", 0, -6)
     status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW", -1)
 
-    -- Regionen beim Container registrieren — ab hier haelt Blizzard alles aktuell
+    -- register the regions with the container — from here on Blizzard keeps everything up to date
     button:SetIcon(status.icon)
     button:SetDurationCooldown(cooldown)
-    button:SetDurationText(status.duration)
+    -- one-letter units without whitespace ("17s") — deDE/ruRU keep the whitespace
+    -- by default, which makes wide values overlap the neighboring buttons
+    button:SetDurationText(status.duration, { textFormatter = GW.GetAuraDurationTextFormatter() })
     button:SetApplicationCount(status.stacks)
 
-    -- Rechtsklick-Cancel (macht der Container secure selbst — auch fuer Enchants)
-    -- und Tooltip-Anker wie im alten System
+    -- right-click cancel (the container does this securely itself — also for enchants)
+    -- and tooltip anchor as in the old system
     button:SetCancelAuraButtons("RightButtonUp, RightButtonDown")
     button:SetTooltipAnchorPoint("ANCHOR_BOTTOMLEFT", -5, -5)
 
     if isEnchant then
-        -- Waffen-Verzauberungen bekommen wie bisher den Curse-farbenen Rahmen
+        -- weapon enchants get the Curse-colored border as before
         border.inner:SetVertexColor(GW.Colors.DebuffColors.Curse:GetRGB())
     elseif isDebuff then
-        -- Dispel-Typ-Faerbung uebernimmt der Container: PreserveAsset behaelt unsere
-        -- Textur und setzt nur die VertexColor anhand der Farbkurve; showWithoutDispelType
-        -- sorgt dafuer, dass auch Debuffs ohne Dispel-Typ gefaerbt werden (Kurve: None = 0)
+        -- The container takes care of the dispel type coloring: PreserveAsset keeps our
+        -- texture and only sets the VertexColor based on the color curve; showWithoutDispelType
+        -- ensures that debuffs without a dispel type get colored as well (curve: None = 0)
         button:AddDispelTypeTexture(border.inner, {
             style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
             showWhenHarmful = true,
             showWithoutDispelType = true,
-            customDispelColorCurve = debuffColorCurve,
+            customDispelColorCurve = GetDebuffColorCurve(),
         })
     else
         border.inner:SetVertexColor(GW.Colors.Fallback:GetRGB())
     end
 
-    -- HINWEIS: Die alte Zoom-In-Animation fuer neue Auras (NewAuraAnimation) ist mit dem
-    -- Container-System nicht umsetzbar: Die Shown-Secrecy des AuraButton-Intrinsics erfasst
-    -- die gesamte Kind-Hierarchie — OnShow-Handler (auch auf eigenen Wrapper-Frames) werden
-    -- mit "blocked by secret aspects" abgelehnt, damit der Zeitpunkt neuer Auras nicht an
-    -- Addon-Code leakt. Falls Blizzard einen Anim-Hook nachliefert, hier wieder einbauen.
+    -- NOTE: The old zoom-in animation for new auras (NewAuraAnimation) is not feasible with
+    -- the container system: the shown secrecy of the AuraButton intrinsic covers the
+    -- entire child hierarchy — OnShow handlers (even on our own wrapper frames) are
+    -- rejected with "blocked by secret aspects", so that the timing of new auras does not
+    -- leak to addon code. If Blizzard ships an animation hook later, re-add it here.
 
     button.header = header
     button.gwInit = true
 
-    -- Button am Container cachen, damit UpdateAuraHeader Settings-Aenderungen
-    -- (z. B. den Icon-Zuschnitt) auf alle vorhandenen Buttons anwenden kann
+    -- Cache the button on the container so that UpdateAuraHeader can apply
+    -- settings changes (e.g. the icon crop) to all existing buttons
     tinsert(header.gwButtons, button)
     UpdateButtonSizeAndCrop(button, GW.settings[header.setting])
 end
@@ -235,37 +239,50 @@ local function UpdateAuraHeader(header)
     local mainAxisSpacing = isColumnLayout and verticalSpacing or horizontalSpacing
     local crossAxisSpacing = isColumnLayout and horizontalSpacing or verticalSpacing
 
-    -- Flow-Layout des Containers
+    -- flow layout of the container
     header:SetFlowLayoutAxis(isColumnLayout and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal)
     header:SetFlowLayoutAnchorPoint(DIRECTION_TO_POINT[grow_dir])
     header:SetFlowLayoutGrowthDirection(
         DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] > 0 and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left,
         DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] > 0 and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
     )
-    -- wrapAfter (Anzahl) -> maximale Zeilenlaenge in Pixeln
+    -- wrapAfter (count) -> maximum line length in pixels
     header:SetFlowLayoutMaximumLineSize(wrapAfter * (mainAxisSize + mainAxisSpacing))
 
-    -- Sortierung & Gruppen
-    local sortMethod = SORT_METHOD_MAP[db.SortMethod] or AuraContainerSortMethod.Default
-    local sortDirection = db.SortDir == "-" and AuraContainerSortDirection.Reverse or AuraContainerSortDirection.Normal
+    -- sorting & groups (shared sort presets, see GW.GetAuraSortPreset)
+    local sort = GW.GetAuraSortPreset(db.Sort)
+    local sortMethod, sortDirection = sort.method, sort.direction
     local separate = db.Seperate or 0
     local maxFrames = wrapAfter * maxWraps
 
     local groupLayout = {
         elementSpacing = mainAxisSpacing,
         lineSpacing = crossAxisSpacing,
+        -- spacing at group boundaries (own -> others transition) uses the group values
+        groupSpacing = mainAxisSpacing,
+        groupLineSpacing = crossAxisSpacing,
         elementWidth = width,
         elementHeight = height,
     }
 
+    -- shared ignore list for both player bars (PLAYER_IGNORED_AURAS)
+    local candidateFilters = {}
+    if GW.settings.PLAYER_IGNORED_AURAS and next(GW.settings.PLAYER_IGNORED_AURAS) then
+        candidateFilters.excludeSpellIDs = GW.settings.PLAYER_IGNORED_AURAS
+    end
+    header:SetAuraGroupCandidateFilters(GROUP_OWN, candidateFilters)
+    header:SetAuraGroupCandidateFilters(GROUP_OTHERS, candidateFilters)
+
+    -- own/others split via the PLAYER filter token (cast by the player/their pet) —
+    -- the isFromPlayerOrPlayerPet aura data field is unreliable for this
     if separate == 0 then
-        -- keine Trennung: "others" zeigt alles, "own" wird stillgelegt
-        header:SetAuraGroupCandidateFilters(GROUP_OTHERS, {})
+        -- no separation: "others" shows everything, "own" is muted
+        header:SetAuraGroupFilterString(GROUP_OTHERS, header.filter)
         header:SetAuraGroupMaxFrameCount(GROUP_OWN, 0)
         header:SetAuraGroupMaxFrameCount(GROUP_OTHERS, maxFrames)
     else
-        header:SetAuraGroupCandidateFilters(GROUP_OWN, { isFromPlayerOrPlayerPet = true })
-        header:SetAuraGroupCandidateFilters(GROUP_OTHERS, { isFromPlayerOrPlayerPet = false })
+        header:SetAuraGroupFilterString(GROUP_OWN, header.filter .. "|PLAYER")
+        header:SetAuraGroupFilterString(GROUP_OTHERS, header.filter .. "|!PLAYER")
         header:SetAuraGroupMaxFrameCount(GROUP_OWN, maxFrames)
         header:SetAuraGroupMaxFrameCount(GROUP_OTHERS, maxFrames)
     end
@@ -280,22 +297,22 @@ local function UpdateAuraHeader(header)
     header:SetAuraGroupLayout(GROUP_OWN, ownLayout)
     header:SetAuraGroupLayout(GROUP_OTHERS, othersLayout)
 
-    -- Groesse + Icon-Zuschnitt auf allen gecachten Buttons aktualisieren
+    -- update size + icon crop on all cached buttons
     for _, button in next, header.gwButtons do
         UpdateButtonSizeAndCrop(button, db)
     end
 
-    -- isMoved auf den Layout-Proxy spiegeln (der Secure-Layout-Manager liest es dort)
+    -- mirror isMoved onto the layout proxy (the secure layout manager reads it there)
     if header.gwLayoutProxy then
         header.gwLayoutProxy:SetAttribute("isMoved", header.isMoved and true or false)
     end
 
-    -- Containergroesse (fuer Mover-Rahmen), analog zu minWidth/minHeight der alten Header
+    -- container size (for the mover frame), analogous to minWidth/minHeight of the old headers
     local minWidth = ((wrapAfter == 1 and 0 or horizontalSpacing) + width) * (isColumnLayout and maxWraps or wrapAfter)
     local minHeight = ((maxWraps == 1 and 0 or verticalSpacing) + height) * (isColumnLayout and wrapAfter or maxWraps)
     header:SetSize(math.max(minWidth, width + 1), math.max(minHeight, height + 1))
 
-    -- Verankerung: Buffs am Mover, Debuffs relativ zu den Buffs (solange nicht separat verschoben)
+    -- anchoring: buffs to the mover, debuffs relative to the buffs (as long as not moved separately)
     if header.filter == "HELPFUL" then
         header:ClearAllPoints()
         header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
@@ -323,7 +340,7 @@ local function newContainer(filter)
     h.setting = filter == "HELPFUL" and "PlayerBuffs" or "PlayerDebuffs"
     h.name = name
 
-    -- feste Gruppen (siehe Kommentar oben) — Optionen werden in UpdateAuraHeader gesetzt
+    -- fixed groups (see comment above) — options are set in UpdateAuraHeader
     h:AddAuraGroup(GROUP_OWN, filter, {
         initializeFrame = function(button) InitializeAuraButton(button, h, isDebuff, false) end,
     })
@@ -332,7 +349,7 @@ local function newContainer(filter)
     })
 
     if filter == "HELPFUL" then
-        -- Waffen-Verzauberungen (ersetzt includeWeapons + GetWeaponEnchantInfo-Polling)
+        -- weapon enchants (replaces includeWeapons + GetWeaponEnchantInfo polling)
         for _, slot in next, { AuraContainerItemEnchantmentSlot.MainHand, AuraContainerItemEnchantmentSlot.OffHand } do
             h:AddItemEnchantment(slot, {
                 initializeFrame = function(button) InitializeAuraButton(button, h, false, true) end,
@@ -345,10 +362,10 @@ local function newContainer(filter)
         RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", "Blizzard,Aura", {316, 60}, {"default", "scaleable"}, true)
     end
 
-    -- Der AuraContainer ist ein "forbidden frame": SecureHandler-FrameRefs (Layout-Manager)
-    -- sind darauf nicht erlaubt. Ein protected Proxy vertritt ihn im Secure-Layout —
-    -- der Snippet togglet nur Show/Hide und liest das isMoved-Attribut am registrierten Frame,
-    -- verschoben wird ohnehin nur der Mover, an dem der Container haengt.
+    -- The AuraContainer is a "forbidden frame": SecureHandler frame refs (layout manager)
+    -- are not allowed on it. A protected proxy stands in for it in the secure layout —
+    -- the snippet only toggles Show/Hide and reads the isMoved attribute on the registered frame,
+    -- only the mover the container is attached to gets moved anyway.
     local proxy = CreateFrame("Frame", nil, UIParent, "SecureFrameTemplate")
     proxy:SetSize(1, 1)
     proxy:SetPoint("BOTTOM")
@@ -358,12 +375,12 @@ local function newContainer(filter)
     proxy:HookScript("OnHide", function() h:Hide() end)
     h.gwLayoutProxy = proxy
 
-    -- Fahrzeug-Wechsel: der Container ist unit-basiert, das alte Attribute-Driver-Konstrukt
-    -- ersetzt ein einfacher (insecurer) Event-Switch
+    -- Vehicle switching: the container is unit-based, a simple (insecure) event switch
+    -- replaces the old attribute driver construct
     h:SetUnit("player")
-    -- WICHTIG: Container sind per Default disabled — ohne SetEnabled(true) registriert
-    -- der Container kein UNIT_AURA und parst nichts (ShouldRegisterForDynamicEvents
-    -- verlangt IsVisible() UND IsEnabled())
+    -- IMPORTANT: containers are disabled by default — without SetEnabled(true) the
+    -- container does not register UNIT_AURA and parses nothing (ShouldRegisterForDynamicEvents
+    -- requires IsVisible() AND IsEnabled())
     h:SetEnabled(true)
     local unitWatcher = CreateFrame("Frame")
     unitWatcher:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
@@ -373,7 +390,7 @@ local function newContainer(filter)
         h:SetUnit(UnitHasVehicleUI("player") and "vehicle" or "player")
     end)
 
-    -- waehrend Haustierkaempfen ausblenden (ersetzt den SecureHandler-StateDriver)
+    -- hide during pet battles (replaces the SecureHandler state driver)
     local petBattleWatcher = CreateFrame("Frame")
     petBattleWatcher:RegisterEvent("PET_BATTLE_OPENING_START")
     petBattleWatcher:RegisterEvent("PET_BATTLE_CLOSE")
@@ -382,6 +399,7 @@ local function newContainer(filter)
     end)
 
     UpdateAuraHeader(h)
+    GW.RegisterAuraContainer(h, UpdateAuraHeader)
 
     return h
 end
@@ -414,35 +432,20 @@ local function loadAuras(lm)
         PetBattleFrame:SetFrameLevel(hb:GetFrameLevel() + 5)
     end
 
-    -- Private Auras gibt es in 12.1 nicht mehr als eigenes System —
-    -- sie laufen jetzt als normale Debuffs durch den Container
+    -- Private auras no longer exist as a separate system in 12.1 —
+    -- they now run through the container as normal debuffs
 end
 
 local function LoadPlayerAuras(lm)
-    -- Blizzard-Leisten ausblenden
+    -- hide the Blizzard bars
     BuffFrame:GwKill()
     if DebuffFrame then
         DebuffFrame:GwKill()
     end
 
-    -- Farbkurve fuer die Dispel-Faerbung der Debuff-Rahmen
-    if C_CurveUtil then
-        debuffColorCurve = C_CurveUtil.CreateColorCurve()
-        debuffColorCurve:SetType(Enum.LuaCurveType.Step)
-        for _, dispelIndex in next, GW.Enum.DispelType do
-            if GW.Colors.DebuffColors[dispelIndex] then
-                debuffColorCurve:AddPoint(dispelIndex, GW.Colors.DebuffColors[dispelIndex])
-            end
-        end
-    end
-
-    -- Der Container nutzt ein eigenes (secure) Tooltip — Optik auf GW-Style umstellen,
-    -- aber nur wenn der GW-Tooltip-Skin ueberhaupt aktiv ist
-    if GW.settings.TOOLTIPS_ENABLED then
-        AuraContainerInbound.SetTooltipBackdrop({
-            backdropInfo = GW.BackdropTemplates.Default,
-        })
-    end
+    -- The container uses its own (secure) tooltip — switch the look to GW style
+    -- (once, gated on TOOLTIPS_ENABLED — same place as the factory containers)
+    GW.EnsureAuraTooltipStyle()
 
     loadAuras(lm)
 end

@@ -34,6 +34,7 @@ local optionTypes = {
     slider      = {template = "GwOptionBoxSliderTmpl", frame = "Button", newLine = true},
     dropdown    = {template = "GwOptionBoxDropDownTmpl", frame = "Button", newLine = true},
     list        = {template = "GwOptionBoxListTmpl", frame = "Button", newLine = true},
+    spellList   = {template = "GwOptionBoxSpellListTmpl", frame = "Button", newLine = true},
     text        = {template = "GwOptionBoxTextTmpl", frame = "Button", newLine = true},
     button      = {template = "GwButtonTextTmpl", frame = "Button", newLine = true},
     colorPicker = {template = "GwOptionBoxColorPickerTmpl", frame = "Button", newLine = true},
@@ -78,6 +79,15 @@ local function GetOptionRowExtent(opt)
         end
 
         return math.max(DEFAULT_ROW_EXTENT, ROW_PAD_Y * 2 + (entryCount * entryHeight))
+    end
+
+    if opt and opt.optionType == "spellList" then
+        -- entry count is dynamic (user managed) — reserve a fixed window of
+        -- maxVisibleRows entries plus the input row, overflow scrolls inside
+        local entryHeight = opt.entryHeight or 24
+        local visibleRows = tonumber(opt.maxVisibleRows) or 5
+
+        return math.max(DEFAULT_ROW_EXTENT, ROW_PAD_Y * 2 + 30 + (visibleRows * entryHeight))
     end
 
     return DEFAULT_ROW_EXTENT

@@ -161,6 +161,25 @@ local function DatabaseValueMigration()
         GW.settings.MINIMAP_SCALE = nil
     end
 
+    -- migration of the player aura sorting: SortMethod + SortDir were combined into
+    -- a single Sort preset (shared values with the unit frame aura sorting)
+    if not GW.settings.playerAuraSortMigrationDone then
+        for _, barKey in next, { "PlayerBuffs", "PlayerDebuffs" } do
+            local db = GW.settings[barKey]
+            if db then
+                if db.SortMethod == "TIME" then
+                    db.Sort = db.SortDir == "-" and "EXPIRATION_DESC" or "EXPIRATION_ASC"
+                elseif db.SortMethod == "NAME" then
+                    db.Sort = db.SortDir == "-" and "NAME_DESC" or "NAME_ASC"
+                end
+                db.SortMethod = nil
+                db.SortDir = nil
+            end
+        end
+
+        GW.settings.playerAuraSortMigrationDone = true
+    end
+
     -- migration for chat timestap
     if not GW.settings.chatTimeStampMigrationDone then
         local timestampFormat = GetChatTimestampFormat()

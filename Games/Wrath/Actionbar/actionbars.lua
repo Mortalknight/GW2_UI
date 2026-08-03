@@ -408,27 +408,42 @@ local function updateMacroName(self)
 end
 GW.updateMacroName = updateMacroName
 
-local function hideBackdrop(self)
-    self.gwBackdrop:Hide()
-end
-
-
-local function showBackdrop(self)
-    self.gwBackdrop:Show()
-end
-
-
 local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
+    -- Blizzards UpdateHotkeys re-anchors and re-sizes the hotkey string on every
+    -- call (e.g. when a gamepad like a Razer Tartarus gets detected and the
+    -- bindings refresh) — remember the flavor and re-apply our position and the
+    -- shortened text right after
+    button.gwHotKeyIsStance, button.gwHotKeyIsPet, button.gwHotKeyIsMainBar = isStanceButton, isPetButton, isMainBar
+    if not button.gwHotKeyHooked and button.UpdateHotkeys then
+        button.gwHotKeyHooked = true
+        hooksecurefunc(button, "UpdateHotkeys", function(btn)
+            FixHotKeyPosition(btn, btn.gwHotKeyIsStance, btn.gwHotKeyIsPet, btn.gwHotKeyIsMainBar)
+            updateHotkey(btn)
+        end)
+    end
+
     button.HotKey:ClearAllPoints()
     if isPetButton or isStanceButton then
+        -- auto size: the template gives the string a fixed width, longer bindings
+        -- (e.g. "C-!") would ellipsize — CENTER anchoring keeps the position stable
+        button.HotKey:SetSize(0, 0)
         button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 5)
+        button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
+        button.HotKey:SetTextColor(1, 1, 1)
     elseif isMainBar then
+        -- width comes from the anchors (full button, nothing ellipsizes); the height
+        -- stays FIXED so the rect center — which the hotkey circle backdrop follows —
+        -- sits at the buttons bottom edge no matter if text is set
+        button.HotKey:SetHeight(1)
         button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
         button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
         button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
         button.HotKey:SetTextColor(1, 1, 1)
     else
+        button.HotKey:SetSize(0, 0)
         button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
+        button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
+        button.HotKey:SetTextColor(1, 1, 1)
     end
     button.HotKey:SetJustifyH("CENTER")
 end
@@ -741,10 +756,7 @@ local function updateMainBar()
             updateActionbarBorders(btn)
             updateHotkey(btn)
 
-            hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
-            hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
-            hotkey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
-            hotkey:SetTextColor(1, 1, 1)
+            FixHotKeyPosition(btn, nil, nil, true)
             btn.changedColor = false
             btn.rangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR
 

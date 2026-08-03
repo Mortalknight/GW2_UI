@@ -1,29 +1,12 @@
 ---@class GW2
 local GW = select(2, ...)
 
+local TEXTURE_PATH = "Interface/AddOns/GW2_UI/textures/hud/"
+
 local actionHudPlayerAuras = {}
 local actionHudPlayerPetAuras = {}
 
 local curveOne, curveTwo
-
-local function registerActionHudAura(auraID, left, right, unit, modelFX)
-    if unit == "player" then
-        actionHudPlayerAuras[auraID] = {}
-        actionHudPlayerAuras[auraID].auraID = auraID
-        actionHudPlayerAuras[auraID].left = left
-        actionHudPlayerAuras[auraID].right = right
-        actionHudPlayerAuras[auraID].unit = unit
-        actionHudPlayerAuras[auraID].modelFX = modelFX
-    elseif unit == "pet" then
-        actionHudPlayerPetAuras[auraID] = {}
-        actionHudPlayerPetAuras[auraID].auraID = auraID
-        actionHudPlayerPetAuras[auraID].left = left
-        actionHudPlayerPetAuras[auraID].right = right
-        actionHudPlayerPetAuras[auraID].unit = unit
-        actionHudPlayerPetAuras[auraID].modelFX = modelFX
-    end
-end
-
 
 -- For creates a model effect somewhere on the hud with a trigger buff
 local function createModelFx(self, modelFX)
@@ -61,39 +44,66 @@ end
 
 local currentTexture = nil
 
+-- Retail: the aura HUD art containers only apply the settings here — the combat
+-- gate itself is a secure visibility state driver on their parent frame. It MUST
+-- be secure: showing a container from addon code during combat would run its
+-- refresh tainted, and tainted aura access is blocked while auras are secret.
+local function UpdateAuraArtVisibility(self)
+    if not self.gwAuraArtContainers then return end
+
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("GwHudAuraArtVisibility", UpdateAuraArtVisibility, {self})
+        return
+    end
+
+    local show = GW.settings.HUD_BACKGROUND and GW.settings.HUD_SPELL_SWAP
+    for _, container in next, self.gwAuraArtContainers do
+        container:SetShown(show)
+    end
+end
+
+local function GetDruidFormArt()
+    if GW.myClassID ~= GW.Enum.ClassIndex.Druid then return end
+
+    local form = GetShapeshiftFormID()
+    if form == BEAR_FORM then
+        return TEXTURE_PATH .. "leftshadow_bear.png", TEXTURE_PATH .. "rightshadow_bear.png"
+    elseif form == CAT_FORM then
+        return TEXTURE_PATH .. "leftshadow_cat.png", TEXTURE_PATH .. "rightshadow_cat.png"
+    end
+end
+
 local function selectBg(self)
     if not GW.settings.HUD_BACKGROUND or not GW.settings.HUD_SPELL_SWAP then
         return
     end
 
-    local right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow.png"
-    local left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow.png"
+    local right = TEXTURE_PATH .. "rightshadow.png"
+    local left = TEXTURE_PATH .. "leftshadow.png"
     local modelFX = nil
 
     if UnitIsDeadOrGhost("player") then
-        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_dead.png"
-        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_dead.png"
+        right = TEXTURE_PATH .. "rightshadow_dead.png"
+        left = TEXTURE_PATH .. "leftshadow_dead.png"
     end
 
-    if GW.myClassID == 11 then --Druid
-        local form = GetShapeshiftFormID()
-        if form == BEAR_FORM then
-            right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_bear.png"
-            left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_bear.png"
-        elseif form == CAT_FORM then
-            right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_cat.png"
-            left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_cat.png"
-        end
+    local formLeft, formRight = GetDruidFormArt()
+    if formLeft then
+        left, right = formLeft, formRight
     end
 
     if GW.Libs.GW2Lib:IsPlayerSkyRiding() then
-        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow-dragon.png"
-        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow-dragon.png"
+        right = TEXTURE_PATH .. "rightshadow-dragon.png"
+        left = TEXTURE_PATH .. "leftshadow-dragon.png"
     end
 
     if UnitAffectingCombat("player") then
-        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadowcombat.png"
-        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadowcombat.png"
+        right = TEXTURE_PATH .. "rightshadowcombat.png"
+        left = TEXTURE_PATH .. "leftshadowcombat.png"
+
+        if formLeft then
+            left, right = formLeft, formRight
+        end
 
         local auraFound = false
         if not GW.Retail then
@@ -204,148 +214,73 @@ local function combatHealthStateRetail(self)
     end
 end
 
-registerActionHudAura(
-    5487,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_bear.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_bear.png",
-    "player"
-)
+-- Central catalog of all aura driven HUD arts, gated by class. Only the entries of
+-- the logged in class are registered: the classic combat scan in selectBg then only
+-- checks auras the player can actually have, and the retail path creates no tracker
+-- containers for spells of other classes.
+local ACTION_HUD_AURAS = {
+    -- DRUID (bear/cat form art is NOT aura driven — selectBg reads GetShapeshiftFormID
+    -- directly, which needs no registration and works in combat on every client)
+    { class = GW.Enum.ClassIndex.Druid, auraID = 48518, unit = "player", -- Lunar Eclipse
+        left = TEXTURE_PATH .. "left_lunareclipse.png", right = TEXTURE_PATH .. "right_lunareclipse.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 100 },
+            modelID = 1513212,
+            modelPosition = { x = -2.5, y = 0, z = -3.4, rotation = 0 },
+        } },
+    { class = GW.Enum.ClassIndex.Druid, auraID = 48517, unit = "player", -- Solar Eclipse
+        left = TEXTURE_PATH .. "left_solareclips.png", right = TEXTURE_PATH .. "right_solareclips.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 100 },
+            modelID = 530798,
+            modelPosition = { x = 2, y = 0, z = -0.1, rotation = 0 },
+        } },
 
-registerActionHudAura(
-    768,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_cat.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_cat.png",
-    "player"
-)
+    -- PALADIN
+    { class = GW.Enum.ClassIndex.Paladin, auraID = 31842, unit = "player", -- Avenging Wrath (Holy)
+        left = TEXTURE_PATH .. "leftshadow_holy.png", right = TEXTURE_PATH .. "rightshadow_holy.png" },
+    { class = GW.Enum.ClassIndex.Paladin, auraID = 31884, unit = "player", -- Avenging Wrath
+        left = TEXTURE_PATH .. "leftshadow_holy.png", right = TEXTURE_PATH .. "rightshadow_holy.png" },
 
---retail
-registerActionHudAura(
-    31842,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_holy.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_holy.png",
-    "player"
-)
-registerActionHudAura(
-    31884,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_holy.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_holy.png",
-    "player"
-)
-registerActionHudAura(
-    51271,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_frost.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_frost.png",
-    "player"
-)
-registerActionHudAura(
-    162264,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_metamorph.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_metamorph.png",
-    "player"
-)
-registerActionHudAura(
-    187827,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_metamorph.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_metamorph.png",
-    "player"
-)
-registerActionHudAura(
-    215785,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_fire.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_fire.png",
-    "player"
-)
-registerActionHudAura(
-    77762,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_fire.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_fire.png",
-    "player"
-)
-registerActionHudAura(
-    201846,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_storm.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_storm.png",
-    "player"
-)
-registerActionHudAura(
-    63560,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_unholy.png",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_unholy.png",
-    "pet"
-)
-registerActionHudAura(
-    375087,
-    "Interface/AddOns/GW2_UI/textures/hud/evokerdpsleft.png",
-    "Interface/AddOns/GW2_UI/textures/hud/evokerdpsright.png",
-    "player", {
-        anchor = {
-            point = "BOTTOM",
-            relPoint = "BOTTOM",
-            target = "Gw2_HudBackgroud",
-            x = 0,
-            y = 50
+    -- DEATH KNIGHT
+    { class = GW.Enum.ClassIndex.Deathknight, auraID = 51271, unit = "player", -- Pillar of Frost
+        left = TEXTURE_PATH .. "leftshadow_frost.png", right = TEXTURE_PATH .. "rightshadow_frost.png" },
+    { class = GW.Enum.ClassIndex.Deathknight, auraID = 63560, unit = "pet", -- Dark Transformation
+        left = TEXTURE_PATH .. "leftshadow_unholy.png", right = TEXTURE_PATH .. "rightshadow_unholy.png" },
 
-        },
-        modelID = 4697927,
+    -- DEMON HUNTER
+    { class = GW.Enum.ClassIndex.Demonhunter, auraID = 162264, unit = "player", -- Metamorphosis (Havoc)
+        left = TEXTURE_PATH .. "leftshadow_metamorph.png", right = TEXTURE_PATH .. "rightshadow_metamorph.png" },
+    { class = GW.Enum.ClassIndex.Demonhunter, auraID = 187827, unit = "player", -- Metamorphosis (Vengeance)
+        left = TEXTURE_PATH .. "leftshadow_metamorph.png", right = TEXTURE_PATH .. "rightshadow_metamorph.png" },
 
-        modelPosition =
-        { x = 2, y = 0, z = 0, rotation = 0 }
-    }
-)
--- Lunar Eclipse
-registerActionHudAura(
-    48518,
-    "Interface/AddOns/GW2_UI/textures/hud/left_lunareclipse.png",
-    "Interface/AddOns/GW2_UI/textures/hud/right_lunareclipse.png",
-    "player",
-    {
-        anchor = {
-            point = "BOTTOM",
-            relPoint = "BOTTOM",
-            target = "Gw2_HudBackgroud",
-            x = 0,
-            y = 100
+    -- SHAMAN
+    { class = GW.Enum.ClassIndex.Shaman, auraID = 215785, unit = "player", -- Hot Hand
+        left = TEXTURE_PATH .. "leftshadow_shaman_fire.png", right = TEXTURE_PATH .. "rightshadow_shaman_fire.png" },
+    { class = GW.Enum.ClassIndex.Shaman, auraID = 77762, unit = "player", -- Lava Surge
+        left = TEXTURE_PATH .. "leftshadow_shaman_fire.png", right = TEXTURE_PATH .. "rightshadow_shaman_fire.png" },
+    { class = GW.Enum.ClassIndex.Shaman, auraID = 201846, unit = "player", -- Stormbringer
+        left = TEXTURE_PATH .. "leftshadow_shaman_storm.png", right = TEXTURE_PATH .. "rightshadow_shaman_storm.png" },
 
-        },
-        modelID = 1513212,
+    -- EVOKER
+    { class = GW.Enum.ClassIndex.Evoker, auraID = 375087, unit = "player", -- Dragonrage
+        left = TEXTURE_PATH .. "evokerdpsleft.png", right = TEXTURE_PATH .. "evokerdpsright.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 50 },
+            modelID = 4697927,
+            modelPosition = { x = 2, y = 0, z = 0, rotation = 0 },
+        } },
+}
 
-        modelPosition =
-        {
-            x = -2.5,
-            y = 0,
-            z = -3.4,
-            rotation = 0
-        }
-    }
-)
---Solar Eclipse
-registerActionHudAura(
-    48517,
-    "Interface/AddOns/GW2_UI/textures/hud/left_solareclips.png",
-    "Interface/AddOns/GW2_UI/textures/hud/right_solareclips.png",
-    "player",
-    {
-        anchor = {
-            point = "BOTTOM",
-            relPoint = "BOTTOM",
-            target = "Gw2_HudBackgroud",
-            x = 0,
-            y = 100
-
-        },
-        modelID = 530798,
-
-        modelPosition =
-        {
-            x = 2,
-            y = 0,
-            z = -0.1,
-            rotation = 0
-        }
-    }
-)
-
-
+for _, art in next, ACTION_HUD_AURAS do
+    if art.class == GW.myClassID then
+        if art.unit == "pet" then
+            actionHudPlayerPetAuras[art.auraID] = art
+        else
+            actionHudPlayerAuras[art.auraID] = art
+        end
+    end
+end
 
 local function updateDebugPosition()
     local x = tonumber(GwHudFXDebug.x:GetText())
@@ -418,6 +353,101 @@ C_Timer.After(1, function()
 end)
 ]]
 
+-- Retail: reading auras from insecure code is blocked while they are secret (in
+-- combat — exactly when this art shows), so the texture swap runs over invisible
+-- aura tracker containers whose button carries the art; the engine shows and hides
+-- it with the aura. One container per art, spells sharing textures share a container.
+-- Model FX come back as STATIC PlayerModel children of the button (set up once in
+-- OnModelLoaded) — only Lua-driven FX reactions to aura values stay impossible.
+local function CreateAuraArtContainers(self)
+    local artByLeftTexture = {}
+    for _, auraList in next, { actionHudPlayerAuras, actionHudPlayerPetAuras } do
+        for spellID, aura in pairs(auraList) do
+            local art = artByLeftTexture[aura.left]
+            if not art then
+                art = { left = aura.left, right = aura.right, unit = aura.unit, modelFX = aura.modelFX, spellIDs = {} }
+                artByLeftTexture[aura.left] = art
+            end
+            art.spellIDs[spellID] = true
+        end
+    end
+
+    -- combat gate: shows the aura art only while in combat (like the old logic).
+    -- Driven by a SECURE state driver so that the containers' OnShow refresh runs
+    -- untainted and may access the (secret) aura data in combat
+    local combatGate = CreateFrame("Frame", "GwHudAuraArtGate", self.actionBarHud)
+    combatGate:SetAllPoints(self.actionBarHud)
+    RegisterStateDriver(combatGate, "visibility", "[combat] show; hide")
+    self.gwAuraArtGate = combatGate
+
+    self.gwAuraArtContainers = {}
+    local index = 0
+    for _, art in pairs(artByLeftTexture) do
+        index = index + 1
+        local container = GW.CreateAuraTrackerContainer({
+            name = "GwHudAuraArt" .. index,
+            -- parented to the combat gate (child of the art frame, so HUD scaling
+            -- still applies to the overlays)
+            parent = combatGate,
+            unit = art.unit,
+            filter = "HELPFUL",
+            spellIDs = art.spellIDs,
+            width = 1024,
+            height = 256,
+            createWidgets = function(button)
+                local left = button:CreateTexture(nil, "BACKGROUND")
+                left:SetTexture(art.left)
+                left:SetSize(512, 256)
+                left:SetPoint("LEFT", button, "LEFT", 0, 0)
+
+                local right = button:CreateTexture(nil, "BACKGROUND")
+                right:SetTexture(art.right)
+                right:SetSize(512, 256)
+                right:SetPoint("RIGHT", button, "RIGHT", 0, 0)
+
+                -- the model FX is fully static per aura (model, position, camera) — only
+                -- the show/hide is dynamic, and that comes for free as a button child
+                if art.modelFX then
+                    local anchor = art.modelFX.anchor
+                    local modelPosition = art.modelFX.modelPosition
+                    local fx = CreateFrame("PlayerModel", nil, button)
+                    fx:SetSize(500, 500)
+                    if _G[anchor.target] then
+                        fx:SetPoint(anchor.point, _G[anchor.target], anchor.relPoint, anchor.x, anchor.y)
+                    else
+                        fx:SetPoint("BOTTOM", button, "BOTTOM", anchor.x, anchor.y)
+                    end
+
+                    -- models load asynchronously — camera and position have to be applied
+                    -- once the model data is there, not right after SetModel. The pcall
+                    -- covers late fires while the button subtree is access restricted
+                    -- (secret auras in combat); by then the first fire has set things up.
+                    local function ApplyModelSetup(model)
+                        model:MakeCurrentCameraCustom()
+                        model:SetPosition(modelPosition.x, modelPosition.y, modelPosition.z)
+                        model:SetFacing(modelPosition.rotation)
+                    end
+                    fx:SetScript("OnModelLoaded", function(model)
+                        pcall(ApplyModelSetup, model)
+                    end)
+                    fx:SetModel(art.modelFX.modelID)
+                    pcall(ApplyModelSetup, fx)
+                end
+                return {}
+            end,
+            refreshEvents = art.unit == "pet" and { "UNIT_PET" } or nil,
+            refreshUnit = art.unit == "pet" and "player" or nil,
+        })
+        container:SetFrameLevel(self.actionBarHud:GetFrameLevel() + 1)
+        container:ClearAllPoints()
+        container:SetPoint("BOTTOM", self.actionBarHud, "BOTTOM", 0, 0)
+        tinsert(self.gwAuraArtContainers, container)
+    end
+
+    -- settings state (containers stay shown/hidden by settings, combat via the gate)
+    UpdateAuraArtVisibility(self)
+end
+
 local function hud_OnEvent(self, event, ...)
     if event == "UNIT_AURA" then
         selectBg(self)
@@ -431,7 +461,6 @@ local function hud_OnEvent(self, event, ...)
         end
     end
 end
-
 
 local function ToggleHudBackground()
     if Gw2_HudBackgroud.actionBarHud.HUDBG then
@@ -454,6 +483,8 @@ local function ToggleHudBackground()
             end
         end
     end
+
+    UpdateAuraArtVisibility(Gw2_HudBackgroud)
 end
 GW.ToggleHudBackground = ToggleHudBackground
 
@@ -470,12 +501,15 @@ local function LoadHudArt()
         curveOne:AddPoint(0.5, CreateColor(1, 1, 1, 1))
         curveOne:AddPoint(1.0, CreateColor(1, 1, 1, 1))
 
+        -- blood overlay alpha, replicating the classic formula clamp(0.8 - 2h):
+        -- strongest (0.8) near death, linearly gone at 40% health and above
         curveTwo = C_CurveUtil.CreateColorCurve()
         curveTwo:SetType(Enum.LuaCurveType.Linear)
         curveTwo:AddPoint(0.0, CreateColor(1, 1, 1, 0.8))
-        curveTwo:AddPoint(0.5, CreateColor(1, 1, 1, 1))
-        curveTwo:AddPoint(0.5000001, CreateColor(1, 1, 1, 0))
+        curveTwo:AddPoint(0.4, CreateColor(1, 1, 1, 0))
         curveTwo:AddPoint(1.0, CreateColor(1, 1, 1, 0))
+
+        CreateAuraArtContainers(hudArtFrame)
     end
 
     ToggleHudBackground()

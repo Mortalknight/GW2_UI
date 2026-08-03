@@ -1,6 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file="deathrecapframe.lua"/>
-    <Script file="mainMenuFrame.lua"/>
     <Script file="talkinghead.lua"/>
     <Script file="flightmap.lua"/>
     <Script file="addonManager.lua"/>

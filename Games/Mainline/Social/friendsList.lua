@@ -9,9 +9,9 @@ local WOW_PROJECT_CATACLYSM_CLASSIC = 14
 local WOW_PROJECT_MISTS_CLASSIC = 19
 
 local MediaPath = "Interface/AddOns/GW2_UI/Textures/social/"
-local delimiter = format("|cff%s | |r", "979fad")
 
 GW.friendsList = {}
+GW.friendsList.delimiter = format("|cff%s | |r", "979fad")
 GW.friendsList.projectCodes = {
     ["ANBS"] = "Diablo Immortal",
     ["Hero"] = "Heroes of the Storm",
@@ -164,25 +164,6 @@ GW.friendsList.statusIcons = {
     },
 }
 
-local function HandleInviteTexNormal(self)
-    self:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png")
-    self:SetTexCoord(0, 1, 0, 1)
-    self:SetSize(16, 16)
-    self:ClearAllPoints()
-    self:SetPoint("CENTER")
-    self:SetVertexColor(1, 1, 1, 1)
-end
-
-local function HandleInviteTexDisabled(self)
-    self:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png")
-    self:SetTexCoord(0, 1, 0, 1)
-    self:SetSize(18, 18)
-    self:ClearAllPoints()
-    self:SetPoint("CENTER")
-    self:SetVertexColor(0.4, 0.4, 0.4, 1)
-    self:SetDesaturated(true)
-end
-
 -- Collapsible list headers (SocialUIScrollableHeaderTemplate) in the currency frame look:
 -- pill texture removed, GW backdrop + separator, arrow instead of plus/minus
 local function UpdateHeaderCollapseIcon(collapseButton)
@@ -197,39 +178,94 @@ local function UpdateHeaderCollapseIcon(collapseButton)
     end
 end
 
-local function ReskinListHeader(header)
-    if header.gwSkinned then return end
-    header.gwSkinned = true
+local function HandleActionButton(button)
+    if not button or button.IsSkinned then return end
 
-    -- the PTR client additionally has a background texture (pill) here — strip everything
-    header:GwStripTextures()
-    header:SetNormalTexture("")
-    header:SetHighlightTexture("")
+    button:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
-    header.gwBackground = header:CreateTexture(nil, "BACKGROUND")
-    header.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
-    header.gwBackground:SetAllPoints(header)
+    if button.NormalTexture then button.NormalTexture:SetAlpha(0) end
+    if button.PushedTexture then button.PushedTexture:SetAlpha(0) end
+    if button.HighlightTexture then
+        button.HighlightTexture:SetColorTexture(1, 1, 1, 0.25)
+        button.HighlightTexture:SetAllPoints()
+    end
 
-    header.ButtonText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-    header.ButtonText:GwLockTextColor(1, 1, 1)
+    button.IsSkinned = true
+end
 
-    if header.CollapseButton then
-        hooksecurefunc(header.CollapseButton, "UpdateCollapsedState", UpdateHeaderCollapseIcon)
-        UpdateHeaderCollapseIcon(header.CollapseButton)
+local function HandleSocialCard(card)
+    if not card or card.gwSkinned then return end
+    card.gwSkinned = true
+
+    card:GwStripTextures()
+
+    if card.CollapseButton then
+        hooksecurefunc(card.CollapseButton, "UpdateCollapsedState", UpdateHeaderCollapseIcon)
+        UpdateHeaderCollapseIcon(card.CollapseButton)
+    end
+
+    if card.ButtonText then
+        card.gwBackground = card:CreateTexture(nil, "BACKGROUND")
+        card.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+        card.gwBackground:SetAllPoints(card)
+
+        card.ButtonText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+        card.ButtonText:GwLockTextColor(1, 1, 1)
+        return
+    end
+
+    if not card.Background and not card.PartyButton and not card.AcceptButton then
+        return
+    end
+
+    if card.Background then
+        card.Background:SetAlpha(0)
+    end
+
+    if card.SetSelected then
+        hooksecurefunc(card, "SetSelected", function(c, selected)
+            if c.gwSelected then
+                c.gwSelected:SetShown(selected)
+            end
+        end)
+    end
+
+    if card.Selected then
+        -- color is owned by the hover kit (HandleItemListScrollBoxHover recolors
+        -- Selected on every scroll update) — only pull the texture inside the card
+        card.Selected:GwSetInside(card, 2, 2)
+    end
+
+    HandleActionButton(card.PartyButton)
+    HandleActionButton(card.RAFSummonButton)
+
+    if card.AcceptButton then
+        card.AcceptButton:GwSkinButton(false, true)
+    end
+
+    if card.DeclineButton then
+        card.DeclineButton:GwSkinButton(false, true)
+        card.DeclineButton:GwSkinNegativeButton()
     end
 end
 
-local function ReskinListHeaders(scrollBox)
-    scrollBox:ForEachFrame(function(child)
-        if child.CollapseButton and child.ButtonText then
-            ReskinListHeader(child)
-        end
-    end)
+local function HandleInitializedCard(card)
+    HandleSocialCard(card)
+
+    -- Blizzards InitializeBackground writes its card atlas on every element
+    -- assignment — straight onto the background texture the GW hover kit
+    -- (AddListItemChildHoverTexture) swapped in; reset it to the GW zebra texture
+    if card.IsSkinned and card.Background and not card.ButtonText then
+        card.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
+    end
 end
 
 -- Shared base structure of all SocialUI tabs (SocialUIContactsFrameTemplate):
 -- FilterBar (SearchBar + filter dropdown), ScrollBox/ScrollBar and ActionButton
-local function SkinSocialContactsView(view)
+-- cardContentHandler (optional): runs per card after every element initialization —
+-- used by the list specific content passes (friends, recent allies) that rebuild
+-- the Blizzard texts in the GW look
+local function SkinSocialContactsView(view, cardContentHandler)
     if not view or view.gwContactsViewSkinned then return end
     view.gwContactsViewSkinned = true
 
@@ -254,200 +290,132 @@ local function SkinSocialContactsView(view)
         GW.HandleScrollControls(view)
     end
     if view.ScrollBox then
-        hooksecurefunc(view.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
-        hooksecurefunc(view.ScrollBox, "Update", ReskinListHeaders)
+        view.ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnInitializedFrame, function(_, card)
+            HandleInitializedCard(card)
+            if cardContentHandler and card.elementData then
+                cardContentHandler(card)
+            end
+        end, view)
+        view.ScrollBox:ForEachFrame(function(card)
+            HandleInitializedCard(card)
+            if cardContentHandler and card.elementData then
+                cardContentHandler(card)
+            end
+        end)
+
+        view.ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnUpdate, function()
+            GW.HandleItemListScrollBoxHover(view.ScrollBox)
+        end, view)
+        GW.HandleItemListScrollBoxHover(view.ScrollBox)
     end
 end
 GW.SkinSocialContactsView = SkinSocialContactsView
 
-local function UpdateFriendButton(button)
-    if not button.isSkinned then
-        local normal = button.travelPassButton:GetNormalTexture()
-        normal:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png")
-        normal:SetTexCoord(0, 1, 0, 1)
-        normal:SetSize(18, 18)
-        normal:ClearAllPoints()
-        normal:SetPoint("CENTER")
-        normal:SetVertexColor(1, 1, 1, 1)
+-- Content pass for the friends list cards (FriendsListSocialCardTemplate): Blizzard
+-- bakes its colors into the display strings on EVERY refresh (WrapTextInColorCode in
+-- FriendsListUtil), so this has to run after each ScrollBox update and rebuild the
+-- texts and icons in the GW look. All data sits on card.elementData.accountInfo
+-- (same shape as C_BattleNet.GetFriendAccountInfo).
+local function UpdateFriendCardContent(card)
+    local accountInfo = card.elementData and card.elementData.accountInfo
+    if not accountInfo then return end
+    -- invite cards use a different sub-template without the content regions but may
+    -- still carry accountInfo — only restyle full friend cards
+    if not card.PresenceHolder or not card.Name then return end
+    local gameAccountInfo = accountInfo.gameAccountInfo or {}
 
-        local disabled = button.travelPassButton:GetDisabledTexture()
-        disabled:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png")
-        disabled:SetTexCoord(0, 1, 0, 1)
-        disabled:SetSize(18, 18)
-        disabled:ClearAllPoints()
-        disabled:SetPoint("CENTER")
-        disabled:SetVertexColor(0.4, 0.4, 0.4, 1)
-        disabled:SetDesaturated(true)
-
-        local highlight = button.travelPassButton:GetHighlightTexture()
-        highlight:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-up.png")
-        highlight:SetTexCoord(0, 1, 0, 1)
-        highlight:SetSize(18, 18)
-        highlight:ClearAllPoints()
-        highlight:SetPoint("CENTER")
-        highlight:SetVertexColor(1, 1, 1, 1)
-
-        if GW.Retail then
-            hooksecurefunc(button.travelPassButton.NormalTexture, "SetAtlas", HandleInviteTexNormal)
-            hooksecurefunc(button.travelPassButton.DisabledTexture, "SetAtlas", HandleInviteTexDisabled)
-        end
-
-        button.isSkinned = true
+    if not card.gwContentSkinned then
+        card.gwContentSkinned = true
+        card.Level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
+        card.Class:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
+        card.Location:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
     end
 
-
-    if button.buttonType == FRIENDS_BUTTON_TYPE_DIVIDER then
-        return
-    end
-
-    local gameName, realID, name, server, class, area, level, faction, status, wowID, timerunningSeasonID
-
-    if button.buttonType == FRIENDS_BUTTON_TYPE_WOW then
-        -- WoW friends
-        wowID = WOW_PROJECT_MAINLINE
-        gameName = GW.friendsList.projectCodes["WOW"]
-        local friendInfo = C_FriendList.GetFriendInfoByIndex(button.id)
-        name, server = strsplit("-", friendInfo.name)
-        level = friendInfo.level
-        class = friendInfo.className
-        area = friendInfo.area
-        faction = GW.myfaction
-
-        if friendInfo.connected then
-            if friendInfo.afk then
-                status = "AFK"
-            elseif friendInfo.dnd then
-                status = "DND"
-            else
-                status = "Online"
-            end
+    -- status: GW square icons instead of the atlas dots
+    local status
+    if gameAccountInfo.isOnline then
+        if accountInfo.isAFK or gameAccountInfo.isGameAFK then
+            status = "AFK"
+        elseif accountInfo.isDND or gameAccountInfo.isGameBusy then
+            status = "DND"
         else
-            status = "Offline"
+            status = "Online"
         end
-    elseif button.buttonType == FRIENDS_BUTTON_TYPE_BNET and BNConnected() then
-        -- Battle.net friends
-        local friendAccountInfo = C_BattleNet.GetFriendAccountInfo(button.id)
-        if friendAccountInfo then
-            realID = friendAccountInfo.accountName
+    else
+        status = "Offline"
+    end
+    card.PresenceHolder.PresenceIcon:SetTexture(GW.friendsList.statusIcons.square[status])
+    card.PresenceHolder.PresenceIcon:SetTexCoord(0, 1, 0, 1)
 
-            local gameAccountInfo = friendAccountInfo.gameAccountInfo
-            gameName = GW.friendsList.projectCodes[strupper(gameAccountInfo.clientProgram)]
+    -- account name in the color of the game the friend is playing
 
-            if gameAccountInfo.isOnline then
-                if friendAccountInfo.isAFK or gameAccountInfo.isGameAFK then
-                    status = "AFK"
-                elseif friendAccountInfo.isDND or gameAccountInfo.isGameBusy then
-                    status = "DND"
-                else
-                    status = "Online"
-                end
-            else
-                status = "Offline"
-            end
-
-            -- Fetch version if friend playing WoW
-            if gameName == "World of Warcraft" then
-                wowID = gameAccountInfo.wowProjectID
-                name = gameAccountInfo.characterName or ""
-                level = gameAccountInfo.characterLevel or 0
-                faction = gameAccountInfo.factionName or nil
-                class = gameAccountInfo.className or ""
-                area = gameAccountInfo.areaName or ""
-                timerunningSeasonID = gameAccountInfo.timerunningSeasonID or ""
-
-                if wowID and wowID ~= 1 and GW.friendsList.expansionData[wowID] then
-                    local suffix = GW.friendsList.expansionData[wowID].suffix and " (" .. GW.friendsList.expansionData[wowID].suffix .. ")" or ""
-                    local serverStrings = { strsplit(" - ", gameAccountInfo.richPresence) }
-                    server = (serverStrings[#serverStrings] or BNET_FRIEND_TOOLTIP_WOW_CLASSIC) .. suffix .. "*"
-                elseif wowID and wowID == 1 and name == "" then
-                    server = gameAccountInfo.richPresence -- Plunderstorm
-                else
-                    server = gameAccountInfo.realmDisplayName or ""
-                end
-            end
-        end
+    local gameName = gameAccountInfo.clientProgram and GW.friendsList.projectCodes[strupper(gameAccountInfo.clientProgram)]
+    local clientColor = gameName and GW.friendsList.clientData[gameName] and GW.friendsList.clientData[gameName].color
+    local accountName = accountInfo.accountName
+    if accountName and accountName ~= "" and clientColor and gameAccountInfo.isOnline then
+        card.FriendName:SetText(GW.StringWithRGB(accountName, clientColor))
     end
 
-    if status then
-        button.status:SetTexture(GW.friendsList.statusIcons.square[status])
+    if gameAccountInfo.characterName and gameAccountInfo.characterName ~= "" then
+        local isOnline = gameAccountInfo.isOnline
+        local classToken = gameAccountInfo.classFilename
+        if not classToken or classToken == "" then
+            classToken = GW.UnlocalizedClassName(gameAccountInfo.className)
+        end
+        local classColor = isOnline and classToken and GW.GWGetClassColor(classToken, true, true, true) or DARKGRAY_COLOR
+
+        local nameString = GW.StringWithRGB(gameAccountInfo.characterName, classColor)
+        if TimerunningUtil and gameAccountInfo.timerunningSeasonID and gameAccountInfo.timerunningSeasonID ~= 0 and gameAccountInfo.timerunningSeasonID ~= "" then
+            nameString = TimerunningUtil.AddSmallIcon(nameString) or nameString
+        end
+        card.Name:SetText(nameString)
+
+        if gameAccountInfo.characterLevel and gameAccountInfo.characterLevel > 0 then
+            local levelColor = isOnline and GetQuestDifficultyColor(gameAccountInfo.characterLevel) or DARKGRAY_COLOR
+            card.Level:SetText(GW.friendsList.delimiter .. GW.StringWithRGB(tostring(gameAccountInfo.characterLevel), levelColor))
+        end
+        if gameAccountInfo.className and gameAccountInfo.className ~= "" then
+            card.Class:SetText(GW.friendsList.delimiter .. GW.StringWithRGB(gameAccountInfo.className, classColor))
+        end
+
+        card.Level:ClearAllPoints()
+        card.Level:SetPoint("BOTTOMLEFT", card.Name, "BOTTOMRIGHT", 2, 0)
+        card.Class:ClearAllPoints()
+        card.Class:SetPoint("BOTTOMLEFT", card.Level, "BOTTOMRIGHT", 2, 0)
+        card.Class:SetPoint("RIGHT", card.TextHolder, "RIGHT")
     end
 
-    button.gameIcon:SetTexCoord(0, 1, 0, 1)
+    if gameAccountInfo.isOnline then
+        -- strip hex color codes AND the newer named-color tags ("|cnCOLOR_NAME:")
+        local plain = gsub(gsub(gsub(card.Location:GetText() or "", "|c%x%x%x%x%x%x%x%x", ""), "|cn[^:]+:", ""), "|r", "")
+        card.Location:SetText(GW.StringWithRGB(plain, { r = 1, g = 1, b = 1 }))
+    end
 
-    if gameName then
-        local buttonTitle, buttonText
-
-        -- real ID
-        local clientColor = GW.friendsList.clientData[gameName] and GW.friendsList.clientData[gameName].color
-        local realIDString = realID and clientColor and GW.StringWithRGB(realID, clientColor) or realID
-
-        -- name
-        local classColor = GW.GWGetClassColor(GW.UnlocalizedClassName(class), true, true, true)
-        local nameString = name and classColor and GW.StringWithRGB(name, classColor) or name
-        if TimerunningUtil and timerunningSeasonID and timerunningSeasonID ~= "" and nameString ~= nil then
-            nameString = TimerunningUtil.AddSmallIcon(nameString) or nameString -- add timerunning tag
+    local iconHolder = card.GameIconHolder
+    if iconHolder and iconHolder:IsShown() and iconHolder.Icon then
+        local texture
+        local wowID = gameAccountInfo.wowProjectID
+        if gameName == "World of Warcraft" and wowID then
+            if GW.friendsList.expansionData[wowID] then
+                texture = GW.friendsList.expansionData[wowID].icon
+            end
+            if wowID == WOW_PROJECT_MAINLINE and gameAccountInfo.timerunningSeasonID and GW.friendsList.timerunningSeasonIcon[gameAccountInfo.timerunningSeasonID] then
+                texture = GW.friendsList.timerunningSeasonIcon[gameAccountInfo.timerunningSeasonID]
+            end
+            if not texture and gameAccountInfo.factionName and GW.friendsList.factionIcons[gameAccountInfo.factionName] then
+                texture = GW.friendsList.factionIcons[gameAccountInfo.factionName]
+            end
         end
 
-        if wowID and GW.friendsList.expansionData[wowID] and level and level ~= 0 then
-            nameString = nameString .. GW.StringWithRGB(delimiter .. level, GetQuestDifficultyColor(level))
-        end
-
-        -- combine Real ID and Name
-        if nameString and nameString ~= "" and realIDString and realIDString ~= "" then
-            buttonTitle = realIDString .. delimiter .. nameString
-        elseif nameString and nameString ~= "" then
-            buttonTitle = nameString
+        if texture then
+            iconHolder.Icon:SetTexture(texture)
+            iconHolder.Icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+            iconHolder.Icon:SetAlpha(1)
         else
-            buttonTitle = realIDString or ""
-        end
-
-        button.name:SetText(buttonTitle)
-
-        -- area
-        if area then
-            if area ~= "" and server and server ~= "" and server ~= GW.myrealm then
-                buttonText = GW.StringWithRGB(area .. " - " .. server, {r = 1, g = 1, b = 1})
-            elseif area ~= "" then
-                buttonText = GW.StringWithRGB(area, {r = 1, g = 1, b = 1})
-            else
-                buttonText = server or ""
-            end
-
-            button.info:SetText(buttonText)
-        end
-
-        -- game icon
-        local texOrAtlas
-        if wowID and GW.friendsList.expansionData[wowID] then
-            texOrAtlas = GW.friendsList.expansionData[wowID].icon
-            if wowID == WOW_PROJECT_MAINLINE and timerunningSeasonID and GW.friendsList.timerunningSeasonIcon[timerunningSeasonID] then
-                texOrAtlas = GW.friendsList.timerunningSeasonIcon[timerunningSeasonID]
-            end
-        end
-
-        if texOrAtlas == nil and faction and GW.friendsList.factionIcons[faction] then
-            texOrAtlas = GW.friendsList.factionIcons[faction]
-        end
-
-        if texOrAtlas then
-            button.gameIcon:SetAlpha(1)
-            button.gameIcon:SetTexture(texOrAtlas)
-            button.gameIcon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+            iconHolder.Icon:SetTexCoord(0, 1, 0, 1)
         end
     end
-
-    button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    button.info:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
-
-    if button.Favorite and button.Favorite:IsShown() then
-        button.Favorite:ClearAllPoints()
-        button.Favorite:SetPoint("LEFT", button.name, "LEFT", button.name:GetStringWidth(), 0)
-    end
-
-    button:SetSize(460, 34)
-    button.name:SetWidth(400)
 end
-
 
 function GW.SkinFriendList()
     local FriendsList = SocialUIFrame.FriendsList
@@ -457,9 +425,6 @@ function GW.SkinFriendList()
     BNetBar.BattleNetBackground:SetAlpha(0)
     BattleNetBar.Background:SetAlpha(0)
 
-    -- Blizzard only anchors the BattleNetBar centered with a fixed width (413) and attaches all
-    -- tab contents to its left edge — after our resize to 500 the bar therefore has to span the
-    -- full window width, otherwise the entire content shifts to the right
     BattleNetBar:ClearAllPoints()
     BattleNetBar:SetPoint("TOPLEFT", SocialUIFrame.gwHeader, "BOTTOMLEFT", 0, 0)
     BattleNetBar:SetPoint("TOPRIGHT", SocialUIFrame.gwHeader, "BOTTOMRIGHT", 0, 0)
@@ -485,9 +450,7 @@ function GW.SkinFriendList()
     BNetBar.PersonalBattleTagDisplay:SetPoint("RIGHT", BNetBar.BattleNetMenuButton, "LEFT", -5, 0)
     BNetBar.PersonalBattleTagDisplay:SetHeight(24)
 
-    SkinSocialContactsView(FriendsList)
-
-    hooksecurefunc("FriendsFrame_UpdateFriendButton", UpdateFriendButton)
+    SkinSocialContactsView(FriendsList, UpdateFriendCardContent)
 
     --View Friends BN Frame
     local button = CreateFrame("Button", nil, BNetBar.PersonalBattleTagDisplay, "GwStandardButton")
@@ -501,8 +464,6 @@ function GW.SkinFriendList()
 
     button:SetScript("OnClick", function() BNetBar.BattleNetMenuButton:SocialUIRequestToggleSideWindow(SocialUISideWindowType.BattleNetBroadcastFrame) end)
 
-    -- The overlay button sits as its own frame above the BattleTag text and would paint
-    -- over it on hover — reparent the text to the button so it always stays on top
     BNetBar.PersonalBattleTagDisplay.DisplayText:SetParent(button)
     BNetBar.PersonalBattleTagDisplay.DisplayText:SetDrawLayer("OVERLAY", 7)
     if BNetBar.PersonalBattleTagDisplay.CopyBattleTagToClipboardButton then

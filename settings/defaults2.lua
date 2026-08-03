@@ -18,8 +18,7 @@ local UnitFrameFader = {
 
 local PlayerAuraSettings = {
     Seperate = 0,
-    SortDir = "+",
-    SortMethod = "INDEX",
+    Sort = "DEFAULT",
     IconSize = 32,
     IconHeight = 32,
     KeepSizeRatio = true,
@@ -231,6 +230,8 @@ GW.globalDefault = {
         PET_Buff_Filter_advanced = CopyTable(GridAuraFilter),
         PET_Debuff_Filter = "player",
         PET_Debuff_Filter_advanced = CopyTable(GridAuraFilter),
+        PET_IGNORED_AURAS = {},
+        PET_AURA_SORT = "DEFAULT",
 
 
         BUTTON_ASSIGNMENTS= true,
@@ -431,6 +432,8 @@ GW.globalDefault = {
         targetFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
         targetAuraSmallSize = 20,
         targetAuraBigSize = 26,
+        target_IGNORED_AURAS = {},
+        target_AURA_SORT = "DEFAULT",
 
         focus_TARGET_ENABLED= true,
         focus_TARGET_SHOW_CASTBAR= true,
@@ -456,6 +459,8 @@ GW.globalDefault = {
         focusFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
         focusAuraSmallSize = 20,
         focusAuraBigSize = 26,
+        focus_IGNORED_AURAS = {},
+        focus_AURA_SORT = "DEFAULT",
 
         target_pos= {
             point= "TOP",
@@ -1223,6 +1228,7 @@ GW.globalDefault = {
         PARTY_UNIT_HEALTH= "NONE",
         PARTY_SHOW_BUFFS = true,
         PARTY_SHOW_AURA_ICON_SIZE = 20,
+        PARTY_IGNORED_AURAS = {},
         partyFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
         PARTY_SHOW_DEBUFFS= true,
         PARTY_ONLY_DISPELL_DEBUFFS= false,
@@ -1429,6 +1435,7 @@ GW.globalDefault = {
 
         PlayerBuffs = CopyTable(PlayerAuraSettings),
         PlayerDebuffs = CopyTable(PlayerAuraSettings),
+        PLAYER_IGNORED_AURAS = {},
 
         PLAYER_AS_TARGET_FRAME= false,
         PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR= false,

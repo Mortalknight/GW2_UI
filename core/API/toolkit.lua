@@ -1067,6 +1067,13 @@ local function GwNudgePoint(obj, xAxis, yAxis, noScale, pointValue, clearPoints)
 
     local point, relativeTo, relativePoint, xOfs, yOfs = GrabPoint(obj, pointValue)
 
+    -- anchors of Blizzard-managed frames can be secret in combat (e.g. the
+    -- DamageMeter windows on a combat reload) — neither arithmetic on the offsets
+    -- nor SetPoint with secret components is possible, so skip the nudge
+    if GW.IsSecretValue(point) or GW.IsSecretValue(relativePoint) or GW.IsSecretValue(xOfs) or GW.IsSecretValue(yOfs) then
+        return
+    end
+
     if clearPoints or GW.SetPointsRestricted(obj) then
         obj:ClearAllPoints()
     end

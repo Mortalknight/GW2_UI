@@ -221,6 +221,8 @@ local function LoadTargetPanel(sWindow)
         checkbox = true,
         groupHeaderName = AURAS}
     )
+    pPlayerPet:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "PET_IGNORED_AURAS", callback = function() GwPlayerPetFrame:UpdateSettings() end, dependence = {["PETBAR_ENABLED"] = true}, groupHeaderName = AURAS})
+    pPlayerPet:AddOptionDropdown(L["Aura Sorting"], L["Set the sorting order of the auras."], { getterSetter = "PET_AURA_SORT", callback = function() GwPlayerPetFrame:UpdateSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["PETBAR_ENABLED"] = true}, groupHeaderName = AURAS, hidden = not GW.Retail})
     pPlayerPet:AddGroupHeader(L["Fader"])
     pPlayerPet:AddOptionDropdown(L["Fader"], nil, { getterSetter = "petFrameFader", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["PETBAR_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
     pPlayerPet:AddOptionSlider(L["Smooth"], nil, { getterSetter = "petFrameFader.smooth", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["PETBAR_ENABLED"] = true}})
@@ -271,6 +273,8 @@ local function LoadTargetPanel(sWindow)
     )
     p_target:AddOptionSlider(L["Aura size"], nil, { getterSetter = "targetAuraSmallSize", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["TARGET_ENABLED"] = true}})
     p_target:AddOptionSlider(L["Own aura size"], nil, { getterSetter = "targetAuraBigSize", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "target_IGNORED_AURAS", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, groupHeaderName = AURAS})
+    p_target:AddOptionDropdown(L["Aura Sorting"], L["Set the sorting order of the auras."], { getterSetter = "target_AURA_SORT", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["TARGET_ENABLED"] = true}, groupHeaderName = AURAS, hidden = not GW.Retail})
 
 
     p_target:AddGroupHeader(L["Fader"])
@@ -344,6 +348,8 @@ local function LoadTargetPanel(sWindow)
     )
     p_focus:AddOptionSlider(L["Aura size"], nil, { getterSetter = "focusAuraSmallSize", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["FOCUS_ENABLED"] = true}})
     p_focus:AddOptionSlider(L["Own aura size"], nil, { getterSetter = "focusAuraBigSize", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "focus_IGNORED_AURAS", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, groupHeaderName = AURAS})
+    p_focus:AddOptionDropdown(L["Aura Sorting"], L["Set the sorting order of the auras."], { getterSetter = "focus_AURA_SORT", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["FOCUS_ENABLED"] = true}, groupHeaderName = AURAS, hidden = not GW.Retail})
 
 
     p_focus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})
@@ -395,7 +401,8 @@ local function LoadTargetPanel(sWindow)
     party:AddOption(SHOW_BUFFS, nil, {getterSetter = "PARTY_SHOW_BUFFS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
     party:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "PARTY_SHOW_DEBUFFS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
     party:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "PARTY_ONLY_DISPELL_DEBUFFS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["PARTY_SHOW_DEBUFFS"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}, hidden = GW.Retail})
+    party:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "PARTY_IGNORED_AURAS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
+    party:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
     party:AddOption(L["Player frame in group"], L["Show your player frame as part of the group"], {getterSetter = "PARTY_PLAYER_FRAME", callback = function() GW.UpdatePlayerInPartySetting() end, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
     party:AddOption(COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS, nil, {getterSetter = "PARTY_SHOW_PETS", callback = function() GW.UpdatePartyPetVisibility() end, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}});
     party:AddOption(L["Shorten health values"], nil, {getterSetter = "PARTY_UNIT_HEALTH_SHORT_VALUES", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}});

@@ -144,9 +144,33 @@ local function updateFreeBankSlots(self)
 end
 
 
+-- The inherited container tooltip (SetBagItem) returns nothing for the main bank
+-- container on classic — its slots are INVENTORY slots there. Mirror blizzards
+-- BankFrameItemButton_OnEnter: resolve the inventory slot id and use SetInventoryItem
+local function bankSlot_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    local hasItem = GameTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(self:GetID()))
+    if not hasItem then
+        GameTooltip:Hide()
+    else
+        GameTooltip:Show()
+    end
+    CursorUpdate(self)
+end
+
+local bankSlotButtonOpts = {
+    initButton = function(button)
+        if not button.gwBankTooltipFixed then
+            button.gwBankTooltipFixed = true
+            button:SetScript("OnEnter", bankSlot_OnEnter)
+            button.UpdateTooltip = bankSlot_OnEnter
+        end
+    end,
+}
+
 -- update all bank items and bank bags
 local function updateBankContainers(f)
-    GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[BANK_CONTAINER], BANK_CONTAINER, GW.settings.BANK_ITEM_SIZE, true)
+    GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[BANK_CONTAINER], BANK_CONTAINER, GW.settings.BANK_ITEM_SIZE, true, bankSlotButtonOpts)
     if f:IsShown() then
         if f.ItemFrame:IsShown() then
             updateFreeBankSlots(f.ItemFrame)
@@ -200,6 +224,12 @@ local function bag_OnClick(self, button)
             end
         elseif self.tooltipText == BANK_BAG_PURCHASE then
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+            -- the confirm dialogs money frame reads BankFrame.nextSlotCost, which
+            -- Blizzards (now inert) bank frame no longer maintains — set it here
+            -- like Blizzards UpdateBagSlotStatus would
+            if BankFrame and GetBankSlotCost then
+                BankFrame.nextSlotCost = GetBankSlotCost(GetNumBankSlots())
+            end
             StaticPopup_Show("CONFIRM_BUY_BANK_SLOT")
         end
     end

@@ -186,7 +186,7 @@ local function AdjustChatLines(frame)
             -- that the engine has not anchored yet (fresh out of the pool while the dock
             -- switches tabs) reports no relative point, and passing that nil on to
             -- SetPoint makes it reject the whole argument list
-            if point and relativePoint then
+            if point and relativePoint and (relativeTo or fontString:GetParent() ~= nil) then
                 -- an explicit parent is what a nil relativeTo means anyway, and it keeps
                 -- SetPoint from having to guess at a nil in the middle of the arguments
                 fontString:SetPoint(point, relativeTo or fontString:GetParent(), relativePoint, -offset, yOfs or 0)
@@ -642,7 +642,14 @@ do
     local hyperLinkFunc = function(w, x, y)
         if w ~= "" then return end
         local emoji = (x~="" and x) and strmatch(x, "gwuimoji:%%(.+)")
-        return (emoji and GW.Libs.Deflate:DecodeForPrint(emoji)) or y
+        if emoji then
+            -- pcall: DecodeBase64 errors on malformed payloads instead of returning nil
+            local ok, decoded = pcall(C_EncodingUtil.DecodeBase64, emoji)
+            if ok and decoded then
+                return decoded
+            end
+        end
+        return y
     end
     local fourString = function(v, w, x, y)
         return format("%s%s%s", v, w, (v and v == "1" and x) or y)
@@ -1135,7 +1142,7 @@ local function InsertEmotions(msg)
         local pattern = GW.EscapeString(word)
         local emoji = Smileys[pattern]
         if emoji and strmatch(msg, "[%s%p]-" .. pattern .. "[%s%p]*") then
-            local encode = GW.Libs.Deflate:EncodeForPrint(word)
+            local encode = C_EncodingUtil.EncodeBase64(word)
             msg = gsub(msg, "([%s%p]-)" .. pattern .. "([%s%p]*)", (encode and ("%1|Hgwuimoji:%%" .. encode .. "|h|cFFffffff|r|h") or "%1") .. emoji .. "%2")
         end
     end

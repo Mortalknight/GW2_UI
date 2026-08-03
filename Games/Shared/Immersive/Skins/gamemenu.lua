@@ -10,13 +10,18 @@ local BUTTONS = {
     [HUD_EDIT_MODE_MENU ]= {sprite = {1, 2}},
     [MACROS] = {sprite = {3, 2}},
     [ADDONS] = {sprite = {4, 2}},
-    [LOGOUT] = {sprite = {1, 3}},
     [EXIT_GAME] = {sprite = {2, 3}},
     [RETURN_TO_GAME] = {sprite = {3, 3}},
     [RATINGS_MENU] = {sprite = {3, 1}},
     ["MOVEANYTING"] = {sprite = {4, 1}}, -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
     [format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName)] = {sprite = {4, 3}}
 }
+if LOGOUT then
+    BUTTONS[LOGOUT] = {sprite = {1, 3}}
+end
+if LOG_OUT then
+    BUTTONS[LOG_OUT] = {sprite = {1, 3}}
+end
 
 local ICON_SPRITES = {
     width = 128,
@@ -37,7 +42,14 @@ local function ToggleGw2Settings()
 end
 GW.ToggleGw2Settings = ToggleGw2Settings
 
-local function applyButtonStyle(b)
+-- one time per frame: pool buttons are reused across InitButtons runs, everything
+-- here survives the pool reset (textures, fonts, anchors)
+local function styleButtonOnce(b)
+    if b.gw2Styled then
+        return
+    end
+    b.gw2Styled = true
+
     if b.Right then
         b.Right:Hide()
     end
@@ -51,39 +63,47 @@ local function applyButtonStyle(b)
         b.Middle:Hide()
     end
     b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton.png")
-    b:ClearHighlightTexture()
+    b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton.png")
+    b:GetHighlightTexture():SetBlendMode("ADD")
+
     if b.GetFontString and b:GetFontString() then
-        b:GetFontString():ClearAllPoints()
-        b:GetFontString():SetPoint("LEFT", b, "LEFT", 32,0)
-        b:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    end
-    b:SetSize(180, 25)
-    if b:GetNormalTexture() then
-        b:HookScript("OnEnter", function()
-            b:GetNormalTexture():SetBlendMode("ADD")
-        end)
-        b:HookScript("OnLeave", function()
-            b:GetNormalTexture():SetBlendMode("BLEND")
-        end)
+        local fontString = b:GetFontString()
+        fontString:ClearAllPoints()
+        fontString:SetPoint("LEFT", b, "LEFT", 32, 0)
+        fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+
+        local gwFontObject = fontString.GetFontObject and fontString:GetFontObject()
+        if gwFontObject then
+            b:SetNormalFontObject(gwFontObject)
+            b:SetHighlightFontObject(gwFontObject)
+            b:SetDisabledFontObject(gwFontObject)
+        end
     end
 
-    if not b.gw2IconTex then
-        local tex = b:CreateTexture(nil, "OVERLAY")
-        tex:SetPoint("LEFT", b, "LEFT", 0, 0)
-        tex:SetSize(32, 32)
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons.png")
-        b.gw2IconTex = tex
+    local tex = b:CreateTexture(nil, "OVERLAY")
+    tex:SetPoint("LEFT", b, "LEFT", 0, 0)
+    tex:SetSize(32, 32)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons.png")
+    b.gw2IconTex = tex
+end
+
+local function applyButtonStyle(b)
+    styleButtonOnce(b)
+
+    if not InCombatLockdown() then
+        b:SetSize(180, 25)
     end
+
     local buttonSprint = BUTTONS[b:GetText()]
     if buttonSprint then
         b.gw2IconTex:SetTexCoord(GW.getSprite(ICON_SPRITES, buttonSprint.sprite[1], buttonSprint.sprite[2]))
+        b.gw2IconTex:Show()
+    else
+        b.gw2IconTex:Hide()
     end
-    --TODO: MAYBE Remove PushedTextOffset:  current -2, -1
 end
 
 local function SkinMainMenu()
-    local GameMenuFrame = _G.GameMenuFrame
-
     local r = {GameMenuFrame:GetRegions()}
     for _, c in pairs(r) do
         if c:GetObjectType() == "FontString" then
@@ -108,10 +128,6 @@ local function SkinMainMenu()
         end
     end
 
-    -- do not add our button via AddButton/AddSection: acquiring a pool button from addon code taints
-    -- the button pool, the next secure InitButtons run then wires blizzards logout/exit callbacks
-    -- tainted and the protected Logout()/Quit() fire ADDON_ACTION_FORBIDDEN; use an own button
-    -- instead which only takes part in the deferred layout via layoutIndex
     local settingsButton
     hooksecurefunc(GameMenuFrame, 'InitButtons', function(self)
         if not self.buttonPool then return end
@@ -133,6 +149,20 @@ local function SkinMainMenu()
 
         settingsButton.layoutIndex = lastLayoutIndex + 1
         settingsButton.topPadding = 20
+    end)
+
+    -- re-apply the button sizes that were skipped while in combat
+    local regenWatcher = CreateFrame("Frame")
+    regenWatcher:RegisterEvent("PLAYER_REGEN_ENABLED")
+    regenWatcher:SetScript("OnEvent", function()
+        if GameMenuFrame:IsShown() and GameMenuFrame.buttonPool then
+            for btn in GameMenuFrame.buttonPool:EnumerateActive() do
+                applyButtonStyle(btn)
+            end
+            if settingsButton then
+                applyButtonStyle(settingsButton)
+            end
+        end
     end)
 
     -- remove elvui transparent bg if ours is enabled

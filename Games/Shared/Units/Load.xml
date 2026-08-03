@@ -14,7 +14,7 @@
     <Include file ="petbar.xml"/>
     <Script file ="petbar.lua"/>
     <Include file ="classpowers.xml"/>
-    <Script file ="classpowers.lua"/>
+    <Include file ="Classpower\Load.xml"/>
     <Include file ="party.xml"/>
     <Script file ="party.lua"/>
     <Include file ="Grid\Load.xml"/>

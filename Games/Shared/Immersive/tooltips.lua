@@ -111,6 +111,9 @@ end
 
 local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
     if not self or self:IsForbidden() or self:NumLines() < 1 then return end
+    -- callers like the CooldownViewer pass secret instance IDs — reading the aura
+    -- data would be denied for tainted code
+    if GW.IsSecretValue(auraInstanceId) or GW.IsSecretValue(unit) then return end
 
     local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceId)
     if not auraData then return end
@@ -1316,6 +1319,12 @@ local function LoadTooltips()
 
     eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
     eventFrame:SetScript("OnEvent", function()
+        -- 12.1: keeps the tooltipShowAuraSpellIDs CVar (secure aura tooltips) in sync
+        -- with the held ID modifier — addons cannot add lines to those tooltips anymore
+        if GW.UpdateAuraTooltipIDCVar then
+            GW.UpdateAuraTooltipIDCVar()
+        end
+
         if not GameTooltip:IsForbidden() and GameTooltip:IsShown() then
             local owner = GameTooltip:GetOwner()
             if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame) or (GwPlayerUnitFrame and owner == GwPlayerUnitFrame)) and UnitExists("mouseover") then
@@ -1348,5 +1357,16 @@ local function LoadTooltips()
             self:Hide()
         end
     end)
+
+    -- 12.1: the secure aura container tooltips can no longer be scanned or extended by
+    -- addons — Blizzard provides the tooltipShowAuraSpellIDs CVar instead (applies live,
+    -- no reload). Updated from the MODIFIER_STATE_CHANGED handler above, the settings
+    -- dropdown callback and once here on load.
+    if GW.Retail then
+        GW.UpdateAuraTooltipIDCVar = function()
+            C_CVar.SetCVar("tooltipShowAuraSpellIDs", IsModKeyDown() and "1" or "0")
+        end
+        GW.UpdateAuraTooltipIDCVar()
+    end
 end
 GW.LoadTooltips = LoadTooltips

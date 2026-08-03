@@ -9,6 +9,7 @@
     <Script file="timetracker.lua"/>
     <Script file="timeManager.lua"/>
     <Script file="ghostframe.lua"/>
+    <Script file="gamemenu.lua"/>
     <Script file="helpFrame.lua"/>
     <Script file="gossip.lua"/>
     <Script file="lfg_popup_frames.lua"/>
