@@ -24,27 +24,30 @@ local function BuildIndicatorSpellIndex(indicators)
     return index
 end
 
+local DEFAULT_INDICATOR_COLOR = { 1, 1, 1 }
+
 local function GetIndicatorDataForSpellId(indicators, spellId)
-    if GW.IsSecretValue(spellId) or not indicators or not spellId then
-        return nil, nil
+    if indicators then
+        local indicator = indicators[spellId]
+        if indicator then
+            return indicator, spellId
+        end
+
+        -- Fallback: check includedIds lists via cached index for indirect matches
+        if not indicators.__includedIndex then
+            indicators.__includedIndex = BuildIndicatorSpellIndex(indicators)
+        end
+
+        local mainSpellId = indicators.__includedIndex[spellId]
+        if mainSpellId then
+            return indicators[mainSpellId], mainSpellId
+        end
     end
 
-    local indicator = indicators[spellId]
-    if indicator then
-        return indicator, spellId
-    end
-
-    -- Fallback: check includedIds lists via cached index for indirect matches
-    if not indicators.__includedIndex then
-        indicators.__includedIndex = BuildIndicatorSpellIndex(indicators)
-    end
-
-    local mainSpellId = indicators.__includedIndex[spellId]
-    if mainSpellId then
-        return indicators[mainSpellId], mainSpellId
-    end
-
-    return nil, nil
+    -- custom spell ids (entered via the settings popup) have no predefined entry:
+    -- the spell acts as its own indicator with a neutral color — it only takes
+    -- effect when the id is actually assigned to a position
+    return DEFAULT_INDICATOR_COLOR, spellId
 end
 
 local function Construct_AuraIcon(self, button)
@@ -82,61 +85,33 @@ GW.Construct_AuraIcon = Construct_AuraIcon
 local function PostUpdateButton(self, button, unit, data, position)
     local parent = self:GetParent()
 
-    if GW.Retail then
-        if data.isHarmfulAura then
-            local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, self.dispelColorCurve)
-            if not color then
-                color = GW.Colors.Fallback
-            end
-            button.background:SetVertexColor(color:GetRGBA())
-            button.background:Show()
-            button.backdrop:Hide()
-
-            local isDispellable = data.isAuraRaidPlayerDispellable
-            --local isImportant = data.isAuraImportant
-            local size = 16
-            -- if isImportant and isDispellable then
-            if isDispellable then
-                size = size * GW.GetDebuffScaleBasedOnPrio()
-            --elseif isImportant then
-            --    size = size * tonumber(parent.raidDebuffScale)
-            elseif isDispellable then
-                size = size * tonumber(parent.raidDispelDebuffScale)
-            end
-            button:SetSize(size, size)
-        else
-            button.background:Hide()
-            button.backdrop:Show()
+    if data.isHarmfulAura then
+        local size = 16
+        local isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
+        local isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
+        if isImportant and isDispellable then
+            size = size * GW.GetDebuffScaleBasedOnPrio()
+        elseif isImportant then
+            size = size * tonumber(parent.raidDebuffScale)
+        elseif isDispellable then
+            size = size * tonumber(parent.raidDispelDebuffScale)
         end
+
+        if data.dispelName and GW.Colors.DebuffColors[data.dispelName] then
+            button.background:SetVertexColor(GW.Colors.DebuffColors[data.dispelName]:GetRGB())
+        else
+            button.background:SetVertexColor(GW.Colors.DebuffColors.None:GetRGB())
+        end
+
+        button:SetSize(size, size)
+        button.background:Show()
+        button.backdrop:Hide()
+
+        -- redo the position
+        self:ForceUpdate(true)
     else
-        if data.isHarmfulAura then
-            local size = 16
-            local isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
-            local isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
-            if isImportant and isDispellable then
-                size = size * GW.GetDebuffScaleBasedOnPrio()
-            elseif isImportant then
-                size = size * tonumber(parent.raidDebuffScale)
-            elseif isDispellable then
-                size = size * tonumber(parent.raidDispelDebuffScale)
-            end
-
-            if data.dispelName and GW.Colors.DebuffColors[data.dispelName] then
-                button.background:SetVertexColor(GW.Colors.DebuffColors[data.dispelName]:GetRGB())
-            else
-                button.background:SetVertexColor(GW.Colors.DebuffColors.None:GetRGB())
-            end
-
-            button:SetSize(size, size)
-            button.background:Show()
-            button.backdrop:Hide()
-
-            -- redo the position
-            self:ForceUpdate(true)
-        else
-            button.background:Hide()
-            button.backdrop:Show()
-        end
+        button.background:Hide()
+        button.backdrop:Show()
     end
 
     -- aura tooltips
@@ -148,42 +123,6 @@ local function PostUpdateButton(self, button, unit, data, position)
         button:EnableMouse(not InCombatLockdown()) -- this is trigger by an event
     elseif parent.showAuraTooltipInCombat == "IN_COMBAT" then
         button:EnableMouse(InCombatLockdown()) -- this is trigger by an event
-    end
-end
-
-local function CheckFilter(data, filters)
-    if not filters or filters.noFilter then return true end
-
-    local player, cancel = data.isAuraPlayer, data.isAuraCancelable
-    local other, perma = not player, not cancel
-
-    if GW.Retail then
-        return (filters.isAuraPlayer and player)
-            or (filters.isAuraRaidPlayerDispellable and data.isAuraRaidPlayerDispellable)
-            --or (filters.isAuraImportant and data.isAuraImportant and other)
-            --or (filters.isAuraImportantPlayer and data.isAuraImportant and player)
-            or (filters.isAuraCrowdControl and data.isAuraCrowdControl and other)
-            or (filters.isAuraCrowdControlPlayer and data.isAuraCrowdControl and player)
-            or (filters.isAuraBigDefensive and data.isAuraBigDefensive and other)
-            or (filters.isAuraBigDefensivePlayer and data.isAuraBigDefensive and player)
-            or (filters.isAuraRaidInCombat and data.isAuraRaidInCombat and other)
-            or (filters.isAuraRaidInCombatPlayer and data.isAuraRaidInCombat and player)
-            or (filters.isAuraExternalDefensive and data.isAuraExternalDefensive and other)
-            or (filters.isAuraExternalDefensivePlayer and data.isAuraExternalDefensive and player)
-            or (filters.isAuraCancelable and cancel and other)
-            or (filters.isAuraCancelablePlayer and cancel and player)
-            or (filters.notAuraCancelable and perma and other)
-            or (filters.notAuraCancelablePlayer and perma and player)
-            or (filters.isAuraRaid and data.isAuraRaid and other)
-            or (filters.isAuraRaidPlayer and data.isAuraRaid and player)
-    else
-        return (filters.isAuraPlayer and player)
-            or (filters.isAuraCancelable and cancel and other)
-            or (filters.isAuraCancelablePlayer and cancel and player)
-            or (filters.notAuraCancelable and perma and other)
-            or (filters.notAuraCancelablePlayer and perma and player)
-            or (filters.isAuraRaid and data.isAuraRaid and other)
-            or (filters.isAuraRaidPlayer and data.isAuraRaid and player)
     end
 end
 
@@ -318,63 +257,46 @@ local function FilterAura(self, unit, data)
     local shouldDisplay = false
     local isImportant, isDispellable
 
-    if GW.Retail then
-        local isDebuff = data.isHarmfulAura
+    if data.isHelpfulAura then
+        local isPlayerBuff = data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"
 
-        if isDebuff then
-            if not parent.showDebuffs then
-                return shouldDisplay
-            end
-            return CheckFilter(data, parent.debuffFilters)
-        else
-            if parent.showBuffs then
-                shouldDisplay = CheckFilter(data, parent.buffFilters)
+        if parent.showBuffs then
+            local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(data.spellId, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+            if hasCustom then
+                shouldDisplay = showForMySpec or (alwaysShowMine and (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"))
+            else
+                shouldDisplay = (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle") and (data.canApplyAura or data.isAuraPlayer) and not SpellIsSelfBuff(data.spellId)
             end
 
-            return CheckForAuraIndicators(self, parent, data.isAuraPlayer, data, shouldDisplay)
+            if shouldDisplay and parent.ignoredAuraSpellIDs then
+                shouldDisplay = not parent.ignoredAuraSpellIDs[data.spellId]
+            end
         end
+
+        return CheckForAuraIndicators(self, parent, isPlayerBuff, data, shouldDisplay)
     else
-        if data.isHelpfulAura then
-            local isPlayerBuff = data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"
+        isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
+        isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
 
-            if parent.showBuffs then
-                local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(data.spellId, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-                if hasCustom then
-                    shouldDisplay = showForMySpec or (alwaysShowMine and (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"))
-                else
-                    shouldDisplay = (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle") and (data.canApplyAura or data.isAuraPlayer) and not SpellIsSelfBuff(data.spellId)
-                end
-
-                if shouldDisplay and parent.ignoredAuras then
-                    shouldDisplay = data.name and not parent.ignoredAuras[data.name]
-                end
-            end
-
-            return CheckForAuraIndicators(self, parent, isPlayerBuff, data, shouldDisplay)
-        else
-            isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
-            isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
-
-            if data.dispelName and BadDispels[data.spellId] and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
-                data.dispelName = "BadDispel"
-            end
-
-            if parent.showDebuffs then
-                if parent.showOnlyDispelDebuffs then
-                    if isDispellable then
-                        shouldDisplay = data.name and not (parent.ignoredAuras and parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and GW.UnitNotUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
-                    end
-                else
-                    shouldDisplay = data.name and not (parent.ignoredAuras and parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and GW.UnitNotUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
-                end
-            end
-
-            if parent.raidShowImportantInstanceDebuffs and not shouldDisplay then
-                shouldDisplay = isImportant
-            end
-
-            return shouldDisplay
+        if data.dispelName and BadDispels[data.spellId] and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+            data.dispelName = "BadDispel"
         end
+
+        if parent.showDebuffs then
+            if parent.showOnlyDispelDebuffs then
+                if isDispellable then
+                    shouldDisplay = data.name and not (parent.ignoredAuraSpellIDs and parent.ignoredAuraSpellIDs[data.spellId] or data.spellId == 6788 and data.sourceUnit and GW.UnitNotUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
+                end
+            else
+                shouldDisplay = data.name and not (parent.ignoredAuraSpellIDs and parent.ignoredAuraSpellIDs[data.spellId] or data.spellId == 6788 and data.sourceUnit and GW.UnitNotUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
+            end
+        end
+
+        if parent.raidShowImportantInstanceDebuffs and not shouldDisplay then
+            shouldDisplay = isImportant
+        end
+
+        return shouldDisplay
     end
 end
 
@@ -423,6 +345,502 @@ local function HandleTooltip(self, event)
     self.Auras:ForceUpdate()
 end
 
+-- ========================================================================
+-- Retail (12.1): grid auras run on the AuraContainer system — the container
+-- tracks and renders the auras inside blizzards secure environment, so the
+-- display keeps working while aura values are secret in combat. The oUF Auras
+-- element is not registered on retail (frame.Auras stays nil).
+--
+-- Group model (one container, everything flows together from the bottom right
+-- like the old element):
+--   * importantDispellable / importantOnly: GW.ImportantRaidDebuff via
+--     includeSpellIDs, sized by the important/dispel scale priority
+--   * dispellableDebuffs: RAID_PLAYER_DISPELLABLE token, dispel scale
+--   * debuffs: everything else (important ids excluded, so nothing shows twice);
+--     advanced filter branches replace this group when filters are selected
+--   * buffs: base group, advanced filter branches replace it when selected
+-- ========================================================================
+
+local GRID_BUFF_SIZE = 14
+local GRID_DEBUFF_SIZE = 16
+
+-- ---- aura indicators (retail): one single-button tracker container per
+-- configured position. The engine drives icon, stacks, cooldown swipe and the
+-- BAR duration bar, so the indicators keep working while aura values are secret.
+-- The visible widgets are children of the aura button (inbound API requirement)
+-- but ANCHORED to the container: the button subtree becomes access restricted
+-- after creation, the container stays ours and can be resized/re-anchored by the
+-- settings at any time.
+
+local function BuildIndicatorSpellList(spellId)
+    local list = { [spellId] = true }
+    local indicators = GW.AURAS_INDICATORS[GW.myclass]
+    local predefined = indicators and indicators[spellId]
+    if predefined and predefined[4] then
+        for _, includedId in ipairs(predefined[4]) do
+            list[includedId] = true
+        end
+    end
+    return list, predefined
+end
+
+local function CreateGridIndicatorTracker(frame, pos, spellList, indicatorColor)
+    local isBar = pos == "BAR"
+    local widgets = {}
+    -- mutable: the reuse path swaps the color when the position gets a different
+    -- spell assigned — a plain captured value would stay frozen at creation time
+    local colorState = { color = indicatorColor }
+
+    -- geometry carrier: the widgets are children of the aura button (inbound API
+    -- requirement) but ANCHOR to this frame. The button subtree gets access
+    -- restricted, and the AuraContainer re-applies its self-measured size after
+    -- every engine layout — the sizer is the only rect that stays fully ours, so
+    -- the settings can position/resize the indicator at any time
+    local holder = CreateFrame("Frame", nil, frame)
+    holder:SetSize(13, 13)
+
+    local container = GW.CreateAuraTrackerContainer({
+        parent = frame,
+        unit = frame.unit or "player",
+        filter = "HELPFUL|PLAYER",
+        spellIDs = spellList,
+        width = 13,
+        height = 13,
+        createWidgets = function(button)
+            if isBar then
+                local bar = CreateFrame("StatusBar", nil, button)
+                bar:SetPoint("TOPLEFT", holder, "TOPLEFT")
+                bar:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT")
+                bar:SetOrientation("VERTICAL")
+                bar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+                bar:SetStatusBarColor(1, 0.5, 0)
+
+                bar.bg = bar:CreateTexture(nil, "BORDER")
+                bar.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+                bar.bg:SetPoint("TOPLEFT", bar, "TOPLEFT", 0, 1)
+                bar.bg:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", 1, -1)
+                bar.bg:SetVertexColor(0, 0, 0, 1)
+
+                widgets.bar = bar
+                return { durationBar = bar }
+            end
+
+            local backdrop = button:CreateTexture(nil, "BACKGROUND")
+            backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+            backdrop:SetVertexColor(0, 0, 0)
+            backdrop:SetPoint("TOPLEFT", holder, "TOPLEFT")
+            backdrop:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT")
+
+            -- monochrome square (indicator color) and spell icon share the slot,
+            -- the settings toggle which of the two is visible
+            local color = button:CreateTexture(nil, "ARTWORK")
+            color:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+            color:SetPoint("TOPLEFT", holder, "TOPLEFT", 1, -1)
+            color:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -1, 1)
+
+            local icon = button:CreateTexture(nil, "ARTWORK", nil, 1)
+            icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 1, -1)
+            icon:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -1, 1)
+            button:SetIcon(icon)
+
+            local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+            cooldown:SetPoint("TOPLEFT", holder, "TOPLEFT", 1, -1)
+            cooldown:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -1, 1)
+            cooldown:SetDrawBling(false)
+            cooldown:SetDrawEdge(false)
+            cooldown:SetReverse(true)
+            cooldown:SetHideCountdownNumbers(true)
+            button:SetDurationCooldown(cooldown)
+
+            local stacks = button:CreateFontString(nil, "OVERLAY")
+            stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
+            stacks:SetJustifyH("CENTER")
+            stacks:SetPoint("CENTER", holder, "CENTER")
+            button:SetApplicationCount(stacks)
+
+            -- apply the current settings right away — the widgets only exist from the
+            -- first button on, the settings updater can run before that
+            local r, g, b = 1, 1, 1
+            if colorState.color then
+                r, g, b = unpack(colorState.color)
+            end
+            color:SetVertexColor(r, g, b)
+            color:SetShown(not frame.showRaidIndicatorIcon)
+            icon:SetShown(frame.showRaidIndicatorIcon and true or false)
+            cooldown:SetDrawSwipe(frame.showRaidIndicatorTimer and true or false)
+            stacks:SetShown(frame.showRaidIndicatorStacks and true or false)
+
+            widgets.colorTexture, widgets.icon, widgets.cooldown, widgets.stacks = color, icon, cooldown, stacks
+            return {}
+        end,
+    })
+
+    -- above the frames health/power textures, like the old indicator template
+    -- (frameLevel 20 in gridFrameAuraIndicator.xml)
+    container:SetFrameLevel(20)
+    -- park the container itself — it renders nothing (the widgets follow the sizer),
+    -- but an unanchored ancestor would keep the widgets from rendering
+    container:SetPoint("TOPRIGHT", frame, "TOPRIGHT")
+    container.gwWidgets = widgets
+    container.gwIsBar = isBar
+    container.gwSizer = holder
+    container.gwColorState = colorState
+    return container
+end
+
+-- (re)applies position, size, spell list and display modes of all configured
+-- indicators; returns the spell ids owned by ICON indicators so the regular buff
+-- display can suppress them (the corner indicator replaces the buff icon, the BAR
+-- keeps it — like the old shouldDisplay logic)
+-- every tracker/engine call below is guarded by cached state: the settings pipeline
+-- (UpdateGridSettings "ALL") runs this for EVERY grid frame — unguarded re-applies
+-- trigger container re-evaluations and freeze the client on large raids
+local function UpdateGridIndicators(frame)
+    local trackers = frame.gwIndicatorTrackers
+    if not trackers then return nil end
+
+    local size = tonumber(frame.raidIndicatorSize) or 13
+    local barWidth = tonumber(frame.raidIndicatorBarWidth) or 2
+    local iconIndicatorSpells
+
+    for _, pos in ipairs(INDICATORS) do
+        local spellId = frame.raidIndicators and tonumber(frame.raidIndicators[pos]) or 0
+        local tracker = trackers[pos]
+
+        if spellId and spellId > 0 then
+            if not tracker or tracker.gwAppliedSpellId ~= spellId then
+                local spellList, predefined = BuildIndicatorSpellList(spellId)
+                if not tracker then
+                    tracker = CreateGridIndicatorTracker(frame, pos, spellList, predefined)
+                    trackers[pos] = tracker
+                else
+                    tracker:SetAuraGroupCandidateFilters("tracker", { includeSpellIDs = spellList })
+                end
+                tracker.gwAppliedSpellId = spellId
+                tracker.gwSpellList = spellList
+                tracker.gwIndicatorColor = predefined
+                -- keep the createWidgets closure in sync — buttons built AFTER a
+                -- spell reassignment must use the new spells color
+                tracker.gwColorState.color = predefined
+            end
+
+            if not tracker.gwAppliedActive then
+                tracker.gwAppliedActive = true
+                tracker:SetAuraGroupMaxFrameCount("tracker", 1)
+            end
+            if frame.unit and tracker.gwAppliedUnit ~= frame.unit then
+                tracker.gwAppliedUnit = frame.unit
+                tracker:SetUnit(frame.unit)
+            end
+
+            local geoSig = pos == "BAR" and ("BAR:" .. barWidth) or (pos .. ":" .. size)
+            if tracker.gwAppliedGeoSig ~= geoSig then
+                tracker.gwAppliedGeoSig = geoSig
+                -- geometry lives on the sizer frame — the widgets anchor to it and
+                -- the engine never touches it (unlike the container, which re-applies
+                -- its self-measured size after every layout)
+                local sizer = tracker.gwSizer
+                sizer:ClearAllPoints()
+                if pos == "BAR" then
+                    -- left edge flush on the frame, growing right — a fixed right
+                    -- side offset would leave a width dependent gap
+                    sizer:SetPoint("TOPLEFT", frame, "TOPRIGHT", 0, 0)
+                    sizer:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT", 0, 0)
+                    sizer:SetWidth(barWidth)
+                else
+                    local config = INDICATOR_CONFIG[pos]
+                    sizer:SetSize(size, size)
+                    sizer:SetPoint(config.point, frame, config.point, config.x, config.y)
+                end
+            end
+
+            if pos ~= "BAR" then
+                -- display modes; best effort — the widgets are button children and the
+                -- subtree can be access restricted while auras are secret. New buttons
+                -- apply the current settings themselves in createWidgets.
+                local r, g, b = 1, 1, 1
+                if tracker.gwIndicatorColor then
+                    r, g, b = unpack(tracker.gwIndicatorColor)
+                end
+                local modeSig = strjoin(":", tostring(frame.showRaidIndicatorIcon), tostring(frame.showRaidIndicatorTimer),
+                    tostring(frame.showRaidIndicatorStacks), r, g, b)
+                if tracker.gwAppliedModeSig ~= modeSig then
+                    local w = tracker.gwWidgets
+                    local ok = pcall(function()
+                        w.icon:SetShown(frame.showRaidIndicatorIcon and true or false)
+                        w.colorTexture:SetShown(not frame.showRaidIndicatorIcon)
+                        w.colorTexture:SetVertexColor(r, g, b)
+                        w.cooldown:SetDrawSwipe(frame.showRaidIndicatorTimer and true or false)
+                        w.stacks:SetShown(frame.showRaidIndicatorStacks and true or false)
+                    end)
+                    if ok then
+                        tracker.gwAppliedModeSig = modeSig
+                    end
+                end
+
+                iconIndicatorSpells = iconIndicatorSpells or {}
+                for id in pairs(tracker.gwSpellList) do
+                    iconIndicatorSpells[id] = true
+                end
+            end
+        elseif tracker and tracker.gwAppliedActive then
+            tracker.gwAppliedActive = false
+            tracker:SetAuraGroupMaxFrameCount("tracker", 0)
+        end
+    end
+
+    return iconIndicatorSpells
+end
+
+-- resource bar aware aura anchoring: with the "HEALER" mode only healer frames
+-- carry the power bar, the others anchor lower
+local function HasGridResourceBar(frame)
+    if frame.showResscoureBar == "ALL" then
+        return true
+    end
+    if frame.showResscoureBar ~= "HEALER" then
+        return false
+    end
+    return (GW.allowRoles and UnitGroupRolesAssigned(frame.unit or "player")) == "HEALER"
+end
+
+local function AnchorGridAuraContainer(frame)
+    local container = frame.gwAuraContainer
+    if not container then return end
+
+    local offsetY = HasGridResourceBar(frame) and 5 or 2
+    if frame.gwAuraAnchorY ~= offsetY then
+        frame.gwAuraAnchorY = offsetY
+        container:ClearAllPoints()
+        container:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -2, offsetY)
+    end
+end
+
+-- tooltip setting: applied to the existing buttons (best effort, the subtree can be
+-- access restricted in combat) and to cfg.enableMouse for future buttons; the
+-- combat dependent modes re-apply on the regen events (shared watcher)
+local function ApplyGridAuraMouseState(frame)
+    local container = frame.gwAuraContainer
+    if not container then return end
+
+    local mode = frame.showAuraTooltipInCombat
+    local enable = (not mode or mode == "ALWAYS"
+        or (mode == "OUT_COMBAT" and not InCombatLockdown())
+        or (mode == "IN_COMBAT" and InCombatLockdown())) and true or false
+
+    container.gwConfig.enableMouse = enable
+    if frame.gwAuraMouseEnabled ~= enable then
+        -- cache only on full success: buttons can be access restricted in combat,
+        -- failed ones get retried on the next regen event
+        local allApplied = true
+        for _, buttons in pairs(container.gwButtonsByGroup) do
+            for _, button in next, buttons do
+                if not pcall(button.EnableMouse, button, enable) then
+                    allApplied = false
+                end
+            end
+        end
+        if allApplied then
+            frame.gwAuraMouseEnabled = enable
+        end
+    end
+end
+
+local gridEventFrames
+local function RegisterGridAuraEvents(frame)
+    if not gridEventFrames then
+        gridEventFrames = {}
+        local watcher = CreateFrame("Frame")
+        watcher:RegisterEvent("PLAYER_REGEN_DISABLED")
+        watcher:RegisterEvent("PLAYER_REGEN_ENABLED")
+        watcher:RegisterEvent("PLAYER_ROLES_ASSIGNED")
+        watcher:RegisterEvent("GROUP_ROSTER_UPDATE")
+        watcher:SetScript("OnEvent", function(_, event)
+            for f in pairs(gridEventFrames) do
+                if event == "PLAYER_ROLES_ASSIGNED" or event == "GROUP_ROSTER_UPDATE" then
+                    AnchorGridAuraContainer(f)
+                else
+                    ApplyGridAuraMouseState(f)
+                    -- retries indicator display modes whose in-combat application
+                    -- failed (everything unchanged is skipped by the caches)
+                    UpdateGridIndicators(f)
+                end
+            end
+        end)
+    end
+    gridEventFrames[frame] = true
+end
+
+-- shallow spell-set comparison, used to keep a STABLE exclude table reference —
+-- a fresh table every pass would defeat the factory's change detection
+local function SameSpellSet(a, b)
+    if a == b then return true end
+    if not a or not b then return false end
+    for k in pairs(a) do
+        if not b[k] then return false end
+    end
+    for k in pairs(b) do
+        if not a[k] then return false end
+    end
+    return true
+end
+
+-- stable candidate filter table for "everything except the important ids"
+local importantExcludeFilters
+local function GetImportantExcludeFilters()
+    if not importantExcludeFilters then
+        importantExcludeFilters = { excludeSpellIDs = GW.ImportantRaidDebuff }
+    end
+    return importantExcludeFilters
+end
+
+local function GetGridDebuffBranches(frame)
+    local branches = GW.BuildAdvancedAuraFilterBranches("HARMFUL", frame.debuffFilters)
+    if #branches == 0 then return nil end
+
+    -- the dispellable group owns the RAID_PLAYER_DISPELLABLE auras (own scale) —
+    -- keep the branches disjoint from it
+    for _, branch in ipairs(branches) do
+        branch.filter = branch.filter .. "|!RAID_PLAYER_DISPELLABLE"
+    end
+    return branches
+end
+
+local function UpdateGridAuraContainers(frame)
+    local container = frame.gwAuraContainer
+    if not container then return end
+    local cfg = container.gwConfig
+
+    cfg.maximumLineSize = (frame.unitWidth or frame:GetWidth() or 40) - 2
+
+    -- indicators first: icon indicators own their spells exclusively, the regular
+    -- buff display suppresses them (together with the per grid ignore list)
+    local iconIndicatorSpells = UpdateGridIndicators(frame)
+    local exclude = iconIndicatorSpells
+    for spellId, enabled in pairs(frame.ignoredAuraSpellIDs or {}) do
+        if enabled then
+            exclude = exclude or {}
+            exclude[spellId] = true
+        end
+    end
+    -- keep the previous table reference when the content is unchanged, so the
+    -- factory's candidate filter change detection can skip the re-apply
+    if SameSpellSet(exclude, frame.gwAuraExcludeCache) then
+        exclude = frame.gwAuraExcludeCache
+    else
+        frame.gwAuraExcludeCache = exclude
+    end
+    cfg.excludeSpellIDs = exclude
+
+    local showImportant = frame.raidShowImportantInstanceDebuffs and next(GW.ImportantRaidDebuff) ~= nil
+    local importantScale = tonumber(frame.raidDebuffScale) or 1
+    local dispelScale = tonumber(frame.raidDispelDebuffScale) or 1
+    local prioScale = GW.GetDebuffScaleBasedOnPrio and GW.GetDebuffScaleBasedOnPrio() or math.max(importantScale, dispelScale)
+
+    local buffBranches = frame.showBuffs and GW.BuildAdvancedAuraFilterBranches("HELPFUL", frame.buffFilters) or nil
+    if buffBranches and #buffBranches == 0 then buffBranches = nil end
+    local debuffBranches = frame.showDebuffs and GetGridDebuffBranches(frame) or nil
+
+    -- the important ids leave the generic groups so they only render in their own,
+    -- scaled groups (stable table reference — see the factory change detection)
+    local importantExclude = showImportant and GetImportantExcludeFilters() or nil
+
+    for _, group in next, cfg.groups do
+        if group.key == "importantDispellable" then
+            group.size = GW.RoundInt(GRID_DEBUFF_SIZE * prioScale)
+            group.maxFrameCount = (frame.showDebuffs and showImportant) and 12 or 0
+        elseif group.key == "importantOnly" then
+            group.size = GW.RoundInt(GRID_DEBUFF_SIZE * importantScale)
+            group.maxFrameCount = (frame.showDebuffs and showImportant) and 12 or 0
+        elseif group.key == "dispellableDebuffs" then
+            group.size = GW.RoundInt(GRID_DEBUFF_SIZE * dispelScale)
+            group.maxFrameCount = frame.showDebuffs and 12 or 0
+            group.candidateFilters = importantExclude
+        elseif group.key == "debuffs" then
+            group.size = GRID_DEBUFF_SIZE
+            group.maxFrameCount = (frame.showDebuffs and not debuffBranches) and 12 or 0
+            group.candidateFilters = importantExclude
+        elseif group.key == "buffs" then
+            group.size = GRID_BUFF_SIZE
+            group.maxFrameCount = (frame.showBuffs and not buffBranches) and 12 or 0
+        end
+    end
+
+    AnchorGridAuraContainer(frame)
+    ApplyGridAuraMouseState(frame)
+
+    -- both branch sets target the SAME container: only the last call runs the layout
+    container:GwSetAdvancedBranches("debuffs", debuffBranches, function(branch, index)
+        return {
+            size = GRID_DEBUFF_SIZE,
+            maxFrameCount = 12,
+            isDebuff = true,
+            hideDuration = true,
+            candidateFilters = importantExclude,
+            layoutIndex = 4 + index * 0.01,
+        }
+    end, true)
+    container:GwSetAdvancedBranches("buffs", buffBranches, function(branch, index)
+        return {
+            size = GRID_BUFF_SIZE,
+            maxFrameCount = 12,
+            hideDuration = true,
+            layoutIndex = 5 + index * 0.01,
+        }
+    end)
+
+    if frame.unit and container.gwAppliedUnit ~= frame.unit then
+        container.gwAppliedUnit = frame.unit
+        container:SetUnit(frame.unit)
+    end
+end
+
+local function Construct_GridAuraContainers(frame)
+    local container = GW.CreateUnitAuraContainer({
+        parent = frame,
+        unit = frame.unit or "player",
+        tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
+        anchorPoint = "BOTTOMRIGHT",
+        growLeft = true,
+        growUp = true,
+        elementSpacing = 1,
+        lineSpacing = 1,
+        onSettingsRefresh = function() UpdateGridAuraContainers(frame) end,
+        groups = {
+            { key = "importantDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+            { key = "importantOnly", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+            { key = "dispellableDebuffs", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true },
+            { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true },
+            { key = "buffs", filter = "HELPFUL", size = GRID_BUFF_SIZE, maxFrameCount = 12, hideDuration = true },
+        },
+    })
+    container:SetFrameLevel(frame.RaisedElementParent and frame.RaisedElementParent.AuraLevel or (frame:GetFrameLevel() + 4))
+    container:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -2, 2)
+    frame.gwAuraContainer = container
+    frame.gwIndicatorTrackers = {}
+    RegisterGridAuraEvents(frame)
+
+    -- the secure header re-targets the frame (raid1 -> raid2, ...): keep the
+    -- containers on the same unit as the frame
+    frame:HookScript("OnAttributeChanged", function(self, name, value)
+        if name == "unit" and value and self.gwAuraContainer then
+            if self.gwAuraContainer.gwAppliedUnit ~= value then
+                self.gwAuraContainer.gwAppliedUnit = value
+                self.gwAuraContainer:SetUnit(value)
+            end
+            for _, tracker in pairs(self.gwIndicatorTrackers) do
+                if tracker.gwAppliedUnit ~= value then
+                    tracker.gwAppliedUnit = value
+                    tracker:SetUnit(value)
+                end
+            end
+            -- the resource bar anchoring depends on the units role
+            AnchorGridAuraContainer(self)
+        end
+    end)
+end
+
 local function CreateAuraIndicator(frame, pos)
     local config = INDICATOR_CONFIG[pos]
     if not config then return nil end
@@ -439,6 +857,14 @@ local function CreateAuraIndicator(frame, pos)
 end
 
 local function Construct_Auras(frame)
+    if GW.Retail then
+        -- no oUF Auras element on retail (reading aura data from insecure code is
+        -- blocked while values are secret) — frame.Auras stays nil, the display
+        -- runs through the AuraContainer
+        Construct_GridAuraContainers(frame)
+        return nil
+    end
+
     local auras = CreateFrame('Frame', '$parentAuras', frame)
     auras:SetSize(frame:GetSize())
     auras:SetFrameLevel(frame.RaisedElementParent.AuraLevel)
@@ -504,37 +930,6 @@ local function Construct_Auras(frame)
 end
 GW.Construct_Auras = Construct_Auras
 
-local function UpdateFilters(frame)
-    for i = 1, 2 do
-        local db = i == 1 and frame.buffFilters or frame.debuffFilters
-        local isPlayer = db.isAuraPlayer
-        local isRaidPlayerDispellable = db.isAuraRaidPlayerDispellable
-        --local isImportant = db.isAuraImportant
-        --local isImportantPlayer = db.isAuraImportantPlayer
-        local isCrowdControl = db.isAuraCrowdControl
-        local isCrowdControlPlayer = db.isAuraCrowdControlPlayer
-        local isBigDefensive = db.isAuraBigDefensive
-        local isBigDefensivePlayer = db.isAuraBigDefensivePlayer
-        local isRaidInCombat = db.isAuraRaidInCombat
-        local isRaidInCombatPlayer = db.isAuraRaidInCombatPlayer
-        local isExternalDefensive = db.isAuraExternalDefensive
-        local isExternalDefensivePlayer = db.isAuraExternalDefensivePlayer
-        local isCancelable = db and db.isAuraCancelable
-        local isCancelablePlayer = db and db.isAuraCancelablePlayer
-        local notCancelable = db and db.notAuraCancelable
-        local notCancelablePlayer = db and db.notAuraCancelablePlayer
-        local isRaid = db and db.isAuraRaid
-        local isRaidPlayer = db and db.isAuraRaidPlayer
-
-        local shared = isPlayer or isCancelable or isCancelablePlayer or notCancelable or notCancelablePlayer or isRaid or isRaidPlayer
-        if GW.Retail then
-            db.noFilter = not (shared or isRaidPlayerDispellable or isCrowdControl or isCrowdControlPlayer or isBigDefensive or isBigDefensivePlayer or isRaidInCombat or isRaidInCombatPlayer or isExternalDefensive or isExternalDefensivePlayer)
-        else
-            db.noFilter = not shared
-        end
-    end
-end
-
 local function UpdateIndicatorSettings(frame)
     local indicatorSize = tonumber(frame.raidIndicatorSize) or 13
     local indicatorBarWidth = tonumber(frame.raidIndicatorBarWidth) or 2
@@ -550,6 +945,11 @@ local function UpdateIndicatorSettings(frame)
 end
 
 local function UpdateAurasSettings(frame)
+    if GW.Retail then
+        UpdateGridAuraContainers(frame)
+        return
+    end
+
     frame.Auras:ClearAllPoints()
     frame.Auras:SetPoint('TOPLEFT', frame, 'TOPLEFT')
     if frame.showResscoureBar == "ALL" or frame.showResscoureBar == "HEALER" then
@@ -561,7 +961,6 @@ local function UpdateAurasSettings(frame)
     frame.Auras:SetSize(frame.unitWidth - 2, frame.unitHeight - 2)
     frame.Auras.forceShow = frame.forceShowAuras
     UpdateIndicatorSettings(frame)
-    UpdateFilters(frame)
 
     frame.Auras:ForceUpdate()
 end

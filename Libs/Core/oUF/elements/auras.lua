@@ -89,8 +89,6 @@ local function UpdateTooltip(self)
 
     if self.tooltipBySpellId then
         GameTooltip:SetSpellByID(self.tooltipBySpellId)
-    elseif oUF.isRetail then
-        GameTooltip:SetUnitAuraByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
     elseif self.index then
         GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self.index, self.isHarmfulAura and "HARMFUL" or "HELPFUL")
     end
@@ -207,87 +205,50 @@ local function updateAura(element, unit, data, position)
     button.auraInstanceID = data.auraInstanceID
     button.isHarmfulAura = data.isHarmfulAura
 
-    if not oUF.isRetail then
-        --loop to get the index
-        for i = 1, 40 do
-            local auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, data.isHelpful and "HELPFUL" or "HARMFUL")
-            if auraData then
-                if auraData.auraInstanceID == data.auraInstanceID then
-                    button.index = i
-                    break
-                end
-            else
+    --loop to get the index
+    for i = 1, 40 do
+        local auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, data.isHelpful and "HELPFUL" or "HARMFUL")
+        if auraData then
+            if auraData.auraInstanceID == data.auraInstanceID then
+                button.index = i
                 break
             end
+        else
+            break
         end
     end
 
     if(button.Cooldown and not element.disableCooldown) then
-        if oUF.isRetail then
-            local duration = C_UnitAuras.GetAuraDuration(unit, data.auraInstanceID)
-            if duration then
-                button.Cooldown:SetCooldownFromDurationObject(duration)
-                button.Cooldown:Show()
-            else
-                button.Cooldown:Hide()
-            end
+        if(data.duration > 0) then
+            button.Cooldown:SetCooldown(data.expirationTime - data.duration, data.duration, data.timeMod)
+            button.Cooldown:Show()
         else
-            if(data.duration > 0) then
-                button.Cooldown:SetCooldown(data.expirationTime - data.duration, data.duration, data.timeMod)
-                button.Cooldown:Show()
-            else
-                button.Cooldown:Hide()
-            end
+            button.Cooldown:Hide()
         end
     end
 
     if(button.Overlay) then
-        if oUF.isRetail then
-            if((data.isHarmfulAura and element.showDebuffType) or (not data.isHarmfulAura and element.showBuffType)) then
-                local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelColorCurve)
-                if not color then
-                    color = ns.FallbackColor
-                end
-                button.Overlay:SetVertexColor(color:GetRGBA())
-                button.Overlay:Show()
-            else
-                button.Overlay:Hide()
-            end
-        else
-            if((data.isHarmfulAura and element.showDebuffType) or (not data.isHarmfulAura and element.showBuffType) or element.showType) then
-                local color = element.__owner.colors.debuff[data.dispelName] or element.__owner.colors.debuff.none
+        if((data.isHarmfulAura and element.showDebuffType) or (not data.isHarmfulAura and element.showBuffType) or element.showType) then
+            local color = element.__owner.colors.debuff[data.dispelName] or element.__owner.colors.debuff.none
 
-                button.Overlay:SetVertexColor(color[1], color[2], color[3])
-                button.Overlay:Show()
-            else
-                button.Overlay:Hide()
-            end
+            button.Overlay:SetVertexColor(color[1], color[2], color[3])
+            button.Overlay:Show()
+        else
+            button.Overlay:Hide()
         end
     end
 
     if(button.Stealable) then
-        if oUF.isRetail then
-            if(element.showStealableBuffs and not UnitCanCooperate('player', unit)) then
-                button.Stealable:SetAlphaFromBoolean(data.isStealable, 1, 0)
-            else
-                button.Stealable:SetAlpha(0)
-            end
+        if(not data.isHarmfulAura and data.isStealable and element.showStealableBuffs and not ns.UnitIsUnit('player', unit)) then
+            button.Stealable:Show()
         else
-            if(not data.isHarmfulAura and data.isStealable and element.showStealableBuffs and not ns.UnitIsUnit('player', unit)) then
-                button.Stealable:Show()
-            else
-                button.Stealable:Hide()
-            end
+            button.Stealable:Hide()
         end
     end
 
     if(button.Icon) then button.Icon:SetTexture(data.icon) end
     if(button.Count) then
-        if oUF.isRetail then
-            button.Count:SetText(C_UnitAuras.GetAuraApplicationDisplayCount(unit, data.auraInstanceID, element.minCount or 2, element.maxCount or 999))
-        else
-            button.Count:SetText(data.applications > 1 and data.applications or '')
-        end
+        button.Count:SetText(data.applications > 1 and data.applications or '')
     end
 
     local width = element.width or element.size or 16
@@ -322,10 +283,6 @@ local function SortAuras(a, b)
         return a.isAuraPlayer
     end
 
-    if ns.Retail then
-        return a.auraInstanceID < b.auraInstanceID
-    end
-
     if(a.canApplyAura ~= b.canApplyAura) then
         return a.canApplyAura
     end
@@ -339,19 +296,10 @@ local function processData(element, unit, data, filter)
     data.isHarmfulAura = filter:find("HARMFUL") and true
     data.isHelpfulAura = filter:find("HELPFUL") and true
 
-    if oUF.isRetail then
-        --data.isAuraImportant = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|IMPORTANT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|IMPORTANT")
-        data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CANCELABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CANCELABLE")
-        data.isAuraCrowdControl = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CROWD_CONTROL") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CROWD_CONTROL")
-        data.isAuraBigDefensive = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|BIG_DEFENSIVE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|BIG_DEFENSIVE")
-        data.isAuraExternalDefensive = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|EXTERNAL_DEFENSIVE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|EXTERNAL_DEFENSIVE")
-        data.isAuraPlayer = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|PLAYER") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|PLAYER")
-        data.isAuraRaid = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|RAID") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|RAID")
-        data.isAuraRaidInCombat = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|RAID_IN_COMBAT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|RAID_IN_COMBAT")
-        data.isAuraRaidPlayerDispellable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|RAID_PLAYER_DISPELLABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
-    else
-        data.isAuraPlayer = data.sourceUnit and (ns.UnitIsUnit('player', data.sourceUnit) or UnitIsOwnerOrControllerOfUnit('player', data.sourceUnit))
-    end
+    -- NOTE 12.1: this element is CLASSIC ONLY — on retail the grid auras run on the
+    -- AuraContainer system (Games/Shared/Units/Grid/elements/auras.lua), reading
+    -- aura data from insecure code is blocked there while values are secret
+    data.isAuraPlayer = data.sourceUnit and (ns.UnitIsUnit('player', data.sourceUnit) or UnitIsOwnerOrControllerOfUnit('player', data.sourceUnit))
     --[[ Callback: Auras:PostProcessAuraData(unit, data)
     Called after the aura data has been processed.
 

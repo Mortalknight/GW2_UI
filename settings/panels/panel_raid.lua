@@ -8,10 +8,10 @@ local StrLower = GW.StrLower
 
 local playerTag = " |cFF888888(" .. PLAYER .. ")|r"
 local otherTag = " |cFF888888(" .. OTHER .. ")|r"
-local auraOptions = {"isAuraPlayer", "isAuraRaidPlayerDispellable", "HEADER", "isAuraRaidPlayer", "isAuraCancelablePlayer", "notAuraCancelablePlayer", "isAuraCrowdControlPlayer", "isAuraBigDefensivePlayer", "isAuraRaidInCombatPlayer", "isAuraExternalDefensivePlayer"}
-local auraOptionsNames = {PLAYER, L["Dispellable"], PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag, L["Crowd Control"] .. playerTag, L["Big Defensive"] .. playerTag, RAID_FRAMES_LABEL .. playerTag, L["External Defensives"] .. playerTag}
-local auraOptionsOther = {"HEADER", "isAuraRaid", "isAuraCancelable", "notAuraCancelable", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraRaidInCombat", "isAuraExternalDefensive"}
-local auraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag, L["Crowd Control"] .. otherTag, L["Big Defensive"] .. otherTag, RAID_FRAMES_LABEL .. otherTag, L["External Defensives"] .. otherTag}
+local auraOptions = {"isAuraPlayer", "isAuraRaidPlayerDispellable", "HEADER", "isAuraRaidPlayer", "isAuraCancelablePlayer", "notAuraCancelablePlayer", "isAuraCrowdControlPlayer", "isAuraBigDefensivePlayer", "isAuraRaidInCombatPlayer", "isAuraExternalDefensivePlayer", "isAuraImportantPlayer"}
+local auraOptionsNames = {PLAYER, L["Dispellable"], PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag, L["Crowd Control"] .. playerTag, L["Big Defensive"] .. playerTag, RAID_FRAMES_LABEL .. playerTag, L["External Defensives"] .. playerTag, L["Important"] .. playerTag}
+local auraOptionsOther = {"HEADER", "isAuraRaid", "isAuraCancelable", "notAuraCancelable", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraRaidInCombat", "isAuraExternalDefensive", "isAuraImportant"}
+local auraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag, L["Crowd Control"] .. otherTag, L["Big Defensive"] .. otherTag, RAID_FRAMES_LABEL .. otherTag, L["External Defensives"] .. otherTag, L["Important"] .. otherTag}
 local statusBarTexturesOptions, statusBarTexturesLables = GW.GetStatusBarTextures()
 
 for i = 1, #auraOptionsOther do
@@ -84,7 +84,9 @@ local function LoadGeneralGridSettings(panel)
     return general
 end
 
-local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showBuffs, showDebuffs, dependence, showPrivateAuras, privateAuraSize)
+-- NOTE 12.1: the private aura options were removed — the anchor system no longer
+-- exists, private auras render as normal secret debuffs through the containers
+local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showBuffs, showDebuffs, dependence)
     panel:AddGroupHeader(L["Buffs"])
 
     panel:AddOption(SHOW_BUFFS, nil, {getterSetter = showBuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"]})
@@ -93,8 +95,15 @@ local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showBuf
     panel:AddGroupHeader(L["Debuffs"])
     panel:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = showDebuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Debuffs"]})
     panel:AddOptionDropdown(L["Debuffs"], nil, {getterSetter = debuffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(L["Private Auras"], nil, {getterSetter = showPrivateAuras, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail or not showPrivateAuras})
-    panel:AddOptionSlider(L["Private Auras size"], L["Set the size of Private Auras on this grid."], {getterSetter = privateAuraSize, callback = function() UpdateGridSettingsThrottled(profile) end, min = 8, max = 40, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail or not showPrivateAuras})
+end
+
+-- per grid ignore list (all game versions: retail containers exclude the spell ids,
+-- the classic engine checks them in its aura filter). Own function: it is called
+-- AFTER the classic only debuff options of each grid page, since the panel layout
+-- follows the creation order
+local function CreateIgnoredAuraSection(panel, profile, ignoredSetting, dependence)
+    panel:AddGroupHeader(L["Ignored Auras"])
+    panel:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], {getterSetter = ignoredSetting, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Ignored Auras"]})
 end
 
 local function CreateClassSortebalList(panel, setting, dependence)
@@ -176,10 +185,11 @@ local function LoadRaid10Profile(panel)
     end
 
     -- retail only filter
-    CreateAuraFilterSection(raid10, "RAID10", "RAID_10_BUFF_FILTER", "RAID_10_DEBUFF_FILTER", "RAID_10_SHOW_BUFFS", "RAID_SHOW_DEBUFFS_RAID10", "RAID10_ENABLED", "RAID_10_SHOW_PRIVATE_AURAS", "RAID_10_PRIVATE_AURA_SIZE")
+    CreateAuraFilterSection(raid10, "RAID10", "RAID_10_BUFF_FILTER", "RAID_10_DEBUFF_FILTER", "RAID_10_SHOW_BUFFS", "RAID_SHOW_DEBUFFS_RAID10", "RAID10_ENABLED")
     -- none retail debuff filter
     raid10:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID10"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     raid10:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    CreateIgnoredAuraSection(raid10, "RAID10", "RAID_10_IGNORED_AURAS", "RAID10_ENABLED")
 
 
     --fader
@@ -274,10 +284,11 @@ local function LoadRaid25Profile(panel)
     end
 
     -- retail only filter
-    CreateAuraFilterSection(raid25, "RAID25", "RAID_25_BUFF_FILTER", "RAID_25_DEBUFF_FILTER", "RAID_25_SHOW_BUFFS", "RAID_SHOW_DEBUFFS_RAID25", "RAID25_ENABLED", "RAID_25_SHOW_PRIVATE_AURAS", "RAID_25_PRIVATE_AURA_SIZE")
+    CreateAuraFilterSection(raid25, "RAID25", "RAID_25_BUFF_FILTER", "RAID_25_DEBUFF_FILTER", "RAID_25_SHOW_BUFFS", "RAID_SHOW_DEBUFFS_RAID25", "RAID25_ENABLED")
     -- none retail debuff filter
     raid25:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID25"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     raid25:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    CreateIgnoredAuraSection(raid25, "RAID25", "RAID_25_IGNORED_AURAS", "RAID25_ENABLED")
 
 
     --fader
@@ -370,10 +381,11 @@ local function LoadRaid40Profile(panel)
     end
 
     -- retail only filter
-    CreateAuraFilterSection(raid40, "RAID40", "RAID_BUFF_FILTER", "RAID_DEBUFF_FILTER", "RAID_SHOW_BUFFS", "RAID_SHOW_DEBUFFS", "RAID_FRAMES", "RAID_SHOW_PRIVATE_AURAS", "RAID_PRIVATE_AURA_SIZE")
+    CreateAuraFilterSection(raid40, "RAID40", "RAID_BUFF_FILTER", "RAID_DEBUFF_FILTER", "RAID_SHOW_BUFFS", "RAID_SHOW_DEBUFFS", "RAID_FRAMES")
     -- none retail debuff filter
     raid40:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     raid40:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    CreateIgnoredAuraSection(raid40, "RAID40", "RAID_IGNORED_AURAS", "RAID_FRAMES")
 
 
     --fader
@@ -464,10 +476,11 @@ local function LoadMaintankProfile(panel)
     end
 
     -- retail only filter
-    CreateAuraFilterSection(tank, "TANK", "RAID_MAINTANK_BUFF_FILTER", "RAID_MAINTANK_DEBUFF_FILTER", "RAID_SHOW_BUFFS_TANK", "RAID_SHOW_DEBUFFS_TANK", "RAID_MAINTANK_FRAMES_ENABLED", "RAID_MAINTANK_SHOW_PRIVATE_AURAS", "RAID_MAINTANK_PRIVATE_AURA_SIZE")
+    CreateAuraFilterSection(tank, "TANK", "RAID_MAINTANK_BUFF_FILTER", "RAID_MAINTANK_DEBUFF_FILTER", "RAID_SHOW_BUFFS_TANK", "RAID_SHOW_DEBUFFS_TANK", "RAID_MAINTANK_FRAMES_ENABLED")
     -- none retail debuff filter
     tank:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_TANK", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_TANK"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     tank:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_TANK", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    CreateIgnoredAuraSection(tank, "TANK", "RAID_MAINTANK_IGNORED_AURAS", "RAID_MAINTANK_FRAMES_ENABLED")
 
 
     --fader
@@ -555,6 +568,7 @@ local function LoadRaidPetProfile(panel)
     -- none retail debuff filter
     p:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     p:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    CreateIgnoredAuraSection(p, "RAID_PET", "RAID_PET_IGNORED_AURAS", "RAID_PET_FRAMES")
 
     --fader
     p:AddGroupHeader(L["Fader"])
@@ -644,10 +658,11 @@ local function LoadPartyProfile(panel)
     end
 
     -- retail only filter
-    CreateAuraFilterSection(party, "PARTY", "RAID_PARTY_BUFF_FILTER", "RAID_PARTY_DEBUFF_FILTER", "RAID_PARTY_SHOW_BUFFS", "RAID_SHOW_DEBUFFS_PARTY", "RAID_STYLE_PARTY", "RAID_PARTY_SHOW_PRIVATE_AURAS", "RAID_PARTY_PRIVATE_AURA_SIZE")
+    CreateAuraFilterSection(party, "PARTY", "RAID_PARTY_BUFF_FILTER", "RAID_PARTY_DEBUFF_FILTER", "RAID_PARTY_SHOW_BUFFS", "RAID_SHOW_DEBUFFS_PARTY", "RAID_STYLE_PARTY")
     -- none retail debuff filter
     party:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     party:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    CreateIgnoredAuraSection(party, "PARTY", "RAID_PARTY_IGNORED_AURAS", "RAID_STYLE_PARTY")
 
 
     --fader
@@ -747,6 +762,7 @@ local function LoadPartyPetProfile(panel)
     -- none retail debuff filter
     p:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "PARTY_ONLY_DISPELL_DEBUFFS_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true, ["PARTY_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     p:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    CreateIgnoredAuraSection(p, "PARTY_PET", "PARTY_PET_IGNORED_AURAS", "PARTY_PET_FRAMES_ENABLED")
 
     --fader
     p:AddGroupHeader(L["Fader"])

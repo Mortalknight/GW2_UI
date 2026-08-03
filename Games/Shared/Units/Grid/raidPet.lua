@@ -50,7 +50,6 @@ local function UpdateGridRaidPetFrame(frame)
     frame.showDebuffs = GW.settings.RAID_SHOW_DEBUFFS_PET
     frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_PET
     frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PET
-    frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_PET
     frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_PET
@@ -74,6 +73,7 @@ local function UpdateGridRaidPetFrame(frame)
     -- retail filtering
     frame.debuffFilters = GW.settings.RAID_PET_DEBUFF_FILTER
     frame.buffFilters = GW.settings.RAID_PET_BUFF_FILTER
+    frame.ignoredAuraSpellIDs = GW.settings.RAID_PET_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
     frame.showBuffs = GW.settings.RAID_PET_SHOW_BUFFS
 
     if not InCombatLockdown() then

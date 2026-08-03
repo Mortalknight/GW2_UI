@@ -573,12 +573,20 @@ local function RefreshSettingsAfterProfileSwitch()
             local color = of.get()
             of.button.bg:SetColorTexture(color.r, color.g, color.b)
         elseif of.optionType == "dropdown" then
-            of.dropDown:GenerateMenu()
+            -- rebuild dynamic option lists first (e.g. the indicator dropdowns pick
+            -- up custom spell ids carried by the incoming profile)
+            if of.optionUpdateFunc then
+                of.optionUpdateFunc()
+            else
+                of.dropDown:GenerateMenu()
+            end
         elseif of.optionType == "list" then
             of:RefreshList()
             if of.callback then
                 of.callback((of.GetListOrder and of:GetListOrder()) or of.get())
             end
+        elseif of.optionType == "spellList" and of.RefreshSpellList then
+            of:RefreshSpellList()
         end
     end
     CheckDependencies()
@@ -1233,7 +1241,12 @@ function RefreshSpellListOption(of, v)
             row.removeButton:SetPoint("RIGHT", -4, 0)
             row.removeButton:GwSkinButton(true)
             row.removeButton:SetScript("OnClick", function()
-                of.set(nil, row.spellID)
+                of.set(false, row.spellID) -- false, not nil: AceDB would re-seed removed DEFAULT entries on the next login
+                -- the list table is mutated in place — invalidate the aura containers'
+                -- cached filter applications BEFORE the callback re-applies them
+                if GW.BumpAuraContainerSettingsGeneration then
+                    GW.BumpAuraContainerSettingsGeneration()
+                end
                 if v.callback then
                     v.callback(nil, row.spellID)
                 end
@@ -1288,6 +1301,11 @@ local function TryAddSpellToList(of, v)
     of.inputFrame.input:SetText("")
     of.inputFrame.input:ClearFocus()
     of.set(true, spellID)
+    -- the list table is mutated in place — invalidate the aura containers' cached
+    -- filter applications BEFORE the callback re-applies them
+    if GW.BumpAuraContainerSettingsGeneration then
+        GW.BumpAuraContainerSettingsGeneration()
+    end
     if v.callback then
         v.callback(true, spellID)
     end
@@ -1440,9 +1458,12 @@ local function SettingsInitOptionWidget(of, v, panel)
 
                     if v.tooltipType then
                         if v.tooltipType == "spell" then
-                            entryButton:SetTooltip(function(tooltip, elementDescription)
-                                GameTooltip:SetSpellByID(option)
-                            end)
+                            -- skip pseudo entries ("None" = 0, "Custom Spell ID..." = -1)
+                            if type(option) == "number" and option > 0 then
+                                entryButton:SetTooltip(function(tooltip, elementDescription)
+                                    GameTooltip:SetSpellByID(option)
+                                end)
+                            end
                         elseif v.tooltipType == "encounter" then
                             entryButton:SetTooltip(function(tooltip, elementDescription)
                                 local name, desc = EJ_GetEncounterInfo(option)

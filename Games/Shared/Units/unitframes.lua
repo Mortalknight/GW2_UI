@@ -851,17 +851,6 @@ function GW.UpdateFilters(frame)
     for i = 1, 2 do
         local db = i == 1 and frame.buffAdvancedFilters or frame.debuffAdvancedFilters
         local isPlayer = db.isAuraPlayer
-        local isRaidPlayerDispellable = db.isAuraRaidPlayerDispellable
-        --local isImportant = db.isAuraImportant
-        --local isImportantPlayer = db.isAuraImportantPlayer
-        local isCrowdControl = db.isAuraCrowdControl
-        local isCrowdControlPlayer = db.isAuraCrowdControlPlayer
-        local isBigDefensive = db.isAuraBigDefensive
-        local isBigDefensivePlayer = db.isAuraBigDefensivePlayer
-        local isRaidInCombat = db.isAuraRaidInCombat
-        local isRaidInCombatPlayer = db.isAuraRaidInCombatPlayer
-        local isExternalDefensive = db.isAuraExternalDefensive
-        local isExternalDefensivePlayer = db.isAuraExternalDefensivePlayer
         local isCancelable = db and db.isAuraCancelable
         local isCancelablePlayer = db and db.isAuraCancelablePlayer
         local notCancelable = db and db.notAuraCancelable
@@ -870,11 +859,7 @@ function GW.UpdateFilters(frame)
         local isRaidPlayer = db and db.isAuraRaidPlayer
 
         local shared = isPlayer or isCancelable or isCancelablePlayer or notCancelable or notCancelablePlayer or isRaid or isRaidPlayer
-        if GW.Retail then
-            db.noFilter = not (shared or isRaidPlayerDispellable or isCrowdControl or isCrowdControlPlayer or isBigDefensive or isBigDefensivePlayer or isRaidInCombat or isRaidInCombatPlayer or isExternalDefensive or isExternalDefensivePlayer)
-        else
-            db.noFilter = not shared
-        end
+        db.noFilter = not shared
     end
 end
 

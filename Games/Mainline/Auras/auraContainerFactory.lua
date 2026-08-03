@@ -50,6 +50,7 @@ local ADVANCED_FILTER_BRANCHES = {
     { setting = "isAuraBigDefensivePlayer",      tokens = "BIG_DEFENSIVE|PLAYER",      side = "player" },
     { setting = "isAuraExternalDefensivePlayer", tokens = "EXTERNAL_DEFENSIVE|PLAYER", side = "player" },
     { setting = "isAuraRaidInCombatPlayer",      tokens = "RAID_IN_COMBAT|PLAYER",     side = "player" },
+    { setting = "isAuraImportantPlayer",         tokens = "IMPORTANT|PLAYER",          side = "player" }, -- token re-added in 12.1
     { setting = "isAuraCancelable",              tokens = "CANCELABLE|!PLAYER",        side = "other" },
     { setting = "notAuraCancelable",             tokens = "!CANCELABLE|!PLAYER",       side = "other" },
     { setting = "isAuraRaid",                    tokens = "RAID|!PLAYER",              side = "other" },
@@ -57,6 +58,7 @@ local ADVANCED_FILTER_BRANCHES = {
     { setting = "isAuraBigDefensive",            tokens = "BIG_DEFENSIVE|!PLAYER",     side = "other" },
     { setting = "isAuraExternalDefensive",       tokens = "EXTERNAL_DEFENSIVE|!PLAYER", side = "other" },
     { setting = "isAuraRaidInCombat",            tokens = "RAID_IN_COMBAT|!PLAYER",    side = "other" },
+    { setting = "isAuraImportant",               tokens = "IMPORTANT|!PLAYER",         side = "other" }, -- token re-added in 12.1
     -- DISPELLABLE instead of RAID_PLAYER_DISPELLABLE: needs no RAID context and covers
     -- everything dispellable; HELPFUL/HARMFUL is prepended as the base prefix anyway
     { setting = "isAuraRaidPlayerDispellable",   tokens = "DISPELLABLE" },
@@ -130,12 +132,27 @@ GW.EnsureAuraTooltipStyle = EnsureTooltipStyle
 -- (e.g. the party containers recompute sizes/filters); default is a plain re-apply.
 local containerRegistry = {}
 
+-- change-detection generation: ApplyLayout skips re-applying candidate filters when
+-- the SOURCE tables are unchanged — but the engine holds a secure copy, so in-place
+-- mutations (e.g. the RAIDDEBUFFS list) are invisible to a reference compare. The
+-- central refresh bumps the generation, which invalidates every cached application.
+local settingsGeneration = 0
+
 local function RegisterAuraContainer(container, refreshFunc)
     tinsert(containerRegistry, { container = container, refresh = refreshFunc })
 end
 GW.RegisterAuraContainer = RegisterAuraContainer
 
+-- invalidate the cached candidate filter applications WITHOUT refreshing anything:
+-- callers that mutate a filter table in place (e.g. the spell list widget writing
+-- into an ignore list) bump the generation, the consumers' own settings callbacks
+-- then re-apply with fresh data
+function GW.BumpAuraContainerSettingsGeneration()
+    settingsGeneration = settingsGeneration + 1
+end
+
 function GW.RefreshAllAuraContainers()
+    settingsGeneration = settingsGeneration + 1
     for _, entry in ipairs(containerRegistry) do
         if entry.refresh then
             entry.refresh(entry.container)
@@ -293,6 +310,11 @@ local function BuildAuraButton(button, container, group)
     if cfg.cancelButtons and group.filter and group.filter:sub(1, 7) == "HELPFUL" then
         button:SetCancelAuraButtons(cfg.cancelButtons)
     end
+    if cfg.enableMouse == false then
+        -- pure display buttons (e.g. grid frames with tooltips disabled): no aura
+        -- tooltip and no mouse interception over the underlying unit button
+        button:EnableMouse(false)
+    end
     if cfg.tooltipAnchor then
         button:SetTooltipAnchorPoint(unpack(cfg.tooltipAnchor))
     end
@@ -314,43 +336,81 @@ end
 local function ApplyLayout(container)
     local cfg = container.gwConfig
 
-    container:SetFlowLayoutAxis(cfg.vertical and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal)
-    container:SetFlowLayoutAnchorPoint(cfg.anchorPoint or "TOPLEFT")
-    container:SetFlowLayoutGrowthDirection(
-        cfg.growLeft and AnchorUtil.FlowDirection.Left or AnchorUtil.FlowDirection.Right,
-        cfg.growUp and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
-    )
-    container:SetFlowLayoutMaximumLineSize(cfg.maximumLineSize or math.huge)
+    -- every engine setter below can trigger a container re-evaluation — with many
+    -- containers (grids!) a full re-apply per settings pass freezes the client, so
+    -- each block is skipped when its inputs are unchanged
+    local flowSig = strjoin(":", cfg.vertical and "V" or "H", cfg.anchorPoint or "TOPLEFT",
+        cfg.growLeft and "L" or "R", cfg.growUp and "U" or "D", tostring(cfg.maximumLineSize or 0))
+    if container.gwAppliedFlowSig ~= flowSig then
+        container.gwAppliedFlowSig = flowSig
+        container:SetFlowLayoutAxis(cfg.vertical and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal)
+        container:SetFlowLayoutAnchorPoint(cfg.anchorPoint or "TOPLEFT")
+        container:SetFlowLayoutGrowthDirection(
+            cfg.growLeft and AnchorUtil.FlowDirection.Left or AnchorUtil.FlowDirection.Right,
+            cfg.growUp and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
+        )
+        container:SetFlowLayoutMaximumLineSize(cfg.maximumLineSize or math.huge)
+    end
 
     for index, group in ipairs(cfg.groups) do
         local textPad = GetGroupTextPad(group)
-        container:SetAuraGroupFilterString(group.key, group.filter)
+
+        if group.gwAppliedFilter ~= group.filter then
+            group.gwAppliedFilter = group.filter
+            container:SetAuraGroupFilterString(group.key, group.filter)
+        end
 
         -- container-wide ignore list (cfg.excludeSpellIDs, e.g. the "Ignored Auras"
-        -- setting) is merged into every group's candidate filters
-        local candidateFilters = group.candidateFilters
-        if cfg.excludeSpellIDs and next(cfg.excludeSpellIDs) then
-            candidateFilters = candidateFilters and CopyTable(candidateFilters, true) or {}
-            candidateFilters.excludeSpellIDs = cfg.excludeSpellIDs
+        -- setting) is merged into every group's candidate filters. Reference compare
+        -- plus the settings generation (see RefreshAllAuraContainers) — the engine
+        -- keeps a secure copy, in-place table mutations need the generation bump
+        if group.gwAppliedCandidates ~= group.candidateFilters
+            or group.gwAppliedExclude ~= cfg.excludeSpellIDs
+            or group.gwAppliedGeneration ~= settingsGeneration then
+            group.gwAppliedCandidates = group.candidateFilters
+            group.gwAppliedExclude = cfg.excludeSpellIDs
+            group.gwAppliedGeneration = settingsGeneration
+
+            local candidateFilters = group.candidateFilters
+            if cfg.excludeSpellIDs and next(cfg.excludeSpellIDs) then
+                candidateFilters = candidateFilters and CopyTable(candidateFilters, true) or {}
+                candidateFilters.excludeSpellIDs = cfg.excludeSpellIDs
+            end
+            container:SetAuraGroupCandidateFilters(group.key, candidateFilters or {})
         end
-        container:SetAuraGroupCandidateFilters(group.key, candidateFilters or {})
-        container:SetAuraGroupMaxFrameCount(group.key, group.maxFrameCount or math.huge)
-        container:SetAuraGroupSortMethod(group.key,
-            group.sortMethod or AuraContainerSortMethod.Default,
-            group.sortDirection or AuraContainerSortDirection.Normal)
-        container:SetAuraGroupLayout(group.key, {
-            elementSpacing = cfg.elementSpacing or 3,
-            lineSpacing = cfg.lineSpacing or 20,
-            -- spacing at GROUP boundaries (e.g. a forceNewLine transition) is governed
-            -- by the group values, not by element/lineSpacing — keep them in sync
-            groupSpacing = cfg.elementSpacing or 3,
-            groupLineSpacing = cfg.lineSpacing or 20,
-            elementWidth = group.size,
-            -- element height includes the duration text strip below the icon
-            elementHeight = group.size + textPad,
-            forceNewLine = group.forceNewLine or false,
-            layoutIndex = group.layoutIndex or index,
-        })
+
+        local maxFrameCount = group.maxFrameCount or math.huge
+        if group.gwAppliedMaxCount ~= maxFrameCount then
+            group.gwAppliedMaxCount = maxFrameCount
+            container:SetAuraGroupMaxFrameCount(group.key, maxFrameCount)
+        end
+
+        local sortMethod = group.sortMethod or AuraContainerSortMethod.Default
+        local sortDirection = group.sortDirection or AuraContainerSortDirection.Normal
+        if group.gwAppliedSortMethod ~= sortMethod or group.gwAppliedSortDirection ~= sortDirection then
+            group.gwAppliedSortMethod = sortMethod
+            group.gwAppliedSortDirection = sortDirection
+            container:SetAuraGroupSortMethod(group.key, sortMethod, sortDirection)
+        end
+
+        local layoutSig = strjoin(":", tostring(cfg.elementSpacing or 3), tostring(cfg.lineSpacing or 20),
+            tostring(group.size), tostring(textPad), tostring(group.forceNewLine or false), tostring(group.layoutIndex or index))
+        if group.gwAppliedLayoutSig ~= layoutSig then
+            group.gwAppliedLayoutSig = layoutSig
+            container:SetAuraGroupLayout(group.key, {
+                elementSpacing = cfg.elementSpacing or 3,
+                lineSpacing = cfg.lineSpacing or 20,
+                -- spacing at GROUP boundaries (e.g. a forceNewLine transition) is governed
+                -- by the group values, not by element/lineSpacing — keep them in sync
+                groupSpacing = cfg.elementSpacing or 3,
+                groupLineSpacing = cfg.lineSpacing or 20,
+                elementWidth = group.size,
+                -- element height includes the duration text strip below the icon
+                elementHeight = group.size + textPad,
+                forceNewLine = group.forceNewLine or false,
+                layoutIndex = group.layoutIndex or index,
+            })
+        end
 
         -- the flow layout does not set the frame size itself (only anchors) — apply
         -- sizes best-effort: the access restriction (DenyTaintedAccessWhenAurasAreSecret)
@@ -369,7 +429,9 @@ end
 -- removed after the fact, but their filter string is swappable
 -- (SetAuraGroupFilterString) — unused slots are muted via maxFrameCount = 0.
 -- templateProvider(branch, index) supplies the group template (size, isDebuff, layoutIndex, ...).
-local function SetAdvancedBranches(container, baseKey, branches, templateProvider)
+-- skipApplyLayout: when several branch sets go onto the SAME container, only the
+-- last call should run the layout
+local function SetAdvancedBranches(container, baseKey, branches, templateProvider, skipApplyLayout)
     local cfg = container.gwConfig
     container.gwAdvancedSlots = container.gwAdvancedSlots or {}
     local slots = container.gwAdvancedSlots[baseKey]
@@ -409,7 +471,9 @@ local function SetAdvancedBranches(container, baseKey, branches, templateProvide
         slots[i].maxFrameCount = 0
     end
 
-    ApplyLayout(container)
+    if not skipApplyLayout then
+        ApplyLayout(container)
+    end
 end
 
 -- Maps the shared per-unit aura settings (preset/advanced filters, sorting, ignore

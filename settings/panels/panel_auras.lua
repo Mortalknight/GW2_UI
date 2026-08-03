@@ -36,8 +36,8 @@ local function LoadAurasPanel(sWindow)
         {name = L["Raid Indicators"], frame = p_indicator}
     }
 
-    --TODO: per grid
-    p_auras:AddOptionText(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "AURAS_IGNORED", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, hidden = GW.Retail})
+    -- the ignored auras moved to per grid spell id lists on the grid settings pages
+    -- (panel_raid, CreateAuraFilterSection) — for every game version
     p_auras:AddOptionText(L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], { getterSetter = "AURAS_MISSING", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, hidden = GW.Retail})
 
     local raidDebuffKeys, raidDebuffValues = {}, {}
@@ -78,7 +78,7 @@ local function LoadAurasPanel(sWindow)
 
     local function BuildIndicatorAuraOptions()
         local auraKeys, auraVals = {0}, {NONE_KEY}
-        for spellID, _ in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
+        for spellID, _ in pairs(GW.AURAS_INDICATORS[GW.myclass] or {}) do
             local spellInfo = C_Spell.GetSpellInfo(spellID)
             if spellInfo then
                 local name = format("%s |cFF888888(%d)|r", spellInfo.name, spellID)
@@ -93,18 +93,48 @@ local function LoadAurasPanel(sWindow)
             end
         end
 
+        -- custom spell ids currently in use need a labeled entry, otherwise the
+        -- dropdown cannot render the selection
+        local predefined = GW.AURAS_INDICATORS[GW.myclass]
+        for _, pos in ipairs(GW.INDICATORS) do
+            local value = tonumber(GW.settings["INDICATOR_" .. pos]) or 0
+            if value > 0 and not (predefined and predefined[value]) and not tContains(auraKeys, value) then
+                local spellInfo = C_Spell.GetSpellInfo(value)
+                tinsert(auraKeys, value)
+                tinsert(auraVals, format("%s |cFF888888(%d)|r", spellInfo and spellInfo.name or UNKNOWN, value))
+            end
+        end
+
+        -- sentinel entry: opens a popup to enter any spell id
+        tinsert(auraKeys, -1)
+        tinsert(auraVals, "|cff98a7e4" .. L["Custom Spell ID..."] .. "|r")
+
         return auraKeys, auraVals
     end
 
     local auraKeys, auraVals = BuildIndicatorAuraOptions()
+    local lastIndicatorValue = {}
+    for _, pos in ipairs(GW.INDICATORS) do
+        lastIndicatorValue["INDICATOR_" .. pos] = tonumber(GW.settings["INDICATOR_" .. pos]) or 0
+    end
+
     local auraNamesUpdateFunction = function()
-        local newKey, newNames = BuildIndicatorAuraOptions()
+        -- the dropdown menus read from the SHARED tables captured at creation —
+        -- mutate them in place, assigning new tables to the widget never reaches
+        -- the menu closures
+        local newKeys, newNames = BuildIndicatorAuraOptions()
+        wipe(auraKeys)
+        wipe(auraVals)
+        for i = 1, #newKeys do
+            auraKeys[i] = newKeys[i]
+            auraVals[i] = newNames[i]
+        end
 
         for _, pos in ipairs(GW.INDICATORS) do
+            -- keep the sentinel restore values in sync (profile switch/import)
+            lastIndicatorValue["INDICATOR_" .. pos] = tonumber(GW.settings["INDICATOR_" .. pos]) or 0
             local settingsWidget = GW.FindSettingsWidgetByOption("INDICATOR_" .. pos)
-            if settingsWidget then
-                settingsWidget.optionsList = newKey
-                settingsWidget.optionNames = newNames
+            if settingsWidget and settingsWidget.dropDown then
                 settingsWidget.dropDown:GenerateMenu()
             end
         end
@@ -113,7 +143,40 @@ local function LoadAurasPanel(sWindow)
     for v, pos in ipairs(GW.INDICATORS) do
         local key = "INDICATOR_" .. pos
         local t = L[GW.indicatorsText[v]]
-        p_indicator:AddOptionDropdown(L["%s Indicator"]:format(t), L["Edit %s raid aura indicator."]:format(t), {getterSetter = key, callback = function() GW.settings[key] = tonumber(GW.settings[key]); GW.UpdateGridSettings("ALL", false) end, optionsList = auraKeys, optionNames = auraVals, optionUpdateFunc = auraNamesUpdateFunction, dependence = {["RAID_FRAMES"] = true}, tooltipType = "spell"})
+        p_indicator:AddOptionDropdown(L["%s Indicator"]:format(t), L["Edit %s raid aura indicator."]:format(t), {getterSetter = key, callback = function()
+            local value = tonumber(GW.settings[key]) or 0
+
+            if value == -1 then
+                -- sentinel selected: restore the previous value and ask for a spell id
+                GW.settings[key] = lastIndicatorValue[key] or 0
+                GW.ShowPopup({
+                    text = format(L["Enter a spell ID for the %s indicator:"], t),
+                    hasEditBox = true,
+                    hideOnEscape = true,
+                    maxLetters = 10,
+                    notHideOnAccept = true,
+                    OnAccept = function(popup)
+                        local id = tonumber((popup.input:GetText() or ""):trim())
+                        local spellInfo = id and C_Spell.GetSpellInfo(id)
+                        if not spellInfo then
+                            UIErrorsFrame:AddMessage(L["Invalid spell ID"], 1, 0.2, 0.2)
+                            return
+                        end
+                        GW.settings[key] = id
+                        lastIndicatorValue[key] = id
+                        auraNamesUpdateFunction()
+                        GW.UpdateGridSettings("ALL", false)
+                        popup:Hide()
+                    end,
+                })
+                auraNamesUpdateFunction()
+                return
+            end
+
+            GW.settings[key] = value
+            lastIndicatorValue[key] = value
+            GW.UpdateGridSettings("ALL", false)
+        end, optionsList = auraKeys, optionNames = auraVals, optionUpdateFunc = auraNamesUpdateFunction, dependence = {["RAID_FRAMES"] = true}, tooltipType = "spell"})
     end
 
     if GW.Classic or GW.TBC or GW.Wrath then

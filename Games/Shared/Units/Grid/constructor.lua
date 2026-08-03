@@ -473,7 +473,6 @@ local function CreateRaisedElement(frame)
 	raised.TextureParent = CreateFrame("Frame", nil, raised)
 
     raised.AuraLevel = level
-    raised.PrivateAurasLevel = level + 5
     raised.AuraBarLevel = level + 10
     raised.MissingAuraIndicator = level + 15
 

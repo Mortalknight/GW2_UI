@@ -19,7 +19,8 @@
 	<Script file="elements\summonindicator.lua"/>
 	<Script file="elements\tags.lua"/>
 	<Script file="elements\threatindicator.lua"/>
-	<Script file="elements\privateauras.lua"/>
+	<!-- privateauras.lua removed: the 12.1 private aura anchor system no longer
+	     exists and the element was never used on the classic flavors -->
 
 	<Script file="finalize.lua"/>
 
