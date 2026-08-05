@@ -1028,6 +1028,8 @@ function GwUnitFrameMixin:ToggleSettings()
             debuffAdvanced = GW.settings[unit .. "_Debuff_Filter_advanced"],
             sort = GW.settings[unit .. "_AURA_SORT"],
             excludeSpellIDs = GW.settings[unit .. "_IGNORED_AURAS"],
+            showStealable = true,
+            showPandemic = true,
         })
     end
 
@@ -1098,8 +1100,8 @@ local function LoadUnitFrame(unit, frameInvert)
             groups = {
                 -- "own" split via the PLAYER filter token (cast by the player/their pet) —
                 -- the isFromPlayerOrPlayerPet aura data field behaves relative to the UNIT
-                { key = "buffsOwn", filter = "HELPFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 32 },
-                { key = "buffs", filter = "HELPFUL|!PLAYER", size = 20, maxFrameCount = 32 },
+                { key = "buffsOwn", filter = "HELPFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 32, showStealable = true },
+                { key = "buffs", filter = "HELPFUL|!PLAYER", size = 20, maxFrameCount = 32, showStealable = true },
             },
         })
         -- Debuffs live in their OWN container anchored below the buff container (which
@@ -1116,7 +1118,7 @@ local function LoadUnitFrame(unit, frameInvert)
             elementSpacing = 3,
             lineSpacing = 4,
             groups = {
-                { key = "debuffsOwn", filter = "HARMFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 40, isDebuff = true },
+                { key = "debuffsOwn", filter = "HARMFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 40, isDebuff = true, showPandemic = true },
                 { key = "debuffs", filter = "HARMFUL|!PLAYER", size = 20, maxFrameCount = 40, isDebuff = true },
             },
         })

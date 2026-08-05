@@ -617,32 +617,36 @@ local function AnchorGridAuraContainer(frame)
     end
 end
 
--- tooltip setting: applied to the existing buttons (best effort, the subtree can be
--- access restricted in combat) and to cfg.enableMouse for future buttons; the
--- combat dependent modes re-apply on the regen events (shared watcher)
+-- Aura tooltip setting. "OUT_COMBAT" is suppressed by the engine via
+-- SetHideTooltipInCombat, only the inverse "IN_COMBAT" mode has to toggle the mouse
+-- on the regen events. The applied state is cached on full success only — buttons
+-- can be access restricted in combat and are retried on the next regen event.
 local function ApplyGridAuraMouseState(frame)
     local container = frame.gwAuraContainer
     if not container then return end
 
     local mode = frame.showAuraTooltipInCombat
-    local enable = (not mode or mode == "ALWAYS"
-        or (mode == "OUT_COMBAT" and not InCombatLockdown())
+    local hideInCombat = mode == "OUT_COMBAT"
+    local enable = (not mode or mode == "ALWAYS" or hideInCombat
         or (mode == "IN_COMBAT" and InCombatLockdown())) and true or false
 
     container.gwConfig.enableMouse = enable
-    if frame.gwAuraMouseEnabled ~= enable then
-        -- cache only on full success: buttons can be access restricted in combat,
-        -- failed ones get retried on the next regen event
+    container.gwConfig.hideTooltipInCombat = hideInCombat
+    if frame.gwAuraMouseEnabled ~= enable or frame.gwAuraHideTooltip ~= hideInCombat then
         local allApplied = true
         for _, buttons in pairs(container.gwButtonsByGroup) do
             for _, button in next, buttons do
                 if not pcall(button.EnableMouse, button, enable) then
                     allApplied = false
                 end
+                if not pcall(button.SetHideTooltipInCombat, button, hideInCombat) then
+                    allApplied = false
+                end
             end
         end
         if allApplied then
             frame.gwAuraMouseEnabled = enable
+            frame.gwAuraHideTooltip = hideInCombat
         end
     end
 end
@@ -808,9 +812,11 @@ local function Construct_GridAuraContainers(frame)
         lineSpacing = 1,
         onSettingsRefresh = function() UpdateGridAuraContainers(frame) end,
         groups = {
-            { key = "importantDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+            -- showDispelIcon sits on the RAID_PLAYER_DISPELLABLE groups, so the corner
+            -- icon marks exactly what this character can dispel
+            { key = "importantDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
             { key = "importantOnly", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
-            { key = "dispellableDebuffs", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true },
+            { key = "dispellableDebuffs", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
             { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true },
             { key = "buffs", filter = "HELPFUL", size = GRID_BUFF_SIZE, maxFrameCount = 12, hideDuration = true },
         },

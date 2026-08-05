@@ -32,6 +32,10 @@ local GW = select(2, ...)
 --             forceNewLine = false,          -- group starts a new line
 --             isDebuff = false,              -- enables dispel coloring of the border
 --             bigFont = false,               -- Normal instead of Small fonts (bigBuff look)
+--             showStealable = false,         -- stealable buffs get a colored border
+--             showDispelIcon = false,        -- dispel type icon in the corner
+--             dispelIconSize = 12,
+--             showPandemic = false,          -- glow while inside the refresh window
 --         },
 --     },
 -- }
@@ -93,6 +97,21 @@ function GW.BuildAdvancedAuraFilterBranches(base, db)
     end
 
     return branches
+end
+
+-- Stealable buffs use one color for every dispel type; customDispelColorMap is keyed
+-- by dispel type name, "None" covers auras without one
+local stealableColorMap
+local function GetStealableColorMap()
+    if not stealableColorMap then
+        stealableColorMap = {}
+        local color = GW.Colors.DebuffColors.Stealable
+        for name in next, GW.Enum.DispelType do
+            stealableColorMap[name] = color
+        end
+        stealableColorMap.None = color
+    end
+    return stealableColorMap
 end
 
 -- Step curve dispel type -> GW debuff color, shared by every aura consumer
@@ -328,6 +347,52 @@ local function BuildAuraButton(button, container, group)
         })
     end
 
+    if group.showStealable then
+        local stealable = visual:CreateTexture(nil, "ARTWORK", nil, 1)
+        stealable:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+        stealable:SetAllPoints(visual)
+        button.gwStealableBorder = stealable
+
+        button:AddDispelTypeTexture(stealable, {
+            style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+            stealableFilter = Enum.CustomAuraButtonDispelTypeStealableFilter.Stealable,
+            showWhenHelpful = true,
+            showWhenHarmful = false,
+            showWithoutDispelType = true,
+            customDispelColorMap = GetStealableColorMap(),
+        })
+    end
+
+    if group.showDispelIcon then
+        local dispelIcon = visual:CreateTexture(nil, "OVERLAY", nil, 2)
+        dispelIcon:SetSize(group.dispelIconSize or 12, group.dispelIconSize or 12)
+        dispelIcon:SetPoint("CENTER", visual, "TOPRIGHT", -1, -1)
+        button.gwDispelIcon = dispelIcon
+
+        button:AddDispelTypeTexture(dispelIcon, {
+            style = Enum.CustomAuraButtonDispelTypeTextureStyle.Icon,
+            showWhenHarmful = group.isDebuff and true or false,
+            showWhenHelpful = not group.isDebuff and true or false,
+            showWithoutDispelType = false,
+        })
+    end
+
+    -- TODO(art): placeholder look, swap in a dedicated pandemic texture here
+    if group.showPandemic then
+        local pandemic = visual:CreateTexture(nil, "OVERLAY", nil, 1)
+        pandemic:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/glow.png")
+        pandemic:SetVertexColor(1, 0.4, 0.25, 0.9)
+        pandemic:SetPoint("TOPLEFT", visual, "TOPLEFT", -3, 3)
+        pandemic:SetPoint("BOTTOMRIGHT", visual, "BOTTOMRIGHT", 3, -3)
+        button.gwPandemicRegion = pandemic
+
+        button:AddPandemicRegion(pandemic)
+    end
+
+    if cfg.hideTooltipInCombat then
+        button:SetHideTooltipInCombat(true)
+    end
+
     button.gwGroup = group
     tinsert(container.gwButtonsByGroup[group.key], button)
     SetAuraButtonSize(button, group.size, GetGroupTextPad(group))
@@ -542,6 +607,9 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
                 layoutIndex = baseLayoutIndex + index * 0.01,
                 sortMethod = sort.method,
                 sortDirection = sort.direction,
+                -- keep the static groups' extras (see the frame configs)
+                showStealable = (not isDebuff) and opts.showStealable or nil,
+                showPandemic = (isDebuff and branch.isPlayer) and opts.showPandemic or nil,
             }
             if branch.isPlayer then
                 template.iconInset = 2
