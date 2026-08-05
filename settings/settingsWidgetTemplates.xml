@@ -215,6 +215,70 @@
         </Frames>
     </Button>
 
+    <Button name="GwOptionBoxSpellInputTmpl" frameStrata="HIGH" virtual="true">
+        <Size x="500" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="235" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="okButton" inherits="GwStandardButton" text="OKAY">
+                <Size x="50" y="20"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
+                </Anchors>
+            </Button>
+            <Frame parentKey="inputFrame" inherits="GwStandardInputField">
+                <Size x="60" y="20"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.okButton" relativePoint="LEFT" x="-5" y="0"/>
+                </Anchors>
+            </Frame>
+            <Button parentKey="clearButton">
+                <Size x="15" y="15"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.inputFrame" relativePoint="LEFT" x="-5" y="0"/>
+                </Anchors>
+            </Button>
+            <Frame parentKey="spellPreview" enableMouse="true">
+                <Size x="0" y="20"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="280" y="0"/>
+                    <Anchor point="RIGHT" relativeKey="$parent.clearButton" relativePoint="LEFT" x="-5" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="icon">
+                            <Size x="18" y="18"/>
+                            <Anchors>
+                                <Anchor point="LEFT"/>
+                            </Anchors>
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="label" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.icon" relativePoint="RIGHT" x="4" y="0"/>
+                                <Anchor point="RIGHT"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Button>
+
     <Button name="GwOptionBoxSpellListTmpl" frameStrata="HIGH" virtual="true">
         <Size x="500" y="40"/>
         <Anchors>

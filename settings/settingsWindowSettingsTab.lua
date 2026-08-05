@@ -35,8 +35,9 @@ local optionTypes = {
     dropdown    = {template = "GwOptionBoxDropDownTmpl", frame = "Button", newLine = true},
     list        = {template = "GwOptionBoxListTmpl", frame = "Button", newLine = true},
     spellList   = {template = "GwOptionBoxSpellListTmpl", frame = "Button", newLine = true},
+    spellInput  = {template = "GwOptionBoxSpellInputTmpl", frame = "Button", newLine = true},
     text        = {template = "GwOptionBoxTextTmpl", frame = "Button", newLine = true},
-    button      = {template = "GwButtonTextTmpl", frame = "Button", newLine = true},
+    button      = {template = "GwButtonTextTmpl", frame = "Button", newLine = false},
     colorPicker = {template = "GwOptionBoxColorPickerTmpl", frame = "Button", newLine = true},
     header      = {template = "GwOptionBoxHeader", frame = "Frame", newLine = true},
     subHeader   = {template = "GwOptionBoxSubHeader", frame = "Frame", newLine = true},
@@ -65,6 +66,14 @@ end
 
 local function IsMasterToggle(opt)
     return opt and opt.isMasterToggle == true
+end
+
+local function NeedsFullRowWidth(opt)
+    local conf = optionTypes[opt.optionType] or {}
+    if opt.optionType == "dropdown" and opt.noNewLine then
+        return false
+    end
+    return conf.newLine == true
 end
 
 local function GetOptionRowExtent(opt)
@@ -480,7 +489,11 @@ local function InitRow(row, elementData)
         AnchorRightHalf(row, rightW)
         row.leftAssigned, row.rightAssigned = leftW, rightW
     elseif canAttachLeft then
-        AnchorFullWidth(row, leftW)
+        if NeedsFullRowWidth(leftW) then
+            AnchorFullWidth(row, leftW)
+        else
+            AnchorLeftHalf(row, leftW)
+        end
         row.leftAssigned, row.rightAssigned = leftW, nil
     else
         if row.leftAssigned  then StashWidget(row.leftAssigned,  panel); row.leftAssigned  = nil end
@@ -741,7 +754,11 @@ local function InitSearchRow(row, item)
         BorrowEntryToSearch(rightE, sp)
         tinsert(state.matches, leftE); tinsert(state.matches, rightE)
     elseif leftW then
-        AnchorFullWidth(row, leftW)
+        if NeedsFullRowWidth(leftW) then
+            AnchorFullWidth(row, leftW)
+        else
+            AnchorLeftHalf(row, leftW)
+        end
         row.leftAssigned, row.rightAssigned = leftW, nil
         BorrowEntryToSearch(leftE, sp)
         tinsert(state.matches, leftE)

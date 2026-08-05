@@ -62,7 +62,6 @@ GW.privateDefaults = {
     profile = {
         GW2_UI_VERSION = "WELCOME",
         Layouts = {},
-        PLAYER_TRACKED_DODGEBAR_SPELL = "",
         PLAYER_TRACKED_DODGEBAR_SPELL_ID = 0,
         CHAT_KEYWORDS_ALERT_COLOR = {r = .5, g = .5, b = .5},
         ChatHistoryLog = {},
@@ -151,6 +150,7 @@ GW.globalDefault = {
         NumberFormat = "POINT",
 
         showDodgebar = true,
+        DODGEBAR_COOLDOWN_TEXT = true,
         showSkyridingbar = true,
 
         FONT_STYLE_TEMPLATE = "GW2",

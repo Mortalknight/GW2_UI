@@ -323,6 +323,12 @@ function GwSettingsPanelMixin:AddOptionSpellList(name, desc, values)
     return opt
 end
 
+-- Single spell setting: an input box takes a spell ID and the resolved spell is shown
+-- next to it with icon, name and tooltip. Stores the ID, an empty input clears it.
+function GwSettingsPanelMixin:AddOptionSpellInput(name, desc, values)
+    return CreateOption("spellInput", self, name, desc, values)
+end
+
 function GwSettingsPanelMixin:AddOptionText(name, desc, values)
     local opt = CreateOption("text", self, name, desc, values)
     if not opt then return end
@@ -392,6 +398,12 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
             of.inputFrame.input:SetEnabled(enabled)
             of.inputFrame.input:SetTextColor(unpack(inputColor))
         end
+    elseif type == "spellInput" then
+        of.inputFrame.input:SetEnabled(enabled)
+        of.inputFrame.input:SetTextColor(unpack(inputColor))
+        of.okButton:SetEnabled(enabled)
+        of.spellPreview:SetShown(enabled)
+        of.clearButton:SetShown(enabled and (tonumber(of.get()) or 0) > 0)
     elseif type == "dropdown" then
         if enabled then
             of.dropDown:Enable()
@@ -544,6 +556,8 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting, toDe
         of.dropDown:GenerateMenu()
     elseif of.optionType == "list" then
         of:RefreshList()
+    elseif of.optionType == "spellInput" and of.RefreshSpellInput then
+        of:RefreshSpellInput()
     end
 end
 GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
@@ -587,6 +601,11 @@ local function RefreshSettingsAfterProfileSwitch()
             end
         elseif of.optionType == "spellList" and of.RefreshSpellList then
             of:RefreshSpellList()
+        elseif of.optionType == "spellInput" and of.RefreshSpellInput then
+            of:RefreshSpellInput()
+            if of.callback then
+                of.callback(tonumber(of.get()) or 0)
+            end
         end
     end
     CheckDependencies()
@@ -1289,6 +1308,52 @@ function RefreshSpellListOption(of, v)
     end
 end
 
+-- single spell widget (AddOptionSpellInput): shows the stored spell with icon and name,
+-- or a hint that the tracked ability is picked automatically
+local function RefreshSpellInputOption(of)
+    local spellID = tonumber(of.get()) or 0
+    local spellInfo = spellID > 0 and GetSpellListSpellInfo(spellID) or nil
+
+    of.spellPreview.spellID = spellInfo and spellID or nil
+    of.spellPreview.icon:SetShown(spellInfo ~= nil)
+    of.clearButton:SetShown(spellID > 0)
+    of.inputFrame.input:SetText(spellID > 0 and spellID or "")
+
+    -- the label hangs on the icon, which keeps its rect while hidden - reanchor it to
+    -- the preview itself in the automatic state so the text stays flush left
+    local label = of.spellPreview.label
+    label:ClearAllPoints()
+    label:SetPoint("RIGHT", of.spellPreview, "RIGHT")
+    if spellInfo then
+        label:SetPoint("LEFT", of.spellPreview.icon, "RIGHT", 4, 0)
+        of.spellPreview.icon:SetTexture(spellInfo.iconID)
+        label:SetText(spellInfo.name)
+        label:SetTextColor(1, 1, 1)
+    else
+        label:SetPoint("LEFT", of.spellPreview, "LEFT")
+        label:SetText(L["Automatic"])
+        label:SetTextColor(0.6, 0.6, 0.6)
+    end
+end
+
+local function TrySetSpellInput(of, v)
+    local input = (of.inputFrame.input:GetText() or ""):trim()
+    local spellID = tonumber(input) or 0
+
+    if input ~= "" and not GetSpellListSpellInfo(spellID) then
+        UIErrorsFrame:AddMessage(L["Invalid spell ID"], 1, 0.2, 0.2)
+        RefreshSpellInputOption(of)
+        return
+    end
+
+    of.inputFrame.input:ClearFocus()
+    of.set(spellID)
+    RefreshSpellInputOption(of)
+    if v.callback then
+        v.callback(spellID)
+    end
+end
+
 local function TryAddSpellToList(of, v)
     local spellID = tonumber((of.inputFrame.input:GetText() or ""):trim())
     local spellInfo = GetSpellListSpellInfo(spellID)
@@ -1513,6 +1578,42 @@ local function SettingsInitOptionWidget(of, v, panel)
         end)
 
         of:RefreshList()
+    elseif v.optionType == "spellInput" then
+        of.inputFrame.input:SetNumeric(true)
+        of.inputFrame.input:SetMaxLetters(10)
+        of.spellPreview.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+
+        -- resets the stored spell back to the automatic pick, only shown while set
+        of.clearButton:GwSkinButton(true)
+        of.clearButton:SetScript("OnClick", function()
+            of.inputFrame.input:SetText("")
+            TrySetSpellInput(of, v)
+        end)
+        of.clearButton:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(RESET .. ": " .. L["Automatic"], 1, 1, 1)
+            GameTooltip:Show()
+        end)
+        of.clearButton:SetScript("OnLeave", GameTooltip_Hide)
+
+        of.spellPreview:SetScript("OnEnter", function(self)
+            if not self.spellID then return end
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetSpellByID(self.spellID)
+            GameTooltip:Show()
+        end)
+        of.spellPreview:SetScript("OnLeave", GameTooltip_Hide)
+
+        of.okButton:GwSkinButton(false, true)
+        of.inputFrame.input:SetScript("OnEnterPressed", function()
+            TrySetSpellInput(of, v)
+        end)
+        of.okButton:SetScript("OnClick", function()
+            TrySetSpellInput(of, v)
+        end)
+
+        of.RefreshSpellInput = RefreshSpellInputOption
+        RefreshSpellInputOption(of)
     elseif v.optionType == "spellList" then
         of.title:ClearAllPoints()
         of.title:SetPoint("TOPLEFT", 5, -8)

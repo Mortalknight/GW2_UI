@@ -110,28 +110,20 @@ local function LoadPlayerPanel(sWindow)
 
     p_player:AddOptionDropdown(L["Show Shield Value"], nil, { getterSetter = "PLAYER_UNIT_ABSORB", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = absorbSettingsList, optionNames = absorbSettingsNames, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = false}, hidden = GW.Classic or GW.TBC or GW.Wrath})
 
-    p_player:AddOption(GW.NewSign .. L["Show Dodge Bar"], nil, {getterSetter = "showDodgebar", callback = function() if GwDodgeBar then GwDodgeBar:ToggleDodgeBar(); GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
+    local statusBarTexturesOptions, statusBarTexturesLables = GW.GetStatusBarTextures()
+    p_player:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "playerFrameHealthBarTexture", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
 
-    p_player:AddOptionText(L["Dodge Bar Ability"], L["Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."], { getterSetter = "PLAYER_TRACKED_DODGEBAR_SPELL", callback = function(self)
-            local spellId = self:GetNumber()
-            local name = ""
-            if spellId > 0 and GW.IsSpellKnown(spellId) then
-                local spellInfo = C_Spell.GetSpellInfo(spellId)
-                name = spellInfo.name
-            end
-            self:SetText(name)
-            GW.private.PLAYER_TRACKED_DODGEBAR_SPELL = name
-            GW.private.PLAYER_TRACKED_DODGEBAR_SPELL_ID = spellId
+    p_player:AddGroupHeader(L["Dodge Bar"])
+    p_player:AddOption(GW.NewSign .. L["Show Dodge Bar"], nil, {getterSetter = "showDodgebar", callback = function() if GwDodgeBar then GwDodgeBar:ToggleDodgeBar(); GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
+    p_player:AddOption(GW.NewSign .. L["Show Dodge Bar Cooldown Text"], L["Show the remaining cooldown of the tracked ability on the dodge bar."], {getterSetter = "DODGEBAR_COOLDOWN_TEXT", callback = function() if GwDodgeBar then GwDodgeBar:SetupBar() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["showDodgebar"] = true}})
+
+    p_player:AddOptionSpellInput(L["Dodge Bar Ability"], L["Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."], { getterSetter = "PLAYER_TRACKED_DODGEBAR_SPELL_ID", callback = function()
             if GwDodgeBar then
                 GwDodgeBar:InitBar()
                 GwDodgeBar:SetupBar()
             end
         end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["showDodgebar"] = true}, isPrivateSetting = true})
     p_player:AddOption(GW.NewSign .. L["Show Skyriding Bar"], nil, {getterSetter = "showSkyridingbar", callback = function() if GwDodgeBar then GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true}, hidden = not GW.Retail})
-
-    local statusBarTexturesOptions, statusBarTexturesLables = GW.GetStatusBarTextures()
-    p_player:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "playerFrameHealthBarTexture", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
-
 
     p_player:AddGroupHeader(L["Size"])
     p_player:AddOptionSlider(L["Scale"], nil, { getterSetter = "player_pos_scale", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
