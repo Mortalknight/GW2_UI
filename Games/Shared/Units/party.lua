@@ -854,15 +854,17 @@ local function CreatePartyFrame(i, isPlayer)
         -- so no forceNewLine here)
         petFrame.aurasContainer = GW.CreateUnitAuraContainer({
             unit = petUnit,
+            pandemicEnabled = function() return GW.settings.PARTY_PANDEMIC_HIGHLIGHT end,
+            dispelIconEnabled = function() return GW.settings.PARTY_DISPEL_ICON end,
             parent = petFrame,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             elementSpacing = -1,
             lineSpacing = 2,
             onSettingsRefresh = function() UpdatePartyAuraContainer(petFrame) end,
             groups = {
-                { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 32, hideDuration = true },
-                { key = "debuffs", filter = "HARMFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true },
-                { key = "importantDebuffs", filter = "HARMFUL", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+                { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 32, hideDuration = true, showPandemic = true },
+                { key = "debuffs", filter = "HARMFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "importantDebuffs", filter = "HARMFUL", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
             },
         })
     else
@@ -920,15 +922,17 @@ local function CreatePartyFrame(i, isPlayer)
     if GW.Retail then
         frame.aurasContainer = GW.CreateUnitAuraContainer({
             unit = registerUnit,
+            pandemicEnabled = function() return GW.settings.PARTY_PANDEMIC_HIGHLIGHT end,
+            dispelIconEnabled = function() return GW.settings.PARTY_DISPEL_ICON end,
             parent = frame,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             elementSpacing = -1,
             lineSpacing = 2,
             onSettingsRefresh = function() UpdatePartyAuraContainer(frame) end,
             groups = {
-                { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 32, hideDuration = true },
-                { key = "debuffs", filter = "HARMFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 40, isDebuff = true, hideDuration = true },
-                { key = "importantDebuffs", filter = "HARMFUL", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+                { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 32, hideDuration = true, showPandemic = true },
+                { key = "debuffs", filter = "HARMFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "importantDebuffs", filter = "HARMFUL", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
             },
         })
     else

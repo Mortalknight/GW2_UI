@@ -74,6 +74,8 @@ local function UpdateGridRaidPetFrame(frame)
     frame.debuffFilters = GW.settings.RAID_PET_DEBUFF_FILTER
     frame.buffFilters = GW.settings.RAID_PET_BUFF_FILTER
     frame.ignoredAuraSpellIDs = GW.settings.RAID_PET_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.RAID_PET_PANDEMIC_HIGHLIGHT
+    frame.showDispelIcon = GW.settings.RAID_PET_DISPEL_ICON
     frame.showBuffs = GW.settings.RAID_PET_SHOW_BUFFS
 
     if not InCombatLockdown() then

@@ -1030,6 +1030,7 @@ function GwUnitFrameMixin:ToggleSettings()
             excludeSpellIDs = GW.settings[unit .. "_IGNORED_AURAS"],
             showStealable = true,
             showPandemic = true,
+            showDispelIcon = true,
         })
     end
 
@@ -1092,6 +1093,8 @@ local function LoadUnitFrame(unit, frameInvert)
         unitframe.aurasContainer = GW.CreateUnitAuraContainer({
             name = "Gw" .. unit .. "AuraContainer",
             unit = unit,
+            pandemicEnabled = function() return GW.settings[unit .. "_PANDEMIC_HIGHLIGHT"] end,
+            dispelIconEnabled = function() return GW.settings[unit .. "_DISPEL_ICON"] end,
             parent = unitframe,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             refreshEvents = refreshEvents,
@@ -1100,7 +1103,7 @@ local function LoadUnitFrame(unit, frameInvert)
             groups = {
                 -- "own" split via the PLAYER filter token (cast by the player/their pet) —
                 -- the isFromPlayerOrPlayerPet aura data field behaves relative to the UNIT
-                { key = "buffsOwn", filter = "HELPFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 32, showStealable = true },
+                { key = "buffsOwn", filter = "HELPFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 32, showStealable = true, showPandemic = true },
                 { key = "buffs", filter = "HELPFUL|!PLAYER", size = 20, maxFrameCount = 32, showStealable = true },
             },
         })
@@ -1112,14 +1115,16 @@ local function LoadUnitFrame(unit, frameInvert)
         unitframe.debuffsContainer = GW.CreateUnitAuraContainer({
             name = "Gw" .. unit .. "DebuffContainer",
             unit = unit,
+            pandemicEnabled = function() return GW.settings[unit .. "_PANDEMIC_HIGHLIGHT"] end,
+            dispelIconEnabled = function() return GW.settings[unit .. "_DISPEL_ICON"] end,
             parent = unitframe,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             refreshEvents = refreshEvents,
             elementSpacing = 3,
             lineSpacing = 4,
             groups = {
-                { key = "debuffsOwn", filter = "HARMFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 40, isDebuff = true, showPandemic = true },
-                { key = "debuffs", filter = "HARMFUL|!PLAYER", size = 20, maxFrameCount = 40, isDebuff = true },
+                { key = "debuffsOwn", filter = "HARMFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 40, isDebuff = true, showPandemic = true, showDispelIcon = true },
+                { key = "debuffs", filter = "HARMFUL|!PLAYER", size = 20, maxFrameCount = 40, isDebuff = true, showDispelIcon = true },
             },
         })
     else

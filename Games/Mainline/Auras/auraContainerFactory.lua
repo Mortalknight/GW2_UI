@@ -170,6 +170,71 @@ function GW.BumpAuraContainerSettingsGeneration()
     settingsGeneration = settingsGeneration + 1
 end
 
+-- Pandemic highlight: a border glow the engine shows while the aura is inside its
+-- refresh window. The region hangs on an own holder frame the engine knows nothing
+-- about - the opt out hides the HOLDER, so it can never fight whatever the engine
+-- does to the region itself (Shown today, possibly alpha animations with 12.1.5).
+-- isEnabled is the hosts per frame setting getter, re-evaluated on every update.
+local gatedHolders = {}
+
+local function CreateGatedHolder(button, isEnabled)
+    local holder = CreateFrame("Frame", nil, button)
+    holder:SetFrameLevel(button:GetFrameLevel() + 2)
+    holder.gwIsEnabled = isEnabled
+    holder:SetShown(isEnabled())
+
+    tinsert(gatedHolders, holder)
+    return holder
+end
+
+-- Show/Hide on a holder is denied while its button subtree carries a secret aura
+-- (same access restriction as SetAuraButtonSize). Settings cannot change in combat,
+-- so there is never anything to apply then — skip instead of touching the subtree
+function GW.UpdateAuraOptionHolders()
+    if InCombatLockdown() then return end
+
+    for _, holder in ipairs(gatedHolders) do
+        holder:SetShown(holder.gwIsEnabled())
+    end
+end
+
+function GW.AddPandemicHighlight(button, anchor, isEnabled)
+    local holder = CreateGatedHolder(button, isEnabled)
+    holder:SetPoint("TOPLEFT", anchor, "TOPLEFT", -4, 4)
+    holder:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", 4, -4)
+
+    local region = holder:CreateTexture(nil, "OVERLAY", nil, 1)
+    region:SetAllPoints(holder)
+    region:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/pandemic-glow.png")
+    region:SetVertexColor(1, 0.4, 0.25)
+
+    button:AddPandemicRegion(region)
+
+    return holder
+end
+
+-- Dispel type icon in the top right corner of the aura: the engine shows it while the
+-- aura carries a dispel type, the holder carries the per frame opt out
+function GW.AddDispelTypeIcon(button, anchor, group, isEnabled)
+    local size = group.dispelIconSize or 12
+    local holder = CreateGatedHolder(button, isEnabled)
+    holder:SetSize(size, size)
+    holder:SetPoint("CENTER", anchor, "TOPRIGHT", -1, -1)
+
+    local dispelIcon = holder:CreateTexture(nil, "OVERLAY", nil, 2)
+    dispelIcon:SetAllPoints(holder)
+    button.gwDispelIcon = dispelIcon
+
+    button:AddDispelTypeTexture(dispelIcon, {
+        style = Enum.CustomAuraButtonDispelTypeTextureStyle.Icon,
+        showWhenHarmful = group.isDebuff and true or false,
+        showWhenHelpful = not group.isDebuff and true or false,
+        showWithoutDispelType = false,
+    })
+
+    return holder
+end
+
 function GW.RefreshAllAuraContainers()
     settingsGeneration = settingsGeneration + 1
     for _, entry in ipairs(containerRegistry) do
@@ -363,30 +428,17 @@ local function BuildAuraButton(button, container, group)
         })
     end
 
-    if group.showDispelIcon then
-        local dispelIcon = visual:CreateTexture(nil, "OVERLAY", nil, 2)
-        dispelIcon:SetSize(group.dispelIconSize or 12, group.dispelIconSize or 12)
-        dispelIcon:SetPoint("CENTER", visual, "TOPRIGHT", -1, -1)
-        button.gwDispelIcon = dispelIcon
-
-        button:AddDispelTypeTexture(dispelIcon, {
-            style = Enum.CustomAuraButtonDispelTypeTextureStyle.Icon,
-            showWhenHarmful = group.isDebuff and true or false,
-            showWhenHelpful = not group.isDebuff and true or false,
-            showWithoutDispelType = false,
-        })
+    local dispelIconGetter = container.gwConfig and container.gwConfig.dispelIconEnabled
+    if group.showDispelIcon and dispelIconGetter then
+        GW.AddDispelTypeIcon(button, visual, group, dispelIconGetter)
     end
 
-    -- TODO(art): placeholder look, swap in a dedicated pandemic texture here
-    if group.showPandemic then
-        local pandemic = visual:CreateTexture(nil, "OVERLAY", nil, 1)
-        pandemic:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/glow.png")
-        pandemic:SetVertexColor(1, 0.4, 0.25, 0.9)
-        pandemic:SetPoint("TOPLEFT", visual, "TOPLEFT", -3, 3)
-        pandemic:SetPoint("BOTTOMRIGHT", visual, "BOTTOMRIGHT", 3, -3)
-        button.gwPandemicRegion = pandemic
-
-        button:AddPandemicRegion(pandemic)
+    -- the getter decides the VISIBILITY (live, via UpdatePandemicHighlights) — the
+    -- region itself is always built when the host wires a setting, so enabling it
+    -- later never needs a reload
+    local pandemicSettingGetter = container.gwConfig and container.gwConfig.pandemicEnabled
+    if group.showPandemic and pandemicSettingGetter then
+        GW.AddPandemicHighlight(button, visual, pandemicSettingGetter)
     end
 
     if cfg.hideTooltipInCombat then
@@ -609,7 +661,8 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
                 sortDirection = sort.direction,
                 -- keep the static groups' extras (see the frame configs)
                 showStealable = (not isDebuff) and opts.showStealable or nil,
-                showPandemic = (isDebuff and branch.isPlayer) and opts.showPandemic or nil,
+                showPandemic = branch.isPlayer and opts.showPandemic or nil,
+                showDispelIcon = isDebuff and opts.showDispelIcon or nil,
             }
             if branch.isPlayer then
                 template.iconInset = 2

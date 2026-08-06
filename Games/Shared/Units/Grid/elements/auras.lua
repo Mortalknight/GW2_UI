@@ -407,6 +407,8 @@ local function CreateGridIndicatorTracker(frame, pos, spellList, indicatorColor)
         width = 13,
         height = 13,
         createWidgets = function(button)
+            GW.AddPandemicHighlight(button, holder, function() return frame.pandemicHighlight end)
+
             if isBar then
                 local bar = CreateFrame("StatusBar", nil, button)
                 bar:SetPoint("TOPLEFT", holder, "TOPLEFT")
@@ -804,6 +806,8 @@ local function Construct_GridAuraContainers(frame)
     local container = GW.CreateUnitAuraContainer({
         parent = frame,
         unit = frame.unit or "player",
+        pandemicEnabled = function() return frame.pandemicHighlight end,
+        dispelIconEnabled = function() return frame.showDispelIcon end,
         tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
         anchorPoint = "BOTTOMRIGHT",
         growLeft = true,
@@ -818,7 +822,7 @@ local function Construct_GridAuraContainers(frame)
             { key = "importantOnly", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
             { key = "dispellableDebuffs", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
             { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true },
-            { key = "buffs", filter = "HELPFUL", size = GRID_BUFF_SIZE, maxFrameCount = 12, hideDuration = true },
+            { key = "buffs", filter = "HELPFUL", size = GRID_BUFF_SIZE, maxFrameCount = 12, hideDuration = true, showPandemic = true },
         },
     })
     container:SetFrameLevel(frame.RaisedElementParent and frame.RaisedElementParent.AuraLevel or (frame:GetFrameLevel() + 4))

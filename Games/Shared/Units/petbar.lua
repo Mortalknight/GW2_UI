@@ -370,6 +370,8 @@ local function LoadPetFrame(lm)
         playerPetFrame.aurasContainer = GW.CreateUnitAuraContainer({
             name = "GwPetAuraContainer",
             unit = "pet",
+            pandemicEnabled = function() return GW.settings.PET_PANDEMIC_HIGHLIGHT end,
+            dispelIconEnabled = function() return GW.settings.PET_DISPEL_ICON end,
             parent = playerPetFrame,
             cancelButtons = "RightButtonDown",
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
@@ -384,7 +386,7 @@ local function LoadPetFrame(lm)
                 -- own buffs large (replaces the old bigBuff logic "own + short");
                 -- split via the PLAYER filter token — the isFromPlayerOrPlayerPet
                 -- aura data field behaves relative to the UNIT, not the player
-                { key = "buffsOwn", filter = "HELPFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 32 },
+                { key = "buffsOwn", filter = "HELPFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 32, showPandemic = true },
                 { key = "buffs", filter = "HELPFUL|!PLAYER", size = 20, maxFrameCount = 32 },
             },
         })
@@ -397,6 +399,8 @@ local function LoadPetFrame(lm)
         playerPetFrame.debuffsContainer = GW.CreateUnitAuraContainer({
             name = "GwPetDebuffContainer",
             unit = "pet",
+            pandemicEnabled = function() return GW.settings.PET_PANDEMIC_HIGHLIGHT end,
+            dispelIconEnabled = function() return GW.settings.PET_DISPEL_ICON end,
             parent = playerPetFrame,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             refreshEvents = { "UNIT_PET" },
@@ -407,8 +411,8 @@ local function LoadPetFrame(lm)
             elementSpacing = 3,
             lineSpacing = 4,
             groups = {
-                { key = "debuffsOwn", filter = "HARMFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 40, isDebuff = true },
-                { key = "debuffs", filter = "HARMFUL|!PLAYER", size = 20, maxFrameCount = 40, isDebuff = true },
+                { key = "debuffsOwn", filter = "HARMFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 40, isDebuff = true, showPandemic = true, showDispelIcon = true },
+                { key = "debuffs", filter = "HARMFUL|!PLAYER", size = 20, maxFrameCount = 40, isDebuff = true, showDispelIcon = true },
             },
         })
     else

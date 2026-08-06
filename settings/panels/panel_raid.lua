@@ -189,6 +189,8 @@ local function LoadRaid10Profile(panel)
     -- none retail debuff filter
     raid10:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID10"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     raid10:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    raid10:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "RAID_10_PANDEMIC_HIGHLIGHT", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID10_ENABLED"] = true}, hidden = not GW.Retail})
+    raid10:AddOption(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type of auras as a small icon in the corner of the aura."], {getterSetter = "RAID_10_DISPEL_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID10_ENABLED"] = true}, hidden = not GW.Retail})
     CreateIgnoredAuraSection(raid10, "RAID10", "RAID_10_IGNORED_AURAS", "RAID10_ENABLED")
 
 
@@ -288,6 +290,8 @@ local function LoadRaid25Profile(panel)
     -- none retail debuff filter
     raid25:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID25"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     raid25:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    raid25:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "RAID_25_PANDEMIC_HIGHLIGHT", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID25_ENABLED"] = true}, hidden = not GW.Retail})
+    raid25:AddOption(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type of auras as a small icon in the corner of the aura."], {getterSetter = "RAID_25_DISPEL_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID25_ENABLED"] = true}, hidden = not GW.Retail})
     CreateIgnoredAuraSection(raid25, "RAID25", "RAID_25_IGNORED_AURAS", "RAID25_ENABLED")
 
 
@@ -385,6 +389,8 @@ local function LoadRaid40Profile(panel)
     -- none retail debuff filter
     raid40:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     raid40:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    raid40:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "RAID_PANDEMIC_HIGHLIGHT", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, hidden = not GW.Retail})
+    raid40:AddOption(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type of auras as a small icon in the corner of the aura."], {getterSetter = "RAID_DISPEL_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, hidden = not GW.Retail})
     CreateIgnoredAuraSection(raid40, "RAID40", "RAID_IGNORED_AURAS", "RAID_FRAMES")
 
 
@@ -480,6 +486,8 @@ local function LoadMaintankProfile(panel)
     -- none retail debuff filter
     tank:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_TANK", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_TANK"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     tank:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_TANK", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    tank:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "RAID_MAINTANK_PANDEMIC_HIGHLIGHT", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_MAINTANK_FRAMES_ENABLED"] = true}, hidden = not GW.Retail})
+    tank:AddOption(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type of auras as a small icon in the corner of the aura."], {getterSetter = "RAID_MAINTANK_DISPEL_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_MAINTANK_FRAMES_ENABLED"] = true}, hidden = not GW.Retail})
     CreateIgnoredAuraSection(tank, "TANK", "RAID_MAINTANK_IGNORED_AURAS", "RAID_MAINTANK_FRAMES_ENABLED")
 
 
@@ -568,6 +576,8 @@ local function LoadRaidPetProfile(panel)
     -- none retail debuff filter
     p:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     p:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    p:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "RAID_PET_PANDEMIC_HIGHLIGHT", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_PET_FRAMES"] = true}, hidden = not GW.Retail})
+    p:AddOption(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type of auras as a small icon in the corner of the aura."], {getterSetter = "RAID_PET_DISPEL_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_PET_FRAMES"] = true}, hidden = not GW.Retail})
     CreateIgnoredAuraSection(p, "RAID_PET", "RAID_PET_IGNORED_AURAS", "RAID_PET_FRAMES")
 
     --fader
@@ -662,6 +672,8 @@ local function LoadPartyProfile(panel)
     -- none retail debuff filter
     party:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     party:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    party:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "RAID_PARTY_PANDEMIC_HIGHLIGHT", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_STYLE_PARTY"] = true}, hidden = not GW.Retail})
+    party:AddOption(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type of auras as a small icon in the corner of the aura."], {getterSetter = "RAID_PARTY_DISPEL_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_STYLE_PARTY"] = true}, hidden = not GW.Retail})
     CreateIgnoredAuraSection(party, "PARTY", "RAID_PARTY_IGNORED_AURAS", "RAID_STYLE_PARTY")
 
 
@@ -762,6 +774,8 @@ local function LoadPartyPetProfile(panel)
     -- none retail debuff filter
     p:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "PARTY_ONLY_DISPELL_DEBUFFS_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true, ["PARTY_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     p:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    p:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "PARTY_PET_PANDEMIC_HIGHLIGHT", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["PARTY_PET_FRAMES_ENABLED"] = true}, hidden = not GW.Retail})
+    p:AddOption(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type of auras as a small icon in the corner of the aura."], {getterSetter = "PARTY_PET_DISPEL_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["PARTY_PET_FRAMES_ENABLED"] = true}, hidden = not GW.Retail})
     CreateIgnoredAuraSection(p, "PARTY_PET", "PARTY_PET_IGNORED_AURAS", "PARTY_PET_FRAMES_ENABLED")
 
     --fader

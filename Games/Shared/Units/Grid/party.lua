@@ -75,6 +75,8 @@ local function UpdateGridPartyFrame(frame)
     frame.debuffFilters = GW.settings.RAID_PARTY_DEBUFF_FILTER
     frame.buffFilters = GW.settings.RAID_PARTY_BUFF_FILTER
     frame.ignoredAuraSpellIDs = GW.settings.RAID_PARTY_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.RAID_PARTY_PANDEMIC_HIGHLIGHT
+    frame.showDispelIcon = GW.settings.RAID_PARTY_DISPEL_ICON
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)

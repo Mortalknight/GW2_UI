@@ -76,6 +76,8 @@ local function UpdateGridRaid40Frame(frame)
     frame.debuffFilters = GW.settings.RAID_DEBUFF_FILTER
     frame.buffFilters = GW.settings.RAID_BUFF_FILTER
     frame.ignoredAuraSpellIDs = GW.settings.RAID_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.RAID_PANDEMIC_HIGHLIGHT
+    frame.showDispelIcon = GW.settings.RAID_DISPEL_ICON
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)

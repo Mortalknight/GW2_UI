@@ -439,6 +439,12 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
             end
         end
     end
+
+    -- the setting gated aura regions (pandemic, dispel icon) read the frame fields
+    -- pushed above — re-evaluate them here so this also covers the post combat catch up
+    if GW.Retail then
+        GW.UpdateAuraOptionHolders()
+    end
 end
 GW.UpdateGridSettings = UpdateFramesAndHeader
 

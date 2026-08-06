@@ -116,6 +116,15 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant)
     visual:SetFrameLevel(button:GetFrameLevel() + 1)
     button.gwVisual = visual
 
+    -- both groups get the region: with Seperate = 0 the own auras render in the
+    -- others group, and the engine only lights the window for your own auras anyway
+    if not isEnchant then
+        GW.AddPandemicHighlight(button, visual, function() return GW.settings.PLAYER_PANDEMIC_HIGHLIGHT end)
+    end
+    if isDebuff then
+        GW.AddDispelTypeIcon(button, visual, { isDebuff = true }, function() return GW.settings.PLAYER_DISPEL_ICON end)
+    end
+
     -- border
     local border = CreateFrame("Frame", nil, visual)
     border:SetFrameLevel(visual:GetFrameLevel())
