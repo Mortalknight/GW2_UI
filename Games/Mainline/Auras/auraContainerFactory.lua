@@ -175,64 +175,116 @@ end
 -- about - the opt out hides the HOLDER, so it can never fight whatever the engine
 -- does to the region itself (Shown today, possibly alpha animations with 12.1.5).
 -- isEnabled is the hosts per frame setting getter, re-evaluated on every update.
-local gatedHolders = {}
-
-local function CreateGatedHolder(button, isEnabled)
-    local holder = CreateFrame("Frame", nil, button)
-    holder:SetFrameLevel(button:GetFrameLevel() + 2)
-    holder.gwIsEnabled = isEnabled
-    holder:SetShown(isEnabled())
-
-    tinsert(gatedHolders, holder)
-    return holder
-end
-
--- Show/Hide on a holder is denied while its button subtree carries a secret aura
--- (same access restriction as SetAuraButtonSize). Settings cannot change in combat,
--- so there is never anything to apply then — skip instead of touching the subtree
-function GW.UpdateAuraOptionHolders()
-    if InCombatLockdown() then return end
-
-    for _, holder in ipairs(gatedHolders) do
-        holder:SetShown(holder.gwIsEnabled())
+-- The engine owns the button lists — enumerate instead of caching them ourselves.
+-- Group keys come from gwConfig.groups (factory containers, including the advanced
+-- branch slots appended later) or gwGroupKeys (containers with fixed groups)
+local function ForEachGroupButton(container, groupKey, func)
+    for i = 1, container:GetAuraGroupFrameCount(groupKey) do
+        func(container:GetAuraGroupFrame(groupKey, i))
     end
 end
 
-function GW.AddPandemicHighlight(button, anchor, isEnabled)
-    local holder = CreateGatedHolder(button, isEnabled)
-    holder:SetPoint("TOPLEFT", anchor, "TOPLEFT", -4, 4)
-    holder:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", 4, -4)
+local function ForEachContainerButton(container, func)
+    if container.gwGroupKeys then
+        for _, key in ipairs(container.gwGroupKeys) do
+            ForEachGroupButton(container, key, func)
+        end
+    elseif container.gwConfig and container.gwConfig.groups then
+        for _, group in ipairs(container.gwConfig.groups) do
+            ForEachGroupButton(container, group.key, func)
+        end
+    end
+end
+GW.ForEachAuraContainerButton = ForEachContainerButton
 
-    local region = holder:CreateTexture(nil, "OVERLAY", nil, 1)
-    region:SetAllPoints(holder)
-    region:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/pandemic-glow.png")
-    region:SetVertexColor(1, 0.4, 0.25)
+local PANDEMIC_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/pandemic-glow.png"
 
-    button:AddPandemicRegion(region)
-
-    return holder
+-- Remove* takes a raw list index and table.removes it — stored indices go stale as
+-- soon as the list changes. The registered texture keeps its identity (the inbound
+-- wrapper returns the same object), so the index is looked up at removal time instead
+local function RemoveDispelTypeTextureByIdentity(button, texture)
+    for i = button:GetDispelTypeTextureCount(), 1, -1 do
+        if button:GetDispelTypeTexture(i) == texture then
+            button:RemoveDispelTypeTexture(i)
+            return
+        end
+    end
 end
 
--- Dispel type icon in the top right corner of the aura: the engine shows it while the
--- aura carries a dispel type, the holder carries the per frame opt out
+-- Both regions are engine driven and their Shown state becomes a secret aspect on
+-- registration — the opt out therefore DE-REGISTERS the region (Remove*) instead of
+-- hiding it. A removed region keeps its last engine state, so its texture content is
+-- cleared to render nothing; re-enabling restores it and registers again.
+local function ApplyAuraOptionRegions(button)
+    local pandemic = button.gwPandemicRegion
+    if pandemic then
+        if button.gwPandemicEnabled() then
+            if not button.gwPandemicIndex then
+                pandemic:SetTexture(PANDEMIC_TEXTURE)
+                button.gwPandemicIndex = button:AddPandemicRegion(pandemic)
+            end
+        elseif button.gwPandemicIndex then
+            -- the buttons only pandemic region is ours, the stored index stays valid
+            button:RemovePandemicRegion(button.gwPandemicIndex)
+            button.gwPandemicIndex = nil
+            pandemic:SetTexture()
+        end
+    end
+
+    local dispelIcon = button.gwDispelIcon
+    if dispelIcon then
+        if button.gwDispelIconEnabled() then
+            if not button.gwDispelIconRegistered then
+                button:AddDispelTypeTexture(dispelIcon, button.gwDispelIconOptions)
+                button.gwDispelIconRegistered = true
+            end
+        elseif button.gwDispelIconRegistered then
+            RemoveDispelTypeTextureByIdentity(button, dispelIcon)
+            button.gwDispelIconRegistered = nil
+            dispelIcon:SetTexture()
+        end
+    end
+end
+
+function GW.UpdateAuraOptionRegions()
+    if InCombatLockdown() then return end
+
+    for _, entry in ipairs(containerRegistry) do
+        ForEachContainerButton(entry.container, ApplyAuraOptionRegions)
+    end
+end
+
+-- Pandemic border glow, shown by the engine while the aura is inside its refresh
+-- window. textureParent overrides where the region is created (buttons whose visuals
+-- live directly on the button need it there for the draw order)
+function GW.AddPandemicHighlight(button, anchor, isEnabled, textureParent)
+    local region = (textureParent or anchor):CreateTexture(nil, "OVERLAY", nil, 1)
+    region:SetPoint("TOPLEFT", anchor, "TOPLEFT", -4, 4)
+    region:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", 4, -4)
+    region:SetVertexColor(1, 0.4, 0.25)
+
+    button.gwPandemicRegion = region
+    button.gwPandemicEnabled = isEnabled
+    ApplyAuraOptionRegions(button)
+end
+
+-- Dispel type icon in the top right corner of the aura, shown by the engine while
+-- the aura carries a dispel type
 function GW.AddDispelTypeIcon(button, anchor, group, isEnabled)
     local size = group.dispelIconSize or 12
-    local holder = CreateGatedHolder(button, isEnabled)
-    holder:SetSize(size, size)
-    holder:SetPoint("CENTER", anchor, "TOPRIGHT", -1, -1)
+    local dispelIcon = anchor:CreateTexture(nil, "OVERLAY", nil, 2)
+    dispelIcon:SetSize(size, size)
+    dispelIcon:SetPoint("CENTER", anchor, "TOPRIGHT", -1, -1)
 
-    local dispelIcon = holder:CreateTexture(nil, "OVERLAY", nil, 2)
-    dispelIcon:SetAllPoints(holder)
     button.gwDispelIcon = dispelIcon
-
-    button:AddDispelTypeTexture(dispelIcon, {
+    button.gwDispelIconEnabled = isEnabled
+    button.gwDispelIconOptions = {
         style = Enum.CustomAuraButtonDispelTypeTextureStyle.Icon,
         showWhenHarmful = group.isDebuff and true or false,
         showWhenHelpful = not group.isDebuff and true or false,
         showWithoutDispelType = false,
-    })
-
-    return holder
+    }
+    ApplyAuraOptionRegions(button)
 end
 
 function GW.RefreshAllAuraContainers()
@@ -242,7 +294,7 @@ function GW.RefreshAllAuraContainers()
             entry.refresh(entry.container)
         elseif entry.container.gwConfig and entry.container.gwConfig.onSettingsRefresh then
             entry.container.gwConfig.onSettingsRefresh(entry.container)
-        else
+        elseif entry.container.GwUpdateLayout then
             entry.container:GwUpdateLayout()
         end
     end
@@ -446,7 +498,6 @@ local function BuildAuraButton(button, container, group)
     end
 
     button.gwGroup = group
-    tinsert(container.gwButtonsByGroup[group.key], button)
     SetAuraButtonSize(button, group.size, GetGroupTextPad(group))
 end
 
@@ -534,11 +585,11 @@ local function ApplyLayout(container)
         -- covers the WHOLE button subtree including our own child frames while auras
         -- are secret; failed buttons keep their creation size until the next layout
         -- pass outside that state
-        for _, button in next, container.gwButtonsByGroup[group.key] do
+        ForEachGroupButton(container, group.key, function(button)
             if button.gwAppliedSize ~= group.size or button.gwAppliedTextPad ~= textPad then
                 pcall(SetAuraButtonSize, button, group.size, textPad)
             end
-        end
+        end)
     end
 end
 
@@ -566,7 +617,6 @@ local function SetAdvancedBranches(container, baseKey, branches, templateProvide
             group.filter = branch.filter
             slots[i] = group
             tinsert(cfg.groups, group)
-            container.gwButtonsByGroup[group.key] = {}
             container:AddAuraGroup(group.key, branch.filter, {
                 initializeFrame = function(button) BuildAuraButton(button, container, group) end,
             })
@@ -730,6 +780,7 @@ end
 function GW.CreateAuraTrackerContainer(config)
     local container = CreateFrame("AuraContainer", config.name, config.parent or UIParent, "CustomAuraContainerTemplate")
     container.gwConfig = config
+    container.gwGroupKeys = { "tracker" }
     container:SetSize(config.width or 1, config.height or 1)
 
     container:AddAuraGroup("tracker", config.filter, {
@@ -759,6 +810,7 @@ function GW.CreateAuraTrackerContainer(config)
     container:SetUnit(config.unit)
     container:SetEnabled(true)
     AttachRefreshWatcher(container, config)
+    RegisterAuraContainer(container)
 
     return container
 end
@@ -766,13 +818,11 @@ end
 function GW.CreateUnitAuraContainer(config)
     local container = CreateFrame("AuraContainer", config.name, config.parent or UIParent, "CustomAuraContainerTemplate")
     container.gwConfig = config
-    container.gwButtonsByGroup = {}
     container.GwUpdateLayout = ApplyLayout
     container.GwSetAdvancedBranches = SetAdvancedBranches
 
     for index, group in ipairs(config.groups) do
         group.layoutIndex = group.layoutIndex or index
-        container.gwButtonsByGroup[group.key] = {}
         container:AddAuraGroup(group.key, group.filter, {
             initializeFrame = function(button) BuildAuraButton(button, container, group) end,
         })

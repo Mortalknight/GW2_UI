@@ -407,8 +407,6 @@ local function CreateGridIndicatorTracker(frame, pos, spellList, indicatorColor)
         width = 13,
         height = 13,
         createWidgets = function(button)
-            GW.AddPandemicHighlight(button, holder, function() return frame.pandemicHighlight end)
-
             if isBar then
                 local bar = CreateFrame("StatusBar", nil, button)
                 bar:SetPoint("TOPLEFT", holder, "TOPLEFT")
@@ -426,6 +424,8 @@ local function CreateGridIndicatorTracker(frame, pos, spellList, indicatorColor)
                 widgets.bar = bar
                 return { durationBar = bar }
             end
+
+            GW.AddPandemicHighlight(button, holder, function() return frame.pandemicHighlight end, button)
 
             local backdrop = button:CreateTexture(nil, "BACKGROUND")
             backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
@@ -636,16 +636,14 @@ local function ApplyGridAuraMouseState(frame)
     container.gwConfig.hideTooltipInCombat = hideInCombat
     if frame.gwAuraMouseEnabled ~= enable or frame.gwAuraHideTooltip ~= hideInCombat then
         local allApplied = true
-        for _, buttons in pairs(container.gwButtonsByGroup) do
-            for _, button in next, buttons do
-                if not pcall(button.EnableMouse, button, enable) then
-                    allApplied = false
-                end
-                if not pcall(button.SetHideTooltipInCombat, button, hideInCombat) then
-                    allApplied = false
-                end
+        GW.ForEachAuraContainerButton(container, function(button)
+            if not pcall(button.EnableMouse, button, enable) then
+                allApplied = false
             end
-        end
+            if not pcall(button.SetHideTooltipInCombat, button, hideInCombat) then
+                allApplied = false
+            end
+        end)
         if allApplied then
             frame.gwAuraMouseEnabled = enable
             frame.gwAuraHideTooltip = hideInCombat

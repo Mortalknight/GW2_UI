@@ -116,15 +116,6 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant)
     visual:SetFrameLevel(button:GetFrameLevel() + 1)
     button.gwVisual = visual
 
-    -- both groups get the region: with Seperate = 0 the own auras render in the
-    -- others group, and the engine only lights the window for your own auras anyway
-    if not isEnchant then
-        GW.AddPandemicHighlight(button, visual, function() return GW.settings.PLAYER_PANDEMIC_HIGHLIGHT end)
-    end
-    if isDebuff then
-        GW.AddDispelTypeIcon(button, visual, { isDebuff = true }, function() return GW.settings.PLAYER_DISPEL_ICON end)
-    end
-
     -- border
     local border = CreateFrame("Frame", nil, visual)
     border:SetFrameLevel(visual:GetFrameLevel())
@@ -221,12 +212,18 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant)
     -- rejected with "blocked by secret aspects", so that the timing of new auras does not
     -- leak to addon code. If Blizzard ships an animation hook later, re-add it here.
 
+    -- Both groups get the pandemic region: with Seperate = 0 the own auras render in
+    -- the others group, and the engine only lights the window for your own auras anyway
+    if not isEnchant then
+        GW.AddPandemicHighlight(button, visual, function() return GW.settings.PLAYER_PANDEMIC_HIGHLIGHT end)
+    end
+    if isDebuff then
+        GW.AddDispelTypeIcon(button, visual, { isDebuff = true }, function() return GW.settings.PLAYER_DISPEL_ICON end)
+    end
+
     button.header = header
     button.gwInit = true
 
-    -- Cache the button on the container so that UpdateAuraHeader can apply
-    -- settings changes (e.g. the icon crop) to all existing buttons
-    tinsert(header.gwButtons, button)
     UpdateButtonSizeAndCrop(button, GW.settings[header.setting])
 end
 
@@ -306,9 +303,17 @@ local function UpdateAuraHeader(header)
     header:SetAuraGroupLayout(GROUP_OWN, ownLayout)
     header:SetAuraGroupLayout(GROUP_OTHERS, othersLayout)
 
-    -- update size + icon crop on all cached buttons
-    for _, button in next, header.gwButtons do
-        UpdateButtonSizeAndCrop(button, db)
+    -- Update size + icon crop on all engine owned buttons. Enchant frames live
+    -- outside the aura groups and stay cached: their enumeration
+    -- (GetActiveItemEnchantmentFrames) sits on ManagedAuraContainerPrivateMixin
+    -- only, which is not part of the addon facing inbound mixin chain
+    for _, key in ipairs(header.gwGroupKeys) do
+        for i = 1, header:GetAuraGroupFrameCount(key) do
+            UpdateButtonSizeAndCrop(header:GetAuraGroupFrame(key, i), db)
+        end
+    end
+    for _, enchantFrame in next, header.gwEnchantButtons do
+        UpdateButtonSizeAndCrop(enchantFrame, db)
     end
 
     -- mirror isMoved onto the layout proxy (the secure layout manager reads it there)
@@ -344,7 +349,8 @@ local function newContainer(filter)
     local h = CreateFrame("AuraContainer", name, UIParent, "CustomAuraContainerTemplate")
     h:SetClampedToScreen(true)
     h.gwIsAuraContainer = true
-    h.gwButtons = {}
+    h.gwGroupKeys = { GROUP_OWN, GROUP_OTHERS }
+    h.gwEnchantButtons = {}
     h.filter = filter
     h.setting = filter == "HELPFUL" and "PlayerBuffs" or "PlayerDebuffs"
     h.name = name
@@ -361,7 +367,10 @@ local function newContainer(filter)
         -- weapon enchants (replaces includeWeapons + GetWeaponEnchantInfo polling)
         for _, slot in next, { AuraContainerItemEnchantmentSlot.MainHand, AuraContainerItemEnchantmentSlot.OffHand } do
             h:AddItemEnchantment(slot, {
-                initializeFrame = function(button) InitializeAuraButton(button, h, false, true) end,
+                initializeFrame = function(button)
+                    InitializeAuraButton(button, h, false, true)
+                    tinsert(h.gwEnchantButtons, button)
+                end,
             })
         end
         h:SetItemEnchantmentLayout({ placement = CustomAuraContainerItemEnchantmentPlacement.BeforeAuraGroups })
