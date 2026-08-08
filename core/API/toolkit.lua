@@ -971,6 +971,57 @@ do
     end
 end
 
+-- Brand logo stack: the blue dragon with a gently pulsing black outline and a soft
+-- additive glow. Returns the holder frame - anchor it, everything scales with size.
+-- The outline lives on an own child frame and the ANIMATION runs on that frame:
+-- scale animations directly on textures composite the region above its layer
+-- siblings while transforming and snap at the loop turnaround
+local function CreateBrandLogo(parent, size)
+    local holder = CreateFrame("Frame", nil, parent)
+    holder:SetSize(size, size)
+
+    local glow = holder:CreateTexture(nil, "BACKGROUND")
+    glow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/glow.png")
+    glow:SetBlendMode("ADD")
+    glow:SetVertexColor(0.25, 0.6, 1)
+    glow:SetAlpha(0.35)
+    glow:SetSize(size * 2, size * 2)
+    glow:SetPoint("CENTER")
+
+    local outlineFrame = CreateFrame("Frame", nil, holder)
+    outlineFrame:SetFrameLevel(holder:GetFrameLevel() + 1)
+    outlineFrame:SetSize(size * 1.26, size * 1.26)
+    outlineFrame:SetPoint("CENTER")
+
+    local outline = outlineFrame:CreateTexture(nil, "ARTWORK")
+    outline:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwlogo-outline.png")
+    outline:SetAlpha(0.9)
+    outline:SetAllPoints(outlineFrame)
+
+    local logoFrame = CreateFrame("Frame", nil, holder)
+    logoFrame:SetFrameLevel(holder:GetFrameLevel() + 2)
+    logoFrame:SetAllPoints(holder)
+
+    local logo = logoFrame:CreateTexture(nil, "ARTWORK")
+    logo:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png")
+    logo:SetAllPoints(logoFrame)
+
+    -- endless seamless pulse: a cosine wave has no turnaround point, so unlike a
+    -- BOUNCE animation group there is nothing to snap at. Runs only while shown
+    local PULSE_PERIOD, PULSE_AMOUNT = 4, 0.08
+    local pulseTime = 0
+    outlineFrame:SetScript("OnUpdate", function(self, elapsed)
+        pulseTime = (pulseTime + elapsed) % PULSE_PERIOD
+        self:SetScale(1 + PULSE_AMOUNT * (0.5 - 0.5 * math.cos(pulseTime / PULSE_PERIOD * 2 * math.pi)))
+    end)
+
+    holder.logo = logo
+    holder.outline = outline
+    holder.glow = glow
+    return holder
+end
+GW.CreateBrandLogo = CreateBrandLogo
+
 local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddition, skip)
     if not object or not font or not object.SetFont or not textSizeType then return end
 

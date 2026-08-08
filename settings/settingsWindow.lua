@@ -50,6 +50,15 @@ local function BuildSettingsWindow()
     settingsContainer.headerBreadcrumb:SetFont(DAMAGE_TEXT_FONT, 14)
     settingsContainer.headerBreadcrumb:SetText(CHAT_CONFIGURATION)
     settingsContainer.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
+    -- Menomonia is the original GW2 typeface — ASCII only here, so the CJK locale
+    -- fallbacks of the regular font pipeline are not needed
+    settingsContainer.brandTextLeft:SetFont("Interface/AddOns/GW2_UI/Fonts/menomonia.ttf", 30)
+    settingsContainer.brandTextLeft:SetText("|cffffffffGW2|r " .. GW.Colors.TextColors.LightHeader:WrapTextInColorCode("UI"))
+
+    local brand = GW.CreateBrandLogo(settingsContainer, 50)
+    brand:SetPoint("CENTER", settingsContainer, "TOPLEFT", 59, -29)
+    settingsContainer.brandTextLeft:ClearAllPoints()
+    settingsContainer.brandTextLeft:SetPoint("LEFT", brand, "RIGHT", 8, 3)
     settingsContainer.versionString:SetFont(UNIT_NAME_FONT, 12)
     settingsContainer.versionString:SetText(GW.GetVersionString())
     settingsContainer.headerString:SetText(CHAT_CONFIGURATION)

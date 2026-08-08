@@ -38,18 +38,23 @@
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture file="Interface/AddOns/GW2_UI/textures/gwlogo.png" alpha="0.06">
+                    <Size x="260" y="260"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-16" y="12"/>
+                    </Anchors>
+                </Texture>
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bottom-right.png">
                     <Size x="128" y="128"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/settingslogo.png">
-                    <Size x="236" y="102"/>
+                <Texture parentKey="brandSeparator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png" alpha="0.8">
+                    <Size x="216" y="2"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="TOP" relativePoint="TOPLEFT" x="118" y="-58"/>
                     </Anchors>
-                    <TexCoords left="0" right="0.921875 " top="0" bottom="0.796875"/>
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="2">
@@ -72,6 +77,17 @@
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.headerString" relativePoint="RIGHT" x="10" y="-2"/>
                     </Anchors>
+                </FontString>
+                <FontString parentKey="brandTextLeft" text="GW" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="0" y="50"/>
+                    <Color r="1" g="1" b="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="TOPLEFT" x="48" y="-29"/>
+                    </Anchors>
+                    <Shadow>
+                        <Offset x="1" y="-2"/>
+                        <Color r="0" g="0" b="0" a="0.9"/>
+                    </Shadow>
                 </FontString>
                 <FontString parentKey="versionString" text="Version" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="236" y="40"/>
