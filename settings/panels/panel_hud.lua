@@ -2,6 +2,31 @@
 local GW = select(2, ...)
 local L = GW.L
 
+-- Applies the chosen combat text mode (cvars + format toggle); shared by the
+-- settings dropdown and the installer combat text step
+local function ApplyCombatTextMode(value)
+    if value == "GW2" then
+        C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+        if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
+            C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+        else
+            C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+        end
+        GW.FloatingCombatTextToggleFormat(true)
+    elseif value == "BLIZZARD" then
+        C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
+        C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+        GW.FloatingCombatTextToggleFormat(false)
+    else
+        C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+        C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+        GW.FloatingCombatTextToggleFormat(false)
+    end
+end
+GW.ApplyCombatTextMode = ApplyCombatTextMode
+GW.COMBAT_TEXT_MODES = { "GW2", "BLIZZARD", "OFF" }
+GW.COMBAT_TEXT_MODE_NAMES = { GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS }
+
 local function LoadHudPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
 
@@ -302,25 +327,7 @@ local function LoadHudPanel(sWindow)
     worldEvents:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "bigDig.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Big Dig"], dependence = {["bigDig.enabled"] = true, ["bigDig.alert"] = true}, hidden = not GW.Retail})
 
     --FCT
-    fct:AddOptionDropdown(COMBAT_TEXT_LABEL, COMBAT_SUBTEXT, { getterSetter = "GW_COMBAT_TEXT_MODE", callback = function(value)
-            if value == "GW2" then
-                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-                if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
-                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
-                else
-                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
-                end
-                GW.FloatingCombatTextToggleFormat(true)
-            elseif value == "BLIZZARD" then
-                C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
-                C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
-                GW.FloatingCombatTextToggleFormat(false)
-            else
-                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
-                GW.FloatingCombatTextToggleFormat(false)
-            end
-        end, optionsList = {"GW2", "BLIZZARD", "OFF"}, optionNames = {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS}, groupHeaderName = COMBAT_TEXT_LABEL, incompatibleAddons = "FloatingCombatText"})
+    fct:AddOptionDropdown(COMBAT_TEXT_LABEL, COMBAT_SUBTEXT, { getterSetter = "GW_COMBAT_TEXT_MODE", callback = GW.ApplyCombatTextMode, optionsList = GW.COMBAT_TEXT_MODES, optionNames = GW.COMBAT_TEXT_MODE_NAMES, groupHeaderName = COMBAT_TEXT_LABEL, incompatibleAddons = "FloatingCombatText"})
 
     fct:AddOption(L["Use Blizzard colors"], nil, {getterSetter = "GW_COMBAT_TEXT_BLIZZARD_COLOR", callback = GW.UpdateDameTextSettings, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}, groupHeaderName = COMBAT_TEXT_LABEL, incompatibleAddons = "FloatingCombatText"})
     fct:AddOption(L["Show numbers with commas"], nil, {getterSetter = "GW_COMBAT_TEXT_COMMA_FORMAT", callback = GW.UpdateDameTextSettings, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}, groupHeaderName = COMBAT_TEXT_LABEL, incompatibleAddons = "FloatingCombatText"})

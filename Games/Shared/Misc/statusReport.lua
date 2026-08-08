@@ -180,11 +180,9 @@ local function CreateStatusFrame()
     titleLogoFrame:SetSize(240, 150)
     StatusFrame.TitleLogoFrame = titleLogoFrame
 
-    local titleTexture = StatusFrame.TitleLogoFrame:CreateTexture(nil, "ARTWORK")
-    titleTexture:SetPoint("CENTER", titleLogoFrame, "CENTER")
-    titleTexture:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png")
-    titleTexture:SetSize(128, 128)
-    titleLogoFrame.Texture = titleTexture
+    local titleBrand = GW.CreateBrandLogo(titleLogoFrame, 128)
+    titleBrand:SetPoint("CENTER", titleLogoFrame, "CENTER")
+    titleLogoFrame.Texture = titleBrand.logo
 
     --Sections
     StatusFrame.Section1 = CreateSection(300, 150, StatusFrame, "TOP", StatusFrame, "TOP", -150)
