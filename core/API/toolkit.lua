@@ -971,6 +971,20 @@ do
     end
 end
 
+-- Gold value fill between track start and thumb; the anchors follow the thumb, so
+-- no update code is needed
+local function AddSliderValueFill(slider)
+    local fill = slider:CreateTexture(nil, "BORDER")
+    fill:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    fill:SetVertexColor(1, 1, 1)
+    fill:SetAlpha(0.9)
+    fill:SetHeight(4)
+    fill:SetPoint("LEFT", slider, "LEFT", 3, 0)
+    fill:SetPoint("RIGHT", slider:GetThumbTexture(), "CENTER", 0, 0)
+    return fill
+end
+GW.AddSliderValueFill = AddSliderValueFill
+
 -- Brand logo stack: the blue dragon with a gently pulsing black outline and a soft
 -- additive glow. Returns the holder frame - anchor it, everything scales with size.
 -- The outline lives on an own child frame and the ANIMATION runs on that frame:

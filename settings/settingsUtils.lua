@@ -1262,6 +1262,8 @@ local function SettingsInitOptionWidget(of, v, panel)
     elseif v.optionType == "slider" then
         of.inputFrame.input:SetJustifyH("CENTER")
         of.inputFrame.input:SetTextColor(1, 0.93, 0.73)
+
+        GW.AddSliderValueFill(of.slider)
         of.slider:SetMinMaxValues(v.min, v.max)
         of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers))
         of.slider.sliderMinText:SetText(RoundDec(v.min, of.decimalNumbers))

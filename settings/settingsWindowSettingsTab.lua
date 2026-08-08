@@ -375,6 +375,16 @@ local function CreateOrGetOptionWidget(panel, opt)
     GW.SettingsInitOptionWidget(of, opt, panel)
     SetupMasterToggleStyle(of)
 
+    -- subtle hover feedback on every interactive row (master toggles have their own)
+    if not of.isMasterToggle and opt.optionType ~= "header" and opt.optionType ~= "subHeader" then
+        local hover = of:CreateTexture(nil, "BACKGROUND")
+        hover:SetColorTexture(GW.Colors.TextColors.LightHeader:GetRGB())
+        hover:SetAlpha(0)
+        hover:SetAllPoints(of)
+        of:HookScript("OnEnter", function() hover:SetAlpha(0.05) end)
+        of:HookScript("OnLeave", function() hover:SetAlpha(0) end)
+    end
+
     opt.__widget = of
 
     RegisterOptionWidget(of, { panel=panel, title=of.displayName, path=of.settingsPath, type=of.optionType, key=of.optionName, desc=of.desc })
