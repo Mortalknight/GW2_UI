@@ -412,10 +412,44 @@ local function CheckForDefaultPosition(frame, point, relativePoint, xOfs, yOfs, 
     GW.settings[frame.setting] = newPoint
 end
 
+-- Snaps the mover EDGES onto the grid: per axis the edge that is already closest
+-- to a line wins. The grid draws its lines in step distances from the screen
+-- center; everything is measured in the movers coordinate space, so differing
+-- frame scales cannot skew the result
+local function SnapToGrid(self, xOfs, yOfs)
+    local toMoverSpace = UIParent:GetEffectiveScale() / self:GetEffectiveScale()
+    local width, height = UIParent:GetSize()
+    local step = math.max(2, math.min(width, height) / GW.settings.gridSpacing) * toMoverSpace
+    local screenX, screenY = UIParent:GetCenter()
+    screenX, screenY = screenX * toMoverSpace, screenY * toMoverSpace
+
+    local function EdgeDelta(coord, center)
+        local snapped = center + GW.RoundInt((coord - center) / step) * step
+        return snapped - coord
+    end
+
+    local deltaLeft = EdgeDelta(self:GetLeft(), screenX)
+    local deltaRight = EdgeDelta(self:GetRight(), screenX)
+    local deltaTop = EdgeDelta(self:GetTop(), screenY)
+    local deltaBottom = EdgeDelta(self:GetBottom(), screenY)
+
+    local deltaX = math.abs(deltaLeft) <= math.abs(deltaRight) and deltaLeft or deltaRight
+    local deltaY = math.abs(deltaTop) <= math.abs(deltaBottom) and deltaTop or deltaBottom
+    return xOfs + deltaX, yOfs + deltaY
+end
+
 local function mover_OnDragStop(self)
     local settingsName = self.setting
+    local wasDragged = self.IsMoving
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
+
+    -- only real drags snap while the grid is shown - pixel nudges, the X/Y inputs
+    -- and the centering buttons stay exact
+    if wasDragged and grid and grid:IsShown() and xOfs and yOfs then
+        xOfs, yOfs = SnapToGrid(self, xOfs, yOfs)
+    end
+
     xOfs = xOfs and GW.RoundInt(xOfs) or 0
     yOfs = yOfs and GW.RoundInt(yOfs) or 0
 
@@ -445,8 +479,24 @@ local function mover_OnDragStop(self)
         self.postdrag(self.parent)
     end
     self.IsMoving = false
+
+    if GW.MoveHudScaleableFrame.moverSettingsFrame.childMover == self then
+        UpdateMoverPositionInputs(self)
+    end
 end
 
+
+-- mirrors the selected movers anchor offsets into the X/Y inputs
+local function UpdateMoverPositionInputs(mover)
+    local options = GW.MoveHudScaleableFrame.moverSettingsFrame.options
+    if not options.position or options.position.gwUpdating then return end
+
+    local _, _, _, x, y = mover:GetPoint()
+    options.position.gwUpdating = true
+    options.position.inputX:SetText(GW.RoundDec(x or 0, 1))
+    options.position.inputY:SetText(GW.RoundDec(y or 0, 1))
+    options.position.gwUpdating = false
+end
 
 local function showExtraOptions(self)
     GW.MoveHudScaleableFrame.moverSettingsFrame.child = self
@@ -455,6 +505,7 @@ local function showExtraOptions(self)
     GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Hide()
     GW.MoveHudScaleableFrame.moverSettingsFrame.options:Show()
     -- options
+    UpdateMoverPositionInputs(self)
     GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider:SetShown(self.optionScaleable)
     GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider:SetShown(self.optionHeight)
     if self.optionScaleable then
@@ -802,6 +853,9 @@ local function LoadMovers(layoutManager)
         end)
     end
 
+    GW.AddSliderValueFill(smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider)
+    GW.AddSliderValueFill(smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider)
+
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.1, 2)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetValue(1)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
@@ -830,10 +884,117 @@ local function LoadMovers(layoutManager)
     GW.HandleNextPrevButton(smallSettingsContainer.moverSettingsFrame.options.movers.right, "right")
     GW.HandleNextPrevButton(smallSettingsContainer.moverSettingsFrame.options.movers.up, "up")
     GW.HandleNextPrevButton(smallSettingsContainer.moverSettingsFrame.options.movers.down, "down")
-    smallSettingsContainer.moverSettingsFrame.options.movers.left:SetScript("OnClick", function() MoveFrameByPixel(-1, 0) end)
-    smallSettingsContainer.moverSettingsFrame.options.movers.right:SetScript("OnClick", function() MoveFrameByPixel(1, 0) end)
-    smallSettingsContainer.moverSettingsFrame.options.movers.up:SetScript("OnClick", function() MoveFrameByPixel(0, 1) end)
-    smallSettingsContainer.moverSettingsFrame.options.movers.down:SetScript("OnClick", function() MoveFrameByPixel(0, -1) end)
+    -- shift click nudges by 10 pixels instead of 1
+    local function NudgeStep()
+        return IsShiftKeyDown() and 10 or 1
+    end
+    local moverButtons = smallSettingsContainer.moverSettingsFrame.options.movers
+    moverButtons.left:SetScript("OnClick", function() MoveFrameByPixel(-NudgeStep(), 0) end)
+    moverButtons.right:SetScript("OnClick", function() MoveFrameByPixel(NudgeStep(), 0) end)
+    moverButtons.up:SetScript("OnClick", function() MoveFrameByPixel(0, NudgeStep()) end)
+    moverButtons.down:SetScript("OnClick", function() MoveFrameByPixel(0, -NudgeStep()) end)
+    for _, arrow in next, { moverButtons.left, moverButtons.right, moverButtons.up, moverButtons.down } do
+        arrow:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOP")
+            GameTooltip:SetText(NPE_MOVE, 1, 1, 1)
+            GameTooltip:AddLine(L["Hold Shift to move in steps of 10"], 0.9, 0.85, 0.7, true)
+            GameTooltip:Show()
+        end)
+        arrow:SetScript("OnLeave", GameTooltip_Hide)
+    end
+
+    -- Exact positioning: the anchor offsets of the selected mover, editable. The
+    -- inputs share the line with the "move" title, so they cost no extra height
+    local options = smallSettingsContainer.moverSettingsFrame.options
+    local position = CreateFrame("Frame", nil, moverButtons)
+    position:SetPoint("TOPRIGHT", moverButtons, "TOPRIGHT", 0, 8)
+    position:SetSize(110, 16)
+    options.position = position
+    moverButtons.title:SetWidth(58)
+    moverButtons.title:SetWordWrap(false)
+
+    local function CreatePositionInput(label, offsetX)
+        local text = position:CreateFontString(nil, "OVERLAY")
+        text:SetFont(UNIT_NAME_FONT, 10, "")
+        text:SetTextColor(1, 1, 1)
+        text:SetPoint("LEFT", position, "LEFT", offsetX, 0)
+        text:SetText(label)
+
+        local input = CreateFrame("EditBox", nil, position)
+        input:SetSize(38, 14)
+        input:SetAutoFocus(false)
+        input:SetFont(UNIT_NAME_FONT, 9, "")
+        input:SetTextColor(1, 1, 1)
+        input:SetJustifyH("CENTER")
+        input:SetPoint("LEFT", text, "RIGHT", 4, 0)
+
+        local bg = input:CreateTexture(nil, "BACKGROUND")
+        bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
+        bg:SetTexCoord(0, 0.2, 0, 1)
+        bg:SetPoint("TOPLEFT", -3, 1)
+        bg:SetPoint("BOTTOMRIGHT", 3, -1)
+
+        input:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+        return input
+    end
+
+    position.inputX = CreatePositionInput("X", 0)
+    position.inputY = CreatePositionInput("Y", 56)
+
+    local function ApplyPositionInputs()
+        local mover = smallSettingsContainer.moverSettingsFrame.childMover
+        local x = tonumber(position.inputX:GetText())
+        local y = tonumber(position.inputY:GetText())
+        if not mover or not x or not y then return end
+
+        local point, _, anchorPoint = mover:GetPoint()
+        position.gwUpdating = true
+        mover:ClearAllPoints()
+        mover:SetPoint(point, UIParent, anchorPoint, x, y)
+        mover_OnDragStop(mover)
+        position.gwUpdating = false
+
+        position.inputX:ClearFocus()
+        position.inputY:ClearFocus()
+    end
+    position.inputX:SetScript("OnEnterPressed", ApplyPositionInputs)
+    position.inputY:SetScript("OnEnterPressed", ApplyPositionInputs)
+
+    -- centering shortcuts: nudge by the distance between the mover and screen center
+    local align = CreateFrame("Frame", nil, options)
+    align:SetSize(170, 20)
+    align:SetPoint("TOPLEFT", options.movers, "BOTTOMLEFT", 0, -4)
+    options.align = align
+
+    local centerX = CreateFrame("Button", nil, align, "GwStandardButton")
+    centerX:SetSize(82, 18)
+    centerX:SetPoint("LEFT", align, "LEFT", 0, 0)
+    centerX:SetText(L["Center"] .. " X")
+    centerX:SetScript("OnClick", function()
+        local mover = smallSettingsContainer.moverSettingsFrame.childMover
+        if not mover then return end
+        local moverCenter = mover:GetCenter()
+        MoveFrameByPixel(UIParent:GetWidth() / 2 - moverCenter, 0)
+    end)
+
+    local centerY = CreateFrame("Button", nil, align, "GwStandardButton")
+    centerY:SetSize(82, 18)
+    centerY:SetPoint("LEFT", centerX, "RIGHT", 6, 0)
+    centerY:SetText(L["Center"] .. " Y")
+    centerY:SetScript("OnClick", function()
+        local mover = smallSettingsContainer.moverSettingsFrame.childMover
+        if not mover then return end
+        local _, moverCenter = mover:GetCenter()
+        MoveFrameByPixel(0, UIParent:GetHeight() / 2 - moverCenter)
+    end)
+
+    -- the extra row pushes the reset button down; options and container grow by
+    -- exactly that delta so nothing overflows
+    options:SetHeight(175 + 24)
+    options.default:ClearAllPoints()
+    options.default:SetPoint("TOPLEFT", align, "BOTTOMLEFT", 0, -5)
+    smallSettingsContainer:SetHeight(smallSettingsContainer:GetHeight() + 24)
+    smallSettingsContainer.seperator:SetHeight(smallSettingsContainer:GetHeight())
 
     smallSettingsContainer:SetScript("OnShow", function()
         mf:Show()

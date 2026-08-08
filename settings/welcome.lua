@@ -136,13 +136,44 @@ local function CVarExists(entry)
 end
 
 local function ApplyCVars()
+    local applied, total = 0, 0
     for _, entry in ipairs(CVARS) do
-        if entry.enabled ~= false and CVarExists(entry) then
-            C_CVar.SetCVar(entry.cvar, entry.value)
+        if CVarExists(entry) then
+            total = total + 1
+            if entry.enabled ~= false then
+                C_CVar.SetCVar(entry.cvar, entry.value)
+                applied = applied + 1
+            end
         end
     end
 
     AddCompleteAlert(L["Setup CVars"])
+    return format("%d/%d", applied, total)
+end
+
+-- one click install: every step with its recommended default, then reload
+local function ApplyExpressInstall()
+    ApplyChatSetup()
+    ApplyCVars()
+
+    GW.settings.PIXEL_PERFECTION = true
+    C_CVar.SetCVar("useUiScale", "0")
+    GW.PixelPerfection()
+
+    GW.settings.FONT_STYLE_TEMPLATE = "GW2"
+    GW.ApplyFontStyleTemplate()
+
+    if not GW.Retail then
+        GW.settings.GW_COMBAT_TEXT_MODE = "GW2"
+        GW.ApplyCombatTextMode("GW2")
+    end
+
+    GW.ShowPopup({
+        text = L["The recommended settings have been applied. The interface will now be reloaded."],
+        OnAccept = function() C_UI.Reload() end,
+        button1 = ACCEPT,
+        button2 = CANCEL,
+    })
 end
 
 -- ============================
@@ -230,16 +261,40 @@ local function SetModuleValue(setting, value)
     end
 end
 
-local STEPS = RemoveHiddenSteps({
-    {
-        title = L["Installation"],
-        desc = L["This short installation process will help you to set up all of the necessary settings used by GW2 UI."],
-    },
+-- forward declaration: the final steps summary closure iterates STEPS, and a local
+-- only enters scope AFTER its declaration statement - inline it would capture a
+-- global nil instead
+local STEPS
+STEPS = RemoveHiddenSteps({
     {
         title = CHAT,
         desc = L["This part sets up your chat window names, positions, and colors."],
         applyText = L["Setup Chat"],
         apply = ApplyChatSetup,
+        buildContent = function(content)
+            local lines = {
+                L["Resets the chat windows and moves the main chat to the bottom left"],
+                format(L["Adds an extra tab for %s"], LOOT .. " / " .. TRADE),
+                format(L["Sets the chat font size to %d"], 12),
+                L["Enables class colors for player names"],
+                L["Sorts the message groups into the matching tabs"],
+            }
+            local previous
+            for _, line in ipairs(lines) do
+                local text = content:CreateFontString(nil, "OVERLAY")
+                text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+                text:SetTextColor(0.9, 0.85, 0.7)
+                text:SetJustifyH("LEFT")
+                text:SetWidth(400)
+                if previous then
+                    text:SetPoint("TOPLEFT", previous, "BOTTOMLEFT", 0, -8)
+                else
+                    text:SetPoint("TOPLEFT", content, "TOPLEFT", 45, -8)
+                end
+                previous = text
+                text:SetFormattedText("|cffd4b678\226\128\162|r  %s", line)
+            end
+        end,
     },
     {
         title = "CVars",
@@ -351,19 +406,23 @@ local STEPS = RemoveHiddenSteps({
             end)
         end,
         -- NEXT commits the previewed choice, SKIP restores the scale from step entry
-        onNext = function(content)
+        onNext = function(content, step)
             local state = content.gwDisplayState
             if state.mode == "pp" then
                 GW.settings.PIXEL_PERFECTION = true
                 C_CVar.SetCVar("useUiScale", "0")
                 GW.PixelPerfection()
                 AddCompleteAlert(L["Pixel Perfect Mode"])
+                step.applied = true
+                step.summaryDetail = format("%s (%.2f)", L["Pixel Perfect Mode"], GW.getBestPixelScale())
             elseif state.mode == "custom" then
                 local value = content.gwScaleSlider:GetValue()
                 GW.settings.PIXEL_PERFECTION = false
                 C_CVar.SetCVar("useUiScale", "1")
                 C_CVar.SetCVar("uiScale", value)
                 UIParent:SetScale(value)
+                step.applied = true
+                step.summaryDetail = format("%s %.2f", UI_SCALE, value)
             end
         end,
         onSkip = function(content)
@@ -373,7 +432,7 @@ local STEPS = RemoveHiddenSteps({
     {
         title = L["Modules"],
         desc = L["Choose which parts of GW2 UI are active for you. Everything can be changed later in the settings."],
-        buildContent = function(content)
+        buildContent = function(content, step)
             local shown = {}
             for _, module in ipairs(MODULES) do
                 if not module.hidden then
@@ -381,31 +440,68 @@ local STEPS = RemoveHiddenSteps({
                 end
             end
 
+            local checks = {}
             local perColumn = math.ceil(#shown / 3)
             for index, module in ipairs(shown) do
                 local check = CreateInstallCheckbox(content, module.name)
                 local column = math.floor((index - 1) / perColumn)
                 local row = (index - 1) % perColumn
-                check:SetPoint("TOPLEFT", content, "TOPLEFT", 10 + column * 155, -4 - row * 22)
+                check:SetPoint("TOPLEFT", content, "TOPLEFT", 10 + column * 155, -30 - row * 22)
                 check.label:SetWidth(125)
                 check.label:SetWordWrap(false)
                 check:SetChecked(GetModuleValue(module.setting))
                 check:SetScript("OnClick", function(self)
                     SetModuleValue(module.setting, self:GetChecked())
+                    step.applied = true
                 end)
+                checks[index] = check
             end
+
+            local function SetAll(value)
+                for index, module in ipairs(shown) do
+                    SetModuleValue(module.setting, value)
+                    checks[index]:SetChecked(value)
+                end
+                step.applied = true
+            end
+
+            local checkAll = CreateActionButton(content, 110)
+            checkAll:SetHeight(20)
+            checkAll:SetPoint("TOPLEFT", content, "TOPLEFT", 10, -2)
+            checkAll:SetText(CHECK_ALL)
+            checkAll:SetScript("OnClick", function() SetAll(true) end)
+
+            local uncheckAll = CreateActionButton(content, 110)
+            uncheckAll:SetHeight(20)
+            uncheckAll:SetPoint("LEFT", checkAll, "RIGHT", 8, 0)
+            uncheckAll:SetText(UNCHECK_ALL)
+            uncheckAll:SetScript("OnClick", function() SetAll(false) end)
 
             local hint = content:CreateFontString(nil, "OVERLAY")
             hint:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
             hint:SetTextColor(0.62, 0.58, 0.5)
-            hint:SetPoint("TOP", content, "TOP", 0, -4 - perColumn * 22 - 14)
+            hint:SetPoint("TOP", content, "TOP", 0, -30 - perColumn * 22 - 14)
             hint:SetText(L["Changes take effect once the installation completes."])
+        end,
+        onNext = function(_, step)
+            local enabled, total, names = 0, 0, {}
+            for _, module in ipairs(MODULES) do
+                if not module.hidden then
+                    total = total + 1
+                    if GetModuleValue(module.setting) then
+                        enabled = enabled + 1
+                        tinsert(names, module.name)
+                    end
+                end
+            end
+            step.summaryDetail = format("%d/%d", enabled, total)
+            step.summaryTooltip = names
         end,
     },
     {
         title = L["Fonts"],
         desc = L["Choose from predefined options to customize fonts and text styles, adjusting the appearance of your text."],
-        buildContent = function(content)
+        buildContent = function(content, step)
             local dropdown = CreateFrame("DropdownButton", nil, content, "WowStyle1DropdownTemplate")
             dropdown:SetSize(220, 25)
             dropdown:SetPoint("TOP", content, "TOP", 0, -10)
@@ -417,16 +513,27 @@ local STEPS = RemoveHiddenSteps({
                         function()
                             GW.settings.FONT_STYLE_TEMPLATE = template
                             GW.ApplyFontStyleTemplate()
+                            step.applied = true
+                            step.summaryDetail = GW.FONT_STYLE_TEMPLATE_NAMES[index]
                         end)
                 end
             end)
+        end,
+        onNext = function(_, step)
+            if not step.summaryDetail then
+                for index, template in ipairs(GW.FONT_STYLE_TEMPLATES) do
+                    if GW.settings.FONT_STYLE_TEMPLATE == template then
+                        step.summaryDetail = GW.FONT_STYLE_TEMPLATE_NAMES[index]
+                    end
+                end
+            end
         end,
     },
     {
         title = COMBAT_TEXT_LABEL,
         desc = COMBAT_SUBTEXT,
         hidden = GW.Retail,
-        buildContent = function(content)
+        buildContent = function(content, step)
             local dropdown = CreateFrame("DropdownButton", nil, content, "WowStyle1DropdownTemplate")
             dropdown:SetSize(220, 25)
             dropdown:SetPoint("TOP", content, "TOP", 0, -10)
@@ -438,15 +545,26 @@ local STEPS = RemoveHiddenSteps({
                         function()
                             GW.settings.GW_COMBAT_TEXT_MODE = mode
                             GW.ApplyCombatTextMode(mode)
+                            step.applied = true
+                            step.summaryDetail = GW.COMBAT_TEXT_MODE_NAMES[index]
                         end)
                 end
             end)
+        end,
+        onNext = function(_, step)
+            if not step.summaryDetail then
+                for index, mode in ipairs(GW.COMBAT_TEXT_MODES) do
+                    if GW.settings.GW_COMBAT_TEXT_MODE == mode then
+                        step.summaryDetail = GW.COMBAT_TEXT_MODE_NAMES[index]
+                    end
+                end
+            end
         end,
     },
     {
         title = L["Profiles"],
         desc = L["This part helps you manage your settings profile. Profiles can be shared between characters."],
-        buildContent = function(content)
+        buildContent = function(content, step)
             local currentLabel = content:CreateFontString(nil, "OVERLAY")
             currentLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
             currentLabel:SetTextColor(0.9, 0.85, 0.7)
@@ -469,6 +587,8 @@ local STEPS = RemoveHiddenSteps({
                         function()
                             GW.globalSettings:SetProfile(profileName)
                             UpdateCurrentLabel()
+                            step.applied = true
+                            step.summaryDetail = profileName
                         end)
                 end
             end)
@@ -480,7 +600,33 @@ local STEPS = RemoveHiddenSteps({
                 GW.globalSettings:SetProfile(UnitName("player") .. " - " .. GetRealmName())
                 UpdateCurrentLabel()
                 dropdown:GenerateMenu()
+                step.applied = true
+                step.summaryDetail = GW.globalSettings:GetCurrentProfile()
             end)
+
+            -- most common case for alts: same settings as the current profile, but
+            -- independent from now on
+            local copyButton = CreateActionButton(content, 220)
+            copyButton:SetPoint("TOP", newButton, "BOTTOM", 0, -8)
+            copyButton:SetText(L["Copy the current profile for this character"])
+            copyButton:SetScript("OnClick", function()
+                local oldProfile = GW.globalSettings:GetCurrentProfile()
+                local newProfile = UnitName("player") .. " - " .. GetRealmName()
+                if newProfile == oldProfile then
+                    newProfile = format("%s (%s)", newProfile, CALENDAR_COPY_EVENT)
+                end
+                GW.globalSettings:SetProfile(newProfile)
+                GW.globalSettings:CopyProfile(oldProfile, true)
+                UpdateCurrentLabel()
+                dropdown:GenerateMenu()
+                step.applied = true
+                step.summaryDetail = newProfile
+            end)
+        end,
+        onNext = function(_, step)
+            if not step.summaryDetail then
+                step.summaryDetail = GW.globalSettings:GetCurrentProfile()
+            end
         end,
     },
     {
@@ -489,6 +635,45 @@ local STEPS = RemoveHiddenSteps({
         applyText = L["Complete"],
         apply = function() C_UI.Reload() end,
         isFinal = true,
+        buildContent = function(content)
+            local previous
+            for _, step in ipairs(STEPS) do
+                if not step.isFinal then
+                    local text = content:CreateFontString(nil, "OVERLAY")
+                    text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+                    text:SetJustifyH("LEFT")
+                    text:SetWidth(320)
+                    if previous then
+                        text:SetPoint("TOPLEFT", previous, "BOTTOMLEFT", 0, -8)
+                    else
+                        text:SetPoint("TOPLEFT", content, "TOPLEFT", 90, -8)
+                    end
+
+                    if step.applied then
+                        local detail = step.summaryDetail and format(" |cff888888%s|r", step.summaryDetail) or ""
+                        text:SetTextColor(0.9, 0.85, 0.7)
+                        text:SetFormattedText("|TInterface/RaidFrame/ReadyCheck-Ready:14|t %s%s", step.title, detail)
+                    else
+                        text:SetTextColor(0.5, 0.47, 0.42)
+                        text:SetFormattedText("|TInterface/RaidFrame/ReadyCheck-NotReady:14|t %s |cff888888%s|r", step.title, L["Skipped"])
+                    end
+
+                    if step.summaryTooltip then
+                        local line = CreateFrame("Frame", nil, content)
+                        line:SetAllPoints(text)
+                        line:EnableMouse(true)
+                        line:SetScript("OnEnter", function(self)
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                            GameTooltip:SetText(step.title, 1, 1, 1)
+                            GameTooltip:AddLine(table.concat(step.summaryTooltip, ", "), 0.9, 0.85, 0.7, true)
+                            GameTooltip:Show()
+                        end)
+                        line:SetScript("OnLeave", GameTooltip_Hide)
+                    end
+                    previous = text
+                end
+            end
+        end,
     },
 })
 
@@ -504,10 +689,12 @@ local function RenderStep(index)
 
     -- progress: filled dots are done, the gold one is the current step
     for i, dot in ipairs(install.dots) do
-        if i < index then
-            dot:SetVertexColor(1, 1, 1, 0.7)
-        elseif i == index then
+        if i == index then
             dot:SetVertexColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        elseif STEPS[i].applied then
+            dot:SetVertexColor(0.3, 0.92, 0.17)
+        elseif i < index then
+            dot:SetVertexColor(1, 1, 1, 0.7)
         else
             dot:SetVertexColor(1, 1, 1, 0.2)
         end
@@ -525,15 +712,17 @@ local function RenderStep(index)
     install.content:SetPoint("BOTTOM", install.action, "TOP", 0, 10)
     install.content:SetWidth(470)
     if step.buildContent then
-        step.buildContent(install.content)
+        step.buildContent(install.content, step)
     end
+    UIFrameFadeIn(install.content, 0.2, 0, 1)
 
     -- the steps own action stands alone, the navigation row stays small below it
     install.action:SetShown(step.applyText ~= nil)
     if step.applyText then
         install.action:SetText(step.applyText)
         install.action:SetScript("OnClick", function()
-            step.apply()
+            step.summaryDetail = step.apply()
+            step.applied = true
             if not step.isFinal then
                 RenderStep(index + 1)
             end
@@ -541,7 +730,7 @@ local function RenderStep(index)
     end
 
     install.back:SetShown(index > 1 and not step.isFinal)
-    install.skip:SetShown(not step.isFinal and index > 1)
+    install.skip:SetShown(not step.isFinal)
     install.next:SetShown(not step.isFinal and not step.applyText)
 
     install.skip:ClearAllPoints()
@@ -560,7 +749,8 @@ local function RenderStep(index)
         RenderStep(index + 1)
     end)
     install.next:SetScript("OnClick", function()
-        if step.onNext then step.onNext(install.content) end
+        if step.onNext then step.onNext(install.content, step) end
+        step.applied = true
         RenderStep(index + 1)
     end)
 end
@@ -630,42 +820,90 @@ end
 -- ============================
 -- Landing page + panel setup
 -- ============================
-local function setDefaultOpenLayout()
-    wpanel.header:SetText(L["Welcome to GW2 UI"])
-
-    wpanel.welcome.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    wpanel.welcome.header:SetTextColor(0.9, 0.85, 0.7, 1)
-    wpanel.welcome.header:SetText(L["GW2 UI is a full user interface replacement. We have built the user interface with a modular approach, this means that if you dislike a certain part of the addon - or have another you prefer for that function - you can just disable that part, while keeping the rest of the interface intact.\nSome of the modules available to you are an immersive questing window, a full inventory replacement, as well as a full character window replacement. There are many more that you can enjoy, just take a look in the settings menu to see what's available to you!"] .. "\n\n\n\n\n\n\n\n")
-
-    wpanel.welcome.subHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE", 4)
-    wpanel.welcome.subHeader:SetTextColor(0.8, 0.75, 0.6, 1)
-    wpanel.welcome.subHeader:SetText("\n\n\n\n" .. L["GW2 UI installation"])
-
-    wpanel.close:SetText(CLOSE)
-    wpanel.close:Show()
-    wpanel.settings:SetText(CHAT_CONFIGURATION)
-    wpanel.welcome.button0:SetText(L["Start installation"])
-    wpanel.welcome.button0:Show()
-    wpanel.welcome.button1:Hide()
-    wpanel.welcome.button2:Hide()
-    wpanel.settings:Show()
-
-    if installFrame then
-        installFrame:Hide()
-    end
-    wpanel.welcome:Show()
-end
+local landingFrame
 
 local function StartInstall()
-    wpanel.welcome:Hide()
-    wpanel.settings:Hide()
-    wpanel.close:Hide()
+    for _, step in ipairs(STEPS) do
+        step.applied = nil
+        step.summaryDetail = nil
+        step.summaryTooltip = nil
+    end
+    landingFrame:Hide()
     installFrame:Show()
     RenderStep(1)
 end
 
+local function CreateLandingFrame()
+    landingFrame = CreateFrame("Frame", nil, wpanel)
+    landingFrame:SetPoint("TOP", wpanel, "TOP", 0, -60)
+    landingFrame:SetPoint("BOTTOM", wpanel, "BOTTOM", 0, 14)
+    landingFrame:SetWidth(478)
+
+    landingFrame.title = landingFrame:CreateFontString(nil, "OVERLAY")
+    landingFrame.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    landingFrame.title:SetTextColor(0.8, 0.75, 0.6)
+    landingFrame.title:SetPoint("TOP", landingFrame, "TOP", 0, -14)
+    landingFrame.title:SetText(L["GW2 UI installation"])
+
+    local separator = landingFrame:CreateTexture(nil, "OVERLAY")
+    separator:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
+    separator:SetAlpha(0.8)
+    separator:SetSize(260, 2)
+    separator:SetPoint("TOP", landingFrame.title, "BOTTOM", 0, -4)
+
+    landingFrame.intro = landingFrame:CreateFontString(nil, "OVERLAY")
+    landingFrame.intro:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    landingFrame.intro:SetTextColor(0.9, 0.85, 0.7)
+    landingFrame.intro:SetPoint("TOP", separator, "BOTTOM", 0, -16)
+    landingFrame.intro:SetWidth(430)
+    landingFrame.intro:SetJustifyH("CENTER")
+    landingFrame.intro:SetText(L["GW2 UI is a full user interface replacement. We have built the user interface with a modular approach, this means that if you dislike a certain part of the addon - or have another you prefer for that function - you can just disable that part, while keeping the rest of the interface intact.\nSome of the modules available to you are an immersive questing window, a full inventory replacement, as well as a full character window replacement. There are many more that you can enjoy, just take a look in the settings menu to see what's available to you!"])
+
+    landingFrame.express = CreateActionButton(landingFrame, 240)
+    landingFrame.express:SetPoint("BOTTOM", landingFrame, "BOTTOM", 0, 76)
+    landingFrame.express:SetText(L["Apply recommended settings"])
+    landingFrame.express:SetScript("OnClick", ApplyExpressInstall)
+
+    landingFrame.start = CreateActionButton(landingFrame, 240)
+    landingFrame.start:SetPoint("BOTTOM", landingFrame, "BOTTOM", 0, 40)
+    landingFrame.start:SetText(L["Start installation"])
+    landingFrame.start:SetScript("OnClick", StartInstall)
+
+    landingFrame.settings = CreateActionButton(landingFrame, 110)
+    landingFrame.settings:SetHeight(24)
+    landingFrame.settings:SetPoint("BOTTOMLEFT", landingFrame, "BOTTOMLEFT", 10, 4)
+    landingFrame.settings:SetText(CHAT_CONFIGURATION)
+    landingFrame.settings.target = GwSettingsWindow
+    landingFrame.settings:SetScript("OnClick", settings_OnClick)
+
+    landingFrame.close = CreateActionButton(landingFrame, 110)
+    landingFrame.close:SetHeight(24)
+    landingFrame.close:SetPoint("BOTTOMRIGHT", landingFrame, "BOTTOMRIGHT", -10, 4)
+    landingFrame.close:SetText(CLOSE)
+    landingFrame.close:SetScript("OnClick", GW.Parent_Hide)
+end
+
+local function setDefaultOpenLayout()
+    wpanel.header:SetText(L["Welcome to GW2 UI"])
+    installFrame:Hide()
+    landingFrame:Show()
+end
+
 local function createPanel()
-    wpanel = CreateFrame("Frame", nil, UIParent, "GwWelcomePageTmpl")
+    wpanel = CreateFrame("Frame", "GwWelcomePage", UIParent, "GwWelcomePageTmpl")
+
+    -- escape closes the window. NOT via UISpecialFrames: the chat setup activates an
+    -- edit mode layout, and the edit mode closes all special frames - the installer
+    -- would vanish mid step
+    wpanel:EnableKeyboard(true)
+    wpanel:SetScript("OnKeyDown", function(self, key)
+        if key == "ESCAPE" then
+            self:SetPropagateKeyboardInput(false)
+            self:Hide()
+        else
+            self:SetPropagateKeyboardInput(true)
+        end
+    end)
 
     local watermark = wpanel:CreateTexture(nil, "BACKGROUND", nil, 1)
     watermark:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png")
@@ -680,13 +918,8 @@ local function createPanel()
     wpanel.subHeader:SetTextColor(0.9, 0.85, 0.7, 1)
     wpanel.subHeader:SetText(GW.GetVersionString())
 
-    wpanel.settings.target = GwSettingsWindow
-    wpanel.settings:SetScript("OnClick", settings_OnClick)
-
-    wpanel.welcome.button0:SetScript("OnClick", StartInstall)
-    wpanel.close:SetScript("OnClick", GW.Parent_Hide)
-
     CreateInstallFrame()
+    CreateLandingFrame()
 end
 
 local function ShowWelcomePanel()

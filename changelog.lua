@@ -45,6 +45,8 @@ addChange("11.0.0", {
 })
 
 addChange("10.16.0", {
+    {GW.Enum.ChangelogType.feature, [=[Move HUD: the mover dialog shows the exact X/Y offsets of the selected frame as editable fields, two buttons center a frame on the screen axes, shift clicking the arrows nudges by 10 pixels, and releasing a dragged frame while the grid is shown snaps it onto the nearest grid line]=]},
+    {GW.Enum.ChangelogType.change, [=[Settings: sliders show a value fill up to their handle and every option row highlights under the mouse]=]},
     {GW.Enum.ChangelogType.feature, [=[Bags: new "Item Level Threshold" setting - the item level is only drawn on items at or above the chosen value, so low level gear stays clean; 0 keeps showing it on everything as before]=]},
     {GW.Enum.ChangelogType.feature, [=[Bags: new "Hide Empty Slots" setting - the empty slots are left out of the layout, and a placeholder showing the number of free slots closes the flow instead; items can still be dropped onto it and land in a slot that accepts them, so profession bags keep their restrictions. The bags and, on Retail, the reagent bag each get their own placeholder with their own count. Only available in the combined bag view, since a bag could otherwise collapse away entirely]=]},
     {GW.Enum.ChangelogType.feature, [=[Bags: new "Mark New Items" setting - newly received items get a small marker in the lower left corner of their slot until the bags are closed; the marker reads Blizzards own new item state, so it disappears exactly when Blizzard considers the item seen]=]},
