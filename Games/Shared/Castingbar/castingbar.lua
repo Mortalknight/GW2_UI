@@ -157,10 +157,6 @@ function GwCastingBarMixin:Init(unit, showTradeSkills)
     else
         self:SetScript("OnEvent", self.OnEvent)
     end
-    if unit == "player" then
-        self:SetScript("OnUpdate", self.OnUpdate)
-    end
-
     self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", unit)
@@ -300,6 +296,9 @@ function GwCastingBarMixin:AddFinishAnimation(isStopped, isChanneling)
     end
 end
 
+-- overrun watchdog for the player bar: hides the bar when a cast runs past its
+-- end without a stop event. Armed on cast start, disarms itself once the bar
+-- reached an end state - it does NOT run permanently
 function GwCastingBarMixin:OnUpdate(elapsed)
     if self.animating then return end
 
@@ -310,6 +309,7 @@ function GwCastingBarMixin:OnUpdate(elapsed)
                 if not animations[self.animationName .. "FadeOut"] then
                     self:SetAlpha(0)
                 end
+                self:SetScript("OnUpdate", nil)
                 return
             end
         else
@@ -318,6 +318,7 @@ function GwCastingBarMixin:OnUpdate(elapsed)
                 if not animations[self.animationName .. "FadeOut"] then
                     self:SetAlpha(0)
                 end
+                self:SetScript("OnUpdate", nil)
                 return
             end
         end
@@ -325,6 +326,7 @@ function GwCastingBarMixin:OnUpdate(elapsed)
         if not animations[self.animationName .. "FadeOut"] then
             self:SetAlpha(0)
         end
+        self:SetScript("OnUpdate", nil)
     end
 end
 
@@ -345,6 +347,7 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
             event = "UNIT_SPELLCAST_START"
         else
             self:Reset()
+            self:SetAlpha(0)
         end
     end
 
@@ -456,6 +459,10 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
             self:SetAlpha(1)
         elseif self:GetAlpha() < 1 then
             UIFrameFadeIn(self, 0.1, 0, 1)
+        end
+
+        if self.unit == "player" then
+            self:SetScript("OnUpdate", self.OnUpdate)
         end
     elseif IsIn(event, "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_EMPOWER_STOP") then
         if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or
