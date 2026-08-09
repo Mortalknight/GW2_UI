@@ -127,13 +127,20 @@ local function PostUpdateButton(self, button, unit, data, position)
                 button.background:SetVertexColor(GW.Colors.DebuffColors.None:GetRGB())
             end
 
+            local sizeChanged = button.gwAuraSize ~= size
+            button.gwAuraSize = size
             button:SetSize(size, size)
+            if sizeChanged and not self.gwRepositionQueued then
+                self.gwRepositionQueued = true
+                C_Timer.After(0, function()
+                    self.gwRepositionQueued = nil
+                    self:ForceUpdate()
+                end)
+            end
             button.background:Show()
             button.backdrop:Hide()
-
-            -- redo the position
-            self:ForceUpdate(true)
         else
+            button.gwAuraSize = nil
             button.background:Hide()
             button.backdrop:Show()
         end
@@ -420,7 +427,14 @@ local function PreUpdateAuras(self, unit, isFullUpdate)
 end
 
 local function HandleTooltip(self, event)
-    self.Auras:ForceUpdate()
+    local mode = self.showAuraTooltipInCombat
+    if mode ~= "OUT_COMBAT" and mode ~= "IN_COMBAT" then return end
+
+    local enable = (mode == "IN_COMBAT") == (event == "PLAYER_REGEN_DISABLED")
+    local auras = self.Auras
+    for i = 1, auras.createdButtons or 0 do
+        auras[i]:EnableMouse(enable)
+    end
 end
 
 local function CreateAuraIndicator(frame, pos)
