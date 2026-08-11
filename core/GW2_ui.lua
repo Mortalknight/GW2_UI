@@ -687,7 +687,6 @@ local function evPlayerLogin(self)
     end
 
     if GW.Retail then
-        --GW.LoadRaidbuffReminder() --auras are secret
         GW.LoadWorldEventTimer()
     end
 

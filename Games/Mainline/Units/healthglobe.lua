@@ -36,17 +36,27 @@ function GwHealthglobeMixin:UpdateHealthData()
     self.health:SetMinMaxValues(0, healthMax)
     self.health:SetValue(health, Enum.StatusBarInterpolation.ExponentialEaseOut)
 
-    -- absorb
+    -- absorb + heal prediction: the values go into the invisible geometry bars whose
+    -- fill starts at the health fill top (see BuildStackedSegment), the clip frames
+    -- reveal the matching slice of the segment textures.
+    -- healthMax may be secret in combat but can be PASSED THROUGH as-is — only the
+    -- pedestal needs Lua math, so it refreshes whenever healthMax is readable and
+    -- stays frozen otherwise (a stale pedestal drifts the segment by ~1px at most,
+    -- the amount scale itself always follows the live max)
     UnitGetDetailedHealPrediction("player", nil, self.hpValues)
     local allHeal = self.hpValues:GetIncomingHeals()
     local allValues = self.hpValues:GetPredictedValues()
-    self.healPrediction:SetMinMaxValues(0, healthMax)
-    self.healPrediction:SetValue(allHeal, Enum.StatusBarInterpolation.ExponentialEaseOut)
+
+    if not GW.IsSecretValue(healthMax) then
+        self.gwGeoPedestal = -healthMax * self.gwGeoPedestalFactor
+    end
+    self.healPredictionGeo:SetMinMaxValues(self.gwGeoPedestal, healthMax)
+    self.damageAbsorbGeo:SetMinMaxValues(self.gwGeoPedestal, healthMax)
+    self.healPredictionGeo:SetValue(allHeal, Enum.StatusBarInterpolation.ExponentialEaseOut)
 
     local damageAbsorbAmount, damageAbsorbClamped = self.hpValues:GetDamageAbsorbs()
-    self.damageAbsorb:SetMinMaxValues(0, healthMax)
-    self.damageAbsorb:SetValue(damageAbsorbAmount, Enum.StatusBarInterpolation.ExponentialEaseOut)
-    self.damageAbsorb.overDamageAbsorbIndicator:SetAlphaFromBoolean(damageAbsorbClamped, 1, 0)
+    self.damageAbsorbGeo:SetValue(damageAbsorbAmount, Enum.StatusBarInterpolation.ExponentialEaseOut)
+    self.overDamageAbsorbIndicator:SetAlphaFromBoolean(damageAbsorbClamped, 1, 0)
 
     local healAbsorbAmount = self.hpValues:GetHealAbsorbs()
     self.healAbsorb:SetMinMaxValues(0, healthMax)
@@ -181,12 +191,81 @@ end
 
 local function LoadHealthGlobe()
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeRetailTmpl")
-    local maxHp = UnitHealthMax("player")
+    -- player data can still be unavailable at load — a 0 range would break the
+    -- pedestal (see below) until the first real update delivers the true max
+    local maxHp = math.max(UnitHealthMax("player") or 0, 1)
 
-    for _, bar in pairs({hg.health, hg.healPrediction, hg.damageAbsorb, hg.healAbsorb}) do
+    for _, bar in pairs({hg.health, hg.healAbsorb}) do
         bar:SetMinMaxValues(0, maxHp)
         bar:SetOrientation("VERTICAL")
     end
+
+    -- Damage absorb and heal prediction render as segments STACKED on top of the
+    -- current health fill (classic look). The amounts can be secret in combat, so
+    -- the stacking must work without any Lua math on them:
+    --   * an invisible geometry bar is anchored with its bottom to the health bar's
+    --     fill texture top — its engine computed fill rect then covers exactly
+    --     [health, health + amount] on screen
+    --   * a SetClipsChildren frame spans [health fill top, geometry fill top] and
+    --     crops the globe aligned segment texture to that window. Clip frames are
+    --     used deliberately: an EMPTY clip rect reliably clips everything, while an
+    --     empty/degenerate MaskTexture rect gets ignored by the renderer and would
+    --     reveal the whole texture whenever the amount is 0
+    --   * a status bar HIDES its fill when it renders below ~1px (rect degenerates
+    --     to the full frame) — the geometry bar therefore carries a 2px pedestal
+    --     below the health edge (range starts at -pedestalValue, frame extended 2px
+    --     downward) so its fill rect never collapses; the clip frame bottom sits on
+    --     the health fill directly, keeping the pedestal outside the visible window
+    -- The MissingHealth clamp mode caps the amounts, so a segment never runs past
+    -- the top of the globe.
+    local GEO_PEDESTAL_PX = 2
+    hg.gwGeoPedestalFactor = GEO_PEDESTAL_PX / hg.health:GetHeight()
+    hg.gwGeoPedestal = -maxHp * hg.gwGeoPedestalFactor
+
+    local function BuildStackedSegment(texturePath, r, g, b, a)
+        local geo = CreateFrame("StatusBar", nil, hg)
+        geo:SetOrientation("VERTICAL")
+        geo:SetHeight(hg.health:GetHeight() + GEO_PEDESTAL_PX)
+        geo:SetPoint("BOTTOMLEFT", hg.health:GetStatusBarTexture(), "TOPLEFT", 0, -GEO_PEDESTAL_PX)
+        geo:SetPoint("BOTTOMRIGHT", hg.health:GetStatusBarTexture(), "TOPRIGHT", 0, -GEO_PEDESTAL_PX)
+        -- fully transparent color fill: the bar still needs a managed fill texture
+        -- (the clipper anchors to its rect), but nothing gets drawn
+        geo:SetColorFill(0, 0, 0, 0)
+        geo:SetMinMaxValues(hg.gwGeoPedestal, maxHp)
+        geo:SetValue(0)
+
+        -- clip window [health, health + amount]: bottom on the health fill top,
+        -- top on the geometry fill top — empty when the amount is 0
+        local clipper = CreateFrame("Frame", nil, hg)
+        clipper:SetClipsChildren(true)
+        clipper:SetFrameLevel(hg.health:GetFrameLevel() + 1)
+        clipper:SetPoint("BOTTOMLEFT", hg.health:GetStatusBarTexture(), "TOPLEFT")
+        clipper:SetPoint("BOTTOMRIGHT", hg.health:GetStatusBarTexture(), "TOPRIGHT")
+        clipper:SetPoint("TOPLEFT", geo:GetStatusBarTexture(), "TOPLEFT")
+
+        -- the segment texture stays anchored to the full globe (correct curvature),
+        -- the clip frame crops it to the segment window
+        local tex = clipper:CreateTexture(nil, "ARTWORK")
+        tex:SetTexture(texturePath)
+        tex:SetPoint("TOPLEFT", hg.health, "TOPLEFT")
+        tex:SetPoint("BOTTOMRIGHT", hg.health, "BOTTOMRIGHT")
+        tex:SetVertexColor(r, g, b, a)
+
+        return geo
+    end
+
+    hg.healPredictionGeo = BuildStackedSegment("Interface/AddOns/GW2_UI/textures/globe/globewhite.png", 0.58431, 0.9372, 0.2980, 0.60)
+    hg.damageAbsorbGeo = BuildStackedSegment("Interface/AddOns/GW2_UI/textures/globe/globeabsorb.png", 1, 1, 1, 0.66)
+
+    -- over absorb glow (full globe) — shown while the absorb amount is clamped
+    local indicatorHolder = CreateFrame("Frame", nil, hg)
+    indicatorHolder:SetFrameLevel(hg.health:GetFrameLevel() + 2)
+    indicatorHolder:SetAllPoints(hg.health)
+    hg.overDamageAbsorbIndicator = indicatorHolder:CreateTexture(nil, "OVERLAY")
+    hg.overDamageAbsorbIndicator:SetTexture("Interface/AddOns/GW2_UI/textures/globe/globeabsorb.png")
+    hg.overDamageAbsorbIndicator:SetAllPoints(indicatorHolder)
+    hg.overDamageAbsorbIndicator:SetVertexColor(1, 1, 1, 0.66)
+    hg.overDamageAbsorbIndicator:SetAlpha(0)
 
     hg.hpValues = CreateUnitHealPredictionCalculator()
     hg.hpValues:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MissingHealth)
@@ -194,10 +273,6 @@ local function LoadHealthGlobe()
     hg.hpValues:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MissingHealth)
     hg.hpValues:SetHealAbsorbMode(Enum.UnitHealAbsorbMode.ReducedByIncomingHeals)
     hg.hpValues:SetIncomingHealOverflowPercent(1)
-
-    hg.damageAbsorb:SetStatusBarColor(1, 1, 1, 0.66)
-    hg.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
-    hg.damageAbsorb.overDamageAbsorbIndicator:SetVertexColor(1, 1, 1, 0.66)
 
     -- position based on XP bar space and make it movable if your actionbars are off
     if GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then

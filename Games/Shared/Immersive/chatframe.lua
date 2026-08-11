@@ -19,6 +19,10 @@ local GetChannelShortcutForChannelID = C_ChatInfo.GetChannelShortcutForChannelID
 local C_GuildInfo_GetMOTD = C_GuildInfo and C_GuildInfo.GetMOTD or GetGuildRosterMOTD
 local GetGroupMembers = C_SocialQueue and C_SocialQueue.GetGroupMembers
 local GetGroupQueues = C_SocialQueue and C_SocialQueue.GetGroupQueues
+local TimeUtil_BetterDate = TimeUtil and TimeUtil.BetterDate or BetterDate
+local DiscordDisplayNameType = Enum.DiscordDisplayNameType
+local FormatDiscordMessage = ChatFrameUtil and ChatFrameUtil.FormatDiscordMessage
+
 
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
@@ -185,7 +189,7 @@ local function AdjustChatLines(frame)
             -- that the engine has not anchored yet (fresh out of the pool while the dock
             -- switches tabs) reports no relative point, and passing that nil on to
             -- SetPoint makes it reject the whole argument list
-            if point and relativePoint then
+            if point and relativePoint and (relativeTo or fontString:GetParent() ~= nil) then
                 -- an explicit parent is what a nil relativeTo means anyway, and it keeps
                 -- SetPoint from having to guess at a nil in the middle of the arguments
                 fontString:SetPoint(point, relativeTo or fontString:GetParent(), relativePoint, -offset, yOfs or 0)
@@ -546,7 +550,7 @@ local function GW_GetPlayerInfoByGUID(guid)
     return data
 end
 
-function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12)
+function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12, _, _, arg18)
     if GW.IsSecretValue(arg12) then
         local ok, _, englishClass = pcall(GetPlayerInfoByGUID, arg12)
         local classColor
@@ -574,6 +578,18 @@ function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _,
 
     -- ambiguate guild chat names
     local name = Ambiguate(arg2, (chatType == "GUILD" and "guild") or "none")
+
+    -- handle discord colors
+    local discordInfo, isFromDiscord = GW.ChatFunctions:GetDiscordInfo(arg18)
+    if isFromDiscord then
+        local shouldShowGlobalName = discordInfo.type == DiscordDisplayNameType.GlobalName
+        if discordInfo.globalName and shouldShowGlobalName then
+            return _G.ChatFrameUtil.DiscordNameColorize(discordInfo.globalName)
+        end
+
+        name = discordInfo.lastOnlineName
+        arg12 = discordInfo.lastOnlineGUID
+    end
 
     -- handle the class color
 
@@ -610,6 +626,14 @@ do
     function GW.ChatFunctions:GetBNPlayerLink(name, displayText, bnetIDAccount, lineID, chatType, chatTarget)
         return GetLink(LinkTypes.BNPlayer, displayText, name, bnetIDAccount, lineID or 0, chatType, chatTarget)
     end
+
+    function GW.ChatFunctions:GetBNPGetDiscordLinklayerLink(linkDisplayText, bnetIDAccount, discordUserID, lineID, chatGroup, chatTarget)
+        return GetLink(LinkTypes.DiscordUser, linkDisplayText, bnetIDAccount, discordUserID, lineID or 0, chatGroup, chatTarget or '')
+    end
+
+    function GW.ChatFunctions:GetDiscordInfo(info)
+        return info, info and GW.NotSecretValue(info.userID) and info.userID and info.userID ~= 0
+    end
 end
 
 local function colorizeLine(text, r, g, b)
@@ -641,7 +665,14 @@ do
     local hyperLinkFunc = function(w, x, y)
         if w ~= "" then return end
         local emoji = (x~="" and x) and strmatch(x, "gwuimoji:%%(.+)")
-        return (emoji and GW.Libs.Deflate:DecodeForPrint(emoji)) or y
+        if emoji then
+            -- pcall: DecodeBase64 errors on malformed payloads instead of returning nil
+            local ok, decoded = pcall(C_EncodingUtil.DecodeBase64, emoji)
+            if ok and decoded then
+                return decoded
+            end
+        end
+        return y
     end
     local fourString = function(v, w, x, y)
         return format("%s%s%s", v, w, (v and v == "1" and x) or y)
@@ -1134,7 +1165,7 @@ local function InsertEmotions(msg)
         local pattern = GW.EscapeString(word)
         local emoji = Smileys[pattern]
         if emoji and strmatch(msg, "[%s%p]-" .. pattern .. "[%s%p]*") then
-            local encode = GW.Libs.Deflate:EncodeForPrint(word)
+            local encode = C_EncodingUtil.EncodeBase64(word)
             msg = gsub(msg, "([%s%p]-)" .. pattern .. "([%s%p]*)", (encode and ("%1|Hgwuimoji:%%" .. encode .. "|h|cFFffffff|r|h") or "%1") .. emoji .. "%2")
         end
     end
@@ -1335,7 +1366,7 @@ local function DisplayChatHistory()
                     end
                     if not skip and gsub(strsub(d[50],10),"_INFORM","") == messageType then
                         if d[1] and not GW.ChatFunctions:IsMessageProtected(d[1]) then
-                            GW.ChatFrame_MessageEventHandler(_G[chat],d[50],d[1],d[2],d[3],d[4],d[5],d[6],d[7],d[8],d[9],d[10],d[11],d[12],d[13],d[14],d[15],d[16],d[17],"GW2UI_ChatHistory",d[51],d[52],d[53])
+                            GW.ChatFrame_MessageEventHandler(_G[chat],d[50],d[1],d[2],d[3],d[4],d[5],d[6],d[7],d[8],d[9],d[10],d[11],d[12],d[13],d[14],d[15],d[16],d[17], d[18],"GW2UI_ChatHistory",d[51],d[52],d[53])
                         end
                     end
                 end
@@ -1454,7 +1485,7 @@ local function AddMessageEdits(frame, msg, alwaysAddTimestamp, isHistory, histor
     if isHistory == "GW2UI_ChatHistory" then historyTimestamp = historyTime end
 
     if GW.settings.timeStampFormat and GW.settings.timeStampFormat ~= "NONE" and (GW.settings.CHAT_ADD_TIMESTAMP_TO_ALL or alwaysAddTimestamp) then
-        local timeStamp = BetterDate(GW.settings.timeStampFormat, historyTimestamp or time())
+        local timeStamp = TimeUtil_BetterDate(GW.settings.timeStampFormat, historyTimestamp or time())
         timeStamp = gsub(timeStamp, " ", "")
         timeStamp = gsub(timeStamp, "AM", " AM")
         timeStamp = gsub(timeStamp, "PM", " PM")
@@ -1506,6 +1537,8 @@ local function GetPFlag(specialFlag, zoneChannelID, unitGUID)
             if GetMentorChannelStatus(Enum.PlayerMentorshipStatus.Newcomer, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == Enum.PlayerMentorshipStatus.Newcomer then
                 flag = NPEV2_CHAT_USER_TAG_NEWCOMER
             end
+        elseif specialFlag == "DISCORD" then
+            flag = [[|A:UI-ChatIcon-Discord:0:0:0:0|a ]]
         else
             flag = _G["CHAT_FLAG_" .. specialFlag]
         end
@@ -1587,7 +1620,7 @@ local function FlashTabIfNotShown(frame, info, chatType, chatGroup, chatTarget)
     end
 end
 
-local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, channelLength, coloredName, historySavedName, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, isHistory, historyTime, historyName, historyBTag)
+local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, channelLength, coloredName, historySavedName, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, isHistory, historyTime, historyName, historyBTag)
     if chatType == "WHISPER_INFORM" and GMChatFrame_IsGM and GMChatFrame_IsGM(arg2) then
         return
     end
@@ -1640,6 +1673,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         playerLinkDisplayText = ("[%s]"):format(coloredName)
     end
 
+    local discordInfo, isFromDiscord = GW.ChatFunctions:GetDiscordInfo(arg18)
     local playerName = (GW.NotSecretValue(arg2) and nameWithRealm ~= arg2 and nameWithRealm) or arg2
     if chatType == "COMMUNITIES_CHANNEL" then
         local messageInfo, clubId, streamId = C_Club.GetInfoFromLastCommunityChatLine()
@@ -1654,12 +1688,18 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         end
     elseif chatType == "BN_WHISPER" or chatType == "BN_WHISPER_INFORM" then
         playerLink = GW.ChatFunctions:GetBNPlayerLink(playerName, playerLinkDisplayText, arg13, arg11, chatGroup, chatTarget)
+    elseif (chatType == "GUILD_DISCORD" or chatType == "GUILD") and isFromDiscord then
+        playerLink = GW.ChatFunctions:GetDiscordLink(playerLinkDisplayText, arg13, discordInfo.userID, arg11, chatGroup, chatTarget)
     else
         playerLink = GW.ChatFunctions:GetPlayerLink(playerName, playerLinkDisplayText, arg11, chatGroup, chatTarget)
     end
 
     local isMobile = arg14 and GetMobileEmbeddedTexture(info.r, info.g, info.b)
     local message = format("%s%s", isMobile or "", arg1)
+
+    if isFromDiscord then
+        message = FormatDiscordMessage(discordInfo, message)
+    end
 
     -- Player Flags
     local pflag = GetPFlag(arg6, arg7, arg12)
@@ -1682,6 +1722,8 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         body = format(header .. "[%s] %s", pflag .. sender, arg3, message) -- arg3 is language header
     elseif chatType == "GUILD_ITEM_LOOTED" then
         body = not isProtected and gsub(message, "$s", sender, 1) or message
+    elseif chatType == "GUILD_DISCORD" and isFromDiscord then
+        body = format(header .. message, pflag .. " " .. playerLink)
     elseif chatType == "TEXT_EMOTE" then
         local classLink = realm and playerLink and not isProtected and (info.colorNameByClass and gsub(playerLink, "(|h|c.-)|r|h$","%1-" .. realm .. "|r|h") or gsub(playerLink, "(|h.-)|h$","%1-" .. realm .. "|h"))
         body = (classLink and gsub(message, arg2 .. "%-" .. realm, pflag .. classLink, 1)) or ((not isProtected and GW.NotSecretValue(arg2) and arg2 ~= sender) and gsub(message, arg2, sender, 1)) or message
@@ -1723,7 +1765,7 @@ local function ChatFrame_GetZoneChannel(frame, index)
     return frame.zoneChannelList[index]
 end
 
-local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, isHistory, historyTime, historyName, historyBTag)
+local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, isHistory, historyTime, historyName, historyBTag)
     local notChatHistory, historySavedName
     if isHistory == "GW2UI_ChatHistory" then
         if historyBTag then arg2 = historyBTag end -- swap arg2 (which is a |k string) to btag name
@@ -1771,7 +1813,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         end
 
         -- fetch the name color to use
-        local coloredName = historySavedName or GW.ChatFunctions:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+        local coloredName = historySavedName or GW.ChatFunctions:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg18)
 
         local channelLength = strlen(arg4)
         local infoType = chatType
@@ -1992,14 +2034,14 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             if isChatLineCensored then
                 eventArgs = SafePack(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
                 msgFormatter = function(msg) -- to translate the message on click [Show Message]
-                    local body = MessageFormatter(frame, info, chatType, chatGroup, chatTarget, channelLength, coloredName, historySavedName, msg, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, isHistory, historyTime, historyName, historyBTag)
+                    local body = MessageFormatter(frame, info, chatType, chatGroup, chatTarget, channelLength, coloredName, historySavedName, msg, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, isHistory, historyTime, historyName, historyBTag)
                     return AddMessageEdits(frame, body, not GW.settings.CHAT_ADD_TIMESTAMP_TO_ALL, isHistory, historyTime)
                 end
             end
 
             local accessID = GW.ChatFunctions:GetAccessID(chatGroup, chatTarget)
             local typeID = GW.ChatFunctions:GetAccessID(infoType, chatTarget, arg12 or arg13)
-            local body = isChatLineCensored and arg1 or MessageFormatter(frame, info, chatType, chatGroup, chatTarget, channelLength, coloredName, historySavedName, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, isHistory, historyTime, historyName, historyBTag)
+            local body = isChatLineCensored and arg1 or MessageFormatter(frame, info, chatType, chatGroup, chatTarget, channelLength, coloredName, historySavedName, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, isHistory, historyTime, historyName, historyBTag)
 
             frame:AddMessage(body, info.r, info.g, info.b, info.id, accessID, typeID, event, eventArgs, msgFormatter, isHistory, historyTime)
         end
@@ -2896,7 +2938,9 @@ local function SocialQueueEvent(guid, numAddedItems)
 end
 
 local function PetBattleFrame_Display()
-    RemoveFrameLock("PETBATTLES")
+    if RemoveFrameLock then
+        RemoveFrameLock("PETBATTLES")
+    end
 
     -- we want to display the pet battle tab now since it is faded initially without mousing over
     for _, frameName in ipairs(CHAT_FRAMES) do

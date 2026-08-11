@@ -708,7 +708,18 @@ local function LoadGossipSkin()
         setGreetingsTextPaging(-1)
     end)
 
-    GossipFrame:SetPropagateKeyboardInput(true)
+    -- SetPropagateKeyboardInput is protected — on a combat reload defer it until
+    -- combat ends (the OnKeyDown handler below is already combat guarded)
+    if InCombatLockdown() then
+        local retry = CreateFrame("Frame")
+        retry:RegisterEvent("PLAYER_REGEN_ENABLED")
+        retry:SetScript("OnEvent", function(self)
+            self:UnregisterAllEvents()
+            GossipFrame:SetPropagateKeyboardInput(true)
+        end)
+    else
+        GossipFrame:SetPropagateKeyboardInput(true)
+    end
     GossipFrame:HookScript("OnKeyDown", function(_, key)
         --Brut force the key to number.
         --Downside if butto name contains a number it will be used. example JoyStick1

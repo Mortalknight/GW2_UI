@@ -953,9 +953,7 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
     self:SetSize(64, 40)
     if self.Text then
         self.Text:Hide()
-    end
-
-    if _G[self:GetName() .. "Text"] then
+    elseif self.GetName and self:GetName() ~= nil then
         _G[self:GetName() .. "Text"]:Hide()
     end
 

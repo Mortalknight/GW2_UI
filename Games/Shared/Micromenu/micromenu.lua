@@ -1043,7 +1043,7 @@ local function setupMicroButtons(mbf)
             end
         end)
         -- Disable icon till level 70 then lets flash it one time
-        greatVaultIcon:SetEnabled(IsPlayerAtEffectiveMaxLevel())
+        greatVaultIcon:SetEnabled(GameRulesUtil.IsPlayerAtEffectiveMaxLevel())
         greatVaultIcon:RegisterEvent("PLAYER_LEVEL_UP")
         greatVaultIcon:RegisterEvent("WEEKLY_REWARDS_UPDATE")
         greatVaultIcon:RegisterEvent("PLAYER_ENTERING_WORLD")

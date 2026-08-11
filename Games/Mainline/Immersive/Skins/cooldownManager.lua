@@ -223,15 +223,49 @@ function CooldownManagerFunctions:HandleViewer(element)
     end
 end
 
-function CooldownManagerFunctions:SkinCategoryHeaders()
-    if not CooldownViewerSettings or not CooldownViewerSettings.CooldownScroll then return end
+local function HandleSettingItem(item)
+	if item.IsSkinned then return end
 
-    local content = CooldownViewerSettings.CooldownScroll.Content
-    if not content then return end
+	local icon = item.Icon
+	if icon then
+		local highlight = item.Highlight
+		if highlight then
+			highlight:SetColorTexture(1, 1, 1, .25)
+			highlight:SetAllPoints(icon)
+		end
 
-    for _, child in next, { content:GetChildren() } do
-        if child.Header then
-            SkinHeaders(child.Header)
+		GW.HandleIcon(icon, true)
+	end
+
+	item.IsSkinned = true
+end
+
+local function HandleSettingItemPool(self)
+	for frame in self:EnumerateActive() do
+		HandleSettingItem(frame)
+	end
+end
+
+do
+    local hookedItemPools = {}
+
+    function CooldownManagerFunctions:SkinCategoryHeaders(content)
+        if not content then return end
+
+        for _, child in next, { content:GetChildren() } do
+            local header = child.Header
+            if header and not header.IsSkinned then
+                SkinHeaders(child.Header)
+            end
+
+            local itemPool = child.itemPool
+            if itemPool and not hookedItemPools[itemPool] then
+                hookedItemPools[itemPool] = true
+
+                HandleSettingItemPool(itemPool)
+
+                hooksecurefunc(itemPool, "Acquire", HandleSettingItemPool)
+            end
         end
     end
 end
@@ -251,11 +285,13 @@ local function ApplyCooldownManagerSkin()
         GW.SkinTextBox(CooldownViewerSettings.SearchBox.Middle, CooldownViewerSettings.SearchBox.Left, CooldownViewerSettings.SearchBox.Right)
         GW.HandleTrimScrollBar(CooldownViewerSettings.CooldownScroll.ScrollBar)
         GW.HandleScrollControls(CooldownViewerSettings.CooldownScroll)
+        GW.HandleTrimScrollBar(CooldownViewerSettings.GroupBuffFilter.Scroll.ScrollBar)
+        GW.HandleScrollControls(CooldownViewerSettings.GroupBuffFilter.Scroll)
         CooldownViewerSettings.UndoButton:GwSkinButton(false, true)
         CooldownViewerSettings.LayoutDropdown:GwHandleDropDownBox()
 
         local lastTab = nil
-        for i, tab in next, { CooldownViewerSettings.SpellsTab, CooldownViewerSettings.AurasTab } do
+        for i, tab in next, { CooldownViewerSettings.SpellsTab, CooldownViewerSettings.AurasTab, CooldownViewerSettings.GroupBuffsTab } do
             GW.HandleTabs(tab, "right", {tab.Icon}, true)
             if i > 1 then
                 tab:ClearAllPoints()
@@ -266,8 +302,12 @@ local function ApplyCooldownManagerSkin()
             end
             lastTab = tab
         end
-        CooldownManagerFunctions:SkinCategoryHeaders()
-        hooksecurefunc(CooldownViewerSettings, 'RefreshLayout', CooldownManagerFunctions.SkinCategoryHeaders)
+        CooldownManagerFunctions:SkinCategoryHeaders(CooldownViewerSettings.CooldownScroll.Content)
+        CooldownManagerFunctions:SkinCategoryHeaders(CooldownViewerSettings.GroupBuffFilter.Scroll.Content)
+        hooksecurefunc(CooldownViewerSettings, 'RefreshLayout', function()
+            CooldownManagerFunctions:SkinCategoryHeaders(CooldownViewerSettings.CooldownScroll.Content)
+            CooldownManagerFunctions:SkinCategoryHeaders(CooldownViewerSettings.GroupBuffFilter.Scroll.Content)
+        end)
     end
 end
 

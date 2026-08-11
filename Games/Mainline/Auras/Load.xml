@@ -1,3 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file ="Auras.xml"/>
+    <Script file ="auraContainerFactory.lua"/>
+    <Script file ="aurabar.lua"/>
 </Ui>

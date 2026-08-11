@@ -62,20 +62,108 @@ local RAD_AT_END = -1
 GwDodgeBarMixin = {}
 
 -- Retail specifgic code
-function GwDodgeBarMixin:UpdateCooldown(durationObject)
-    local statusbar = self.statusbar
-    if not statusbar then return end
+local function FormatRemaining(seconds)
+    if seconds >= 60 then
+        return format("%dm", math.ceil(seconds / 60))
+    end
+    return format("%ds", math.ceil(seconds))
+end
 
-    if durationObject then
-        statusbar:SetTimerDuration(durationObject, Enum.StatusBarInterpolation.ExponentialEaseOut)
+-- Countdown on the classic clients, where the cooldown values are plain numbers
+local function ClassicCountdown_OnUpdate(self)
+    local remaining = (self.gwNextChargeAt or 0) - GetTime()
+    if remaining <= 0 or not GW.settings.DODGEBAR_COOLDOWN_TEXT then
+        self:SetScript("OnUpdate", nil)
+        self.cooldownText:SetText("")
+        return
+    end
+
+    self.cooldownText:SetText(FormatRemaining(remaining))
+end
+
+-- Runs the given cooldown on the bar, or fills it when there is none
+function GwDodgeBarMixin:SetFill(durationObject)
+    for _, bar in ipairs(self.fillBars) do
+        bar:SetMinMaxValues(0, 1)
+        if durationObject then
+            bar:SetTimerDuration(durationObject, Enum.StatusBarInterpolation.ExponentialEaseOut)
+        else
+            bar:SetValue(1, Enum.StatusBarInterpolation.ExponentialEaseOut)
+        end
     end
 end
 
-function GwDodgeBarMixin:UpdateChargeText(currentCharges)
-    local text = self.chargeText
-    if not text then return end
+function GwDodgeBarMixin:UpdateBarText(showCharges, chargeCount, showCountdown)
+    if showCharges then
+        self.chargeText:SetText(chargeCount)
+    else
+        self.chargeText:SetText("")
+    end
 
-    text:SetText(currentCharges)
+    local anchor = self.gwTextAnchor
+    self.chargeText:ClearAllPoints()
+    self.cooldownText:ClearAllPoints()
+    if showCharges and showCountdown then
+        self.chargeText:SetPoint("RIGHT", anchor, "CENTER", -3, self.gwTextOffsetY)
+        self.cooldownText:SetPoint("LEFT", anchor, "CENTER", 1, self.gwTextOffsetY)
+    else
+        self.chargeText:SetPoint("CENTER", anchor, "CENTER", 0, self.gwTextOffsetY)
+        self.cooldownText:SetPoint("CENTER", anchor, "CENTER", 0, self.gwTextOffsetY)
+    end
+end
+
+-- Retail: hands the cooldown to the engine binding that writes the countdown text
+function GwDodgeBarMixin:SetCountdownBinding(durationObject)
+    local show = durationObject ~= nil and GW.settings.DODGEBAR_COOLDOWN_TEXT and true or false
+
+    if show then
+        self.chargeCountdown:SetDuration(durationObject)
+        self.chargeCountdown:Enable()
+        self.chargeCountdown:UpdateFontString()
+    else
+        self.chargeCountdown:Disable()
+        self.cooldownText:SetText("")
+    end
+
+    return show
+end
+
+function GwDodgeBarMixin:ArmCooldownTimer()
+    if not self.spellId or not self.fillBars then return end
+
+    self.gwArmPending = nil
+    self.gwTimerArmed = true
+
+    local durationObject = C_Spell.GetSpellCooldownDuration(self.spellId, true)
+    self:SetFill(durationObject)
+    self:UpdateBarText(false, nil, self:SetCountdownBinding(durationObject))
+end
+
+function GwDodgeBarMixin:ShowReady()
+    self:SetFill(nil)
+    self:UpdateBarText(false, nil, self:SetCountdownBinding(nil))
+end
+
+function GwDodgeBarMixin:UpdateRetailFill()
+    if not self.spellId or not self.fillBars then return end
+
+    local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
+    if spellChargeInfo and spellChargeInfo.maxCharges > 1 then
+        self.gwTimerArmed = nil
+        local durationObject
+        if spellChargeInfo.isActive then
+            durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
+        end
+        self:SetFill(durationObject)
+        self:UpdateBarText(true, spellChargeInfo.currentCharges, self:SetCountdownBinding(durationObject))
+        return
+    end
+
+    if self.gwArmPending then
+        self:ArmCooldownTimer()
+    elseif not self.gwTimerArmed then
+        self:ShowReady()
+    end
 end
 --- end
 
@@ -86,6 +174,11 @@ function GwDodgeBarMixin:OnFinished()
     self:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
     FrameFlash(self.arcfill.spark, 0.2)
     self.arcfill.fill:SetRotation(FULL_IN_RAD)
+
+    if self.cooldownText then
+        self:SetScript("OnUpdate", nil)
+        self:UpdateBarText(false, nil, false)
+    end
 end
 
 function GwDodgeBarMixin:UpdateAnim(start, duration, charges, maxCharges)
@@ -98,6 +191,15 @@ function GwDodgeBarMixin:UpdateAnim(start, duration, charges, maxCharges)
     end
 
     if not maxCharges or maxCharges == 0 then maxCharges = 1 end
+
+    if self.cooldownText then
+        self.gwNextChargeAt = start + duration
+        self:UpdateBarText(maxCharges > 1, charges, GW.settings.DODGEBAR_COOLDOWN_TEXT)
+        if GW.settings.DODGEBAR_COOLDOWN_TEXT then
+            self:SetScript("OnUpdate", ClassicCountdown_OnUpdate)
+        end
+    end
+
     -- figure out the total time (and fraction of 1 time) remaining until the bar is full again
     local time_remain = (duration * (maxCharges - charges)) - (GetTime() - start)
     local totalDuration = duration * maxCharges
@@ -160,6 +262,8 @@ function GwDodgeBarMixin:InitBar(pew)
     -- do everything required to make the dodge bar a secure clickable button
     local overrideSpellID = GW.private.PLAYER_TRACKED_DODGEBAR_SPELL_ID
     self.gwMaxCharges = nil
+    self.gwTimerArmed = nil
+    self.gwArmPending = nil
     self.spellId = overrideSpellID and overrideSpellID > 0 and overrideSpellID or nil
 
     if pew or not InCombatLockdown() then
@@ -226,21 +330,13 @@ function GwDodgeBarMixin:SetupBar()
         return
     end
 
-    local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
     if GW.Retail then
-        local currentCharges = spellChargeInfo and spellChargeInfo.currentCharges
-        self:UpdateChargeText(currentCharges)
-
-        local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
-        if durationObject and spellChargeInfo and spellChargeInfo.isActive then
-            self:UpdateCooldown(durationObject)
-        else
-            self.statusbar:SetValue(1, Enum.StatusBarInterpolation.ExponentialEaseOut)
-        end
+        self:UpdateRetailFill()
 
         return
     end
 
+    local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
     local start, duration = spellChargeInfo and spellChargeInfo.cooldownStartTime, spellChargeInfo and spellChargeInfo.cooldownDuration
 
 
@@ -285,7 +381,15 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         local spellId = select(3, ...)
         if spellId ~= self.spellId then return end
         self.gwNeedDrain = true
-        if (GW.Retail) or (not GW.Retail and self.gwMaxCharges and self.gwMaxCharges > 1) then
+        if GW.Retail then
+            -- charge spells report through SPELL_UPDATE_CHARGES, single charge and
+            -- charge free spells only through SPELL_UPDATE_COOLDOWN
+            self:RegisterEvent("SPELL_UPDATE_CHARGES")
+            self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+            self.gwTimerArmed = nil
+            self.gwArmPending = true
+            C_Timer.After(0, function() self:UpdateRetailFill() end)
+        elseif self.gwMaxCharges and self.gwMaxCharges > 1 then
             self:RegisterEvent("SPELL_UPDATE_CHARGES")
         else
             self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
@@ -293,6 +397,12 @@ function GwDodgeBarMixin:OnEvent(event, ...)
     elseif event == "SPELL_UPDATE_COOLDOWN" then
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then return end
+        if GW.Retail and not self.isSkyridingBar then -- skyriding is not secret
+            -- the engine timer armed at cast runs the whole cooldown on its own, only
+            -- charge pools need a refresh here
+            self:UpdateRetailFill()
+            return
+        end
         local spellCooldownInfo = GW.GetSpellCooldown(self.spellId)
         if spellCooldownInfo and spellCooldownInfo.startTime and spellCooldownInfo.startTime ~= 0 and spellCooldownInfo.duration and spellCooldownInfo.duration ~= 0 then
             self:UpdateAnim(spellCooldownInfo.startTime, spellCooldownInfo.duration, 0, 1)
@@ -302,14 +412,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         if not GW.inWorld or not self.spellId then return end
         local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
         if GW.Retail and not self.isSkyridingBar then -- skyriding is not secret
-            local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
-            local currentCharges = spellChargeInfo and spellChargeInfo.currentCharges
-            self:UpdateChargeText(currentCharges)
-            if durationObject and spellChargeInfo and spellChargeInfo.isActive then
-                self:UpdateCooldown(durationObject)
-            else
-                self.statusbar:SetValue(1, Enum.StatusBarInterpolation.ExponentialEaseOut)
-            end
+            self:UpdateRetailFill()
         else
             if spellChargeInfo.cooldownStartTime and spellChargeInfo.cooldownStartTime ~= 0 and spellChargeInfo.cooldownDuration and spellChargeInfo.cooldownDuration ~= 0 then
                 self:UpdateAnim(spellChargeInfo.cooldownStartTime, spellChargeInfo.cooldownDuration, spellChargeInfo.currentCharges, spellChargeInfo.maxCharges)
@@ -579,26 +682,42 @@ local function LoadDodgeBar(parent, asTargetFrame)
     -- setting these values in the XML creates animation glitches so we do it here instead
     local af = fmdb.arcfill
     af.maskr_normal:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
+
+    local textHolder = CreateFrame("Frame", nil, fmdb)
+    textHolder:SetAllPoints(af)
+    textHolder:SetFrameLevel(fmdb:GetFrameLevel() + 20)
+
+    fmdb.gwTextAnchor = af
+    fmdb.gwTextOffsetY = fmdb.asTargetFrame and 27 or 47
+    for _, key in ipairs({"chargeText", "cooldownText"}) do
+        local text = textHolder:CreateFontString(nil, "OVERLAY")
+        text:SetFont(UNIT_NAME_FONT, 7, "OUTLINE")
+        text:SetShadowColor(0, 0, 0, 1)
+        text:SetShadowOffset(1, -1)
+        text:SetTextColor(1.0, 0.95, 0.8, 0.85)
+        text:SetPoint("CENTER", af, "CENTER", 0, fmdb.gwTextOffsetY)
+        fmdb[key] = text
+    end
+
     if GW.Retail then
         af.bg:AddMaskTexture(af.mask_normal)
 
         fmdb.statusbar = CreateFrame("StatusBar", nil, fmdb)
-        fmdb.statusbar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill.png")
-        fmdb.statusbar:SetPoint("TOPLEFT", af, "TOPLEFT", 8, 0)
-        fmdb.statusbar:SetPoint("BOTTOMRIGHT", af, "BOTTOMRIGHT", -8, 0)
+        fmdb.statusbar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+        fmdb.statusbar:SetPoint("TOPLEFT", af, "TOPLEFT", 17, 0)
+        fmdb.statusbar:SetPoint("BOTTOMRIGHT", af, "BOTTOMRIGHT", -18, 0)
         fmdb.statusbar:SetStatusBarColor(1.0, 0.682, 0.031, 1.0)
-        local statusTexture = fmdb.statusbar:GetStatusBarTexture()
-        statusTexture:SetTexCoord(0.08, 0.92, 0.0, 1.0)
-        af.maskr_normal:SetPoint("CENTER", af, "CENTER", 0, 0)
-        statusTexture:AddMaskTexture(af.maskr_normal)
+        fmdb.fillBars = { fmdb.statusbar }
 
-        fmdb.chargeText = fmdb.statusbar:CreateFontString(nil, "OVERLAY")
-        fmdb.chargeText:SetPoint("CENTER", fmdb.statusbar, "CENTER", 0, (fmdb.asTargetFrame and 27 or 47))
-        fmdb.chargeText:SetFont(UNIT_NAME_FONT, 7, "OUTLINE")
-        fmdb.chargeText:SetShadowColor(0, 0, 0, 1)
-        fmdb.chargeText:SetShadowOffset(1, -1)
-        fmdb.chargeText:SetTextColor(1.0, 0.95, 0.8, 0.85)
-        fmdb.chargeText:Show()
+        af.maskr_normal:SetPoint("CENTER", af, "CENTER", 0, 0)
+        fmdb.statusbar:GetStatusBarTexture():AddMaskTexture(af.maskr_normal)
+
+        fmdb.chargeCountdown = C_DurationUtil.CreateDurationTextBinding()
+        fmdb.chargeCountdown:SetFontString(fmdb.cooldownText)
+        fmdb.chargeCountdown:SetFormatter(GW.cooldownNumberFormatter)
+        fmdb.chargeCountdown:SetExpiredText("")
+        fmdb.chargeCountdown:SetZeroDurationText("")
+        fmdb.chargeCountdown:Disable()
     else
         af.fill:SetRotation(FULL_IN_RAD)
         af.maskr_hover:SetPoint("CENTER", af.fill, "CENTER", 0, 0)

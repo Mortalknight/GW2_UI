@@ -127,7 +127,7 @@ local function ApplyWeeklyRewardsSkin()
     WeeklyRewardsFrame.titleText:SetText(RATED_PVP_WEEKLY_VAULT)
 
     WeeklyRewardsFrame.BorderContainer:GwStripTextures()
-    WeeklyRewardsFrame.ConcessionFrame:GwStripTextures()
+    WeeklyRewardsFrame.ConcessionsFrame:GwStripTextures()
 
     WeeklyRewardsFrame.HeaderFrame:GwStripTextures()
     WeeklyRewardsFrame.HeaderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
@@ -150,7 +150,7 @@ local function ApplyWeeklyRewardsSkin()
         SkinActivityFrame(activity, true)
     end
 
-    local rewardText = WeeklyRewardsFrame.ConcessionFrame.RewardsFrame.Text
+    local rewardText = WeeklyRewardsFrame.ConcessionsFrame.Rewards.Text
     if rewardText then
         ReplaceIconString(rewardText)
         hooksecurefunc(rewardText, "SetText", ReplaceIconString)

@@ -45,7 +45,12 @@ local function LoadTooltipPanel(sWindow)
         },
         dependence = {["TOOLTIPS_ENABLED"] = true, ["HIDE_TOOLTIP_IN_COMBAT"] = true}
     })
-    p:AddOptionDropdown(L["Modifier for IDs"], nil, { getterSetter = "ADVANCED_TOOLTIP_ID_MODIFIER", optionsList = {"ALWAYS", "NONE", "SHIFT", "CTRL", "ALT"}, optionNames = {ALWAYS, NONE, SHIFT_KEY, CTRL_KEY, ALT_KEY}, dependence = {["TOOLTIPS_ENABLED"] = true}})
+    p:AddOptionDropdown(L["Modifier for IDs"], nil, { getterSetter = "ADVANCED_TOOLTIP_ID_MODIFIER", callback = function()
+        -- keeps the tooltipShowAuraSpellIDs CVar (secure aura tooltips) in sync
+        if GW.UpdateAuraTooltipIDCVar then
+            GW.UpdateAuraTooltipIDCVar()
+        end
+    end, optionsList = {"ALWAYS", "NONE", "SHIFT", "CTRL", "ALT"}, dependence = {["TOOLTIPS_ENABLED"] = true}, optionNames = {ALWAYS, NONE, SHIFT_KEY, CTRL_KEY, ALT_KEY}})
     p:AddOptionDropdown(L["Item Count"], L["Display how many of a certain item you have in your possession."], { getterSetter = "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT", optionsList = {"Bag", "Bank", "Stack"}, optionNames = {INVTYPE_BAG, BANK, L["Stack Size"]}, dependence = {["TOOLTIPS_ENABLED"] = true}, checkbox = true})
     p:AddOption(L["Include Reagents"], nil, {getterSetter = "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS", dependence = {["TOOLTIPS_ENABLED"] = true}, hidden = not GW.Retail})
     p:AddOption(L["Include Warband"], nil, {getterSetter = "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND", dependence = {["TOOLTIPS_ENABLED"] = true}, hidden = not GW.Retail})

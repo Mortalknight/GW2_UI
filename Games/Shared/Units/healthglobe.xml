@@ -279,32 +279,9 @@
                 </Anchors>
             </StatusBar>
 
-            <StatusBar parentKey="healPrediction">
-                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globewhite.png"/>
-                <Size x="88" y="88"/>
-                <Anchors>
-                    <Anchor point="CENTER" relativeKey="$parent.health" relativePoint="CENTER" x="0" y="0"/>
-                </Anchors>
-            </StatusBar>
-
-             <StatusBar parentKey="damageAbsorb" >
-                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb.png"/>
-                <Size x="88" y="88"/>
-                <Anchors>
-                    <Anchor point="CENTER" relativeKey="$parent.health" relativePoint="CENTER" x="0" y="0"/>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture parentKey="overDamageAbsorbIndicator" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb.png">
-                            <Size x="88" y="88"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" relativeKey="$parent.health" relativePoint="CENTER" x="0" y="0"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </StatusBar>
-
+            <!-- damage absorb + heal prediction segments are built in Lua
+                 (BuildStackedSegment in healthglobe.lua): they render as clipped
+                 slices stacked on the health fill, driven by geometry status bars -->
             <StatusBar parentKey="healAbsorb">
                 <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeantiheal.png"/>
                 <Size x="88" y="88"/>

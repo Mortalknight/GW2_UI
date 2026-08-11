@@ -330,6 +330,17 @@ local function FilterAura(element, unit, data)
 	end
 end
 
+-- central aura filter dispatch: applies the per-frame ignore list ({[spellID] = true},
+-- e.g. target_IGNORED_AURAS) before running the frame's filter. Sits upstream of the
+-- FilterAura overrides (party) on purpose, so they don't have to duplicate the check.
+-- The Retail containers handle the ignore list via excludeSpellIDs instead.
+local function ShouldDisplayAura(auras, unit, data)
+    if auras.ignoredAuraSpellIDs and data.spellId and auras.ignoredAuraSpellIDs[data.spellId] then
+        return false
+    end
+    return (auras.FilterAura or FilterAura)(auras, unit, data)
+end
+
 local function processData(unit, data, filter, newBuffAnimation)
     if not data or not data.name then return end
 
@@ -377,7 +388,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             if data then
                 auras.allBuffs[data.auraInstanceID] = data
 
-                if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
+                if ShouldDisplayAura(auras, unit, data) then
                     auras.activeBuffs[data.auraInstanceID] = true
                 end
             end
@@ -393,7 +404,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             if data then
                 auras.allDebuffs[data.auraInstanceID] = data
 
-                if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
+                if ShouldDisplayAura(auras, unit, data) then
                     auras.activeDebuffs[data.auraInstanceID] = true
                 end
             end
@@ -406,7 +417,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
                     if data then
                         auras.allBuffs[data.auraInstanceID] = data
 
-                        if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
+                        if ShouldDisplayAura(auras, unit, data) then
                             auras.activeBuffs[data.auraInstanceID] = true
                             buffsChanged = true
                         end
@@ -416,7 +427,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
                     if data then
                         auras.allDebuffs[data.auraInstanceID] = data
 
-                        if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
+                        if ShouldDisplayAura(auras, unit, data) then
                             auras.activeDebuffs[data.auraInstanceID] = true
                             debuffsChanged = true
                         end

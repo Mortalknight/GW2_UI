@@ -439,6 +439,12 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
             end
         end
     end
+
+    -- the setting gated aura regions (pandemic, dispel icon) read the frame fields
+    -- pushed above — re-evaluate them here so this also covers the post combat catch up
+    if GW.Retail then
+        GW.UpdateAuraOptionRegions()
+    end
 end
 GW.UpdateGridSettings = UpdateFramesAndHeader
 
@@ -473,7 +479,6 @@ local function CreateRaisedElement(frame)
 	raised.TextureParent = CreateFrame("Frame", nil, raised)
 
     raised.AuraLevel = level
-    raised.PrivateAurasLevel = level + 5
     raised.AuraBarLevel = level + 10
     raised.MissingAuraIndicator = level + 15
 

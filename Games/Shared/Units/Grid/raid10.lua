@@ -28,7 +28,6 @@ local function GridRaid10StyleRegister(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
-    self.PrivateAuras = GW.Construct_PrivateAura(self)
     self.Fader = GW.Construct_Faderframe(self)
 
     return self
@@ -47,12 +46,9 @@ local function UpdateGridRaid10Frame(frame)
     frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT_RAID10)
     frame.raidShowImportantInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID10
     frame.showDebuffs = GW.settings.RAID_SHOW_DEBUFFS_RAID10
-    frame.showPrivateAuras = GW.settings.RAID_10_SHOW_PRIVATE_AURAS
-    frame.privateAuraSize = GW.settings.RAID_10_PRIVATE_AURA_SIZE
     frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_RAID10
     frame.showBuffs = GW.settings.RAID_10_SHOW_BUFFS
     frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_RAID10
-    frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_RAID10
     frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_RAID10
@@ -76,6 +72,9 @@ local function UpdateGridRaid10Frame(frame)
     -- retail filtering
     frame.debuffFilters = GW.settings.RAID_10_DEBUFF_FILTER
     frame.buffFilters = GW.settings.RAID_10_BUFF_FILTER
+    frame.ignoredAuraSpellIDs = GW.settings.RAID_10_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.RAID_10_PANDEMIC_HIGHLIGHT
+    frame.showDispelIcon = GW.settings.RAID_10_DISPEL_ICON
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
@@ -102,7 +101,6 @@ local function UpdateGridRaid10Frame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    GW.UpdatePrivateAurasSettings(frame)
     GW.Update_Faderframe(frame, "grid10")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")

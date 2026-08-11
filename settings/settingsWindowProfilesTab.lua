@@ -4,7 +4,6 @@ local L = GW.L
 local ResetToDefault = GW.ResetToDefault
 
 local ICONS = {}
-local ImportExportFrame
 local ProfileWin
 local IconSelectionFrame
 
@@ -27,131 +26,6 @@ local function UpdateScrollBox(scrollBox)
     scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
 end
 GW.RefreshProfileScrollBox = UpdateScrollBox
-
-------------------------------------------------------------
--- Import / Export UI
-------------------------------------------------------------
-local function createImportExportFrame()
-    local frame = CreateFrame("Frame", "GW_ImportExportFrame", UIParent)
-    frame:SetSize(700, 600)
-    frame:SetPoint("CENTER")
-    frame:SetFrameStrata("DIALOG")
-    frame:Hide()
-    tinsert(UISpecialFrames, frame:GetName())
-
-    frame.bg = frame:CreateTexture(nil, "ARTWORK")
-    frame.bg:SetAllPoints()
-    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg.png")
-
-    frame.header = frame:CreateFontString(nil, "OVERLAY")
-    frame.header:SetFont(DAMAGE_TEXT_FONT, 30, "OUTLINE")
-    frame.header:SetTextColor(1, 0.95, 0.8, 1)
-    frame.header:SetPoint("TOP", 0, -20)
-
-    frame.subheader = frame:CreateFontString(nil, "OVERLAY")
-    frame.subheader:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
-    frame.subheader:SetTextColor(0.9, 0.85, 0.7, 1)
-    frame.subheader:SetPoint("TOP", frame.header, "BOTTOM", 0, 0)
-
-    frame.result = frame:CreateFontString(nil, "OVERLAY")
-    frame.result:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
-    frame.result:SetTextColor(0.9, 0.85, 0.7, 1)
-    frame.result:SetPoint("TOP", frame.subheader, "BOTTOM", 0, -40)
-
-    frame.scrollArea = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-    frame.scrollArea:SetPoint("TOPLEFT", 15, -170)
-    frame.scrollArea:SetPoint("BOTTOMRIGHT", -30, 40)
-    frame.scrollArea.ScrollBar:GwSkinScrollBar()
-    frame.scrollArea.bg = frame.scrollArea:CreateTexture(nil, "ARTWORK")
-    frame.scrollArea.bg:SetAllPoints()
-    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground.png")
-
-    frame.description = frame:CreateFontString(nil, "OVERLAY")
-    frame.description:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
-    frame.description:SetTextColor(0.8, 0.75, 0.6, 1)
-    frame.description:SetJustifyH("LEFT")
-    frame.description:SetJustifyV("MIDDLE")
-    frame.description:SetPoint("TOPLEFT", frame.scrollArea, "TOPLEFT", 0, 25)
-
-    frame.editBox = CreateFrame("EditBox", nil, frame)
-    frame.editBox:SetMultiLine(true)
-    frame.editBox:EnableMouse(true)
-    frame.editBox:SetAutoFocus(false)
-    frame.editBox:SetFontObject(ChatFontNormal)
-
-    frame.scrollArea:SetScrollChild(frame.editBox)
-    frame.scrollArea:SetScript("OnSizeChanged", function(scroll)
-        frame.editBox:SetSize(scroll:GetWidth(), scroll:GetHeight())
-    end)
-    frame.scrollArea:HookScript("OnVerticalScroll", function(scroll, offset)
-        frame.editBox:SetHitRectInsets(0, 0, offset, (frame.editBox:GetHeight() - offset - scroll:GetHeight()))
-    end)
-    frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
-    frame.editBox:SetScript("OnTextChanged", function(self, userInput)
-        if userInput then return end
-        local _, max = frame.scrollArea.ScrollBar:GetMinMaxValues()
-        for _ = 1, max do ScrollFrameTemplate_OnMouseWheel(frame.scrollArea, -1) end
-    end)
-
-    frame.close = CreateFrame("Button", nil, frame, "GwStandardButton")
-    frame.close:SetPoint("BOTTOMRIGHT")
-    frame.close:SetSize(128, 28)
-    frame.close:SetText(CLOSE)
-    frame.close:SetScript("OnClick", function() frame:Hide() end)
-
-    frame.import = CreateFrame("Button", nil, frame, "GwStandardButton")
-    frame.import:SetPoint("BOTTOM")
-    frame.import:SetSize(128, 28)
-    frame.import:SetText(L["Import"])
-    frame.import:SetScript("OnClick", function()
-        local text = frame.editBox:GetText() or ""
-        local profileName, profilePlayer = GW.ImportProfile(text)
-        frame.result:SetText("")
-        if profileName and profilePlayer then
-            frame.subheader:SetText(("%s - %s"):format(profileName, profilePlayer))
-            frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully imported!"])
-            frame.editBox:SetText("")
-        else
-            frame.subheader:SetText("")
-            frame.result:SetFormattedText("|cffff0000%s|r", L["Error importing profile: Invalid or corrupt string!"])
-        end
-    end)
-
-    frame.decode = CreateFrame("Button", nil, frame, "GwStandardButton")
-    frame.decode:SetPoint("BOTTOMLEFT")
-    frame.decode:SetSize(128, 28)
-    frame.decode:SetScript("OnClick", function()
-        local txt = frame.editBox:GetText() or ""
-        frame.result:SetText("")
-
-        if frame.mode == "convert" then
-            local ok, msgOrData = GW.ConvertOldProfileString(txt)
-            if ok then
-                frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully converted!"])
-                frame.editBox:SetText(msgOrData)
-            else
-                frame.result:SetFormattedText("|cffff0000%s|r", msgOrData or L["Error"])
-            end
-            return
-        end
-
-        -- decode only (preview)
-        if GW.GetImportStringType(txt) == "Deflate" then --TODO
-            local profileName, profilePlayer = GW.DecodeProfile(txt)
-            if not profileName or not profilePlayer then
-                frame.subheader:SetText("")
-                frame.result:SetFormattedText("|cffff0000%s|r", L["Error decoding profile: Invalid or corrupt string!"])
-            else
-                frame.subheader:SetText(("%s - %s"):format(profileName, profilePlayer))
-                frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully decoded!"])
-            end
-        else
-            frame.result:SetFormattedText("|cffff0000%s|r", L["Error decoding profile: Invalid or corrupt string!"])
-        end
-    end)
-
-    return frame
-end
 
 ------------------------------------------------------------
 -- Profile ops
@@ -207,16 +81,22 @@ local function export_OnClick(self)
     local p = self:GetParent()
     local exportString = GW.GetExportString(p.profileName)
 
-    ImportExportFrame:Show()
-    ImportExportFrame.mode = "export"
-    ImportExportFrame.header:SetText(L["Export Profile"])
-    ImportExportFrame.subheader:SetText(p.profileName or "")
-    ImportExportFrame.description:SetText(L["Profile string to share your settings:"])
-    ImportExportFrame.import:Hide()
-    ImportExportFrame.decode:Hide()
-    ImportExportFrame.editBox:SetText(exportString or "")
-    ImportExportFrame.editBox:HighlightText()
-    ImportExportFrame.editBox:SetFocus()
+    GW.ShowPopup({
+        text = format("%s - '%s'\n%s", L["Export Profile"], p.profileName or UNKNOWN, L["Profile string to share your settings:"]),
+        hasEditBox = true,
+        inputText = exportString or "",
+        maxLetters = 0,
+        highlightInput = true,
+        hideCancel = true,
+        button1 = CLOSE,
+        hideOnEscape = true,
+        -- keep the string intact and selected — the box is only there for Ctrl+C
+        EditBoxOnTextChanged = function(popup, userInput)
+            if not userInput then return end
+            popup.input:SetText(exportString or "")
+            popup.input:HighlightText()
+        end,
+    })
 end
 
 
@@ -361,7 +241,7 @@ end
 
 
 local function item_OnLeave(self)
-    if MouseIsOver(self) then return end
+    if self:IsMouseOver() then return end
     if self.canActivate then
         self.activateButton:GetScript("OnLeave")(self.activateButton, true)
     end
@@ -556,7 +436,6 @@ local function LoadSettingsProfileTab(container)
 
     GW.SettingsMenuButtonSetUp(settingsProfile.menu.newProfile, true)
     GW.SettingsMenuButtonSetUp(settingsProfile.menu.importProfile, false)
-    GW.SettingsMenuButtonSetUp(settingsProfile.menu.convertOldProfileString, true)
 
     -- List
     local view = CreateScrollBoxListLinearView()
@@ -625,34 +504,40 @@ local function LoadSettingsProfileTab(container)
         })
     end)
 
+    local function TryImportFromPopup(popup, silent)
+        local txt = strtrim(popup.input:GetText() or "")
+        if txt == "" then return end
+
+        local profileName, profilePlayer = GW.ImportProfile(txt)
+        if profileName and profilePlayer then
+            GW.Notice(format("%s (%s - %s)", L["Import string successfully imported!"], profileName, profilePlayer))
+            popup:Hide()
+        elseif not silent then
+            GW.Notice(L["Error importing profile: Invalid or corrupt string!"])
+        end
+    end
+
     settingsProfile.menu.importProfile:SetText(L["Import Profile"])
     settingsProfile.menu.importProfile:SetScript("OnClick", function()
-        ImportExportFrame:Show()
-        ImportExportFrame.mode = "import"
-        ImportExportFrame.header:SetText(L["Import Profile"])
-        ImportExportFrame.subheader:SetText("")
-        ImportExportFrame.description:SetText(L["Paste your profile string here to import the profile."])
-        ImportExportFrame.editBox:SetText("")
-        ImportExportFrame.import:Show()
-        ImportExportFrame.decode:Show()
-        ImportExportFrame.decode:SetText(L["Decode"])
-        ImportExportFrame.result:SetText("")
-        ImportExportFrame.editBox:SetFocus()
-    end)
-
-    settingsProfile.menu.convertOldProfileString:SetText(L["Convert old profile String"])
-    settingsProfile.menu.convertOldProfileString:SetScript("OnClick", function()
-        ImportExportFrame:Show()
-        ImportExportFrame.mode = "convert"
-        ImportExportFrame.header:SetText(L["Convert old profile String to new one"])
-        ImportExportFrame.subheader:SetText("")
-        ImportExportFrame.description:SetText(L["Paste your profile string here to convert to the new format."])
-        ImportExportFrame.editBox:SetText("")
-        ImportExportFrame.import:Hide()
-        ImportExportFrame.decode:Show()
-        ImportExportFrame.decode:SetText(CONVERT)
-        ImportExportFrame.result:SetText("")
-        ImportExportFrame.editBox:SetFocus()
+        GW.ShowPopup({
+            text = format("%s\n%s", L["Import Profile"], L["Paste your profile string here to import the profile."]),
+            hasEditBox = true,
+            maxLetters = 0,
+            button1 = L["Import Profile"],
+            hideOnEscape = true,
+            -- a failed attempt keeps the popup open (success hides it itself)
+            notHideOnAccept = true,
+            -- a pasted string is validated and imported right away; while it does not
+            -- look like a profile string yet (no prefix match) we stay silent so
+            -- manual typing does not spam error notices
+            EditBoxOnTextChanged = function(popup, userInput)
+                if not userInput then return end
+                TryImportFromPopup(popup, GW.GetImportStringType(strtrim(popup.input:GetText() or "")) == "")
+            end,
+            OnAccept = function(popup)
+                TryImportFromPopup(popup, false)
+            end,
+        })
     end)
 
     IconSelectionFrame = CreateFrame("Frame", nil, settingsProfile, "IconSelectorPopupFrameTemplate")
@@ -690,7 +575,6 @@ local function LoadSettingsProfileTab(container)
     end
 
     -- Build import/export frame last (needs fonts/colors already loaded)
-    ImportExportFrame = createImportExportFrame()
 
     return settingsProfile
 end

@@ -51,7 +51,6 @@ local function UpdateGridPartyPetFrame(frame)
     frame.showOnlyDispelDebuffs = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS_PET
     frame.showBuffs = GW.settings.PARTY_PET_SHOW_BUFFS
     frame.showAuraTooltipInCombat = GW.settings.PARTY_AURA_TOOLTIP_INCOMBAT_PET
-    frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.PARTY_SHORT_HEALTH_VALUES_PET
     frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR_PET
@@ -75,6 +74,9 @@ local function UpdateGridPartyPetFrame(frame)
     -- retail filtering
     frame.debuffFilters = GW.settings.PARTY_PET_DEBUFF_FILTER
     frame.buffFilters = GW.settings.PARTY_PET_BUFF_FILTER
+    frame.ignoredAuraSpellIDs = GW.settings.PARTY_PET_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.PARTY_PET_PANDEMIC_HIGHLIGHT
+    frame.showDispelIcon = GW.settings.PARTY_PET_DISPEL_ICON
 
     if not InCombatLockdown() then
         frame:DisableElement("MiddleIcon")

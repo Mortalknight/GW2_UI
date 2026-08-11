@@ -4,6 +4,8 @@ local L = GW.L
 
 local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
 
+local GetInventorySlotInfo = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlotInfo or GetInventorySlotInfo
+
 -- the keyring only exists up to wrath, the reagent bag only on retail
 local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath
 local HAS_REAGENT_BAG = GW.Retail

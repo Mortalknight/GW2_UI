@@ -92,14 +92,14 @@ local function SkinPager()
     r[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon.png")
     r[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon.png")
     r[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon.png")
-    SetDesaturation(r[4], true)
+    r[4]:SetDesaturated(true)
 
     r = { InboxNextPageButton:GetRegions() }
     r[1]:SetTextColor(1, 1, 1, 1)
     r[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon.png")
     r[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon.png")
     r[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon.png")
-    SetDesaturation(r[4], true)
+    r[4]:SetDesaturated(true)
 end
 
 local function SkinOpenMailFrame()

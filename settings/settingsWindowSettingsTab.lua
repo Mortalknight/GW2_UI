@@ -34,8 +34,10 @@ local optionTypes = {
     slider      = {template = "GwOptionBoxSliderTmpl", frame = "Button", newLine = true},
     dropdown    = {template = "GwOptionBoxDropDownTmpl", frame = "Button", newLine = true},
     list        = {template = "GwOptionBoxListTmpl", frame = "Button", newLine = true},
+    spellList   = {template = "GwOptionBoxSpellListTmpl", frame = "Button", newLine = true},
+    spellInput  = {template = "GwOptionBoxSpellInputTmpl", frame = "Button", newLine = true},
     text        = {template = "GwOptionBoxTextTmpl", frame = "Button", newLine = true},
-    button      = {template = "GwButtonTextTmpl", frame = "Button", newLine = true},
+    button      = {template = "GwButtonTextTmpl", frame = "Button", newLine = false},
     colorPicker = {template = "GwOptionBoxColorPickerTmpl", frame = "Button", newLine = true},
     header      = {template = "GwOptionBoxHeader", frame = "Frame", newLine = true},
     subHeader   = {template = "GwOptionBoxSubHeader", frame = "Frame", newLine = true},
@@ -66,6 +68,14 @@ local function IsMasterToggle(opt)
     return opt and opt.isMasterToggle == true
 end
 
+local function NeedsFullRowWidth(opt)
+    local conf = optionTypes[opt.optionType] or {}
+    if opt.optionType == "dropdown" and opt.noNewLine then
+        return false
+    end
+    return conf.newLine == true
+end
+
 local function GetOptionRowExtent(opt)
     if opt and opt.optionType == "list" then
         local optionsList = type(opt.optionsList) == "table" and opt.optionsList or {}
@@ -78,6 +88,15 @@ local function GetOptionRowExtent(opt)
         end
 
         return math.max(DEFAULT_ROW_EXTENT, ROW_PAD_Y * 2 + (entryCount * entryHeight))
+    end
+
+    if opt and opt.optionType == "spellList" then
+        -- entry count is dynamic (user managed) — reserve a fixed window of
+        -- maxVisibleRows entries plus the input row, overflow scrolls inside
+        local entryHeight = opt.entryHeight or 24
+        local visibleRows = tonumber(opt.maxVisibleRows) or 5
+
+        return math.max(DEFAULT_ROW_EXTENT, ROW_PAD_Y * 2 + 30 + (visibleRows * entryHeight))
     end
 
     return DEFAULT_ROW_EXTENT
@@ -480,7 +499,11 @@ local function InitRow(row, elementData)
         AnchorRightHalf(row, rightW)
         row.leftAssigned, row.rightAssigned = leftW, rightW
     elseif canAttachLeft then
-        AnchorFullWidth(row, leftW)
+        if NeedsFullRowWidth(leftW) then
+            AnchorFullWidth(row, leftW)
+        else
+            AnchorLeftHalf(row, leftW)
+        end
         row.leftAssigned, row.rightAssigned = leftW, nil
     else
         if row.leftAssigned  then StashWidget(row.leftAssigned,  panel); row.leftAssigned  = nil end
@@ -741,7 +764,11 @@ local function InitSearchRow(row, item)
         BorrowEntryToSearch(rightE, sp)
         tinsert(state.matches, leftE); tinsert(state.matches, rightE)
     elseif leftW then
-        AnchorFullWidth(row, leftW)
+        if NeedsFullRowWidth(leftW) then
+            AnchorFullWidth(row, leftW)
+        else
+            AnchorLeftHalf(row, leftW)
+        end
         row.leftAssigned, row.rightAssigned = leftW, nil
         BorrowEntryToSearch(leftE, sp)
         tinsert(state.matches, leftE)

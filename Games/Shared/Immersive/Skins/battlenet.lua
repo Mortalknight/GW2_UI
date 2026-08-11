@@ -71,23 +71,25 @@ local function LoadBNToastSkin()
 
     ReportFrame.CloseButton:SetSize(20, 20)
 
-    BattleTagInviteFrame:GwStripTextures()
+    if BattleTagInviteFrame then
+        BattleTagInviteFrame:GwStripTextures()
 
-    if not BattleTagInviteFrame.SetBackdrop then
-        Mixin(BattleTagInviteFrame, BackdropTemplateMixin)
-        BattleTagInviteFrame:HookScript("OnSizeChanged", BattleTagInviteFrame.OnBackdropSizeChanged)
-    end
+        if not BattleTagInviteFrame.SetBackdrop then
+            Mixin(BattleTagInviteFrame, BackdropTemplateMixin)
+            BattleTagInviteFrame:HookScript("OnSizeChanged", BattleTagInviteFrame.OnBackdropSizeChanged)
+        end
 
-    BattleTagInviteFrame:SetBackdrop({
-        edgeFile = "",
-        bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png",
-        edgeSize = GW.Scale(1)
-    })
+        BattleTagInviteFrame:SetBackdrop({
+            edgeFile = "",
+            bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png",
+            edgeSize = GW.Scale(1)
+        })
 
-    for i = 1, BattleTagInviteFrame:GetNumChildren() do
-        local child = select(i, BattleTagInviteFrame:GetChildren())
-        if child:IsObjectType("Button") then
-            child:GwSkinButton(false, true)
+        for i = 1, BattleTagInviteFrame:GetNumChildren() do
+            local child = select(i, BattleTagInviteFrame:GetChildren())
+            if child:IsObjectType("Button") then
+                child:GwSkinButton(false, true)
+            end
         end
     end
 

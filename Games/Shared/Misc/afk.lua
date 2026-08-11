@@ -7,6 +7,7 @@ local lerp = GW.lerp
 
 local GetChatCategory = ChatFrameUtil and ChatFrameUtil.GetChatCategory or Chat_GetChatCategory
 local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
+local FormatDiscordMessage = ChatFrameUtil and ChatFrameUtil.FormatDiscordMessage
 
 local AFKMode
 
@@ -230,7 +231,7 @@ local function Chat_OnMouseWheel(self, delta)
     end
 end
 
-local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, _, _, _, arg18)
     local infoType = strsub(event, 10)
     local info = ChatTypeInfo[infoType]
 
@@ -259,7 +260,12 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     local isMobile = arg14 and GetMobileEmbeddedTexture(info.r, info.g, info.b)
     local message = format("%s%s", isMobile or "", arg1)
 
-    local coloredName = (infoType == "BN_WHISPER" and GW.GetBNFriendColor(arg2, arg13)) or GW.ChatFunctions:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+    local discordInfo, isFromDiscord = GW.ChatFunctions:GetDiscordInfo(arg18)
+    if isFromDiscord then
+        message = FormatDiscordMessage(discordInfo, message)
+    end
+
+    local coloredName = (infoType == "BN_WHISPER" and GW.GetBNFriendColor(arg2, arg13)) or GW.ChatFunctions:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg18)
     local senderLink = format("%s[%s]|h", playerLink, coloredName)
     local success, msg = pcall(format, _G["CHAT_" .. infoType .. "_GET"] .. "%s", senderLink, message)
     if not success then return end

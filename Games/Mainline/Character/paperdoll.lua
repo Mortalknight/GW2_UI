@@ -121,7 +121,7 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.TalentSetManager = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "TalentSetManager",
         setting = GW.settings.USE_TALENT_WINDOW,
-        showFunction = function() TalentFrame_LoadUI() if PlayerTalentFrame_Toggle then PlayerTalentFrame_Toggle(TALENTS_TAB) end end,
+        showFunction = function() PlayerSpellsUtil.OpenToClassTalentsTab() end,
         hideOurFrame = true,
     })
 

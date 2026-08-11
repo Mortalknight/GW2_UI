@@ -309,6 +309,26 @@ function GwSettingsPanelMixin:AddOptionSortableList(name, desc, values)
     return opt
 end
 
+-- Spell ID list: an input box adds spell IDs to a table setting ({[spellID] = true}),
+-- entries render below with icon, name, spell tooltip and a remove button
+function GwSettingsPanelMixin:AddOptionSpellList(name, desc, values)
+    values.checkbox = true -- table setting: proxy get(key)/set(value, key) semantics
+
+    local opt = CreateOption("spellList", self, name, desc, values)
+    if not opt then return end
+
+    opt.entryHeight = values.entryHeight or 24
+    opt.maxVisibleRows = values.maxVisibleRows or 5
+
+    return opt
+end
+
+-- Single spell setting: an input box takes a spell ID and the resolved spell is shown
+-- next to it with icon, name and tooltip. Stores the ID, an empty input clears it.
+function GwSettingsPanelMixin:AddOptionSpellInput(name, desc, values)
+    return CreateOption("spellInput", self, name, desc, values)
+end
+
 function GwSettingsPanelMixin:AddOptionText(name, desc, values)
     local opt = CreateOption("text", self, name, desc, values)
     if not opt then return end
@@ -378,6 +398,12 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
             of.inputFrame.input:SetEnabled(enabled)
             of.inputFrame.input:SetTextColor(unpack(inputColor))
         end
+    elseif type == "spellInput" then
+        of.inputFrame.input:SetEnabled(enabled)
+        of.inputFrame.input:SetTextColor(unpack(inputColor))
+        of.okButton:SetEnabled(enabled)
+        of.spellPreview:SetShown(enabled)
+        of.clearButton:SetShown(enabled and (tonumber(of.get()) or 0) > 0)
     elseif type == "dropdown" then
         if enabled then
             of.dropDown:Enable()
@@ -404,6 +430,8 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
         end
     elseif type == "list" then
         of:SetListEnabled(enabled, color)
+    elseif type == "spellList" then
+        of:SetSpellListEnabled(enabled, color)
     end
 end
 
@@ -528,6 +556,8 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting, toDe
         of.dropDown:GenerateMenu()
     elseif of.optionType == "list" then
         of:RefreshList()
+    elseif of.optionType == "spellInput" and of.RefreshSpellInput then
+        of:RefreshSpellInput()
     end
 end
 GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
@@ -557,11 +587,24 @@ local function RefreshSettingsAfterProfileSwitch()
             local color = of.get()
             of.button.bg:SetColorTexture(color.r, color.g, color.b)
         elseif of.optionType == "dropdown" then
-            of.dropDown:GenerateMenu()
+            -- rebuild dynamic option lists first (e.g. the indicator dropdowns pick
+            -- up custom spell ids carried by the incoming profile)
+            if of.optionUpdateFunc then
+                of.optionUpdateFunc()
+            else
+                of.dropDown:GenerateMenu()
+            end
         elseif of.optionType == "list" then
             of:RefreshList()
             if of.callback then
                 of.callback((of.GetListOrder and of:GetListOrder()) or of.get())
+            end
+        elseif of.optionType == "spellList" and of.RefreshSpellList then
+            of:RefreshSpellList()
+        elseif of.optionType == "spellInput" and of.RefreshSpellInput then
+            of:RefreshSpellInput()
+            if of.callback then
+                of.callback(tonumber(of.get()) or 0)
             end
         end
     end
@@ -1061,6 +1104,279 @@ local function RefreshListOption(of, v)
     end
 end
 
+-- spell ID list widget (AddOptionSpellList): renders the entries of a
+-- {[spellID] = true} table setting with icon, name, spell tooltip and remove button
+local function GetSpellListIDs(of)
+    local ids = {}
+    for spellID, enabled in pairs(of.get() or {}) do
+        if enabled and type(spellID) == "number" then
+            tinsert(ids, spellID)
+        end
+    end
+    table.sort(ids)
+    return ids
+end
+
+-- spell info with Classic fallback (older clients lack C_Spell.GetSpellInfo)
+local function GetSpellListSpellInfo(spellID)
+    if not spellID then return end
+
+    if C_Spell and C_Spell.GetSpellInfo then
+        return C_Spell.GetSpellInfo(spellID)
+    end
+
+    local name, _, icon = GetSpellInfo(spellID)
+    if name then
+        return { name = name, iconID = icon }
+    end
+end
+
+local RefreshSpellListOption -- forward declaration, needed by the scrollbar closures
+
+local function UpdateSpellListScrollbar(of, v, totalRows, visibleRows, entryHeight)
+    if not of.spellScrollTrack then
+        of.spellScrollTrack = CreateFrame("Frame", nil, of)
+        of.spellScrollTrack:EnableMouse(true)
+        of.spellScrollTrack:EnableMouseWheel(true)
+        of.spellScrollTrack:SetSize(LIST_SCROLLBAR_WIDTH, 1)
+
+        of.spellScrollTrack.bg = of.spellScrollTrack:CreateTexture(nil, "BACKGROUND")
+        of.spellScrollTrack.bg:SetAllPoints()
+        of.spellScrollTrack.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg.png")
+
+        of.spellScrollThumb = CreateFrame("Button", nil, of.spellScrollTrack)
+        of.spellScrollThumb:EnableMouse(true)
+        of.spellScrollThumb:EnableMouseWheel(true)
+        of.spellScrollThumb:SetSize(LIST_SCROLLBAR_WIDTH, 1)
+
+        of.spellScrollThumb.texture = of.spellScrollThumb:CreateTexture(nil, "ARTWORK")
+        of.spellScrollThumb.texture:SetAllPoints()
+        of.spellScrollThumb.texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
+
+        -- drag: track cursor while held and translate into a scroll offset
+        local function SetOffsetFromCursor()
+            local ids = GetSpellListIDs(of)
+            local vRows = tonumber(v.maxVisibleRows) or 5
+            local maxOffset = math.max(0, #ids - vRows)
+            if maxOffset == 0 then return end
+
+            local scale = of.spellScrollTrack:GetEffectiveScale() or 1
+            local top = of.spellScrollTrack:GetTop()
+            local trackHeight = of.spellScrollTrack:GetHeight()
+            local thumbHeight = of.spellScrollThumb:GetHeight()
+            if not top or trackHeight <= thumbHeight then return end
+
+            local _, cursorY = GetCursorPosition()
+            local offsetInTrack = top - (cursorY / scale) - (thumbHeight / 2)
+            local ratio = math.max(0, math.min(1, offsetInTrack / (trackHeight - thumbHeight)))
+
+            local newOffset = GW.RoundInt(ratio * maxOffset)
+            if newOffset ~= of.spellListScrollOffset then
+                of.spellListScrollOffset = newOffset
+                RefreshSpellListOption(of, v)
+            end
+        end
+
+        for _, frame in ipairs({of.spellScrollTrack, of.spellScrollThumb}) do
+            frame:SetScript("OnMouseDown", function(_, button)
+                if button == "LeftButton" then
+                    of.spellScrollTrack:SetScript("OnUpdate", SetOffsetFromCursor)
+                    SetOffsetFromCursor()
+                end
+            end)
+            frame:SetScript("OnMouseUp", function(_, button)
+                if button == "LeftButton" then
+                    of.spellScrollTrack:SetScript("OnUpdate", nil)
+                end
+            end)
+            frame:SetScript("OnMouseWheel", function(_, delta)
+                of.spellListScrollOffset = (of.spellListScrollOffset or 0) - delta
+                RefreshSpellListOption(of, v)
+            end)
+        end
+    end
+
+    local showScrollbar = totalRows > visibleRows
+    of.spellScrollTrack:SetShown(showScrollbar)
+    of.spellScrollThumb:SetShown(showScrollbar)
+    if not showScrollbar then
+        of.spellScrollTrack:SetScript("OnUpdate", nil)
+        return
+    end
+
+    local trackHeight = (visibleRows * entryHeight) - 2
+    local thumbHeight = math.max(12, trackHeight * (visibleRows / totalRows))
+    local maxOffset = math.max(totalRows - visibleRows, 1)
+    local thumbOffset = (trackHeight - thumbHeight) * ((of.spellListScrollOffset or 0) / maxOffset)
+
+    of.spellScrollTrack:ClearAllPoints()
+    of.spellScrollTrack:SetPoint("TOPLEFT", of.list, "TOPRIGHT", LIST_SCROLLBAR_GAP, -1)
+    of.spellScrollTrack:SetHeight(trackHeight)
+
+    of.spellScrollThumb:ClearAllPoints()
+    of.spellScrollThumb:SetPoint("TOP", of.spellScrollTrack, "TOP", 0, -thumbOffset)
+    of.spellScrollThumb:SetHeight(thumbHeight)
+end
+
+function RefreshSpellListOption(of, v)
+    local ids = GetSpellListIDs(of)
+    local entryHeight = v.entryHeight or 24
+    local visibleRows = tonumber(v.maxVisibleRows) or 5
+    local enabled = of.spellListEnabled ~= false
+    local textColor = enabled and 1 or 0.4
+
+    of.spellListScrollOffset = math.max(0, math.min(of.spellListScrollOffset or 0, math.max(0, #ids - visibleRows)))
+    of.spellRows = of.spellRows or {}
+    of.list:SetHeight(math.max(1, math.min(#ids, visibleRows)) * entryHeight)
+    UpdateSpellListScrollbar(of, v, #ids, visibleRows, entryHeight)
+
+    for i, spellID in ipairs(ids) do
+        local row = of.spellRows[i]
+        if not row then
+            row = CreateFrame("Frame", nil, of.list)
+            row:SetHeight(entryHeight - 2)
+            row:EnableMouse(true)
+            row:EnableMouseWheel(true)
+
+            row.bg = row:CreateTexture(nil, "BACKGROUND")
+            row.bg:SetAllPoints()
+            row.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
+            row.bg:SetAlpha(0.45)
+
+            row.icon = row:CreateTexture(nil, "ARTWORK")
+            row.icon:SetSize(entryHeight - 6, entryHeight - 6)
+            row.icon:SetPoint("LEFT", 3, 0)
+            row.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+
+            row.label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            row.label:SetFont(UNIT_NAME_FONT, 12)
+            row.label:SetJustifyH("LEFT")
+            row.label:SetWordWrap(false) -- keep rows single-line, the tooltip has the full name
+            row.label:SetPoint("LEFT", row.icon, "RIGHT", 5, 0)
+            row.label:SetPoint("RIGHT", -22, 0)
+
+            row.removeButton = CreateFrame("Button", nil, row)
+            row.removeButton:SetSize(15, 15)
+            row.removeButton:SetPoint("RIGHT", -4, 0)
+            row.removeButton:GwSkinButton(true)
+            row.removeButton:SetScript("OnClick", function()
+                of.set(false, row.spellID) -- false, not nil: AceDB would re-seed removed DEFAULT entries on the next login
+                -- the list table is mutated in place — invalidate the aura containers'
+                -- cached filter applications BEFORE the callback re-applies them
+                if GW.BumpAuraContainerSettingsGeneration then
+                    GW.BumpAuraContainerSettingsGeneration()
+                end
+                if v.callback then
+                    v.callback(nil, row.spellID)
+                end
+                RefreshSpellListOption(of, v)
+            end)
+
+            row:SetScript("OnEnter", function(self)
+                if not self.spellID then return end
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetSpellByID(self.spellID)
+                GameTooltip:Show()
+            end)
+            row:SetScript("OnLeave", GameTooltip_Hide)
+            row:SetScript("OnMouseWheel", function(_, delta)
+                of.spellListScrollOffset = (of.spellListScrollOffset or 0) - delta
+                RefreshSpellListOption(of, v)
+            end)
+
+            of.spellRows[i] = row
+        end
+
+        local visibleIndex = i - (of.spellListScrollOffset or 0)
+        local isVisible = visibleIndex >= 1 and visibleIndex <= visibleRows
+
+        row:ClearAllPoints()
+        row:SetPoint("TOPLEFT", of.list, "TOPLEFT", 0, -((visibleIndex - 1) * entryHeight))
+        row:SetPoint("RIGHT", of.list, "RIGHT", 0, 0)
+        row.spellID = spellID
+
+        local spellInfo = GetSpellListSpellInfo(spellID)
+        row.icon:SetTexture(spellInfo and spellInfo.iconID or 134400)
+        row.label:SetText(format("%s |cFF888888(%d)|r", spellInfo and spellInfo.name or UNKNOWN, spellID))
+        row.label:SetTextColor(textColor, textColor, textColor)
+        row.removeButton:SetShown(enabled)
+        row:SetShown(isVisible)
+    end
+
+    for i = #ids + 1, #of.spellRows do
+        of.spellRows[i]:Hide()
+    end
+end
+
+-- single spell widget (AddOptionSpellInput): shows the stored spell with icon and name,
+-- or a hint that the tracked ability is picked automatically
+local function RefreshSpellInputOption(of)
+    local spellID = tonumber(of.get()) or 0
+    local spellInfo = spellID > 0 and GetSpellListSpellInfo(spellID) or nil
+
+    of.spellPreview.spellID = spellInfo and spellID or nil
+    of.spellPreview.icon:SetShown(spellInfo ~= nil)
+    of.clearButton:SetShown(spellID > 0)
+    of.inputFrame.input:SetText(spellID > 0 and spellID or "")
+
+    -- the label hangs on the icon, which keeps its rect while hidden - reanchor it to
+    -- the preview itself in the automatic state so the text stays flush left
+    local label = of.spellPreview.label
+    label:ClearAllPoints()
+    label:SetPoint("RIGHT", of.spellPreview, "RIGHT")
+    if spellInfo then
+        label:SetPoint("LEFT", of.spellPreview.icon, "RIGHT", 4, 0)
+        of.spellPreview.icon:SetTexture(spellInfo.iconID)
+        label:SetText(spellInfo.name)
+        label:SetTextColor(1, 1, 1)
+    else
+        label:SetPoint("LEFT", of.spellPreview, "LEFT")
+        label:SetText(L["Automatic"])
+        label:SetTextColor(0.6, 0.6, 0.6)
+    end
+end
+
+local function TrySetSpellInput(of, v)
+    local input = (of.inputFrame.input:GetText() or ""):trim()
+    local spellID = tonumber(input) or 0
+
+    if input ~= "" and not GetSpellListSpellInfo(spellID) then
+        UIErrorsFrame:AddMessage(L["Invalid spell ID"], 1, 0.2, 0.2)
+        RefreshSpellInputOption(of)
+        return
+    end
+
+    of.inputFrame.input:ClearFocus()
+    of.set(spellID)
+    RefreshSpellInputOption(of)
+    if v.callback then
+        v.callback(spellID)
+    end
+end
+
+local function TryAddSpellToList(of, v)
+    local spellID = tonumber((of.inputFrame.input:GetText() or ""):trim())
+    local spellInfo = GetSpellListSpellInfo(spellID)
+
+    if not spellInfo then
+        UIErrorsFrame:AddMessage(L["Invalid spell ID"], 1, 0.2, 0.2)
+        return
+    end
+
+    of.inputFrame.input:SetText("")
+    of.inputFrame.input:ClearFocus()
+    of.set(true, spellID)
+    -- the list table is mutated in place — invalidate the aura containers' cached
+    -- filter applications BEFORE the callback re-applies them
+    if GW.BumpAuraContainerSettingsGeneration then
+        GW.BumpAuraContainerSettingsGeneration()
+    end
+    if v.callback then
+        v.callback(true, spellID)
+    end
+    RefreshSpellListOption(of, v)
+end
+
 local function SettingsInitOptionWidget(of, v, panel)
     local t = {}
     for _, path in ipairs{panel.header and panel.header:GetText(), panel.breadcrumb and panel.breadcrumb:GetText()} do
@@ -1207,9 +1523,12 @@ local function SettingsInitOptionWidget(of, v, panel)
 
                     if v.tooltipType then
                         if v.tooltipType == "spell" then
-                            entryButton:SetTooltip(function(tooltip, elementDescription)
-                                GameTooltip:SetSpellByID(option)
-                            end)
+                            -- skip pseudo entries ("None" = 0, "Custom Spell ID..." = -1)
+                            if type(option) == "number" and option > 0 then
+                                entryButton:SetTooltip(function(tooltip, elementDescription)
+                                    GameTooltip:SetSpellByID(option)
+                                end)
+                            end
                         elseif v.tooltipType == "encounter" then
                             entryButton:SetTooltip(function(tooltip, elementDescription)
                                 local name, desc = EJ_GetEncounterInfo(option)
@@ -1259,6 +1578,89 @@ local function SettingsInitOptionWidget(of, v, panel)
         end)
 
         of:RefreshList()
+    elseif v.optionType == "spellInput" then
+        of.inputFrame.input:SetNumeric(true)
+        of.inputFrame.input:SetMaxLetters(10)
+        of.spellPreview.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+
+        -- resets the stored spell back to the automatic pick, only shown while set
+        of.clearButton:GwSkinButton(true)
+        of.clearButton:SetScript("OnClick", function()
+            of.inputFrame.input:SetText("")
+            TrySetSpellInput(of, v)
+        end)
+        of.clearButton:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(RESET .. ": " .. L["Automatic"], 1, 1, 1)
+            GameTooltip:Show()
+        end)
+        of.clearButton:SetScript("OnLeave", GameTooltip_Hide)
+
+        of.spellPreview:SetScript("OnEnter", function(self)
+            if not self.spellID then return end
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetSpellByID(self.spellID)
+            GameTooltip:Show()
+        end)
+        of.spellPreview:SetScript("OnLeave", GameTooltip_Hide)
+
+        of.okButton:GwSkinButton(false, true)
+        of.inputFrame.input:SetScript("OnEnterPressed", function()
+            TrySetSpellInput(of, v)
+        end)
+        of.okButton:SetScript("OnClick", function()
+            TrySetSpellInput(of, v)
+        end)
+
+        of.RefreshSpellInput = RefreshSpellInputOption
+        RefreshSpellInputOption(of)
+    elseif v.optionType == "spellList" then
+        of.title:ClearAllPoints()
+        of.title:SetPoint("TOPLEFT", 5, -8)
+
+        -- input + OK button together span exactly the row width, everything shifted
+        -- left to leave room for the scrollbar on the right (like the list widget)
+        of.okButton:ClearAllPoints()
+        of.okButton:SetPoint("TOPRIGHT", of, "TOPRIGHT", -28, -10)
+        of.inputFrame:ClearAllPoints()
+        of.inputFrame:SetPoint("TOPRIGHT", of.okButton, "TOPLEFT", -5, 0)
+        of.inputFrame:SetWidth(205)
+        of.list:ClearAllPoints()
+        of.list:SetPoint("TOPRIGHT", of.okButton, "BOTTOMRIGHT", 0, -5)
+        of.list:SetWidth(260)
+
+        of.spellListEnabled = true
+        of.SetSpellListEnabled = function(self, enabled, titleColor)
+            self.spellListEnabled = enabled
+            self.inputFrame.input:SetEnabled(enabled)
+            self.okButton:SetEnabled(enabled)
+            if titleColor then
+                self.title:SetTextColor(unpack(titleColor))
+            else
+                self.title:SetTextColor(enabled and 1 or 0.4, enabled and 1 or 0.4, enabled and 1 or 0.4)
+            end
+            RefreshSpellListOption(self, v)
+        end
+        of.RefreshSpellList = function(self)
+            RefreshSpellListOption(self, v)
+        end
+
+        of.okButton:GwSkinButton(false, true)
+        of.inputFrame.input:SetNumeric(true)
+        of.inputFrame.input:SetScript("OnEnterPressed", function()
+            TryAddSpellToList(of, v)
+        end)
+        of.okButton:SetScript("OnClick", function()
+            TryAddSpellToList(of, v)
+        end)
+
+        of.list:EnableMouseWheel(true)
+        of.list:SetScript("OnMouseWheel", function(_, delta)
+            of.spellListScrollOffset = (of.spellListScrollOffset or 0) - delta
+            RefreshSpellListOption(of, v)
+        end)
+
+        RefreshSpellListOption(of, v)
     elseif v.optionType == "slider" then
         of.inputFrame.input:SetJustifyH("CENTER")
         of.inputFrame.input:SetTextColor(1, 0.93, 0.73)

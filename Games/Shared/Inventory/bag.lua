@@ -5,6 +5,8 @@ local UpdateMoney = GW.UpdateMoney
 local EnableTooltip = GW.EnableTooltip
 local inv
 
+local GetInventorySlotInfo = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlotInfo or GetInventorySlotInfo
+
 -- the keyring only exists up to wrath, the reagent bag only on retail; both occupy
 -- the extra fifth bag bar slot and the extra layout section
 local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath

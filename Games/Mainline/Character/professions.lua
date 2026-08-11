@@ -226,7 +226,7 @@ local function updateOverview(fmOverview)
             fm.skillName = name
             fm.profId = profId
             fm.icon:SetTexture(icon)
-            SetDesaturation(fm.icon, false)
+            fm.icon:SetDesaturated(false)
             fm.title:SetText(name)
 
             if not skillDesc then
@@ -280,7 +280,7 @@ local function updateOverview(fmOverview)
                 fm.background:SetTexCoord(0, 1, 1, 0)
                 fm.background:SetAlpha(1.0)
             end
-            SetDesaturation(fm.background, false)
+            fm.background:SetDesaturated(false)
             if i > 2 then
                 fm.unlearn:Hide()
             else
@@ -315,14 +315,14 @@ local function updateOverview(fmOverview)
             fm.desc:SetWidth(450)
             fm.skillName = nil
             fm.profId = nil
-            SetDesaturation(fm.icon, true)
+            fm.icon:SetDesaturated(true)
             fm.StatusBar:Hide()
             fm.btn1:Hide()
             fm.btn2:Hide()
             fm.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/paperdollbg.png")
             fm.background:SetTexCoord(0, 1, 1, 0)
             fm.background:SetAlpha(1.0)
-            SetDesaturation(fm.background, true)
+            fm.background:SetDesaturated(true)
             fm.unlearn:Hide()
         end
     end
