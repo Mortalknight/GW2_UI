@@ -48,11 +48,50 @@ local function GetQuestTexture(button)
     return button.IconQuestTexture
 end
 
-local function UpdateOwnContainerItemButton(button)
+-- Everything the update below writes is derived from these fields, so an unchanged set means
+-- every setter would write the value the button already holds. Remembering them per button lets
+-- a bag event that changed a single stack skip the other slots instead of reskinning all of them
+-- (the quality setter alone pulls the whole bag skin behind it). Returns true when the slot has
+-- to be written and stores the new state in that case.
+local function TakeSlotState(button, info)
+    local itemID, count, quality, locked, filtered, readable, noValue, link
+    if info then
+        itemID, count, quality = info.itemID, info.stackCount, info.quality
+        locked, filtered, readable = info.isLocked, info.isFiltered, info.isReadable
+        noValue, link = info.hasNoValue, info.hyperlink
+    end
+
+    if button.gw_slotStateSet
+        and button.gw_slotItemID == itemID
+        and button.gw_slotCount == count
+        and button.gw_slotQuality == quality
+        and button.gw_slotLocked == locked
+        and button.gw_slotFiltered == filtered
+        and button.gw_slotReadable == readable
+        and button.gw_slotNoValue == noValue
+        and button.gw_slotLink == link
+    then
+        return false
+    end
+
+    button.gw_slotStateSet = true
+    button.gw_slotItemID, button.gw_slotCount, button.gw_slotQuality = itemID, count, quality
+    button.gw_slotLocked, button.gw_slotFiltered, button.gw_slotReadable = locked, filtered, readable
+    button.gw_slotNoValue, button.gw_slotLink = noValue, link
+    return true
+end
+
+-- force writes the slot even when its content did not change, needed whenever something outside
+-- the container api changed the look (settings, skin/size sweeps, a new slot id on the button)
+local function UpdateOwnContainerItemButton(button, force)
     local bagID = button:GetParent():GetID()
     local slotID = button:GetID()
 
     local info = C_Container.GetContainerItemInfo(bagID, slotID)
+    if not TakeSlotState(button, info) and not force then
+        return
+    end
+
     local texture = info and info.iconFileID
     local itemCount = info and info.stackCount
     local locked = info and info.isLocked
@@ -153,6 +192,19 @@ local function EnsureItemButton(cf, index, iconSize, opts)
     return button
 end
 
+local function UpdateOwnContainerItemButtons(cf, force)
+    if not cf or not cf.gw_items then
+        return
+    end
+    for i = 1, cf.gw_num_slots or 0 do
+        local button = cf.gw_items[i]
+        if button then
+            UpdateOwnContainerItemButton(button, force)
+        end
+    end
+end
+GW.UpdateOwnContainerItemButtons = UpdateOwnContainerItemButtons
+
 -- (re)builds the own item buttons of one of our containers to match the bags current size.
 -- iconSize is only used for the initial skinning of newly created buttons. straightIDs assigns
 -- the slot ids in list order like the old bank frame buttons, without it the ids are assigned
@@ -172,8 +224,21 @@ local function SetupOwnContainerItemButtons(cf, bagID, iconSize, straightIDs, op
     if bagID ~= KEYRING_CONTAINER or IsBagOpen(KEYRING_CONTAINER) then
         numSlots = C_Container.GetContainerNumSlots(bagID)
     end
+    local bagFamily = select(2, C_Container.GetContainerNumFreeSlots(bagID))
+    -- the button set only has to be rebuilt when the container itself changed: with the same
+    -- id, size and family the existing buttons already carry the right slot ids, and only the
+    -- slot contents can have changed. The retail bank reuses one container frame for all tabs,
+    -- so the id has to be part of that check
+    local rebuild = bagID ~= cf.gw_bag_id or numSlots ~= cf.gw_num_slots or bagFamily ~= cf.gw_bag_family
+
+    cf.gw_bag_id = bagID
     cf.gw_num_slots = numSlots
-    cf.gw_bag_family = select(2, C_Container.GetContainerNumFreeSlots(bagID))
+    cf.gw_bag_family = bagFamily
+
+    if not rebuild then
+        UpdateOwnContainerItemButtons(cf)
+        return
+    end
 
     for i = 1, numSlots do
         local button = EnsureItemButton(cf, i, iconSize, opts)
@@ -183,7 +248,9 @@ local function SetupOwnContainerItemButtons(cf, bagID, iconSize, straightIDs, op
             opts.initButton(button, bagID, slotID)
         end
         button:Show()
-        UpdateOwnContainerItemButton(button)
+        -- forced: the slot id or the container behind it can have changed, which makes any
+        -- remembered slot state of this button meaningless
+        UpdateOwnContainerItemButton(button, true)
     end
 
     -- hide leftovers from a previously bigger bag
@@ -192,19 +259,6 @@ local function SetupOwnContainerItemButtons(cf, bagID, iconSize, straightIDs, op
     end
 end
 GW.SetupOwnContainerItemButtons = SetupOwnContainerItemButtons
-
-local function UpdateOwnContainerItemButtons(cf)
-    if not cf or not cf.gw_items then
-        return
-    end
-    for i = 1, cf.gw_num_slots or 0 do
-        local button = cf.gw_items[i]
-        if button then
-            UpdateOwnContainerItemButton(button)
-        end
-    end
-end
-GW.UpdateOwnContainerItemButtons = UpdateOwnContainerItemButtons
 
 -- ITEM_LOCKED / ITEM_UNLOCKED, updates one slot or all when no slot is given
 local function UpdateOwnContainerLockedState(cf, slotID)
@@ -217,6 +271,9 @@ local function UpdateOwnContainerLockedState(cf, slotID)
         if button and (not slotID or button:GetID() == slotID) then
             local info = C_Container.GetContainerItemInfo(bagID, button:GetID())
             SetItemButtonDesaturated(button, info and info.isLocked)
+            -- the remembered slot state has to follow, or the next content update would skip
+            -- a slot whose lock state it thinks it never wrote
+            button.gw_slotLocked = info and info.isLocked
         end
     end
 end
@@ -246,10 +303,21 @@ local function UpdateOwnContainerSearchResults(cf)
         if button and button.searchOverlay then
             local info = C_Container.GetContainerItemInfo(bagID, button:GetID())
             button.searchOverlay:SetShown((info and info.isFiltered) == true)
+            button.gw_slotFiltered = info and info.isFiltered
         end
     end
 end
 GW.UpdateOwnContainerSearchResults = UpdateOwnContainerSearchResults
+
+-- forgets the remembered slot state of every own item button, so the next content update writes
+-- them all again. Needed when something outside the container api changed how a slot has to look
+-- while its content stayed the same (C_NewItems.ClearAll on bag close)
+local function InvalidateOwnBagItemButtonStates()
+    for i = 1, #allItemButtons do
+        allItemButtons[i].gw_slotStateSet = nil
+    end
+end
+GW.InvalidateOwnBagItemButtonStates = InvalidateOwnBagItemButtonStates
 
 -- used by the flavor reskin sweeps to apply size and style setting changes
 local function ForEachOwnBagItemButton(func)
@@ -260,12 +328,14 @@ end
 GW.ForEachOwnBagItemButton = ForEachOwnBagItemButton
 
 -- central refresh for the bag/bank setting callbacks and integrations (e.g. pawn): updates
--- all visible own item buttons; hidden buttons get rebuilt on the next open anyway
+-- all visible own item buttons; hidden buttons get rebuilt on the next open anyway.
+-- Always forced - the trigger sits outside the container api, so the slot contents look
+-- unchanged while the setting that decides how to draw them did change
 local function UpdateAllOwnBagItemButtons()
     for i = 1, #allItemButtons do
         local button = allItemButtons[i]
         if button:IsVisible() then
-            UpdateOwnContainerItemButton(button)
+            UpdateOwnContainerItemButton(button, true)
         end
     end
 end

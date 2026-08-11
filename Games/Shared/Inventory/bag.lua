@@ -360,26 +360,99 @@ local function updateFreeBagSlots()
 end
 
 
+-- A pure content change moves no button: the flow only depends on the slot counts, the layout
+-- settings, the keyring state and - in compact mode, where empty slots drop out of the flow
+-- (layoutContainerFrame) - on which slots are filled. This tracks that fingerprint so an item
+-- update does not drag a full relayout of every button behind it. The bag frame is a singleton,
+-- so one module wide state array is enough.
+local lastLayoutState = {}
+local function layoutStateChanged(f)
+    local sep = GW.settings.BAG_SEPARATE_BAGS
+    local compact = GW.settings.BAG_COMPACT_EMPTY_SLOTS == true and not sep
+    local changed = false
+    local idx = 1
+
+    local flags = (sep and 1 or 0) + (compact and 2 or 0)
+        + ((HAS_KEYRING and IsBagOpen(KEYRING_CONTAINER)) and 4 or 0)
+    if lastLayoutState[idx] ~= flags then
+        changed, lastLayoutState[idx] = true, flags
+    end
+
+    idx = idx + 1
+    if lastLayoutState[idx] ~= f.gw_bag_cols then
+        changed, lastLayoutState[idx] = true, f.gw_bag_cols
+    end
+
+    local lastTracked = HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS
+    for i = BACKPACK_CONTAINER, lastTracked + (HAS_KEYRING and 1 or 0) do
+        -- the keyring takes the slot right after the bags, it has its own container id
+        local bag_id = i > lastTracked and KEYRING_CONTAINER or i
+        local cf = f.ItemFrame.Containers[bag_id]
+        local numSlots = cf and cf.gw_num_slots or 0
+
+        idx = idx + 1
+        if lastLayoutState[idx] ~= numSlots then
+            changed, lastLayoutState[idx] = true, numSlots
+        end
+
+        -- outside of compact mode the empty slots stay in the flow, so which ones hold an
+        -- item makes no difference for the layout and does not need to be tracked
+        local filled = -1
+        if compact and cf and cf.gw_items then
+            filled = 0
+            for slot = 1, numSlots do
+                local button = cf.gw_items[slot]
+                if button and button.hasItem then
+                    filled = filled + 1
+                end
+            end
+        end
+
+        idx = idx + 1
+        if lastLayoutState[idx] ~= filled then
+            changed, lastLayoutState[idx] = true, filled
+        end
+    end
+
+    return changed
+end
+
+local function invalidateLayoutState()
+    wipe(lastLayoutState)
+end
+
+
 -- update all backpack bag items
 local function updateBagContainers(f)
     if f.ItemFrame:IsShown() then
         updateFreeBagSlots()
-        layoutItems(f)
-        snapFrameSize(f)
+        if layoutStateChanged(f) then
+            layoutItems(f)
+            snapFrameSize(f)
+        end
     end
 end
 
 
--- rescan ALL bag ItemButtons
-local function rescanBagContainers(f)
+-- rescan bag ItemButtons; without dirtyBags every container is rescanned, with it only the
+-- ones a BAG_UPDATE named - a looted or used item touches one bag, not all of them
+local function rescanBagContainers(f, dirtyBags)
     if f.gw_suppressRescan then
         -- a batch of bags is being opened, whoever opens them rescans once at the end
         return
     end
-    for bag_id = BACKPACK_CONTAINER, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
-        GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id)
+    if not dirtyBags then
+        -- the callers of the full rescan are the structural ones (open, bag un/equipped,
+        -- keyring toggled): those also change things the layout fingerprint cannot see, like
+        -- the header name of a swapped bag, so they always lay out
+        invalidateLayoutState()
     end
-    if HAS_KEYRING then
+    for bag_id = BACKPACK_CONTAINER, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
+        if not dirtyBags or dirtyBags[bag_id] then
+            GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id)
+        end
+    end
+    if HAS_KEYRING and (not dirtyBags or dirtyBags[KEYRING_CONTAINER]) then
         GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[KEYRING_CONTAINER], KEYRING_CONTAINER)
     end
     updateBagContainers(f)
@@ -640,6 +713,8 @@ local function bag_OnShow(self)
     self:RegisterEvent("BAG_UPDATE_DELAYED")
     self:RegisterEvent("BAG_UPDATE_COOLDOWN")
     self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
+    self:RegisterEvent("QUEST_ACCEPTED")
+    self:RegisterEvent("QUEST_REMOVED")
     -- every OpenBag makes blizzard build its container frame, and our hook on that
     -- answers with a full rescan of all containers - opening the whole set would rescan
     -- everything once per bag before the single rescan below does it once more
@@ -666,6 +741,9 @@ local function bag_OnHide(self)
     if C_NewItems and C_NewItems.ClearAll then
         -- blizzards container frames did this on hide, ours have to now
         C_NewItems.ClearAll()
+        -- the slot contents did not change, only their new item state, so the remembered
+        -- state has to be dropped for the markers to go on the next open
+        GW.InvalidateOwnBagItemButtonStates()
     end
     if BagItemSearchBox then
         -- blizzard leaves the filter active when the bags close, which then hides items
@@ -676,6 +754,9 @@ local function bag_OnHide(self)
     end
     -- should an error ever leave the batch flag set, closing the bag recovers from it
     self.gw_suppressRescan = false
+    wipe(self.gw_dirtyBags)
+    self.gw_need_bag_update = false
+    self.gw_need_bag_rescan = false
     for i = 1, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
         if IsBagOpen(i) then
             CloseBag(i)
@@ -720,8 +801,13 @@ local function bag_OnEvent(self, event, ...)
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
         if (bag_id <= (HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS) and bag_id >= BACKPACK_CONTAINER) or (HAS_KEYRING and bag_id == KEYRING_CONTAINER) then
+            self.gw_dirtyBags[bag_id] = true
             self.gw_need_bag_update = true
         end
+    elseif event == "QUEST_ACCEPTED" or event == "QUEST_REMOVED" then
+        -- an items quest marker can change without the item itself changing, and the content
+        -- updates only look at the container api, so those two need an explicit refresh
+        GW.UpdateAllOwnBagItemButtons()
     elseif event == "BAG_UPDATE_DELAYED" then
         if self.gw_need_bag_rescan then
             self.gw_suppressRescan = true
@@ -739,8 +825,11 @@ local function bag_OnEvent(self, event, ...)
             updateKeyringButtonState()
         end
         if self.gw_need_bag_rescan or self.gw_need_bag_update then
-            rescanBagContainers(self)
+            -- a bag itself changed (added, removed, swapped): every container can have shifted,
+            -- so that case keeps the full rescan
+            rescanBagContainers(self, not self.gw_need_bag_rescan and self.gw_dirtyBags or nil)
         end
+        wipe(self.gw_dirtyBags)
         self.gw_need_bag_rescan = false
         self.gw_need_bag_update = false
     elseif event == "BAG_UPDATE_COOLDOWN" then
@@ -893,6 +982,8 @@ local function LoadBag(helpers)
     -- create bag frame, restore its saved size, and init its many pieces
     local f = CreateFrame("Frame", "GwBagFrame", UIParent, "GwBagFrameTemplate")
     tinsert(UISpecialFrames, "GwBagFrame")
+    -- the bag ids a BAG_UPDATE named since the last BAG_UPDATE_DELAYED
+    f.gw_dirtyBags = {}
     f:ClearAllPoints()
     f:SetWidth(GW.settings.BAG_WIDTH)
     f.Header:SetWidth(GW.settings.BAG_WIDTH)
