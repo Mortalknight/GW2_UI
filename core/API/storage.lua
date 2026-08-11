@@ -109,6 +109,7 @@ GW.ClearStorage = ClearStorage
 
 ---------- MONEY ----------
 local UpdateMoney = function ()
+    if not IsLoggedIn() then return end
     local money = GetMoney() or 0
 
     -- first store old money

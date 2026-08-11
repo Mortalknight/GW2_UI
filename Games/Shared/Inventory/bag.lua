@@ -1143,13 +1143,17 @@ local function LoadBag(helpers)
     f.moneyFrame:SetScript("OnClick", GW.Money_OnClick)
 
     -- update money when applicable
-    f.moneyFrame:SetScript("OnEvent", function(self)
+    f.moneyFrame:SetScript("OnEvent", function(self, event)
+        if event == "PLAYER_ENTERING_WORLD" then
+            self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        end
         if GW.inWorld then
             updateMoney(self:GetParent())
         end
         GW.MoneyOnEvent()
     end)
     f.moneyFrame:RegisterEvent("PLAYER_MONEY")
+    f.moneyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     if GW.Retail then
         f.moneyFrame:RegisterEvent("ACCOUNT_MONEY")
     end
