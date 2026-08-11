@@ -757,9 +757,6 @@ local function evPlayerLogin(self)
         GW.LoadChatBubbles()
     end
 
-    -- create new microbuttons
-    GW.LoadMicroMenu()
-
     if GW.settings.PARTY_FRAMES then
         GW.LoadPartyFrames()
     end
@@ -812,6 +809,9 @@ local function evPlayerLoginLate()
     end
 
     GW.LoadChat()
+
+    -- create new microbuttons
+    GW.LoadMicroMenu()
 
     -- create action bars
     if GW.settings.ACTIONBARS_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
