@@ -632,9 +632,7 @@ do
     end
 
     function GW.ChatFunctions:GetDiscordInfo(info)
-        if GW.IsSecretValue(info) then return end
-
-        return info, info and info.userID and info.userID ~= 0
+        return info, info and GW.NotSecretValue(info.userID) and info.userID and info.userID ~= 0
     end
 end
 
