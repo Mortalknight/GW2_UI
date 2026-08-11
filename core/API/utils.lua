@@ -1664,6 +1664,48 @@ end
 GW.DoesAncestryIncludeAny = DoesAncestryIncludeAny
 
 
+local gw2LayoutIconSizeBars = {"MainActionBar", "MultiBarBottomLeft", "MultiBarBottomRight", "MultiBarRight", "MultiBarLeft", "MultiBar5", "MultiBar6", "MultiBar7"}
+
+-- returns true if the setting had to be written
+local function SetGw2LayoutFrameSetting(frame, setting, value, forced)
+    if not forced and GW.Libs.LEMO:GetFrameSetting(frame, setting) == value then
+        return false
+    end
+
+    GW.Libs.LEMO:SetFrameSetting(frame, setting, value)
+    return true
+end
+
+-- writes our layout values and returns true if anything actually changed
+local function SetGw2LayoutSettings(forced)
+    local dirty = forced
+    local mainActionBarOffsetY = 80 * (tonumber(GW.settings.HUD_SCALE) or 1)
+
+    for _, barName in ipairs(gw2LayoutIconSizeBars) do
+        dirty = SetGw2LayoutFrameSetting(_G[barName], Enum.EditModeActionBarSetting.IconSize, 5, forced) or dirty
+    end
+
+    -- Main Actionbar
+    dirty = SetGw2LayoutFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.HideBarArt, 1, forced) or dirty
+    dirty = SetGw2LayoutFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal, forced) or dirty
+    dirty = SetGw2LayoutFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumRows, 1, forced) or dirty
+    dirty = SetGw2LayoutFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumIcons, 12, forced) or dirty
+    dirty = SetGw2LayoutFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.HideBarScrolling, 1, forced) or dirty
+
+    if forced or not GW.Libs.LEMO:IsFrameAnchoredTo(MainActionBar, "TOP", UIParent, "BOTTOM", 0, mainActionBarOffsetY) then
+        GW.Libs.LEMO:ReanchorFrame(MainActionBar, "TOP", UIParent, "BOTTOM", 0, mainActionBarOffsetY)
+        dirty = true
+    end
+
+    -- PossessActionBar
+    if forced or not GW.Libs.LEMO:IsFrameAnchoredTo(PossessActionBar, "BOTTOM", MainActionBar, "TOP", -110, 40) then
+        GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainActionBar, "TOP", -110, 40)
+        dirty = true
+    end
+
+    return dirty
+end
+
 local function AddGw2Layout(init)
     if not GW.Libs.LEMO:IsReady() then
         C_Timer.After(0, function() AddGw2Layout(init) end)
@@ -1673,34 +1715,30 @@ local function AddGw2Layout(init)
     GW.Libs.LEMO:LoadLayouts()
 
     if init or (not init and GW.Libs.LEMO:GetActiveLayout() ~= "GW2_Layout") then
+        -- a freshly created layout, or one that is not the active one yet, cannot be compared
+        -- against our target values, so those two cases always write the full set of settings
+        local forced = false
+
         if not GW.Libs.LEMO:DoesLayoutExist("GW2_Layout") then
             if GW.Libs.LEMO:GetNumAccountLayouts() < 5 then
                 GW.Libs.LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
             else
                 GW.Libs.LEMO:AddLayout(Enum.EditModeLayoutType.Character, "GW2_Layout")
             end
+            forced = true -- AddLayout already made it the active one
+        elseif GW.Libs.LEMO:GetActiveLayout() ~= "GW2_Layout" then
+            GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
+            forced = true
         end
-        GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
 
-        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.IconSize, 5)
-        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.HideBarArt, 1)
-        GW.Libs.LEMO:SetFrameSetting(MultiBarBottomLeft, Enum.EditModeActionBarSetting.IconSize, 5)
-        GW.Libs.LEMO:SetFrameSetting(MultiBarBottomRight, Enum.EditModeActionBarSetting.IconSize, 5)
-        GW.Libs.LEMO:SetFrameSetting(MultiBarRight, Enum.EditModeActionBarSetting.IconSize, 5)
-        GW.Libs.LEMO:SetFrameSetting(MultiBarLeft, Enum.EditModeActionBarSetting.IconSize, 5)
-        GW.Libs.LEMO:SetFrameSetting(MultiBar5, Enum.EditModeActionBarSetting.IconSize, 5)
-        GW.Libs.LEMO:SetFrameSetting(MultiBar6, Enum.EditModeActionBarSetting.IconSize, 5)
-        GW.Libs.LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.IconSize, 5)
-        -- Main Actionbar
-        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
-        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumRows, 1)
-        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumIcons, 12)
-        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.HideBarScrolling, 1)
-        GW.Libs.LEMO:ReanchorFrame(MainActionBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
-
-        -- PossessActionBar
-        GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainActionBar, "TOP", -110, 40)
-        GW.Libs.LEMO:ApplyChanges()
+        -- ApplyChanges saves the layouts and cycles the edit mode frame, which re-applies the
+        -- whole layout (~270ms on login), so only do it when we really touched something
+        if SetGw2LayoutSettings(forced) then
+            GW.Libs.LEMO:ApplyChanges()
+            GW.Debug("AddGw2Layout: applied layout changes, forced:", forced)
+        else
+            GW.Debug("AddGw2Layout: layout already up to date, skipped ApplyChanges")
+        end
     end
 
     if init then

@@ -1,6 +1,6 @@
 -- Copyright 2022-2023 plusmouse. Licensed under terms found in LICENSE file.
 
-local lib = LibStub:NewLibrary("LibEditModeOverride-1.0-GW2", 10)
+local lib = LibStub:NewLibrary("LibEditModeOverride-1.0-GW2", 11)
 
 if not lib then return end
 
@@ -154,6 +154,31 @@ function lib:ReanchorFrame(frame, ...)
 
   anchorInfo.point, anchorInfo.relativeTo, anchorInfo.relativePoint, anchorInfo.offsetX, anchorInfo.offsetY = pointGetter:GetPoint(1)
   anchorInfo.relativeTo = anchorInfo.relativeTo:GetName()
+end
+
+-- GW2 Change: lets callers check whether a frame already sits where they want it, so they can
+-- skip an ApplyChanges (which re-applies the whole layout) when nothing needs to move.
+-- Offsets are compared with a sub-pixel tolerance since saved values can be rounded.
+local ANCHOR_TOLERANCE = 0.5
+
+function lib:IsFrameAnchoredTo(frame, ...)
+  assert(layoutInfo, LOAD_ERROR)
+  local system = GetSystemByFrame(frame)
+
+  if not system or system.isInDefaultPosition then
+    return false
+  end
+
+  pointGetter:ClearAllPoints()
+  pointGetter:SetPoint(...)
+  local point, relativeTo, relativePoint, offsetX, offsetY = pointGetter:GetPoint(1)
+
+  local anchorInfo = system.anchorInfo
+  return anchorInfo.point == point
+    and anchorInfo.relativeTo == (relativeTo and relativeTo:GetName())
+    and anchorInfo.relativePoint == relativePoint
+    and math.abs((anchorInfo.offsetX or 0) - (offsetX or 0)) <= ANCHOR_TOLERANCE
+    and math.abs((anchorInfo.offsetY or 0) - (offsetY or 0)) <= ANCHOR_TOLERANCE
 end
 
 function lib:AreLayoutsLoaded()
