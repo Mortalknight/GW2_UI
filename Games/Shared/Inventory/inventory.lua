@@ -368,6 +368,22 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
     -- ADDON_ACTION_FORBIDDEN - blizzard routes its own id through SetAttribute for that reason
     button.gwBagID = bag_id
 
+    -- Show the new item marker if active; C_NewItems is the only state holder, we just read it,
+    -- and closing the bags clears it like blizzards container frames used to. This runs for empty
+    -- slots too: without that the marker of a sold, moved or used up item kept sitting on the now
+    -- empty slot, since nothing else ever hides it. Only our own container buttons carry a real
+    -- bag id and slot id here, the (stolen) bag bar buttons also have the gw backdrop
+    if button.gwNewItem then
+        local ownSlot = button.gwOwnItemButton and C_NewItems
+        local isNew = ownSlot and itemIDOrLink and GW.settings.BAG_ITEM_NEW_ITEM_SHOW
+            and C_NewItems.IsNewItem and C_NewItems.IsNewItem(bag_id, button:GetID())
+        button.gwNewItem:SetShown(isNew == true)
+        if ownSlot and not itemIDOrLink and C_NewItems.RemoveNewItem then
+            -- drop the state as well, or the next item landing in this slot inherits the marker
+            C_NewItems.RemoveNewItem(bag_id, button:GetID())
+        end
+    end
+
     -- by default the profession bag tint wins over an items quality color; with the
     -- quality-over-profession option the tint is applied first so the quality color wins
     local qualityWinsOverProfession = GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR
@@ -389,14 +405,6 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
             else
                 button.junkIcon:Hide()
             end
-        end
-
-        -- Show the new item marker if active; C_NewItems is the only state holder, we just
-        -- read it, and closing the bags clears it like blizzards container frames used to
-        if button.gwNewItem then
-            local isNew = GW.settings.BAG_ITEM_NEW_ITEM_SHOW and C_NewItems and C_NewItems.IsNewItem
-                and C_NewItems.IsNewItem(bag_id, button:GetID())
-            button.gwNewItem:SetShown(isNew == true)
         end
 
         -- Show upgrade icon if active
