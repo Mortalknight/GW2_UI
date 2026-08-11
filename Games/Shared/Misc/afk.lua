@@ -3,6 +3,7 @@ local GW = select(2, ...)
 local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
+local lerp = GW.lerp
 
 local GetChatCategory = ChatFrameUtil and ChatFrameUtil.GetChatCategory or Chat_GetChatCategory
 local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
@@ -18,10 +19,23 @@ local printKeys = {
     PRINTSCREEN = true,
 }
 
+-- the character greets (wave), plays a few random emotes with idle pauses in
+-- between and finally falls asleep; a key press restarts the cycle
+local EMOTES_UNTIL_SLEEP = 6
+local AFK_LOGOUT_TIME = 30 * 60 -- the server logs AFK players out after 30 minutes
+
 local animations = {
     wave = { id = 67, facing = 6, wait = 5, offsetX = -200, offsetY = 220, duration = 2.3 },
-    dance = { id = 69, facing = 6, wait = 30, offsetX = -200, offsetY = 220, duration = 300 },
     sleep = { id = 71, facing = 1, wait = 30, offsetX = -200, offsetY = 220, duration = 3000 }
+}
+local emotePool = {
+    { id = 60, duration = 4 },  -- talk
+    { id = 66, duration = 3 },  -- bow
+    { id = 68, duration = 3 },  -- cheer
+    { id = 69, duration = 14 }, -- dance
+    { id = 70, duration = 3 },  -- laugh
+    { id = 74, duration = 3 },  -- roar
+    { id = 82, duration = 4 },  -- flex
 }
 
 local function CancelTimer(timer)
@@ -36,26 +50,72 @@ local function UpdateTimer(self)
     self.bottom.time:SetFormattedText("%02d:%02d", floor(time / 60), time % 60)
 end
 
+local LOGOUT_WARNING_TIME = 5 * 60
+
+-- smooth fill with a spark on the edge; the color heats up from gold to red
+-- over the last 10 minutes, the final 5 minutes pulse. Only runs while the
+-- AFK screen is shown
+local function LogoutBar_OnUpdate(bar, elapsed)
+    bar.throttle = (bar.throttle or 0) + elapsed
+    if bar.throttle < 0.05 or not AFKMode.startTime then return end
+    bar.throttle = 0
+
+    local afkTime = GetTime() - AFKMode.startTime
+    local remaining = max(0, AFK_LOGOUT_TIME - afkTime)
+
+    bar:SetValue(min(afkTime, AFK_LOGOUT_TIME))
+    bar.spark:SetPoint("CENTER", bar, "LEFT", min(afkTime / AFK_LOGOUT_TIME, 1) * bar:GetWidth(), 0)
+    bar.text:SetFormattedText("%s %d:%02d", LOGOUT, floor(remaining / 60), remaining % 60)
+
+    local base = GW.Colors.TextColors.LightHeader
+    local heat = 1 - min(1, remaining / 600)
+    local r, g, b = lerp(base.r, 0.9, heat), lerp(base.g, 0.15, heat), lerp(base.b, 0.15, heat)
+    bar:SetStatusBarColor(r, g, b)
+    bar.spark:SetVertexColor(r, g, b)
+
+    if remaining <= LOGOUT_WARNING_TIME then
+        local pulse = 0.75 + 0.25 * math.cos(GetTime() * math.pi)
+        bar.text:SetTextColor(0.9, 0.15, 0.15)
+        bar.text:SetAlpha(pulse)
+        bar.spark:SetAlpha(pulse)
+    else
+        bar.text:SetTextColor(0.7, 0.7, 0.7)
+        bar.text:SetAlpha(1)
+        bar.spark:SetAlpha(1)
+    end
+end
+
 local function GetAnimation(key)
-    if not key then
-        -- get next animation in row
-        local current = AFKMode.bottom.model.curAnimation
-        if current == "wave" then
-            key = "dance"
-        elseif current == "dance" then
-            key = "sleep"
-        else
-            key = "wave"
-        end
+    if key then
+        return animations[key], key
     end
 
-    return animations[key], key
+    local model = AFKMode.bottom.model
+    if model.curAnimation == "sleep" then
+        return animations.wave, "wave"
+    end
+    if (model.emoteCount or 0) >= EMOTES_UNTIL_SLEEP then
+        return animations.sleep, "sleep"
+    end
+
+    local pick
+    repeat
+        pick = emotePool[math.random(#emotePool)]
+    until pick.id ~= model.lastEmoteId or #emotePool == 1
+    model.lastEmoteId = pick.id
+
+    return { id = pick.id, facing = 6, wait = math.random(15, 35), offsetX = -200, offsetY = 220, duration = pick.duration }, "emote"
 end
 
 local function SetAnimation(key)
     local options, usedKey = GetAnimation(key)
 
     local model = AFKMode.bottom.model
+    if usedKey == "emote" then
+        model.emoteCount = (model.emoteCount or 0) + 1
+    else
+        model.emoteCount = 0
+    end
     model.curAnimation = usedKey
     model.duration = options.duration
     model.idleDuration = options.wait
@@ -88,7 +148,9 @@ local function SetAFK(self, status)
         SetAnimation("wave")
 
         self.startTime = GetTime()
+        self.bottom.logout:SetValue(0)
         self.timer = CancelTimer(self.timer)
+        UpdateTimer(self)
         self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
 
         self.chat:RegisterEvent("CHAT_MSG_WHISPER")
@@ -317,6 +379,38 @@ local function LoadAFKAnimation()
     AFKMode.bottom.time:SetText("00:00")
     AFKMode.bottom.time:SetPoint("TOPLEFT", AFKMode.bottom.guild, "BOTTOMLEFT", 0, -6)
     AFKMode.bottom.time:SetTextColor(0.7, 0.7, 0.7)
+
+    -- countdown until the 30 minute server auto logout
+    AFKMode.bottom.logout = CreateFrame("StatusBar", nil, AFKMode.bottom)
+    AFKMode.bottom.logout:SetSize(240, 6)
+    AFKMode.bottom.logout:SetPoint("TOPLEFT", AFKMode.bottom.time, "BOTTOMLEFT", 0, -8)
+    AFKMode.bottom.logout:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    AFKMode.bottom.logout:SetStatusBarColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    AFKMode.bottom.logout:SetMinMaxValues(0, AFK_LOGOUT_TIME)
+    AFKMode.bottom.logout:SetScript("OnUpdate", LogoutBar_OnUpdate)
+
+    local logoutBg = AFKMode.bottom.logout:CreateTexture(nil, "BACKGROUND")
+    logoutBg:SetAllPoints()
+    logoutBg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    logoutBg:SetVertexColor(0, 0, 0, 0.6)
+
+    AFKMode.bottom.logout.spark = AFKMode.bottom.logout:CreateTexture(nil, "OVERLAY")
+    AFKMode.bottom.logout.spark:SetTexture("Interface/CastingBar/UI-CastingBar-Spark")
+    AFKMode.bottom.logout.spark:SetBlendMode("ADD")
+    AFKMode.bottom.logout.spark:SetSize(20, 26)
+    AFKMode.bottom.logout.spark:SetPoint("CENTER", AFKMode.bottom.logout, "LEFT", 0, 0)
+
+    AFKMode.bottom.logout.text = AFKMode.bottom.logout:CreateFontString(nil, "OVERLAY")
+    AFKMode.bottom.logout.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    AFKMode.bottom.logout.text:SetPoint("LEFT", AFKMode.bottom.logout, "RIGHT", 8, 0)
+    AFKMode.bottom.logout.text:SetTextColor(0.7, 0.7, 0.7)
+
+    -- brand watermark, same subtle treatment as the settings window
+    local watermark = AFKMode.bottom:CreateTexture(nil, "BACKGROUND", nil, 2)
+    watermark:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png")
+    watermark:SetSize(140, 140)
+    watermark:SetPoint("BOTTOMRIGHT", AFKMode.bottom, "BOTTOMRIGHT", -24, 10)
+    watermark:SetAlpha(0.08)
 
     --Use this frame to control position of the model
     AFKMode.bottom.modelHolder = CreateFrame("Frame", nil, AFKMode.bottom)
