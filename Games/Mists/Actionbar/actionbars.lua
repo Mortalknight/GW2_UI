@@ -94,7 +94,7 @@ GW.HookActionBarStateChanges()
 
 local out_R, out_G, out_B, out_A = RED_FONT_COLOR:GetRGBA()
 local function changeVertexColorActionbars(btn)
-    if btn and btn.changedColor then
+    if btn and btn.gw_ChangedColor then
         local valid = C_ActionBar.IsActionInRange(btn.action)
         local checksRange = (valid ~= nil)
         local inRange = checksRange and valid
@@ -119,7 +119,7 @@ local function setButtonBackgroundAlpha(btn, alpha)
 end
 
 local function updateActionbarBorders(btn)
-    if not btn.gwBackdrop or btn.ShowGrid then return end
+    if not btn.gwBackdrop or btn.gw_ShowGrid then return end
     local texture = C_ActionBar.GetActionTexture(btn.action)
 
     if texture then
@@ -133,24 +133,24 @@ local function updateActionbarBorders(btn)
         setButtonBackgroundAlpha(btn, 1)
         if shouldShowHotKey then
             btn.HotKey:Show()
-            if btn.hkBg then
-                btn.hkBg.texture:Show()
+            if btn.gw_HkBg then
+                btn.gw_HkBg.texture:Show()
             end
         end
         btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
         btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
-        btn.hasAction = true
+        btn.gw_HasAction = true
     else
         setButtonBackgroundAlpha(btn, tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY or not GW.settings.BUTTON_ASSIGNMENTS then
             btn.HotKey:Hide()
-            if btn.hkBg then
-                btn.hkBg.texture:Hide()
+            if btn.gw_HkBg then
+                btn.gw_HkBg.texture:Hide()
             end
             btn:ClearPushedTexture()
             btn:ClearHighlightTexture()
         end
-        btn.hasAction = false
+        btn.gw_HasAction = false
     end
 end
 
@@ -218,11 +218,14 @@ end
 
 
 local function actionBarFrameShow(f, instant)
-    f.fadeOut:Stop()
-    f.fadeIn:Stop()
+    f.gw_FadeOut:Stop()
+    f.gw_FadeIn:Stop()
 
     f.gw_FadeShowing = true
-    if not InCombatLockdown() then
+    -- mirrored as an attribute because the secure state driver snippet in
+    -- mainBarLayout.lua can only read attributes; never on Blizzard's own bars,
+    -- setting attributes on those taints them
+    if f.gw_IsGwFrame and not InCombatLockdown() then
         f:SetAttribute("gw_FadeShowing", true)
     end
     if f.gw_StateTrigger then
@@ -230,9 +233,9 @@ local function actionBarFrameShow(f, instant)
     end
 
     if instant then
-        fadeIn_OnFinished(f.fadeIn)
+        fadeIn_OnFinished(f.gw_FadeIn)
     else
-        f.fadeIn:Play()
+        f.gw_FadeIn:Play()
     end
 end
 
@@ -247,11 +250,14 @@ end
 
 
 local function actionBarFrameHide(f, instant)
-    f.fadeOut:Stop()
-    f.fadeIn:Stop()
+    f.gw_FadeOut:Stop()
+    f.gw_FadeIn:Stop()
 
     f.gw_FadeShowing = false
-    if not InCombatLockdown() then
+    -- mirrored as an attribute because the secure state driver snippet in
+    -- mainBarLayout.lua can only read attributes; never on Blizzard's own bars,
+    -- setting attributes on those taints them
+    if f.gw_IsGwFrame and not InCombatLockdown() then
         f:SetAttribute("gw_FadeShowing", false)
     end
     for i = 1, 12 do
@@ -259,9 +265,9 @@ local function actionBarFrameHide(f, instant)
     end
 
     if instant then
-        fadeOut_OnFinished(f.fadeOut)
+        fadeOut_OnFinished(f.gw_FadeOut)
     else
-        f.fadeOut:Play()
+        f.gw_FadeOut:Play()
     end
 end
 
@@ -311,7 +317,7 @@ local function fadeCheck(self, forceCombat)
                     isFlyout = true
                 end
                 local curAlpha = f:GetAlpha()
-                local busy = (f.fadeIn:IsPlaying() or f.fadeOut:IsPlaying())
+                local busy = (f.gw_FadeIn:IsPlaying() or f.gw_FadeOut:IsPlaying())
                 local forceHide = false
                 if not f.gw_IsEnabled then
                     forceHide = true
@@ -334,15 +340,15 @@ end
 
 
 local function createFaderAnim(self, state)
-    self.fadeOut = self:CreateAnimationGroup("fadeOut")
-    self.fadeIn = self:CreateAnimationGroup("fadeIn")
-    self.fadeOut:SetLooping("NONE")
-    self.fadeIn:SetLooping("NONE")
-    self.fadeOut:SetScript("OnFinished", fadeOut_OnFinished)
-    self.fadeIn:SetScript("OnFinished", fadeIn_OnFinished)
+    self.gw_FadeOut = self:CreateAnimationGroup("fadeOut")
+    self.gw_FadeIn = self:CreateAnimationGroup("fadeIn")
+    self.gw_FadeOut:SetLooping("NONE")
+    self.gw_FadeIn:SetLooping("NONE")
+    self.gw_FadeOut:SetScript("OnFinished", fadeOut_OnFinished)
+    self.gw_FadeIn:SetScript("OnFinished", fadeIn_OnFinished)
 
-    local fadeOut = self.fadeOut:CreateAnimation("Alpha")
-    local fadeIn = self.fadeIn:CreateAnimation("Alpha")
+    local fadeOut = self.gw_FadeOut:CreateAnimation("Alpha")
+    local fadeIn = self.gw_FadeIn:CreateAnimation("Alpha")
     fadeOut:SetFromAlpha(1.0)
     fadeOut:SetToAlpha(0.0)
     fadeOut:SetDuration(fadeTime)
@@ -354,8 +360,8 @@ local function createFaderAnim(self, state)
         self.gw_StateTrigger = true
     end
     local bar = self:GetParent()
-    bar.elapsedTimer = -1
-    bar.fadeTimer = -1
+    bar.gw_ElapsedTimer = -1
+    bar.gw_FadeTimer = -1
 end
 
 
@@ -367,19 +373,19 @@ local function updateHotkey(self)
 
     if shouldShow then
         if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY then
-            shouldShow = self.hasAction and hasText
+            shouldShow = self.gw_HasAction and hasText
         end
     end
 
     if shouldShow then
         hotkey:Show()
-        if self.hkBg then
-            self.hkBg.texture:Show()
+        if self.gw_HkBg then
+            self.gw_HkBg.texture:Show()
         end
     else
         hotkey:Hide()
-        if self.hkBg then
-            self.hkBg.texture:Hide()
+        if self.gw_HkBg then
+            self.gw_HkBg.texture:Hide()
         end
     end
 
@@ -412,7 +418,7 @@ GW.updateHotkey = updateHotkey
 
 local function updateMacroName(self)
     if self.Name then
-        if self.showMacroName then
+        if self.gw_ShowMacroName then
             self.Name:SetPoint("TOPLEFT", self, "TOPLEFT")
             self.Name:SetJustifyH("LEFT")
             self.Name:SetWidth(self:GetWidth())
@@ -659,7 +665,7 @@ local function helper_RangeUpdate(slot, inRange, checkRange)
     end
 
     if checkRange and not inRange then
-        btn.isOutOfRange = true
+        btn.gw_IsOutOfRange = true
         if indicator == "RED_INDICATOR" or indicator == "BOTH" then
             btn.gw_RangeIndicator:Show()
         end
@@ -667,11 +673,11 @@ local function helper_RangeUpdate(slot, inRange, checkRange)
             btn.icon:SetVertexColor(out_R, out_G, out_B, 1, true)
         end
     else
-        btn.isOutOfRange = false
+        btn.gw_IsOutOfRange = false
         if btn.gw_RangeIndicator then
             btn.gw_RangeIndicator:Hide()
         end
-        local vc = btn.icon.savedVertexColor
+        local vc = btn.icon.gw_SavedVertexColor
         btn.icon:SetVertexColor(vc.r, vc.g, vc.b, vc.a, true)
     end
 end
@@ -684,12 +690,12 @@ local function saveVertexColor(self, r, g, b, a, bypass)
         a = 1
     end
     -- reuse the same table to avoid allocating on every SetVertexColor call
-    self.savedVertexColor = self.savedVertexColor or {}
-    local saved = self.savedVertexColor
+    self.gw_SavedVertexColor = self.gw_SavedVertexColor or {}
+    local saved = self.gw_SavedVertexColor
     saved.r, saved.g, saved.b, saved.a = r, g, b, a
 
     -- keep out of range active
-    if self:GetParent().isOutOfRange then
+    if self:GetParent().gw_IsOutOfRange then
         r, g, b, a = out_R, out_G, out_B, out_A
         self:SetVertexColor(r, g, b, a, true)
     end
@@ -724,9 +730,9 @@ local function updateMainBar()
     local btn_padding = GW.settings.MAINBAR_MARGIIN
 
     fmActionbar.gw_Buttons = {}
-    fmActionbar.rangeTimer = -1
-    fmActionbar.fadeTimer = -1
-    fmActionbar.elapsedTimer = -1
+    fmActionbar.gw_RangeTimer = -1
+    fmActionbar.gw_FadeTimer = -1
+    fmActionbar.gw_ElapsedTimer = -1
 
     for i = 1, 12 do
         local btn = _G["ActionButton" .. i]
@@ -739,11 +745,11 @@ local function updateMainBar()
             local hotkey = _G["ActionButton" .. i .. "HotKey"]
             btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GW.settings.MAINBAR_MARGIIN
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
-            btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+            btn.gw_ShowMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
-            btn.hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
-            btn.hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
-            btn.hkBg.texture:SetParent(hotkey:GetParent())
+            btn.gw_HkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
+            btn.gw_HkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
+            btn.gw_HkBg.texture:SetParent(hotkey:GetParent())
             setActionButtonStyle("ActionButton" .. i)
             saveVertexColor(btn.icon, btn.icon:GetVertexColor())
             hooksecurefunc(btn.icon, "SetVertexColor", saveVertexColor)
@@ -756,8 +762,8 @@ local function updateMainBar()
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
             hotkey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
             hotkey:SetTextColor(1, 1, 1)
-            btn.changedColor = false
-            btn.rangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR
+            btn.gw_ChangedColor = false
+            btn.gw_RangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR
 
             if C_ActionBar.IsEquippedAction(btn.action) then
                 local borname = "ActionButton" .. i .. "Border"
@@ -832,8 +838,8 @@ local function trackBarChanges()
 
     -- set that we'll need to immediately re-calc visible bars and mainbar offset (happens in fadeCheck)
     fmActionbar.gw_DirtySetting = true
-    fmActionbar.fadeTimer = -1
-    fmActionbar.elapsedTimer = -1
+    fmActionbar.gw_FadeTimer = -1
+    fmActionbar.gw_ElapsedTimer = -1
 
     -- store the new enabled state for each multibar
     fmActionbar.gw_Bar1.gw_IsEnabled = show1
@@ -864,9 +870,13 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     multibar:GwKillEditMode()
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
+    fmMultibar.gw_IsGwFrame = true -- our own frame, so it may carry the fade state attribute
     GW.MixinHideDuringPetAndOverride(fmMultibar)
     if actionPage ~= nil then
-        fmMultibar:SetAttribute("actionpage", actionPage)
+        fmMultibar:SetAttribute("_onstate-actionpage", [[
+            self:SetAttribute("actionpage", tonumber(newstate))
+        ]])
+        RegisterStateDriver(fmMultibar, "actionpage", tostring(actionPage))
         fmMultibar:SetFrameStrata("LOW")
     end
     fmMultibar.gw_Buttons = {}
@@ -902,7 +912,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
 
-            btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+            btn.gw_ShowMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
             setActionButtonStyle(buttonName .. i)
 
@@ -915,7 +925,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
             btn.gwX = btn_padding
             btn.gwY = btn_padding_y
-            btn.changedColor = false
+            btn.gw_ChangedColor = false
             hooksecurefunc(btn, "SetPoint", function(_, _, parent)
                 if parent ~= fmMultibar then
                     btn:ClearAllPoints()
@@ -1025,10 +1035,10 @@ local function UpdateMultibarButtons()
         fmMultiBar = fmActionbar["gw_Bar" .. y]
         if fmMultiBar and fmMultiBar.gw_IsEnabled then
 
-            if fmActionbar.isSkinOnly then
+            if fmActionbar.gw_IsSkinOnly then
                 for i = 1, 12 do
                     local btn = fmMultiBar.gw_Buttons[i]
-                    btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+                    btn.gw_ShowMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
                     updateMacroName(btn)
                     updateActionbarBorders(btn)
                     updateHotkey(btn)
@@ -1079,7 +1089,7 @@ local function UpdateMultibarButtons()
                         used_height = used_height + settings.size + GW.settings.MULTIBAR_MARGIIN
                     end
 
-                    btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+                    btn.gw_ShowMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
                     updateMacroName(btn)
                     updateActionbarBorders(btn)
                     updateHotkey(btn)
@@ -1150,22 +1160,22 @@ end
 local updateCap = 1 / 60 -- cap updates to 60 FPS
 actionBar_OnUpdate = function(self, elapsed)
     local testFade = false
-    self.elapsedTimer = (self.elapsedTimer or 0) + elapsed
-    if self.elapsedTimer < updateCap then
+    self.gw_ElapsedTimer = (self.gw_ElapsedTimer or 0) + elapsed
+    if self.gw_ElapsedTimer < updateCap then
         return
     end
-    local elapsedToProcess = self.elapsedTimer
-    self.elapsedTimer = 0
-    self.rangeTimer = self.rangeTimer - elapsedToProcess
-    self.fadeTimer = self.fadeTimer - elapsedToProcess
+    local elapsedToProcess = self.gw_ElapsedTimer
+    self.gw_ElapsedTimer = 0
+    self.gw_RangeTimer = self.gw_RangeTimer - elapsedToProcess
+    self.gw_FadeTimer = self.gw_FadeTimer - elapsedToProcess
 
-    if self.rangeTimer <= 0 then
-        self.rangeTimer = TOOLTIP_UPDATE_TIME
+    if self.gw_RangeTimer <= 0 then
+        self.gw_RangeTimer = TOOLTIP_UPDATE_TIME
     end
 
-    if self.fadeTimer <= 0 then
+    if self.gw_FadeTimer <= 0 then
         testFade = true
-        self.fadeTimer = 0.1
+        self.gw_FadeTimer = 0.1
     end
 
     -- fade bars in/out as required
@@ -1182,7 +1192,7 @@ local function UpdateMainBarHot()
 
     for i = 1, 12 do
         local btn = fmActionbar.gw_Buttons[i]
-        if not fmActionbar.isSkinOnly then
+        if not fmActionbar.gw_IsSkinOnly then
             btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GW.settings.MAINBAR_MARGIIN
 
             btn:ClearAllPoints()
@@ -1193,13 +1203,13 @@ local function UpdateMainBarHot()
             end
         end
 
-        btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
-        btn.rangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR
+        btn.gw_ShowMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+        btn.gw_RangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR
         updateMacroName(btn)
         updateActionbarBorders(btn)
         updateHotkey(btn)
     end
-    if not fmActionbar.isSkinOnly then
+    if not fmActionbar.gw_IsSkinOnly then
         -- position the main action bar
         fmActionbar:SetSize(btn_padding, used_height)
         fmActionbar.gw_Width = btn_padding
@@ -1242,7 +1252,7 @@ local function LoadActionBars(lm)
         elseif event == "ACTIONBAR_SHOWGRID" or event == "ACTIONBAR_HIDEGRID" then
             local needShow = event == "ACTIONBAR_SHOWGRID"
             ForEachActionbarButton(function(btn)
-                btn.ShowGrid = needShow
+                btn.gw_ShowGrid = needShow
                 if needShow then
                     setButtonBackgroundAlpha(btn, 1)
                 else

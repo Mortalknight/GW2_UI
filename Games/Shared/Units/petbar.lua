@@ -74,7 +74,7 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
             end)
         end
 
-        button.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+        button.gw_ShowMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
         if not GW.Retail then
@@ -86,7 +86,7 @@ end
 function GwPlayerPetFrameMixin:UpdatePetBarButtons()
     for _, button in ipairs(self.buttons) do
         if button then
-            button.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+            button.gw_ShowMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
             GW.updateMacroName(button)
         end
     end
