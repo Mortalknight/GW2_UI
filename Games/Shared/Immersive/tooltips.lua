@@ -456,7 +456,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
                 race = localizedFaction .. " " .. race
             end
             local hexColor = GW.RGBToHex(diffColor.r, diffColor.g, diffColor.b)
-            local unitGender = GW.settings.ADVANCED_TOOLTIP_SHOW_GENDER and genderTable[gender]
+            local unitGender = GW.settings.ADVANCED_TOOLTIP_SHOW_GENDER and GW.NotSecretValue(gender) and genderTable[gender]
 
             local levelText
             if level < realLevel then
