@@ -22,13 +22,47 @@ local CASTINGBAR_TEXTURES = {
 }
 GW.CASTINGBAR_TEXTURES = CASTINGBAR_TEXTURES
 
+local TEXTURE_PATH = "Interface/AddOns/GW2_UI/Textures/units/castingbars/"
+
+-- which texture set and which color setting belong to a cast kind
+local CASTINGBAR_KINDS = {
+    cast = {textures = CASTINGBAR_TEXTURES.YELLOW, color = "CASTINGBAR_COLOR_CAST"},
+    channel = {textures = CASTINGBAR_TEXTURES.GREEN, color = "CASTINGBAR_COLOR_CHANNEL"},
+    empower = {textures = CASTINGBAR_TEXTURES.GREEN, color = "CASTINGBAR_COLOR_EMPOWER"},
+    interrupted = {textures = CASTINGBAR_TEXTURES.RED, color = "CASTINGBAR_COLOR_INTERRUPTED"},
+}
+
+-- the color the last empower stage fades towards, the earlier stages sit between it
+-- and the empower base color
+local EMPOWER_STAGE_TINT = {r = 1, g = 0.96, b = 0.65}
+local EMPOWER_STAGE_NUMERALS = {"I", "II", "III", "IV", "V", "VI"}
+
 local settings = {}
 GwCastingBarMixin = {}
 
 local function UpdateSettings()
     settings.showSpellQueueWindow = GW.settings.PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW
+    settings.width = tonumber(GW.settings.CASTINGBAR_WIDTH) or 176
+    settings.height = tonumber(GW.settings.CASTINGBAR_HEIGHT) or 15
+    settings.iconPosition = GW.settings.CASTINGBAR_ICON_POSITION or "HIDE"
+    settings.showName = GW.settings.CASTINGBAR_SHOW_NAME
+    settings.showTimer = GW.settings.CASTINGBAR_SHOW_TIMER
+    settings.showLatency = GW.settings.CASTINGBAR_SHOW_LATENCY
+    settings.customColors = GW.settings.CASTINGBAR_CUSTOM_COLORS
+    settings.empowerStageColors = GW.settings.CASTINGBAR_EMPOWER_STAGE_COLORS
+    settings.interruptShake = GW.settings.CASTINGBAR_INTERRUPT_SHAKE
+    settings.interruptSound = GW.settings.CASTINGBAR_INTERRUPT_SOUND
 end
 GW.UpdateCastingBarSettings = UpdateSettings
+
+-- the tick and pip template ships the default bar height, both have to follow the bar they
+-- sit on - which is our own bar or, through the shared mixin, a unit frames casting bar
+local function setSegmentHeight(segment, height)
+    segment:SetHeight(height)
+    if segment.line then
+        segment.line:SetHeight(height)
+    end
+end
 
 function GwCastingBarMixin:HideTicks()
     for _, tick in next, self.TickLines do
@@ -54,6 +88,7 @@ function GwCastingBarMixin:SetCastTicks(numTicks)
         end
 
         tick:ClearAllPoints()
+        setSegmentHeight(tick, self:GetHeight())
         tick:SetPoint("TOPRIGHT", self, "TOPLEFT", offset * i, 0)
         tick:Show()
     end
@@ -132,6 +167,170 @@ function GwCastingBarMixin:CheckForTicks()
     end
 end
 
+-- keeps the anchor the bar returns to, so the interrupt shake can offset it and put it back
+function GwCastingBarMixin:SetBasePoint(point, relativeTo, relativePoint, x, y)
+    self.gwBasePoint = self.gwBasePoint or {}
+    local base = self.gwBasePoint
+    base.point, base.relativeTo, base.relativePoint = point, relativeTo, relativePoint
+    base.x, base.y = x or 0, y or 0
+
+    self:ClearAllPoints()
+    self:SetPoint(base.point, base.relativeTo, base.relativePoint, base.x, base.y)
+end
+
+function GwCastingBarMixin:ApplySize()
+    local width, height = settings.width, settings.height
+    local iconSize = math.max(12, GW.RoundInt(height * 2))
+
+    self:SetSize(width, height)
+    self.progress:SetSize(width, height)
+
+    -- width is set per cast (finish animation, empower stages), the height is ours
+    self.highlight:SetSize(width, height)
+    self.latency:SetHeight(height)
+
+    self.icon:SetSize(iconSize, iconSize)
+    self.icon:ClearAllPoints()
+    if settings.iconPosition == "RIGHT" then
+        self.icon:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", 0, 0)
+    else
+        self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", 0, 0)
+    end
+
+    -- the cast name takes whatever the timer leaves of the bar width
+    local timeWidth = math.min(70, width * 0.4)
+    self.time:SetWidth(timeWidth)
+    self.name:SetWidth(math.max(20, width - timeWidth))
+
+    if self.stage then
+        -- the stage sits inside the bar, so it follows the bars height
+        local sizeType = GW.Enum.TextSizeType.Small
+        if height >= 26 then
+            sizeType = GW.Enum.TextSizeType.Header
+        elseif height >= 18 then
+            sizeType = GW.Enum.TextSizeType.Normal
+        end
+        self.stage:GwSetFontTemplate(UNIT_NAME_FONT, sizeType, "OUTLINE")
+    end
+
+    for _, tick in next, self.TickLines or {} do
+        setSegmentHeight(tick, height)
+    end
+    for _, pip in next, self.Pips or {} do
+        setSegmentHeight(pip, height)
+    end
+end
+
+-- without custom colors the flavored textures are used as they are, with them the painted
+-- texture is desaturated first so the brush structure survives while the hue comes from the tint
+local function resolveKind(kind)
+    local kindInfo = CASTINGBAR_KINDS[kind] or CASTINGBAR_KINDS.cast
+    return kindInfo, settings.customColors and GW.settings[kindInfo.color] or nil
+end
+
+-- the flash drawn over a finished or failed cast, set apart from the bar itself because a
+-- finished cast flashes in the "done" art without repainting the bar underneath
+function GwCastingBarMixin:SetHighlightKind(kind)
+    if not self.progress then
+        return
+    end
+
+    local kindInfo, color = resolveKind(kind)
+    self.highlight:SetTexture(TEXTURE_PATH .. kindInfo.textures.HIGHLIGHT .. ".png")
+    self.highlight:SetDesaturated(color ~= nil)
+    self.highlight:SetVertexColor(color and color.r or 1, color and color.g or 1, color and color.b or 1)
+    self.gwHighlightColor = color
+end
+
+function GwCastingBarMixin:SetCastKind(kind)
+    -- the unit frame casting bars share this mixin but are the status bar themselves and bring
+    -- their own art, only our own bar has the progress child with the textures below
+    if not self.progress then
+        return
+    end
+
+    local kindInfo, color = resolveKind(kind)
+    self.gwCastKind = kind
+
+    self.progress:SetStatusBarTexture(TEXTURE_PATH .. kindInfo.textures.NORMAL .. ".png")
+    self:SetBarColor(color)
+    self:SetHighlightKind(kind)
+end
+
+-- color of nil restores the untinted texture
+function GwCastingBarMixin:SetBarColor(color)
+    if not self.progress then
+        return
+    end
+
+    local barTexture = self.progress:GetStatusBarTexture()
+    if barTexture then
+        barTexture:SetDesaturated(color ~= nil)
+    end
+
+    if color then
+        self.progress:SetStatusBarColor(color.r, color.g, color.b)
+    else
+        self.progress:SetStatusBarColor(1, 1, 1)
+    end
+
+    self.gwBarColor = color
+end
+
+function GwCastingBarMixin:SetEmpowerStage(stage)
+    if self.gwEmpowerStage == stage then
+        return
+    end
+    self.gwEmpowerStage = stage
+
+    if self.stage then
+        local showStage = stage ~= nil and settings.empowerStageColors
+        self.stage:SetShown(showStage)
+        self.stage:SetText(showStage and (EMPOWER_STAGE_NUMERALS[stage] or stage) or "")
+    end
+
+    if not settings.empowerStageColors then
+        return
+    end
+
+    if not stage then
+        -- back to the plain color of whatever the bar is showing
+        local _, color = resolveKind(self.gwCastKind)
+        self:SetBarColor(color)
+        return
+    end
+
+    -- the held stage brightens the bar towards EMPOWER_STAGE_TINT, so the stage is readable
+    -- from the color alone. numStages counts the hold-at-max section as well, the highest stage
+    -- one can actually hold is numStages - 1 and that one gets the full tint
+    local base = (settings.customColors and GW.settings[CASTINGBAR_KINDS.empower.color]) or {r = 1, g = 0.72, b = 0.2}
+    local p = (stage - 1) / math.max(1, (self.numStages or 0) - 2)
+    self:SetBarColor({
+        r = lerp(base.r, EMPOWER_STAGE_TINT.r, p),
+        g = lerp(base.g, EMPOWER_STAGE_TINT.g, p),
+        b = lerp(base.b, EMPOWER_STAGE_TINT.b, p),
+    })
+end
+
+function GwCastingBarMixin:AddInterruptFeedback()
+    if settings.interruptSound then
+        PlaySound(SOUNDKIT.IG_QUEST_FAILED)
+    end
+
+    local base = self.gwBasePoint
+    if not settings.interruptShake or not base or not base.point then
+        return
+    end
+
+    GW.AddToAnimation(self.animationName .. "Shake", 0, 1, GetTime(), 0.35, function(p)
+        self:ClearAllPoints()
+        self:SetPoint(base.point, base.relativeTo, base.relativePoint, base.x + math.sin(p * 42) * 5 * (1 - p), base.y)
+    end, nil, function()
+        self:ClearAllPoints()
+        self:SetPoint(base.point, base.relativeTo, base.relativePoint, base.x, base.y)
+    end)
+end
+
 function GwCastingBarMixin:Init(unit, showTradeSkills)
     UpdateSettings()
     self.unit = unit
@@ -144,12 +343,15 @@ function GwCastingBarMixin:Init(unit, showTradeSkills)
     self.showTradeSkills = showTradeSkills
     self.TickLines = {}
     self.numStages = 0
-    self.showDetails = GW.settings.CASTINGBAR_DATA
     self.Pips = {}
     self.StagePoints = {}
 
     self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
     self.time:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
+    if self.stage then
+        self.stage:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
+        self.stage:Hide()
+    end
     self:SetAlpha(0)
 
     if unit == "pet" then
@@ -184,7 +386,9 @@ end
 function GwCastingBarMixin:SetValues(name, icon)
     self.name:SetText(name)
     self.icon:SetTexture(icon)
-    self.latency:Show()
+    if settings.showLatency then
+        self.latency:Show()
+    end
 end
 
 function GwCastingBarMixin:Reset()
@@ -233,6 +437,7 @@ function GwCastingBarMixin:AddStages(stages, unit)
         end
 
         pip:ClearAllPoints()
+        setSegmentHeight(pip, self:GetHeight())
         pip:Show()
         if stage < #stages then
             pip.rank:SetText(stage)
@@ -249,19 +454,21 @@ function GwCastingBarMixin:ClearStages()
 	end
     self.numStages = 0
     if self.StagePoints then wipe(self.StagePoints) end
+    self:SetEmpowerStage(nil)
 end
 
 function GwCastingBarMixin:AddFinishAnimation(isStopped, isChanneling)
     self.animating = true
-    local highlightColor = isStopped and CASTINGBAR_TEXTURES.RED.HIGHLIGHT or CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
-    self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. highlightColor .. ".png")
-    self.highlight:SetWidth(176)
+    self:SetEmpowerStage(nil)
+    self:SetHighlightKind(isStopped and "interrupted" or "cast")
+    self.highlight:SetWidth(self:GetWidth())
     self.highlight:SetTexCoord(0, 1, 0, 1)
 
     if isStopped then
+        -- a stopped cast repaints the bar itself, a finished one only flashes
+        self:SetCastKind("interrupted")
         self.progress:SetFillAmount(1)
-        self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. highlightColor .. ".png")
-        self.progress:SetStatusBarTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. CASTINGBAR_TEXTURES.RED.NORMAL .. ".png")
+        self:AddInterruptFeedback()
     end
 
     if isChanneling then
@@ -277,8 +484,10 @@ function GwCastingBarMixin:AddFinishAnimation(isStopped, isChanneling)
         end
     else
         self.highlight:Show()
+        local color = self.gwHighlightColor
+        local hr, hg, hb = color and color.r or 1, color and color.g or 1, color and color.b or 1
         GW.AddToAnimation(self.animationName .. "Complete", 0, 1, GetTime(), isStopped and 0.5 or 0.2, function(p)
-            self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, p))
+            self.highlight:SetVertexColor(hr, hg, hb, lerp(1, 0.7, p))
         end, nil, function()
             self.animating = false
             if not self.isCasting and not self.isChanneling then
@@ -332,11 +541,10 @@ end
 
 function GwCastingBarMixin:OnEvent(event, unitID, ...)
     local spell, icon, startTime, endTime, isTradeSkill, castID, spellID, numStages, isEmpowered
-    local barTexture = CASTINGBAR_TEXTURES.YELLOW.NORMAL
-    local barHighlightTexture = CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
+    local castKind = "cast"
 
     self.highlight:SetTexCoord(0, 1, 0, 1)
-    self.highlight:SetWidth(176)
+    self.highlight:SetWidth(self:GetWidth())
 
     if event == "PLAYER_ENTERING_WORLD" then
         local nameChannel = UnitChannelInfo(self.unit)
@@ -370,15 +578,14 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
                 self.isChanneling = true
                 self.isCasting = false
             end
-            barTexture = CASTINGBAR_TEXTURES.GREEN.NORMAL
-            barHighlightTexture = CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
+            castKind = isEmpowered and "empower" or "channel"
         else
             spell, _, icon, startTime, endTime, isTradeSkill, castID, _, spellID = UnitCastingInfo(self.unit)
             self.isCasting = true
         end
 
-        self.progress:SetStatusBarTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barTexture .. ".png")
-        self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barHighlightTexture .. ".png")
+        self:SetEmpowerStage(nil)
+        self:SetCastKind(castKind)
 
         self:Reset()
 
@@ -387,9 +594,7 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
             return
         end
 
-        if self.showDetails then
-            self:SetValues(spell, icon)
-        end
+        self:SetValues(spell, icon)
 
         self.numStages = numStages and numStages + 1 or 0
         self.maxValue = (endTime - startTime) / 1000
@@ -424,7 +629,8 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
         self.latency:SetPoint(self.isChanneling and "LEFT" or "RIGHT", self, self.isChanneling and "LEFT" or "RIGHT")
         local lagWorld = select(4, GetNetStats()) / 1000
         local sqw = settings.showSpellQueueWindow and (tonumber(GetCVar("SpellQueueWindow")) or 0) / 1000 or 0
-        self.latency:SetWidth(math.max(0.0001, math.min(1, ((sqw + lagWorld) / (self.endTime - self.startTime)))) * 176)
+        local barWidth = self:GetWidth()
+        self.latency:SetWidth(math.max(0.0001, math.min(1, ((sqw + lagWorld) / (self.endTime - self.startTime)))) * barWidth)
 
         GW.AddToAnimation(
             self.animationName,
@@ -433,23 +639,26 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
             self.startTime,
             self.endTime - self.startTime,
             function(p)
-                if self.showDetails then
+                if settings.showTimer then
                     self.time:SetText(TimeCount(self.endTime - GetTime(), true))
                 end
                 p = self.isChanneling and (1 - p) or p
                 self.progress:SetFillAmount(p)
                 if self.numStages > 0 and self.StagePoints then
+                    local reachedStage = 0
                     for i = 1, self.numStages - 1 do
                         local stage_percentage = self.StagePoints[i]
                         if stage_percentage <= p then
+                            reachedStage = i
                             self.highlight:SetTexCoord(0, stage_percentage, 0, 1)
-                            self.highlight:SetWidth(math.max(1, stage_percentage * 176))
+                            self.highlight:SetWidth(math.max(1, stage_percentage * barWidth))
                             self.highlight:Show()
                         end
                         if i == 1 and stage_percentage >= p then
                             self.highlight:Hide()
                         end
                     end
+                    self:SetEmpowerStage(reachedStage > 0 and reachedStage or nil)
                 end
             end,
             "noease"
@@ -477,7 +686,7 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
         end
     elseif IsIn(event, "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
         if self:IsShown() and self.isCasting and select(1, ...) == self.castID then
-            if self.showDetails then
+            if settings.showName then
                 self.name:SetText(event == "UNIT_SPELLCAST_FAILED" and FAILED or INTERRUPTED)
             end
             self:AddFinishAnimation(true)
@@ -507,26 +716,37 @@ function GwCastingBarMixin:CreateNewBarSegment()
     return segment
 end
 
-local function TogglePlayerEnhancedCastbar(self, setShown)
+-- spell name, timer, latency zone and icon each have their own setting; this shows or hides
+-- them and fits the mover around whatever is left
+local function ApplyDetailSettings(self)
     if not self then return end
-    self.name:SetShown(setShown)
-    self.icon:SetShown(setShown)
-    self.latency:SetShown(setShown)
-    self.time:SetShown(setShown)
-    self.showDetails = setShown
+    local showIcon = settings.iconPosition ~= "HIDE"
+    self.name:SetShown(settings.showName)
+    self.time:SetShown(settings.showTimer)
+    self.latency:SetShown(settings.showLatency)
+    self.icon:SetShown(showIcon)
 
     if self.gwMover then
-        self:ClearAllPoints()
-        if setShown then
-            self.gwMover:SetSize(self:GetWidth() + self.icon:GetWidth(), math.max(self:GetHeight(), self.icon:GetHeight()))
-            self:SetPoint("CENTER", self.gwMover, self.icon:GetWidth() / 2, -(self.icon:GetHeight() / 4))
-        else
-            self.gwMover:SetSize(self:GetWidth(), self:GetHeight())
-            self:SetPoint("CENTER", self.gwMover)
+        -- the mover covers the icon as well, so dragging grabs the whole thing
+        local iconWidth = showIcon and self.icon:GetWidth() or 0
+        local iconHeight = showIcon and self.icon:GetHeight() or 0
+        self.gwMover:SetSize(self:GetWidth() + iconWidth, math.max(self:GetHeight(), iconHeight))
+
+        local offsetX = iconWidth / 2
+        if settings.iconPosition == "RIGHT" then
+            offsetX = -offsetX
         end
+        self:SetBasePoint("CENTER", self.gwMover, "CENTER", offsetX, -(iconHeight / 4))
     end
 end
-GW.TogglePlayerEnhancedCastbar = TogglePlayerEnhancedCastbar
+
+-- the pet bar rides above the player bar, with a gap that has to follow the bar height
+local function AnchorPetCastbar()
+    if not GwCastingBarPet or not GwCastingBarPlayer or not GwCastingBarPlayer.gwMover then
+        return
+    end
+    GwCastingBarPet:SetBasePoint("TOPLEFT", GwCastingBarPlayer.gwMover, "TOPLEFT", 0, GwCastingBarPlayer:GetHeight() + 20)
+end
 
 local function LoadCastingBar(name, unit, showTradeSkills)
     UpdateSettings()
@@ -536,19 +756,34 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     GwCastingBar.progress.customMaskSize = 64
     GwCastingBar.highlight = GwCastingBar.progress.highlight
     GwCastingBar.latency = GwCastingBar.progress.latency
+    GwCastingBar.stage = GwCastingBar.progress.stage
     GwCastingBar:Init(unit, showTradeSkills)
+    GwCastingBar:ApplySize()
+    GwCastingBar:SetCastKind("cast")
 
     if name == "GwCastingBarPlayer" then
         RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "Blizzard", nil, {"default", "scaleable"})
-        GwCastingBar:ClearAllPoints()
-        GwCastingBar:SetPoint("CENTER", GwCastingBar.gwMover)
+        GwCastingBar:SetBasePoint("CENTER", GwCastingBar.gwMover, "CENTER", 0, 0)
     else
-        GwCastingBar:ClearAllPoints()
-        GwCastingBar:SetPoint("TOPLEFT", GwCastingBarPlayer.gwMover, "TOPLEFT", 0, 35)
+        GwCastingBar:SetBasePoint("TOPLEFT", GwCastingBarPlayer.gwMover, "TOPLEFT", 0, GwCastingBarPlayer:GetHeight() + 20)
     end
 
-    TogglePlayerEnhancedCastbar(GwCastingBar, GwCastingBar.showDetails)
+    ApplyDetailSettings(GwCastingBar)
 
     return GwCastingBar
 end
 GW.LoadCastingBar = LoadCastingBar
+
+-- re-applies every layout and color setting to the existing bars, used by the settings panel
+local function UpdateCastingBarLayout()
+    UpdateSettings()
+
+    for _, bar in next, {GwCastingBarPlayer, GwCastingBarPet} do
+        bar:ApplySize()
+        bar:SetCastKind(bar.gwCastKind or "cast")
+        ApplyDetailSettings(bar)
+    end
+
+    AnchorPetCastbar()
+end
+GW.UpdateCastingBarLayout = UpdateCastingBarLayout

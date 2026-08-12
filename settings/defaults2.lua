@@ -1290,7 +1290,24 @@ GW.globalDefault = {
         WORLDMAP_COORDS_Y_OFFSET= 0,
 
         showPlayerCastBarTicks = true,
-        CASTINGBAR_DATA= false,
+        CASTINGBAR_WIDTH= 176,
+        CASTINGBAR_HEIGHT= 15,
+        -- what the old "Advanced Casting Bar" toggle switched as a block, one setting each.
+        -- The defaults match that toggle being off, existing profiles are migrated
+        CASTINGBAR_SHOW_NAME= false,
+        CASTINGBAR_SHOW_TIMER= false,
+        CASTINGBAR_SHOW_LATENCY= false,
+        CASTINGBAR_ICON_POSITION= "HIDE",
+        -- the default colors match the flavored bar textures, so switching custom colors on
+        -- does not change the look until one of them is edited
+        CASTINGBAR_CUSTOM_COLORS= false,
+        CASTINGBAR_COLOR_CAST= {r = 0.93, g = 0.65, b = 0.15},
+        CASTINGBAR_COLOR_CHANNEL= {r = 0.55, g = 0.8, b = 0.2},
+        CASTINGBAR_COLOR_EMPOWER= {r = 1, g = 0.72, b = 0.2},
+        CASTINGBAR_COLOR_INTERRUPTED= {r = 0.8, g = 0.16, b = 0.11},
+        CASTINGBAR_EMPOWER_STAGE_COLORS= true,
+        CASTINGBAR_INTERRUPT_SHAKE= true,
+        CASTINGBAR_INTERRUPT_SOUND= false,
         USE_CHARACTER_WINDOW= true,
         USE_TALENT_WINDOW= true,
         USE_SPELLBOOK_WINDOW = true,

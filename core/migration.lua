@@ -155,6 +155,20 @@ local function DatabaseValueMigration()
         GW.settings.FONTS_ENABLED = nil
     end
 
+    -- migration of the player cast bar details: the single "Advanced Casting Bar" toggle was
+    -- split into one setting per element. Only profiles that had it enabled carry the key
+    -- (it is gone from the defaults), so everyone else keeps the plain bar
+    if GW.settings.CASTINGBAR_DATA ~= nil then
+        if GW.settings.CASTINGBAR_DATA then
+            GW.settings.CASTINGBAR_SHOW_NAME = true
+            GW.settings.CASTINGBAR_SHOW_TIMER = true
+            GW.settings.CASTINGBAR_SHOW_LATENCY = true
+            GW.settings.CASTINGBAR_ICON_POSITION = "LEFT"
+        end
+
+        GW.settings.CASTINGBAR_DATA = nil
+    end
+
     -- migration minimap scale setting
     if GW.settings.MINIMAP_SCALE then
         GW.settings.MINIMAP_SIZE = GW.settings.MINIMAP_SCALE

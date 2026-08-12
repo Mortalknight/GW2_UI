@@ -398,7 +398,7 @@
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
                                 </Anchors>
-                      
+
                                 <Color r="1" g="1" b="1" a="0.7"></Color>
                             </Texture>
                             <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png" hidden="true">
@@ -407,6 +407,16 @@
                                     <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
                                 </Anchors>
                             </Texture>
+                        </Layer>
+                        <!-- the reached empower stage, drawn on top of the fill: the pip numbers
+                             below the bar are too small to read while holding a cast -->
+                        <Layer level="OVERLAY" textureSubLevel="3">
+                            <FontString parentKey="stage" justifyH="CENTER" justifyV="MIDDLE" hidden="true">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                                </Anchors>
+                            </FontString>
                         </Layer>
                     </Layers>
             

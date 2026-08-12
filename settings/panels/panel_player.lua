@@ -140,9 +140,30 @@ local function LoadPlayerPanel(sWindow)
 
     -- CAST BAR
     castbar:AddOption(ENABLE, L["Enable the GW2 style casting bar."], {getterSetter = "CASTINGBAR_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    castbar:AddOption(L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], {getterSetter = "CASTINGBAR_DATA", callback = function(value) GW.TogglePlayerEnhancedCastbar(GwCastingBarPlayer, value); GW.TogglePlayerEnhancedCastbar(GwCastingBarPet, value); end, dependence = {["CASTINGBAR_ENABLED"] = true}})
-    castbar:AddOption(L["Show spell queue window on castingbar"], nil, {getterSetter = "PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW", dependence = {["CASTINGBAR_ENABLED"] = true, ["CASTINGBAR_DATA"] = true}})
     castbar:AddOption(L["Ticks"], L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."], {getterSetter = "showPlayerCastBarTicks", dependence = {["CASTINGBAR_ENABLED"] = true}})
+
+    castbar:AddGroupHeader(DISPLAY)
+    castbar:AddOption(GW.NewSign .. L["Spell Name"], L["Shows the name of the spell being cast above the bar."], {getterSetter = "CASTINGBAR_SHOW_NAME", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = DISPLAY, dependence = {["CASTINGBAR_ENABLED"] = true}})
+    castbar:AddOption(GW.NewSign .. L["Cast Timer"], L["Shows the remaining cast time above the bar."], {getterSetter = "CASTINGBAR_SHOW_TIMER", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = DISPLAY, dependence = {["CASTINGBAR_ENABLED"] = true}})
+    castbar:AddOption(GW.NewSign .. L["Latency"], L["Marks the part of the cast that is lost to your latency at the end of the bar."], {getterSetter = "CASTINGBAR_SHOW_LATENCY", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = DISPLAY, dependence = {["CASTINGBAR_ENABLED"] = true}})
+    castbar:AddOption(L["Show spell queue window on castingbar"], nil, {getterSetter = "PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW", callback = function() GW.UpdateCastingBarSettings() end, groupHeaderName = DISPLAY, dependence = {["CASTINGBAR_ENABLED"] = true, ["CASTINGBAR_SHOW_LATENCY"] = true}})
+    castbar:AddOptionDropdown(GW.NewSign .. L["Spell Icon"], L["Which side of the casting bar the spell icon sits on."], {getterSetter = "CASTINGBAR_ICON_POSITION", callback = function() GW.UpdateCastingBarLayout() end, optionsList = {"LEFT", "RIGHT", "HIDE"}, optionNames = {L["Left"], L["Right"], HIDE}, groupHeaderName = DISPLAY, dependence = {["CASTINGBAR_ENABLED"] = true}})
+
+    castbar:AddGroupHeader(L["Size"])
+    castbar:AddOptionSlider(GW.NewSign .. L["Width"], nil, {getterSetter = "CASTINGBAR_WIDTH", callback = function() GW.UpdateCastingBarLayout() end, min = 100, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["CASTINGBAR_ENABLED"] = true}})
+    castbar:AddOptionSlider(GW.NewSign .. L["Height"], nil, {getterSetter = "CASTINGBAR_HEIGHT", callback = function() GW.UpdateCastingBarLayout() end, min = 6, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["CASTINGBAR_ENABLED"] = true}})
+
+    castbar:AddGroupHeader(COLOR)
+    castbar:AddOption(GW.NewSign .. L["Custom Colors"], L["Use your own casting bar colors instead of the default textures."], {getterSetter = "CASTINGBAR_CUSTOM_COLORS", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["CASTINGBAR_ENABLED"] = true}})
+    castbar:AddOptionColorPicker(GW.NewSign .. L["Casting"], nil, {getterSetter = "CASTINGBAR_COLOR_CAST", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["CASTINGBAR_ENABLED"] = true, ["CASTINGBAR_CUSTOM_COLORS"] = true}})
+    castbar:AddOptionColorPicker(GW.NewSign .. L["Channeling"], nil, {getterSetter = "CASTINGBAR_COLOR_CHANNEL", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["CASTINGBAR_ENABLED"] = true, ["CASTINGBAR_CUSTOM_COLORS"] = true}})
+    castbar:AddOptionColorPicker(GW.NewSign .. L["Empowered"], nil, {getterSetter = "CASTINGBAR_COLOR_EMPOWER", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["CASTINGBAR_ENABLED"] = true, ["CASTINGBAR_CUSTOM_COLORS"] = true}, hidden = not GW.Retail})
+    castbar:AddOptionColorPicker(GW.NewSign .. INTERRUPTED, nil, {getterSetter = "CASTINGBAR_COLOR_INTERRUPTED", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["CASTINGBAR_ENABLED"] = true, ["CASTINGBAR_CUSTOM_COLORS"] = true}})
+
+    castbar:AddGroupHeader(L["Feedback"])
+    castbar:AddOption(GW.NewSign .. L["Empowered Stage Colors"], L["Brightens the casting bar with every empower stage you hold and shows the stage on the bar."], {getterSetter = "CASTINGBAR_EMPOWER_STAGE_COLORS", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = L["Feedback"], dependence = {["CASTINGBAR_ENABLED"] = true}, hidden = not GW.Retail})
+    castbar:AddOption(GW.NewSign .. L["Shake On Interrupt"], L["Shakes the casting bar when your cast was interrupted or failed."], {getterSetter = "CASTINGBAR_INTERRUPT_SHAKE", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = L["Feedback"], dependence = {["CASTINGBAR_ENABLED"] = true}})
+    castbar:AddOption(GW.NewSign .. L["Sound On Interrupt"], L["Plays a sound when your cast was interrupted or failed."], {getterSetter = "CASTINGBAR_INTERRUPT_SOUND", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = L["Feedback"], dependence = {["CASTINGBAR_ENABLED"] = true}})
 
     -- AURAS
     p_player_aura:AddOption(ENABLE, L["Move and resize the player auras."], {getterSetter = "PLAYER_BUFFS_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})

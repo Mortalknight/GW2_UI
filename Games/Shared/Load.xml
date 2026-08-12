@@ -8,6 +8,7 @@
     <Include file ="DataInfo\Load.xml"/>
     <Include file ="Aura\Load.xml"/>
     <Include file ="Misc\Load.xml"/>
+    <Include file ="Social\Load.xml"/>
     <Include file ="DamageText\Load.xml"/>
     <Include file ="Castingbar\Load.xml"/>
     <Include file ="Units\Load.xml"/>
