@@ -244,7 +244,11 @@ local function LoadFonts()
         end
     end
 
-    RaidWarningFrame:SetSize(640, 48)
-    RaidBossEmoteFrame:SetSize(640, 56)
+    if RaidWarningFrame then
+        RaidWarningFrame:SetSize(640, 48)
+    end
+    if RaidBossEmoteFrame then
+        RaidBossEmoteFrame:SetSize(640, 56)
+    end
 end
 GW.LoadFonts = LoadFonts

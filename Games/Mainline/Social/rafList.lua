@@ -20,7 +20,7 @@ local function RAFRewards()
         local icon = button.Icon
         icon:SetDesaturation(0)
 
-        local text = reward.Months
+        local text = reward.Months.Text
         text:SetTextColor(1, 1, 1)
     end
 end
