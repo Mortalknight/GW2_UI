@@ -151,7 +151,8 @@ GW.GridSettings = settings
 local settingsEventFrame = CreateFrame("Frame")
 local pendingProfiles = {}
 
--- Helper-only mapping to simplify future settings updates (not wired yet).
+-- Maps the grid profile keys to their GW.settings keys. ApplySettings pushes the
+-- values into GW.GridSettings; "enabled" additionally gates header/child creation.
 local SETTINGS_HELPER_MAP = {
     enabled = {
         PARTY = "RAID_STYLE_PARTY",
@@ -305,6 +306,19 @@ local function ApplySettings()
     settings.partyGridShowPlayer = GW.settings.RAID_SHOW_PLAYER_PARTY
 end
 
+local function IsProfileEnabled(profile)
+    if profile == "PARTY" then
+        -- mirrors the group visibility check in UpdateGridHeader
+        return GW.settings.RAID_STYLE_PARTY or GW.settings.RAID_STYLE_PARTY_AND_FRAMES
+    end
+
+    local settingName = SETTINGS_HELPER_MAP.enabled[profile]
+    return not settingName or not not GW.settings[settingName]
+end
+
+-- defined after CreateHeader; called from UpdateFramesAndHeader at runtime only
+local EnsureHeaderGroups
+
 local function MarkPending(profile)
     settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     if profile == "ALL" then
@@ -410,6 +424,26 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
         settingsEventFrame.isSetup = true
     end
 
+    -- profiles disabled at login have no groups yet — build them once the profile
+    -- gets enabled: the header update materializes the secure children, the
+    -- updateFunc pass right after pushes the current settings onto them (the
+    -- regular pass below is skipped for pure header updates)
+    for headerProfile, header in pairs(headers) do
+        if profile == "ALL" or headerProfile == profile then
+            if EnsureHeaderGroups(headerProfile) then
+                GW.UpdateGridHeader(headerProfile)
+                for i = 1, header.numGroups do
+                    local group = header.groups[i]
+                    if group then
+                        for _, child in ipairs({ group:GetChildren() }) do
+                            header.updateFunc(child)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
     if not onlyHeaderUpdate or updateHeaderAndFrames then
         if InCombatLockdown() then
             MarkPending(profile)
@@ -418,8 +452,10 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
             if profile == "ALL" or headerProfile == profile then
                 for i = 1, header.numGroups do
                     local group = header.groups[i]
-                    for _, child in ipairs({ group:GetChildren() }) do
-                        header.updateFunc(child)
+                    if group then
+                        for _, child in ipairs({ group:GetChildren() }) do
+                            header.updateFunc(child)
+                        end
                     end
                 end
             end
@@ -753,15 +789,42 @@ local function CreateHeader(parent, profile, options, overrideName, groupFilter)
     return header
 end
 
+-- Builds the secure group headers (and thereby their pre-created children) for a
+-- profile. Skipped for disabled profiles: each group pre-creates ALL its secure
+-- children out of combat (RAID40 = 40 frames, RAID_PET = 40, ...) so that mid-combat
+-- roster growth already has frames — but that also means a disabled profile would
+-- pay the full creation cost for frames that can never become visible. Called again
+-- from UpdateFramesAndHeader when a profile gets enabled after login; in combat the
+-- creation is deferred via MarkPending. Returns true when groups were just created.
+EnsureHeaderGroups = function(profile)
+    local header = headers[profile]
+    if not header or header.groups[1] or not IsProfileEnabled(profile) then return false end
+    if InCombatLockdown() then
+        MarkPending(profile)
+        return false
+    end
+
+    local options = profiles[profile]
+    GW_UF:SetActiveStyle("GW2_Grid" .. options.name)
+
+    header.groups[1] = CreateHeader(GW_UF, profile, options, "GW2_" .. options.name .. "Group1")
+
+    while options.numGroups > #header.groups do
+        local index = tostring(#header.groups + 1)
+        tinsert(header.groups, CreateHeader(GW_UF, profile, options, "GW2_" .. options.name .. "Group" .. index, index))
+    end
+
+    return true
+end
+
 local function Initialize()
     GW.CreateRaidControlFrame()
     GW.Create_Tags()
     ApplySettings()
 
-    -- create headers and groups for all profiles
+    -- create headers (and groups for the enabled profiles)
     for profile, options in pairs(profiles) do
         GW_UF:RegisterStyle("GW2_Grid" .. options.name, options.styleFunc)
-        GW_UF:SetActiveStyle("GW2_Grid" .. options.name)
 
         -- Create a holding header
         local Header = CreateFrame("Frame", "GW2_" .. options.name .. "GridContainer", UIParent, "SecureHandlerStateTemplate")
@@ -773,12 +836,7 @@ local function Initialize()
         Header.updateFunc = options.updateFunc
         headers[profile] = Header
 
-        Header.groups[1] = CreateHeader(GW_UF, profile, options, "GW2_" .. options.name .. "Group1")
-
-        while options.numGroups > #Header.groups do
-            local index = tostring(#Header.groups + 1)
-            tinsert(Header.groups, CreateHeader(GW_UF, profile, options, "GW2_" .. options.name .. "Group" .. index, index))
-        end
+        EnsureHeaderGroups(profile)
 
         RegisterStateDriver(Header, "visibility", options.visibility)
 

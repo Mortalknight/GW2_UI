@@ -180,6 +180,7 @@ end
 
 local function LoadHealthGlobe()
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, GW.Retail and "GwHealthGlobePingableTmpl" or "GwHealthGlobeTmpl")
+    GW.SetFrameRoleset(hg, "unitFrames")
 
     hg.absorbOverlay = hg.healPrediction.absorbbg.candy.health.antiHeal.absorbOverlay
     hg.antiHeal = hg.healPrediction.absorbbg.candy.health.antiHeal

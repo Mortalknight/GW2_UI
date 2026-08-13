@@ -675,6 +675,7 @@ GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
 local function CreatePartyFrame(i, isPlayer)
     local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, GW.Retail and "GwPartyFrameRetailTemplate" or "GwPartyFrameTemplate")
+    GW.SetFrameRoleset(frame, "unitFrames")
 
     if i == 1 then
         RegisterMovableFrame(frame, PARTY, "party_pos", "Unitframe,Group", nil, {"default"})
@@ -759,6 +760,7 @@ local function CreatePartyFrame(i, isPlayer)
     --Create party pet frame
     local petUnit = (registerUnit == "player") and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
     local petFrame = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, GW.Retail and "GwPartyPetFrameRetailTemplate" or "GwPartyPetFrameTemplate")
+    GW.SetFrameRoleset(petFrame, "unitFrames")
     petFrame.gwUnit = petUnit
     petFrame:SetAttribute("unit", petUnit)
     petFrame.isPet = true

@@ -196,6 +196,7 @@ end
 
 local function LoadHealthGlobe()
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeRetailTmpl")
+    GW.SetFrameRoleset(hg, "unitFrames")
     -- player data can still be unavailable at load — a 0 range would break the
     -- pedestal (see below) until the first real update delivers the true max
     local maxHp = math.max(UnitHealthMax("player") or 0, 1)

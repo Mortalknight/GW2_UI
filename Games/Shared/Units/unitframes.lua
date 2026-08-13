@@ -37,6 +37,7 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
         end
     end
     local f = CreateFrame("Button", name, UIParent, template)
+    GW.SetFrameRoleset(f, "unitFrames")
 
     local hg = f.healthContainer
     f.portrait:ClearAllPoints()
@@ -200,6 +201,7 @@ GW.CreateUnitFrame = CreateUnitFrame
 
 local function CreateSmallUnitFrame(name)
     local f = CreateFrame("Button", name, UIParent, GW.Retail and "GwNormalUnitFramePingableSmallRetailTemplate" or "GwNormalUnitFrameSmall")
+    GW.SetFrameRoleset(f, "unitFrames")
 
     local hg = f.healthContainer
 

@@ -658,6 +658,11 @@ do
 		local name = overrideName or generateName(nil, ...)
 		local header = Mixin(CreateFrame('Frame', name, PetBattleFrameHider, template), headerMixin)
 
+		-- 12.1: declare the roleset so the UI mode system gates visibility like Blizzard's own unit frames
+		if(header.SetRolesets) then
+			header:SetRolesets('unitFrames')
+		end
+
 		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate' .. (ns.Retail and ', PingableUnitFrameTemplate' or ''))
 
 		if(...) then
@@ -747,6 +752,15 @@ function oUF:Spawn(unit, overrideName)
 	local name = overrideName or generateName(unit)
 	local object = CreateFrame('Button', name, PetBattleFrameHider, 'SecureUnitButtonTemplate, PingableUnitFrameTemplate')
 	Private.UpdateUnits(object, unit)
+
+	-- 12.1: declare the roleset so the UI mode system gates visibility like Blizzard's own unit frames
+	if(object.SetRolesets) then
+		if(unit:match('arena%d?')) then
+			object:SetRolesets('arenaFrames')
+		else
+			object:SetRolesets('unitFrames')
+		end
+	end
 
 	self:DisableBlizzard(unit)
 	walkObject(object, unit)

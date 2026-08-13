@@ -309,6 +309,7 @@ end
 local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent,
         GW.Retail and "GwPlayerPetFramePingableTemplate" or "GwPlayerPetFrameTemplate")
+    GW.SetFrameRoleset(playerPetFrame, "unitFrames")
 
     if GW.Retail then
         playerPetFrame.hpValues = CreateUnitHealPredictionCalculator()

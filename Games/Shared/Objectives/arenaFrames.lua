@@ -191,6 +191,7 @@ end
 
 function GwObjectivesArenaContainerMixin:RegisterFrame(i)
     local arenaFrame = CreateFrame("Button", "GwArenaFrame" .. i, GwQuestTracker, GW.Retail and "GwQuestTrackerArenaFramePingableTemplate" or "GwQuestTrackerArenaFrameTemplate")
+    GW.SetFrameRoleset(arenaFrame, "arenaFrames")
     local unit = "arena" .. i
     Mixin(arenaFrame, GwArenaFrameMixin)
 
@@ -234,6 +235,7 @@ end
 
 function GwObjectivesArenaContainerMixin:RegisterPrepFrame()
     local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFramePingableTemplate")
+    GW.SetFrameRoleset(arenaPrepFrame, "arenaFrames")
 
     arenaPrepFrame:EnableMouse(true)
     arenaPrepFrame:RegisterForClicks("AnyDown")

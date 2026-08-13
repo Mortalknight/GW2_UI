@@ -17,6 +17,16 @@ local function SetDeadIcon(self)
 end
 GW.SetDeadIcon = SetDeadIcon
 
+-- 12.1: declares the frame's roleset so the UI mode system gates its visibility
+-- like Blizzard's own frames ("unitFrames", "arenaFrames", ...). No-op on clients
+-- without the API.
+local function SetFrameRoleset(frame, roleset)
+    if frame.SetRolesets then
+        frame:SetRolesets(roleset or "unitFrames")
+    end
+end
+GW.SetFrameRoleset = SetFrameRoleset
+
 -- Scales a buttons hotkey text down when it would render wider than the button —
 -- the auto-sized hotkey strings would otherwise overlap the neighboring buttons,
 -- the anchored ones (main bar) would ellipsize. The scale is clamped so extreme
