@@ -1,6 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 local GetAddOnRestrictionState = C_RestrictedActions and C_RestrictedActions.GetAddOnRestrictionState
+local UnregisterInternalEvent = GameEvent and GameEvent.UnregisterInternalEvent
 
 function GW.GetSpellCooldown(spellID)
     if not spellID then return end
@@ -393,6 +394,14 @@ end
 
 function GW.IsChatRestricted()
     return C_CVar.GetCVarBool("addonChatRestrictionsForced") or GW.CheckRestrictionState("ChallengeMode") > 1 or GW.CheckRestrictionState("Encounter") > 1 or GW.CheckRestrictionState("PvPMatch") > 1
+end
+
+function GW.UnregisterGameEvent(event)
+    if UnregisterInternalEvent then
+        UnregisterInternalEvent(event)
+    else
+        UIParent:UnregisterEvent(event)
+    end
 end
 
 function GW.GetWowheadLinkForLanguage()
