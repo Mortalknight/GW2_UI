@@ -410,7 +410,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
 
         local guildName, guildRankName, _, guildRealm = GetGuildInfo(unit)
         local pvpName, gender = UnitPVPName(unit), UnitSex(unit)
-        local level, realLevel = GW.UnitEffectiveLevel(unit), UnitLevel(unit)
+        local level, realLevel = UnitEffectiveLevel(unit), UnitLevel(unit)
         local relationship = UnitRealmRelationship(unit)
         local isShiftKeyDown = IsShiftKeyDown()
 
@@ -507,7 +507,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
                     diffColor = GetCreatureDifficultyColor(level)
                 end
             else
-                level = GW.UnitEffectiveLevel(unit)
+                level = UnitEffectiveLevel(unit)
                 diffColor = GetCreatureDifficultyColor(level)
             end
 
