@@ -579,7 +579,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
                 local spellData = C_Spell.GetSpellInfo(spellInfo.spellID)
                 local spellBlock = block.delvesFrame.spell[id]
 
-                if spellInfo.spellID == 1270179 then -- Chest icon
+                if spellInfo.spellID == 1307638 then -- Chest icon
                     spellBlock.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/chest.png")
                     GW.RequestNemesisCounterUpdate(spellBlock)
                 else
