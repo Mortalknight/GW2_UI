@@ -68,6 +68,11 @@ function GwAnimatedStatusBarMixin:SetFillAmount(value, forced)
     if totalWidth == 0 then totalWidth = 1 end
     if height == 0 then height = 1 end
 
+    if self.fill_threshold_width ~= totalWidth then
+        self.fill_threshold = nil
+        self.fill_threshold_width = totalWidth
+    end
+
     local barWidth = totalWidth * value
     local stretchMask = self.strechMask or false
     local maskHeightValue = self.customMaskSize or 128

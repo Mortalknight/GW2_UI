@@ -457,8 +457,13 @@ function GwCastingBarMixin:ClearStages()
     self:SetEmpowerStage(nil)
 end
 
+function GwCastingBarMixin:IsFinishAnimating()
+    return self.finishAnimationUntil ~= nil and GetTime() < self.finishAnimationUntil
+end
+
 function GwCastingBarMixin:AddFinishAnimation(isStopped, isChanneling)
-    self.animating = true
+    local flashDuration = isStopped and 0.5 or 0.2
+    self.finishAnimationUntil = GetTime() + flashDuration
     self:SetEmpowerStage(nil)
     self:SetHighlightKind(isStopped and "interrupted" or "cast")
     self.highlight:SetWidth(self:GetWidth())
@@ -472,7 +477,7 @@ function GwCastingBarMixin:AddFinishAnimation(isStopped, isChanneling)
     end
 
     if isChanneling then
-        self.animating = false
+        self.finishAnimationUntil = nil -- no flash for a channel, nothing to wait for
         if self:GetAlpha() > 0 then
             GW.AddToAnimation(self.animationName .. "FadeOut", 1, 0, GetTime(), 0.2, function(p)
                 self:SetAlpha(math.min(1, math.max(0, p)))
@@ -486,10 +491,10 @@ function GwCastingBarMixin:AddFinishAnimation(isStopped, isChanneling)
         self.highlight:Show()
         local color = self.gwHighlightColor
         local hr, hg, hb = color and color.r or 1, color and color.g or 1, color and color.b or 1
-        GW.AddToAnimation(self.animationName .. "Complete", 0, 1, GetTime(), isStopped and 0.5 or 0.2, function(p)
+        GW.AddToAnimation(self.animationName .. "Complete", 0, 1, GetTime(), flashDuration, function(p)
             self.highlight:SetVertexColor(hr, hg, hb, lerp(1, 0.7, p))
         end, nil, function()
-            self.animating = false
+            self.finishAnimationUntil = nil
             if not self.isCasting and not self.isChanneling then
                 if self:GetAlpha() > 0 then
                     GW.AddToAnimation(self.animationName .. "FadeOut", 1, 0, GetTime(), 0.2, function(p)
@@ -509,7 +514,7 @@ end
 -- end without a stop event. Armed on cast start, disarms itself once the bar
 -- reached an end state - it does NOT run permanently
 function GwCastingBarMixin:OnUpdate(elapsed)
-    if self.animating then return end
+    if self:IsFinishAnimating() then return end
 
     if self.isCasting or self.isChanneling then
         if self.isCasting then
@@ -676,7 +681,7 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
     elseif IsIn(event, "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_EMPOWER_STOP") then
         if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or
            ((event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_EMPOWER_STOP") and (self.isChanneling or self.isEmpowered)) then
-            if not self.animating then
+            if not self:IsFinishAnimating() then
                 self:AddFinishAnimation(false, true)
             end
             self:Reset()

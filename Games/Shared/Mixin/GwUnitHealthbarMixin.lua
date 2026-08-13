@@ -3,6 +3,35 @@ local GW = select(2, ...)
 
 GwUnitHealthbarMixin = {}
 
+-- The classic clients resolve unit data asynchronously
+local HEALTH_RETRY_INTERVAL = 0.1
+local HEALTH_RETRY_LIMIT = 10
+
+local function HasNoHealthData(unit, health, healthMax)
+    if not unit or not UnitExists(unit) then return false end
+    if healthMax <= 0 then return true end
+    -- a unit at 0 health is dead; alive and 0 means the value has not arrived yet
+    return health <= 0 and not UnitIsDeadOrGhost(unit)
+end
+
+function GwUnitHealthbarMixin:ScheduleHealthDataRetry(forceUpdate)
+    if self.gwHealthRetryPending then return end
+
+    local retries = (self.gwHealthRetries or 0) + 1
+    if retries > HEALTH_RETRY_LIMIT then return end
+    self.gwHealthRetries = retries
+
+    local unit = self.gwUnit
+    self.gwHealthRetryPending = true
+    C_Timer.After(HEALTH_RETRY_INTERVAL, function()
+        self.gwHealthRetryPending = nil
+        -- the frame may have been pointed at a different unit in the meantime
+        if self.gwUnit == unit and UnitExists(unit) then
+            self:UpdateHealthBar(forceUpdate)
+        end
+    end)
+end
+
 function GwUnitHealthbarMixin:UpdateHealthTextString(health, healthPrecentage)
     local text = ""
     if GW.Retail then
@@ -67,6 +96,13 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
         local unit = self.gwUnit
         local health = UnitHealth(unit)
         local healthMax = UnitHealthMax(unit)
+
+        if HasNoHealthData(unit, health, healthMax) then
+            self:ScheduleHealthDataRetry(forceUpdate)
+        else
+            self.gwHealthRetries = nil
+        end
+
         local absorb = (self.showAbsorbBar and UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(unit)) or 0
         local prediction = UnitGetIncomingHeals(unit) or 0
         local healAbsorb = UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(unit) or 0
