@@ -180,7 +180,7 @@ end
 
 
 local function registerFrame(i, container)
-    local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerAreanaFrameTemp")
+    local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaFrameTemp")
     local unit = "arena" .. i
 
     arenaFrame.gwUnit = unit
