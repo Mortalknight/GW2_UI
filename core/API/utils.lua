@@ -18,7 +18,7 @@ end
 GW.SetDeadIcon = SetDeadIcon
 
 local function SetClassIcon(self, class)
-    if class == nil then
+    if GW.IsSecretValue(class) or class == nil then
         class = 0
     end
     local tex = GW.CLASS_ICONS[class]
@@ -416,6 +416,10 @@ GW.GetDefaultClassColor = GetDefaultClassColor
 
 do
     function GW.GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
+        if GW.IsSecretValue(class) then
+            return C_ClassColor.GetClassColor(class) or RAID_CLASS_COLORS.PRIEST
+        end
+
         local fallbackColor = RAID_CLASS_COLORS.PRIEST
         local useBlizzardClassColor = alwaysUseBlizzardColors or GW.settings.BLIZZARDCLASSCOLOR_ENABLED
         local color = fallbackColor
@@ -1367,9 +1371,12 @@ GW.GetClassIconStringWithStyle = GetClassIconStringWithStyle
 
 local function IsGroupMember(name)
     if name then
-        if UnitInParty(name) then
+        local nameRaid = UnitInRaid(name)
+        local nameParty = UnitInParty(name)
+
+        if GW.NotSecretValue(nameParty) and nameParty then
             return 1
-        elseif UnitInRaid(name) then
+        elseif GW.NotSecretValue(nameRaid) and nameRaid then
             return 2
         elseif name == GW.myname then
             return 3

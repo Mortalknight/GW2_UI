@@ -202,12 +202,9 @@ do
 end
 
 local function CalculateAverageItemLevel(iLevelDB, unit)
-    local spec = GW.Retail and GetInspectSpecialization(unit)
+    local spec = not GW.Classic and GetInspectSpecialization(unit)
+    if GW.IsSecretValue(spec) or (not spec or spec == 0) then return end
     local total = 0
-
-    if GW.Retail and (not spec or spec == 0) then
-		return
-	end
 
     -- Armor
     for _, id in next, ARMOR_SLOTS do

@@ -450,6 +450,9 @@ local function SetUnitText(self, unit, isPlayerUnit)
         if levelLine then
             local diffColor = GetCreatureDifficultyColor(level)
             local race, englishRace = UnitRace(unit)
+            if GW.IsSecretValue(race) or GW.IsSecretValue(englishRace) then
+                race, englishRace = "", ""
+            end
 
             local _, localizedFaction = GW.GetUnitBattlefieldFaction(unit)
             if localizedFaction and (englishRace == "Pandaren" or englishRace == "Dracthyr" or englishRace == "Earthen") then
@@ -508,7 +511,8 @@ local function SetUnitText(self, unit, isPlayerUnit)
                 diffColor = GetCreatureDifficultyColor(level)
             end
 
-            if UnitIsPVP(unit) then
+            local unitPVP = UnitIsPVP(unit)
+            if GW.NotSecretValue(unitPVP) and unitPVP then
                 pvpFlag = format(" (%s)", PVP)
             end
 
@@ -617,10 +621,12 @@ local function AddMountInfo(self, unit)
 end
 
 local function AddRoleInfo(self, unit)
-    if not IsInGroup() or not (UnitInParty(unit) or UnitInRaid(unit)) then return end
+    local unitRaid, unitParty = UnitInRaid(unit), UnitInParty(unit)
+	local unitSecret = GW.IsSecretValue(unitRaid) or GW.IsSecretValue(unitParty)
+	if unitSecret or not (unitRaid or unitParty) then return end
 
     local role = UnitGroupRolesAssigned(unit)
-    if not role or role == "NONE" then return end
+    if GW.IsSecretValue(role) or (not role or role == "NONE") then return end
 
     local r, g, b = 1, 1, 1
     if role == "HEALER" then
@@ -633,18 +639,20 @@ local function AddRoleInfo(self, unit)
     -- if in raid add also the assist function here eg: Role:      [] Tank ([] Maintank)
     local isGroupLeader = UnitIsGroupLeader(unit)
     local isGroupAssist = UnitIsGroupAssistant(unit)
-    local raidId = UnitInRaid(unit)
+    local isSecretLeader = GW.IsSecretValue(isGroupLeader)
+    local isSecretAssist = GW.IsSecretValue(isGroupAssist)
+
     local raidRole = ""
-    if raidId then
-        local raidR = select(10, GetRaidRosterInfo(raidId))
+    if unitRaid then
+        local raidR = select(10, GetRaidRosterInfo(unitRaid))
         if raidR == "MAINTANK" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-maintank.png:0:0:0:-3:64:64:4:60:4:60|t " .. MAINTANK .. ")" end
         if raidR == "MAINASSIST" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist.png:0:0:0:-1:64:64:4:60:4:60|t " .. MAIN_ASSIST .. ")" end
     end
 
     self:AddDoubleLine(format("%s:", ROLE), role .. raidRole, nil, nil, nil, r, g, b)
-    if isGroupLeader or isGroupAssist then
+    if (not isSecretLeader and isGroupLeader) or (not isSecretAssist and isGroupAssist) then
         local roleString
-        if isGroupLeader then
+        if not isSecretLeader and isGroupLeader then
             roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:0:0:0:-2:64:64:4:60:4:60|t " .. (IsInRaid() and RAID_LEADER or PARTY_LEADER)
         else
             roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:0:0:0:-2:64:64:4:60:4:60|t " .. RAID_ASSISTANT

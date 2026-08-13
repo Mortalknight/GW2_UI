@@ -42,8 +42,8 @@ GW.GetVersionString = GetVersionString
 
 -- init: store API, to reduce the API usage
 local function GetPlayerRole()
-    local assignedRole = GW.allowRoles and UnitGroupRolesAssigned("player") or "NONE"
-    return (assignedRole ~= "NONE" and assignedRole) or GW.myspecRole or "NONE"
+    local role = GW.allowRoles and UnitGroupRolesAssigned("player") or "NONE"
+    return GW.NotSecretValue(role) and (role ~= "NONE" and role) or GW.myspecRole or "NONE"
 end
 GW.GetPlayerRole = GetPlayerRole
 

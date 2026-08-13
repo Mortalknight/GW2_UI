@@ -64,7 +64,7 @@ local function Create_Raid_Counter()
         for i = 1, GetNumGroupMembers() do
             local role = UnitGroupRolesAssigned(unit .. i)
 
-            if role then
+            if GW.NotSecretValue(role) and role then
                 if role == "TANK" then
                     tank = tank + 1
                 elseif role == "HEALER" then

@@ -65,7 +65,13 @@ local function SortGuildTable(shift)
 end
 
 local function inGroup(name)
-    return (UnitInParty(name) or UnitInRaid(name)) and "|cffaaaaaa*|r" or ""
+    local nameRaid = UnitInRaid(name)
+    local nameParty = UnitInParty(name)
+    if GW.IsSecretValue(nameRaid) or GW.IsSecretValue(nameParty) then
+        return ""
+    end
+
+    return (nameParty or nameRaid) and "|cffaaaaaa*|r" or ""
 end
 
 local function FetchGuildMembers_Internal()

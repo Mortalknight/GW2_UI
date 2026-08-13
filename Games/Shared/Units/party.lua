@@ -384,7 +384,7 @@ function GwPartyFrameMixin:UpdateAwayData()
         portraitIndex = 2
     end
 
-    if phaseReason then
+    if GW.NotSecretValue(phaseReason) and phaseReason then
         portraitIndex = 4
     end
 
@@ -432,34 +432,33 @@ function GwPartyFrameMixin:UpdateAwayData()
 end
 
 function GwPartyFrameMixin:UpdatePortrait()
-    if self.portrait then
-        local playerInstanceId = select(4, UnitPosition("player"))
-        local instanceId = select(4, UnitPosition(self.unit))
-        local phaseReason
+    if not self.portrait then return end
 
-        if GW.Retail then
-            phaseReason = UnitPhaseReason(self.unit)
-        else
-            phaseReason = not UnitInPhase(self.unit)
-        end
+    local playerInstanceId = select(4, UnitPosition("player"))
+    local instanceId = select(4, UnitPosition(self.unit))
 
-        if playerInstanceId == instanceId and not phaseReason then
-            SetPortraitTexture(self.portrait, self.unit)
-        else
-            self.portrait:SetTexture(nil)
-        end
+    if playerInstanceId ~= instanceId then
+        self.portrait:SetTexture(nil)
+        return
     end
+
+    SetPortraitTexture(self.portrait, self.unit)
+
+    local phaseReason = GW.Retail and UnitPhaseReason(self.unit) or not UnitInPhase(self.unit)
+    self.portrait:SetDesaturated(phaseReason)
 end
 
 function GwPartyFrameMixin:SetUnitName()
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit) or UNKNOWNOBJECT
+    local isLeader = UnitIsGroupLeader(self.unit)
+    local isSecret = GW.IsSecretValue(isLeader)
 
-    if nameRoleIcon[role] then
+    if GW.NotSecretValue(role) and nameRoleIcon[role] then
         nameString = nameRoleIcon[role] .. nameString
     end
 
-    if UnitIsGroupLeader(self.unit) then
+    if not isSecret and isLeader then
         nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:18:18:0:-3|t" .. nameString
     end
 

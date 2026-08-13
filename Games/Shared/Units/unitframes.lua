@@ -476,8 +476,10 @@ end
 function GwUnitFrameMixin:UnitFrameData(lvl)
     local level = lvl or UnitLevel(self.unit)
     local name = UnitName(self.unit)
+    local isLeader = UnitIsGroupLeader(self.unit)
+    local isSecret = GW.IsSecretValue(isLeader)
 
-    if UnitIsGroupLeader(self.unit) then
+    if not isSecret and isLeader then
         name = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:18:18|t" .. name
     end
 

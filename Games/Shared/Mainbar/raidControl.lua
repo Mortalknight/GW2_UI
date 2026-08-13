@@ -34,7 +34,7 @@ local function fnGMIG_OnEvent(self)
     for i = 1, GetNumGroupMembers() do
         local role = UnitGroupRolesAssigned(unit .. i)
 
-        if role then
+        if GW.NotSecretValue(role) and role then
             if role == "TANK" then
                 numTank = numTank + 1
             elseif role == "HEALER" then

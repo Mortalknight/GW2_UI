@@ -98,7 +98,12 @@ end
 function GwHealthglobeMixin:OnEnter()
     local warmode = GW.Retail and C_PvP.IsWarModeDesired()
     local pvpdesired = GetPVPDesired()
-    local pvpactive = UnitIsPVP(self.unit) or UnitIsPVPFreeForAll(self.unit)
+    local freePVP = UnitIsPVPFreeForAll(self.unit)
+    local unitPVP = UnitIsPVP(self.unit)
+    local pvpactive = false
+    if freePVP or (GW.NotSecretValue(unitPVP) and unitPVP) then
+        pvpactive = true
+    end
 
     GameTooltip_SetDefaultAnchor(GameTooltip, self)
     GameTooltip:SetUnit(self.unit)

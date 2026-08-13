@@ -133,7 +133,7 @@ local function updateArena_Name(self)
     elseif inBG ~= nil then
         local role = UnitGroupRolesAssigned(self.unit)
         local englishFaction = UnitFactionGroup(self.unit)
-        if role and nameRoleIcon[role] and englishFaction and FractionIcon[englishFaction] and name then
+        if GW.NotSecretValue(role) and role and nameRoleIcon[role] and englishFaction and FractionIcon[englishFaction] and name then
             nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. name
         else
             return

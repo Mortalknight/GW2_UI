@@ -109,7 +109,10 @@ type and zero for the minimum value.
 --]]
 local function GetDisplayPower(element, unit)
 	local barInfo = GetUnitPowerBarInfo(unit)
-	if(barInfo and barInfo.showOnRaid and (UnitInParty(unit) or UnitInRaid(unit))) then
+	local unitRaid, unitParty = UnitInRaid(unit), UnitInParty(unit)
+	local unitSecret = ns.IsSecretValue(unitRaid) or ns.IsSecretValue(unitParty) -- what do i do here?
+	local showOnRaid = barInfo and barInfo.showOnRaid and not unitSecret and (unitRaid or unitParty)
+	if showOnRaid then
 		return ALTERNATE_POWER_INDEX, barInfo.minPower
 	end
 end
@@ -158,7 +161,7 @@ local function UpdateColor(self, event, unit)
 		or (element.colorClassNPC and not isPlayer)
 		or (element.colorClassPet and UnitPlayerControlled(unit) and not isPlayer) then
 		local _, class = UnitClass(unit)
-		color = self.colors.class[class]
+		color = ns.NotSecretValue(class) and self.colors.class[class] or nil
 	elseif(element.colorSelection and unitSelectionType(unit, element.considerSelectionInCombatHostile)) then
 		color = self.colors.selection[unitSelectionType(unit, element.considerSelectionInCombatHostile)]
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then

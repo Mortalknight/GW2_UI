@@ -18,7 +18,8 @@ local function Create_Tags()
     AddTag("GW2_Grid:leaderIcon", "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
-        if( UnitIsGroupLeader(unit)) then
+        local isLeader = UnitIsGroupLeader(unit)
+        if( GW.NotSecretValue(isLeader) and isLeader) then
             return "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:0:0:0:-2:64:64:4:60:4:60|t "
         end
     end)
@@ -26,7 +27,8 @@ local function Create_Tags()
     AddTag("GW2_Grid:assistIcon", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
-        if( UnitIsGroupAssistant(unit)) then
+        local isAssistant = UnitIsGroupAssistant(unit)
+        if( GW.NotSecretValue(isAssistant) and isAssistant) then
             return"|TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:0:0:0:-2:64:64:4:60:4:60|t "
         end
     end)
@@ -34,9 +36,9 @@ local function Create_Tags()
     AddTag("GW2_Grid:roleIcon", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE PLAYER_ROLES_ASSIGNED GROUP_ROSTER_UPDATE" ,function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
-
         local role = UnitGroupRolesAssigned(unit)
-        if GW.nameRoleIcon[role] then
+
+        if GW.NotSecretValue(role) and GW.nameRoleIcon[role] then
             return GW.nameRoleIcon[role]
         end
     end)

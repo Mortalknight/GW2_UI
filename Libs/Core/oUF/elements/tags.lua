@@ -319,7 +319,7 @@ local tagStrings = {
 
 	['raidcolor'] = [[function(u)
 		local _, class = UnitClass(u)
-		if(class) then
+		if ns.NotSecretValue(class) and class then
 			return _COLORS.class[class]:GenerateHexColorMarkup()
 		else
 			local id = u:match('arena(%d)$')
