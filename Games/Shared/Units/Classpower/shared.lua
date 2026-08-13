@@ -214,7 +214,7 @@ local function SetClassPowerCustomResourceBarAnchor(bar, mover, ownerFrame, yOfs
 
     local side = CP.GetCustomResourceBarSide()
     local anchorMode = CP.GetAnchorMode()
-    local configuredWidth = bar:GetWidth()
+    local configuredWidth = bar.gwConfiguredWidth or bar:GetWidth()
     bar:ClearAllPoints()
 
     -- In CENTER mode keep the bar inside mover bounds and shrink it to available side space.
@@ -422,6 +422,7 @@ local function EnableAuraTracker(f, key, config)
         -- entries like Last Stand with Bolster) may have changed since creation
         tracker:SetAuraGroupCandidateFilters("tracker", { includeSpellIDs = config.spellIDs })
     end
+    tracker.gwConfiguredWidth = config.width or 1
     tracker:Show()
     tracker:SetEnabled(true)
     tracker:UpdateAllAuras()

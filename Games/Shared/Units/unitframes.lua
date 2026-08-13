@@ -312,7 +312,7 @@ function GwUnitFrameMixin:UpdateHealthbarColor()
         local _, englishClass = UnitClass(unit)
         local color = GWGetClassColor(englishClass, true)
         healthBar:SetStatusBarColor(color:GetRGB())
-        nameString:SetTextColor(color.forNameString:GetRGB())
+        nameString:SetTextColor(color:GetRGB())
     else
         local unitReaction = UnitReaction(unit, "player")
         local nameColor = unitReaction and GW.Colors.FactionBarColors[unitReaction] or RAID_CLASS_COLORS.PRIEST
@@ -491,7 +491,7 @@ function GwUnitFrameMixin:UnitFrameData(lvl)
         local color = GW.GWGetClassColor(englishClass, true)
 
         self.health:SetStatusBarColor(color:GetRGB())
-        self.nameString:SetTextColor(color.forNameString:GetRGB())
+        self.nameString:SetTextColor(color:GetRGB())
     else
         self:UpdateHealthbarColor()
     end
@@ -747,7 +747,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             local guid = UnitGUID(self.unit)
             if GW.NotSecretValue(guid) and guid and (not GW.unitIlvlsCache[guid] or (GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel == nil)) then
                 local _, englishClass = UnitClass(self.unit)
-                local color = GWGetClassColor(englishClass, true, true)
+                local color = GWGetClassColor(englishClass, true)
                 GW.unitIlvlsCache[guid] = {unitColor = {color.r, color.g, color.b}}
                 self:RegisterEvent("INSPECT_READY")
                 NotifyInspect(self.unit)

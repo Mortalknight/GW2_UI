@@ -17,6 +17,26 @@ local function SetDeadIcon(self)
 end
 GW.SetDeadIcon = SetDeadIcon
 
+-- Scales a buttons hotkey text down when it would render wider than the button —
+-- the auto-sized hotkey strings would otherwise overlap the neighboring buttons,
+-- the anchored ones (main bar) would ellipsize. The scale is clamped so extreme
+-- bindings shrink to readable instead of to pixel mush
+local function FitHotKeyText(button)
+    local hotkey = button.HotKey
+    hotkey:SetTextScale(1)
+
+    local maxWidth = button:GetWidth() - 2
+    if maxWidth <= 0 then
+        return
+    end
+
+    local textWidth = hotkey:GetUnboundedStringWidth()
+    if textWidth and textWidth > maxWidth then
+        hotkey:SetTextScale(math.max(0.6, maxWidth / textWidth))
+    end
+end
+GW.FitHotKeyText = FitHotKeyText
+
 local function SetClassIcon(self, class)
     if GW.IsSecretValue(class) or class == nil then
         class = 0
@@ -404,53 +424,31 @@ local function GetDefaultClassColor(class)
         color = GW.privateDefaults.profile.Gw2ClassColor[class]
     end
     if type(color) ~= "table" then return end
-    if not color.colorStr then
-        color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
-    elseif strlen(color.colorStr) == 6 then
-        color.colorStr = "ff" .. color.colorStr
-    end
 
     return color
 end
 GW.GetDefaultClassColor = GetDefaultClassColor
 
-do
-    function GW.GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
-        if GW.IsSecretValue(class) then
-            return C_ClassColor.GetClassColor(class) or RAID_CLASS_COLORS.PRIEST
-        end
+-- Returns a ColorMixin, never a color string: both sources hold mixins, so callers use
+-- :GetRGB() for widgets and :WrapTextInColorCode() for text. Nothing is written back into the
+-- color tables, which is why the class color settings no longer have to invalidate cached fields
+function GW.GWGetClassColor(class, useClassColor, alwaysUseBlizzardColors)
+    if GW.IsSecretValue(class) then
+        -- a secret class cannot be used as a table key, so the engine has to resolve the color
+        local ok, secretColor = pcall(C_ClassColor.GetClassColor, class)
+        return (ok and secretColor) or RAID_CLASS_COLORS.PRIEST
+    end
 
-        local fallbackColor = RAID_CLASS_COLORS.PRIEST
-        local useBlizzardClassColor = alwaysUseBlizzardColors or GW.settings.BLIZZARDCLASSCOLOR_ENABLED
-        local color = fallbackColor
-
-        if class and useClassColor then
-            color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW.Colors.ClassColors[class]
-        end
-
-        if type(color) ~= "table" or not color.r or not color.g or not color.b then
-            color = fallbackColor
-        end
-
-        if not color.colorStr then
-            color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
-        elseif strlen(color.colorStr) == 6 then
-            color.colorStr = "ff" .. color.colorStr
-        end
-
-        if not color.forNameString then
-            color.forNameString = CreateColor(
-                    min(1, color.r + 0.3),
-                    min(1, color.g + 0.3),
-                    min(1, color.b + 0.3)
-                )
-        end
-        if forNameString and not useBlizzardClassColor then
-            return color.forNameString
+    local color
+    if class and useClassColor then
+        if alwaysUseBlizzardColors or GW.settings.BLIZZARDCLASSCOLOR_ENABLED then
+            color = RAID_CLASS_COLORS[class]
         else
-            return color
+            color = GW.Colors.ClassColors[class]
         end
     end
+
+    return color or RAID_CLASS_COLORS.PRIEST
 end
 
 

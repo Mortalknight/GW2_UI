@@ -67,6 +67,13 @@ local DIRECTION_TO_DEBUFF_ANCHOR = {
 --  Seperate  1: own before others |  -1: others before own |  0: own disabled (maxFrameCount 0), others shows everything
 local GROUP_OWN = "GwAurasOwn"
 local GROUP_OTHERS = "GwAurasOthers"
+-- The debuff bar splits each of the two groups along the RAID_PLAYER_DISPELLABLE token
+-- ("the player can dispel this" — plain DISPELLABLE only means "has a dispel type"):
+-- the corner dispel icon must only appear on auras the player can dispel, and with
+-- static button regions that boundary has to be a group boundary. The buff bar keeps
+-- the plain pair
+local GROUP_OWN_DISPELLABLE = "GwAurasOwnDispellable"
+local GROUP_OTHERS_DISPELLABLE = "GwAurasOthersDispellable"
 
 local function GetButtonMainAxisSize(db)
     local width = db.IconSize
@@ -105,7 +112,7 @@ end
 -- Called once per frame by the container (created in batches, access in combat
 -- can be restricted by secret values — therefore ONLY build regions here and
 -- hand them to the mixin setters, never read aura data yourself!)
-local function InitializeAuraButton(button, header, isDebuff, isEnchant)
+local function InitializeAuraButton(button, header, isDebuff, isEnchant, withDispelIcon)
     -- The button itself is forbidden (HookScript/animations on it are blocked
     -- by secret aspects) — therefore the entire GW look is attached to a
     -- separate wrapper frame. It is anchored by CENTER and explicitly sized:
@@ -218,7 +225,11 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant)
         GW.AddPandemicHighlight(button, visual, function() return GW.settings.PLAYER_PANDEMIC_HIGHLIGHT end)
     end
     if isDebuff then
-        GW.AddDispelTypeIcon(button, visual, { isDebuff = true }, function() return GW.settings.PLAYER_DISPEL_ICON end)
+        GW.AddDispelTypeIcon(button, visual, { isDebuff = true }, function()
+            local mode = GW.settings.PLAYER_DISPEL_ICON
+            if mode == "ALL" then return true end
+            return mode == "DISPELLABLE" and withDispelIcon or false
+        end)
     end
 
     button.header = header
@@ -276,32 +287,35 @@ local function UpdateAuraHeader(header)
     if GW.settings.PLAYER_IGNORED_AURAS and next(GW.settings.PLAYER_IGNORED_AURAS) then
         candidateFilters.excludeSpellIDs = GW.settings.PLAYER_IGNORED_AURAS
     end
-    header:SetAuraGroupCandidateFilters(GROUP_OWN, candidateFilters)
-    header:SetAuraGroupCandidateFilters(GROUP_OTHERS, candidateFilters)
 
     -- own/others split via the PLAYER filter token (cast by the player/their pet) —
-    -- the isFromPlayerOrPlayerPet aura data field is unreliable for this
-    if separate == 0 then
-        -- no separation: "others" shows everything, "own" is muted
-        header:SetAuraGroupFilterString(GROUP_OTHERS, header.filter)
-        header:SetAuraGroupMaxFrameCount(GROUP_OWN, 0)
-        header:SetAuraGroupMaxFrameCount(GROUP_OTHERS, maxFrames)
-    else
-        header:SetAuraGroupFilterString(GROUP_OWN, header.filter .. "|PLAYER")
-        header:SetAuraGroupFilterString(GROUP_OTHERS, header.filter .. "|!PLAYER")
-        header:SetAuraGroupMaxFrameCount(GROUP_OWN, maxFrames)
-        header:SetAuraGroupMaxFrameCount(GROUP_OTHERS, maxFrames)
+    -- the isFromPlayerOrPlayerPet aura data field is unreliable for this. The debuff
+    -- bar splits each side once more along DISPELLABLE (see gwGroupInfo); within a
+    -- side the dispellable group renders first (RAID_PLAYER_DISPELLABLE boundary)
+    local baseIndexOwn = separate == -1 and 2 or 1
+    local baseIndexOthers = separate == -1 and 1 or 2
+    for _, info in ipairs(header.gwGroupInfo) do
+        header:SetAuraGroupCandidateFilters(info.key, candidateFilters)
+        header:SetAuraGroupSortMethod(info.key, sortMethod, sortDirection)
+
+        local filter = header.filter
+        local muted = false
+        if separate == 0 then
+            -- no separation: "others" shows everything, "own" is muted
+            muted = info.own
+        else
+            filter = filter .. (info.own and "|PLAYER" or "|!PLAYER")
+        end
+        if info.dispel ~= nil then
+            filter = filter .. (info.dispel and "|RAID_PLAYER_DISPELLABLE" or "|!RAID_PLAYER_DISPELLABLE")
+        end
+        header:SetAuraGroupFilterString(info.key, filter)
+        header:SetAuraGroupMaxFrameCount(info.key, muted and 0 or maxFrames)
+
+        local layout = CopyTable(groupLayout)
+        layout.layoutIndex = (info.own and baseIndexOwn or baseIndexOthers) + (info.dispel == false and 0.5 or 0)
+        header:SetAuraGroupLayout(info.key, layout)
     end
-
-    local ownLayout = CopyTable(groupLayout)
-    local othersLayout = CopyTable(groupLayout)
-    ownLayout.layoutIndex = separate == -1 and 2 or 1
-    othersLayout.layoutIndex = separate == -1 and 1 or 2
-
-    header:SetAuraGroupSortMethod(GROUP_OWN, sortMethod, sortDirection)
-    header:SetAuraGroupSortMethod(GROUP_OTHERS, sortMethod, sortDirection)
-    header:SetAuraGroupLayout(GROUP_OWN, ownLayout)
-    header:SetAuraGroupLayout(GROUP_OTHERS, othersLayout)
 
     -- Update size + icon crop on all engine owned buttons. Enchant frames live
     -- outside the aura groups and stay cached: their enumeration
@@ -349,19 +363,35 @@ local function newContainer(filter)
     local h = CreateFrame("AuraContainer", name, UIParent, "CustomAuraContainerTemplate")
     h:SetClampedToScreen(true)
     h.gwIsAuraContainer = true
-    h.gwGroupKeys = { GROUP_OWN, GROUP_OTHERS }
+    -- dispel = nil marks a group without the dispellable split (the buff bar pair)
+    if isDebuff then
+        h.gwGroupInfo = {
+            { key = GROUP_OWN_DISPELLABLE, own = true, dispel = true },
+            { key = GROUP_OWN, own = true, dispel = false },
+            { key = GROUP_OTHERS_DISPELLABLE, own = false, dispel = true },
+            { key = GROUP_OTHERS, own = false, dispel = false },
+        }
+    else
+        h.gwGroupInfo = {
+            { key = GROUP_OWN, own = true },
+            { key = GROUP_OTHERS, own = false },
+        }
+    end
+    h.gwGroupKeys = {}
+    for _, info in ipairs(h.gwGroupInfo) do
+        tinsert(h.gwGroupKeys, info.key)
+    end
     h.gwEnchantButtons = {}
     h.filter = filter
     h.setting = filter == "HELPFUL" and "PlayerBuffs" or "PlayerDebuffs"
     h.name = name
 
     -- fixed groups (see comment above) — options are set in UpdateAuraHeader
-    h:AddAuraGroup(GROUP_OWN, filter, {
-        initializeFrame = function(button) InitializeAuraButton(button, h, isDebuff, false) end,
-    })
-    h:AddAuraGroup(GROUP_OTHERS, filter, {
-        initializeFrame = function(button) InitializeAuraButton(button, h, isDebuff, false) end,
-    })
+    for _, info in ipairs(h.gwGroupInfo) do
+        h:AddAuraGroup(info.key, filter, {
+            initializeFrame = function(button) InitializeAuraButton(button, h, isDebuff, false, info.dispel) end,
+        })
+    end
 
     if filter == "HELPFUL" then
         -- weapon enchants (replaces includeWeapons + GetWeaponEnchantInfo polling)

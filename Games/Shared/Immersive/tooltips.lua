@@ -90,7 +90,7 @@ local function ShowAuraInfo(self, auraData)
 
         if auraData.sourceUnit and GW.NotSecretValue(auraData.sourceUnit) then
             local _, class = UnitClass(auraData.sourceUnit)
-            local color = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+            local color = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR)
             self:AddDoubleLine(format(IDLine, ID, auraData.spellId), color:WrapTextInColorCode(UnitName(auraData.sourceUnit) or UNKNOWN))
         else
             self:AddLine(format(IDLine, ID, auraData.spellId))
@@ -414,7 +414,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local relationship = UnitRealmRelationship(unit)
         local isShiftKeyDown = IsShiftKeyDown()
 
-        local nameColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+        local nameColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR)
 
         if GW.settings.ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES and pvpName and pvpName ~= "" then
             name = pvpName
@@ -548,7 +548,7 @@ local function AddTargetInfo(self, unit)
             targetColor = C_ClassColor.GetClassColor(class) or RAID_CLASS_COLORS.PRIEST
         elseif UnitIsPlayer(unitTarget) and (not GW.Retail or not UnitHasVehicleUI(unitTarget)) then
             local _, class = UnitClass(unitTarget)
-            targetColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+            targetColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR)
         else
             targetColor = GW.Colors.FactionBarColors[UnitReaction(unitTarget, "player")]
         end
@@ -572,7 +572,7 @@ local function AddTargetInfo(self, unit)
             if GW.IsSecretUnit(groupUnit) then
                 classColor = C_ClassColor.GetClassColor(class) or RAID_CLASS_COLORS.PRIEST
             else
-                classColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+                classColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR)
             end
 
             local unitName = UnitName(groupUnit) or UNKNOWN

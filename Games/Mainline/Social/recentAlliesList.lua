@@ -25,7 +25,7 @@ local function UpdateRecentAllyCardContent(card)
     card.PresenceHolder.PresenceIcon:SetTexCoord(0, 1, 0, 1)
 
     local classInfo = characterData.classID and C_CreatureInfo.GetClassInfo(characterData.classID)
-    local classColor = isOnline and classInfo and GW.GWGetClassColor(classInfo.classFile, true, true, true) or DARKGRAY_COLOR
+    local classColor = isOnline and classInfo and GW.GWGetClassColor(classInfo.classFile, true, true) or DARKGRAY_COLOR
 
     if characterData.name and characterData.name ~= "" then
         card.Name:SetText(GW.StringWithRGB(characterData.name, classColor))

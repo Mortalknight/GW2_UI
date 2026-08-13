@@ -74,8 +74,8 @@ local function ReskinRecentAllyButton(button)
         local classFile = characterData and characterData.classID and select(2, GetClassInfo(characterData.classID))
         local nameString
         if stateData.isOnline and characterData.name then
-            local classcolor = GW.GWGetClassColor(classFile, true, true, true)
-            nameString = WrapTextInColorCode(characterData.name, classcolor.colorStr)
+            local classcolor = GW.GWGetClassColor(classFile, true, true)
+            nameString = classcolor:WrapTextInColorCode(characterData.name)
         else
             nameString = format("|cff%s%s|r", "979fad", characterData.name)
         end

@@ -354,7 +354,7 @@ local function Friends_OnEnter(self)
             if info.online then
                 zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
                 if zoneText and (zoneText == info.zone) then zonec = activezone else zonec = inactivezone end
-                classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
+                classc, levelc = GW.GWGetClassColor(info.class, true), GetQuestDifficultyColor(info.level)
                 if not classc then classc = levelc end
 
                 TooltipAddXLine(true, CHARACTER_FRIEND, format(levelNameClassString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, info.name, inGroup(info.name), info.status), info.zone, classc.r, classc.g, classc.b, zonec.r, zonec.g, zonec.b)
@@ -379,7 +379,7 @@ local function Friends_OnEnter(self)
                     local clientInfo = clientList[client]
                     local header = format("%s (%s)", BATTLENET_OPTIONS_LABEL, info.classicText or (clientInfo and clientInfo.tag) or client)
                     if info.client and info.client == BNET_CLIENT_WOW then
-                        classc = GW.GWGetClassColor(info.className, true, true)
+                        classc = GW.GWGetClassColor(info.className, true)
                         if info.level and info.level ~= "" then
                             levelc = GetQuestDifficultyColor(info.level)
                         else
@@ -460,7 +460,7 @@ local function Friends_OnClick(self, button)
 
             for _, info in ipairs(friendTable) do
                 if info.online then
-                    local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
+                    local classc, levelc = GW.GWGetClassColor(info.class, true), GetQuestDifficultyColor(info.level)
                     if not classc then classc = levelc end
 
                     local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name)
@@ -495,7 +495,7 @@ local function Friends_OnClick(self, button)
                     end
 
                     if (info.client and info.client == BNET_CLIENT_WOW) and inGroup(info.characterName, info.realmName) == "" then
-                        local classc, levelc = GW.GWGetClassColor(info.className, true, true), GetQuestDifficultyColor(info.level)
+                        local classc, levelc = GW.GWGetClassColor(info.className, true), GetQuestDifficultyColor(info.level)
                         if not classc then classc = levelc end
 
                         if info.wowProjectID == WOW_PROJECT_ID then

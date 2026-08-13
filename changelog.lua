@@ -12,6 +12,10 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+addChange("11.1.0", {
+    {GW.Enum.ChangelogType.feature, [=[Dispel type icon (Retail): debuffs show their dispel type (magic, curse, poison, disease) as a small corner icon on the player, target, focus, pet, party and raid frames. The per-frame "Show Dispel Type Icon" setting is a three state choice now - off, on every debuff with a dispel type, or (the default) only on debuffs your group can actually dispel, matching Blizzards own dispel indicator behavior. Dispellable debuffs render before the rest of a frames debuffs for that]=]},
+    {GW.Enum.ChangelogType.bug, [=[Secret more secrets]=]},
+})
 
 addChange("11.0.0", {
     {GW.Enum.ChangelogType.change, [=[Patch 12.1 (Retail): full compatibility update - all removed APIs replaced, the Social/Friends frame skin was rebuilt for Blizzards new SocialUI, and the "Advanced Tooltip ID Modifier" setting works again on the new secure auras]=]},
@@ -19,7 +23,6 @@ addChange("11.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Auras: new "Ignored Auras" setting - hide an aura by its spell id, with icon, name and tooltip per entry. Available for target, focus, pet and party frames on all game versions, for the player bars on Retail and per grid type on the raid grids (it replaces the old global name based text field there, custom entries have to be re-added once)]=]},
     {GW.Enum.ChangelogType.feature, [=[Auras: new "Aura Sorting" setting - default, remaining time or name, each ascending or descending. For the player bars on all game versions (old sort settings are migrated) and for target, focus and pet on Retail]=]},
     {GW.Enum.ChangelogType.feature, [=[Pandemic highlight (Retail): your own auras glow while they are inside their pandemic window (the last 30% of the duration, where refreshing adds the remaining time on top) - on the player, target, focus, pet, party and raid frames including the aura indicators. Can be turned off per frame ("Pandemic Highlight")]=]},
-    {GW.Enum.ChangelogType.feature, [=[Dispel type icon (Retail): debuffs show their dispel type (magic, curse, poison, disease) as a small corner icon on the player, target, focus, pet, party and raid frames - on the grids only for debuffs YOU can dispel. Can be turned off per frame ("Show Dispel Type Icon")]=]},
     {GW.Enum.ChangelogType.feature, [=[Auras (Retail): the "Important" filter is back in the advanced buff/debuff filters (raid grids, target, focus, pet); the grid debuff filters default to important plus dispellable debuffs. Stealable buffs on target and focus get their highlight border back]=]},
     {GW.Enum.ChangelogType.feature, [=[Raid grids (all game versions): the aura indicator dropdowns accept any spell now - pick "Custom Spell ID..." and enter the id manually; custom spells use a neutral white indicator color]=]},
     {GW.Enum.ChangelogType.bug, [=[Dungeon & Raid Debuffs (Retail): the list, its scale and the grid emphasis work again on the party frames and the raid grids (was disabled since 12.0)]=]},

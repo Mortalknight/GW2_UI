@@ -308,12 +308,12 @@ end
 GW.ToggelAfkMode = ToggelAfkMode
 
 local function UpdateClasscolor()
-    local classColor = GWGetClassColor(GW.myclass, true, true)
+    local classColor = GWGetClassColor(GW.myclass, true)
     AFKMode.bottom.name:SetTextColor(classColor.r, classColor.g, classColor.b)
 end
 
 local function LoadAFKAnimation()
-    local classColor = GWGetClassColor(GW.myclass, true, true)
+    local classColor = GWGetClassColor(GW.myclass, true)
     local playerName = GW.myname
 
     local BackdropFrame = {

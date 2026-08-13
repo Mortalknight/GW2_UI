@@ -126,7 +126,7 @@ local function Money_OnEnter(self)
     -- list all players from the realm
     GameTooltip:AddLine(CHARACTER .. ":")
     for _, g in pairs(chars) do
-        local color = GW.GWGetClassColor(g.class, true, true)
+        local color = GW.GWGetClassColor(g.class, true)
         local icon = g.faction == "Alliance" and ALLIANCE_ICON or g.faction == "Horde" and HORDE_ICON or NEUTRAL_ICON
         local label = format("%s%s", icon, g.name)
         if g.name == GW.myname then

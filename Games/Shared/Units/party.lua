@@ -79,22 +79,24 @@ local function UpdatePartyAuraContainer(frame)
     local onlyDispellable = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS
     local showImportant = GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF
 
+    -- The debuff display splits along the RAID_PLAYER_DISPELLABLE token into disjoint
+    -- group pairs (filters are static, see the group configs): the corner dispel icon
+    -- only lives on the dispellable groups, and "only dispellable" simply mutes the
+    -- rest group. The important pair fills in what the regular groups do not show
     for _, group in next, cfg.groups do
         group.size = size
         if group.key == "buffs" then
             group.maxFrameCount = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
-        elseif group.key == "debuffs" then
+        elseif group.key == "debuffsDispellable" then
             group.maxFrameCount = showDebuffs and 40 or 0
-            -- "only dispellable" is exactly the RAID_PLAYER_DISPELLABLE filter token
-            group.filter = onlyDispellable and "HARMFUL|RAID_PLAYER_DISPELLABLE" or "HARMFUL"
+        elseif group.key == "debuffs" then
+            group.maxFrameCount = (showDebuffs and not onlyDispellable) and 40 or 0
+        elseif group.key == "importantDebuffsDispellable" then
+            -- with the regular debuffs visible their dispellable group already shows these
+            group.maxFrameCount = (showImportant and not showDebuffs) and 40 or 0
+            group.size = GW.RoundInt(size * (GW.settings.RAIDDEBUFFS_Scale or 1))
         elseif group.key == "importantDebuffs" then
-            -- GW.ImportantRaidDebuff via includeSpellIDs (set at creation); only adds
-            -- debuffs the regular debuff group does not already show — with all debuffs
-            -- visible the group stays off, with "only dispellable" it fills in the
-            -- non-dispellable important ones (disjoint via "!" negation)
-            local active = showImportant and (not showDebuffs or onlyDispellable)
-            group.maxFrameCount = active and 40 or 0
-            group.filter = (showDebuffs and onlyDispellable) and "HARMFUL|!RAID_PLAYER_DISPELLABLE" or "HARMFUL"
+            group.maxFrameCount = (showImportant and (not showDebuffs or onlyDispellable)) and 40 or 0
             group.size = GW.RoundInt(size * (GW.settings.RAIDDEBUFFS_Scale or 1))
         end
     end
@@ -443,8 +445,13 @@ function GwPartyFrameMixin:UpdatePortrait()
     end
 
     SetPortraitTexture(self.portrait, self.unit)
+    local phaseReason
+    if GW.Retail then
+        phaseReason = UnitPhaseReason(self.unit)
+    else
+        phaseReason = not UnitInPhase(self.unit)
+    end
 
-    local phaseReason = GW.Retail and UnitPhaseReason(self.unit) or not UnitInPhase(self.unit)
     self.portrait:SetDesaturated(phaseReason)
 end
 
@@ -862,8 +869,13 @@ local function CreatePartyFrame(i, isPlayer)
             onSettingsRefresh = function() UpdatePartyAuraContainer(petFrame) end,
             groups = {
                 { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 32, hideDuration = true, showPandemic = true },
-                { key = "debuffs", filter = "HARMFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-                { key = "importantDebuffs", filter = "HARMFUL", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                -- static disjoint pairs along RAID_PLAYER_DISPELLABLE, the corner dispel
+                -- icon only sits on auras the player can dispel (visibility is driven per
+                -- pair via maxFrameCount in UpdatePartyAuraContainer)
+                { key = "debuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true },
+                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true },
             },
         })
     else
@@ -930,8 +942,13 @@ local function CreatePartyFrame(i, isPlayer)
             onSettingsRefresh = function() UpdatePartyAuraContainer(frame) end,
             groups = {
                 { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 32, hideDuration = true, showPandemic = true },
-                { key = "debuffs", filter = "HARMFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-                { key = "importantDebuffs", filter = "HARMFUL", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                -- static disjoint pairs along RAID_PLAYER_DISPELLABLE, the corner dispel
+                -- icon only sits on auras the player can dispel (visibility is driven per
+                -- pair via maxFrameCount in UpdatePartyAuraContainer)
+                { key = "debuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 40, isDebuff = true, hideDuration = true },
+                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
             },
         })
     else

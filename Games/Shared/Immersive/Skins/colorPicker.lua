@@ -215,7 +215,7 @@ function GW.SkinAndEnhanceColorPicker()
     classButton:SetSize(80, 22)
     classButton:SetPoint("TOPRIGHT", ColorPickerFrame, "TOPRIGHT", 0, 0)
     classButton:SetScript("OnClick", function()
-        local color = GW.GWGetClassColor(GW.myclass, true, true)
+        local color = GW.GWGetClassColor(GW.myclass, true)
         ColorPickerFrame:SetColorRGB(color.r, color.g, color.b)
         ColorSwatch:SetColorTexture(color.r, color.g, color.b)
         if ColorPickerFrame.hasOpacity then

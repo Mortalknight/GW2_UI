@@ -480,9 +480,18 @@ local function BuildAuraButton(button, container, group)
         })
     end
 
+    -- every debuff group carries the region, the three state setting decides the
+    -- registration live: "ALL" puts the icon on every debuff with a dispel type,
+    -- "DISPELLABLE" only on the groups holding the player-dispellable half of the
+    -- split (showDispelIcon — for advanced slots that role can change with the
+    -- selected filters, the getter reads the CURRENT one), "OFF" on none
     local dispelIconGetter = container.gwConfig and container.gwConfig.dispelIconEnabled
-    if group.showDispelIcon and dispelIconGetter then
-        GW.AddDispelTypeIcon(button, visual, group, dispelIconGetter)
+    if dispelIconGetter and group.isDebuff then
+        GW.AddDispelTypeIcon(button, visual, group, function()
+            local mode = dispelIconGetter()
+            if mode == "ALL" then return true end
+            return mode == "DISPELLABLE" and group.showDispelIcon or false
+        end)
     end
 
     -- the getter decides the VISIBILITY (live, via UpdatePandemicHighlights) — the
@@ -631,6 +640,12 @@ local function SetAdvancedBranches(container, baseKey, branches, templateProvide
             group.candidateFilters = template.candidateFilters
             group.sortMethod = template.sortMethod
             group.sortDirection = template.sortDirection
+            if group.showDispelIcon ~= template.showDispelIcon then
+                -- the slot switched between the dispel icon role and the rest role —
+                -- the existing buttons re-evaluate their (de)registration via the getter
+                group.showDispelIcon = template.showDispelIcon
+                ForEachGroupButton(container, group.key, ApplyAuraOptionRegions)
+            end
         end
     end
 
@@ -667,6 +682,25 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
     if buffBranches and #buffBranches == 0 then buffBranches = nil end
     if debuffBranches and #debuffBranches == 0 then debuffBranches = nil end
 
+    -- dispel icon boundary for the advanced branches, mirroring SplitDispelIconGroups:
+    -- every debuff branch splits into its DISPELLABLE part (carries the icon) and the
+    -- rest. Splitting ALL branches keeps the icon role of each reusable slot positionally
+    -- stable when the selected filters change (slots keep their buttons)
+    if debuffBranches and opts.showDispelIcon then
+        local split = {}
+        for _, branch in ipairs(debuffBranches) do
+            if branch.filter:find("RAID_PLAYER_DISPELLABLE", 1, true) then
+                -- already bounded by the player-dispellable token, no twin needed
+                branch.gwDispelIcon = true
+                tinsert(split, branch)
+            else
+                tinsert(split, { filter = branch.filter .. "|RAID_PLAYER_DISPELLABLE", isPlayer = branch.isPlayer, gwDispelIcon = true })
+                tinsert(split, { filter = branch.filter .. "|!RAID_PLAYER_DISPELLABLE", isPlayer = branch.isPlayer })
+            end
+        end
+        debuffBranches = split
+    end
+
     local buffMax = opts.buffFilter == "none" and 0 or 32
     local debuffMax = opts.debuffFilter == "none" and 0 or 40
     local sort = GW.GetAuraSortPreset(opts.sort)
@@ -690,10 +724,13 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
     for _, group in next, debuffCfg.groups do
         group.sortMethod = sort.method
         group.sortDirection = sort.direction
-        if group.key == "debuffsOwn" then
+        -- the dispel icon split (SplitDispelIconGroups) leaves a twin group behind each
+        -- of the static keys — it follows its original in everything but the icon
+        local baseKey = group.gwBaseKey or group.key
+        if baseKey == "debuffsOwn" then
             group.size = opts.bigSize
             group.maxFrameCount = debuffBranches and 0 or debuffMax
-        elseif group.key == "debuffs" then
+        elseif baseKey == "debuffs" then
             group.size = opts.smallSize
             -- the "player" preset shows own debuffs only — mute the others group
             group.maxFrameCount = (debuffBranches or opts.debuffFilter == "player") and 0 or debuffMax
@@ -706,13 +743,15 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
                 size = branch.isPlayer and opts.bigSize or opts.smallSize,
                 maxFrameCount = isDebuff and 40 or 32,
                 isDebuff = isDebuff or nil,
+                gwAdvancedSlot = true,
                 layoutIndex = baseLayoutIndex + index * 0.01,
                 sortMethod = sort.method,
                 sortDirection = sort.direction,
                 -- keep the static groups' extras (see the frame configs)
                 showStealable = (not isDebuff) and opts.showStealable or nil,
                 showPandemic = branch.isPlayer and opts.showPandemic or nil,
-                showDispelIcon = isDebuff and opts.showDispelIcon or nil,
+                -- only the DISPELLABLE half of a split branch carries the icon
+                showDispelIcon = (isDebuff and opts.showDispelIcon and branch.gwDispelIcon) or nil,
             }
             if branch.isPlayer then
                 template.iconInset = 2
@@ -815,11 +854,39 @@ function GW.CreateAuraTrackerContainer(config)
     return container
 end
 
+-- The corner dispel icon must only appear on auras the PLAYER can dispel. The region
+-- options know nothing about dispellability and per-aura regions do not exist, so the
+-- boundary has to be a group boundary: every icon-bearing group is split into its
+-- RAID_PLAYER_DISPELLABLE part (keeps the key and the icon) and a negated twin without
+-- the icon right behind it. That token means "the player can dispel this" — plain
+-- DISPELLABLE only means "has a dispel type" and is NOT sufficient here. The engine
+-- evaluates the token per aura and unit, so the split follows spec changes on its own.
+-- Groups whose filter already carries the token (the grid and party ones) are left alone
+local DISPEL_TWIN_FIELDS = {"size", "maxFrameCount", "isDebuff", "hideDuration", "iconInset", "bigFont", "showPandemic", "candidateFilters", "sortMethod", "sortDirection", "forceNewLine"}
+local function SplitDispelIconGroups(groups)
+    local index = 1
+    while groups[index] do
+        local group = groups[index]
+        if group.showDispelIcon and not group.filter:find("RAID_PLAYER_DISPELLABLE", 1, true) then
+            local twin = { key = group.key .. "NoDispel", gwBaseKey = group.key, filter = group.filter .. "|!RAID_PLAYER_DISPELLABLE" }
+            for _, field in ipairs(DISPEL_TWIN_FIELDS) do
+                twin[field] = group[field]
+            end
+            group.filter = group.filter .. "|RAID_PLAYER_DISPELLABLE"
+            tinsert(groups, index + 1, twin)
+            index = index + 1
+        end
+        index = index + 1
+    end
+end
+
 function GW.CreateUnitAuraContainer(config)
     local container = CreateFrame("AuraContainer", config.name, config.parent or UIParent, "CustomAuraContainerTemplate")
     container.gwConfig = config
     container.GwUpdateLayout = ApplyLayout
     container.GwSetAdvancedBranches = SetAdvancedBranches
+
+    SplitDispelIconGroups(config.groups)
 
     for index, group in ipairs(config.groups) do
         group.layoutIndex = group.layoutIndex or index

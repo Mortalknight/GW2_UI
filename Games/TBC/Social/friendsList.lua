@@ -305,7 +305,7 @@ local function UpdateFriendButton(button)
         local realIDString = realID and clientColor and GW.StringWithRGB(realID, clientColor) or realID
 
         -- name
-        local classColor = GW.GWGetClassColor(GW.UnlocalizedClassName(class), true, true, true)
+        local classColor = GW.GWGetClassColor(GW.UnlocalizedClassName(class), true, true)
         local nameString = name and classColor and GW.StringWithRGB(name, classColor) or name
         if TimerunningUtil and timerunningSeasonID and timerunningSeasonID ~= "" and nameString ~= nil then
             nameString = TimerunningUtil.AddSmallIcon(nameString) or nameString -- add timerunning tag

@@ -545,7 +545,7 @@ local function GW_GetPlayerInfoByGUID(guid)
         GuidCache[guid] = data
     end
 
-    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true, true) end
+    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true) end
 
     return data
 end
@@ -1131,7 +1131,7 @@ local function CheckKeyword(message, author)
                 local wordMatch = classMatch and lowerCaseWord
 
                 if wordMatch then
-                    local classColorTable = GW.GWGetClassColor(classMatch, true, true, true)
+                    local classColorTable = GW.GWGetClassColor(classMatch, true, true)
                     local classColoredName = classColorTable and classColorTable:WrapTextInColorCode(tempWord)
                     if classColoredName then
                         local tempstr = gsub(tempWord, "%-", "%%-")
@@ -1339,8 +1339,8 @@ local function GetBNFriendColor(name, id, useBTag)
         end
     end
 
-    local Color = Class and GW.GWGetClassColor(Class, true, true, true)
-    return (Color and format("|c%s%s|r", Color.colorStr, TAG or name)) or TAG or name, BNET_TAG
+    local Color = Class and GW.GWGetClassColor(Class, true, true)
+    return (Color and Color:WrapTextInColorCode(TAG or name)) or TAG or name, BNET_TAG
 end
 GW.GetBNFriendColor = GetBNFriendColor
 
@@ -1575,7 +1575,7 @@ local function ChatFrame_ReplaceIconAndGroupExpressions(message, noIconReplaceme
                 for i = 1, GetNumGroupMembers() do
                     local name, _, subgroup, _, _, classFileName = GetRaidRosterInfo(i)
                     if name and subgroup == groupIndex then
-                        local classColorTable = GW.GWGetClassColor(classFileName, true, true)
+                        local classColorTable = GW.GWGetClassColor(classFileName, true)
                         if classColorTable then
                             name = classColorTable:WrapTextInColorCode(name)
                         end
@@ -2146,6 +2146,29 @@ local function GetTab(chat)
 
     return chat.tab
 end
+
+local CHAT_TAB_SIDES_PADDING = 20 -- local in Blizzards FloatingChatFrame.lua
+local CHAT_TAB_SECRET_WIDTH = 90 -- CHAT_TAB_DOCKED_MAX_WIDTH, local as well
+local function EnforceTabSize(chatFrame)
+    local tab = GetTab(chatFrame)
+    if not tab or not tab.Text then return end
+
+    local padding = tab.sizePadding or 0
+
+    -- FCF_HasSecretName (local in Blizzards code)
+    if chatFrame.chatTarget and (chatFrame.chatType == "WHISPER" or chatFrame.chatType == "BN_WHISPER") then
+        tab.Text:SetWidth(CHAT_TAB_SECRET_WIDTH - CHAT_TAB_SIDES_PADDING - padding)
+        tab:SetWidth(CHAT_TAB_SECRET_WIDTH)
+        return
+    end
+
+    tab.Text:SetWidth(0)
+    local textWidth = tab.Text:GetStringWidth()
+    if GW.IsSecretValue(textWidth) then return end
+
+    tab.Text:SetWidth(textWidth)
+    tab:SetWidth(textWidth + CHAT_TAB_SIDES_PADDING + padding)
+end
 do
     local charCount
     local function CountLinkCharacters(self)
@@ -2254,6 +2277,15 @@ local function styleChatWindow(frame)
     local tab = GetTab(frame)
     tab.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     tab.Text:SetTextColor(1, 1, 1)
+    if GW.Retail then
+        local fontObject = tab.Text:GetFontObject()
+        if fontObject then
+            tab:SetNormalFontObject(fontObject)
+            tab:SetHighlightFontObject(fontObject)
+            tab:SetDisabledFontObject(fontObject)
+        end
+        EnforceTabSize(frame)
+    end
 
     if frame.styled then return end
 
@@ -3058,6 +3090,17 @@ local function LoadChat()
         chatFrame:SetTimeVisible(100)
         chatFrame:SetFading(GW.settings.CHATFRAME_FADE)
     end)
+
+    if GW.Retail then
+        hooksecurefunc("FCFDock_UpdateTabs", function(dock)
+            for _, chatFrame in ipairs(dock.DOCKED_CHAT_FRAMES) do
+                EnforceTabSize(chatFrame)
+            end
+        end)
+        hooksecurefunc("FCF_SetWindowName", function(chatFrame)
+            EnforceTabSize(chatFrame)
+        end)
+    end
 
     hooksecurefunc("FCF_DockUpdate", function()
         for _, frameName in ipairs(CHAT_FRAMES) do

@@ -372,6 +372,7 @@ local function updateHotkey(self)
 		text = gsub(text, "CTRL%-", "C")
         text = gsub(text, KEY_BUTTON3, "M3") --middle mouse Button
         text = gsub(text, gsub(KEY_BUTTON4, "4", ""), "M") -- mouse button
+        text = gsub(text, gsub(KEY_BUTTON5, "5", ""), "M") -- mouse button
         text = gsub(text, KEY_PAGEUP, "PU")
         text = gsub(text, KEY_PAGEDOWN, "PD")
         text = gsub(text, KEY_SPACE, "SpB")
@@ -395,6 +396,10 @@ local function updateHotkey(self)
     else
         hotkey:SetText("")
     end
+
+    -- scale long bindings down to the button so they neither overlap the
+    -- neighboring buttons nor ellipsize
+    GW.FitHotKeyText(self)
 end
 GW.updateHotkey = updateHotkey
 

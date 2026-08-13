@@ -169,6 +169,18 @@ local function DatabaseValueMigration()
         GW.settings.CASTINGBAR_DATA = nil
     end
 
+    -- migration of the dispel type icon settings: the per-frame checkbox became a three
+    -- state dropdown (OFF/ALL/DISPELLABLE); enabled maps to the new default behavior
+    for _, key in next, {
+        "PLAYER_DISPEL_ICON", "target_DISPEL_ICON", "focus_DISPEL_ICON", "PET_DISPEL_ICON",
+        "PARTY_DISPEL_ICON", "PARTY_PET_DISPEL_ICON", "RAID_DISPEL_ICON", "RAID_25_DISPEL_ICON",
+        "RAID_10_DISPEL_ICON", "RAID_PARTY_DISPEL_ICON", "RAID_PET_DISPEL_ICON", "RAID_MAINTANK_DISPEL_ICON",
+    } do
+        if type(GW.settings[key]) == "boolean" then
+            GW.settings[key] = GW.settings[key] and "DISPELLABLE" or "OFF"
+        end
+    end
+
     -- migration minimap scale setting
     if GW.settings.MINIMAP_SCALE then
         GW.settings.MINIMAP_SIZE = GW.settings.MINIMAP_SCALE

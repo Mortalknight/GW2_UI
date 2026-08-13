@@ -362,7 +362,7 @@ local function UpdateFriendCardContent(card)
         if not classToken or classToken == "" then
             classToken = GW.UnlocalizedClassName(gameAccountInfo.className)
         end
-        local classColor = isOnline and classToken and GW.GWGetClassColor(classToken, true, true, true) or DARKGRAY_COLOR
+        local classColor = isOnline and classToken and GW.GWGetClassColor(classToken, true, true) or DARKGRAY_COLOR
 
         local nameString = GW.StringWithRGB(gameAccountInfo.characterName, classColor)
         if TimerunningUtil and gameAccountInfo.timerunningSeasonID and gameAccountInfo.timerunningSeasonID ~= 0 and gameAccountInfo.timerunningSeasonID ~= "" then

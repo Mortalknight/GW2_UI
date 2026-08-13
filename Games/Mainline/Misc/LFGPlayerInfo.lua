@@ -100,7 +100,7 @@ local function Update(resultID)
 end
 
 local function CreateTooltipLine(role, class, spec, amount)
-    local color = GW.GWGetClassColor(class, true, true)
+    local color = GW.GWGetClassColor(class, true)
     local roleIcon = CreateAtlasMarkup(LFG_LIST_GROUP_DATA_ATLASES_BORDERLESS[role], 13, 13, 0, 0)
 
     return roleIcon .. " " .. color:WrapTextInColorCode(string.format(LFG_LIST_TOOLTIP_CLASS_ROLE, (LOCALIZED_CLASS_NAMES_MALE[class] or ""), spec)) .. (amount <= 1 and "" or " x " .. tostring(amount))

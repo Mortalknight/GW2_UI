@@ -22,7 +22,7 @@ local function UpdateGuildStatus()
 				local classFilename = GW.UnlocalizedClassName(className)
 				if classFilename then
 					if online then
-						local classTextColor = GW.GWGetClassColor(classFilename, true, true)
+						local classTextColor = GW.GWGetClassColor(classFilename, true)
 						local levelTextColor = GetQuestDifficultyColor(level)
 						_G["GuildFrameButton"..i.."Name"]:SetTextColor(classTextColor.r, classTextColor.g, classTextColor.b)
 						_G["GuildFrameButton"..i.."Level"]:SetTextColor(levelTextColor.r, levelTextColor.g, levelTextColor.b)
@@ -45,7 +45,7 @@ local function UpdateGuildStatus()
 				local _, _, _, _, className, _, _, _, online = GetGuildRosterInfo(button.guildIndex)
 				local classFilename = online and GW.UnlocalizedClassName(className)
 				if classFilename then
-					local classTextColor = GW.GWGetClassColor(classFilename, true, true)
+					local classTextColor = GW.GWGetClassColor(classFilename, true)
 					_G["GuildFrameGuildStatusButton"..i.."Name"]:SetTextColor(classTextColor.r, classTextColor.g, classTextColor.b)
 					_G["GuildFrameGuildStatusButton"..i.."Online"]:SetTextColor(1, 1, 1)
 				end
