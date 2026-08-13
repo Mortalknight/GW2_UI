@@ -358,7 +358,7 @@ local function processData(unit, data, filter, newBuffAnimation)
 end
 
 local function UpdateBuffLayout(self, event, unit, updateInfo)
-    if self.unit ~= unit then return end
+    if self.gwUnit ~= unit then return end
 
     local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
 

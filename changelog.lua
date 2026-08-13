@@ -13,6 +13,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("11.1.2", {
+    {GW.Enum.ChangelogType.bug, [=[Secret more secrets]=]},
+})
+
+
 
 addChange("11.1.1", {
     {GW.Enum.ChangelogType.bug, [=[Unit frames (Retail): Blizzard reads the .unit field on frames itself since 12.1 (the ping system among others) - an addon-written value there is tainted and trips up Blizzards secure readers. The oUF-based raid grids got the upstream oUF fix (internal state moved to its own field), and every own secure unit frame (player, target, focus, party, pet, boss, arena) keeps its bookkeeping in a gw-prefixed field now; the unit reaches Blizzard exclusively through the secure "unit" attribute]=]},
