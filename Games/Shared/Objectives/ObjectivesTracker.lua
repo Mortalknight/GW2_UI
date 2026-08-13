@@ -390,10 +390,21 @@ function GwObjectivesTrackerMixin:AddAddonContainerLoadingToQueue(config)
     end
 end
 
+-- Shared runtime state of the tracker modules. layoutGeneration is bumped whenever the
+-- layout affecting settings pass runs (compact mode etc.) — blocks and objective rows
+-- re-apply their fonts/anchors only when their generation is behind, a content update
+-- alone no longer re-styles every row
+local ObjectivesTrackerState = {
+    layoutGeneration = 1,
+}
+GW.ObjectivesTrackerState = ObjectivesTrackerState
+
 function GW.RefreshObjectivesTrackerLayout()
     if not GwQuestTracker or not GW.ObjectiveTrackerContainer then
         return
     end
+
+    ObjectivesTrackerState.layoutGeneration = ObjectivesTrackerState.layoutGeneration + 1
 
     local function RefreshObjectivesFrame(frame)
         GW.ApplyObjectivesHeaderStyle(frame.header)

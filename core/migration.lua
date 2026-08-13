@@ -169,6 +169,18 @@ local function DatabaseValueMigration()
         GW.settings.CASTINGBAR_DATA = nil
     end
 
+    -- same split for the target/focus cast bars: their toggle only ever drove the cast
+    -- timer text, the spell name was always shown (and stays on by default)
+    for _, unit in next, { "target", "focus" } do
+        local key = unit .. "_CASTINGBAR_DATA"
+        if GW.settings[key] ~= nil then
+            if GW.settings[key] then
+                GW.settings[unit .. "_CASTINGBAR_SHOW_TIMER"] = true
+            end
+            GW.settings[key] = nil
+        end
+    end
+
     -- migration of the dispel type icon settings: the per-frame checkbox became a three
     -- state dropdown (OFF/ALL/DISPELLABLE); enabled maps to the new default behavior
     for _, key in next, {

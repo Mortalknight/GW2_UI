@@ -63,9 +63,10 @@ local ADVANCED_FILTER_BRANCHES = {
     { setting = "isAuraExternalDefensive",       tokens = "EXTERNAL_DEFENSIVE|!PLAYER", side = "other" },
     { setting = "isAuraRaidInCombat",            tokens = "RAID_IN_COMBAT|!PLAYER",    side = "other" },
     { setting = "isAuraImportant",               tokens = "IMPORTANT|!PLAYER",         side = "other" }, -- token re-added in 12.1
-    -- DISPELLABLE instead of RAID_PLAYER_DISPELLABLE: needs no RAID context and covers
-    -- everything dispellable; HELPFUL/HARMFUL is prepended as the base prefix anyway
-    { setting = "isAuraRaidPlayerDispellable",   tokens = "DISPELLABLE" },
+    -- RAID_PLAYER_DISPELLABLE = "someone in the players group can dispel this", matching
+    -- the "Dispellable" label and the old engines IsDispellableByMe check — plain
+    -- DISPELLABLE would only mean "has a dispel type", no matter who could remove it
+    { setting = "isAuraRaidPlayerDispellable",   tokens = "RAID_PLAYER_DISPELLABLE" },
 }
 
 -- Builds the list of filter string branches from a GW advanced filter table

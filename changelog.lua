@@ -12,6 +12,13 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+
+
+addChange("11.1.1", {
+    {GW.Enum.ChangelogType.change, [=[Performance: the quest tracker no longer rebuilds every tracked quest on every quest log update - unchanged quests are skipped via a content fingerprint, rows only re-apply fonts and anchors when the layout settings actually changed, and the per-line allocation churn is gone. Progress on one quest now only redraws that quest. Applies to ALL game versions]=]},
+    {GW.Enum.ChangelogType.change, [=[Advanced aura filters (Retail): the "Dispellable" option matches its label again - it shows auras your group can dispel (as the old aura engine did), not every aura that merely has a dispel type]=]},
+})
+
 addChange("11.1.0", {
     {GW.Enum.ChangelogType.feature, [=[Dispel type icon (Retail): debuffs show their dispel type (magic, curse, poison, disease) as a small corner icon on the player, target, focus, pet, party and raid frames. The per-frame "Show Dispel Type Icon" setting is a three state choice now - off, on every debuff with a dispel type, or (the default) only on debuffs your group can actually dispel, matching Blizzards own dispel indicator behavior. Dispellable debuffs render before the rest of a frames debuffs for that]=]},
     {GW.Enum.ChangelogType.bug, [=[Secret more secrets]=]},
@@ -97,7 +104,7 @@ addChange("10.13.1", {
     {GW.Enum.ChangelogType.change, [=[Performance: chat bubbles and the world event tracker no longer poll every frame in the background]=]},
     {GW.Enum.ChangelogType.change, [=[Performance: reduced memory churn in damage text, runes, timers, action bars and bag/inventory coloring]=]},
     {GW.Enum.ChangelogType.feature, [=[Cast bar: the player/pet cast bar can be sized freely now - width and height sliders in the player cast bar settings. Ticks, empower stages and the latency zone follow the new size]=]},
-    {GW.Enum.ChangelogType.feature, [=[Cast bar: the "Advanced Casting Bar" toggle was replaced by one setting per element - spell name, cast timer and latency zone can be turned on individually, and the spell icon can sit left, right or be hidden. Profiles that had the advanced bar enabled get all of them turned on]=]},
+    {GW.Enum.ChangelogType.feature, [=[Cast bar: the "Advanced Casting Bar" toggle was replaced by one setting per element - spell name, cast timer and latency zone can be turned on individually, and the spell icon can sit left, right or be hidden. Profiles that had the advanced bar enabled get all of them turned on. The target and focus cast bars get the same split (spell name, cast timer), and their cast timer works again on Retail - it never updated since the timer moved into the game engine]=]},
     {GW.Enum.ChangelogType.feature, [=[Cast bar: optional custom colors for casting, channeling, empowered and interrupted casts ("Custom Colors" in the player cast bar settings) - the painted bar art keeps its structure and takes your hue]=]},
     {GW.Enum.ChangelogType.feature, [=[Cast bar (Retail): empowered casts show the stage you are holding as a numeral on the bar and brighten with every stage reached. Interrupted or failed casts shake the bar, with an optional sound - all three can be turned off in the player cast bar settings]=]},
     {GW.Enum.ChangelogType.bug, [=[Bags: the "new item" marker stayed on a slot after the item was sold, moved or used up]=]},

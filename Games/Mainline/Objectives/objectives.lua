@@ -27,7 +27,95 @@ local function ShouldSortSuperTrackedQuestToTop()
     return GW.settings.OBJECTIVES_SUPERTRACKED_QUEST_TOP
 end
 
-local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
+-- AddObjective keeps no reference to its options table (field reads only), so one
+-- scratch table serves every quest objective line — a full update otherwise allocated
+-- a fresh table per line, the bulk of the trackers garbage churn
+local objectiveOptions = {}
+local function QuestObjectiveOptions(finished, objectiveType, useCompletedLine, timerShown, duration, startTime)
+    wipe(objectiveOptions)
+    objectiveOptions.isQuest = true
+    objectiveOptions.finished = finished
+    objectiveOptions.objectiveType = objectiveType
+    objectiveOptions.useCompletedLine = useCompletedLine
+    objectiveOptions.timerShown = timerShown
+    objectiveOptions.duration = duration
+    objectiveOptions.startTime = startTime
+    return objectiveOptions
+end
+
+local function HasAutoQuestPopUpOfType(questID, checkType)
+    for i = 1, GetNumAutoQuestPopUps() do
+        local id, popUpType = GetAutoQuestPopUp(i)
+        if id == questID and popUpType == checkType then
+            return true
+        end
+    end
+    return false
+end
+
+-- Everything UpdateBlockInternal renders derives from these inputs: when they are
+-- unchanged since the last pass over this quest, the block is pixel identical and the
+-- whole rebuild (row re-anchoring, SetText with its text layout flushes, height math)
+-- is skipped. QUEST_LOG_UPDATE fires for every log change and always runs a FULL
+-- layout over every watched quest — with the fingerprint that becomes one comparison
+-- per unchanged quest. Running quest timers stay skippable: the clock lives in the
+-- rows own OnUpdate, only presence and total duration are part of the fingerprint
+local signatureParts, signatureCount = {}, 0
+local function AddSignaturePart(value)
+    signatureCount = signatureCount + 1
+    signatureParts[signatureCount] = tostring(value)
+end
+
+local function BuildQuestBlockSignature(quest, questID, questLogIndex, colorKey)
+    local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
+    local isComplete = quest:IsComplete()
+    local isSuperTracked = questID == C_SuperTrack.GetSuperTrackedQuestID()
+    local shouldShowWaypoint = isSuperTracked or (questID == QuestMapFrame_GetFocusedQuestID())
+    local timeTotal, timeElapsed = C_QuestLog.GetTimeAllowed(questID)
+    local requiredMoney = quest.requiredMoney or 0
+
+    signatureCount = 0
+    AddSignaturePart(questID)
+    AddSignaturePart(quest.title)
+    AddSignaturePart(colorKey)
+    AddSignaturePart(GW.ObjectivesTrackerState.layoutGeneration)
+    AddSignaturePart(GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES)
+    AddSignaturePart(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
+    AddSignaturePart(isComplete)
+    AddSignaturePart(C_QuestLog.IsFailed(questID))
+    AddSignaturePart(isSuperTracked)
+    AddSignaturePart(shouldShowWaypoint)
+    AddSignaturePart(quest.isAutoComplete)
+    AddSignaturePart(quest.startEvent)
+    AddSignaturePart(HasAutoQuestPopUpOfType(questID, "COMPLETE"))
+    AddSignaturePart(HasAutoQuestPopUpOfType(questID, "OFFER"))
+    AddSignaturePart(QuestUtil.CanCreateQuestGroup(questID))
+    AddSignaturePart(requiredMoney)
+    if requiredMoney > 0 then
+        AddSignaturePart(GetMoney())
+    end
+    if isComplete or shouldShowWaypoint then
+        AddSignaturePart(C_QuestLog.GetNextWaypointText(questID))
+    end
+    if isComplete then
+        AddSignaturePart(GetQuestLogCompletionText(questLogIndex))
+    end
+    AddSignaturePart(timeTotal and timeElapsed and timeElapsed < timeTotal and timeTotal or false)
+    AddSignaturePart(numObjectives)
+    for objectiveIndex = 1, numObjectives do
+        local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
+        AddSignaturePart(text)
+        AddSignaturePart(objectiveType)
+        AddSignaturePart(finished)
+        if objectiveType == "progressbar" then
+            AddSignaturePart(GetQuestProgressBarPercent(questID))
+        end
+    end
+
+    return table.concat(signatureParts, "\1", 1, signatureCount)
+end
+
+local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, signature)
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
     local questFailed = C_QuestLog.IsFailed(questID)
@@ -48,6 +136,7 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
 
     self.questID = questID
     self.questLogIndex = questLogIndex
+    self.gwSignature = signature or BuildQuestBlockSignature(quest, questID, questLogIndex, self.gwColorKey)
     self.title = quest.title
     self.isSuperTracked = isSuperTracked
     self.Header:SetText(quest.title)
@@ -60,7 +149,9 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
         self:GetScript("OnLeave")(self)
     end
 
-    GW.CombatQueue:Queue(nil, self.UpdateObjectiveActionButton, {self})
+    -- keyed: a nil key never dedups, and the queue drains only a few entries per tick —
+    -- un-deduped bursts kept the item buttons stale for seconds
+    GW.CombatQueue:Queue("update_tracker_actionbutton_" .. parent:GetName() .. (self.index or 0), self.UpdateObjectiveActionButton, {self})
 
     if numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
         isComplete = true
@@ -70,44 +161,44 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
 
     if isComplete then
         if quest.isAutoComplete then
-            self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, {isQuest = true, finished = false, objectiveType = nil})
+            self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, QuestObjectiveOptions(false, nil))
         else
             local completionText = GetQuestLogCompletionText(questLogIndex)
             if completionText then
                 if shouldShowWaypoint then
                     local waypointText = C_QuestLog.GetNextWaypointText(questID)
                     if waypointText then
-                        self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), {isQuest = true, finished = false, objectiveType = nil})
+                        self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), QuestObjectiveOptions(false, nil))
                     end
                 end
-                self:AddObjective(completionText, {isQuest = true, finished = false, objectiveType = nil})
+                self:AddObjective(completionText, QuestObjectiveOptions(false, nil))
             else
                 local waypointText = C_QuestLog.GetNextWaypointText(questID)
                 if waypointText then
-                    self:AddObjective(waypointText, {isQuest = true, finished = false, objectiveType = nil})
+                    self:AddObjective(waypointText, QuestObjectiveOptions(false, nil))
                 else
-                    self:AddObjective(QUEST_WATCH_QUEST_READY, {isQuest = true, finished = false, objectiveType = nil})
+                    self:AddObjective(QUEST_WATCH_QUEST_READY, QuestObjectiveOptions(false, nil))
                 end
             end
         end
     elseif questFailed then
-        self:AddObjective(FAILED, {isQuest = true, finished = false, objectiveType = nil})
+        self:AddObjective(FAILED, QuestObjectiveOptions(false, nil))
     else
         if shouldShowWaypoint then
 			local waypointText = C_QuestLog.GetNextWaypointText(questID);
 			if waypointText  then
-                self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), {isQuest = true, finished = isComplete, objectiveType = nil})
+                self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), QuestObjectiveOptions(isComplete, nil))
 			end
 		end
 
         if quest.requiredMoney > GetMoney() then
-            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), {isQuest = true, finished = isComplete, objectiveType = nil})
+            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), QuestObjectiveOptions(isComplete, nil))
         end
 
         -- timer bar
 		local timeTotal, timeElapsed = C_QuestLog.GetTimeAllowed(questID)
 		if timeTotal and timeElapsed and timeElapsed < timeTotal then
-            self:AddObjective(TIME_REMAINING, {isQuest = true, qty = nil, totalqty = nil, timerShown = true, duration = timeTotal, startTime = GetTime() - timeElapsed})
+            self:AddObjective(TIME_REMAINING, QuestObjectiveOptions(nil, nil, nil, true, timeTotal, GetTime() - timeElapsed))
 		end
     end
 
@@ -122,17 +213,17 @@ function GwQuestLogBlockMixin:UpdateBlockObjectives(numObjectives)
     for objectiveIndex = 1, numObjectives do
         local text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, objectiveIndex, false)
         if text and (showCompletedObjectives or not finished) then
-            self:AddObjective(text, {isQuest = true, finished = finished, useCompletedLine = showCompletedObjectives, objectiveType = objectiveType})
+            self:AddObjective(text, QuestObjectiveOptions(finished, objectiveType, showCompletedObjectives))
         end
     end
 end
 
-function GwQuestLogBlockMixin:UpdateBlock(parent, quest, questID, questLogIndex)
+function GwQuestLogBlockMixin:UpdateBlock(parent, quest, questID, questLogIndex, signature)
     if quest and not questID then
         questID = quest:GetID()
         questLogIndex = quest:GetQuestLogIndex()
     end
-    UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
+    UpdateBlockInternal(self, parent, quest, questID, questLogIndex, signature)
 end
 
 GwQuestLogMixin = {}
@@ -355,10 +446,31 @@ function GwQuestLogMixin:UpdateLayout()
 
                     local isFrequency = IsQuestFrequency(q)
                     local colorKey = self.isCampaignContainer and GW.Enum.ObjectivesNotificationType.Campaign or (isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest)
-                    local block = self:GetBlock(counterQuest, colorKey, true)
-                    block.isFrequency = isFrequency
-                    block:UpdateBlock(self, q)
-                    block:Show()
+                    local questLogIndex = q:GetQuestLogIndex()
+                    local signature = BuildQuestBlockSignature(q, curQuestId, questLogIndex, colorKey)
+                    local block = self.blocks and self.blocks[counterQuest]
+
+                    if block and block:IsShown() and block.questID == curQuestId and block.gwSignature == signature then
+                        -- pixel identical since the last pass: keep the rendered rows and
+                        -- only refresh what the rebuild would have refreshed anyway
+                        block.isFrequency = isFrequency
+                        if q.requiredMoney > 0 then
+                            self.watchMoneyReasons = self.watchMoneyReasons + 1
+                        else
+                            self.watchMoneyReasons = self.watchMoneyReasons - 1
+                        end
+                        if block.questLogIndex ~= questLogIndex then
+                            -- the log index feeds the item button, it shifts when other
+                            -- quests come and go without our content changing
+                            block.questLogIndex = questLogIndex
+                            GW.CombatQueue:Queue("update_tracker_actionbutton_" .. frameName .. block.index, block.UpdateObjectiveActionButton, {block})
+                        end
+                    else
+                        block = self:GetBlock(counterQuest, colorKey, true)
+                        block.isFrequency = isFrequency
+                        block:UpdateBlock(self, q, curQuestId, questLogIndex, signature)
+                        block:Show()
+                    end
                     savedContainerHeight = savedContainerHeight + block.height
                     block.fromContainerTopHeight = savedContainerHeight
                     GW.CombatQueue:Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
@@ -420,11 +532,19 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
     local questLogIndex = q:GetQuestLogIndex()
     local isFrequency = IsQuestFrequency(q)
     local colorKey = self.isCampaignContainer and GW.Enum.ObjectivesNotificationType.Campaign or (isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest)
+    local signature = BuildQuestBlockSignature(q, questID, questLogIndex, colorKey)
+    local existingBlock = self:GetBlockByQuestId(questID)
+    if existingBlock and existingBlock:IsShown() and existingBlock.gwSignature == signature then
+        existingBlock.questLogIndex = questLogIndex
+        self.isUpdating = false
+        return
+    end
+
     local block = self:GetOrCreateBlockByQuestId(questID, colorKey)
 
     if block and questLogIndex and questLogIndex > 0 then
         block.isFrequency = isFrequency
-        block:UpdateBlock(self, q, questID, questLogIndex)
+        block:UpdateBlock(self, q, questID, questLogIndex, signature)
         block:Show()
         if added then
             C_Timer.After(0.1, function()

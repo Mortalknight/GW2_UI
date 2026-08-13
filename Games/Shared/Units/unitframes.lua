@@ -12,11 +12,11 @@ local LoadAuras = GW.LoadAuras
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
 local function castingbarOnUpdate(self)
-    if (self.casting or self.channeling or self.empowering) and self.showCastingbarData and self.castingTimeString then
+    local frame = self:GetParent()
+    if (frame.casting or frame.channeling or frame.empowering) and frame.showCastingbarTimer and self.castingTimeString then
         local durationObject = self:GetTimerDuration()
         if durationObject then
-            local durationTime = durationObject:GetRemainingDuration()
-            self.castingbarNormal.castingTimeString:SetFormattedText("%.1fs", durationTime)
+            self.castingTimeString:SetFormattedText("%.1fs", durationObject:GetRemainingDuration())
         end
     end
 end
@@ -660,23 +660,28 @@ function GwUnitFrameMixin:StartCastbar(event)
     cbBackground:ClearAllPoints()
     cbBackground:SetPoint("TOPLEFT", self.powerbar, "BOTTOMLEFT", (self.type == "NormalTarget") and -2 or 0, -1)
 
-    self.castingString:Show()
+    self.castingString:SetShown(self.showCastingbarName)
     if self.castingTimeString then
-        self.castingTimeString:Show()
+        self.castingTimeString:SetShown(self.showCastingbarTimer and true or false)
     end
 
     if not GW.Retail and notInterruptible then
-        self.castingString:SetText(name)
+        self.castingString:SetText(self.showCastingbarName and name or "")
         self.castingbarNormal:Hide()
         if self.castingbar then self.castingbar:Show() end
         if self.castingbarSpark then self.castingbarSpark:Show() end
     else
-        self.castingbarNormal.castingString:SetText(name)
+        self.castingbarNormal.castingString:SetText(self.showCastingbarName and name or "")
         self.castingString:Hide()
         if self.castingTimeString then self.castingTimeString:Hide() end
         if self.castingbar then self.castingbar:Hide() end
         if self.castingbarSpark then self.castingbarSpark:Hide() end
         self.castingbarNormal:Show()
+    end
+
+    if not self.showCastingbarTimer then
+        self.castingbarNormal.castingTimeString:SetText("")
+        if self.castingTimeString then self.castingTimeString:SetText("") end
     end
 
     if self.empowering then
@@ -696,7 +701,7 @@ function GwUnitFrameMixin:StartCastbar(event)
             startTime,
             endTime - startTime,
             function(p)
-                if self.showCastingbarData and self.castingTimeString then
+                if self.showCastingbarTimer and self.castingTimeString then
                     if notInterruptible then
                         self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
                     else
@@ -893,7 +898,8 @@ function GwUnitFrameMixin:ToggleSettings()
     self.showCastbar = GW.settings[unit .. "_SHOW_CASTBAR"]
     self.showAbsorbBar = GW.settings[unit .. "_SHOW_ABSORB_BAR"]
 
-    self.showCastingbarData = GW.settings[unit .. "_CASTINGBAR_DATA"]
+    self.showCastingbarName = GW.settings[unit .. "_CASTINGBAR_SHOW_NAME"]
+    self.showCastingbarTimer = GW.settings[unit .. "_CASTINGBAR_SHOW_TIMER"]
 
     self.displayBuffs = GW.settings[unit .. "_Buff_Filter"] == "none" and 0 or 32
     self.auras.buffFilter = GW.settings[unit .. "_Buff_Filter"]

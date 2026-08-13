@@ -178,7 +178,12 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectives
         else
             objective:SetPoint("TOPRIGHT", self.objectiveBlocks[index - 1], "BOTTOMRIGHT", 0, overrideYOffet or 0)
         end
-        objective:ApplyLayoutStyle()
+        -- fonts and the row internal anchors only depend on the compact mode setting,
+        -- re-applying them on every content update is the expensive part of row reuse
+        if objective.gwLayoutGeneration ~= GW.ObjectivesTrackerState.layoutGeneration then
+            objective.gwLayoutGeneration = GW.ObjectivesTrackerState.layoutGeneration
+            objective:ApplyLayoutStyle()
+        end
         objective:SetScript("OnUpdate", nil)
         objective:SetScript("OnEnter", nil)
         objective:SetScript("OnLeave", nil)
@@ -209,6 +214,7 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectives
     newObjective.isMythicKeystone = false
 
     newObjective:ApplyLayoutStyle()
+    newObjective.gwLayoutGeneration = GW.ObjectivesTrackerState.layoutGeneration
 
     return newObjective
 end

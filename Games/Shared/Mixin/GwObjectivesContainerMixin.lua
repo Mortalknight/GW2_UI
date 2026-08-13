@@ -65,14 +65,23 @@ end
 function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     local block = self.blocks and self.blocks[idx]
     if block then
-        block:ApplyLayoutStyle()
-        -- set the correct block color for an existing block here
-        block:SetBlockColorByKey(colorKey)
-        block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
-        block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
+        -- style and colors only change with the compact mode setting or when the block
+        -- gets reused for another module color — a content update re-hides the rows only
+        if block.gwLayoutGeneration ~= GW.ObjectivesTrackerState.layoutGeneration then
+            block.gwLayoutGeneration = GW.ObjectivesTrackerState.layoutGeneration
+            block:ApplyLayoutStyle()
+        end
+        if block.gwColorKey ~= colorKey then
+            block.gwColorKey = colorKey
+            block:SetBlockColorByKey(colorKey)
+            block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
+            block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
+            for _, obj in ipairs(block.objectiveBlocks) do
+                obj.StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
+                obj.TimerBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
+            end
+        end
         for _, obj in ipairs(block.objectiveBlocks) do
-            obj.StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
-            obj.TimerBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
             obj:Hide()
         end
         return block
@@ -93,6 +102,7 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     end
 
     newBlock.index = idx
+    newBlock.gwColorKey = colorKey
     newBlock:SetBlockColorByKey(colorKey)
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
@@ -104,6 +114,7 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     end
 
     newBlock:ApplyLayoutStyle()
+    newBlock.gwLayoutGeneration = GW.ObjectivesTrackerState.layoutGeneration
 
     -- quest item button here
     if addItemButton then
