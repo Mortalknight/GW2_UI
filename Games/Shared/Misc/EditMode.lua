@@ -89,8 +89,16 @@ local function OnProceed()
 end
 
 local function OnSaveProceed()
+    -- SaveLayoutChanges is asynchronous when the active layout is a preset: it only opens
+    -- the "New Layout" dialog and saves after that gets confirmed. Proceeding immediately
+    -- exits the edit mode, which REVERTS all changes before they were ever saved (hit by
+    -- skin-only users on the "Modern" preset — their bar changes always got discarded).
+    -- The unsaved-changes dialog registers EditMode.SavedLayouts -> OnProceed on show, so
+    -- Blizzard proceeds on its own once the new layout is actually saved.
     EditModeManagerFrame:SaveLayoutChanges()
-    OnProceed()
+    if not EditModeManagerFrame.IsActiveLayoutPreset or not EditModeManagerFrame:IsActiveLayoutPreset() then
+        OnProceed()
+    end
 end
 
 local function OnClose()
