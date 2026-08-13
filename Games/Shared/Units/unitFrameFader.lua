@@ -96,7 +96,7 @@ end
 local isGliding = false
 local function Update(self, event, unit)
     if not self:IsVisible() then return end
-    if (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_ENTERED_VEHICLE") and self.unit ~= unit then return end
+    if (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_ENTERED_VEHICLE") and self.gwUnit ~= unit then return end
 
     local element = self.Fader
     if self.isForced or (not element or not element.count or element.count <= 0) then
@@ -126,7 +126,7 @@ local function Update(self, event, unit)
 
     -- try to get the unit from the parent
     if not unit or type(unit) ~= "string" then
-        unit = self.unit
+        unit = self.gwUnit
     end
 
     -- range fader
@@ -157,7 +157,7 @@ local function Update(self, event, unit)
 end
 
 local function ForceUpdate(element, event)
-    return Update(element.__owner, event or "ForceUpdate", element.__owner.unit)
+    return Update(element.__owner, event or "ForceUpdate", element.__owner.gwUnit)
 end
 
 local function OnRangeUpdate(frame, elapsed)
@@ -263,7 +263,7 @@ local options = {
                 self:SetAlpha(0)
             end
 
-            self:RegisterUnitEvent("UNIT_TARGET", self.__owner.unit)
+            self:RegisterUnitEvent("UNIT_TARGET", self.__owner.gwUnit)
             self:RegisterEvent("PLAYER_TARGET_CHANGED")
             self:RegisterEvent("PLAYER_FOCUS_CHANGED")
         end,
@@ -285,16 +285,16 @@ local options = {
     },
     Casting = {
         enable = function(self)
-            self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.__owner.unit)
-            self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.__owner.unit)
-            self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.__owner.unit)
-            self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.__owner.unit)
-            self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.__owner.unit)
-            self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.__owner.unit)
+            self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.__owner.gwUnit)
+            self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.__owner.gwUnit)
+            self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.__owner.gwUnit)
+            self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.__owner.gwUnit)
+            self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.__owner.gwUnit)
+            self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.__owner.gwUnit)
 
             if GW.Retail then
-                self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.__owner.unit)
-                self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.__owner.unit)
+                self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.__owner.gwUnit)
+                self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.__owner.gwUnit)
             end
         end,
         events = {"UNIT_SPELLCAST_START","UNIT_SPELLCAST_FAILED","UNIT_SPELLCAST_STOP","UNIT_SPELLCAST_INTERRUPTED","UNIT_SPELLCAST_CHANNEL_START","UNIT_SPELLCAST_CHANNEL_STOP"}
@@ -302,11 +302,11 @@ local options = {
     Health = {
         enable = function(self)
             if GW.Classic then
-                self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self.__owner.unit)
+                self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self.__owner.gwUnit)
             end
 
-            self:RegisterUnitEvent("UNIT_HEALTH", self.__owner.unit)
-            self:RegisterUnitEvent("UNIT_MAXHEALTH", self.__owner.unit)
+            self:RegisterUnitEvent("UNIT_HEALTH", self.__owner.gwUnit)
+            self:RegisterUnitEvent("UNIT_MAXHEALTH", self.__owner.gwUnit)
         end,
         events = GW.Classic and {'UNIT_HEALTH_FREQUENT','UNIT_HEALTH','UNIT_MAXHEALTH'} or {'UNIT_HEALTH','UNIT_MAXHEALTH'}
     },

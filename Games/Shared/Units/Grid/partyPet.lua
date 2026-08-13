@@ -10,7 +10,7 @@ local function GridPartyPetStyleRegister(self)
         "OnEnter",
         function(self)
             GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
-            GameTooltip:SetUnit(self.unit)
+            GameTooltip:SetUnit(self.__unit)
             GameTooltip:Show()
         end
     )

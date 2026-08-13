@@ -637,6 +637,9 @@ local function LoadPlayerAuras(lm)
     if ConsolidatedBuffs then
         ConsolidatedBuffs:GwKill()
     end
+    if DebuffFrame then
+        DebuffFrame:GwKill()
+    end
 
     loadAuras(lm)
 end

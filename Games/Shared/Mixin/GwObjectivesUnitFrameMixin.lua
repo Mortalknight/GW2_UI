@@ -13,13 +13,13 @@ end
 
 
 function GwObjectivesUnitFrameMixin:UpdateHealth()
-    local health = UnitHealth(self.unit)
-    local maxHealth = UnitHealthMax(self.unit)
+    local health = UnitHealth(self.gwUnit)
+    local maxHealth = UnitHealthMax(self.gwUnit)
     self.health:SetMinMaxValues(0, maxHealth)
 
     if GW.Retail then
         self.health:SetValue(health, Enum.StatusBarInterpolation.ExponentialEaseOut)
-        self.health.value:SetText(string.format("%.0f%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100)))
+        self.health.value:SetText(string.format("%.0f%%", UnitHealthPercent(self.gwUnit, true, CurveConstants.ScaleTo100)))
     else
         local healthPercentage = (health > 0 and maxHealth > 0) and (health / maxHealth) or 0
         self.health:SetValue(health)
@@ -28,9 +28,9 @@ function GwObjectivesUnitFrameMixin:UpdateHealth()
 end
 
 function GwObjectivesUnitFrameMixin:UpdatePower()
-    local powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
-    local power = UnitPower(self.unit, powerType)
-    local powerMax = UnitPowerMax(self.unit, powerType)
+    local powerType, powerToken, altR, altG, altB = UnitPowerType(self.gwUnit)
+    local power = UnitPower(self.gwUnit, powerType)
+    local powerMax = UnitPowerMax(self.gwUnit, powerType)
 
     self.power:SetMinMaxValues(0, powerMax)
 
@@ -43,7 +43,7 @@ function GwObjectivesUnitFrameMixin:UpdatePower()
 
     if GW.Retail then
         self.power:SetValue(power, Enum.StatusBarInterpolation.ExponentialEaseOut)
-        self.power.value:SetText(string.format("%.0f%%", UnitPowerPercent(self.unit, powerType, true, CurveConstants.ScaleTo100)))
+        self.power.value:SetText(string.format("%.0f%%", UnitPowerPercent(self.gwUnit, powerType, true, CurveConstants.ScaleTo100)))
     else
         local powerPercentage = (power > 0 and powerMax > 0) and (power / powerMax) or 0
         self.power:SetValue(power)
@@ -52,11 +52,11 @@ function GwObjectivesUnitFrameMixin:UpdatePower()
 end
 
 function GwObjectivesUnitFrameMixin:UpdateName()
-    local name = UnitName(self.unit)
+    local name = UnitName(self.gwUnit)
     self.name:SetText(name)
 
     if GW.Retail then return end -- guid is secret
-    self.guid = UnitGUID(self.unit)
+    self.guid = UnitGUID(self.gwUnit)
     if self.guid == UnitGUID("target") then
         self.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     else
@@ -65,9 +65,9 @@ function GwObjectivesUnitFrameMixin:UpdateName()
 end
 
 function GwObjectivesUnitFrameMixin:OnEnter()
-    if self.unit then
+    if self.gwUnit then
         GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
-        GameTooltip:SetUnit(self.unit)
+        GameTooltip:SetUnit(self.gwUnit)
         GameTooltip:Show()
     end
 end

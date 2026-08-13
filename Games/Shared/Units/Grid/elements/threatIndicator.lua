@@ -6,12 +6,12 @@ local function unitExists(unit)
 end
 
 local function Update(self, event, unit)
-    if(unit ~= self.unit) then return end
+    if(unit ~= self.__unit) then return end
 
 	local element = self.ThreatIndicator
 
     local feedbackUnit = element.feedbackUnit
-	unit = unit or self.unit
+	unit = unit or self.__unit
 
 	local status
 	-- BUG: Non-existent '*target' or '*pet' units cause UnitThreatSituation() errors

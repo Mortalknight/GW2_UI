@@ -7,7 +7,7 @@ function GwUnitHealthbarMixin:UpdateHealthTextString(health, healthPrecentage)
     local text = ""
     if GW.Retail then
         local formatFunc = self.shortendHealthValues and GW.ShortValue or BreakUpLargeNumbers
-        local pctText = string.format("%.0f%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100))
+        local pctText = string.format("%.0f%%", UnitHealthPercent(self.gwUnit, true, CurveConstants.ScaleTo100))
         if self.showHealthValue and self.showHealthPrecentage then
             text = self.frameInvert and (string.format("%s - %s", pctText, formatFunc(health))) or (string.format("%s - %s", formatFunc(health), pctText))
         elseif self.showHealthValue then
@@ -34,7 +34,7 @@ end
 function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
     if GW.Retail then
         local statusBarAnimation = forceUpdate and Enum.StatusBarInterpolation.Immediate or Enum.StatusBarInterpolation.ExponentialEaseOut
-        local unit = self.unit
+        local unit = self.gwUnit
         local health = UnitHealth(unit)
         local healthMax = UnitHealthMax(unit)
         local healthPrecentage = UnitHealthPercent(unit)
@@ -64,7 +64,7 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
             self.antiHeal:SetValue(healAbsorbAmount, statusBarAnimation)
         end
     else
-        local unit = self.unit
+        local unit = self.gwUnit
         local health = UnitHealth(unit)
         local healthMax = UnitHealthMax(unit)
         local absorb = (self.showAbsorbBar and UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(unit)) or 0

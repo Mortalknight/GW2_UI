@@ -563,7 +563,7 @@ eventFrame:SetScript('OnEvent', function(self, event, unit)
 	local strings = eventFontStrings[event]
 	if(strings) then
 		for fs in next, strings do
-			if(not stringsToUpdate[fs] and fs:IsVisible() and (unitlessEvents[event] or fs.parent.unit == unit or (fs.extraUnits and fs.extraUnits[unit]))) then
+			if(not stringsToUpdate[fs] and fs:IsVisible() and (unitlessEvents[event] or fs.parent.__unit == unit or (fs.extraUnits and fs.extraUnits[unit]))) then
 				stringsToUpdate[fs] = true
 			end
 		end
@@ -601,7 +601,7 @@ local function enableTimer(timer)
 		frame:SetScript('OnUpdate', function(self, elapsed)
 			if(total >= timer) then
 				for fs in next, strings do
-					if(fs.parent:IsShown() and unitExists(fs.parent.unit)) then
+					if(fs.parent:IsShown() and unitExists(fs.parent.__unit)) then
 						fs:UpdateTag()
 					end
 				end
@@ -751,10 +751,10 @@ local function getTagFunc(tagstr)
 
 		func = function(self)
 			local parent = self.parent
-			local unit = parent.unit
+			local unit = parent.__unit
 			local realUnit
 			if(self.overrideUnit) then
-				realUnit = parent.realUnit
+				realUnit = parent.__realUnit
 			end
 
 			_ENV._COLORS = parent.colors

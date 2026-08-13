@@ -22,13 +22,13 @@ GwArenaFrameMixin = CreateFromMixins(GwObjectivesUnitFrameMixin)
 function GwArenaFrameMixin:UpdateName()
     local inArena = C_PvP.GetZonePVPInfo()
     local inBG = UnitInBattleground("player")
-    local name = UnitName(self.unit) or UNKNOWNOBJECT
+    local name = UnitName(self.gwUnit) or UNKNOWNOBJECT
     local nameString = UNKNOWNOBJECT
 
     if inArena == "arena" then
         local specID = GetArenaOpponentSpec(self.id)
         if specID and specID > 0 then
-            local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.unit))
+            local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.gwUnit))
             if role and nameRoleIcon[role] and specName and name then
                 nameString = nameRoleIcon[role] .. name .. " - " .. specName
             else
@@ -38,8 +38,8 @@ function GwArenaFrameMixin:UpdateName()
             nameString = name
         end
     elseif inBG then
-        local role = UnitGroupRolesAssigned(self.unit)
-        local englishFaction = UnitFactionGroup(self.unit)
+        local role = UnitGroupRolesAssigned(self.gwUnit)
+        local englishFaction = UnitFactionGroup(self.gwUnit)
         if GW.NotSecretValue(role) and role and nameRoleIcon[role] and englishFaction and FractionIcon[englishFaction] and name then
             nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. name
         else
@@ -50,8 +50,8 @@ function GwArenaFrameMixin:UpdateName()
     end
 
     self.name:SetText(nameString)
-    self.class = select(2, UnitClass(self.unit))
-    self.classIndex = select(3, UnitClass(self.unit))
+    self.class = select(2, UnitClass(self.gwUnit))
+    self.classIndex = select(3, UnitClass(self.gwUnit))
     if self.class then
         SetClassIcon(self.icon, self.classIndex)
         local color = GWGetClassColor(self.class, true)
@@ -59,7 +59,7 @@ function GwArenaFrameMixin:UpdateName()
     end
 
     if GW.Retail then return end
-    self.guid = UnitGUID(self.unit)
+    self.guid = UnitGUID(self.gwUnit)
     if self.guid == UnitGUID("target") then
         self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     else
@@ -68,7 +68,7 @@ function GwArenaFrameMixin:UpdateName()
 end
 
 function GwArenaFrameMixin:OnEvent(event, unitId)
-    if event == "UNIT_POWER_FREQUENT" and self.unit ~= unitId then return end
+    if event == "UNIT_POWER_FREQUENT" and self.gwUnit ~= unitId then return end
     local _, instanceType = IsInInstance()
     if instanceType ~= "arena" and instanceType ~= "pvp" then
         return
@@ -194,7 +194,7 @@ function GwObjectivesArenaContainerMixin:RegisterFrame(i)
     local unit = "arena" .. i
     Mixin(arenaFrame, GwArenaFrameMixin)
 
-    arenaFrame.unit = unit
+    arenaFrame.gwUnit = unit
     arenaFrame.id = i
     arenaFrame.guid = UnitGUID(unit)
     arenaFrame.container = self

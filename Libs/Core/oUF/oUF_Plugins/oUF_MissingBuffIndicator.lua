@@ -36,7 +36,7 @@ end
 
 local function Update(self, event)
 	 -- missing buffs
-     if not UnitIsDeadOrGhost(self.unit) and self.missingAuras then
+     if not UnitIsDeadOrGhost(self.__unit) and self.missingAuras then
         local spellInfo
         local btnIndex, i, x, y = 1, 0, 0, 0
         -- do a reset
@@ -47,7 +47,7 @@ local function Update(self, event)
             self.missingAuras[mName] = true
         end
         for mName, _ in pairs(self.missingAuras) do
-            if AuraUtil.FindAuraByName(mName, self.unit, "HELPFUL") then
+            if AuraUtil.FindAuraByName(mName, self.__unit, "HELPFUL") then
                 self.missingAuras[mName] = false
             end
         end
@@ -69,7 +69,7 @@ local function Update(self, event)
 end
 
 local function ForceUpdate(element)
-	if(not element.__owner.unit) then return end
+	if(not element.__owner.__unit) then return end
 	return Update(element.__owner)
 end
 

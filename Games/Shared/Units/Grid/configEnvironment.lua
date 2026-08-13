@@ -233,11 +233,11 @@ end
 local function ForceShow2(frame, header)
     if InCombatLockdown() then return end
     if not frame.isForced then
-        frame.oldUnit = frame.unit
-        frame.oldRealUnit = frame.realUnit
+        frame.oldUnit = frame.__unit
+        frame.oldRealUnit = frame.__realUnit
         frame.oldNameOverrideUnit = frame.Name and frame.Name.overrideUnit
         frame.oldHealthValueOverrideUnit = frame.HealthValueText and frame.HealthValueText.overrideUnit
-        frame.unit = "player"
+        frame.__unit = "player"
         frame.isForced = true
         frame.oldOnUpdate = frame:GetScript("OnUpdate")
     end
@@ -251,7 +251,7 @@ local function ForceShow2(frame, header)
     UnregisterUnitWatch(frame)
     RegisterUnitWatch(frame, true)
 
-    frame.realUnit = configModeData.unit
+    frame.__realUnit = configModeData.unit
     frame.Name.overrideUnit = true
     frame.HealthValueText.overrideUnit = true
 
@@ -287,8 +287,8 @@ local function UnforceShow(frame, header)
     if InCombatLockdown() then return end
     if not frame.isForced then return end
 
-    frame.unit = frame.oldUnit or frame.unit
-    frame.realUnit = frame.oldRealUnit
+    frame.__unit = frame.oldUnit or frame.__unit
+    frame.__realUnit = frame.oldRealUnit
     frame.oldUnit = nil
     frame.oldRealUnit = nil
     frame.isForced = nil

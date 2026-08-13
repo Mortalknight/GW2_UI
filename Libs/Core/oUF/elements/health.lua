@@ -106,7 +106,7 @@ local Private = oUF.Private
 local unitSelectionType = Private.unitSelectionType
 
 local function UpdateColor(self, event, unit)
-	if(not unit or self.unit ~= unit) then return end
+	if(not unit or self.__unit ~= unit) then return end
 	local element = self.Health
 
 	local r, g, b, color
@@ -167,7 +167,7 @@ end
 
 local function Update(self, event, unit)
 	if (self.isForced and event ~= 'Gw2_UpdateAllElements') then return end -- GW2 changed
-	if(not unit or self.unit ~= unit) then return end
+	if(not unit or self.__unit ~= unit) then return end
 	local element = self.Health
 
 	--[[ Callback: Health:PreUpdate(unit)
@@ -227,7 +227,7 @@ local function Path(self, event, ...)
 end
 
 local function ForceUpdate(element)
-	Path(element.__owner, 'ForceUpdate', element.__owner.unit)
+	Path(element.__owner, 'ForceUpdate', element.__owner.__unit)
 end
 
 --[[ Health:SetColorDisconnected(state, isForced)

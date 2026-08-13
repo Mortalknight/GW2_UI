@@ -101,7 +101,7 @@ local function UpdatePartyAuraContainer(frame)
         end
     end
 
-    container:SetUnit(frame.unit)
+    container:SetUnit(frame.gwUnit)
     container:ClearAllPoints()
     container:SetPoint(cfg.anchorPoint, element, cfg.anchorPoint)
     container:GwUpdateLayout()
@@ -366,20 +366,20 @@ function GwPartyFrameMixin:UpdateAwayData()
     if not self.classicon then return end
 
     local playerInstanceId = select(4, UnitPosition("player"))
-    local instanceId = select(4, UnitPosition(self.unit))
-    local readyCheckStatus = GetReadyCheckStatus(self.unit)
+    local instanceId = select(4, UnitPosition(self.gwUnit))
+    local readyCheckStatus = GetReadyCheckStatus(self.gwUnit)
     local phaseReason
     local portraitIndex = 1
 
     if GW.Retail then
-        phaseReason = UnitPhaseReason(self.unit)
+        phaseReason = UnitPhaseReason(self.gwUnit)
     else
-        phaseReason = not UnitInPhase(self.unit)
+        phaseReason = not UnitInPhase(self.gwUnit)
     end
 
-    if not readyCheckStatus and not UnitHasIncomingResurrection(self.unit) and not (GW.Retail and C_IncomingSummon.HasIncomingSummon(self.unit)) then
+    if not readyCheckStatus and not UnitHasIncomingResurrection(self.gwUnit) and not (GW.Retail and C_IncomingSummon.HasIncomingSummon(self.gwUnit)) then
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
-        SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
+        SetClassIcon(self.classicon, select(3, UnitClass(self.gwUnit)))
     end
 
     if playerInstanceId ~= instanceId then
@@ -390,7 +390,7 @@ function GwPartyFrameMixin:UpdateAwayData()
         portraitIndex = 4
     end
 
-    if UnitHasIncomingResurrection(self.unit) then
+    if UnitHasIncomingResurrection(self.gwUnit) then
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
         if GW.Retail then
             self.classicon:SetAtlas("RaidFrame-Icon-Rez")
@@ -399,7 +399,7 @@ function GwPartyFrameMixin:UpdateAwayData()
         end
     end
 
-    local status = (GW.Retail or GW.TBC or GW.Wrath) and C_IncomingSummon.IncomingSummonStatus(self.unit) or 0
+    local status = (GW.Retail or GW.TBC or GW.Wrath) and C_IncomingSummon.IncomingSummonStatus(self.gwUnit) or 0
     if status ~= 0 then --Enum.SummonStatus.None
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
         if status == Enum.SummonStatus.Pending then
@@ -411,7 +411,7 @@ function GwPartyFrameMixin:UpdateAwayData()
         end
     end
 
-    if not UnitIsConnected(self.unit) then
+    if not UnitIsConnected(self.gwUnit) then
         portraitIndex = 3
     end
 
@@ -426,7 +426,7 @@ function GwPartyFrameMixin:UpdateAwayData()
         end
     end
 
-    if UnitThreatSituation(self.unit) and UnitThreatSituation(self.unit) > 2 then
+    if UnitThreatSituation(self.gwUnit) and UnitThreatSituation(self.gwUnit) > 2 then
         portraitIndex = 5
     end
 
@@ -437,28 +437,28 @@ function GwPartyFrameMixin:UpdatePortrait()
     if not self.portrait then return end
 
     local playerInstanceId = select(4, UnitPosition("player"))
-    local instanceId = select(4, UnitPosition(self.unit))
+    local instanceId = select(4, UnitPosition(self.gwUnit))
 
     if playerInstanceId ~= instanceId then
         self.portrait:SetTexture(nil)
         return
     end
 
-    SetPortraitTexture(self.portrait, self.unit)
+    SetPortraitTexture(self.portrait, self.gwUnit)
     local phaseReason
     if GW.Retail then
-        phaseReason = UnitPhaseReason(self.unit)
+        phaseReason = UnitPhaseReason(self.gwUnit)
     else
-        phaseReason = not UnitInPhase(self.unit)
+        phaseReason = not UnitInPhase(self.gwUnit)
     end
 
     self.portrait:SetDesaturated(phaseReason)
 end
 
 function GwPartyFrameMixin:SetUnitName()
-    local role = UnitGroupRolesAssigned(self.unit)
-    local nameString = UnitName(self.unit) or UNKNOWNOBJECT
-    local isLeader = UnitIsGroupLeader(self.unit)
+    local role = UnitGroupRolesAssigned(self.gwUnit)
+    local nameString = UnitName(self.gwUnit) or UNKNOWNOBJECT
+    local isLeader = UnitIsGroupLeader(self.gwUnit)
     local isSecret = GW.IsSecretValue(isLeader)
 
     if GW.NotSecretValue(role) and nameRoleIcon[role] then
@@ -482,16 +482,16 @@ function GwPartyFrameMixin:UpdateHealthTextString(healthCur, healthPrec, healthM
         local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and GW.ShortValue or BreakUpLargeNumbers
 
         if GW.settings.PARTY_UNIT_HEALTH == "PREC" then
-            self.healthString:SetText(string.format("%.0f%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100)))
+            self.healthString:SetText(string.format("%.0f%%", UnitHealthPercent(self.gwUnit, true, CurveConstants.ScaleTo100)))
             self.healthString:SetJustifyH("LEFT")
         elseif GW.settings.PARTY_UNIT_HEALTH == "HEALTH" then
             self.healthString:SetText(formatFunc(healthCur))
             self.healthString:SetJustifyH("LEFT")
         elseif GW.settings.PARTY_UNIT_HEALTH == "LOSTHEALTH" then
-            self.healthString:SetText(formatFunc(UnitHealthMissing(self.unit)))
+            self.healthString:SetText(formatFunc(UnitHealthMissing(self.gwUnit)))
             self.healthString:SetJustifyH("RIGHT")
         end
-        local color = UnitHealthPercent(self.unit, true, healtTextColorCurve)
+        local color = UnitHealthPercent(self.gwUnit, true, healtTextColorCurve)
         self.healthString:SetTextColor(color:GetRGB())
     else
         local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and GW.ShortValue or GW.GetLocalizedNumber
@@ -519,13 +519,13 @@ function GwPartyFrameMixin:UpdateFrame()
     self:UpdateAwayData()
     self:UpdatePortrait()
 
-    if self.level then self.level:SetText(UnitLevel(self.unit)) end
-    if self.classicon then SetClassIcon(self.classicon, select(3, UnitClass(self.unit))) end
+    if self.level then self.level:SetText(UnitLevel(self.gwUnit)) end
+    if self.classicon then SetClassIcon(self.classicon, select(3, UnitClass(self.gwUnit))) end
 end
 
 function GwPartyFrameMixin:OnEvent(event, unit, ...)
     local isVisible = event == "UNIT_PET" or self:IsVisible()
-    if (not UnitExists(self.unit) or IsInRaid()) or not isVisible and event ~= "load" then return end
+    if (not UnitExists(self.gwUnit) or IsInRaid()) or not isVisible and event ~= "load" then return end
 
     if event == "load" then
         self:UpdateFrame()
@@ -545,15 +545,15 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
         self:UpdatePortrait()
     elseif event == "UNIT_NAME_UPDATE" then
         self:SetUnitName()
-    elseif event == "UNIT_AURA" and unit == self.unit then
-        GW.UpdateBuffLayout(self, event, self.unit, ...)
-    elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
+    elseif event == "UNIT_AURA" and unit == self.gwUnit then
+        GW.UpdateBuffLayout(self, event, self.gwUnit, ...)
+    elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.gwUnit) then
         self:UpdateAwayData()
     elseif event == "READY_CHECK_FINISHED" then
         C_Timer.After(1.5, function()
-            if UnitInParty(self.unit) then
+            if UnitInParty(self.gwUnit) then
                 self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
-                SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
+                SetClassIcon(self.classicon, select(3, UnitClass(self.gwUnit)))
             end
         end)
     end
@@ -638,13 +638,13 @@ local function UpdatePlayerInPartySetting(alwaysHide)
         local petFrame = frame.PetFrame
 
         local unit = GetPartyUnit(i)
-        frame.unit = unit
+        frame.gwUnit = unit
         frame.guid = UnitGUID(unit)
         frame:SetAttribute("unit", unit)
         frame:OnEvent("load")
 
         local petUnit = GetPartyPetUnit(i)
-        petFrame.unit = petUnit
+        petFrame.gwUnit = petUnit
         petFrame.guid = UnitGUID(petUnit)
         petFrame:SetAttribute("unit", petUnit)
         petFrame:OnEvent("load")
@@ -759,7 +759,7 @@ local function CreatePartyFrame(i, isPlayer)
     --Create party pet frame
     local petUnit = (registerUnit == "player") and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
     local petFrame = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, GW.Retail and "GwPartyPetFrameRetailTemplate" or "GwPartyPetFrameTemplate")
-    petFrame.unit = petUnit
+    petFrame.gwUnit = petUnit
     petFrame:SetAttribute("unit", petUnit)
     petFrame.isPet = true
 
@@ -915,7 +915,7 @@ local function CreatePartyFrame(i, isPlayer)
     -- Speichere den Pet-Frame im Party-Frame
     frame.PetFrame = petFrame
 
-    frame.unit = registerUnit
+    frame.gwUnit = registerUnit
     frame.guid = UnitGUID(registerUnit)
     frame.ready = -1
     frame:SetAttribute("unit", registerUnit)
@@ -1000,7 +1000,7 @@ local function TogglePartyPreview()
         for i, frame in ipairs(partyFrames) do
             local unit = GetPartyUnit(i)
             local petUnit = GetPartyPetUnit(i)
-            frame.unit = unit
+            frame.gwUnit = unit
             frame.guid = UnitGUID(unit)
             frame:SetAttribute("unit", unit)
             local vis = (i == 1 and GW.settings.PARTY_PLAYER_FRAME) and
@@ -1008,7 +1008,7 @@ local function TogglePartyPreview()
                 ("[@raid6,exists][@%s,noexists] hide;show"):format(unit)
             RegisterStateDriver(frame, "visibility", vis)
             frame:OnEvent("load")
-            frame.PetFrame.unit = petUnit
+            frame.PetFrame.gwUnit = petUnit
             frame.PetFrame.guid = UnitGUID(petUnit)
             frame.PetFrame:SetAttribute("unit", petUnit)
             if GW.settings.PARTY_SHOW_PETS then
@@ -1026,13 +1026,13 @@ local function TogglePartyPreview()
         previewMode = false
     else
         for i, frame in ipairs(partyFrames) do
-            frame.unit = "player"
+            frame.gwUnit = "player"
             frame.guid = GW.myguid
             frame:SetAttribute("unit", "player")
             RegisterStateDriver(frame, "visibility", "show")
             frame:OnEvent("load")
             if GW.settings.PARTY_SHOW_PETS then
-                frame.PetFrame.unit = "player"
+                frame.PetFrame.gwUnit = "player"
                 frame.PetFrame.guid = GW.myguid
                 frame.PetFrame:SetAttribute("unit", "player")
                 RegisterStateDriver(frame.PetFrame, "visibility", "show")

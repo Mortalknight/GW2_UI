@@ -15,6 +15,8 @@ AddChange(string addonVersion, table changeList)
 
 
 addChange("11.1.1", {
+    {GW.Enum.ChangelogType.bug, [=[Unit frames (Retail): Blizzard reads the .unit field on frames itself since 12.1 (the ping system among others) - an addon-written value there is tainted and trips up Blizzards secure readers. The oUF-based raid grids got the upstream oUF fix (internal state moved to its own field), and every own secure unit frame (player, target, focus, party, pet, boss, arena) keeps its bookkeeping in a gw-prefixed field now; the unit reaches Blizzard exclusively through the secure "unit" attribute]=]},
+    {GW.Enum.ChangelogType.bug, [=[Memory (Retail): the raid grids built a full aura container setup for every one of their ~125 pre-created (hidden) frames right at login - and bound them to the PLAYERS own auras on top, so each of them also built skinned aura buttons for every aura you had. That cost around 90 MB before you ever joined a group. Grid aura containers and indicator trackers are now built lazily, when a frame receives its first real unit (deferred out of combat), and never fall back to tracking the player]=]},
     {GW.Enum.ChangelogType.change, [=[Performance: the quest tracker no longer rebuilds every tracked quest on every quest log update - unchanged quests are skipped via a content fingerprint, rows only re-apply fonts and anchors when the layout settings actually changed, and the per-line allocation churn is gone. Progress on one quest now only redraws that quest. Applies to ALL game versions]=]},
     {GW.Enum.ChangelogType.change, [=[Advanced aura filters (Retail): the "Dispellable" option matches its label again - it shows auras your group can dispel (as the old aura engine did), not every aura that merely has a dispel type]=]},
 })

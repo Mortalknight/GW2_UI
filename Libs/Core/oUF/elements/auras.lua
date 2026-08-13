@@ -90,7 +90,7 @@ local function UpdateTooltip(self)
     if self.tooltipBySpellId then
         GameTooltip:SetSpellByID(self.tooltipBySpellId)
     elseif self.index then
-        GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self.index, self.isHarmfulAura and "HARMFUL" or "HELPFUL")
+        GameTooltip:SetUnitAura(self:GetParent().__owner.__unit, self.index, self.isHarmfulAura and "HARMFUL" or "HELPFUL")
     end
 end
 
@@ -319,7 +319,7 @@ local function processData(element, unit, data, filter)
 end
 
 local function UpdateAuras(self, event, unit, updateInfo)
-    if(self.unit ~= unit) then return end
+    if(self.__unit ~= unit) then return end
 
     local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
 
@@ -843,7 +843,7 @@ local function UpdateAuras(self, event, unit, updateInfo)
 end
 
 local function Update(self, event, unit, updateInfo, onlyPosition)
-    if (self.isForced and event ~= 'Gw2_UpdateAllElements') or (self.unit ~= unit) then return end -- GW2 changed
+    if (self.isForced and event ~= 'Gw2_UpdateAllElements') or (self.__unit ~= unit) then return end -- GW2 changed
 
     if not onlyPosition then
         UpdateAuras(self, event, unit, updateInfo)
@@ -870,7 +870,7 @@ local function Update(self, event, unit, updateInfo, onlyPosition)
 end
 
 local function ForceUpdate(element, onlyPosition)
-    return Update(element.__owner, 'ForceUpdate', element.__owner.unit, nil, onlyPosition)
+    return Update(element.__owner, 'ForceUpdate', element.__owner.__unit, nil, onlyPosition)
 end
 
 local function Enable(self)

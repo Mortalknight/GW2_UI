@@ -145,7 +145,7 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
     local arg1, arg2, arg3, arg4 = ...
 
     if event == "UNIT_COMBAT" then
-        if unit == self.unit then
+        if unit == self.gwUnit then
             CombatFeedback_OnCombatEvent(self, arg1, arg2, arg3, arg4)
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
@@ -327,11 +327,11 @@ local function LoadPetFrame(lm)
     playerPetFrame.powerbar.customMaskSize = 64
 
     playerPetFrame.buttons = {}
-    playerPetFrame.unit = "pet"
+    playerPetFrame.gwUnit = "pet"
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
-    playerPetFrame:SetAttribute("unit", playerPetFrame.unit)
+    playerPetFrame:SetAttribute("unit", playerPetFrame.gwUnit)
     playerPetFrame:EnableMouse(true)
     playerPetFrame:RegisterForClicks("AnyDown")
     GW.AddToClique(playerPetFrame)
@@ -344,7 +344,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:SetScript("OnEnter", function(self)
         GameTooltip:ClearLines()
         GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
-        GameTooltip:SetUnit(self.unit)
+        GameTooltip:SetUnit(self.gwUnit)
         GameTooltip:Show()
     end)
 

@@ -98,15 +98,15 @@ end
 function GwHealthglobeMixin:OnEnter()
     local warmode = GW.Retail and C_PvP.IsWarModeDesired()
     local pvpdesired = GetPVPDesired()
-    local freePVP = UnitIsPVPFreeForAll(self.unit)
-    local unitPVP = UnitIsPVP(self.unit)
+    local freePVP = UnitIsPVPFreeForAll(self.gwUnit)
+    local unitPVP = UnitIsPVP(self.gwUnit)
     local pvpactive = false
     if freePVP or (GW.NotSecretValue(unitPVP) and unitPVP) then
         pvpactive = true
     end
 
     GameTooltip_SetDefaultAnchor(GameTooltip, self)
-    GameTooltip:SetUnit(self.unit)
+    GameTooltip:SetUnit(self.gwUnit)
     GameTooltip:AddLine(" ")
     if warmode or pvpdesired or pvpactive then
         GameTooltip_AddColoredLine(GameTooltip, PVP .. " - " .. VIDEO_OPTIONS_ENABLED, HIGHLIGHT_FONT_COLOR)
@@ -135,7 +135,7 @@ function GwHealthglobeMixin:OnEnter()
     if IsInRaid() then
         local groupNumber
         for i = 1, GetNumGroupMembers() do
-            if GW.UnitIsUnit("raid" .. i, self.unit) then
+            if GW.UnitIsUnit("raid" .. i, self.gwUnit) then
                 groupNumber = select(3, GetRaidRosterInfo(i))
             end
         end
@@ -303,7 +303,7 @@ local function LoadHealthGlobe()
     hg:SetAttribute("unit", "player")
     hg:EnableMouse(true)
     hg:RegisterForClicks("AnyDown")
-    hg.unit = "player"
+    hg.gwUnit = "player"
 
     GW.AddToClique(hg)
 
@@ -339,7 +339,7 @@ local function LoadHealthGlobe()
         v:SetTextColor(0, 0, 0, 1 / i)
     end
 
-    hg.UpdateTooltip = (GW.NotSecretValue(hg.unit) and hg.OnEnter) or nil
+    hg.UpdateTooltip = (GW.NotSecretValue(hg.gwUnit) and hg.OnEnter) or nil
     hg:SetScript("OnEvent", hg.OnEvent)
     hg:SetScript("OnEnter", hg.OnEnter)
     hg:SetScript("OnLeave", function(self)

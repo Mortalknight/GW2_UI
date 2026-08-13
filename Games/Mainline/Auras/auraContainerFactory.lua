@@ -787,6 +787,19 @@ local function AttachRefreshWatcher(container, config)
     container.gwRefreshWatcher = watcher
 end
 
+-- SetUnit plus the deferred first enable for containers that were created before
+-- their unit existed (see the comment in CreateUnitAuraContainer)
+local function GwContainerSetUnit(container, unit)
+    if not unit then
+        return
+    end
+    container:SetUnit(unit)
+    if not container.gwEnabled then
+        container.gwEnabled = true
+        container:SetEnabled(true)
+    end
+end
+
 -- Single-button tracker container: the AuraContainer finds the aura in its secure
 -- environment (works even while aura values are secret) and drives display widgets
 -- engine-side — a StatusBar as remaining-duration bar (SetDurationBar) and/or a
@@ -847,8 +860,15 @@ function GW.CreateAuraTrackerContainer(config)
     })
     container:SetAuraGroupCandidateFilters("tracker", { includeSpellIDs = config.spellIDs })
     container:SetAuraGroupMaxFrameCount("tracker", 1)
-    container:SetUnit(config.unit)
-    container:SetEnabled(true)
+    container.GwSetUnit = GwContainerSetUnit
+    -- same unit guard as CreateUnitAuraContainer: no unit yet = stay disabled
+    if config.unit then
+        container.gwEnabled = true
+        container:SetUnit(config.unit)
+        container:SetEnabled(true)
+    else
+        container:SetEnabled(false)
+    end
     AttachRefreshWatcher(container, config)
     RegisterAuraContainer(container)
 
@@ -896,8 +916,19 @@ function GW.CreateUnitAuraContainer(config)
         })
     end
 
-    container:SetUnit(config.unit)
-    container:SetEnabled(true)
+    container.GwSetUnit = GwContainerSetUnit
+    -- the grid frames are pre-created by the secure header BEFORE their units exist.
+    -- Binding unit-less containers to a fallback like "player" made every one of the
+    -- ~125 pre-created grid frames track the players own auras and build a full set
+    -- of skinned aura buttons for them (tens of MB, growing with every own aura) —
+    -- without a unit the container stays disabled until GwSetUnit delivers one
+    if config.unit then
+        container.gwEnabled = true
+        container:SetUnit(config.unit)
+        container:SetEnabled(true)
+    else
+        container:SetEnabled(false)
+    end
     AttachRefreshWatcher(container, config)
 
     ApplyLayout(container)

@@ -6,7 +6,7 @@ local CheckHighlightFrame
 
 local function Update(self, event)
 	local element = self.highlightBorder
-    local isSameUnit = ns.UnitIsUnit(self.unit, "target")
+    local isSameUnit = ns.UnitIsUnit(self.__unit, "target")
 
     element:SetAlpha(0)
 

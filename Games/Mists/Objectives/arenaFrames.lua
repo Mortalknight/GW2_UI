@@ -75,8 +75,8 @@ end
 
 
 local function updateArena_Health(self)
-    local health = UnitHealth(self.unit)
-    local maxHealth = UnitHealthMax(self.unit)
+    local health = UnitHealth(self.gwUnit)
+    local maxHealth = UnitHealthMax(self.gwUnit)
     local healthPrecentage = 0
 
     if health > 0 and maxHealth > 0 then
@@ -90,9 +90,9 @@ end
 
 
 local function updateArena_Power(self)
-    local powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
-    local power = UnitPower(self.unit, powerType)
-    local powerMax = UnitPowerMax(self.unit, powerType)
+    local powerType, powerToken, altR, altG, altB = UnitPowerType(self.gwUnit)
+    local power = UnitPower(self.gwUnit, powerType)
+    local powerMax = UnitPowerMax(self.gwUnit, powerType)
     local powerPercentage = 0
 
     if GW.Colors.PowerBarCustomColors[powerToken] then
@@ -116,7 +116,7 @@ local function updateArena_Name(self)
     local inArena = C_PvP.GetZonePVPInfo()
     local inBG = UnitInBattleground("player")
     local nameString = UNKNOWNOBJECT
-    local name = UnitName(self.unit) or UNKNOWNOBJECT
+    local name = UnitName(self.gwUnit) or UNKNOWNOBJECT
 
     if inArena == "arena" then
         local specID = GetArenaOpponentSpec(self.id)
@@ -124,15 +124,15 @@ local function updateArena_Name(self)
             return
         else
             if specID and specID > 0 then
-                local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.unit))
+                local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.gwUnit))
                 if role and nameRoleIcon[role] and specName and name then
                     nameString = nameRoleIcon[role] .. name .. " - " .. specName
                 end
             end
         end
     elseif inBG ~= nil then
-        local role = UnitGroupRolesAssigned(self.unit)
-        local englishFaction = UnitFactionGroup(self.unit)
+        local role = UnitGroupRolesAssigned(self.gwUnit)
+        local englishFaction = UnitFactionGroup(self.gwUnit)
         if GW.NotSecretValue(role) and role and nameRoleIcon[role] and englishFaction and FractionIcon[englishFaction] and name then
             nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. name
         else
@@ -143,9 +143,9 @@ local function updateArena_Name(self)
     end
 
     self.name:SetText(nameString)
-    self.guid = UnitGUID(self.unit)
-    self.class = select(2, UnitClass(self.unit))
-    self.classIndex = select(3, UnitClass(self.unit))
+    self.guid = UnitGUID(self.gwUnit)
+    self.class = select(2, UnitClass(self.gwUnit))
+    self.classIndex = select(3, UnitClass(self.gwUnit))
     if self.class then
         SetClassIcon(self.icon, self.classIndex)
         local color = GWGetClassColor(self.class, true)
@@ -183,7 +183,7 @@ local function registerFrame(i, container)
     local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerAreanaFrameTemp")
     local unit = "arena" .. i
 
-    arenaFrame.unit = unit
+    arenaFrame.gwUnit = unit
     arenaFrame.id = i
     arenaFrame.guid = UnitGUID(unit)
 

@@ -415,7 +415,7 @@ local function CreateGridIndicatorTracker(frame, pos, spellList, indicatorColor)
 
     local container = GW.CreateAuraTrackerContainer({
         parent = frame,
-        unit = frame.unit or "player",
+        unit = frame.__unit,
         filter = "HELPFUL|PLAYER",
         spellIDs = spellList,
         width = 13,
@@ -545,9 +545,9 @@ local function UpdateGridIndicators(frame)
                 tracker.gwAppliedActive = true
                 tracker:SetAuraGroupMaxFrameCount("tracker", 1)
             end
-            if frame.unit and tracker.gwAppliedUnit ~= frame.unit then
-                tracker.gwAppliedUnit = frame.unit
-                tracker:SetUnit(frame.unit)
+            if frame.__unit and tracker.gwAppliedUnit ~= frame.__unit then
+                tracker.gwAppliedUnit = frame.__unit
+                tracker:GwSetUnit(frame.__unit)
             end
 
             local geoSig = pos == "BAR" and ("BAR:" .. barWidth) or (pos .. ":" .. size)
@@ -618,7 +618,7 @@ local function HasGridResourceBar(frame)
     if frame.showResscoureBar ~= "HEALER" then
         return false
     end
-    return (GW.allowRoles and UnitGroupRolesAssigned(frame.unit or "player")) == "HEALER"
+    return (GW.allowRoles and UnitGroupRolesAssigned(frame.__unit or "player")) == "HEALER"
 end
 
 local function AnchorGridAuraContainer(frame)
@@ -808,16 +808,16 @@ local function UpdateGridAuraContainers(frame)
         }
     end)
 
-    if frame.unit and container.gwAppliedUnit ~= frame.unit then
-        container.gwAppliedUnit = frame.unit
-        container:SetUnit(frame.unit)
+    if frame.__unit and container.gwAppliedUnit ~= frame.__unit then
+        container.gwAppliedUnit = frame.__unit
+        container:GwSetUnit(frame.__unit)
     end
 end
 
-local function Construct_GridAuraContainers(frame)
+local function Construct_GridAuraContainers(frame, unit)
     local container = GW.CreateUnitAuraContainer({
         parent = frame,
-        unit = frame.unit or "player",
+        unit = unit or frame.__unit,
         pandemicEnabled = function() return frame.pandemicHighlight end,
         dispelIconEnabled = function() return frame.showDispelIcon end,
         tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
@@ -840,27 +840,28 @@ local function Construct_GridAuraContainers(frame)
     container:SetFrameLevel(frame.RaisedElementParent and frame.RaisedElementParent.AuraLevel or (frame:GetFrameLevel() + 4))
     container:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -2, 2)
     frame.gwAuraContainer = container
-    frame.gwIndicatorTrackers = {}
     RegisterGridAuraEvents(frame)
+end
 
-    -- the secure header re-targets the frame (raid1 -> raid2, ...): keep the
-    -- containers on the same unit as the frame
-    frame:HookScript("OnAttributeChanged", function(self, name, value)
-        if name == "unit" and value and self.gwAuraContainer then
-            if self.gwAuraContainer.gwAppliedUnit ~= value then
-                self.gwAuraContainer.gwAppliedUnit = value
-                self.gwAuraContainer:SetUnit(value)
-            end
-            for _, tracker in pairs(self.gwIndicatorTrackers) do
-                if tracker.gwAppliedUnit ~= value then
-                    tracker.gwAppliedUnit = value
-                    tracker:SetUnit(value)
-                end
-            end
-            -- the resource bar anchoring depends on the units role
-            AnchorGridAuraContainer(self)
-        end
-    end)
+-- Deferred construction: an AuraContainer with its aura groups is an expensive engine
+-- object, and the secure headers pre-create ~125 hidden grid frames at login BEFORE any
+-- unit exists — building the containers eagerly cost tens of MB with zero benefit.
+-- Built on the frames first real unit instead; every runtime entry point above already
+-- no-ops while gwAuraContainer is nil, and the current settings are applied right after
+local gridAuraContainerCount = 0
+local function EnsureGridAuraContainers(frame, unit)
+    if frame.gwAuraContainer then
+        return
+    end
+    Construct_GridAuraContainers(frame, unit)
+    UpdateGridAuraContainers(frame)
+
+    gridAuraContainerCount = gridAuraContainerCount + 1
+    GW.Debug("grid aura containers built:", gridAuraContainerCount, "->", frame:GetDebugName(), unit or frame.__unit)
+end
+-- /dump GW.GetGridAuraContainerCount() — how many grid frames actually built their containers
+function GW.GetGridAuraContainerCount()
+    return gridAuraContainerCount
 end
 
 local function CreateAuraIndicator(frame, pos)
@@ -882,8 +883,60 @@ local function Construct_Auras(frame)
     if GW.Retail then
         -- no oUF Auras element on retail (reading aura data from insecure code is
         -- blocked while values are secret) — frame.Auras stays nil, the display
-        -- runs through the AuraContainer
-        Construct_GridAuraContainers(frame)
+        -- runs through the AuraContainer, which is built lazily on the first unit
+        frame.gwIndicatorTrackers = {}
+
+        -- the construction trigger must NOT be the unit attribute: the secure header
+        -- assigns the tokens (raid1..raid40) to all pre-created frames at login, long
+        -- before those units exist. A frame is SHOWN (unit watch) exactly when its
+        -- unit is real — that is the moment the containers earn their cost. Frames
+        -- force-shown without an existing unit (the Move HUD preview) skip the build,
+        -- they have no auras to display anyway
+        frame:HookScript("OnShow", function(self)
+            if self.gwAuraContainer or not self.__unit then
+                return
+            end
+            -- UnitExists could hand back a secret one day — when in doubt build,
+            -- a spare container is cheaper than a thrown truthiness test
+            local exists = UnitExists(self.__unit)
+            if GW.NotSecretValue(exists) and not exists then
+                return
+            end
+            if InCombatLockdown() then
+                -- joining a group mid-combat: the container setup talks to the
+                -- secure aura engine, defer it out of combat
+                GW.CombatQueue:Queue("grid_aura_construct_" .. self:GetDebugName(), EnsureGridAuraContainers, {self, self.__unit})
+            else
+                EnsureGridAuraContainers(self, self.__unit)
+            end
+        end)
+
+        frame:HookScript("OnAttributeChanged", function(self, name, value)
+            if name ~= "unit" or not value or not self.gwAuraContainer then
+                return
+            end
+
+            -- the secure header re-targets the frame (raid1 -> raid2, ...): keep the
+            -- containers on the same unit as the frame
+            if self.gwAuraContainer.gwAppliedUnit ~= value then
+                self.gwAuraContainer.gwAppliedUnit = value
+                self.gwAuraContainer:GwSetUnit(value)
+            end
+            for _, tracker in pairs(self.gwIndicatorTrackers) do
+                if tracker.gwAppliedUnit ~= value then
+                    tracker.gwAppliedUnit = value
+                    tracker:GwSetUnit(value)
+                end
+            end
+            -- the resource bar anchoring depends on the units role
+            AnchorGridAuraContainer(self)
+        end)
+
+        -- frames that are already live when they get styled (profile switches)
+        if frame:IsShown() and frame.__unit and UnitExists(frame.__unit) then
+            EnsureGridAuraContainers(frame)
+        end
+
         return nil
     end
 

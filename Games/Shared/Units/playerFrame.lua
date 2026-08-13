@@ -121,7 +121,7 @@ end
 
 local function LoadPlayerFrame()
     local frame = GW.CreateUnitFrame("GwPlayerUnitFrame", false, true)
-    frame.unit = "player"
+    frame.gwUnit = "player"
     frame.type = "NormalTarget"
 
     Mixin(frame, GwPlayerUnitFrameMixin)

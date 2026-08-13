@@ -30,7 +30,7 @@ local RESURRECT_ATLAS = "RaidFrame-Icon-Rez"
 -- gw2 modified
 
 local function Update(self, event, unit)
-	if(self.unit ~= unit) then return end
+	if(self.__unit ~= unit) then return end
 
 	local element = self.ResurrectIndicator
 
@@ -88,7 +88,7 @@ local function Path(self, ...)
 end
 
 local function ForceUpdate(element)
-	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.__unit)
 end
 
 local function Enable(self)

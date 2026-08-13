@@ -223,7 +223,7 @@ local function LoadHealthGlobe()
     hg:SetAttribute("unit", "player")
     hg:EnableMouse(true)
     hg:RegisterForClicks("AnyDown")
-    hg.unit = "player"
+    hg.gwUnit = "player"
 
     GW.AddToClique(hg)
 

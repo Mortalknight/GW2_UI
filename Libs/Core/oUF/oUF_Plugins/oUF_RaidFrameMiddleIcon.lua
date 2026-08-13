@@ -19,12 +19,12 @@ local function Update(self)
     self.HealthValueText:SetTextColor(1, 1, 1)
 
     -- disconnect
-    if not UnitIsConnected(self.unit) then
+    if not UnitIsConnected(self.__unit) then
         element:SetTexture("Interface/CharacterFrame/Disconnect-Icon")
         element:SetTexCoord(unpack(ns.TexCoords))
 
         shouldShowIcon = true
-    elseif UnitIsDeadOrGhost(self.unit) then -- deathicon
+    elseif UnitIsDeadOrGhost(self.__unit) then -- deathicon
         if self.useClassColor then
             element:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
         end
@@ -33,8 +33,8 @@ local function Update(self)
         self.HealthValueText:SetTextColor(255, 0, 0)
 
         shouldShowIcon = true
-    elseif self.showTargetmarker and GetRaidTargetIndex(self.unit) then -- targetmarker
-        local index = GetRaidTargetIndex(self.unit)
+    elseif self.showTargetmarker and GetRaidTargetIndex(self.__unit) then -- targetmarker
+        local index = GetRaidTargetIndex(self.__unit)
         if index then
             element:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcons")
             SetRaidTargetIconTexture(element, index)
@@ -43,7 +43,7 @@ local function Update(self)
         end
     elseif not self.useClassColor and not self.hideClassIcon then -- class icon only if option is active
 
-        local _, _, classIndex = UnitClass(self.unit)
+        local _, _, classIndex = UnitClass(self.__unit)
         element:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
         ns.SetClassIcon(element, classIndex)
 
@@ -59,7 +59,7 @@ local function Update(self)
 end
 
 local function ForceUpdate(element)
-	if(not element.__owner.unit) then return end
+	if(not element.__owner.__unit) then return end
 	return Update(element.__owner)
 end
 
