@@ -336,6 +336,7 @@ function GwUnitFrameMixin:UpdateHealthbarColor()
 
     if (UnitLevel(unit) - GW.mylevel) <= -5 then
         local r, g, b = nameString:GetTextColor()
+        if GW.IsSecretValue(r) then return end
         nameString:SetTextColor(r + 0.5, g + 0.5, b + 0.5, 1)
     end
 end
