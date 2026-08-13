@@ -8,7 +8,7 @@ local function UpdateTooltip(self)
     if GameTooltip:IsForbidden() then return end
 
     if self.index then
-        GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self.index, self.isHarmful and "HARMFUL" or "HELPFUL")
+        GameTooltip:SetUnitAura(self:GetParent().__owner.gwUnit, self.index, self.isHarmful and "HARMFUL" or "HELPFUL")
     end
 end
 
@@ -551,7 +551,7 @@ GW.UpdateBuffLayout = UpdateBuffLayout
 
 local function ForceUpdate(element)
     local parent = element:GetParent()
-    UpdateBuffLayout(parent, "ForceUpdate", parent.unit)
+    UpdateBuffLayout(parent, "ForceUpdate", parent.gwUnit)
 end
 
 -- No use for player (not secure)
