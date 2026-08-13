@@ -111,7 +111,6 @@ addChange("10.13.1", {
     {GW.Enum.ChangelogType.feature, [=[Cast bar (Retail): empowered casts show the stage you are holding as a numeral on the bar and brighten with every stage reached. Interrupted or failed casts shake the bar, with an optional sound - all three can be turned off in the player cast bar settings]=]},
     {GW.Enum.ChangelogType.bug, [=[Bags: the "new item" marker stayed on a slot after the item was sold, moved or used up]=]},
     {GW.Enum.ChangelogType.change, [=[Performance: a bag update only refreshes the bags and slots that actually changed instead of rebuilding and re-laying out every bag slot, which removes the stutter while looting or using items with the bags open]=]},
-    {GW.Enum.ChangelogType.change, [=[Performance: the GW2 Edit Mode layout is only re-applied on login when something actually differs, which removes a noticeable hitch during loading]=]},
 })
 
 addChange("10.13.0", {
