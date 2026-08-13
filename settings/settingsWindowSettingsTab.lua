@@ -16,6 +16,7 @@ local COL_GAP   = 8
 local CONTENT_W = 550
 local DEFAULT_ROW_EXTENT = 40
 local MASTER_TOGGLE_SEPARATOR_EXTENT = 5
+local GROUP_GAP_EXTENT = 12 -- empty spacer row between different option groups (proximity grouping)
 local SEARCH_HIGHLIGHT_ALPHA = 0.08
 
 local SEARCH_ACTIVE = false
@@ -41,6 +42,7 @@ local optionTypes = {
     colorPicker = {template = "GwOptionBoxColorPickerTmpl", frame = "Button", newLine = true},
     header      = {template = "GwOptionBoxHeader", frame = "Frame", newLine = true},
     subHeader   = {template = "GwOptionBoxSubHeader", frame = "Frame", newLine = true},
+    note        = {template = "GwOptionBoxNote", frame = "Frame", newLine = true},
 }
 
 GwSettingsWindowSettingsTabMixin = {}
@@ -77,6 +79,15 @@ local function NeedsFullRowWidth(opt)
 end
 
 local function GetOptionRowExtent(opt)
+    if opt and opt.optionType == "note" then
+        -- height follows the wrapped text; the FontString has a fixed width from the
+        -- template, so it can be measured before the row gets anchored. Callers pass
+        -- either the option or the widget itself (the search view does the latter).
+        local widget = opt.__widget or opt
+        local textHeight = widget.title and widget.title.GetStringHeight and widget.title:GetStringHeight() or 0
+        return math.max(DEFAULT_ROW_EXTENT, ROW_PAD_Y * 2 + math.ceil(textHeight) + 8)
+    end
+
     if opt and opt.optionType == "list" then
         local optionsList = type(opt.optionsList) == "table" and opt.optionsList or {}
         local entryCount = math.max(#optionsList, 1)
@@ -105,6 +116,9 @@ end
 local function GetPackedRowExtent(row)
     if row and row.kind == "masterToggleSeparator" then
         return MASTER_TOGGLE_SEPARATOR_EXTENT
+    end
+    if row and row.kind == "groupGap" then
+        return GROUP_GAP_EXTENT
     end
 
     local extent = DEFAULT_ROW_EXTENT
@@ -395,7 +409,7 @@ local function CreateOrGetOptionWidget(panel, opt)
     SetupMasterToggleStyle(of)
 
     -- subtle hover feedback on every interactive row (master toggles have their own)
-    if not of.isMasterToggle and opt.optionType ~= "header" and opt.optionType ~= "subHeader" then
+    if not of.isMasterToggle and opt.optionType ~= "header" and opt.optionType ~= "subHeader" and opt.optionType ~= "note" then
         local hover = of:CreateTexture(nil, "BACKGROUND")
         hover:SetColorTexture(GW.Colors.TextColors.LightHeader:GetRGB())
         hover:SetAlpha(0)
@@ -411,8 +425,44 @@ local function CreateOrGetOptionWidget(panel, opt)
     return of
 end
 
-local function PackOptionsIntoRows(options)
+-- group key used for the visual proximity grouping: a header starts the group that
+-- carries its name, options belong to the group named by their group/groupHeaderName.
+-- "group" exists for options that belong together but should not carry a header.
+local function GetGroupKey(opt)
+    if opt.optionType == "header" or opt.optionType == "subHeader" then
+        return Norm(opt.name or "")
+    end
+    return Norm(opt.group or opt.groupHeaderName or "")
+end
+
+-- An empty key means "not specified", NOT "a group of its own" — several panels set
+-- groupHeaderName on only some options of a section, and treating the gaps as their own
+-- group tore those sections apart. Unspecified options join whatever surrounds them.
+local function SameGroup(a, b)
+    local ka, kb = GetGroupKey(a), GetGroupKey(b)
+    return ka == kb or ka == "" or kb == ""
+end
+
+-- Options may carry an isVisible predicate (notes that only apply in a certain state).
+-- Unlike "hidden", which is evaluated once at creation, this is re-checked on every
+-- rebuild — see RefreshConditionalOptions.
+local function IsOptionVisible(opt)
+    if not opt.isVisible then return true end
+    local ok, visible = pcall(opt.isVisible)
+    if not ok then return true end -- a broken predicate must not swallow the option
+    return visible == true
+end
+
+local function PackOptionsIntoRows(allOptions)
+    local options = {}
+    for _, opt in ipairs(allOptions) do
+        if IsOptionVisible(opt) then
+            options[#options + 1] = opt
+        end
+    end
+
     local rows, i = {}, 1
+    local lastGroupKey
 
     local function AddMasterToggleSeparatorIfNeeded(lastIndex)
         if IsMasterToggle(options[lastIndex]) and options[lastIndex + 1] and not IsMasterToggle(options[lastIndex + 1]) then
@@ -420,15 +470,40 @@ local function PackOptionsIntoRows(options)
         end
     end
 
+    -- spacer between two rows whose group differs — proximity does the grouping
+    -- without needing a visible header. Skipped right after a header/separator row,
+    -- those already separate visually.
+    local function AddGroupGapIfNeeded(opt)
+        local groupKey = GetGroupKey(opt)
+        local wantsGap = opt.startsGroup == true
+
+        if groupKey ~= "" then
+            wantsGap = wantsGap or (lastGroupKey ~= nil and groupKey ~= lastGroupKey)
+            lastGroupKey = groupKey -- an unspecified key must not reset the current group
+        end
+
+        if not wantsGap then return end
+
+        local lastRow = rows[#rows]
+        if not (lastRow and lastRow.cols) then return end
+
+        local lastOpt = lastRow.cols[1]
+        if lastOpt and lastOpt.optionType ~= "header" and lastOpt.optionType ~= "subHeader" then
+            rows[#rows+1] = { kind = "groupGap" }
+        end
+    end
+
     while i <= #options do
         local a = options[i]; if not a then break end
+        AddGroupGapIfNeeded(a)
         if ResolveForceNewLine(a) then
             rows[#rows+1] = { cols = {a} }
             AddMasterToggleSeparatorIfNeeded(i)
             i = i + 1
         else
             local b = options[i + 1]
-            if b and not ResolveForceNewLine(b) and IsMasterToggle(a) == IsMasterToggle(b) then
+            if b and not ResolveForceNewLine(b) and IsMasterToggle(a) == IsMasterToggle(b)
+                and SameGroup(a, b) and not b.startsGroup then
                 rows[#rows+1] = { cols = {a, b} }
                 AddMasterToggleSeparatorIfNeeded(i + 1)
                 i = i + 2
@@ -440,6 +515,23 @@ local function PackOptionsIntoRows(options)
         end
     end
     return rows
+end
+
+local function HasConditionalOptions(panel)
+    for _, opt in ipairs((panel and panel.gwOptions) or {}) do
+        if opt.isVisible then return true end
+    end
+    return false
+end
+
+local function VisibilitySignature(panel)
+    local parts = {}
+    for _, opt in ipairs((panel and panel.gwOptions) or {}) do
+        if opt.isVisible then
+            parts[#parts + 1] = IsOptionVisible(opt) and "1" or "0"
+        end
+    end
+    return table.concat(parts)
 end
 
 local function BuildOptionsDataProvider(panel)
@@ -466,10 +558,10 @@ local function InitRow(row, elementData)
 
     row:SetWidth(ROW_PAD_X * 2 + CONTENT_W)
 
-    if elementData.kind == "masterToggleSeparator" then
+    if elementData.kind == "masterToggleSeparator" or elementData.kind == "groupGap" then
         if row.leftAssigned  then StashWidget(row.leftAssigned,  panel); row.leftAssigned  = nil end
         if row.rightAssigned then StashWidget(row.rightAssigned, panel); row.rightAssigned = nil end
-        SetRowMasterToggleSeparatorShown(row, true)
+        SetRowMasterToggleSeparatorShown(row, elementData.kind == "masterToggleSeparator")
         return
     end
     SetRowMasterToggleSeparatorShown(row, false)
@@ -532,7 +624,33 @@ local function InitOptionPanel(panel)
     panel.scroll.ScrollBar:SetHideIfUnscrollable(true)
 
     panel.scroll.ScrollBox:SetDataProvider(BuildOptionsDataProvider(panel), ScrollBoxConstants.RetainScrollPosition)
+    panel.gwConditionalPanel = HasConditionalOptions(panel)
+    panel.gwVisibilitySignature = VisibilitySignature(panel)
 end
+
+-- Re-evaluates the isVisible predicates and rebuilds only the panels whose visible set
+-- actually changed. Called from CheckDependencies, i.e. after every settings change.
+local function RefreshConditionalOptions()
+    for _, main in ipairs(menuItems) do
+        local panels = {main.basePanel}
+        if main.hasSubFrames then
+            for _, sub in ipairs(main.subFrameData) do
+                panels[#panels + 1] = sub.frame
+            end
+        end
+
+        for _, panel in ipairs(panels) do
+            if panel and panel.gwConditionalPanel and panel.scroll then
+                local signature = VisibilitySignature(panel)
+                if signature ~= panel.gwVisibilitySignature then
+                    panel.gwVisibilitySignature = signature
+                    panel.scroll.ScrollBox:SetDataProvider(BuildOptionsDataProvider(panel), ScrollBoxConstants.RetainScrollPosition)
+                end
+            end
+        end
+    end
+end
+GW.RefreshConditionalOptions = RefreshConditionalOptions
 
 -- =========================
 -- Menu + Panel-Switch

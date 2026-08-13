@@ -59,22 +59,22 @@ local function LoadAurasPanel(sWindow)
         if GW.RefreshAllAuraContainers then
             GW.RefreshAllAuraContainers()
         end
-    end, optionsList = raidDebuffKeys, optionNames = raidDebuffValues, tooltipType = "spell", checkbox = true})
+    end, optionsList = raidDebuffKeys, optionNames = raidDebuffValues, tooltipType = "spell", checkbox = true, group = "importantDebuffs"})
     p_auras:AddOptionSlider(L["Set important Dungeon & Raid debuff scale"], nil, { getterSetter = "RAIDDEBUFFS_Scale", callback = function()
         GW.UpdateGridSettings("ALL", false)
         if GW.RefreshAllAuraContainers then
             GW.RefreshAllAuraContainers()
         end
-    end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
-    p_auras:AddOptionSlider(L["Set dispellable debuff scale"], nil, { getterSetter = "DISPELL_DEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
-    p_auras:AddOptionDropdown(L["Important & dispellable debuff scale priority"], L["If both scales could apply to a debuff, which one should be used"], { getterSetter = "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO", optionsList = {"DISPELL", "IMPORTANT", "OFF"}, optionNames = {L["Dispell > Important"], L["Important > Dispell"], OFF}})
+    end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, group = "importantDebuffs"})
+    p_auras:AddOptionSlider(L["Set dispellable debuff scale"], nil, { getterSetter = "DISPELL_DEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, group = "debuffScalePrio"})
+    p_auras:AddOptionDropdown(L["Important & dispellable debuff scale priority"], L["If both scales could apply to a debuff, which one should be used"], { getterSetter = "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO", optionsList = {"DISPELL", "IMPORTANT", "OFF"}, optionNames = {L["Dispell > Important"], L["Important > Dispell"], OFF}, group = "debuffScalePrio"})
 
     -- indicators
-    p_indicator:AddOption(L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], { getterSetter = "INDICATORS_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
-    p_indicator:AddOption(L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], { getterSetter = "INDICATORS_TIME", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
-    p_indicator:AddOption(L["Show Stack Count"], L["Show stack count text on raid aura indicators."], { getterSetter = "INDICATORS_STACKS", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
-    p_indicator:AddOptionSlider(L["Indicator Size"], nil, { getterSetter = "INDICATORS_SIZE", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 8, max = 20, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
-    p_indicator:AddOptionSlider(L["Indicator Bar Width"], nil, { getterSetter = "INDICATORS_BAR_WIDTH", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 1, max = 5, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
+    p_indicator:AddOption(L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], { getterSetter = "INDICATORS_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, group = "indicatorDisplay"})
+    p_indicator:AddOption(L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], { getterSetter = "INDICATORS_TIME", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, group = "indicatorDisplay"})
+    p_indicator:AddOption(L["Show Stack Count"], L["Show stack count text on raid aura indicators."], { getterSetter = "INDICATORS_STACKS", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, group = "indicatorDisplay"})
+    p_indicator:AddOptionSlider(L["Indicator Size"], nil, { getterSetter = "INDICATORS_SIZE", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 8, max = 20, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}, group = "indicatorSize"})
+    p_indicator:AddOptionSlider(L["Indicator Bar Width"], nil, { getterSetter = "INDICATORS_BAR_WIDTH", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 1, max = 5, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}, group = "indicatorSize"})
 
     local function BuildIndicatorAuraOptions()
         local auraKeys, auraVals = {0}, {NONE_KEY}
@@ -176,7 +176,7 @@ local function LoadAurasPanel(sWindow)
             GW.settings[key] = value
             lastIndicatorValue[key] = value
             GW.UpdateGridSettings("ALL", false)
-        end, optionsList = auraKeys, optionNames = auraVals, optionUpdateFunc = auraNamesUpdateFunction, dependence = {["RAID_FRAMES"] = true}, tooltipType = "spell"})
+        end, optionsList = auraKeys, optionNames = auraVals, optionUpdateFunc = auraNamesUpdateFunction, dependence = {["RAID_FRAMES"] = true}, tooltipType = "spell", group = "indicatorPositions"})
     end
 
     if GW.Classic or GW.TBC or GW.Wrath then

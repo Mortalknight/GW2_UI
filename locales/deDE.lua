@@ -239,6 +239,11 @@ L["Grays"] = "Müll"
 L["Greyed out"] = "Ausgegraut"
 L["Grid Size:"] = "Rastergröße:"
 L["Group Frames"] = "Gruppenrahmen"
+L["Party Frames"] = "Party-Rahmen"
+L["Party Grid"] = "Party-Grid"
+L["Go to the party grid settings"] = "Zu den Party-Grid-Einstellungen"
+L["Go to the party frame settings"] = "Zu den Party-Rahmen-Einstellungen"
+L["The stylised party frames and the raid style party grid are two separate displays, each with its own settings page. This opens the other one."] = "Die stilisierten Party-Rahmen und das Party-Grid im Raid-Stil sind zwei getrennte Anzeigen mit jeweils eigener Einstellungsseite. Dies öffnet die andere."
 L["GW2 UI installation"] = "GW2-UI-Installationsprozess"
 L[ [=[GW2 UI is a full user interface replacement. We have built the user interface with a modular approach, this means that if you dislike a certain part of the addon - or have another you prefer for that function - you can just disable that part, while keeping the rest of the interface intact.
 Some of the modules available to you are an immersive questing window, a full inventory replacement, as well as a full character window replacement. There are many more that you can enjoy, just take a look in the settings menu to see what's available to you!]=] ] = [=[
@@ -1038,3 +1043,11 @@ L["The War Within"] = "The War Within"
 L["Character Pane"] = "Charakterfenster"
 L["Alpha"] = "Alpha"
 L["Button Size"] = "Buttongröße"
+
+-- Party-Rahmen vs. Party-Grid: Zustandshinweise auf beiden Seiten
+L["The party grid has taken over: '%s' is enabled under %s, so the stylised party frames are hidden and the settings below have no effect."] = "Das Party-Grid hat übernommen: '%s' ist unter %s aktiviert, daher werden die stilisierten Party-Rahmen nicht angezeigt und die Einstellungen unten haben keine Wirkung."
+L["The party frames are turned off: enable '%s' below to use them."] = "Die Party-Rahmen sind ausgeschaltet: aktiviere unten '%s', um sie zu nutzen."
+L["Group frames are disabled entirely: enable them under %s."] = "Die Gruppenrahmen sind komplett deaktiviert: aktiviere sie unter %s."
+L["This grid is not in use: the stylised party frames are shown instead. Enable '%s' below to replace them with this grid."] = "Dieses Grid wird nicht genutzt: stattdessen werden die stilisierten Party-Rahmen angezeigt. Aktiviere unten '%s', um sie durch dieses Grid zu ersetzen."
+L["The party grid is displayed"] = "Das Party-Grid wird angezeigt"
+L["The party grid replaces the party frames"] = "Das Party-Grid ersetzt die Party-Rahmen"

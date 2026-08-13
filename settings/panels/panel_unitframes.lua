@@ -117,7 +117,9 @@ local function LoadTargetPanel(sWindow)
     party.sub:SetText(L["Edit the party and raid options to suit your needs."])
     party.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     party.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    party.breadcrumb:SetText(CHAT_MSG_PARTY)
+    -- "Party Frames", not just "Party": the raid style party grid has its own page under
+    -- Group Frames and users kept mixing the two up while both were labelled "Party"
+    party.breadcrumb:SetText(L["Party Frames"])
     party.preview:SetWidth(party.preview:GetFontString():GetStringWidth() + 5)
     party.preview:SetScript("OnClick", GW.TogglePartyPreview)
     party.preview:SetScript("OnEnter", function(self)
@@ -127,7 +129,12 @@ local function LoadTargetPanel(sWindow)
         GameTooltip:Show()
     end)
     party.preview:SetScript("OnLeave", GameTooltip_Hide)
-    party.preview:SetEnabled(GW.settings.PARTY_FRAMES and not GW.settings.RAID_STYLE_PARTY)
+    -- the frames are only replaced when the grid module is actually loaded, so
+    -- RAID_STYLE_PARTY alone must not disable the preview (see PARTY_GRID_REPLACES_FRAMES)
+    local function IsPartyGridReplacingFrames()
+        return GW.settings.RAID_FRAMES == true and GW.settings.RAID_STYLE_PARTY == true
+    end
+    party.preview:SetEnabled(GW.settings.PARTY_FRAMES == true and not IsPartyGridReplacingFrames())
 
     local panels = {
         {name = GENERAL, frame = general},
@@ -141,7 +148,7 @@ local function LoadTargetPanel(sWindow)
         table.insert(panels, {name = L["Focus target"], frame = pTargetOfFocus})
     end
 
-    table.insert(panels, {name = CHAT_MSG_PARTY, frame = party})
+    table.insert(panels, {name = L["Party Frames"], frame = party})
 
     local playerTag = " |cFF888888(" .. PLAYER .. ")|r"
     local otherTag = " |cFF888888(" .. OTHER .. ")|r"
@@ -197,12 +204,12 @@ local function LoadTargetPanel(sWindow)
 
     --PET
     pPlayerPet:AddOption(ENABLE, L["Use the GW2 UI improved Pet bar."], {getterSetter = "PETBAR_ENABLED", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "PetFrame", isMasterToggle = true})
-    pPlayerPet:AddOption(L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], {getterSetter = "PET_FLOATING_COMBAT_TEXT", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleCombatFeedback() end end, dependence = {["PETBAR_ENABLED"] = true}})
-    pPlayerPet:AddOption(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, L["Show health as a numerical value."], {getterSetter = "PET_HEALTH_VALUE_RAW", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
-    pPlayerPet:AddOption(RAID_HEALTH_TEXT_PERC, L["Display health as a percentage. Can be used as well as, or instead of Health Value."], {getterSetter = "PET_HEALTH_VALUE_PERCENT", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
-    pPlayerPet:AddOption(L["Shorten health values"], nil, {getterSetter = "PET_UNIT_HEALTH_SHORT_VALUES", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = not GW.Retail})
-    pPlayerPet:AddOption(L["Show absorb bar"], nil, {getterSetter = "PET_SHOW_ABSORB_BAR", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
-    pPlayerPet:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "playerPetFrameHealthBarTexture", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["PETBAR_ENABLED"] = true}})
+    pPlayerPet:AddOption(L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], {getterSetter = "PET_FLOATING_COMBAT_TEXT", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleCombatFeedback() end end, dependence = {["PETBAR_ENABLED"] = true}, group = "portrait"})
+    pPlayerPet:AddOption(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, L["Show health as a numerical value."], {getterSetter = "PET_HEALTH_VALUE_RAW", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "healthText"})
+    pPlayerPet:AddOption(RAID_HEALTH_TEXT_PERC, L["Display health as a percentage. Can be used as well as, or instead of Health Value."], {getterSetter = "PET_HEALTH_VALUE_PERCENT", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "healthText"})
+    pPlayerPet:AddOption(L["Shorten health values"], nil, {getterSetter = "PET_UNIT_HEALTH_SHORT_VALUES", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = not GW.Retail, group = "healthText"})
+    pPlayerPet:AddOption(L["Show absorb bar"], nil, {getterSetter = "PET_SHOW_ABSORB_BAR", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "healthBars"})
+    pPlayerPet:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "playerPetFrameHealthBarTexture", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["PETBAR_ENABLED"] = true}, group = "healthBars"})
 
     pPlayerPet:AddGroupHeader(AURAS)
     pPlayerPet:AddOption(L["Show auras below"], nil, {getterSetter = "PET_AURAS_UNDER", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleAuraPosition() end end, dependence = {["PETBAR_ENABLED"] = true}})
@@ -241,21 +248,21 @@ local function LoadTargetPanel(sWindow)
 
     --TARGET
     p_target:AddOption(ENABLE, L["Enable the target frame replacement."], {getterSetter = "TARGET_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    p_target:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "target_SHOW_CASTBAR", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, L["Show health as a numerical value."], {getterSetter = "target_HEALTH_VALUE_ENABLED", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(RAID_HEALTH_TEXT_PERC, L["Display health as a percentage. Can be used as well as, or instead of Health Value."], {getterSetter = "target_HEALTH_VALUE_TYPE", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(L["Shorten health values"], nil, {getterSetter = "target_SHORT_VALUES", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, hidden = not GW.Retail})
-    p_target:AddOption(CLASS_COLORS, L["Display the class color as the health bar."], {getterSetter = "target_CLASS_COLOR", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(L["Show Threat"], L["Show Threat"], {getterSetter = "target_THREAT_VALUE_ENABLED", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(L["Show Combo Points on Target"], L["Show combo points on target, below the health bar."], {getterSetter = "target_HOOK_COMBOPOINTS", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(GW.NewSign .. L["Spell Name"], L["Shows the name of the spell being cast on the casting bar."], {getterSetter = "target_CASTINGBAR_SHOW_NAME", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(GW.NewSign .. L["Cast Timer"], L["Shows the remaining cast time on the casting bar."], {getterSetter = "target_CASTINGBAR_SHOW_TIMER", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], {getterSetter = "target_FLOATING_COMBAT_TEXT", callback = function() GwTargetUnitFrame:ToggleTargetFrameCombatFeedback() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(L["Invert target frame"], nil, {getterSetter = "target_FRAME_INVERT", callback = function() GW.ShowRlPopup = true end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(L["Show alternative background texture"], nil, {getterSetter = "target_FRAME_ALT_BACKGROUND", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(L["Show absorb bar"], nil, {getterSetter = "target_SHOW_ABSORB_BAR", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
-    p_target:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "target_ILVL", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["TARGET_ENABLED"] = true}, hidden = GW.Classic})
-    p_target:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "targetFrameHealthBarTexture", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "target_SHOW_CASTBAR", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, group = "castbar"})
+    p_target:AddOption(GW.NewSign .. L["Spell Name"], L["Shows the name of the spell being cast on the casting bar."], {getterSetter = "target_CASTINGBAR_SHOW_NAME", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, group = "castbar"})
+    p_target:AddOption(GW.NewSign .. L["Cast Timer"], L["Shows the remaining cast time on the casting bar."], {getterSetter = "target_CASTINGBAR_SHOW_TIMER", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, group = "castbar"})
+    p_target:AddOption(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, L["Show health as a numerical value."], {getterSetter = "target_HEALTH_VALUE_ENABLED", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, group = "healthText"})
+    p_target:AddOption(RAID_HEALTH_TEXT_PERC, L["Display health as a percentage. Can be used as well as, or instead of Health Value."], {getterSetter = "target_HEALTH_VALUE_TYPE", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, group = "healthText"})
+    p_target:AddOption(L["Shorten health values"], nil, {getterSetter = "target_SHORT_VALUES", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, hidden = not GW.Retail, group = "healthText"})
+    p_target:AddOption(L["Show Threat"], L["Show Threat"], {getterSetter = "target_THREAT_VALUE_ENABLED", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, group = "unitInfo"})
+    p_target:AddOption(L["Show Combo Points on Target"], L["Show combo points on target, below the health bar."], {getterSetter = "target_HOOK_COMBOPOINTS", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, group = "unitInfo"})
+    p_target:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "target_ILVL", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["TARGET_ENABLED"] = true}, hidden = GW.Classic, group = "unitInfo"})
+    p_target:AddOption(L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], {getterSetter = "target_FLOATING_COMBAT_TEXT", callback = function() GwTargetUnitFrame:ToggleTargetFrameCombatFeedback() end, dependence = {["TARGET_ENABLED"] = true}, group = "portrait"})
+    p_target:AddOption(L["Invert target frame"], nil, {getterSetter = "target_FRAME_INVERT", callback = function() GW.ShowRlPopup = true end, dependence = {["TARGET_ENABLED"] = true}, group = "frameAppearance"})
+    p_target:AddOption(L["Show alternative background texture"], nil, {getterSetter = "target_FRAME_ALT_BACKGROUND", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, group = "frameAppearance"})
+    p_target:AddOption(CLASS_COLORS, L["Display the class color as the health bar."], {getterSetter = "target_CLASS_COLOR", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, group = "healthBars"})
+    p_target:AddOption(L["Show absorb bar"], nil, {getterSetter = "target_SHOW_ABSORB_BAR", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "healthBars"})
+    p_target:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "targetFrameHealthBarTexture", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["TARGET_ENABLED"] = true}, group = "healthBars"})
 
     p_target:AddGroupHeader(AURAS)
     p_target:AddOption(BUFFS_ON_TOP, nil, {getterSetter = "target_AURAS_ON_TOP", callback = function() GwTargetUnitFrame:ToggleSettings() end, groupHeaderName = AURAS, dependence = {["TARGET_ENABLED"] = true}})
@@ -322,18 +329,18 @@ local function LoadTargetPanel(sWindow)
 
     --FOCUS
     p_focus:AddOption(ENABLE, L["Enable the focus target frame replacement."], {getterSetter = "FOCUS_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = GW.Classic, isMasterToggle = true})
-    p_focus:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "focus_SHOW_CASTBAR", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, L["Show health as a numerical value."], {getterSetter = "focus_HEALTH_VALUE_ENABLED", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(RAID_HEALTH_TEXT_PERC, L["Display health as a percentage. Can be used as well as, or instead of Health Value."], {getterSetter = "focus_HEALTH_VALUE_TYPE", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(L["Shorten health values"], nil, {getterSetter = "focus_SHORT_VALUES", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(CLASS_COLORS, L["Display the class color as the health bar."], {getterSetter = "focus_CLASS_COLOR", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(L["Invert focus frame"], nil, {getterSetter = "focus_FRAME_INVERT", callback = function() GW.ShowRlPopup = true end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(L["Show alternative background texture"], nil, {getterSetter = "focus_FRAME_ALT_BACKGROUND", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(GW.NewSign .. L["Spell Name"], L["Shows the name of the spell being cast on the casting bar."], {getterSetter = "focus_CASTINGBAR_SHOW_NAME", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(GW.NewSign .. L["Cast Timer"], L["Shows the remaining cast time on the casting bar."], {getterSetter = "focus_CASTINGBAR_SHOW_TIMER", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(L["Show absorb bar"], nil, {getterSetter = "focus_SHOW_ABSORB_BAR", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
-    p_focus:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "focus_ILVL", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic })
-    p_focus:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "focusFrameHealthBarTexture", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
+    p_focus:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "focus_SHOW_CASTBAR", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "castbar"})
+    p_focus:AddOption(GW.NewSign .. L["Spell Name"], L["Shows the name of the spell being cast on the casting bar."], {getterSetter = "focus_CASTINGBAR_SHOW_NAME", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "castbar"})
+    p_focus:AddOption(GW.NewSign .. L["Cast Timer"], L["Shows the remaining cast time on the casting bar."], {getterSetter = "focus_CASTINGBAR_SHOW_TIMER", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "castbar"})
+    p_focus:AddOption(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, L["Show health as a numerical value."], {getterSetter = "focus_HEALTH_VALUE_ENABLED", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "healthText"})
+    p_focus:AddOption(RAID_HEALTH_TEXT_PERC, L["Display health as a percentage. Can be used as well as, or instead of Health Value."], {getterSetter = "focus_HEALTH_VALUE_TYPE", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "healthText"})
+    p_focus:AddOption(L["Shorten health values"], nil, {getterSetter = "focus_SHORT_VALUES", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "healthText"})
+    p_focus:AddOption(L["Invert focus frame"], nil, {getterSetter = "focus_FRAME_INVERT", callback = function() GW.ShowRlPopup = true end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "frameAppearance"})
+    p_focus:AddOption(L["Show alternative background texture"], nil, {getterSetter = "focus_FRAME_ALT_BACKGROUND", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "frameAppearance"})
+    p_focus:AddOption(CLASS_COLORS, L["Display the class color as the health bar."], {getterSetter = "focus_CLASS_COLOR", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "healthBars"})
+    p_focus:AddOption(L["Show absorb bar"], nil, {getterSetter = "focus_SHOW_ABSORB_BAR", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "healthBars"})
+    p_focus:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "focusFrameHealthBarTexture", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "healthBars"})
+    p_focus:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "focus_ILVL", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic, group = "unitInfo"})
 
     p_focus:AddGroupHeader(AURAS)
     p_focus:AddOption(BUFFS_ON_TOP, nil, {getterSetter = "focus_AURAS_ON_TOP", callback = function() GwFocusUnitFrame:ToggleSettings() end, groupHeaderName = AURAS, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
@@ -408,23 +415,45 @@ local function LoadTargetPanel(sWindow)
     pTargetOfFocus:AddOptionSlider(GW.NewSign .. L["Powerbar Height"], nil, { getterSetter = "focustargetFramePowerBarSize.height", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
 
     -- Party
+    -- the whole page depends on {PARTY_FRAMES = true, PARTY_GRID_REPLACES_FRAMES = false};
+    -- these two notes name whichever of the two conditions is currently failing
+    party:AddOptionNote(format(L["The party grid has taken over: '%s' is enabled under %s, so the stylised party frames are hidden and the settings below have no effect."], USE_RAID_STYLE_PARTY_FRAMES, L["Group Frames"] .. " - " .. L["Party Grid"]), {
+        isVisible = function() return IsPartyGridReplacingFrames() end,
+        group = "partyPageNote",
+    })
+    party:AddOptionNote(format(L["The party frames are turned off: enable '%s' below to use them."], ENABLE), {
+        isVisible = function() return not IsPartyGridReplacingFrames() and GW.settings.PARTY_FRAMES ~= true end,
+        group = "partyPageNote",
+    })
     party:AddOption(ENABLE, L["Replace the default UI group frames."], {getterSetter = "PARTY_FRAMES", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    party:AddOption(L["Show both party frames and party grid"], format(L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."], USE_RAID_STYLE_PARTY_FRAMES), {getterSetter = "RAID_STYLE_PARTY_AND_FRAMES", callback = function() GW.UpdateGridSettings("PARTY", true) end, dependence = {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOption(SHOW_BUFFS, nil, {getterSetter = "PARTY_SHOW_BUFFS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "PARTY_SHOW_DEBUFFS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "PARTY_ONLY_DISPELL_DEBUFFS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["PARTY_SHOW_DEBUFFS"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "PARTY_PANDEMIC_HIGHLIGHT", callback = GW.UpdateAuraOptionRegions, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}, hidden = not GW.Retail})
-    party:AddOptionDropdown(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "PARTY_DISPEL_ICON", callback = GW.UpdateAuraOptionRegions, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}, hidden = not GW.Retail})
-    party:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "PARTY_IGNORED_AURAS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOption(L["Player frame in group"], L["Show your player frame as part of the group"], {getterSetter = "PARTY_PLAYER_FRAME", callback = function() GW.UpdatePlayerInPartySetting() end, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOption(COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS, nil, {getterSetter = "PARTY_SHOW_PETS", callback = function() GW.UpdatePartyPetVisibility() end, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}});
-    party:AddOption(L["Shorten health values"], nil, {getterSetter = "PARTY_UNIT_HEALTH_SHORT_VALUES", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}});
-    party:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "PARTY_UNIT_HEALTH", callback = GW.UpdatePartyFrames, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOptionDropdown(L["Orientation"], L["Choose whether party frames are arranged vertically or horizontally."], { getterSetter = "PARTY_FRAME_ORIENTATION", callback = function() GW.UpdatePartyLayout() end, optionsList = {"VERTICAL", "HORIZONTAL"}, optionNames = {L["Vertical"], L["Horizontal"]}, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOptionSlider(L["Frame Spacing"], nil, { getterSetter = "PARTY_FRAME_SPACING", callback = function() GW.UpdatePartyLayout() end, min = 0, max = 100, decimalNumbers = 0, step = 1, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
-    party:AddOptionSlider(L["Aura size"], nil, { getterSetter = "PARTY_SHOW_AURA_ICON_SIZE", callback = GW.UpdatePartyFrames, min = 10, max = 40, decimalNumbers = 0, step = 2, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false, ["PARTY_FRAME_ORIENTATION"] = {"VERTICAL"}}})
-    party:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "partyFrameHealthBarTexture", callback = function() GW.UpdatePartyFrames() end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
+    party:AddOption(L["Show both party frames and party grid"], format(L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."], USE_RAID_STYLE_PARTY_FRAMES), {getterSetter = "RAID_STYLE_PARTY_AND_FRAMES", callback = function()
+        GW.UpdateGridSettings("PARTY", true)
+        -- this toggle also decides whether the party grid is displayed, so the preview
+        -- button on the party grid page has to follow along
+        if GW.UpdatePartyGridPreviewState then GW.UpdatePartyGridPreviewState() end
+    end, dependence = {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "frameDisplay"})
+    -- deliberately without a dependence: when the grid took over, every other option on
+    -- this page is greyed out and this link is the only thing left that still explains why
+    party:AddOptionButton(L["Go to the party grid settings"], L["The stylised party frames and the raid style party grid are two separate displays, each with its own settings page. This opens the other one."], {
+        callback = function() GW.GetSettingsTabFrame():OpenSettingsToPanel("raid_party") end,
+        forceNewLine = true,
+        group = "partyPageLink",
+    })
+    party:AddOption(SHOW_BUFFS, nil, {getterSetter = "PARTY_SHOW_BUFFS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "auras"})
+    party:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "PARTY_SHOW_DEBUFFS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "auras"})
+    party:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "PARTY_ONLY_DISPELL_DEBUFFS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["PARTY_SHOW_DEBUFFS"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "auras"})
+    party:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "PARTY_PANDEMIC_HIGHLIGHT", callback = GW.UpdateAuraOptionRegions, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, hidden = not GW.Retail, group = "auras"})
+    party:AddOptionDropdown(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "PARTY_DISPEL_ICON", callback = GW.UpdateAuraOptionRegions, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, hidden = not GW.Retail, group = "auras"})
+    party:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "PARTY_IGNORED_AURAS", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "auras"})
+    party:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "auras"})
+    party:AddOption(L["Player frame in group"], L["Show your player frame as part of the group"], {getterSetter = "PARTY_PLAYER_FRAME", callback = function() GW.UpdatePlayerInPartySetting() end, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "frameContent"})
+    party:AddOption(COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS, nil, {getterSetter = "PARTY_SHOW_PETS", callback = function() GW.UpdatePartyPetVisibility() end, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "frameContent"});
+    party:AddOption(L["Shorten health values"], nil, {getterSetter = "PARTY_UNIT_HEALTH_SHORT_VALUES", callback = GW.UpdatePartyFrames, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "healthText"});
+    party:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "PARTY_UNIT_HEALTH", callback = GW.UpdatePartyFrames, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "healthText"})
+    party:AddOptionDropdown(L["Orientation"], L["Choose whether party frames are arranged vertically or horizontally."], { getterSetter = "PARTY_FRAME_ORIENTATION", callback = function() GW.UpdatePartyLayout() end, optionsList = {"VERTICAL", "HORIZONTAL"}, optionNames = {L["Vertical"], L["Horizontal"]}, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "layout"})
+    party:AddOptionSlider(L["Frame Spacing"], nil, { getterSetter = "PARTY_FRAME_SPACING", callback = function() GW.UpdatePartyLayout() end, min = 0, max = 100, decimalNumbers = 0, step = 1, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "layout"})
+    party:AddOptionSlider(L["Aura size"], nil, { getterSetter = "PARTY_SHOW_AURA_ICON_SIZE", callback = GW.UpdatePartyFrames, min = 10, max = 40, decimalNumbers = 0, step = 2, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false, ["PARTY_FRAME_ORIENTATION"] = {"VERTICAL"}}, group = "layout"})
+    party:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "partyFrameHealthBarTexture", callback = function() GW.UpdatePartyFrames() end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["PARTY_FRAMES"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "healthBars"})
 
     sWindow:AddSettingsPanel(p, UNITFRAME_LABEL, L["Edit general unitframe settings."], panels)
 end

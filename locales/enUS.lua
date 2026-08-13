@@ -137,6 +137,11 @@ L["Show grid"] = true
 L["Grid Size:"] = true
 L["Edit the party and raid options to suit your needs."] = true
 L["Group Frames"] = true
+L["Party Frames"] = true
+L["Party Grid"] = true
+L["Go to the party grid settings"] = true
+L["Go to the party frame settings"] = true
+L["The stylised party frames and the raid style party grid are two separate displays, each with its own settings page. This opens the other one."] = true
 L["Replace the default UI group frames."] = true
 L["Edit the group settings."] = true
 L["Use Blizzard colors"] = true
@@ -1007,3 +1012,11 @@ L["The War Within"] = true
 L["Character Pane"] = true
 L["Alpha"] = true
 L["Button Size"] = true
+
+-- party frames vs. party grid: state notes on both pages
+L["The party grid has taken over: '%s' is enabled under %s, so the stylised party frames are hidden and the settings below have no effect."] = true
+L["The party frames are turned off: enable '%s' below to use them."] = true
+L["Group frames are disabled entirely: enable them under %s."] = true
+L["This grid is not in use: the stylised party frames are shown instead. Enable '%s' below to replace them with this grid."] = true
+L["The party grid is displayed"] = true
+L["The party grid replaces the party frames"] = true

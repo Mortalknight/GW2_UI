@@ -62,19 +62,60 @@ local function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect)
 end
 GW.CreateSettingProxy = CreateSettingProxy
 
+-- Virtual dependence conditions: a dependence key that is no setting of its own but a
+-- derived state. Needed wherever a page depends on an OR of several settings, which the
+-- plain "key = expectedValue" form cannot express.
+local VIRTUAL_CONDITIONS = {
+    -- The party grid is displayed both when it REPLACES the stylised party frames and when
+    -- the "show both" option is on — so its settings have to stay editable in either case.
+    PARTY_GRID_ACTIVE = {
+        label = function() return L["The party grid is displayed"] end,
+        get = function()
+            return GW.settings.RAID_STYLE_PARTY == true or GW.settings.RAID_STYLE_PARTY_AND_FRAMES == true
+        end,
+    },
+    -- The mirror image: the stylised party frames are only replaced when the grid module is
+    -- actually loaded. With RAID_FRAMES off, RAID_STYLE_PARTY alone hides nothing, so the
+    -- frames stay visible and must stay configurable.
+    PARTY_GRID_REPLACES_FRAMES = {
+        label = function() return L["The party grid replaces the party frames"] end,
+        get = function()
+            return GW.settings.RAID_FRAMES == true and GW.settings.RAID_STYLE_PARTY == true
+        end,
+    },
+}
+GW.SettingsVirtualConditions = VIRTUAL_CONDITIONS
+
+-- returns currentValue, displayName, exists
+local function ResolveDependenceValue(settingName)
+    local virtual = VIRTUAL_CONDITIONS[settingName]
+    if virtual then
+        local ok, value = pcall(virtual.get)
+        return ok and value == true, virtual.label(), true
+    end
+
+    local widget = GW.FindSettingsWidgetByOption(settingName)
+    if not widget then
+        return false, settingName, false
+    end
+
+    local currentVal = widget.get and widget.get()
+    if widget.isIncompatibleAddonLoaded and not widget.isIncompatibleAddonLoadedButOverride then
+        currentVal = false
+    end
+
+    return currentVal, widget.displayName or settingName, true
+end
+
 local function AddDependenciesToOptionWidgetTooltip()
     for _, of in pairs(GW.GetAllSettingsWidgets()) do
         if of.dependence then
             of.dependenciesInfo = {}
 
             for settingName, expectedValue in pairs(of.dependence) do
-                local settingsWidget = GW.FindSettingsWidgetByOption(settingName)
-                if settingsWidget then
-                    local displayName = settingsWidget and settingsWidget.displayName or settingName
-                    local currentVal = settingsWidget and settingsWidget.get()
-                    if settingsWidget.isIncompatibleAddonLoaded and not settingsWidget.isIncompatibleAddonLoadedButOverride then
-                        currentVal = false
-                    end
+                local currentVal, displayName, exists = ResolveDependenceValue(settingName)
+                if exists then
+                    local settingsWidget = GW.FindSettingsWidgetByOption(settingName)
                     local match = false
 
                     local expectedText
@@ -109,7 +150,9 @@ local function AddDependenciesToOptionWidgetTooltip()
                     local color = match and "|cff66cc66" or "|cffcc6666"  -- green or red
                     expectedText = color .. expectedText .. "|r"
 
-                    table.insert(of.dependenciesInfo, { name = string.format("|cffaaaaaa%s|r", settingsWidget.settingsPath .. displayName), expected = expectedText })
+                    -- virtual conditions have no widget and therefore no settings path
+                    local settingsPath = settingsWidget and settingsWidget.settingsPath or ""
+                    table.insert(of.dependenciesInfo, { name = string.format("|cffaaaaaa%s|r", settingsPath .. displayName), expected = expectedText })
                 end
             end
         end
@@ -221,6 +264,9 @@ local function CreateOption(optionType, panel, name, desc, values)
         isIncompatibleAddonLoaded = false,
         isIncompatibleAddonLoadedButOverride = false,
         groupHeaderName = values.groupHeaderName,
+        group = values.group, -- groups options visually (extra spacing) without rendering a header
+        startsGroup = values.startsGroup, -- forces the group spacing before this option
+        isVisible = values.isVisible, -- predicate re-checked on every settings change
         isPrivateSetting = values.isPrivateSetting, -- forbidden for addons
         optionUpdateFunc = values.optionUpdateFunc,
         isMasterToggle = values.isMasterToggle,
@@ -279,6 +325,12 @@ end
 
 function GwSettingsPanelMixin:AddSubGroupHeader(name, values)
     return CreateOption("subHeader", self, name, nil, values)
+end
+
+-- Wrapping explanatory text spanning the whole row. Pass values.isVisible to have it
+-- appear only in the state it describes (re-evaluated on every settings change).
+function GwSettingsPanelMixin:AddOptionNote(text, values)
+    return CreateOption("note", self, text, nil, values)
 end
 
 function GwSettingsPanelMixin:AddOptionColorPicker(name, desc, values)
@@ -443,13 +495,7 @@ local function CheckDependencies()
             local allDepsMet = true
 
             for settingName, expectedValue in pairs(v.dependence) do
-                local of = GW.FindSettingsWidgetByOption(settingName)
-                local currentVal = (of and of.get and of.get())
-                if of and of.isIncompatibleAddonLoaded and not of.isIncompatibleAddonLoadedButOverride then
-                    currentVal = false
-                end
-
-                if not of then currentVal = false end
+                local currentVal = ResolveDependenceValue(settingName)
 
                 if type(expectedValue) == "table" then
                     local matched = false
@@ -474,6 +520,11 @@ local function CheckDependencies()
         end
     end
     AddDependenciesToOptionWidgetTooltip()
+
+    -- notes gated by isVisible describe a state that may have just changed
+    if GW.RefreshConditionalOptions then
+        GW.RefreshConditionalOptions()
+    end
 end
 GW.CheckDependencies = CheckDependencies
 
@@ -1546,9 +1597,10 @@ local function SettingsInitOptionWidget(of, v, panel)
         of.dropDown.Text:SetTextColor(1, 1, 1)
     elseif v.optionType == "list" then
         of.title:ClearAllPoints()
-        of.title:SetPoint("TOPLEFT", 5, -2)
+        of.title:SetPoint("TOPLEFT", 5, 0)
         of.list:ClearAllPoints()
-        of.list:SetPoint("TOPRIGHT", of, "TOPRIGHT", -28, 0)
+        -- same 260 units and right edge as a dropdown control (see the spellList branch)
+        of.list:SetPoint("TOPRIGHT", of, "TOPRIGHT", -10, -2)
 
         of.listEnabled = true
         of.SetListEnabled = function(self, enabled, titleColor)
@@ -1616,12 +1668,15 @@ local function SettingsInitOptionWidget(of, v, panel)
         RefreshSpellInputOption(of)
     elseif v.optionType == "spellList" then
         of.title:ClearAllPoints()
-        of.title:SetPoint("TOPLEFT", 5, -8)
+        of.title:SetPoint("TOPLEFT", 5, 0)
 
-        -- input + OK button together span exactly the row width, everything shifted
-        -- left to leave room for the scrollbar on the right (like the list widget)
+        -- input + OK button together span exactly the same 260 units as a dropdown
+        -- control, flush with its right edge at -10. The scrollbar hangs outside that
+        -- edge into the unused row padding and only shows when the list overflows —
+        -- reserving room for it here would indent the whole widget against every
+        -- other control on the page.
         of.okButton:ClearAllPoints()
-        of.okButton:SetPoint("TOPRIGHT", of, "TOPRIGHT", -28, -10)
+        of.okButton:SetPoint("TOPRIGHT", of, "TOPRIGHT", -10, -2)
         of.inputFrame:ClearAllPoints()
         of.inputFrame:SetPoint("TOPRIGHT", of.okButton, "TOPLEFT", -5, 0)
         of.inputFrame:SetWidth(205)
@@ -1798,6 +1853,11 @@ local function SettingsInitOptionWidget(of, v, panel)
     elseif v.optionType == "subHeader" then
         of.title:SetFont(DAMAGE_TEXT_FONT, 14)
         of.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    elseif v.optionType == "note" then
+        of.title:SetFont(UNIT_NAME_FONT, 12)
+        of.title:SetTextColor(0.95, 0.85, 0.65, 1)
+        of.title:SetWordWrap(true)
+        of.title:SetText(v.name or "")
     end
 end
 GW.SettingsInitOptionWidget = SettingsInitOptionWidget

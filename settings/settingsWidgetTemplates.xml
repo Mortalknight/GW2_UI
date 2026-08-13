@@ -369,6 +369,42 @@
         </Layers>
     </Frame>
 
+    <Frame name="GwOptionBoxNote" frameStrata="HIGH" virtual="true">
+        <Size x="550" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background">
+                    <Color r="0" g="0" b="0" a="0.25"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="5" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" x="-10" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="accent">
+                    <Color r="1" g="0.85" b="0.5" a="0.85"/>
+                    <Size x="2" y="0"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="5" y="0"/>
+                        <Anchor point="BOTTOMLEFT" x="5" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="SettingsNote" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="TOP" nonspacewrap="false">
+                    <Size x="520" y="0"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="15" y="-6"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+
     <Frame name="GwOptionBoxSubHeader" frameStrata="HIGH" virtual="true">
         <Size x="600" y="40"/>
         <Anchors>
