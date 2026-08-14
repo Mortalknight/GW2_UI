@@ -30,9 +30,7 @@ local profiles = {
     RAID40 = {
         name = "Raid40",
         size = 40,
-        visibility = "[@raid26,noexists] hide; show",
-        visibilityAll = "[group:raid] show;hide",
-        visibilityIncl25 = "[@raid11,noexists] hide; show",
+        visibility = "[@raid26,noexists] hide; show", -- fallback only, see BuildRaidGridVisibility
         numGroups = 8,
         styleFunc = GW.GridRaid40StyleRegister,
         updateFunc = GW.UpdateGridRaid40Frame
@@ -40,8 +38,7 @@ local profiles = {
     RAID25 = {
         name = "Raid25",
         size = 25,
-        visibility = "[@raid11,noexists][@raid26,exists] hide;show",
-        visibilityIncl10 = "[@raid1,noexists][@raid26,exists] hide; show",
+        visibility = "[@raid11,noexists][@raid26,exists] hide;show", -- fallback only, see BuildRaidGridVisibility
         numGroups = 5,
         styleFunc = GW.GridRaid25StyleRegister,
         updateFunc = GW.UpdateGridRaid25Frame
@@ -158,7 +155,7 @@ local SETTINGS_HELPER_MAP = {
         PARTY = "RAID_STYLE_PARTY",
         PARTY_PET = "PARTY_PET_FRAMES_ENABLED",
         RAID_PET = "RAID_PET_FRAMES",
-        RAID40 = "RAID_FRAMES",
+        RAID40 = "RAID40_ENABLED",
         RAID25 = "RAID25_ENABLED",
         RAID10 = "RAID10_ENABLED",
         TANK = "RAID_MAINTANK_FRAMES_ENABLED",
@@ -310,6 +307,10 @@ local function IsProfileEnabled(profile)
     if profile == "PARTY" then
         -- mirrors the group visibility check in UpdateGridHeader
         return GW.settings.RAID_STYLE_PARTY or GW.settings.RAID_STYLE_PARTY_AND_FRAMES
+    end
+    if profile == "RAID40" then
+        -- own toggle, additionally gated by the module master
+        return GW.settings.RAID_FRAMES and GW.settings.RAID40_ENABLED
     end
 
     local settingName = SETTINGS_HELPER_MAP.enabled[profile]
@@ -522,24 +523,56 @@ local function CreateRaisedElement(frame)
 end
 GW.CreateRaisedElement = CreateRaisedElement
 
+-- the raid grids in ascending size; every grid has its own enable, RAID_FRAMES is
+-- only the module master on top
+local RAID_GRID_ORDER = {
+    { profile = "RAID10", size = 10, enabled = function() return GW.settings.RAID10_ENABLED end },
+    { profile = "RAID25", size = 25, enabled = function() return GW.settings.RAID25_ENABLED end },
+    { profile = "RAID40", size = 40, enabled = function() return GW.settings.RAID_FRAMES and GW.settings.RAID40_ENABLED end },
+}
+
+-- ONE source of truth for the raid grid visibility drivers. Macro conditionals cannot
+-- read addon settings, so a grid cannot carry a single static condition covering every
+-- enable-combination - instead the condition is generated from the enabled set: every
+-- enabled grid covers from one above the next smaller enabled grid up to its own size,
+-- the biggest one upwards. The ranges partition 1-40 by construction, so exactly one
+-- grid is visible for any raid size. The previous hand-picked variants could overlap
+-- after runtime toggles (RAID25 on with RAID10 off returned no condition at all for
+-- RAID40, leaving whatever driver was registered before).
+local function BuildRaidGridVisibility(profile)
+    local lower = 1
+    local target
+
+    for _, grid in ipairs(RAID_GRID_ORDER) do
+        if grid.profile == profile then
+            if not grid.enabled() then return "hide" end
+            target = grid
+            break
+        elseif grid.enabled() then
+            lower = grid.size + 1 -- the biggest enabled smaller grid ends below us
+        end
+    end
+
+    if not target then return nil end
+
+    -- the upper bound is always the grids own size: extending downwards is capacity
+    -- safe (a bigger grid has more slots), extending upwards is not - a grid with
+    -- 5 groups cannot display raid members 26+. With RAID40 disabled, raids above
+    -- the biggest enabled grid intentionally show no grid at all.
+    local condition = "[@raid" .. lower .. ",exists]"
+    if target.size < MAX_RAID_MEMBERS then
+        condition = condition .. "[@raid" .. (target.size + 1) .. ",noexists]"
+    end
+    return condition .. " show; hide"
+end
+
 local function GetHeaderVisibility(profile)
-    if profile == "RAID40" then
-        if not GW.settings.RAID_FRAMES then
-            return "hide"
-        end
-        if GW.settings.RAID25_ENABLED then
-            return GW.settings.RAID10_ENABLED and profiles.RAID40.visibility
-        end
-        return GW.settings.RAID10_ENABLED and profiles.RAID40.visibilityIncl25 or profiles.RAID40.visibilityAll
-    elseif profile == "RAID25" then
-        if not GW.settings.RAID25_ENABLED then
-            return "hide"
-        end
-        return GW.settings.RAID10_ENABLED and profiles.RAID25.visibility or profiles.RAID25.visibilityIncl10
-    elseif profile == "RAID10" then
-        return GW.settings.RAID10_ENABLED and profiles.RAID10.visibility or "hide"
+    if profile == "RAID40" or profile == "RAID25" or profile == "RAID10" then
+        return BuildRaidGridVisibility(profile)
     elseif profile == "RAID_PET" then
         return GW.settings.RAID_PET_FRAMES and profiles.RAID_PET.visibility or "hide"
+    elseif profile == "TANK" then
+        return GW.settings.RAID_MAINTANK_FRAMES_ENABLED and profiles.TANK.visibility or "hide"
     end
 
     return nil
@@ -722,42 +755,24 @@ local function UpdateGridHeader(profile)
     header:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
     header.gwMover:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
 
-    --check if we can diable the frame and also the mover
+    -- header driver + mover state. The header visibility itself is registered inside
+    -- UpdateGroupVisibility from GetHeaderVisibility - registering it here as well (as the
+    -- code used to) is the kind of duplication that caused overlapping grids
     if not header.isForced then
         if profile == "RAID40" then
-            RegisterStateDriver(header, "visibility", profiles.RAID40.visibility)
-            UpdateGroupVisibility(header, profile, true)
+            GW.ToggleMover(header.gwMover, GW.settings.RAID40_ENABLED)
+            UpdateGroupVisibility(header, profile, GW.settings.RAID40_ENABLED)
         elseif profile == "RAID25" then
             GW.ToggleMover(header.gwMover, GW.settings.RAID25_ENABLED)
-            if not GW.settings.RAID25_ENABLED then
-                RegisterStateDriver(header, "visibility", "hide")
-            else
-                RegisterStateDriver(header, "visibility", profiles.RAID25.visibility)
-            end
             UpdateGroupVisibility(header, profile, GW.settings.RAID25_ENABLED)
         elseif profile == "RAID10" then
             GW.ToggleMover(header.gwMover, GW.settings.RAID10_ENABLED)
-            if not GW.settings.RAID10_ENABLED then
-                RegisterStateDriver(header, "visibility", "hide")
-            else
-                RegisterStateDriver(header, "visibility", profiles.RAID10.visibility)
-            end
             UpdateGroupVisibility(header, profile, GW.settings.RAID10_ENABLED)
         elseif profile == "RAID_PET" then
             GW.ToggleMover(header.gwMover, GW.settings.RAID_PET_FRAMES)
-            if not GW.settings.RAID_PET_FRAMES then
-                RegisterStateDriver(header, "visibility", "hide")
-            else
-                RegisterStateDriver(header, "visibility", profiles.RAID_PET.visibility)
-            end
             UpdateGroupVisibility(header, profile, GW.settings.RAID_PET_FRAMES)
         elseif profile == "TANK" then
             GW.ToggleMover(header.gwMover, GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
-            if not GW.settings.RAID_MAINTANK_FRAMES_ENABLED then
-                RegisterStateDriver(header, "visibility", "hide")
-            else
-                RegisterStateDriver(header, "visibility", profiles.TANK.visibility)
-            end
             UpdateGroupVisibility(header, profile, GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
         end
     end
@@ -782,7 +797,7 @@ local function CreateHeader(parent, profile, options, overrideName, groupFilter)
     header.styleFunc = options.styleFunc
     header.updateFunc = options.updateFunc
 
-    header:SetVisibility("custom " .. options.visibility)
+    header:SetVisibility("custom " .. (GetHeaderVisibility(profile) or options.visibility))
 
     tinsert(GW.GridHeaders, header)
 
@@ -838,7 +853,7 @@ local function Initialize()
 
         EnsureHeaderGroups(profile)
 
-        RegisterStateDriver(Header, "visibility", options.visibility)
+        RegisterStateDriver(Header, "visibility", GetHeaderVisibility(profile) or options.visibility)
 
         -- movable frame for the container
         if profile == "PARTY" then

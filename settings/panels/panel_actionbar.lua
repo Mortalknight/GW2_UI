@@ -83,12 +83,28 @@ local function LoadActionbarPanel(sWindow)
     general:AddOptionButton(L["Fix: Restore empty action bar slots"], L["Restores empty slots across all 8 action bars when they were hidden in Blizzard Edit Mode."], {callback = GW.MakeActionbuttonsVisible, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), forceNewLine = true, group = "emptySlots"})
 
     -- MAINBAR
+    mainBar:AddOptionNote(format(L["The action bars are disabled entirely: enable them under %s."], BINDING_HEADER_ACTIONBAR .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.ACTIONBARS_ENABLED ~= true end,
+        group = "actionbarPageNote",
+    })
+    mainBar:AddOptionNote(format(L["The automatic bar layout is disabled: position, visibility and columns of these bars are managed by Blizzard's Edit Mode. Enable '%s' under %s to manage them here."], L["Automatic Bar Layout"], BINDING_HEADER_ACTIONBAR .. " - " .. GENERAL), {
+        isVisible = function() return GW.Retail and GW.settings.ACTIONBARS_ENABLED == true and GW.settings.BAR_LAYOUT_ENABLED ~= true end,
+        group = "actionbarPageNote",
+    })
     mainBar:AddOptionSlider(L["Button Spacing"], nil, { getterSetter = "MAINBAR_MARGIIN", callback = function() GW.UpdateMainBarHot() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), group = "buttonAppearance"})
 
     mainBar:AddOptionDropdown(L["Main Bar Range Indicator"], nil, { getterSetter = "MAINBAR_RANGEINDICATOR", callback = GW.UpdateMainBarHot, optionsList = {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"}, optionNames = {L["%s Indicator"]:format(RED_GEM), L["Red Overlay"], STATUS_TEXT_BOTH, NONE}, dependence = {["ACTIONBARS_ENABLED"] = true}, incompatibleAddons = "Actionbars", group = "buttonAppearance"})
     mainBar:AddOptionDropdown(BINDING_HEADER_ACTIONBAR .. SHOW, nil, { getterSetter = "FADE_MULTIACTIONBAR_8", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars", group = "barVisibility"})
 
     --EXTRABARS
+    extraBars:AddOptionNote(format(L["The action bars are disabled entirely: enable them under %s."], BINDING_HEADER_ACTIONBAR .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.ACTIONBARS_ENABLED ~= true end,
+        group = "actionbarPageNote",
+    })
+    extraBars:AddOptionNote(format(L["The automatic bar layout is disabled: position, visibility and columns of these bars are managed by Blizzard's Edit Mode. Enable '%s' under %s to manage them here."], L["Automatic Bar Layout"], BINDING_HEADER_ACTIONBAR .. " - " .. GENERAL), {
+        isVisible = function() return GW.Retail and GW.settings.ACTIONBARS_ENABLED == true and GW.settings.BAR_LAYOUT_ENABLED ~= true end,
+        group = "actionbarPageNote",
+    })
     extraBars:AddOptionSlider(L["Button Spacing"], nil, { getterSetter = "MULTIBAR_MARGIIN", callback = function() GW.UpdateMultibarButtons() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)()})
 
     extraBars:AddGroupHeader(OPTION_SHOW_ACTION_BAR:format(2))
@@ -182,6 +198,14 @@ local function LoadActionbarPanel(sWindow)
 
     -- STANCEBAR
     local stanceBarDependence = (function() local t = {["ACTIONBARS_ENABLED"] = true, ["StanceBar.enabled"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)()
+    stanceBar:AddOptionNote(format(L["The action bars are disabled entirely: enable them under %s."], BINDING_HEADER_ACTIONBAR .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.ACTIONBARS_ENABLED ~= true end,
+        group = "actionbarPageNote",
+    })
+    stanceBar:AddOptionNote(format(L["The automatic bar layout is disabled: position, visibility and columns of these bars are managed by Blizzard's Edit Mode. Enable '%s' under %s to manage them here."], L["Automatic Bar Layout"], BINDING_HEADER_ACTIONBAR .. " - " .. GENERAL), {
+        isVisible = function() return GW.Retail and GW.settings.ACTIONBARS_ENABLED == true and GW.settings.BAR_LAYOUT_ENABLED ~= true end,
+        group = "actionbarPageNote",
+    })
     stanceBar:AddOption(ENABLE, nil, { getterSetter = "StanceBar.enabled", isMasterToggle = true ,callback = function() if GwStanceBar then GwStanceBar:UpdateVisibility(); GwStanceBar:UpdateAlpha() end end, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
     stanceBar:AddOptionDropdown(L["Growth Direction"], L["Set the growth direction of the stance bar."], {getterSetter = "StanceBar.growDirection", callback = function() if GwStanceBar then GwStanceBar:AdjustMaxStanceButtons() end end, optionsList = {"UP", "DOWN", "LEFT", "RIGHT"}, optionNames = {L["Up"], L["Down"], L["Left"], L["Right"]}, dependence = stanceBarDependence, incompatibleAddons = "Actionbars", group = "barLayout"})
     stanceBar:AddOptionSlider(L["Button Size"], nil, {getterSetter = "StanceBar.buttonSize", callback = function() if GwStanceBar then GwStanceBar:AdjustMaxStanceButtons() end end, min = 20, max = 60, decimalNumbers = 0, step = 1, dependence = stanceBarDependence, incompatibleAddons = "Actionbars", group = "barLayout"})

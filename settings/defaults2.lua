@@ -1108,6 +1108,8 @@ GW.globalDefault = {
             hasMoved= false,
         },
 
+        -- RAID40 (RAID_FRAMES is the module master for all group frames)
+        RAID40_ENABLED = true,
         -- RAID25
         RAID25_ENABLED= true,
         RAID_CLASS_COLOR_RAID25= false,

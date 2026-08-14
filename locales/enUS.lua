@@ -1020,3 +1020,6 @@ L["Group frames are disabled entirely: enable them under %s."] = true
 L["This grid is not in use: the stylised party frames are shown instead. Enable '%s' below to replace them with this grid."] = true
 L["The party grid is displayed"] = true
 L["The party grid replaces the party frames"] = true
+L["Display a separate raid grid for groups from 26 to 40 players"] = true
+L["The action bars are disabled entirely: enable them under %s."] = true
+L["The automatic bar layout is disabled: position, visibility and columns of these bars are managed by Blizzard's Edit Mode. Enable '%s' under %s to manage them here."] = true

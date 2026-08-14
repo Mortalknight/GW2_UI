@@ -70,6 +70,10 @@ local function LoadAurasPanel(sWindow)
     p_auras:AddOptionDropdown(L["Important & dispellable debuff scale priority"], L["If both scales could apply to a debuff, which one should be used"], { getterSetter = "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO", optionsList = {"DISPELL", "IMPORTANT", "OFF"}, optionNames = {L["Dispell > Important"], L["Important > Dispell"], OFF}, group = "debuffScalePrio"})
 
     -- indicators
+    p_indicator:AddOptionNote(format(L["Group frames are disabled entirely: enable them under %s."], L["Group Frames"] .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.RAID_FRAMES ~= true end,
+        group = "indicatorPageNote",
+    })
     p_indicator:AddOption(L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], { getterSetter = "INDICATORS_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, group = "indicatorDisplay"})
     p_indicator:AddOption(L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], { getterSetter = "INDICATORS_TIME", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, group = "indicatorDisplay"})
     p_indicator:AddOption(L["Show Stack Count"], L["Show stack count text on raid aura indicators."], { getterSetter = "INDICATORS_STACKS", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, group = "indicatorDisplay"})

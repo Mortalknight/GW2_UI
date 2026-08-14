@@ -79,6 +79,10 @@ local function LoadGeneralGridSettings(panel)
     general.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     general.breadcrumb:SetText(GENERAL)
 
+    -- module master for ALL group frames (raid grids, party grid, pets, tank); the
+    -- individual raid grids carry their own enable on their pages
+    general:AddOption(ENABLE, RAID_FRAMES_SUBTEXT, {getterSetter = "RAID_FRAMES", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
+
     general:AddOptionSlider(L["Name Update Rate"], L["Maximum tick rate allowed for name updates per second."], { getterSetter = "tagUpdateRate", callback = function(value) GW.oUF.Tags:SetEventUpdateTimer(value) end, min = 0.05, max = 0.5, decimalNumbers = 2, step = 0.01})
 
     return general
@@ -158,6 +162,10 @@ local function LoadRaid10Profile(panel)
     raid10.preview:SetScript("OnLeave", GameTooltip_Hide)
     raid10.preview:SetEnabled(GW.settings.RAID10_ENABLED)
 
+    raid10:AddOptionNote(format(L["Group frames are disabled entirely: enable them under %s."], L["Group Frames"] .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.RAID_FRAMES ~= true end,
+        group = "gridPageNote",
+    })
     raid10:AddOption(ENABLE, L["Display a separate raid grid for groups from 1 to 10 players"], {getterSetter = "RAID10_ENABLED", isMasterToggle = true, callback = function(value) raid10.preview:SetEnabled(value) GW.UpdateGridSettings("RAID10", nil, true) GW.UpdateGridSettings("RAID25", nil, true) GW.UpdateGridSettings("RAID40", nil, true) end, dependence = {["RAID_FRAMES"] = true}})
     raid10:AddOption(RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], {getterSetter = "RAID_CLASS_COLOR_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}, group = "gridClass"})
     raid10:AddOption(L["Hide class icon"], nil, {getterSetter = "RAID_HIDE_CLASS_ICON_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_CLASS_COLOR_RAID10"] = false}, group = "gridClass"})
@@ -268,6 +276,10 @@ local function LoadRaid25Profile(panel)
     raid25.preview:SetScript("OnLeave", GameTooltip_Hide)
     raid25.preview:SetEnabled(GW.settings.RAID25_ENABLED)
 
+    raid25:AddOptionNote(format(L["Group frames are disabled entirely: enable them under %s."], L["Group Frames"] .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.RAID_FRAMES ~= true end,
+        group = "gridPageNote",
+    })
     raid25:AddOption(ENABLE, L["Display a separate raid grid for groups from 11 to 25 players"], {getterSetter = "RAID25_ENABLED", isMasterToggle = true, callback = function(value) raid25.preview:SetEnabled(value); GW.UpdateGridSettings("RAID10", nil, true); GW.UpdateGridSettings("RAID25", nil, true); GW.UpdateGridSettings("RAID40", nil, true) end, dependence = {["RAID_FRAMES"] = true}})
     raid25:AddOption(RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], {getterSetter = "RAID_CLASS_COLOR_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}, group = "gridClass"})
     raid25:AddOption(L["Hide class icon"], nil, {getterSetter = "RAID_HIDE_CLASS_ICON_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_CLASS_COLOR_RAID25"] = false}, group = "gridClass"})
@@ -376,27 +388,31 @@ local function LoadRaid40Profile(panel)
         GameTooltip:Show()
     end)
     raid40.preview:SetScript("OnLeave", GameTooltip_Hide)
-    raid40.preview:SetEnabled(GW.settings.RAID_FRAMES)
+    raid40.preview:SetEnabled(GW.settings.RAID_FRAMES and GW.settings.RAID40_ENABLED)
 
-    raid40:AddOption(ENABLE, RAID_FRAMES_SUBTEXT, {getterSetter = "RAID_FRAMES", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    raid40:AddOption(RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], {getterSetter = "RAID_CLASS_COLOR", callback = function(value) raid40.preview:SetEnabled(value); GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, group = "gridClass"})
-    raid40:AddOption(L["Hide class icon"], nil, {getterSetter = "RAID_HIDE_CLASS_ICON", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID_CLASS_COLOR"] = false}, group = "gridClass"})
+    raid40:AddOptionNote(format(L["Group frames are disabled entirely: enable them under %s."], L["Group Frames"] .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.RAID_FRAMES ~= true end,
+        group = "gridPageNote",
+    })
+    raid40:AddOption(ENABLE, L["Display a separate raid grid for groups from 26 to 40 players"], {getterSetter = "RAID40_ENABLED", isMasterToggle = true, callback = function(value) raid40.preview:SetEnabled(value and GW.settings.RAID_FRAMES); GW.UpdateGridSettings("RAID40", nil, true) end, dependence = {["RAID_FRAMES"] = true}})
+    raid40:AddOption(RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], {getterSetter = "RAID_CLASS_COLOR", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridClass"})
+    raid40:AddOption(L["Hide class icon"], nil, {getterSetter = "RAID_HIDE_CLASS_ICON", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true, ["RAID_CLASS_COLOR"] = false}, group = "gridClass"})
 
-    raid40:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "RAID_UNIT_MARKERS", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, group = "gridIcons"})
-    raid40:AddOption(L["Role Icon"], nil, {getterSetter = "RAID_SHOW_ROLE_ICON", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, group = "gridIcons"})
-    raid40:AddOption(L["Tank Icon"], nil, {getterSetter = "RAID_SHOW_TANK_ICON", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, group = "gridIcons"})
-    raid40:AddOption(L["Leader/Assist Icon"], nil, {getterSetter = "RAID_SHOW_LEADER_ICON", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, group = "gridIcons"})
+    raid40:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "RAID_UNIT_MARKERS", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridIcons"})
+    raid40:AddOption(L["Role Icon"], nil, {getterSetter = "RAID_SHOW_ROLE_ICON", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridIcons"})
+    raid40:AddOption(L["Tank Icon"], nil, {getterSetter = "RAID_SHOW_TANK_ICON", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridIcons"})
+    raid40:AddOption(L["Leader/Assist Icon"], nil, {getterSetter = "RAID_SHOW_LEADER_ICON", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridIcons"})
 
-    raid40:AddOption(L["Shorten health values"], nil, {getterSetter = "RAID_SHORT_HEALTH_VALUES", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, hidden = not GW.Retail, group = "gridBars"})
-    raid40:AddOption(L["Show absorb bar"], nil, {getterSetter = "RAID_SHOW_ABSORB_BAR", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "gridBars"})
-    raid40:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "RAID_UNIT_HEALTH", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["RAID_FRAMES"] = true}, group = "gridBars"})
-    raid40:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "raid40_show_powerbar", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"ALL", "HEALER", "NONE"}, optionNames = {ALL, HEALER, NONE}, dependence = {["RAID_FRAMES"] = true}, group = "gridBars"})
-    raid40:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "raid40_FrameHealthBarTexture", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["RAID_FRAMES"] = true}, group = "gridBars"})
+    raid40:AddOption(L["Shorten health values"], nil, {getterSetter = "RAID_SHORT_HEALTH_VALUES", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, hidden = not GW.Retail, group = "gridBars"})
+    raid40:AddOption(L["Show absorb bar"], nil, {getterSetter = "RAID_SHOW_ABSORB_BAR", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "gridBars"})
+    raid40:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "RAID_UNIT_HEALTH", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridBars"})
+    raid40:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "raid40_show_powerbar", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"ALL", "HEALER", "NONE"}, optionNames = {ALL, HEALER, NONE}, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridBars"})
+    raid40:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "raid40_FrameHealthBarTexture", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridBars"})
 
-    raid40:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "RAID_AURA_TOOLTIP_INCOMBAT", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["RAID_FRAMES"] = true}, group = "gridMisc"})
-    raid40:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "RAID_UNIT_FLAGS", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE_KEY, L["Different Than Own"], ALL}, dependence = {["RAID_FRAMES"] = true}, hidden = not GW.Retail, group = "gridMisc"})
+    raid40:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "RAID_AURA_TOOLTIP_INCOMBAT", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridMisc"})
+    raid40:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "RAID_UNIT_FLAGS", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE_KEY, L["Different Than Own"], ALL}, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, hidden = not GW.Retail, group = "gridMisc"})
 
-    raid40:AddOption(L["Start Near Center"], L["The initial group will start near the center and grow out."], {getterSetter = "UNITFRAME_ANCHOR_FROM_CENTER", callback = function() GW.UpdateGridSettings("RAID40", true) end, dependence = {["RAID_FRAMES"] = true}, group = "gridLayout"})
+    raid40:AddOption(L["Start Near Center"], L["The initial group will start near the center and grow out."], {getterSetter = "UNITFRAME_ANCHOR_FROM_CENTER", callback = function() GW.UpdateGridSettings("RAID40", true) end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, group = "gridLayout"})
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do
@@ -407,19 +423,19 @@ local function LoadRaid40Profile(panel)
     end
 
     -- retail only filter
-    CreateAuraFilterSection(raid40, "RAID40", "RAID_BUFF_FILTER", "RAID_DEBUFF_FILTER", "RAID_SHOW_BUFFS", "RAID_SHOW_DEBUFFS", "RAID_FRAMES")
+    CreateAuraFilterSection(raid40, "RAID40", "RAID_BUFF_FILTER", "RAID_DEBUFF_FILTER", "RAID_SHOW_BUFFS", "RAID_SHOW_DEBUFFS", "RAID40_ENABLED")
     -- none retail debuff filter
-    raid40:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
-    raid40:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
-    raid40:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "RAID_PANDEMIC_HIGHLIGHT", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, hidden = not GW.Retail})
-    raid40:AddOptionDropdown(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "RAID_DISPEL_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}, hidden = not GW.Retail})
-    CreateIgnoredAuraSection(raid40, "RAID40", "RAID_IGNORED_AURAS", "RAID_FRAMES")
+    raid40:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true, ["RAID_SHOW_DEBUFFS"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    raid40:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    raid40:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "RAID_PANDEMIC_HIGHLIGHT", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, hidden = not GW.Retail})
+    raid40:AddOptionDropdown(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "RAID_DISPEL_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, hidden = not GW.Retail})
+    CreateIgnoredAuraSection(raid40, "RAID40", "RAID_IGNORED_AURAS", "RAID40_ENABLED")
 
 
     --fader
     raid40:AddGroupHeader(L["Fader"])
-    raid40:AddOption(L["Range"], nil, {getterSetter = "grid40FrameFaderRange", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, groupHeaderName = L["Fader"]})
-    raid40:AddOptionDropdown(L["Fader"], nil, { getterSetter = "grid40FrameFader", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["RAID_FRAMES"] = true, ["grid40FrameFaderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]})
+    raid40:AddOption(L["Range"], nil, {getterSetter = "grid40FrameFaderRange", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}, groupHeaderName = L["Fader"]})
+    raid40:AddOptionDropdown(L["Fader"], nil, { getterSetter = "grid40FrameFader", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true, ["grid40FrameFaderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]})
     raid40:AddOptionSlider(L["Smooth"], nil, { getterSetter = "grid40FrameFader.smooth", callback = function() UpdateGridSettingsThrottled("RAID40") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["RAID_FRAMES"] = true}})
     raid40:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "grid40FrameFader.minAlpha", callback = function() UpdateGridSettingsThrottled("RAID40") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["RAID_FRAMES"] = true}})
     raid40:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "grid40FrameFader.maxAlpha", callback = function() UpdateGridSettingsThrottled("RAID40") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["RAID_FRAMES"] = true}})
@@ -432,21 +448,21 @@ local function LoadRaid40Profile(panel)
             local g1, g2 = strsplit("+", dir)
             return L["%s and then %s"]:format(L[StrLower(g1, 2)], L[StrLower(g2, 2)])
         end
-   ), dependence = {["RAID_FRAMES"] = true}})
+   ), dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}})
 
-    raid40:AddOptionSlider(L["Groups Per Row/Column"], nil, { getterSetter = "RAID_GROUPS_PER_COLUMN", callback = function() UpdateGridSettingsThrottled("RAID40", true) end, min = 1, max = 8, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
-    raid40:AddOptionSlider(L["Set Raid Unit Width"], L["Set the width of the raid units."], { getterSetter = "RAID_WIDTH", callback = function() UpdateGridSettingsThrottled("RAID40", false, true) end, min = 45, max = 300, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
-    raid40:AddOptionSlider(L["Set Raid Unit Height"], L["Set the height of the raid units."], { getterSetter = "RAID_HEIGHT", callback = function() UpdateGridSettingsThrottled("RAID40", false, true) end, min = 15, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
-    raid40:AddOptionSlider(L["Horizontal Spacing"], nil, { getterSetter = "RAID_UNITS_HORIZONTAL_SPACING", callback = function() UpdateGridSettingsThrottled("RAID40", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
-    raid40:AddOptionSlider(L["Vertical Spacing"], nil, { getterSetter = "RAID_UNITS_VERTICAL_SPACING", callback = function() UpdateGridSettingsThrottled("RAID40", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
+    raid40:AddOptionSlider(L["Groups Per Row/Column"], nil, { getterSetter = "RAID_GROUPS_PER_COLUMN", callback = function() UpdateGridSettingsThrottled("RAID40", true) end, min = 1, max = 8, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}})
+    raid40:AddOptionSlider(L["Set Raid Unit Width"], L["Set the width of the raid units."], { getterSetter = "RAID_WIDTH", callback = function() UpdateGridSettingsThrottled("RAID40", false, true) end, min = 45, max = 300, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}})
+    raid40:AddOptionSlider(L["Set Raid Unit Height"], L["Set the height of the raid units."], { getterSetter = "RAID_HEIGHT", callback = function() UpdateGridSettingsThrottled("RAID40", false, true) end, min = 15, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}})
+    raid40:AddOptionSlider(L["Horizontal Spacing"], nil, { getterSetter = "RAID_UNITS_HORIZONTAL_SPACING", callback = function() UpdateGridSettingsThrottled("RAID40", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}})
+    raid40:AddOptionSlider(L["Vertical Spacing"], nil, { getterSetter = "RAID_UNITS_VERTICAL_SPACING", callback = function() UpdateGridSettingsThrottled("RAID40", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}})
     raid40:AddOptionSlider(L["Group Spacing"], L["Additional spacing between each individual group."], { getterSetter = "RAID_UNITS_GROUP_SPACING", callback = function() UpdateGridSettingsThrottled("RAID40", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence ={["RAID_FRAMES"] = true}})
 
     -- Sorting
     raid40:AddGroupHeader(L["Grouping & Sorting"])
-    raid40:AddOption(L["Raid-Wide Sorting"], L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."], {getterSetter = "RAID_WIDE_SORTING", callback = function() UpdateGridSettingsAndRefreshPreview("RAID40", false, true) end, dependence = {["RAID_FRAMES"] = true}})
-    raid40:AddOptionDropdown(L["Group By"], L["Set the order that the group will sort."], { getterSetter = "RAID_GROUP_BY", callback = function() UpdateGridSettingsAndRefreshPreview("RAID40", true) end, optionsList = {"CLASS", "GROUP", "INDEX", "NAME", "ROLE"}, optionNames = {CLASS, GROUP, "Index", NAME, ROLE}, dependence = {["RAID_FRAMES"] = true}})
-    raid40:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "RAID_SORT_DIRECTION", callback = function() UpdateGridSettingsAndRefreshPreview("RAID40", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["RAID_FRAMES"] = true}})
-    raid40:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "T", callback = function() UpdateGridSettingsAndRefreshPreview("RAID40", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["RAID_FRAMES"] = true, ["RAID_GROUP_BY"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
+    raid40:AddOption(L["Raid-Wide Sorting"], L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."], {getterSetter = "RAID_WIDE_SORTING", callback = function() UpdateGridSettingsAndRefreshPreview("RAID40", false, true) end, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}})
+    raid40:AddOptionDropdown(L["Group By"], L["Set the order that the group will sort."], { getterSetter = "RAID_GROUP_BY", callback = function() UpdateGridSettingsAndRefreshPreview("RAID40", true) end, optionsList = {"CLASS", "GROUP", "INDEX", "NAME", "ROLE"}, optionNames = {CLASS, GROUP, "Index", NAME, ROLE}, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}})
+    raid40:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "RAID_SORT_DIRECTION", callback = function() UpdateGridSettingsAndRefreshPreview("RAID40", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true}})
+    raid40:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "T", callback = function() UpdateGridSettingsAndRefreshPreview("RAID40", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["RAID_FRAMES"] = true, ["RAID40_ENABLED"] = true, ["RAID_GROUP_BY"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
     CreateClassSortebalList(raid40, "Raid40GroupByClassOrder", "RAID_GROUP_BY")
     return raid40
 end
@@ -479,6 +495,10 @@ local function LoadMaintankProfile(panel)
     tank.preview:SetScript("OnLeave", GameTooltip_Hide)
     tank.preview:SetEnabled(GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
 
+    tank:AddOptionNote(format(L["Group frames are disabled entirely: enable them under %s."], L["Group Frames"] .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.RAID_FRAMES ~= true end,
+        group = "gridPageNote",
+    })
     tank:AddOption(ENABLE, L["Enable Maintank grid"], {getterSetter = "RAID_MAINTANK_FRAMES_ENABLED", isMasterToggle = true, callback = function(value) tank.preview:SetEnabled(value); GW.UpdateGridSettings("TANK", nil, true) end, dependence = {["RAID_FRAMES"] = true}})
     tank:AddOption(RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], {getterSetter = "RAID_CLASS_COLOR_TANK", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}, group = "gridClass"})
     tank:AddOption(L["Hide class icon"], nil, {getterSetter = "RAID_HIDE_CLASS_ICON_TANK", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_CLASS_COLOR_TANK"] = false}, group = "gridClass"})
@@ -583,6 +603,10 @@ local function LoadRaidPetProfile(panel)
     p.preview:SetScript("OnLeave", GameTooltip_Hide)
     p.preview:SetEnabled(GW.settings.RAID_PET_FRAMES)
 
+    p:AddOptionNote(format(L["Group frames are disabled entirely: enable them under %s."], L["Group Frames"] .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.RAID_FRAMES ~= true end,
+        group = "gridPageNote",
+    })
     p:AddOption(ENABLE, L["Show a separate grid for raid pets"], {getterSetter = "RAID_PET_FRAMES", isMasterToggle = true, callback = function(value) p.preview:SetEnabled(value); GW.UpdateGridSettings("RAID_PET", nil, true) end, dependence = {["RAID_FRAMES"] = true}})
     p:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "RAID_UNIT_MARKERS_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}, group = "gridIcons"})
 
@@ -692,7 +716,7 @@ local function LoadPartyProfile(panel)
     -- the whole page depends on {RAID_FRAMES = true, PARTY_GRID_ACTIVE = true}; these two notes
     -- name whichever of the two conditions is currently failing. RAID_FRAMES lives on the
     -- "Raid: 40" page, so without this the reason is invisible from here.
-    party:AddOptionNote(format(L["Group frames are disabled entirely: enable them under %s."], L["Group Frames"] .. " - " .. RAID .. ": 40"), {
+    party:AddOptionNote(format(L["Group frames are disabled entirely: enable them under %s."], L["Group Frames"] .. " - " .. GENERAL), {
         isVisible = function() return GW.settings.RAID_FRAMES ~= true end,
         group = "partyPageNote",
     })
@@ -821,6 +845,10 @@ local function LoadPartyPetProfile(panel)
     p.preview:SetScript("OnLeave", GameTooltip_Hide)
     p.preview:SetEnabled(GW.settings.PARTY_PET_FRAMES_ENABLED)
 
+    p:AddOptionNote(format(L["Group frames are disabled entirely: enable them under %s."], L["Group Frames"] .. " - " .. GENERAL), {
+        isVisible = function() return GW.settings.RAID_FRAMES ~= true end,
+        group = "gridPageNote",
+    })
     p:AddOption(ENABLE, L["Show a separate grid for party pets"], {getterSetter = "PARTY_PET_FRAMES_ENABLED", isMasterToggle = true, callback = function(value) p.preview:SetEnabled(value); GW.UpdateGridSettings("PARTY_PET", nil, true) end, dependence = {["RAID_FRAMES"] = true}})
     p:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "PARTY_UNIT_MARKERS_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridIcons"})
 

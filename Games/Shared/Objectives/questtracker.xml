@@ -83,12 +83,6 @@
         </Anchors>
     </Frame>
 
-    <Frame name="GwQuesttrackerContainerProtected" inherits="SecureHandlerStateTemplate" protected="true" parent="UIParent" virtual="true">
-        <Size x="300" y="1"></Size>
-        <Anchors>
-            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
-        </Anchors>
-    </Frame>
 
     <Frame name="GwScenarioCurrencyTemplate" virtual="true" hidden="true">
         <Size x="48" y="25"></Size>

@@ -186,10 +186,12 @@ end
 
 local function SetAlphaRecursive(frame, alpha)
     if not frame or not frame.SetAlpha then return end
-    -- skip forbidden subtrees (e.g. AuraContainer buttons) — SetAlpha would error
-    -- there; their effective alpha follows the accessible parent anyway
     if frame.IsForbidden and frame:IsForbidden() then return end
     frame:SetAlpha(alpha)
+
+    if frame.gwSkipAlphaRecursion or (frame.GetObjectType and frame:GetObjectType() == "AuraContainer") then
+        return
+    end
 
     local numChildren = frame:GetNumChildren()
     if numChildren == 0 then

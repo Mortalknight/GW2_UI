@@ -85,9 +85,10 @@ local function UpdateGridRaid40Frame(frame)
             frame:ClearAllPoints()
         end
 
-        if GW.settings.RAID_FRAMES and not frame:IsEnabled() then
+        local enabled = GW.settings.RAID_FRAMES and GW.settings.RAID40_ENABLED
+        if enabled and not frame:IsEnabled() then
             frame:Enable()
-        elseif not GW.settings.RAID_FRAMES and frame:IsEnabled() then
+        elseif not enabled and frame:IsEnabled() then
             frame:Disable()
         end
     end

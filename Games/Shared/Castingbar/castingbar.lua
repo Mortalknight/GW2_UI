@@ -354,6 +354,29 @@ function GwCastingBarMixin:Init(unit, showTradeSkills)
     end
     self:SetAlpha(0)
 
+    if not self.gwStuckWatchdog then
+        self.gwStuckWatchdog = C_Timer.NewTicker(0.5, function()
+            local barUnit = self.unit or unit
+            if self:GetAlpha() <= 0
+                or self:IsFinishAnimating()
+                or animations[self.animationName .. "FadeOut"]
+                or UnitCastingInfo(barUnit) or UnitChannelInfo(barUnit) then
+                self.gwStuckVisibleSince = nil
+                return
+            end
+
+            self.gwStuckVisibleSince = self.gwStuckVisibleSince or GetTime()
+            if GetTime() - self.gwStuckVisibleSince < 1 then return end
+            self.gwStuckVisibleSince = nil
+
+            self.isCasting, self.isChanneling, self.isEmpowered = false, false, false
+            self.highlight:Hide()
+            GW.AddToAnimation(self.animationName .. "FadeOut", 1, 0, GetTime(), 0.2, function(p)
+                self:SetAlpha(math.min(1, math.max(0, p)))
+            end)
+        end)
+    end
+
     if unit == "pet" then
         self:SetScript("OnEvent", self.OnPetEvent)
     else

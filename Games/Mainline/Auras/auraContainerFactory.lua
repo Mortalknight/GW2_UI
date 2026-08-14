@@ -833,6 +833,7 @@ end
 function GW.CreateAuraTrackerContainer(config)
     local container = CreateFrame("AuraContainer", config.name, config.parent or UIParent, "CustomAuraContainerTemplate")
     container.gwConfig = config
+    container.gwSkipAlphaRecursion = true -- engine child buttons reject tainted SetAlpha
     container.gwGroupKeys = { "tracker" }
     container:SetSize(config.width or 1, config.height or 1)
 
@@ -904,6 +905,7 @@ end
 function GW.CreateUnitAuraContainer(config)
     local container = CreateFrame("AuraContainer", config.name, config.parent or UIParent, "CustomAuraContainerTemplate")
     container.gwConfig = config
+    container.gwSkipAlphaRecursion = true -- engine child buttons reject tainted SetAlpha
     container.GwUpdateLayout = ApplyLayout
     container.GwSetAdvancedBranches = SetAdvancedBranches
 

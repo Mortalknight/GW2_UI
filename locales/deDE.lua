@@ -1051,3 +1051,6 @@ L["Group frames are disabled entirely: enable them under %s."] = "Die Gruppenrah
 L["This grid is not in use: the stylised party frames are shown instead. Enable '%s' below to replace them with this grid."] = "Dieses Grid wird nicht genutzt: stattdessen werden die stilisierten Party-Rahmen angezeigt. Aktiviere unten '%s', um sie durch dieses Grid zu ersetzen."
 L["The party grid is displayed"] = "Das Party-Grid wird angezeigt"
 L["The party grid replaces the party frames"] = "Das Party-Grid ersetzt die Party-Rahmen"
+L["Display a separate raid grid for groups from 26 to 40 players"] = "Zeigt ein separates Raid-Grid für Gruppen von 26 bis 40 Spielern"
+L["The action bars are disabled entirely: enable them under %s."] = "Die Aktionsleisten sind komplett deaktiviert: aktiviere sie unter %s."
+L["The automatic bar layout is disabled: position, visibility and columns of these bars are managed by Blizzard's Edit Mode. Enable '%s' under %s to manage them here."] = "Das automatische Leisten-Layout ist deaktiviert: Position, Sichtbarkeit und Spalten dieser Leisten verwaltet Blizzards Bearbeitungsmodus. Aktiviere '%s' unter %s, um sie hier zu verwalten."
