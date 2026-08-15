@@ -5,10 +5,6 @@ local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
 local lerp = GW.lerp
 
-local GetChatCategory = ChatFrameUtil and ChatFrameUtil.GetChatCategory or Chat_GetChatCategory
-local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
-local FormatDiscordMessage = ChatFrameUtil and ChatFrameUtil.FormatDiscordMessage
-
 local AFKMode
 
 local ignoreKeys = {
@@ -235,7 +231,7 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     local infoType = strsub(event, 10)
     local info = ChatTypeInfo[infoType]
 
-    local chatGroup = GetChatCategory(infoType)
+    local chatGroup = ChatFrameUtil.GetChatCategory(infoType)
     local chatTarget
     if chatGroup == "BN_CONVERSATION" then
         chatTarget = tostring(arg8)
@@ -257,12 +253,12 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
         arg1 = RemoveExtraSpaces(arg1)
     end
 
-    local isMobile = arg14 and GetMobileEmbeddedTexture(info.r, info.g, info.b)
+    local isMobile = arg14 and ChatFrameUtil.GetMobileEmbeddedTexture(info.r, info.g, info.b)
     local message = format("%s%s", isMobile or "", arg1)
 
     local discordInfo, isFromDiscord = GW.ChatFunctions:GetDiscordInfo(arg18)
     if isFromDiscord then
-        message = FormatDiscordMessage(discordInfo, message)
+        message = ChatFrameUtil.FormatDiscordMessage(discordInfo, message)
     end
 
     local coloredName = (infoType == "BN_WHISPER" and GW.GetBNFriendColor(arg2, arg13)) or GW.ChatFunctions:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg18)

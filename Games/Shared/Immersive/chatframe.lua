@@ -4,16 +4,7 @@ local L = GW.L
 
 GW.ChatFunctions = {}
 
-local GetMentorChannelStatus = ChatFrameUtil and ChatFrameUtil.GetMentorChannelStatus or ChatFrame_GetMentorChannelStatus
-local Chat_GetChatCategory = ChatFrameUtil and ChatFrameUtil.GetChatCategory or Chat_GetChatCategory
-local ChatEdit_ActivateChat = ChatFrameUtil and ChatFrameUtil.ActivateChat or ChatEdit_ActivateChat
-local ChatEdit_ChooseBoxForSend = ChatFrameUtil and ChatFrameUtil.ChooseBoxForSend or ChatEdit_ChooseBoxForSend
-local ChatEdit_SetLastTellTarget = ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or ChatEdit_SetLastTellTarget
-local ChatFrame_AddMessageEventFilter = ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter or ChatFrame_AddMessageEventFilter
 local GetClientTexture = BNet_GetClientEmbeddedAtlas or BNet_GetClientEmbeddedTexture
-local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
-local ResolvePrefixedChannelName = (ChatFrameUtil and ChatFrameUtil.ResolvePrefixedChannelName) or ChatFrame_ResolvePrefixedChannelName
-local ShouldColorChatByClass = (ChatFrameUtil and ChatFrameUtil.ShouldColorChatByClass) or Chat_ShouldColorChatByClass
 local IsChannelRegionalForChannelID = C_ChatInfo.IsChannelRegionalForChannelID
 local GetChannelShortcutForChannelID = C_ChatInfo.GetChannelShortcutForChannelID
 local C_GuildInfo_GetMOTD = C_GuildInfo and C_GuildInfo.GetMOTD or GetGuildRosterMOTD
@@ -21,8 +12,6 @@ local GetGroupMembers = C_SocialQueue and C_SocialQueue.GetGroupMembers
 local GetGroupQueues = C_SocialQueue and C_SocialQueue.GetGroupQueues
 local TimeUtil_BetterDate = TimeUtil and TimeUtil.BetterDate or BetterDate
 local DiscordDisplayNameType = Enum.DiscordDisplayNameType
-local FormatDiscordMessage = ChatFrameUtil and ChatFrameUtil.FormatDiscordMessage
-
 
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
@@ -584,7 +573,7 @@ function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _,
     if isFromDiscord then
         local shouldShowGlobalName = discordInfo.type == DiscordDisplayNameType.GlobalName
         if discordInfo.globalName and shouldShowGlobalName then
-            return _G.ChatFrameUtil.DiscordNameColorize(discordInfo.globalName)
+            return ChatFrameUtil.DiscordNameColorize(discordInfo.globalName)
         end
 
         name = discordInfo.lastOnlineName
@@ -594,7 +583,7 @@ function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _,
     -- handle the class color
 
     local info = name and arg12 and _G.ChatTypeInfo[chatType]
-    if info and ShouldColorChatByClass(info) then
+    if info and ChatFrameUtil.ShouldColorChatByClass(info) then
         local data = GW_GetPlayerInfoByGUID(arg12)
         local color = data and data.classColor
         if color then
@@ -645,10 +634,10 @@ local canChangeMessage = function(arg1, id)
     if id and arg1 == "" then return id end
 end
 
-function GW.ChatFunctions:IsMessageProtected(message)
-    if GW.IsSecretValue(message) then return true end
+function GW.ChatFunctions:IsMessageProtected(msg)
+    if GW.IsSecretValue(msg) then return true end
 
-    return message and (message ~= gsub(message, "(:?|?)|K(.-)|k", canChangeMessage))
+    return msg and (msg ~= gsub(msg, "(:?|?)|K(.-)|k", canChangeMessage))
 end
 
 local removeIconFromLine
@@ -693,12 +682,12 @@ local function getLines(frame)
     local startLine = frameMessages <= maxMessages and 1 or frameMessages + 1 - maxMessages
 
     for i = startLine, frameMessages do
-        local message, r, g, b = frame:GetMessageInfo(i)
-        if message and not GW.ChatFunctions:IsMessageProtected(message) then
+        local msg, r, g, b = frame:GetMessageInfo(i)
+        if msg and not GW.ChatFunctions:IsMessageProtected(msg) then
             r, g, b = r or 1, g or 1, b or 1
-            message = removeIconFromLine(message)
-            message = colorizeLine(message, r, g, b)
-            copyLines[index] = message
+            msg = removeIconFromLine(msg)
+            msg = colorizeLine(msg, r, g, b)
+            copyLines[index] = msg
             index = index + 1
         end
     end
@@ -941,17 +930,17 @@ local function chatBackgroundOnResize(self)
 end
 
 
-local function SetChatEditBoxMessage(message)
-    local ChatFrameEditBox = ChatEdit_ChooseBoxForSend()
+local function SetChatEditBoxMessage(msg)
+    local ChatFrameEditBox = ChatFrameUtil.ChooseBoxForSend()
     local editBoxShown = ChatFrameEditBox:IsShown()
     local editBoxText = ChatFrameEditBox:GetText()
     if not editBoxShown then
-        ChatEdit_ActivateChat(ChatFrameEditBox)
+        ChatFrameUtil.ActivateChat(ChatFrameEditBox)
     end
     if editBoxText and editBoxText ~= "" then
         ChatFrameEditBox:SetText("")
     end
-    ChatFrameEditBox:Insert(message)
+    ChatFrameEditBox:Insert(msg)
     ChatFrameEditBox:HighlightText()
 end
 
@@ -1082,10 +1071,10 @@ GW.UpdateChatKeywords = UpdateChatKeywords
 
 local protectLinks = {}
 local rebuiltWords = {} -- reused scratch list for the rebuilt message (avoids O(n^2) concat)
-local function CheckKeyword(message, author)
+local function CheckKeyword(msg, author)
     local letSound = not SoundTimer and author ~= PLAYER_NAME and GW.settings.CHAT_KEYWORDS_ALERT_NEW ~= "None"
 
-    for hyperLink in gmatch(message, "|c%x-|H.-|h.-|h|r") do
+    for hyperLink in gmatch(msg, "|c%x-|H.-|h.-|h|r") do
         protectLinks[hyperLink] = gsub(hyperLink,"%s","|s")
 
         if letSound then
@@ -1101,12 +1090,12 @@ local function CheckKeyword(message, author)
     end
 
     for hyperLink, tempLink in pairs(protectLinks) do
-        message = gsub(message, GW.EscapeString(hyperLink), tempLink)
+        msg = gsub(msg, GW.EscapeString(hyperLink), tempLink)
     end
 
     local lowerMyName = strlower(GW.myname)
     local wordCount = 0
-    for word in gmatch(message, "%s-%S+%s*") do
+    for word in gmatch(msg, "%s-%S+%s*") do
         if not next(protectLinks) or not protectLinks[gsub(gsub(word, "%s", ""), "|s", " ")] then
             local tempWord = gsub(word, "[%s%p]", "")
             local lowerCaseWord = strlower(tempWord)
@@ -1247,21 +1236,21 @@ local function DisableChatThrottle()
 end
 GW.DisableChatThrottle = DisableChatThrottle
 
-local function PrepareMessage(author, message)
-    if GW.IsSecretValue(author) or GW.IsSecretValue(message) then return end
+local function PrepareMessage(author, msg)
+    if GW.IsSecretValue(author) or GW.IsSecretValue(msg) then return end
 
-    if author and author ~= "" and author ~= PLAYER_NAME and message and message ~= "" then
-        return strupper(author) .. message
+    if author and author ~= "" and author ~= PLAYER_NAME and msg and msg ~= "" then
+        return strupper(author) .. msg
     end
 end
 
-local function ChatThrottleHandler(author, message, when)
-    local msg = PrepareMessage(author, message)
+local function ChatThrottleHandler(arg1, arg2, when)
+    local msg = PrepareMessage(arg1, arg2)
     if not msg then return end
 
-    for savedMessage, object in pairs(throttle) do
+    for text, object in pairs(throttle) do
         if difftime(when, object.time) >= GW.settings.CHAT_SPAM_INTERVAL_TIMER then
-            throttle[savedMessage] = nil
+            throttle[text] = nil
         end
     end
 
@@ -1272,33 +1261,33 @@ local function ChatThrottleHandler(author, message, when)
     end
 end
 
-local function ChatThrottleBlockFlag(author, message, when)
-    local msg = GW.settings.CHAT_SPAM_INTERVAL_TIMER ~= 0 and PrepareMessage(author, message)
+local function ChatThrottleBlockFlag(author, text, when)
+    local msg = GW.settings.CHAT_SPAM_INTERVAL_TIMER ~= 0 and PrepareMessage(author, text)
     local object = msg and throttle[msg]
 
     return object and object.time and object.count and object.count > 1 and (difftime(when, object.time) <= GW.settings.CHAT_SPAM_INTERVAL_TIMER), object
 end
 
-local function ChatThrottleIntervalHandler(message, author, ...)
-    local blockFlag, blockObject = ChatThrottleBlockFlag(author, message, time())
+local function ChatThrottleIntervalHandler(text, author, ...)
+    local blockFlag, blockObject = ChatThrottleBlockFlag(author, text, time())
 
     if blockFlag then
         return true
     else
         if blockObject then blockObject.time = time() end
-        return FindURL(message, author, ...)
+        return FindURL(text, author, ...)
     end
 end
 
-local function HandleChatMessageFilter(_, event, message, author, ...)
-    if GW.IsSecretValue(message) or GW.IsSecretValue(author) then
+local function HandleChatMessageFilter(_, event, msg, author, ...)
+    if GW.IsSecretValue(msg) or GW.IsSecretValue(author) then
         return -- keyword/URL/smiley processing would error on secret values; pass through unchanged
     end
 
     if GW.IsIn(event, "CHAT_MSG_CHANNEL", "CHAT_MSG_YELL", "CHAT_MSG_SAY") then
-        return ChatThrottleIntervalHandler(message, author, ...)
+        return ChatThrottleIntervalHandler(msg, author, ...)
     else
-        return FindURL(message, author, ...)
+        return FindURL(msg, author, ...)
     end
 end
 
@@ -1409,12 +1398,12 @@ local function SaveChatHistory(event, ...)
     end
 
     if GW.settings.CHAT_SPAM_INTERVAL_TIMER ~= 0 and (event == "CHAT_MSG_SAY" or event == "CHAT_MSG_YELL" or event == "CHAT_MSG_CHANNEL") then
-        local message, author = ...
+        local msg, author = ...
         local when = time()
 
-        ChatThrottleHandler(author, message, when)
+        ChatThrottleHandler(author, msg, when)
 
-        if ChatThrottleBlockFlag(author, message, when) then
+        if ChatThrottleBlockFlag(author, msg, when) then
             return
         end
     end
@@ -1476,8 +1465,8 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
 end
 
 local function AddMessageEdits(frame, msg, alwaysAddTimestamp, isHistory, historyTime)
-    local isProtected = GW.ChatFunctions:IsMessageProtected(msg)
-    if isProtected or (not isProtected and (strmatch(msg, "^%s*$") or strmatch(msg, "^|Hgwtime|h") or strmatch(msg, "^|Hcpl:"))) then
+    local msgProtected = GW.ChatFunctions:IsMessageProtected(msg)
+    if msgProtected or (not msgProtected and (strmatch(msg, "^%s*$") or strmatch(msg, "^|Hgwtime|h") or strmatch(msg, "^|Hcpl:"))) then
         return msg
     end
 
@@ -1530,11 +1519,11 @@ local function GetPFlag(specialFlag, zoneChannelID, unitGUID)
             -- Add Blizzard Icon if this was sent by a GM/DEV
             flag = "|TInterface/ChatFrame/UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t "
         elseif specialFlag == "GUIDE" then
-            if GetMentorChannelStatus(Enum.PlayerMentorshipStatus.Mentor, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == Enum.PlayerMentorshipStatus.Mentor then
+            if ChatFrameUtil.GetMentorChannelStatus(Enum.PlayerMentorshipStatus.Mentor, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == Enum.PlayerMentorshipStatus.Mentor then
                 flag = gsub(NPEV2_CHAT_USER_TAG_GUIDE, "(|A.-|a).+", "%1") .. " "
             end
         elseif specialFlag == "NEWCOMER" then
-            if GetMentorChannelStatus(Enum.PlayerMentorshipStatus.Newcomer, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == Enum.PlayerMentorshipStatus.Newcomer then
+            if ChatFrameUtil.GetMentorChannelStatus(Enum.PlayerMentorshipStatus.Newcomer, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == Enum.PlayerMentorshipStatus.Newcomer then
                 flag = NPEV2_CHAT_USER_TAG_NEWCOMER
             end
         elseif specialFlag == "DISCORD" then
@@ -1559,14 +1548,14 @@ end
 
 --Copied from FrameXML ChatFrame.lua and modified to add CUSTOM_CLASS_COLORS
 local seenGroups = {}
-local function ChatFrame_ReplaceIconAndGroupExpressions(message, noIconReplacement, noGroupReplacement)
+local function ChatFrame_ReplaceIconAndGroupExpressions(msg, noIconReplacement, noGroupReplacement)
     wipe(seenGroups)
 
-    local ICON_LIST, ICON_TAG_LIST, GROUP_TAG_LIST = _G.ICON_LIST, _G.ICON_TAG_LIST, _G.GROUP_TAG_LIST
-    for tag in gmatch(message, "%b{}") do
+    local ICON_LIST, ICON_TAG_LIST, GROUP_TAG_LIST = ICON_LIST, ICON_TAG_LIST, GROUP_TAG_LIST
+    for tag in gmatch(msg, "%b{}") do
         local term = strlower(gsub(tag, "[{}]", ""))
         if not noIconReplacement and ICON_TAG_LIST[term] and ICON_LIST[ICON_TAG_LIST[term]] then
-            message = gsub(message, tag, ICON_LIST[ICON_TAG_LIST[term]] .. "0|t")
+            msg = gsub(msg, tag, ICON_LIST[ICON_TAG_LIST[term]] .. "0|t")
         elseif not noGroupReplacement and GROUP_TAG_LIST[term] then
             local groupIndex = GROUP_TAG_LIST[term]
             if not seenGroups[groupIndex] then
@@ -1579,18 +1568,18 @@ local function ChatFrame_ReplaceIconAndGroupExpressions(message, noIconReplaceme
                         if classColorTable then
                             name = classColorTable:WrapTextInColorCode(name)
                         end
-                        groupList = groupList..(groupList == "[" and "" or _G.PLAYER_LIST_DELIMITER)..name
+                        groupList = groupList..(groupList == "[" and "" or PLAYER_LIST_DELIMITER) .. name
                     end
                 end
                 if groupList ~= "[" then
                     groupList = groupList.."]"
-                    message = gsub(message, tag, groupList, 1)
+                    msg = gsub(msg, tag, groupList, 1)
                 end
             end
         end
     end
 
-    return message
+    return msg
 end
 
 -- Clone of FCFManager_GetChatTarget as it doesn't exist on Classic ERA
@@ -1625,9 +1614,9 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         return
     end
 
-    local isProtected = GW.ChatFunctions:IsMessageProtected(arg1)
+    local msgProtected = GW.ChatFunctions:IsMessageProtected(arg1)
     local bossMonster = strsub(chatType, 1, 9) == "RAID_BOSS" or strsub(chatType, 1, 7) == "MONSTER"
-    if not isProtected then
+    if not msgProtected then
         if bossMonster then -- Blizzard Formatting Errors: escape any special characters when non-secret
             arg1 = gsub(arg1, "(%d%s?%%)([^%%%a])", "%1%%%2") -- escape percentages that need it [broken since SL?]
             arg1 = gsub(arg1, "(%d%s?%%)$", "%1%%") -- escape percentages on the end
@@ -1636,16 +1625,10 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         end
 
         arg1 = RemoveExtraSpaces(arg1) arg1 = RemoveExtraSpaces(arg1)
-    end
 
-    if not isProtected then
         -- Search for icon links and replace them with texture links.
         -- If arg17 is true, don't convert to raid icons
-        if ChatFrameUtil and ChatFrameUtil.CanChatGroupPerformExpressionExpansion then
-            arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrameUtil.CanChatGroupPerformExpressionExpansion(chatGroup))
-        else
-            arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup))
-        end
+        arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrameUtil.CanChatGroupPerformExpressionExpansion(chatGroup))
     end
 
     -- Get class colored name for BattleNet friend
@@ -1694,11 +1677,11 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         playerLink = GW.ChatFunctions:GetPlayerLink(playerName, playerLinkDisplayText, arg11, chatGroup, chatTarget)
     end
 
-    local isMobile = arg14 and GetMobileEmbeddedTexture(info.r, info.g, info.b)
-    local message = format("%s%s", isMobile or "", arg1)
+    local isMobile = arg14 and ChatFrameUtil.GetMobileEmbeddedTexture(info.r, info.g, info.b)
+    local msg = format("%s%s", isMobile or "", arg1)
 
     if isFromDiscord then
-        message = FormatDiscordMessage(discordInfo, message)
+        msg = ChatFrameUtil.FormatDiscordMessage(discordInfo, msg)
     end
 
     -- Player Flags
@@ -1719,31 +1702,31 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
     local sender = (not bossMonster and playerLink) or arg2
     local specialType = bossMonster or (chatType == "PET_BATTLE_INFO" or chatType == "PET_BATTLE_COMBAT_LOG")
     if usingDifferentLanguage then
-        body = format(header .. "[%s] %s", pflag .. sender, arg3, message) -- arg3 is language header
+        body = format(header .. "[%s] %s", pflag .. sender, arg3, msg) -- arg3 is language header
     elseif chatType == "GUILD_ITEM_LOOTED" then
-        body = not isProtected and gsub(message, "$s", sender, 1) or message
+        body = not msgProtected and gsub(msg, "$s", sender, 1) or msg
     elseif chatType == "GUILD_DISCORD" and isFromDiscord then
-        body = format(header .. message, pflag .. " " .. playerLink)
+        body = format(header .. msg, pflag .. " " .. playerLink)
     elseif chatType == "TEXT_EMOTE" then
-        local classLink = realm and playerLink and not isProtected and (info.colorNameByClass and gsub(playerLink, "(|h|c.-)|r|h$","%1-" .. realm .. "|r|h") or gsub(playerLink, "(|h.-)|h$","%1-" .. realm .. "|h"))
-        body = (classLink and gsub(message, arg2 .. "%-" .. realm, pflag .. classLink, 1)) or ((not isProtected and GW.NotSecretValue(arg2) and arg2 ~= sender) and gsub(message, arg2, sender, 1)) or message
+        local classLink = realm and playerLink and not msgProtected and (info.colorNameByClass and gsub(playerLink, "(|h|c.-)|r|h$","%1-" .. realm .. "|r|h") or gsub(playerLink, "(|h.-)|h$","%1-" .. realm .. "|h"))
+        body = (classLink and gsub(msg, arg2 .. "%-" .. realm, pflag .. classLink, 1)) or ((not msgProtected and GW.NotSecretValue(arg2) and arg2 ~= sender) and gsub(msg, arg2, sender, 1)) or msg
     elseif specialType then
-        if isProtected then -- keep the secret message out of the format pattern
-            body = format(header, pflag .. sender) .. message
+        if msgProtected then -- keep the secret message out of the format pattern
+            body = format(header, pflag .. sender) .. msg
         else -- monster emotes carry the name placeholder inside the message itself
-            body = format(header .. message, pflag .. sender)
+            body = format(header .. msg, pflag .. sender)
         end
     else
-        body = format(header .. "%s", pflag .. sender, message)
+        body = format(header .. "%s", pflag .. sender, msg)
     end
 
     -- Add Channel
     if not specialType and (channelLength > 0) then
-        body = "|Hchannel:channel:" .. arg8 .. "|h[" .. ResolvePrefixedChannelName(arg4) .. "]|h " .. body
+        body = "|Hchannel:channel:" .. arg8 .. "|h[" .. ChatFrameUtil.ResolvePrefixedChannelName(arg4) .. "]|h " .. body
     end
 
     -- body can be secret even when arg1 is not: format() propagates a secret sender into it
-    if not specialType and not isProtected and GW.NotSecretValue(body) and GW.settings.CHAT_SHORT_CHANNEL_NAMES and (chatType ~= "EMOTE" and chatType ~= "TEXT_EMOTE") then
+    if not specialType and not msgProtected and GW.NotSecretValue(body) and GW.settings.CHAT_SHORT_CHANNEL_NAMES and (chatType ~= "EMOTE" and chatType ~= "TEXT_EMOTE") then
         if chatType == "RAID_LEADER" or chatType == "PARTY_LEADER" or chatType == "INSTANCE_CHAT_LEADER" then
             body = gsub(body, "|Hchannel:(.-)|h%[(.-)%]|h", format("|Hchannel:%s|h[%s]|h", (chatType == "PARTY_LEADER" and "PARTY" or chatType == "RAID_LEADER" and "RAID" or chatType == "INSTANCE_CHAT_LEADER" and "INSTANCE_CHAT") , DEFAULT_STRINGS[strupper(chatType)] or gsub(chatType, "channel:", "")))
         else
@@ -1774,24 +1757,28 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         notChatHistory = true
     end
 
-    local isProtected = GW.IsSecretValue(arg2)
+    local nameProtected = GW.IsSecretValue(arg2)
+    local msgNotSecret = GW.NotSecretValue(arg1)
 
-    if not isProtected and TextToSpeechFrame_MessageEventHandler and notChatHistory then
+    if msgNotSecret and TextToSpeechFrame_MessageEventHandler and notChatHistory then
         TextToSpeechFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
     end
 
-    if strsub(event, 1, 8) == "CHAT_MSG" then
+    if event == 'CAUTIONARY_CHAT_MESSAGE' then -- hyperlinkLineID, confirmNumber
+		ChatFrameUtil.HandleCautionaryChatMessage(arg1, arg2)
+    elseif strsub(event, 1, 8) == "CHAT_MSG" then
         if arg16 then return true end -- hiding sender in letterbox: do NOT even show in chat window (only shows in cinematic frame)
 
         local chatType = strsub(event, 10)
         local info = ChatTypeInfo[chatType]
+        local header = _G["CHAT_" .. chatType .. "_GET"]
 
         --If it was a GM whisper, dispatch it to the GMChat addon.
         if arg6 == "GM" and chatType == "WHISPER" then
             return
         end
 
-        if ChatFrameUtil and ChatFrameUtil.ProcessMessageEventFilters then
+        if ChatFrameUtil.ProcessMessageEventFilters then
             local filtered, new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17 = ChatFrameUtil.ProcessMessageEventFilters(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
             if filtered then
                 return true
@@ -1820,8 +1807,8 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
         if chatType == "VOICE_TEXT" and not GetCVarBool("speechToText") then
             return
-        elseif chatType == "COMMUNITIES_CHANNEL" or ((strsub(chatType, 1, 7) == "CHANNEL") and (chatType ~= "CHANNEL_LIST") and ((GW.NotSecretValue(arg1) and arg1 ~= "INVITE") or (chatType ~= "CHANNEL_NOTICE_USER"))) then
-            if GW.NotSecretValue(arg1) and arg1 == "WRONG_PASSWORD" then
+        elseif chatType == "COMMUNITIES_CHANNEL" or ((strsub(chatType, 1, 7) == "CHANNEL") and (chatType ~= "CHANNEL_LIST") and ((msgNotSecret and arg1 ~= "INVITE") or (chatType ~= "CHANNEL_NOTICE_USER"))) then
+            if msgNotSecret and arg1 == "WRONG_PASSWORD" then
                 local _, popup = StaticPopup_Visible("CHAT_CHANNEL_PASSWORD")
                 if popup and strupper(popup.data) == strupper(arg9) then
                     return
@@ -1842,7 +1829,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                         infoType = "CHANNEL"..arg8
                         info = ChatTypeInfo[infoType]
 
-                        if chatType == "CHANNEL_NOTICE" and GW.NotSecretValue(arg1) and arg1 == "YOU_LEFT" and GW.NotSecretTable(frame.zoneChannelList) then
+                        if chatType == "CHANNEL_NOTICE" and msgNotSecret and arg1 == "YOU_LEFT" and GW.NotSecretTable(frame.zoneChannelList) then
                             frame.channelList[index] = nil
                             frame.zoneChannelList[index] = nil
                         end
@@ -1859,14 +1846,14 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             end
         end
 
-        local chatGroup = Chat_GetChatCategory(chatType)
+        local chatGroup = ChatFrameUtil.GetChatCategory(chatType)
         local chatTarget = FCFManager_GetChatTarget(chatGroup, arg2, arg8)
 
         if GW.NotSecretValue(chatTarget) and FCFManager_ShouldSuppressMessage(frame, chatGroup, chatTarget) then
             return true
         end
 
-        if not isProtected and (chatGroup == "WHISPER" or chatGroup == "BN_WHISPER") then
+        if not nameProtected and (chatGroup == "WHISPER" or chatGroup == "BN_WHISPER") then
             local nameLower = strlower(arg2)
             if frame.privateMessageList and not frame.privateMessageList[nameLower] then
                 return true
@@ -1879,7 +1866,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
         if frame.privateMessageList then
             if chatGroup == "SYSTEM" then -- HACK to put certain system messages into dedicated whisper windows
-                local msg = GW.NotSecretValue(arg1) and strlower(arg1)
+                local msg = msgNotSecret and strlower(arg1)
                 local found = false
                 if msg then
                     for playerName in pairs(frame.privateMessageList) do
@@ -1896,7 +1883,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 if not found then
                     return true
                 end
-            elseif not isProtected and (chatGroup == "BN_INLINE_TOAST_ALERT" or chatGroup == "BN_WHISPER_PLAYER_OFFLINE") then
+            elseif not nameProtected and (chatGroup == "BN_INLINE_TOAST_ALERT" or chatGroup == "BN_WHISPER_PLAYER_OFFLINE") then
                 local nameLower = strlower(arg2)
                 if not frame.privateMessageList[nameLower] then
                     return true -- Dedicated BN whisper windows need online/offline messages for only that player
@@ -1922,7 +1909,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         elseif strsub(chatType, 1, 18) == "GUILD_ACHIEVEMENT" then
             frame:AddMessage(format(arg1, GW.ChatFunctions:GetPlayerLink(arg2, format("[%s]", coloredName))), info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
         elseif chatType == "PING" then
-            frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
+            frame:AddMessage(format("%s: %s", coloredName, arg1), info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
         elseif chatType == "IGNORED" then
             frame:AddMessage(format(CHAT_IGNORED, arg2), info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
         elseif chatType == "FILTERED" then
@@ -1931,12 +1918,12 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             frame:AddMessage(CHAT_RESTRICTED_TRIAL, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
         elseif chatType == "CHANNEL_LIST" then
             if channelLength > 0 then
-                frame:AddMessage(format(_G["CHAT_" .. chatType .. "_GET"], tonumber(arg8), arg4) .. arg1, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
+                frame:AddMessage(format(header .. arg1, tonumber(arg8), arg4) .. arg1, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
             else
                 frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
             end
         elseif chatType == "CHANNEL_NOTICE_USER" then
-            local globalstring = GW.NotSecretValue(arg1) and (_G["CHAT_" .. arg1 .. "_NOTICE_BN"] or _G["CHAT_" .. arg1 .. "_NOTICE"])
+            local globalstring = msgNotSecret and (_G["CHAT_" .. arg1 .. "_NOTICE_BN"] or _G["CHAT_" .. arg1 .. "_NOTICE"])
             if not globalstring then return end
 
             if arg5 ~= "" then
@@ -1965,19 +1952,19 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 local accessID = GW.ChatFunctions:GetAccessID(chatGroup, arg8)
                 local typeID = GW.ChatFunctions:GetAccessID(infoType, arg8, arg12)
 
-                frame:AddMessage(format(globalstring, arg8, ResolvePrefixedChannelName(arg4)), info.r, info.g, info.b, info.id, accessID, typeID, nil, nil, nil, isHistory, historyTime)
+                frame:AddMessage(format(globalstring, arg8, ChatFrameUtil.ResolvePrefixedChannelName(arg4)), info.r, info.g, info.b, info.id, accessID, typeID, nil, nil, nil, isHistory, historyTime)
             end
         elseif chatType == "BN_INLINE_TOAST_ALERT" then
-            local globalstring = GW.NotSecretValue(arg1) and _G["BN_INLINE_TOAST_" .. arg1]
+            local globalstring = msgNotSecret and _G["BN_INLINE_TOAST_" .. arg1]
             if not globalstring then return end
 
-            local message
+            local msg
             if arg1 == "FRIEND_REQUEST" then
-                message = globalstring
+                msg = globalstring
             elseif arg1 == "FRIEND_PENDING" then
-                message = format(BN_INLINE_TOAST_FRIEND_PENDING, BNGetNumFriendInvites())
+                msg = format(BN_INLINE_TOAST_FRIEND_PENDING, BNGetNumFriendInvites())
             elseif arg1 == "FRIEND_REMOVED" or arg1 == "BATTLETAG_FRIEND_REMOVED" then
-                message = format(globalstring, arg2)
+                msg = format(globalstring, arg2)
             elseif arg1 == "FRIEND_ONLINE" or arg1 == "FRIEND_OFFLINE" then
                 local accountInfo = C_BattleNet.GetAccountInfoByID(arg13)
                 local gameInfo = accountInfo and accountInfo.gameAccountInfo
@@ -2002,28 +1989,28 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                         local charName = BNet_GetValidatedCharacterName(gameInfo.characterName, accountInfo.battleTag, gameInfo.clientProgram) or ""
                         local linkDisplayText = format("[%s] (%s%s)", arg2, clientTexture, charName)
                         local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
-                        message = format(globalstring, playerLink)
+                        msg = format(globalstring, playerLink)
                     end
                 else
                     local linkDisplayText = format("[%s]", arg2)
                     local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
-                    message = format(globalstring, playerLink)
+                    msg = format(globalstring, playerLink)
                 end
             else
                 local linkDisplayText = format("[%s]", arg2)
                 local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
-                message = format(globalstring, playerLink)
+                msg = format(globalstring, playerLink)
             end
-            frame:AddMessage(message, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
+            frame:AddMessage(msg, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
         elseif chatType == "BN_INLINE_TOAST_BROADCAST" then
-            if GW.NotSecretValue(arg1) and arg1 ~= "" then
+            if msgNotSecret and arg1 ~= "" then
                 arg1 = RemoveNewlines(RemoveExtraSpaces(arg1))
                 local linkDisplayText = ("[%s]"):format(arg2)
                 local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
                 frame:AddMessage(format(BN_INLINE_TOAST_BROADCAST, playerLink, arg1), info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
             end
         elseif chatType == "BN_INLINE_TOAST_BROADCAST_INFORM" then
-            if GW.NotSecretValue(arg1) and arg1 ~= "" then
+            if msgNotSecret and arg1 ~= "" then
                 frame:AddMessage(BN_INLINE_TOAST_BROADCAST_INFORM, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
             end
         else
@@ -2047,8 +2034,8 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         end
 
         if notChatHistory and (chatType == "WHISPER" or chatType == "BN_WHISPER") then
-            if not isProtected then
-                ChatEdit_SetLastTellTarget(arg2, chatType)
+            if not nameProtected then
+                ChatFrameUtil.SetLastTellTarget(arg2, chatType)
             end
             FlashClientIcon()
         end
@@ -2702,7 +2689,7 @@ local function BuildEmoticonTableFrame()
             icon:SetPoint("TOPLEFT", (col - 1) * 26 + 2, -(row - 1) * 26 - 2)
             icon:SetScript("OnMouseUp",function(self, button)
                 if button == "LeftButton" then
-                    local ChatFrameEditBox = ChatEdit_ChooseBoxForSend()
+                    local ChatFrameEditBox = ChatFrameUtil.ChooseBoxForSend()
                     if not ChatFrameEditBox:IsShown() then
                         ChatEdit_ActivateChat(ChatFrameEditBox)
                     end
@@ -2895,16 +2882,16 @@ local function RecentSocialQueue(currentTime, msg)
     return previousMessage
 end
 
-local function SocialQueueMessage(guid, message)
-    if GW.IsSecretValue(message) or not (guid and message) then return end
+local function SocialQueueMessage(guid, msg)
+    if GW.IsSecretValue(msg) or not (guid and msg) then return end
 
     local currentTime = time()
-    if RecentSocialQueue(currentTime, message) then return end
-    socialQueueCache[guid] = {currentTime, message}
+    if RecentSocialQueue(currentTime, msg) then return end
+    socialQueueCache[guid] = {currentTime, msg}
 
     PlaySound(SOUNDKIT.UI_71_SOCIAL_QUEUEING_TOAST)
 
-    GW.Notice(format("|Hsqu:%s|h%s|h", guid, message))
+    GW.Notice(format("|Hsqu:%s|h%s|h", guid, msg))
 end
 
 local function SocialQueueEvent(guid, numAddedItems)
@@ -3217,7 +3204,7 @@ local function LoadChat()
     hooksecurefunc("FCFTab_UpdateColors", setChatBackgroundColor)
 
     for _, event in pairs(FindURL_Events) do
-        ChatFrame_AddMessageEventFilter(event, HandleChatMessageFilter)
+        ChatFrameUtil.AddMessageEventFilter(event, HandleChatMessageFilter)
         local nType = strsub(event, 10)
         if nType ~= "AFK" and nType ~= "DND" and nType ~= "COMMUNITIES_CHANNEL" then
             eventFrame:RegisterEvent(event)
