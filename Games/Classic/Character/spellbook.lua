@@ -177,7 +177,7 @@ local function setButtonStyle(ispassive, spellID, skillType, icon, spellbookInde
         btn:SetAttribute("type2", "flyout")
         btn:SetAttribute("spell", spellID)
         btn:SetAttribute("flyout", spellID)
-        btn:SetAttribute("flyoutDirection", 'RIGHT')
+        GW.SetSecureAttribute(btn, "flyoutDirection", "RIGHT")
     elseif not btn.isFuture and booktype == BOOKTYPE_PET then
         btn:SetAttribute("type1", "spell")
         btn:SetAttribute("type2", "macro")

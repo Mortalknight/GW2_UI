@@ -184,14 +184,21 @@ local function FlyoutDirection(actionbar)
             --Change arrow direction depending on what bar the button is on
             local point = GW.GetScreenQuadrant(actionbar)
             if point ~= "UNKNOWN" then
+                local direction
                 if strfind(point, "TOP") then
-                    button:SetAttribute("flyoutDirection", "DOWN")
+                    direction = "DOWN"
                 elseif point == "RIGHT" then
-                    button:SetAttribute("flyoutDirection", "LEFT")
+                    direction = "LEFT"
                 elseif point == "LEFT" then
-                    button:SetAttribute("flyoutDirection", "RIGHT")
+                    direction = "RIGHT"
                 elseif point == "CENTER" or strfind(point, "BOTTOM") then
-                    button:SetAttribute("flyoutDirection", "UP")
+                    direction = "UP"
+                end
+                if direction then
+                    -- through the restricted environment: an insecurely written attribute taints
+                    -- Blizzards Update chain as soon as UpdateFlyout reads it back, which then
+                    -- blocks UpdatePressAndHoldAction:SetAttribute in combat
+                    GW.SetSecureAttribute(button, "flyoutDirection", direction)
                 end
                 if button.UpdateFlyout then
                     button:UpdateFlyout()

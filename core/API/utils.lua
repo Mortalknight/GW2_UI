@@ -17,6 +17,38 @@ local function SetDeadIcon(self)
 end
 GW.SetDeadIcon = SetDeadIcon
 
+-- Writes an attribute on a protected Blizzard frame through the restricted environment.
+-- A value written by plain addon code is tainted, and secure code READING it back taints
+-- the whole execution - Blizzards action button Update chain reads "flyoutDirection" and
+-- then gets its own SetAttribute blocked in combat (UpdatePressAndHoldAction). Handler
+-- snippets run secure, and the value is baked into the snippet TEXT as a literal, because
+-- passing it via attribute would just hand over the taint again. Out of combat only.
+local secureAttributeHandler
+local function SetSecureAttribute(frame, name, value)
+    if InCombatLockdown() then return false end -- SetFrameRef is an attribute write itself
+
+    local valueType = type(value)
+    local literal
+    if valueType == "string" then
+        literal = format("%q", value)
+    elseif valueType == "number" or valueType == "boolean" then
+        literal = tostring(value)
+    elseif valueType == "nil" then
+        literal = "nil"
+    else
+        return false -- tables/functions cannot be expressed as a snippet literal
+    end
+
+    if not secureAttributeHandler then
+        secureAttributeHandler = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
+    end
+
+    secureAttributeHandler:SetFrameRef("gwTarget", frame)
+    SecureHandlerExecute(secureAttributeHandler, format([[self:GetFrameRef("gwTarget"):SetAttribute(%q, %s)]], name, literal))
+    return true
+end
+GW.SetSecureAttribute = SetSecureAttribute
+
 -- 12.1: declares the frame's roleset so the UI mode system gates its visibility
 -- like Blizzard's own frames ("unitFrames", "arenaFrames", ...). No-op on clients
 -- without the API.
