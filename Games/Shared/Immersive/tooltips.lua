@@ -414,7 +414,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local relationship = UnitRealmRelationship(unit)
         local isShiftKeyDown = IsShiftKeyDown()
 
-        local nameColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR)
+        local nameColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
 
         if GW.settings.ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES and pvpName and pvpName ~= "" then
             name = pvpName
