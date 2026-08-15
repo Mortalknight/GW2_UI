@@ -627,7 +627,7 @@ do
         return GetLink(LinkTypes.BNPlayer, displayText, name, bnetIDAccount, lineID or 0, chatType, chatTarget)
     end
 
-    function GW.ChatFunctions:GetBNPGetDiscordLinklayerLink(linkDisplayText, bnetIDAccount, discordUserID, lineID, chatGroup, chatTarget)
+    function GW.ChatFunctions:GetDiscordLink(linkDisplayText, bnetIDAccount, discordUserID, lineID, chatGroup, chatTarget)
         return GetLink(LinkTypes.DiscordUser, linkDisplayText, bnetIDAccount, discordUserID, lineID or 0, chatGroup, chatTarget or '')
     end
 
