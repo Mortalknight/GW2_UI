@@ -181,8 +181,14 @@ end
 do
     local ShouldUnitIdentityBeSecret = C_Secrets and C_Secrets.ShouldUnitIdentityBeSecret
     local CanCompareUnitTokens = C_Secrets and C_Secrets.CanCompareUnitTokens
+    local ShouldAurasBeSecret = C_Secrets and C_Secrets.ShouldAurasBeSecret
+
     function GW.IsSecretValue(value)
         return issecretvalue and issecretvalue(value)
+    end
+
+    function GW.AreAurasSecret()
+        return (ShouldAurasBeSecret and ShouldAurasBeSecret()) or false
     end
 
     function GW.NotSecretValue(value)

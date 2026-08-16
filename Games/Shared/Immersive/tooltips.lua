@@ -102,6 +102,7 @@ end
 
 local function SetUnitAura(self, unit, index, filter)
     if not self or self:IsForbidden() or self:NumLines() < 1 then return end
+    if GW.AreAurasSecret() then return end
 
     local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
     if not auraData then return end
@@ -112,8 +113,7 @@ end
 local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
     if not self or self:IsForbidden() or self:NumLines() < 1 then return end
     -- callers like the CooldownViewer pass secret instance IDs — reading the aura
-    -- data would be denied for tainted code
-    if GW.IsSecretValue(auraInstanceId) or GW.IsSecretValue(unit) then return end
+    if GW.IsSecretValue(auraInstanceId) or GW.IsSecretValue(unit) or GW.AreAurasSecret() then return end
 
     local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceId)
     if not auraData then return end
@@ -761,7 +761,7 @@ local function SetUnitInfo(self, unit, data)
         AddMythicInfo(self, unit)
     end
 
-    if (GW.Retail or GW.Mists) and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown and not isInCombat then
+    if (GW.Retail or GW.Mists) and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown and not isInCombat and not GW.AreAurasSecret() then
         AddMountInfo(self, unit)
     end
 
