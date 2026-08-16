@@ -886,13 +886,12 @@ local function Construct_Auras(frame)
         -- runs through the AuraContainer, which is built lazily on the first unit
         frame.gwIndicatorTrackers = {}
 
-        -- the construction trigger must NOT be the unit attribute: the secure header
-        -- assigns the tokens (raid1..raid40) to all pre-created frames at login, long
-        -- before those units exist. A frame is SHOWN (unit watch) exactly when its
-        -- unit is real — that is the moment the containers earn their cost. Frames
-        -- force-shown without an existing unit (the Move HUD preview) skip the build,
-        -- they have no auras to display anyway
-        frame:HookScript("OnShow", function(self)
+        -- the containers earn their cost only for REAL units: the secure header assigns
+        -- unit tokens (raid1..raid40) to all pre-created frames at login, long before
+        -- those units exist, so every build trigger runs through the UnitExists check
+        -- below. Frames force-shown without an existing unit (the Move HUD preview)
+        -- skip the build too, they have no auras to display anyway
+        local function EnsureGridAurasIfReal(self)
             if self.gwAuraContainer or not self.__unit then
                 return
             end
@@ -902,17 +901,20 @@ local function Construct_Auras(frame)
             if GW.NotSecretValue(exists) and not exists then
                 return
             end
-            if InCombatLockdown() then
-                -- joining a group mid-combat: the container setup talks to the
-                -- secure aura engine, defer it out of combat
-                GW.CombatQueue:Queue("grid_aura_construct_" .. self:GetDebugName(), EnsureGridAuraContainers, {self, self.__unit})
-            else
-                EnsureGridAuraContainers(self, self.__unit)
-            end
-        end)
+            EnsureGridAuraContainers(self, self.__unit)
+        end
+
+        frame:HookScript("OnShow", EnsureGridAurasIfReal)
 
         frame:HookScript("OnAttributeChanged", function(self, name, value)
-            if name ~= "unit" or not value or not self.gwAuraContainer then
+            if name ~= "unit" or not value then
+                return
+            end
+
+            if not self.gwAuraContainer then
+                if self:IsShown() then
+                    EnsureGridAurasIfReal(self)
+                end
                 return
             end
 

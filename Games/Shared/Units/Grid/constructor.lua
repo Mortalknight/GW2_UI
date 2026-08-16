@@ -555,15 +555,14 @@ local function BuildRaidGridVisibility(profile)
 
     if not target then return nil end
 
-    -- the upper bound is always the grids own size: extending downwards is capacity
-    -- safe (a bigger grid has more slots), extending upwards is not - a grid with
-    -- 5 groups cannot display raid members 26+. With RAID40 disabled, raids above
-    -- the biggest enabled grid intentionally show no grid at all.
-    local condition = "[@raid" .. lower .. ",exists]"
+    -- IMPORTANT: multiple bracket groups in a macro conditional are OR'ed, not AND'ed.
+    -- "show inside the range" therefore has to be written in its De Morgan form:
+    -- hide when below the lower bound OR above the upper bound, otherwise show.
+    local condition = "[@raid" .. lower .. ",noexists]"
     if target.size < MAX_RAID_MEMBERS then
-        condition = condition .. "[@raid" .. (target.size + 1) .. ",noexists]"
+        condition = condition .. "[@raid" .. (target.size + 1) .. ",exists]"
     end
-    return condition .. " show; hide"
+    return condition .. " hide; show"
 end
 
 local function GetHeaderVisibility(profile)
@@ -613,11 +612,7 @@ local function UpdateGroupVisibility(header, profile, enabled)
 end
 GW.UpdateGroupVisibility = UpdateGroupVisibility
 
-local function UpdateGridHeader(profile)
-    -- Update header values
-    local header = headers[profile]
-    if header.isUpdating then return end
-    header.isUpdating = true
+local function UpdateGridHeaderLayout(header, profile)
     local direction = settings.raidGrow[profile] or "DOWN+RIGHT"
     local point = DIRECTION_TO_POINT[direction]
     local x, y = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[direction], DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[direction]
@@ -754,7 +749,9 @@ local function UpdateGridHeader(profile)
 
     header:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
     header.gwMover:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
+end
 
+local function UpdateGridHeaderVisibility(header, profile)
     -- header driver + mover state. The header visibility itself is registered inside
     -- UpdateGroupVisibility from GetHeaderVisibility - registering it here as well (as the
     -- code used to) is the kind of duplication that caused overlapping grids
@@ -776,8 +773,19 @@ local function UpdateGridHeader(profile)
             UpdateGroupVisibility(header, profile, GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
         end
     end
+end
 
+local function UpdateGridHeader(profile)
+    local header = headers[profile]
+    if header.isUpdating then return end
+    header.isUpdating = true
+
+    local okLayout, layoutError = pcall(UpdateGridHeaderLayout, header, profile)
+    local okVisibility, visibilityError = pcall(UpdateGridHeaderVisibility, header, profile)
     header.isUpdating = false
+
+    if not okLayout then geterrorhandler()(layoutError) end
+    if not okVisibility then geterrorhandler()(visibilityError) end
 end
 GW.UpdateGridHeader = UpdateGridHeader
 

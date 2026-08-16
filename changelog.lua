@@ -15,7 +15,8 @@ AddChange(string addonVersion, table changeList)
 
 addChange("11.1.3", {
     {GW.Enum.ChangelogType.bug, [=[Fix wrong HP values on retail clients]=]},
-    {GW.Enum.ChangelogType.bug, [=[Setting imporvements]=]},
+    {GW.Enum.ChangelogType.bug, [=[Setting improvements]=]},
+    {GW.Enum.ChangelogType.bug, [=[Grids hides correctly]=]},
 })
 
 addChange("11.1.2", {

@@ -895,7 +895,6 @@ local function Enable(self)
 				auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 				for _, dispelIndex in next, oUF.Enum.DispelType do
 					if(self.colors.dispel[dispelIndex]) then
-                        print("Adding dispel color for index:", dispelIndex, "Color:", self.colors.dispel[dispelIndex])
 						auras.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 					end
 				end
