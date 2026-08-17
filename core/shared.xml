@@ -143,8 +143,11 @@
         </Layers>
         <Scripts>
             <OnShow>
-                self:HookScript("OnEnter", GwStandardButton_OnEnter)
-                self:HookScript("OnLeave", GwStandardButton_OnLeave)
+                if not self.gwHoverHooked then
+                    self.gwHoverHooked = true
+                    self:HookScript("OnEnter", GwStandardButton_OnEnter)
+                    self:HookScript("OnLeave", GwStandardButton_OnLeave)
+                end
             </OnShow>
         </Scripts>
     </Button>
@@ -168,8 +171,11 @@
         </Layers>
         <Scripts>
             <OnShow>
-                self:HookScript("OnEnter", GwStandardButton_OnEnter)
-                self:HookScript("OnLeave", GwStandardButton_OnLeave)
+                if not self.gwHoverHooked then
+                    self.gwHoverHooked = true
+                    self:HookScript("OnEnter", GwStandardButton_OnEnter)
+                    self:HookScript("OnLeave", GwStandardButton_OnLeave)
+                end
             </OnShow>
         </Scripts>
     </Button>

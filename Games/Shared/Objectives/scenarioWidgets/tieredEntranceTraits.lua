@@ -8,6 +8,7 @@ GwTieredEntranceTraitsListMixin = {}
 GwTieredEntranceTraitSpellMixin = {}
 
 function GwTieredEntranceTraitsContainerMixin:OnHide()
+    self.gwListWasOpen = self.List:IsShown()
     self.List:Hide()
     self.Arrow:Hide()
 end
@@ -45,6 +46,7 @@ end
 function GwTieredEntranceTraitsContainerMixin:SetSpells(spells)
     self.spells = spells
     self.auras = nil
+    self.gwAuraSig = nil
     self.numTraits = spells and #spells or 0
     self.needSet = true
     self.List:Hide()
@@ -53,10 +55,19 @@ function GwTieredEntranceTraitsContainerMixin:SetSpells(spells)
     ApplyButtonText(self)
 end
 
--- aura mode (Maw buff button): same look, rows carry aura instance ids. Keeps an
--- open list open — the aura set changes live while collecting powers
 function GwTieredEntranceTraitsContainerMixin:SetAuras(auras, labelFormat)
-    local listWasShown = self.List:IsShown()
+    local sig = tostring(auras and #auras or 0)
+    for _, auraData in ipairs(auras or {}) do
+        sig = sig .. ":" .. tostring(auraData.auraInstanceID)
+    end
+    if sig == self.gwAuraSig and not self.gwListWasOpen then
+        self.auras = auras
+        return
+    end
+    self.gwAuraSig = sig
+
+    local listWasShown = self.List:IsShown() or self.gwListWasOpen
+    self.gwListWasOpen = nil
     self.spells = nil
     self.auras = auras
     self.numTraits = auras and #auras or 0
@@ -67,6 +78,9 @@ function GwTieredEntranceTraitsContainerMixin:SetAuras(auras, labelFormat)
     if listWasShown and self.numTraits > 0 then
         self.needSet = nil
         self.List:SetAuras(auras)
+        self:UpdateAlignment()
+        self.List:Show()
+        self.Arrow:Show()
     else
         self.List:Hide()
         self.Arrow:Hide()

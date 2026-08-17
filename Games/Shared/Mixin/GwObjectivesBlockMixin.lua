@@ -240,6 +240,14 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, options)
     local statusBar = objectiveBlock.StatusBar
     local objectiveSpacing = GW.GetObjectivesEntrySpacing()
 
+    -- widget partition ticks are re-applied by their caller (see the scenario
+    -- status bar widgets) — clear stale ones from objective block reuse
+    if statusBar.gwPartitions then
+        for _, tick in ipairs(statusBar.gwPartitions) do
+            tick:Hide()
+        end
+    end
+
     objectiveBlock:Show()
     local formattedText = text
     if options.isReceip then
@@ -308,6 +316,10 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, options)
     if statusBar:IsShown() then
         h = h + statusBar:GetHeight() + objectiveSpacing
         objectiveBlock:SetHeight(h)
+    end
+
+    if statusBar:IsShown() and strtrim(text) == "" then
+        objectiveText:SetHeight((h + statusBar:GetHeight()) / 2)
     end
 
     if options.timerShown then

@@ -13,21 +13,36 @@ local UI_WIDGET_TYPE_SCENARIO_CURRENCIES = 11
 -- events), so a failed read falls back to slot enumeration — GetAuraSlots hands
 -- out handles without touching aura data and works on secret auras.
 if GW.Retail and ShouldShowMawBuffs then
+    -- our tracker renders its own Maw buff button: mute Blizzards container — its
+    -- UNIT_AURA update calls the (tainted) wrapper below and would then trip over
+    -- the secret aura reads in its own display loop
+    if ScenarioObjectiveTracker and ScenarioObjectiveTracker.MawBuffsBlock and ScenarioObjectiveTracker.MawBuffsBlock.Container then
+        ScenarioObjectiveTracker.MawBuffsBlock.Container:UnregisterAllEvents()
+    end
+
     local origShouldShowMawBuffs = ShouldShowMawBuffs
+    local lastKnown = false
     function ShouldShowMawBuffs()
         local ok, result = pcall(origShouldShowMawBuffs)
         if ok then
-            return result
+            lastKnown = result and true or false
+            return lastKnown
         end
+        -- secret state (e.g. in combat): the reads can only turn the button ON or
+        -- keep it — the collected powers do not vanish mid fight
         local slotOk, _, slot = pcall(C_UnitAuras.GetAuraSlots, "player", "MAW", 1)
-        return (slotOk and slot ~= nil) or false
+        if slotOk and slot ~= nil then
+            lastKnown = true
+        end
+        return lastKnown
     end
 
     -- Maw aura enumeration via slot handles — works while aura data is secret;
-    -- the returned aura tables may carry secret values (fine for setters/tooltips)
+    -- the returned aura tables may carry secret values (fine for setters/tooltips).
+    -- Returns nil on a FAILED read (callers keep their last known set then)
     function GW.CollectMawAuras()
         local auras = {}
-        pcall(function()
+        local ok = pcall(function()
             local continuation
             repeat
                 local results = { C_UnitAuras.GetAuraSlots("player", "MAW", 40, continuation) }
@@ -40,6 +55,9 @@ if GW.Retail and ShouldShowMawBuffs then
                 end
             until not continuation
         end)
+        if not ok then
+            return nil
+        end
         return auras
     end
 end
@@ -397,9 +415,131 @@ function GwObjectivesScenarioContainerMixin:UpdateWidgetRegistration(widgetSetID
     end
 end
 
+-- the Blizzard scenario tracker renders a FIXED bottom widget set besides the
+-- per-step set — the Torghast blessing/torment rows live there. Rendered with
+-- own visuals: GW font labels plus the trait icon tiles.
+local SCENARIO_BOTTOM_WIDGET_SET = 252
+local function CollectScenarioSpellRows()
+    local rows
+    local ok = pcall(function()
+        for _, widget in ipairs(C_UIWidgetManager.GetAllWidgetsBySetID(SCENARIO_BOTTOM_WIDGET_SET) or {}) do
+            if widget.widgetType == Enum.UIWidgetVisualizationType.TextWithState then
+                local info = C_UIWidgetManager.GetTextWithStateWidgetVisualizationInfo(widget.widgetID)
+                if info and info.shownState ~= Enum.WidgetShownState.Hidden and info.text and info.text ~= "" then
+                    rows = rows or {}
+                    tinsert(rows, { text = info.text, orderIndex = info.orderIndex or 0 })
+                end
+            elseif widget.widgetType == Enum.UIWidgetVisualizationType.SpellDisplay then
+                local info = C_UIWidgetManager.GetSpellDisplayVisualizationInfo(widget.widgetID)
+                if info and info.spellInfo and info.spellInfo.shownState ~= Enum.WidgetShownState.Hidden and info.spellInfo.spellID then
+                    rows = rows or {}
+                    tinsert(rows, { spellID = info.spellInfo.spellID, orderIndex = info.orderIndex or 0 })
+                end
+            end
+        end
+    end)
+    if not ok then
+        return nil
+    end
+    -- GetAllWidgetsBySetID returns the widgets unsorted — the orderIndex carries
+    -- the display order (label, its spells, next label, ...)
+    if rows then
+        table.sort(rows, function(a, b)
+            return a.orderIndex < b.orderIndex
+        end)
+    end
+    return rows
+end
+
+local SPELL_ROW_ICON_SIZE = 32
+local SPELL_ROW_SPACING = 6
+local SPELL_ROW_ICON_INDENT = 20 -- icons align with the objective text, labels with the headers
+-- /run GW.DumpScenarioBlocks() — objective row geometry for layout debugging
+function GW.DumpScenarioBlocks()
+    local container = GwQuesttrackerContainerScenario
+    local block = container and container.block
+    if not block then
+        print("scenario block not found")
+        return
+    end
+    print(format("block: height=%d numObjectives=%d frameHeight=%d top=%d bottom=%d",
+        block.height or -1, block.numObjectives or -1, block:GetHeight(), block:GetTop() or -1, block:GetBottom() or -1))
+    for i, objectiveBlock in ipairs(block.objectiveBlocks or {}) do
+        local text = objectiveBlock.ObjectiveText and objectiveBlock.ObjectiveText:GetText() or ""
+        print(format("  [%d] shown:%s h:%d textH:%d top:%d bar:%s text:%s", i, tostring(objectiveBlock:IsShown()),
+            objectiveBlock:GetHeight(), objectiveBlock.ObjectiveText and objectiveBlock.ObjectiveText:GetHeight() or -1,
+            objectiveBlock:GetTop() or -1, tostring(objectiveBlock.StatusBar:IsShown()), text:sub(1, 20)))
+    end
+    if container.gwSpellRows then
+        print(format("spellRows: shown:%s h:%d top:%d bottom:%d", tostring(container.gwSpellRows:IsShown()),
+            container.gwSpellRows:GetHeight(), container.gwSpellRows:GetTop() or -1, container.gwSpellRows:GetBottom() or -1))
+    end
+end
+
+local function UpdateScenarioSpellRowsFrame(frame, rows)
+    for _, label in ipairs(frame.labels) do
+        label:Hide()
+    end
+    frame.iconPool:ReleaseAll()
+
+    local width = frame:GetWidth()
+    local y, x = 0, nil
+    local labelIndex = 0
+    for _, row in ipairs(rows) do
+        if row.text then
+            if x then -- close an open icon line
+                y = y + SPELL_ROW_ICON_SIZE + SPELL_ROW_SPACING
+                x = nil
+            end
+            labelIndex = labelIndex + 1
+            local label = frame.labels[labelIndex]
+            if not label then
+                label = frame:CreateFontString(nil, "ARTWORK")
+                label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
+                label:SetTextColor(1, 1, 1)
+                label:SetJustifyH("LEFT")
+                frame.labels[labelIndex] = label
+            end
+            label:ClearAllPoints()
+            label:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -y)
+            label:SetText(row.text)
+            label:Show()
+            -- measure instead of assuming: the tracker font size is configurable
+            y = y + math.max(label:GetStringHeight() or 0, 12) + SPELL_ROW_SPACING
+        elseif row.spellID then
+            if x and width > 0 and (x + SPELL_ROW_ICON_SIZE) > width then
+                y = y + SPELL_ROW_ICON_SIZE + SPELL_ROW_SPACING
+                x = nil
+            end
+            x = x or SPELL_ROW_ICON_INDENT
+            local tile = frame.iconPool:Acquire()
+            tile:ClearAllPoints()
+            tile:SetPoint("TOPLEFT", frame, "TOPLEFT", x, -y)
+            tile.Icon:SetTexture(C_Spell.GetSpellTexture(row.spellID))
+            tile.spellID = row.spellID
+            tile.auraInstanceID = nil
+            if not tile.mask then
+                tile.mask = tile:CreateMaskTexture()
+                tile.mask:SetAllPoints(tile.Icon)
+                tile.mask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                tile.Icon:AddMaskTexture(tile.mask)
+            end
+            tile:Show()
+            x = x + SPELL_ROW_ICON_SIZE + SPELL_ROW_SPACING
+        end
+    end
+    if x then
+        y = y + SPELL_ROW_ICON_SIZE
+    end
+
+    frame:SetHeight(math.max(y, 1))
+    return y
+end
+
 local function PrepareScenarioCustomObjectiveBlock(objectiveBlock, height)
     objectiveBlock:SetHeight(height)
     objectiveBlock.ObjectiveText:SetText("")
+    objectiveBlock.ObjectiveText:SetHeight(height)
     objectiveBlock.StatusBar:Hide()
     objectiveBlock.TimerBar:Hide()
     objectiveBlock.TimerBar:SetScript("OnUpdate", nil)
@@ -438,9 +578,79 @@ local function AddScenarioCurrencyObjective(block, widgetInfo)
         currencyFrame:Show()
     end
 
-    block.height = block.height + objectiveBlock:GetHeight()
+    block.height = block.height + objectiveBlock:GetHeight() + (block.numObjectives > 1 and 5 or 0)
 
     return true
+end
+
+-- own GW rendering for the fixed bottom widget set (blessing/torment labels + tiles)
+local function AddScenarioSpellRowsObjective(block, container)
+    local frame = container.gwSpellRows -- created in InitModule (retail only)
+    if not frame then
+        return false
+    end
+
+    local rows = CollectScenarioSpellRows()
+    if not rows or #rows == 0 then
+        frame:Hide()
+        return false
+    end
+
+    block.numObjectives = block.numObjectives + 1
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, nil, -5)
+
+    frame:SetParent(objectiveBlock)
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", objectiveBlock, "TOPLEFT", 5, 0)
+    frame:SetPoint("TOPRIGHT", objectiveBlock, "TOPRIGHT", -10, 0)
+
+    local height = UpdateScenarioSpellRowsFrame(frame, rows)
+    PrepareScenarioCustomObjectiveBlock(objectiveBlock, height + GW.GetObjectivesEntrySpacing())
+    frame:Show()
+
+    -- the -5 row offset (GetObjectiveBlock override) adds real distance between
+    -- rows — account it, otherwise the block ends up too short and the last row
+    -- bleeds into the next tracker section
+    block.height = block.height + objectiveBlock:GetHeight() + (block.numObjectives > 1 and 5 or 0)
+
+    return true
+end
+
+-- widget status bars can carry partition markers (e.g. the Torghast empowerment
+-- threshold) — thin ticks on the objective progress bar. Values can be secret,
+-- a failed placement just skips the ticks
+local function UpdateStatusBarPartitions(statusBar, widgetInfo)
+    if statusBar.gwPartitions then
+        for _, tick in ipairs(statusBar.gwPartitions) do
+            tick:Hide()
+        end
+    end
+
+    pcall(function()
+        local values = widgetInfo and widgetInfo.partitionValues
+        if not values or #values == 0 or not widgetInfo.barMax or widgetInfo.barMax <= (widgetInfo.barMin or 0) then
+            return
+        end
+
+        statusBar.gwPartitions = statusBar.gwPartitions or {}
+        local barMin = widgetInfo.barMin or 0
+        local width = statusBar:GetWidth()
+        for i, value in ipairs(values) do
+            local tick = statusBar.gwPartitions[i]
+            if not tick then
+                tick = statusBar:CreateTexture(nil, "OVERLAY")
+                tick:SetColorTexture(1, 1, 1, 0.9)
+                statusBar.gwPartitions[i] = tick
+            end
+            local fraction = (value - barMin) / (widgetInfo.barMax - barMin)
+            if fraction > 0 and fraction < 1 and width > 0 then
+                tick:SetSize(3, statusBar:GetHeight() + 4)
+                tick:ClearAllPoints()
+                tick:SetPoint("CENTER", statusBar, "LEFT", fraction * width, 0)
+                tick:Show()
+            end
+        end
+    end)
 end
 
 local function AddScenarioTieredEntranceTraitsObjective(block)
@@ -464,20 +674,23 @@ local function AddScenarioTieredEntranceTraitsObjective(block)
     block.tieredEntranceTraitsFrame:SetPoint("TOPRIGHT", objectiveBlock, "TOPRIGHT", -10, 0)
     block.tieredEntranceTraitsFrame:Show()
 
-    block.height = block.height + objectiveBlock:GetHeight()
+    block.height = block.height + objectiveBlock:GetHeight() + (block.numObjectives > 1 and 5 or 0)
 
     return true
 end
 
 local function AddScenarioMawBuffsObjective(block)
     if not (GW.Retail and ShouldShowMawBuffs()) then
+        block.mawBuffsFrame:Hide()
         return false
     end
 
     block.numObjectives = block.numObjectives + 1
     local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, nil, -5)
 
-    block.mawBuffsFrame:SetAuras(GW.CollectMawAuras(), JAILERS_TOWER_BUFFS_BUTTON_TEXT)
+    -- a failed read (secret state) keeps the last known power set
+    local auras = GW.CollectMawAuras() or block.mawBuffsFrame.auras or {}
+    block.mawBuffsFrame:SetAuras(auras, JAILERS_TOWER_BUFFS_BUTTON_TEXT)
     PrepareScenarioCustomObjectiveBlock(objectiveBlock, block.mawBuffsFrame:GetHeight() + GW.GetObjectivesEntrySpacing())
 
     block.mawBuffsFrame:SetParent(objectiveBlock)
@@ -485,7 +698,7 @@ local function AddScenarioMawBuffsObjective(block)
     block.mawBuffsFrame:SetPoint("TOPRIGHT", objectiveBlock, "TOPRIGHT", -10, 0)
     block.mawBuffsFrame:Show()
 
-    block.height = block.height + objectiveBlock:GetHeight()
+    block.height = block.height + objectiveBlock:GetHeight() + (block.numObjectives > 1 and 5 or 0)
 
     return true
 end
@@ -550,7 +763,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         block.currenciesFrame.currency[i]:Hide()
     end
     block.tieredEntranceTraitsFrame:Hide()
-    block.mawBuffsFrame:Hide()
 
     if not isDelveScenario then
         GW.StopNemesisCounter()
@@ -723,6 +935,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     end
     AddScenarioTieredEntranceTraitsObjective(block)
     AddScenarioMawBuffsObjective(block)
+    AddScenarioSpellRowsObjective(block, self)
 
     for criteriaIndex = 1, numCriteria do
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
@@ -748,9 +961,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         end
     end
     -- add special widgets here
-    GW.addWarfrontData(block)
-    GW.addHeroicVisionsData(block)
-    GW.addJailersTowerData(block)
     GW.addEmberCourtData(self)
 
     local bonusSteps = C_Scenario.GetBonusSteps() or {}
@@ -782,15 +992,16 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
             hasVisibleStatusBarWidget = true
             local objectiveType = "object"
             local quantity = widgetInfo.barValue
-            local text = GW.ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text)
 
+            -- the values render on the bar itself, the row text is just the label —
+            -- an empty label collapses the row around a centered bar (AddObjective)
             if widgetInfo.barValueTextType == Enum.StatusBarValueTextType.Percentage then
                 objectiveType = "progressbar"
-                quantity = math.min(1, widgetInfo.barValue / widgetInfo.barMax)
-                text = (widgetInfo.text or "") .. " " .. FormatPercentage(quantity)
-                quantity = quantity * 100
+                quantity = math.min(1, widgetInfo.barValue / widgetInfo.barMax) * 100
             end
-            block:AddObjective(text, { finished = false, objectiveType = objectiveType, qty = quantity, firstObjectivesYValue = -5 })
+            block:AddObjective(widgetInfo.text or "", { finished = false, objectiveType = objectiveType, qty = quantity, totalqty = widgetInfo.barMax, firstObjectivesYValue = -5 })
+            local objectiveBlock = block:GetObjectiveBlock(block.numObjectives)
+            UpdateStatusBarPartitions(objectiveBlock.StatusBar, widgetInfo)
         end
     end
     if hasVisibleStatusBarWidget and not self.timerWidgetManager:IsTimerRunning() then
@@ -1110,6 +1321,13 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.layoutUpdateFrame = CreateFrame("Frame", nil, self)
     self.layoutUpdateFrame.container = self
 
+    if GW.Retail then
+        self.gwSpellRows = CreateFrame("Frame", nil, self)
+        self.gwSpellRows.labels = {}
+        self.gwSpellRows.iconPool = CreateFramePool("Frame", self.gwSpellRows, "GwTieredEntranceTraitSpellTemplate")
+        self.gwSpellRows:Hide()
+    end
+
     -- JailersTower hook
     -- do it only here so we are sure we do not hook more than one time
     if GW.Retail then
@@ -1121,13 +1339,25 @@ function GwObjectivesScenarioContainerMixin:InitModule()
 
         -- own Maw buff button: re-layout when the power count changes (appear on
         -- the first collected buff, live count/list while running)
+        -- blessing/torment rows: follow widget updates of the fixed bottom set
+        local widgetWatcher = CreateFrame("Frame")
+        widgetWatcher:RegisterEvent("UPDATE_UI_WIDGET")
+        widgetWatcher:SetScript("OnEvent", function(_, _, widgetInfo)
+            if widgetInfo and widgetInfo.widgetSetID == SCENARIO_BOTTOM_WIDGET_SET then
+                self:QueueUpdateLayout()
+            end
+        end)
+
         local lastMawCount = -1
         local mawWatcher = CreateFrame("Frame")
         mawWatcher:RegisterUnitEvent("UNIT_AURA", "player")
         mawWatcher:SetScript("OnEvent", function()
-            local count = #GW.CollectMawAuras()
-            if count ~= lastMawCount then
-                lastMawCount = count
+            local collected = GW.CollectMawAuras()
+            if not collected then
+                return -- failed read (secret state): keep the current display
+            end
+            if #collected ~= lastMawCount then
+                lastMawCount = #collected
                 self:QueueUpdateLayout()
             end
         end)
