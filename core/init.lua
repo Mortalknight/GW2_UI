@@ -218,6 +218,21 @@ do
     function GW.UnitNotUnit(unit1, unit2) -- nil means blocked
         return GW.UnitIsUnit(unit1, unit2) == false
     end
+
+    -- 12.0: aura APIs flagged "RequiresUnitAuraAccess" (GetAuraSlots, GetAuraDataBySlot,
+    -- GetBuffDataByIndex, ...) raise a hard Lua error - not a nil return - when aura data is
+    -- secret and execution is tainted by an addon. The restriction is active during combat,
+    -- encounters, challenge mode and PvP matches, so an InCombatLockdown() check is not enough.
+    local ShouldAurasBeSecret = C_Secrets and C_Secrets.ShouldAurasBeSecret
+
+    function GW.AurasAreSecret()
+        if not ShouldAurasBeSecret then return false end -- no secret system (Classic and friends)
+
+        local ok, isSecret = pcall(ShouldAurasBeSecret)
+        if not ok then return true end -- unable to tell, assume the worst
+
+        return isSecret == true
+    end
 end
 
 
