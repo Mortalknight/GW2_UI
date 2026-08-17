@@ -18,6 +18,9 @@ local function HandleUnitAuraEvent(unit, ...)
     local debuffsChanged = false
     local dataTable = unit == "pet" and petAuras or unit == "player" and playerAuras or nil
     if not dataTable then return end
+    -- Skipping only costs us a refresh: while aura access is restricted every lookup below
+    -- would raise an error instead of returning data, so there is nothing to read either way.
+    if GW.AurasAreSecret() then return end
 
     if isFullUpdate then
         table.wipe(dataTable.buffs)
@@ -385,7 +388,8 @@ local function GetAuraData(unit, unitSource, filter, ...)
                 results[#results + 1] = auraData
             end
         end
-    elseif unitSource and filter == "HARMFUL" then
+    -- the index scan below reads another unit's debuffs, which errors while auras are restricted
+    elseif unitSource and filter == "HARMFUL" and not GW.AurasAreSecret() then
         for i = 1, 40 do
             local auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i)
 
