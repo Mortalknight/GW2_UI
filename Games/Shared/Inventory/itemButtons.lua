@@ -187,9 +187,70 @@ local function EnsureItemButton(cf, index, iconSize, opts)
         button.__gwSkinned = true
     end
 
+    -- secure delegate for spell-item-targeting clicks: our buttons are addon created,
+    -- so the inherited handler may not complete a targeting cast (UseContainerItem is
+    -- forbidden from tainted code then). The overlay runs "/use bag slot" securely and
+    -- only shows while a spell awaits an item target (see UpdateSpellTargetOverlays)
+    local overlay = CreateFrame("Button", nil, button, "SecureActionButtonTemplate")
+    overlay:SetAllPoints()
+    overlay:RegisterForClicks("AnyDown", "AnyUp")
+    overlay:SetAttribute("type", "macro")
+    overlay:SetScript("OnEnter", function(o)
+        local owner = o:GetParent()
+        local onEnter = owner:GetScript("OnEnter")
+        if onEnter then onEnter(owner) end
+    end)
+    overlay:SetScript("OnLeave", function(o)
+        local owner = o:GetParent()
+        local onLeave = owner:GetScript("OnLeave")
+        if onLeave then onLeave(owner) end
+    end)
+    overlay:Hide()
+    button.gwSecureUseOverlay = overlay
+
     cf.gw_items[index] = button
     allItemButtons[#allItemButtons + 1] = button
     return button
+end
+
+-- shows/hides the secure "/use" overlays with the item targeting state. Toggling
+-- secure frames is combat locked: in-combat flips are skipped and resynced on
+-- PLAYER_REGEN_ENABLED (item targeting spells in combat are a rare edge)
+local overlaysShown = false
+local function UpdateSpellTargetOverlays(force)
+    if InCombatLockdown() then
+        return
+    end
+
+    local targeting = (SpellCanTargetItem() or SpellCanTargetItemID()) and true or false
+    if targeting == overlaysShown and not force then
+        return
+    end
+    overlaysShown = targeting
+
+    for _, button in ipairs(allItemButtons) do
+        local overlay = button.gwSecureUseOverlay
+        if overlay then
+            -- "/use bag slot" only understands the carried bags (0-4 + reagent bag),
+            -- bank containers keep their normal click path
+            local bagID = button:GetParent():GetID()
+            if targeting and button:IsVisible() and bagID >= 0 and bagID <= 5 then
+                overlay:SetAttribute("macrotext", format("/use %d %d", bagID, button:GetID()))
+                overlay:Show()
+            else
+                overlay:Hide()
+            end
+        end
+    end
+end
+
+do
+    local watcher = CreateFrame("Frame")
+    watcher:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
+    watcher:RegisterEvent("PLAYER_REGEN_ENABLED")
+    watcher:SetScript("OnEvent", function(_, event)
+        UpdateSpellTargetOverlays(event == "PLAYER_REGEN_ENABLED")
+    end)
 end
 
 local function UpdateOwnContainerItemButtons(cf, force)
