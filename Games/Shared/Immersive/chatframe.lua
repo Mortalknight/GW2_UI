@@ -185,11 +185,18 @@ local function AdjustChatLines(frame)
     for index, fontString in ipairs(visibleLines) do
         if index == 1 then
             local point, relativeTo, relativePoint, _, yOfs = fontString:GetPoint(1)
+            -- GetPoint is flagged SecretWhenAnchoringSecret, so a line that inherits secret
+            -- anchoring hands back secret values, and SetPoint rejects secret arguments with a
+            -- usage error. A secret string is still truthy, so the completeness check below
+            -- lets it through. Leave the anchor as the engine set it in that case - the call
+            -- would have failed anyway, and SetWidth below still does the real work.
+            local anchorIsSecret = GW.IsSecretValue(point) or GW.IsSecretValue(relativeTo)
+                or GW.IsSecretValue(relativePoint) or GW.IsSecretValue(yOfs)
             -- only rebuild the anchor when GetPoint handed back a complete one: a line
             -- that the engine has not anchored yet (fresh out of the pool while the dock
             -- switches tabs) reports no relative point, and passing that nil on to
             -- SetPoint makes it reject the whole argument list
-            if point and relativePoint and (relativeTo or fontString:GetParent() ~= nil) then
+            if not anchorIsSecret and point and relativePoint and (relativeTo or fontString:GetParent() ~= nil) then
                 -- an explicit parent is what a nil relativeTo means anyway, and it keeps
                 -- SetPoint from having to guess at a nil in the middle of the arguments
                 fontString:SetPoint(point, relativeTo or fontString:GetParent(), relativePoint, -offset, yOfs or 0)
