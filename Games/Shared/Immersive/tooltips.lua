@@ -102,6 +102,8 @@ end
 
 local function SetUnitAura(self, unit, index, filter)
     if not self or self:IsForbidden() or self:NumLines() < 1 then return end
+    -- reading aura data raises an error for tainted code while auras are restricted
+    if GW.AurasAreSecret() then return end
 
     local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
     if not auraData then return end
@@ -114,6 +116,7 @@ local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
     -- callers like the CooldownViewer pass secret instance IDs — reading the aura
     -- data would be denied for tainted code
     if GW.IsSecretValue(auraInstanceId) or GW.IsSecretValue(unit) then return end
+    if GW.AurasAreSecret() then return end
 
     local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceId)
     if not auraData then return end
@@ -587,6 +590,10 @@ local function AddTargetInfo(self, unit)
 end
 
 local function AddMountInfo(self, unit)
+    -- GetBuffDataByIndex errors outright for tainted code while aura access is restricted.
+    -- The caller's InCombatLockdown() check does not cover encounters, keys or PvP matches.
+    if GW.AurasAreSecret() then return end
+
     local index = 1
     local auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
     while auraData do
