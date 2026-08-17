@@ -90,7 +90,17 @@ local function FetchGuildMembers_Internal()
             end
         end
 
-        local members = guildClubID and CommunitiesUtil.GetAndSortMemberInfo(guildClubID)
+        -- GetAndSortMemberInfo starts with C_Club.GetClubMembers and feeds the result straight
+        -- into ipairs. That table is secret while club data is restricted, and ipairs rejects it
+        -- with "table expected, got secret" from inside Blizzard's code, where we cannot guard
+        -- it - so check the same call ourselves before handing the club id over.
+        local members
+        if guildClubID then
+            local memberIds = C_Club.GetClubMembers(guildClubID)
+            if memberIds and GW.NotSecretValue(memberIds) and GW.NotSecretTable(memberIds) then
+                members = CommunitiesUtil.GetAndSortMemberInfo(guildClubID)
+            end
+        end
         if members then
             for _, data in next, members do
                 if data.guid then
