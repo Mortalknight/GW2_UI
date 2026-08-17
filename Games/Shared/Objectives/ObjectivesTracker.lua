@@ -300,6 +300,22 @@ end
 
 local function DisableBlizzardsObjevtiveTracker()
     if GW.Retail then
+        -- Taking the tracker over taints Blizzard's update path, and their scenario module keeps
+        -- running on it regardless. ShouldShowMawBuffs reads player auras from there, which is a
+        -- hard error for tainted code while aura access is restricted, so every scenario layout
+        -- pass throws. Degrade to the zone check the original already ORs in - it is only ever
+        -- used to decide whether the maw buff block is shown, never for a protected action.
+        if ShouldShowMawBuffs then
+            local BlizzardShouldShowMawBuffs = ShouldShowMawBuffs
+            function ShouldShowMawBuffs()
+                if GW.AurasAreSecret() then
+                    return IsInJailersTower() or false
+                end
+
+                return BlizzardShouldShowMawBuffs()
+            end
+        end
+
         ObjectiveTrackerFrame:Hide()
         ObjectiveTrackerFrame:UnregisterAllEvents()
         ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
