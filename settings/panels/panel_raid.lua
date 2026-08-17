@@ -6,18 +6,16 @@ local StrUpper = GW.StrUpper
 local StrLower = GW.StrLower
 
 
-local playerTag = " |cFF888888(" .. PLAYER .. ")|r"
-local otherTag = " |cFF888888(" .. OTHER .. ")|r"
-local auraOptions = {"isAuraPlayer", "isAuraRaidPlayerDispellable", "HEADER", "isAuraRaidPlayer", "isAuraCancelablePlayer", "notAuraCancelablePlayer", "isAuraCrowdControlPlayer", "isAuraBigDefensivePlayer", "isAuraRaidInCombatPlayer", "isAuraExternalDefensivePlayer", "isAuraImportantPlayer"}
-local auraOptionsNames = {PLAYER, L["Dispellable"], PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag, L["Crowd Control"] .. playerTag, L["Big Defensive"] .. playerTag, RAID_FRAMES_LABEL .. playerTag, L["External Defensives"] .. playerTag, L["Important"] .. playerTag}
-local auraOptionsOther = {"HEADER", "isAuraRaid", "isAuraCancelable", "notAuraCancelable", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraRaidInCombat", "isAuraExternalDefensive", "isAuraImportant"}
-local auraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag, L["Crowd Control"] .. otherTag, L["Big Defensive"] .. otherTag, RAID_FRAMES_LABEL .. otherTag, L["External Defensives"] .. otherTag, L["Important"] .. otherTag}
+-- tri-state aura filters: properties block + filter token block
+local auraOptions = {
+    "HEADER", "isAuraPlayer", "isAuraRaidPlayerDispellable", "isAuraStealable", "isAuraBoss", "isAuraPriority", "isAuraRole",
+    "HEADER", "isAuraRaid", "isAuraRaidInCombat", "isAuraCancelable", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraExternalDefensive", "isAuraImportant"
+}
+local auraOptionsNames = {
+    L["Aura Properties"], PLAYER, L["Dispellable"], L["Stealable"], L["Boss Aura"], L["Priority Debuff"], L["Role Aura"],
+    FILTERS, RAID, RAID_FRAMES_LABEL, L["Is Cancelable"], L["Crowd Control"], L["Big Defensive"], L["External Defensives"], L["Important"]
+}
 local statusBarTexturesOptions, statusBarTexturesLables = GW.GetStatusBarTextures()
-
-for i = 1, #auraOptionsOther do
-    tinsert(auraOptions, auraOptionsOther[i])
-    tinsert(auraOptionsNames, auraOptionsNamesOther[i])
-end
 
 local classOrderValues, classOrderNames = {}, {}
 local pendingGridSettingUpdates = {}
@@ -91,14 +89,23 @@ end
 -- NOTE 12.1: the private aura options were removed — the anchor system no longer
 -- exists, private auras render as normal secret debuffs through the containers
 local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showBuffs, showDebuffs, dependence)
+    if GW.Retail then
+        panel:AddOptionNote(L["Every selected filter narrows the display further - only auras matching all selected filters are shown. No selection shows everything."]
+            .. "\n" .. L["Clicking an entry cycles through three states: off (ignored) - check (only auras with this property are shown) - red cross (auras with this property are hidden)."]
+            .. "\n" .. L["Important and dispellable debuffs always render through their own scaled groups, no matter what is selected here."], {
+            isVisible = function() return GW.settings.RAID_FRAMES == true and GW.settings[dependence] == true and (GW.settings[showBuffs] == true or GW.settings[showDebuffs] == true) end,
+            group = "gridAuraFilterNote",
+        })
+    end
+
     panel:AddGroupHeader(L["Buffs"])
 
     panel:AddOption(SHOW_BUFFS, nil, {getterSetter = showBuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"]})
-    panel:AddOptionDropdown(L["Buffs"], nil, {getterSetter = buffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showBuffs] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOptionDropdown(L["Buffs"], L["Every selected filter narrows the display further - only auras matching all selected filters are shown. No selection shows everything."], {getterSetter = buffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, triState = true, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showBuffs] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
 
     panel:AddGroupHeader(L["Debuffs"])
     panel:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = showDebuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Debuffs"]})
-    panel:AddOptionDropdown(L["Debuffs"], nil, {getterSetter = debuffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOptionDropdown(L["Debuffs"], L["Every selected filter narrows the display further - only auras matching all selected filters are shown. No selection shows everything."], {getterSetter = debuffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, triState = true, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
 end
 
 -- per grid ignore list (all game versions: retail containers exclude the spell ids,

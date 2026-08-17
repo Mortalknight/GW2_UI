@@ -704,25 +704,16 @@ local function SameSpellSet(a, b)
     return true
 end
 
--- stable candidate filter table for "everything except the important ids"
+-- stable candidate filter table for "everything except boss auras". SpellID-based
+-- include/exclude lists (GW.ImportantRaidDebuff) are IGNORED by the engine for
+-- harmful auras on friendly units (AuraContainerUtil.CanApplyIdentityCandidateFilters,
+-- anti-"Move now!" rule) — the flag-based isBossAura field is always applied
 local importantExcludeFilters
 local function GetImportantExcludeFilters()
     if not importantExcludeFilters then
-        importantExcludeFilters = { excludeSpellIDs = GW.ImportantRaidDebuff }
+        importantExcludeFilters = { isBossAura = false }
     end
     return importantExcludeFilters
-end
-
-local function GetGridDebuffBranches(frame)
-    local branches = GW.BuildAdvancedAuraFilterBranches("HARMFUL", frame.debuffFilters)
-    if #branches == 0 then return nil end
-
-    -- the dispellable group owns the RAID_PLAYER_DISPELLABLE auras (own scale) —
-    -- keep the branches disjoint from it
-    for _, branch in ipairs(branches) do
-        branch.filter = branch.filter .. "|!RAID_PLAYER_DISPELLABLE"
-    end
-    return branches
 end
 
 local function UpdateGridAuraContainers(frame)
@@ -751,62 +742,50 @@ local function UpdateGridAuraContainers(frame)
     end
     cfg.excludeSpellIDs = exclude
 
-    local showImportant = frame.raidShowImportantInstanceDebuffs and next(GW.ImportantRaidDebuff) ~= nil
+    local showImportant = frame.raidShowImportantInstanceDebuffs
     local importantScale = tonumber(frame.raidDebuffScale) or 1
     local dispelScale = tonumber(frame.raidDispelDebuffScale) or 1
     local prioScale = GW.GetDebuffScaleBasedOnPrio and GW.GetDebuffScaleBasedOnPrio() or math.max(importantScale, dispelScale)
 
-    local buffBranches = frame.showBuffs and GW.BuildAdvancedAuraFilterBranches("HELPFUL", frame.buffFilters) or nil
-    if buffBranches and #buffBranches == 0 then buffBranches = nil end
-    local debuffBranches = frame.showDebuffs and GetGridDebuffBranches(frame) or nil
+    -- advanced filters narrow the generic buffs/debuffs groups; the important
+    -- groups always show their boss auras unfiltered
+    local buffSuffix, buffSelection = GW.BuildAuraFilterSuffix(frame.buffFilters)
+    local debuffSuffix, debuffSelection = GW.BuildAuraFilterSuffix(frame.debuffFilters)
 
-    -- the important ids leave the generic groups so they only render in their own,
-    -- scaled groups (stable table reference — see the factory change detection)
+    -- boss auras leave the generic groups (candidate based, see below)
     local importantExclude = showImportant and GetImportantExcludeFilters() or nil
 
     for _, group in next, cfg.groups do
+        group.gwBaseFilter = group.gwBaseFilter or group.filter
         if group.key == "importantDispellable" then
+            GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, nil, nil))
             group.size = GW.RoundInt(GRID_DEBUFF_SIZE * prioScale)
             group.maxFrameCount = (frame.showDebuffs and showImportant) and 12 or 0
         elseif group.key == "importantOnly" then
+            GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, nil, nil))
             group.size = GW.RoundInt(GRID_DEBUFF_SIZE * importantScale)
             group.maxFrameCount = (frame.showDebuffs and showImportant) and 12 or 0
         elseif group.key == "dispellableDebuffs" then
+            group.filter = group.gwBaseFilter .. debuffSuffix
+            GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, debuffSelection, importantExclude))
             group.size = GW.RoundInt(GRID_DEBUFF_SIZE * dispelScale)
             group.maxFrameCount = frame.showDebuffs and 12 or 0
-            group.candidateFilters = importantExclude
         elseif group.key == "debuffs" then
+            group.filter = group.gwBaseFilter .. debuffSuffix
+            GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, debuffSelection, importantExclude))
             group.size = GRID_DEBUFF_SIZE
-            group.maxFrameCount = (frame.showDebuffs and not debuffBranches) and 12 or 0
-            group.candidateFilters = importantExclude
+            group.maxFrameCount = frame.showDebuffs and 12 or 0
         elseif group.key == "buffs" then
+            group.filter = group.gwBaseFilter .. buffSuffix
+            GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, buffSelection, nil))
             group.size = GRID_BUFF_SIZE
-            group.maxFrameCount = (frame.showBuffs and not buffBranches) and 12 or 0
+            group.maxFrameCount = frame.showBuffs and 12 or 0
         end
     end
 
     AnchorGridAuraContainer(frame)
     ApplyGridAuraMouseState(frame)
-
-    -- both branch sets target the SAME container: only the last call runs the layout
-    container:GwSetAdvancedBranches("debuffs", debuffBranches, function(branch, index)
-        return {
-            size = GRID_DEBUFF_SIZE,
-            maxFrameCount = 12,
-            isDebuff = true,
-            hideDuration = true,
-            candidateFilters = importantExclude,
-            layoutIndex = 4 + index * 0.01,
-        }
-    end, true)
-    container:GwSetAdvancedBranches("buffs", buffBranches, function(branch, index)
-        return {
-            size = GRID_BUFF_SIZE,
-            maxFrameCount = 12,
-            hideDuration = true,
-            layoutIndex = 5 + index * 0.01,
-        }
-    end)
+    container:GwUpdateLayout()
 
     if frame.__unit and container.gwAppliedUnit ~= frame.__unit then
         container.gwAppliedUnit = frame.__unit
@@ -828,12 +807,13 @@ local function Construct_GridAuraContainers(frame, unit)
         lineSpacing = 1,
         onSettingsRefresh = function() UpdateGridAuraContainers(frame) end,
         groups = {
-            -- showDispelIcon sits on the RAID_PLAYER_DISPELLABLE groups, so the corner
-            -- icon marks exactly what this character can dispel
-            { key = "importantDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-            { key = "importantOnly", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
-            { key = "dispellableDebuffs", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-            { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true },
+            -- isBossAura instead of spellID lists (those are ignored for debuffs on
+            -- friendly units) and gwDispelRole candidates instead of token splits
+            -- (those fail open for secret auras) — candidates stay exact
+            { key = "importantDispellable", filter = "HARMFUL", candidateFilters = { isBossAura = true }, gwDispelRole = "include", size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+            { key = "importantOnly", filter = "HARMFUL", candidateFilters = { isBossAura = true }, gwDispelRole = "exclude", size = GRID_DEBUFF_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+            { key = "dispellableDebuffs", filter = "HARMFUL", gwDispelRole = "include", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+            { key = "debuffs", filter = "HARMFUL", gwDispelRole = "exclude", size = GRID_DEBUFF_SIZE, maxFrameCount = 12, isDebuff = true, hideDuration = true },
             { key = "buffs", filter = "HELPFUL", size = GRID_BUFF_SIZE, maxFrameCount = 12, hideDuration = true, showPandemic = true },
         },
     })

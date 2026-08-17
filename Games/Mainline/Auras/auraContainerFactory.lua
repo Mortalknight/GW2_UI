@@ -43,61 +43,139 @@ local GW = select(2, ...)
 -- Returns: the container. Layout/filters/sizes can be re-applied at runtime via
 -- container:GwUpdateLayout() after config values have been changed.
 
--- GW advanced filters are OR-combined — a single filter string cannot express that,
--- but each OR branch is exactly ONE 12.1 filter string (incl. "!" negation and the new
--- tokens DISPELLABLE/CROWD_CONTROL/BIG_DEFENSIVE/...). OR = one container group per branch.
-local ADVANCED_FILTER_BRANCHES = {
-    { setting = "isAuraCancelablePlayer",        tokens = "CANCELABLE|PLAYER",         side = "player" },
-    { setting = "notAuraCancelablePlayer",       tokens = "!CANCELABLE|PLAYER",        side = "player" },
-    { setting = "isAuraRaidPlayer",              tokens = "RAID|PLAYER",               side = "player" },
-    { setting = "isAuraCrowdControlPlayer",      tokens = "CROWD_CONTROL|PLAYER",      side = "player" },
-    { setting = "isAuraBigDefensivePlayer",      tokens = "BIG_DEFENSIVE|PLAYER",      side = "player" },
-    { setting = "isAuraExternalDefensivePlayer", tokens = "EXTERNAL_DEFENSIVE|PLAYER", side = "player" },
-    { setting = "isAuraRaidInCombatPlayer",      tokens = "RAID_IN_COMBAT|PLAYER",     side = "player" },
-    { setting = "isAuraImportantPlayer",         tokens = "IMPORTANT|PLAYER",          side = "player" }, -- token re-added in 12.1
-    { setting = "isAuraCancelable",              tokens = "CANCELABLE|!PLAYER",        side = "other" },
-    { setting = "notAuraCancelable",             tokens = "!CANCELABLE|!PLAYER",       side = "other" },
-    { setting = "isAuraRaid",                    tokens = "RAID|!PLAYER",              side = "other" },
-    { setting = "isAuraCrowdControl",            tokens = "CROWD_CONTROL|!PLAYER",     side = "other" },
-    { setting = "isAuraBigDefensive",            tokens = "BIG_DEFENSIVE|!PLAYER",     side = "other" },
-    { setting = "isAuraExternalDefensive",       tokens = "EXTERNAL_DEFENSIVE|!PLAYER", side = "other" },
-    { setting = "isAuraRaidInCombat",            tokens = "RAID_IN_COMBAT|!PLAYER",    side = "other" },
-    { setting = "isAuraImportant",               tokens = "IMPORTANT|!PLAYER",         side = "other" }, -- token re-added in 12.1
-    -- RAID_PLAYER_DISPELLABLE = "someone in the players group can dispel this", matching
-    -- the "Dispellable" label and the old engines IsDispellableByMe check — plain
-    -- DISPELLABLE would only mean "has a dispel type", no matter who could remove it
-    { setting = "isAuraRaidPlayerDispellable",   tokens = "RAID_PLAYER_DISPELLABLE" },
+-- Advanced filters narrow the existing groups, tri-state: true = required,
+-- 1 = excluded. Tokens fail open for secret auras (show too much, never double);
+-- candidate fields stay exact. PLAYER must stay a token — the container's
+-- isFromPlayerOrPlayerPet aura data is relative to the unit, not the player.
+local ADVANCED_FILTER_TOKENS = {
+    { setting = "isAuraPlayer",            token = "PLAYER" },
+    { setting = "isAuraRaid",              token = "RAID" },
+    { setting = "isAuraRaidInCombat",      token = "RAID_IN_COMBAT" }, -- with PLAYER: own HoTs
+    { setting = "isAuraCancelable",        token = "CANCELABLE" },
+    { setting = "isAuraCrowdControl",      token = "CROWD_CONTROL" },
+    { setting = "isAuraBigDefensive",      token = "BIG_DEFENSIVE" },
+    { setting = "isAuraExternalDefensive", token = "EXTERNAL_DEFENSIVE" },
+    { setting = "isAuraImportant",         token = "IMPORTANT" }, -- token re-added in 12.1
 }
 
--- Builds the list of filter string branches from a GW advanced filter table
--- (e.g. PET_Buff_Filter_advanced). Simplification to avoid duplicate display:
---   * isAuraPlayer (or cancelable+notCancelable together = all) covers the whole side,
---     the individual branches of that side are then dropped as subsets.
---   * Remaining overlaps (e.g. RAID|PLAYER vs. CANCELABLE|PLAYER) are possible and
---     show an aura twice — the more exotic the combination, the rarer the case.
--- Returns: array of { filter = "HELPFUL|...", isPlayer = bool } — empty = nothing selected.
-function GW.BuildAdvancedAuraFilterBranches(base, db)
-    local branches = {}
-    if not db then return branches end
+-- Candidate fields (AuraContainerUtil.DoesAuraPassCandidateFilters); the
+-- "Dispellable" option maps to dispel type candidates instead (LibDispel).
+local ADVANCED_CANDIDATE_FIELDS = {
+    { setting = "isAuraStealable",         field = "isStealable" },
+    { setting = "isAuraBoss",              field = "isBossAura" },
+    { setting = "isAuraBossOrRole",        field = "isBossOrRoleAura" },
+    { setting = "isAuraPriority",          field = "isPriorityAura" },
+    { setting = "isAuraRole",              field = "isRoleAura" },
+    { setting = "isAuraCanApply",          field = "canApplyAura" },
+    { setting = "isAuraNameplateAll",      field = "nameplateShowAll" },
+    { setting = "isAuraNameplatePersonal", field = "nameplateShowPersonal" },
+}
 
-    local playerAll = db.isAuraPlayer or (db.isAuraCancelablePlayer and db.notAuraCancelablePlayer)
-    local otherAll = db.isAuraCancelable and db.notAuraCancelable
+local function ResolveFilterToken(entry, value)
+    return value == 1 and ("!" .. entry.token) or entry.token
+end
 
-    if playerAll then
-        tinsert(branches, { filter = base .. "|PLAYER", isPlayer = true })
+-- true stays true (required), 1 becomes false (excluded); gwDispellable is
+-- resolved per group role in ComposeAuraGroupCandidates
+local function BuildCandidateSelection(db)
+    local selection
+    for _, entry in ipairs(ADVANCED_CANDIDATE_FIELDS) do
+        local value = db[entry.setting]
+        if value then
+            selection = selection or {}
+            selection[entry.field] = value ~= 1
+        end
     end
-    if otherAll then
-        tinsert(branches, { filter = base .. "|!PLAYER", isPlayer = false })
+    if db.isAuraRaidPlayerDispellable then
+        selection = selection or {}
+        selection.gwDispellable = db.isAuraRaidPlayerDispellable
     end
+    return selection
+end
 
-    for _, branch in ipairs(ADVANCED_FILTER_BRANCHES) do
-        local sideCovered = (branch.side == "player" and playerAll) or (branch.side == "other" and otherAll)
-        if db[branch.setting] and not sideCovered then
-            tinsert(branches, { filter = base .. "|" .. branch.tokens, isPlayer = branch.side == "player" })
+-- Advanced filter table (e.g. target_Buff_Filter_advanced) -> filter string
+-- suffix + candidate selection; empty selection = show everything
+function GW.BuildAuraFilterSuffix(db)
+    if not db then return "", nil end
+
+    local tokens = {}
+    for _, entry in ipairs(ADVANCED_FILTER_TOKENS) do
+        local value = db[entry.setting]
+        if value then
+            tinsert(tokens, ResolveFilterToken(entry, value))
         end
     end
 
-    return branches
+    local suffix = #tokens > 0 and ("|" .. table.concat(tokens, "|")) or ""
+    return suffix, BuildCandidateSelection(db)
+end
+
+-- nothing passes an empty include list (mutes a dispel twin half)
+local EMPTY_DISPEL_TYPES = {}
+
+-- Effective candidateFilters of a group: configured base + caller extra + advanced
+-- selection + the dispel twin role ("include" = what this character can dispel,
+-- carries the icon; "exclude" = the rest). Apply via ApplyStableCandidates.
+function GW.ComposeAuraGroupCandidates(group, selection, extra)
+    local merged
+    local function put(field, value)
+        if value ~= nil then
+            merged = merged or {}
+            merged[field] = value
+        end
+    end
+
+    local function absorb(source)
+        if not source then return end
+        for field, value in next, source do
+            if field ~= "gwDispellable" then
+                put(field, value)
+            end
+        end
+    end
+    absorb(group.gwBaseCandidates)
+    absorb(extra)
+    absorb(selection)
+
+    local dispellable = selection and selection.gwDispellable
+    local myTypes = GW.Libs.Dispel:GetMyDispelTypes()
+    if group.gwDispelRole == "include" then
+        -- "Dispellable" excluded → this half shows nothing
+        put("includeDispelTypes", dispellable == 1 and EMPTY_DISPEL_TYPES or myTypes)
+    elseif group.gwDispelRole == "exclude" then
+        if dispellable == true then
+            -- "Dispellable" required → the include half owns everything
+            put("includeDispelTypes", EMPTY_DISPEL_TYPES)
+        else
+            put("excludeDispelTypes", myTypes)
+        end
+    elseif dispellable == true then
+        put("includeDispelTypes", myTypes)
+    elseif dispellable == 1 then
+        put("excludeDispelTypes", myTypes)
+    end
+
+    return merged
+end
+
+-- keep the previous table when the content is unchanged — ApplyLayout skips the
+-- engine re-apply by reference compare
+local function SameCandidates(a, b)
+    if a == b then return true end
+    if not a or not b then return false end
+    for k, v in next, a do
+        if b[k] ~= v then return false end
+    end
+    for k, v in next, b do
+        if a[k] ~= v then return false end
+    end
+    return true
+end
+
+function GW.ApplyStableCandidates(group, candidates)
+    if not SameCandidates(candidates, group.candidateFilters) then
+        group.candidateFilters = candidates
+    end
 end
 
 -- Stealable buffs use one color for every dispel type; customDispelColorMap is keyed
@@ -297,6 +375,59 @@ function GW.RefreshAllAuraContainers()
             entry.container.gwConfig.onSettingsRefresh(entry.container)
         elseif entry.container.GwUpdateLayout then
             entry.container:GwUpdateLayout()
+        end
+    end
+end
+
+-- the dispel type candidates hold LibDispel's table, which mutates in place —
+-- invisible to the reference compares, so bump + refresh when the lib reports a change
+EventRegistry:RegisterCallback("GW2_UI.DispelTypesChanged", function()
+    GW.BumpAuraContainerSettingsGeneration()
+    GW.RefreshAllAuraContainers()
+end, "GW2_UI")
+
+-- /run GW.DumpAuraContainers("target") — per group: filter, candidates, mute state,
+-- shown counts (substring match on config name or unit, nil = all). Frame names and
+-- IsShown can be SECRET in raids: plain-string identification, secret counter.
+function GW.DumpAuraContainers(match)
+    for index, entry in ipairs(containerRegistry) do
+        local container = entry.container
+        local cfg = container.gwConfig
+        local unit = tostring(container.gwAppliedUnit or (cfg and cfg.unit))
+        local label = (cfg and cfg.name or ("container#" .. index)) .. " unit: " .. unit
+        if cfg and cfg.groups and (not match or label:lower():find(match:lower(), 1, true)) then
+            print("|cff88ffff" .. label .. "|r")
+            for _, group in ipairs(cfg.groups) do
+                local shown, total, secret = 0, 0, 0
+                ForEachGroupButton(container, group.key, function(button)
+                    total = total + 1
+                    local ok, isShown = pcall(button.IsShown, button)
+                    if not ok or GW.IsSecretValue(isShown) then
+                        secret = secret + 1
+                    elseif isShown then
+                        shown = shown + 1
+                    end
+                end)
+                -- candidate summary: nested dispel type tables list their truthy keys
+                local candText = ""
+                for field, value in next, group.candidateFilters or {} do
+                    if type(value) == "table" then
+                        local keys = {}
+                        for k, v in next, value do
+                            if v then tinsert(keys, tostring(k)) end
+                        end
+                        candText = format("%s %s={%s}", candText, field, table.concat(keys, ","))
+                    else
+                        candText = format("%s %s=%s", candText, field, tostring(value))
+                    end
+                end
+                local muted = (group.maxFrameCount or 1) == 0
+                if shown > 0 or secret > 0 or not muted then
+                    print(format("    %s shown:%d/%d%s%s %s%s", group.key, shown, total,
+                        secret > 0 and (" secret:" .. secret) or "", muted and " (muted)" or "",
+                        (group.filter or ""):gsub("|", "||"), candText))
+                end
+            end
         end
     end
 end
@@ -603,70 +734,12 @@ local function ApplyLayout(container)
     end
 end
 
--- Advanced filter branches as reusable group slots: container groups cannot be
--- removed after the fact, but their filter string is swappable
--- (SetAuraGroupFilterString) — unused slots are muted via maxFrameCount = 0.
--- templateProvider(branch, index) supplies the group template (size, isDebuff, layoutIndex, ...).
--- skipApplyLayout: when several branch sets go onto the SAME container, only the
--- last call should run the layout
-local function SetAdvancedBranches(container, baseKey, branches, templateProvider, skipApplyLayout)
-    local cfg = container.gwConfig
-    container.gwAdvancedSlots = container.gwAdvancedSlots or {}
-    local slots = container.gwAdvancedSlots[baseKey]
-    if not slots then
-        slots = {}
-        container.gwAdvancedSlots[baseKey] = slots
-    end
-
-    for i, branch in ipairs(branches or {}) do
-        local template = templateProvider(branch, i)
-        local group = slots[i]
-        if not group then
-            group = template
-            group.key = baseKey .. "Advanced" .. i
-            group.filter = branch.filter
-            slots[i] = group
-            tinsert(cfg.groups, group)
-            container:AddAuraGroup(group.key, branch.filter, {
-                initializeFrame = function(button) BuildAuraButton(button, container, group) end,
-            })
-        else
-            -- Reuse the slot: update filter + base data (fonts/insets of the already
-            -- built buttons are kept — so deliver the branches in a stable sort order)
-            group.filter = branch.filter
-            group.size = template.size
-            group.maxFrameCount = template.maxFrameCount
-            group.layoutIndex = template.layoutIndex or group.layoutIndex
-            group.forceNewLine = template.forceNewLine
-            group.candidateFilters = template.candidateFilters
-            group.sortMethod = template.sortMethod
-            group.sortDirection = template.sortDirection
-            if group.showDispelIcon ~= template.showDispelIcon then
-                -- the slot switched between the dispel icon role and the rest role —
-                -- the existing buttons re-evaluate their (de)registration via the getter
-                group.showDispelIcon = template.showDispelIcon
-                ForEachGroupButton(container, group.key, ApplyAuraOptionRegions)
-            end
-        end
-    end
-
-    for i = #(branches or {}) + 1, #slots do
-        slots[i].maxFrameCount = 0
-    end
-
-    if not skipApplyLayout then
-        ApplyLayout(container)
-    end
-end
-
--- Maps the shared per-unit aura settings (preset/advanced filters, sorting, ignore
--- list, icon sizes) onto the two stacked containers of a frame (buffs + debuffs with
--- the static groups buffsOwn/buffs and debuffsOwn/debuffs). Growth direction and
--- anchoring stay with the caller — they are frame specific. Triggers the layout via
--- GwSetAdvancedBranches, so set growth fields on the configs BEFORE calling this.
+-- Maps the shared per-unit aura settings onto the two stacked containers of a
+-- frame — ONE buffs group and ONE debuffs group (plus its dispel icon twin), so
+-- an aura can never render twice. Growth/anchoring stay with the caller.
 --
 -- opts = {
---     smallSize = 20, bigSize = 24,        -- other players' / own aura button size
+--     smallSize = 20, bigSize = 24,        -- buff / debuff button size
 --     buffFilter = "all|none|advanced",    -- preset setting values
 --     debuffFilter = "all|none|player|advanced",
 --     buffAdvanced = {...}, debuffAdvanced = {...}, -- advanced filter tables
@@ -677,29 +750,16 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
     local cfg = buffContainer.gwConfig
     local debuffCfg = debuffContainer.gwConfig
 
-    local buffBranches = opts.buffFilter == "advanced" and GW.BuildAdvancedAuraFilterBranches("HELPFUL", opts.buffAdvanced) or nil
-    local debuffBranches = opts.debuffFilter == "advanced" and GW.BuildAdvancedAuraFilterBranches("HARMFUL", opts.debuffAdvanced) or nil
-    -- empty advanced selection behaves like the old noFilter (= show everything)
-    if buffBranches and #buffBranches == 0 then buffBranches = nil end
-    if debuffBranches and #debuffBranches == 0 then debuffBranches = nil end
-
-    -- dispel icon boundary for the advanced branches, mirroring SplitDispelIconGroups:
-    -- every debuff branch splits into its DISPELLABLE part (carries the icon) and the
-    -- rest. Splitting ALL branches keeps the icon role of each reusable slot positionally
-    -- stable when the selected filters change (slots keep their buttons)
-    if debuffBranches and opts.showDispelIcon then
-        local split = {}
-        for _, branch in ipairs(debuffBranches) do
-            if branch.filter:find("RAID_PLAYER_DISPELLABLE", 1, true) then
-                -- already bounded by the player-dispellable token, no twin needed
-                branch.gwDispelIcon = true
-                tinsert(split, branch)
-            else
-                tinsert(split, { filter = branch.filter .. "|RAID_PLAYER_DISPELLABLE", isPlayer = branch.isPlayer, gwDispelIcon = true })
-                tinsert(split, { filter = branch.filter .. "|!RAID_PLAYER_DISPELLABLE", isPlayer = branch.isPlayer })
-            end
-        end
-        debuffBranches = split
+    local buffSuffix, buffCandidates = "", nil
+    if opts.buffFilter == "advanced" then
+        buffSuffix, buffCandidates = GW.BuildAuraFilterSuffix(opts.buffAdvanced)
+    end
+    local debuffSuffix, debuffCandidates = "", nil
+    if opts.debuffFilter == "advanced" then
+        debuffSuffix, debuffCandidates = GW.BuildAuraFilterSuffix(opts.debuffAdvanced)
+    elseif opts.debuffFilter == "player" then
+        -- the "player" preset is just the PLAYER token on the single group
+        debuffSuffix = "|PLAYER"
     end
 
     local buffMax = opts.buffFilter == "none" and 0 or 32
@@ -709,61 +769,33 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
     cfg.excludeSpellIDs = opts.excludeSpellIDs
     debuffCfg.excludeSpellIDs = opts.excludeSpellIDs
 
-    -- static groups: sizes + mute states (advanced active mutes them, the branches
-    -- take over); the sort applies to every group including the advanced slots
+    -- every selection change rebuilds from gwBaseFilter/gwBaseCandidates
     for _, group in next, cfg.groups do
         group.sortMethod = sort.method
         group.sortDirection = sort.direction
-        if group.key == "buffsOwn" then
-            group.size = opts.bigSize
-            group.maxFrameCount = buffBranches and 0 or buffMax
-        elseif group.key == "buffs" then
+        group.gwBaseFilter = group.gwBaseFilter or group.filter
+        GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, buffCandidates, nil))
+        if group.key == "buffs" then
+            group.filter = group.gwBaseFilter .. buffSuffix
             group.size = opts.smallSize
-            group.maxFrameCount = buffBranches and 0 or buffMax
+            group.maxFrameCount = buffMax
         end
     end
     for _, group in next, debuffCfg.groups do
         group.sortMethod = sort.method
         group.sortDirection = sort.direction
-        -- the dispel icon split (SplitDispelIconGroups) leaves a twin group behind each
-        -- of the static keys — it follows its original in everything but the icon
-        local baseKey = group.gwBaseKey or group.key
-        if baseKey == "debuffsOwn" then
+        group.gwBaseFilter = group.gwBaseFilter or group.filter
+        GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, debuffCandidates, nil))
+        -- gwBaseKey covers the dispel icon twin (see SplitDispelIconGroups)
+        if (group.gwBaseKey or group.key) == "debuffs" then
+            group.filter = group.gwBaseFilter .. debuffSuffix
             group.size = opts.bigSize
-            group.maxFrameCount = debuffBranches and 0 or debuffMax
-        elseif baseKey == "debuffs" then
-            group.size = opts.smallSize
-            -- the "player" preset shows own debuffs only — mute the others group
-            group.maxFrameCount = (debuffBranches or opts.debuffFilter == "player") and 0 or debuffMax
+            group.maxFrameCount = debuffMax
         end
     end
 
-    local function branchTemplate(baseLayoutIndex, isDebuff)
-        return function(branch, index)
-            local template = {
-                size = branch.isPlayer and opts.bigSize or opts.smallSize,
-                maxFrameCount = isDebuff and 40 or 32,
-                isDebuff = isDebuff or nil,
-                gwAdvancedSlot = true,
-                layoutIndex = baseLayoutIndex + index * 0.01,
-                sortMethod = sort.method,
-                sortDirection = sort.direction,
-                -- keep the static groups' extras (see the frame configs)
-                showStealable = (not isDebuff) and opts.showStealable or nil,
-                showPandemic = branch.isPlayer and opts.showPandemic or nil,
-                -- only the DISPELLABLE half of a split branch carries the icon
-                showDispelIcon = (isDebuff and opts.showDispelIcon and branch.gwDispelIcon) or nil,
-            }
-            if branch.isPlayer then
-                template.iconInset = 2
-                template.bigFont = true
-            end
-            return template
-        end
-    end
-
-    buffContainer:GwSetAdvancedBranches("buffs", buffBranches, branchTemplate(1, false))
-    debuffContainer:GwSetAdvancedBranches("debuffs", debuffBranches, branchTemplate(3, true))
+    ApplyLayout(buffContainer)
+    ApplyLayout(debuffContainer)
 end
 
 -- The container only refreshes on UNIT_AURA — if the unit BEHIND the token changes
@@ -876,25 +908,21 @@ function GW.CreateAuraTrackerContainer(config)
     return container
 end
 
--- The corner dispel icon must only appear on auras the PLAYER can dispel. The region
--- options know nothing about dispellability and per-aura regions do not exist, so the
--- boundary has to be a group boundary: every icon-bearing group is split into its
--- RAID_PLAYER_DISPELLABLE part (keeps the key and the icon) and a negated twin without
--- the icon right behind it. That token means "the player can dispel this" — plain
--- DISPELLABLE only means "has a dispel type" and is NOT sufficient here. The engine
--- evaluates the token per aura and unit, so the split follows spec changes on its own.
--- Groups whose filter already carries the token (the grid and party ones) are left alone
+-- The corner dispel icon must only appear on auras this character can dispel —
+-- a group boundary: icon-bearing groups split into the dispellable half (keeps
+-- key + icon, gwDispelRole "include") and a twin for the rest ("exclude").
+-- Candidate based, so exact even for secret auras. Preset roles are left alone.
 local DISPEL_TWIN_FIELDS = {"size", "maxFrameCount", "isDebuff", "hideDuration", "iconInset", "bigFont", "showPandemic", "candidateFilters", "sortMethod", "sortDirection", "forceNewLine"}
 local function SplitDispelIconGroups(groups)
     local index = 1
     while groups[index] do
         local group = groups[index]
-        if group.showDispelIcon and not group.filter:find("RAID_PLAYER_DISPELLABLE", 1, true) then
-            local twin = { key = group.key .. "NoDispel", gwBaseKey = group.key, filter = group.filter .. "|!RAID_PLAYER_DISPELLABLE" }
+        if group.showDispelIcon and not group.gwDispelRole then
+            local twin = { key = group.key .. "NoDispel", gwBaseKey = group.key, filter = group.filter, gwDispelRole = "exclude" }
             for _, field in ipairs(DISPEL_TWIN_FIELDS) do
                 twin[field] = group[field]
             end
-            group.filter = group.filter .. "|RAID_PLAYER_DISPELLABLE"
+            group.gwDispelRole = "include"
             tinsert(groups, index + 1, twin)
             index = index + 1
         end
@@ -907,12 +935,14 @@ function GW.CreateUnitAuraContainer(config)
     container.gwConfig = config
     container.gwSkipAlphaRecursion = true -- engine child buttons reject tainted SetAlpha
     container.GwUpdateLayout = ApplyLayout
-    container.GwSetAdvancedBranches = SetAdvancedBranches
 
     SplitDispelIconGroups(config.groups)
 
     for index, group in ipairs(config.groups) do
         group.layoutIndex = group.layoutIndex or index
+        -- configured candidates = compose base, the appliers rebuild the effective table
+        group.gwBaseCandidates = group.candidateFilters
+        group.candidateFilters = GW.ComposeAuraGroupCandidates(group, nil, nil)
         container:AddAuraGroup(group.key, group.filter, {
             initializeFrame = function(button) BuildAuraButton(button, container, group) end,
         })

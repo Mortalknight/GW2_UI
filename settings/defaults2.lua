@@ -45,6 +45,15 @@ local GridAuraFilter = {
     isAuraExternalDefensivePlayer = false,
     isAuraImportant = false,
     isAuraImportantPlayer = false,
+    -- aura property candidates (see ADVANCED_CANDIDATE_FIELDS in the factory)
+    isAuraStealable = false,
+    isAuraBoss = false,
+    isAuraBossOrRole = false,
+    isAuraPriority = false,
+    isAuraRole = false,
+    isAuraCanApply = false,
+    isAuraNameplateAll = false,
+    isAuraNameplatePersonal = false,
     isAuraCrowdControl = false,
     isAuraCrowdControlPlayer = false,
     isAuraBigDefensive = false,
@@ -1725,30 +1734,13 @@ GW.globalDefault = {
     }
 }
 
--- aura filter defaults:
-GW.globalDefault.profile.RAID_PARTY_BUFF_FILTER.isAuraBigDefensive = true
-GW.globalDefault.profile.RAID_PARTY_BUFF_FILTER.isAuraRaidInCombatPlayer = true
-GW.globalDefault.profile.RAID_PARTY_DEBUFF_FILTER.isAuraImportant = true
-GW.globalDefault.profile.RAID_PARTY_DEBUFF_FILTER.isAuraImportantPlayer = true
-GW.globalDefault.profile.RAID_PARTY_DEBUFF_FILTER.isAuraRaidPlayerDispellable = true
-
-GW.globalDefault.profile.RAID_BUFF_FILTER.isAuraBigDefensive = true
-GW.globalDefault.profile.RAID_BUFF_FILTER.isAuraRaidInCombatPlayer = true
-GW.globalDefault.profile.RAID_DEBUFF_FILTER.isAuraImportant = true
-GW.globalDefault.profile.RAID_DEBUFF_FILTER.isAuraImportantPlayer = true
-GW.globalDefault.profile.RAID_DEBUFF_FILTER.isAuraRaidPlayerDispellable = true
-
-GW.globalDefault.profile.RAID_25_BUFF_FILTER.isAuraBigDefensive = true
-GW.globalDefault.profile.RAID_25_BUFF_FILTER.isAuraRaidInCombatPlayer = true
-GW.globalDefault.profile.RAID_25_DEBUFF_FILTER.isAuraImportant = true
-GW.globalDefault.profile.RAID_25_DEBUFF_FILTER.isAuraImportantPlayer = true
-GW.globalDefault.profile.RAID_25_DEBUFF_FILTER.isAuraRaidPlayerDispellable = true
-
-GW.globalDefault.profile.RAID_10_BUFF_FILTER.isAuraBigDefensive = true
-GW.globalDefault.profile.RAID_10_BUFF_FILTER.isAuraRaidInCombatPlayer = true
-GW.globalDefault.profile.RAID_10_DEBUFF_FILTER.isAuraImportant = true
-GW.globalDefault.profile.RAID_10_DEBUFF_FILTER.isAuraImportantPlayer = true
-GW.globalDefault.profile.RAID_10_DEBUFF_FILTER.isAuraRaidPlayerDispellable = true
+-- grid aura filter defaults: buffs = own raid HoTs, debuffs = important ones
+-- (dispellable debuffs always render through their own grid group)
+for _, gridProfile in next, { "RAID_PARTY", "RAID", "RAID_25", "RAID_10" } do
+    GW.globalDefault.profile[gridProfile .. "_BUFF_FILTER"].isAuraPlayer = true
+    GW.globalDefault.profile[gridProfile .. "_BUFF_FILTER"].isAuraRaidInCombat = true
+    GW.globalDefault.profile[gridProfile .. "_DEBUFF_FILTER"].isAuraImportant = true
+end
 
 -- game default:
 if GW.Retail or GW.Mists then

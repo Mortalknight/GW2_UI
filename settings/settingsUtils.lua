@@ -397,6 +397,11 @@ function GwSettingsPanelMixin:AddOptionDropdown(name, desc, values)
     opt.optionsList = values.optionsList
     opt.optionsNames = values.optionNames
     opt.hasCheckbox = values.checkbox
+    -- checkbox entries cycle: off -> required (check) -> excluded (red cross, stored as 1)
+    opt.triState = values.triState
+    if opt.triState then
+        opt.desc = (opt.desc ~= "" and (opt.desc .. "\n\n") or "") .. L["Clicking an entry cycles through three states: off (ignored) - check (only auras with this property are shown) - red cross (auras with this property are hidden)."]
+    end
     opt.tooltipType = values.tooltipType
     opt.hasSound = values.hasSound
     opt.noNewLine = values.noNewLine
@@ -1532,7 +1537,14 @@ local function SettingsInitOptionWidget(of, v, panel)
                     end
                     local function SetSelected(data)
                         if v.hasCheckbox then
-                            local isSelected = not of.get(data.option)
+                            local isSelected
+                            if v.triState then
+                                -- off -> required (true) -> excluded (1) -> off
+                                local current = of.get(data.option)
+                                isSelected = (current == true and 1) or (current ~= 1 and true) or false
+                            else
+                                isSelected = not of.get(data.option)
+                            end
                             of.set(isSelected, data.option)
 
                             if v.callback then
@@ -1558,6 +1570,17 @@ local function SettingsInitOptionWidget(of, v, panel)
                     entryButton:AddInitializer(function(button, description, menu)
                         if v.hasCheckbox then
                             GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, IsSelected,  {optionName = v.optionName, option = option})
+                            -- tri-state: the "excluded" state (1) shows a red cross instead
+                            -- of the check; the menu re-runs this initializer on every click
+                            if v.triState and button.leftTexture2 then
+                                if of.get(option) == 1 then
+                                    button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png")
+                                    button.leftTexture2:SetVertexColor(1, 0.25, 0.25)
+                                else
+                                    button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
+                                    button.leftTexture2:SetVertexColor(1, 1, 1)
+                                end
+                            end
                         else
                             GW.BlizzardDropdownRadioButtonInitializer(button, description, menu, IsSelected,  {optionName = v.optionName, option = option})
                         end

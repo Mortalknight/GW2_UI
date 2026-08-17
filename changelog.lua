@@ -14,6 +14,9 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("11.1.3", {
+    {GW.Enum.ChangelogType.change, [=[Advanced aura filters (Retail): rebuilt from the ground up so an aura can never appear twice again - even with the secret aura values of patch 12.1. Every selected filter now narrows the display, and each entry cycles through three states: off, required (check) or excluded (red cross)]=]},
+    {GW.Enum.ChangelogType.feature, [=[New aura property filters (Retail): Dispellable, Stealable, Boss Aura, Priority Debuff and Role Aura - these stay accurate even while aura data is secret]=]},
+    {GW.Enum.ChangelogType.change, [=[Aura display (Retail): target, focus and pet frames show one buff and one debuff block with their own size sliders; the "own auras bigger" split had to go - it was the source of the duplicate icons. Dispel type icons still appear only on debuffs you can dispel and now follow talent changes instantly]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix wrong HP values on retail clients]=]},
     {GW.Enum.ChangelogType.bug, [=[Setting improvements]=]},
     {GW.Enum.ChangelogType.bug, [=[Grids hides correctly]=]},

@@ -262,6 +262,25 @@ function GwPlayerPetFrameMixin:ToggleCombatFeedback()
     end
 end
 
+-- Aura part of UpdateSettings, split out for onSettingsRefresh — combat safe,
+-- unlike the full settings pass (SetScale on the protected pet frame)
+function GwPlayerPetFrameMixin:ApplyAuraSettings()
+    -- filters/sizes/sort/ignore list via the shared factory helper; the pet bar
+    -- uses fixed 20/24 icon sizes (no per-frame size settings)
+    GW.ApplyAuraContainerSettings(self.aurasContainer, self.debuffsContainer, {
+        smallSize = 20,
+        bigSize = 24,
+        buffFilter = GW.settings.PET_Buff_Filter,
+        debuffFilter = GW.settings.PET_Debuff_Filter,
+        buffAdvanced = GW.settings.PET_Buff_Filter_advanced,
+        debuffAdvanced = GW.settings.PET_Debuff_Filter_advanced,
+        sort = GW.settings.PET_AURA_SORT,
+        excludeSpellIDs = GW.settings.PET_IGNORED_AURAS,
+    })
+    -- re-anchor the debuff container: with buffs disabled it takes the buffs' place
+    self:ToggleAuraPosition()
+end
+
 function GwPlayerPetFrameMixin:UpdateSettings()
     self.showAbsorbBar = GW.settings.PET_SHOW_ABSORB_BAR
     self.shortendHealthValues = GW.settings.PET_UNIT_HEALTH_SHORT_VALUES
@@ -269,20 +288,7 @@ function GwPlayerPetFrameMixin:UpdateSettings()
     self.showHealthPrecentage = GW.settings.PET_HEALTH_VALUE_PERCENT
 
     if GW.Retail and self.aurasContainer then
-        -- filters/sizes/sort/ignore list via the shared factory helper; the pet bar
-        -- uses fixed 20/24 icon sizes (no per-frame size settings)
-        GW.ApplyAuraContainerSettings(self.aurasContainer, self.debuffsContainer, {
-            smallSize = 20,
-            bigSize = 24,
-            buffFilter = GW.settings.PET_Buff_Filter,
-            debuffFilter = GW.settings.PET_Debuff_Filter,
-            buffAdvanced = GW.settings.PET_Buff_Filter_advanced,
-            debuffAdvanced = GW.settings.PET_Debuff_Filter_advanced,
-            sort = GW.settings.PET_AURA_SORT,
-            excludeSpellIDs = GW.settings.PET_IGNORED_AURAS,
-        })
-        -- re-anchor the debuff container: with buffs disabled it takes the buffs' place
-        self:ToggleAuraPosition()
+        self:ApplyAuraSettings()
     else
         self.displayBuffs = GW.settings.PET_Buff_Filter == "none" and 0 or 32
         self.auras.buffFilter = GW.settings.PET_Buff_Filter
@@ -383,12 +389,12 @@ local function LoadPetFrame(lm)
             maximumLineSize = playerPetFrame.auras:GetWidth(),
             elementSpacing = 3,
             lineSpacing = 4,
+            -- one refresh hook covers both containers; must stay combat safe (never
+            -- the full UpdateSettings — its SetScale is blocked in combat)
+            onSettingsRefresh = function() playerPetFrame:ApplyAuraSettings() end,
             groups = {
-                -- own buffs large (replaces the old bigBuff logic "own + short");
-                -- split via the PLAYER filter token — the isFromPlayerOrPlayerPet
-                -- aura data field behaves relative to the UNIT, not the player
-                { key = "buffsOwn", filter = "HELPFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 32, showPandemic = true },
-                { key = "buffs", filter = "HELPFUL|!PLAYER", size = 20, maxFrameCount = 32 },
+                -- ONE group per aura type — any second group duplicates secret auras
+                { key = "buffs", filter = "HELPFUL", size = 20, maxFrameCount = 32, showPandemic = true },
             },
         })
         playerPetFrame.aurasContainer:SetPoint("TOPRIGHT", playerPetFrame.auras, "TOPRIGHT")
@@ -412,8 +418,7 @@ local function LoadPetFrame(lm)
             elementSpacing = 3,
             lineSpacing = 4,
             groups = {
-                { key = "debuffsOwn", filter = "HARMFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 40, isDebuff = true, showPandemic = true, showDispelIcon = true },
-                { key = "debuffs", filter = "HARMFUL|!PLAYER", size = 20, maxFrameCount = 40, isDebuff = true, showDispelIcon = true },
+                { key = "debuffs", filter = "HARMFUL", size = 24, maxFrameCount = 40, isDebuff = true, showPandemic = true, showDispelIcon = true },
             },
         })
     else

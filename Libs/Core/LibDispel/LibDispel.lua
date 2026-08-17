@@ -1,4 +1,4 @@
-local MAJOR, MINOR = "LibDispel-1.0-GW", 4
+local MAJOR, MINOR = "LibDispel-1.0-GW", 6
 assert(LibStub, MAJOR.." requires LibStub")
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
@@ -94,10 +94,14 @@ do
             DispelList.Magic = CheckPetSpells()
         elseif myClass == "DRUID" then
             local cure = CheckSpell(88423) -- Nature's Cure
-            local corruption = CheckSpell(2782) -- Remove Corruption
+            local corruption = CheckSpell(2782) -- Remove Corruption (retail), Remove Curse (classic flavors)
             DispelList.Magic = cure
-            DispelList.Poison = cure or (not Classic and corruption) or CheckSpell(2893) or CheckSpell(8946) -- Abolish Poison / Cure Poison
+            DispelList.Poison = cure or (not vanilla and corruption) or CheckSpell(2893) or CheckSpell(8946) -- Abolish Poison / Cure Poison
             DispelList.Curse = cure or corruption
+        elseif myClass == "HUNTER" then
+            local salve = Retail and GW2_ADDON.IsSpellKnown(459517) -- Emergency Salve
+            DispelList.Poison = salve
+            DispelList.Disease = salve
         elseif myClass == "MAGE" then
             local greater = CheckSpell(412113)
             DispelList.Curse = greater or CheckSpell(475) -- Remove Curse
@@ -122,9 +126,9 @@ do
         elseif myClass == "SHAMAN" then
             local purify = CheckSpell(77130) -- Purify Spirit
             local cleanse = purify or CheckSpell(51886) -- Cleanse Spirit (Retail/Mists)
-            local toxins = (Retail and CheckSpell(383013)) or (Classic and CheckSpell(526)) -- Poison Cleansing Totem (Retail), Cure Poison (Classic / TBC)
-            local cureDisease = Classic and CheckSpell(2870) -- Cure Disease
-            local diseaseTotem = Classic and CheckSpell(8170) -- Disease Cleansing Totem
+            local toxins = (Retail and CheckSpell(383013)) or (vanilla and CheckSpell(526)) -- Poison Cleansing Totem (Retail), Cure Poison (Classic / TBC)
+            local cureDisease = vanilla and CheckSpell(2870) -- Cure Disease
+            local diseaseTotem = vanilla and CheckSpell(8170) -- Disease Cleansing Totem
 
             DispelList.Magic = purify
             DispelList.Curse = cleanse
@@ -155,11 +159,31 @@ do
         lib.frame:UnregisterAllEvents()
     end
 
+    -- fire only when the list content really changed
+    local DISPEL_KEYS = {"Magic", "Curse", "Disease", "Poison", "Bleed"}
+    local previous = {}
+    local function UpdateDispelsAndNotify(owner, event, arg1)
+        UpdateDispels(owner, event, arg1)
+
+        local changed = false
+        for _, key in ipairs(DISPEL_KEYS) do
+            local value = not not DispelList[key]
+            if previous[key] ~= value then
+                previous[key] = value
+                changed = true
+            end
+        end
+        if changed then
+            EventRegistry:TriggerEvent("GW2_UI.DispelTypesChanged", DispelList)
+        end
+    end
+
     local frame = lib.frame
-    frame:SetScript("OnEvent", UpdateDispels)
+    frame:SetScript("OnEvent", UpdateDispelsAndNotify)
     frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
     frame:RegisterEvent("PLAYER_LOGIN")
     frame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+    frame:RegisterEvent("SPELLS_CHANGED")
 
     if not Classic then
         frame:RegisterEvent("PLAYER_TALENT_UPDATE")

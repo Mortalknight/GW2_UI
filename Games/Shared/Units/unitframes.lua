@@ -875,6 +875,58 @@ function GW.UpdateFilters(frame)
     end
 end
 
+-- Aura part of ToggleSettings, split out for onSettingsRefresh — combat safe,
+-- unlike the full settings pass (protected unitframe)
+function GwUnitFrameMixin:ApplyAuraSettings(unit)
+    unit = unit or self.gwUnit:lower()
+    local cfg = self.aurasContainer.gwConfig
+    local debuffCfg = self.debuffsContainer.gwConfig
+    local buffFilter = GW.settings[unit .. "_Buff_Filter"]
+
+    -- growth direction: inverted frames grow to the left, "auras on top" grows upward
+    -- (the auras frame extends DOWNWARD from its anchor, so when growing up the
+    -- container's bottom sits on the auras frame's top edge — like the old engine)
+    local growLeft = self.frameInvert and true or false
+    local growUp = self.auraPositionTop and true or false
+    local side = growLeft and "RIGHT" or "LEFT"
+    local anchorPoint = (growUp and "BOTTOM" or "TOP") .. side
+
+    for _, containerCfg in next, { cfg, debuffCfg } do
+        containerCfg.growLeft = growLeft
+        containerCfg.growUp = growUp
+        containerCfg.anchorPoint = anchorPoint
+        containerCfg.maximumLineSize = self.healthContainer:GetWidth() + 4
+    end
+
+    self.aurasContainer:ClearAllPoints()
+    self.aurasContainer:SetPoint(anchorPoint, self.auras, "TOP" .. side)
+
+    -- the debuff block hangs below the buff container (above it when growing up);
+    -- the buff container sizes itself to its content, so the debuff block follows
+    -- the buff line count automatically. With buffs disabled it takes their place.
+    self.debuffsContainer:ClearAllPoints()
+    if buffFilter == "none" then
+        self.debuffsContainer:SetPoint(anchorPoint, self.auras, "TOP" .. side)
+    elseif growUp then
+        self.debuffsContainer:SetPoint("BOTTOM" .. side, self.aurasContainer, "TOP" .. side, 0, 4)
+    else
+        self.debuffsContainer:SetPoint("TOP" .. side, self.aurasContainer, "BOTTOM" .. side, 0, -4)
+    end
+
+    -- filters/sizes/sort/ignore list (triggers the layout — growth fields above
+    -- have to be in place already)
+    GW.ApplyAuraContainerSettings(self.aurasContainer, self.debuffsContainer, {
+        smallSize = GW.settings[unit .. "AuraSmallSize"],
+        bigSize = GW.settings[unit .. "AuraBigSize"],
+        buffFilter = buffFilter,
+        debuffFilter = GW.settings[unit .. "_Debuff_Filter"],
+        buffAdvanced = GW.settings[unit .. "_Buff_Filter_advanced"],
+        debuffAdvanced = GW.settings[unit .. "_Debuff_Filter_advanced"],
+        sort = GW.settings[unit .. "_AURA_SORT"],
+        excludeSpellIDs = GW.settings[unit .. "_IGNORED_AURAS"],
+    })
+end
+
 function GwUnitFrameMixin:ToggleSettings()
     local unit = self.gwUnit:lower()
 
@@ -996,55 +1048,7 @@ function GwUnitFrameMixin:ToggleSettings()
     self.auras.maxWidth = self.healthContainer:GetWidth() + 4
 
     if GW.Retail and self.aurasContainer then
-        local cfg = self.aurasContainer.gwConfig
-        local debuffCfg = self.debuffsContainer.gwConfig
-        local buffFilter = GW.settings[unit .. "_Buff_Filter"]
-
-        -- growth direction: inverted frames grow to the left, "auras on top" grows upward
-        -- (the auras frame extends DOWNWARD from its anchor, so when growing up the
-        -- container's bottom sits on the auras frame's top edge — like the old engine)
-        local growLeft = self.frameInvert and true or false
-        local growUp = self.auraPositionTop and true or false
-        local side = growLeft and "RIGHT" or "LEFT"
-        local anchorPoint = (growUp and "BOTTOM" or "TOP") .. side
-
-        for _, containerCfg in next, { cfg, debuffCfg } do
-            containerCfg.growLeft = growLeft
-            containerCfg.growUp = growUp
-            containerCfg.anchorPoint = anchorPoint
-            containerCfg.maximumLineSize = self.healthContainer:GetWidth() + 4
-        end
-
-        self.aurasContainer:ClearAllPoints()
-        self.aurasContainer:SetPoint(anchorPoint, self.auras, "TOP" .. side)
-
-        -- the debuff block hangs below the buff container (above it when growing up);
-        -- the buff container sizes itself to its content, so the debuff block follows
-        -- the buff line count automatically. With buffs disabled it takes their place.
-        self.debuffsContainer:ClearAllPoints()
-        if buffFilter == "none" then
-            self.debuffsContainer:SetPoint(anchorPoint, self.auras, "TOP" .. side)
-        elseif growUp then
-            self.debuffsContainer:SetPoint("BOTTOM" .. side, self.aurasContainer, "TOP" .. side, 0, 4)
-        else
-            self.debuffsContainer:SetPoint("TOP" .. side, self.aurasContainer, "BOTTOM" .. side, 0, -4)
-        end
-
-        -- filters/sizes/sort/ignore list (triggers the layout — growth fields above
-        -- have to be in place already)
-        GW.ApplyAuraContainerSettings(self.aurasContainer, self.debuffsContainer, {
-            smallSize = GW.settings[unit .. "AuraSmallSize"],
-            bigSize = GW.settings[unit .. "AuraBigSize"],
-            buffFilter = buffFilter,
-            debuffFilter = GW.settings[unit .. "_Debuff_Filter"],
-            buffAdvanced = GW.settings[unit .. "_Buff_Filter_advanced"],
-            debuffAdvanced = GW.settings[unit .. "_Debuff_Filter_advanced"],
-            sort = GW.settings[unit .. "_AURA_SORT"],
-            excludeSpellIDs = GW.settings[unit .. "_IGNORED_AURAS"],
-            showStealable = true,
-            showPandemic = true,
-            showDispelIcon = true,
-        })
+        self:ApplyAuraSettings(unit)
     end
 
     self:OnEvent("FORCE_UPDATE")
@@ -1113,11 +1117,11 @@ local function LoadUnitFrame(unit, frameInvert)
             refreshEvents = refreshEvents,
             elementSpacing = 3,
             lineSpacing = 4,
+            -- one refresh hook covers both containers; must stay combat safe
+            onSettingsRefresh = function() unitframe:ApplyAuraSettings() end,
             groups = {
-                -- "own" split via the PLAYER filter token (cast by the player/their pet) —
-                -- the isFromPlayerOrPlayerPet aura data field behaves relative to the UNIT
-                { key = "buffsOwn", filter = "HELPFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 32, showStealable = true, showPandemic = true },
-                { key = "buffs", filter = "HELPFUL|!PLAYER", size = 20, maxFrameCount = 32, showStealable = true },
+                -- ONE group per aura type — any second group duplicates secret auras
+                { key = "buffs", filter = "HELPFUL", size = 20, maxFrameCount = 32, showStealable = true, showPandemic = true },
             },
         })
         -- Debuffs live in their OWN container anchored below the buff container (which
@@ -1136,8 +1140,7 @@ local function LoadUnitFrame(unit, frameInvert)
             elementSpacing = 3,
             lineSpacing = 4,
             groups = {
-                { key = "debuffsOwn", filter = "HARMFUL|PLAYER", size = 24, iconInset = 2, bigFont = true, maxFrameCount = 40, isDebuff = true, showPandemic = true, showDispelIcon = true },
-                { key = "debuffs", filter = "HARMFUL|!PLAYER", size = 20, maxFrameCount = 40, isDebuff = true, showDispelIcon = true },
+                { key = "debuffs", filter = "HARMFUL", size = 24, maxFrameCount = 40, isDebuff = true, showPandemic = true, showDispelIcon = true },
             },
         })
     else
