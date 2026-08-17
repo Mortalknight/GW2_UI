@@ -389,7 +389,7 @@ local function UpdateIcon(self, updateSize)
     end
 end
 
-function GwAuraTmpl_OnLoad(self)
+function GwAuraSecureTmpl_OnLoad(self)
     if self.gwInit then
         return
     end
@@ -495,8 +495,8 @@ local function UpdateAuraHeader(header)
 
     header:SetAttribute("config-width", width)
     header:SetAttribute("config-height", height)
-    header:SetAttribute("template", "GwAuraTmpl")
-    header:SetAttribute("weaponTemplate", header.filter == "HELPFUL" and "GwAuraTmpl" or nil)
+    header:SetAttribute("template", "GwAuraSecureTmpl")
+    header:SetAttribute("weaponTemplate", header.filter == "HELPFUL" and "GwAuraSecureTmpl" or nil)
     -- shared sort presets (same values as the Retail container sorting) mapped onto
     -- the SecureAuraHeader attributes
     local sort = SECURE_SORT_PRESETS[db.Sort] or SECURE_SORT_PRESETS.DEFAULT
