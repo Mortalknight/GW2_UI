@@ -955,6 +955,96 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
     end
 end
 
+-- ISOLATED TEST. Widget setup reads secret text metrics (GetStringHeight and friends) and does
+-- arithmetic on them, which throws under our taint. The mixins involved are shared across the
+-- whole widget system, so the only place we may touch is this tooltip scoped entry point.
+--
+-- An earlier attempt reverted alongside a GameTooltip_InsertFrame rewrite that broke world quest
+-- tooltips, and the two were never told apart. This adds back only the wrapper. If the completion
+-- percentage survives, the wrapper was innocent; if it disappears, this is the culprit and goes.
+-- Blizzard_SharedXML/SharedTooltipTemplates.lua's GameTooltip_InsertFrame, with exactly one line
+-- moved: frame:GetWidth() is read before the frame is re-anchored instead of after.
+--
+-- Anchoring the frame into a tooltip line is what turns its measurements secret. Proof from a
+-- single failing call: neededHeight came back as a plain 80 from frame:GetHeight() before the
+-- re-anchor, while frameWidth from the same frame after it was secret. Reading the width early
+-- gets a real number, so the minimum width bump below happens exactly as Blizzard intended.
+--
+-- Nothing else changes. The comparison stays unguarded on purpose: a container that was already
+-- parented to the tooltip (the widget container never leaves it) still reports a secret width and
+-- still throws here, precisely as it does with Blizzard's own version - and that path is known to
+-- render fine. An earlier attempt guarded the comparison and skipped the bump instead, which left
+-- the tooltip too narrow to show its inserted frame and quietly broke world quest tooltips.
+local function GwGameTooltip_InsertFrame(tooltipFrame, frame, verticalPadding)
+    verticalPadding = verticalPadding or 0
+
+    local textSpacing = tooltipFrame:GetCustomLineSpacing() or 2
+    local textHeight = Round(tooltipFrame:GetLeftLine(2):GetLineHeight())
+    local neededHeight = Round(frame:GetHeight() + verticalPadding)
+    local frameWidth = frame:GetWidth() -- moved up: still measurable while unanchored
+    local numLinesNeeded = math.ceil(neededHeight / (textHeight + textSpacing))
+    local currentLine = tooltipFrame:NumLines()
+
+    GameTooltip_AddBlankLinesToTooltip(tooltipFrame, numLinesNeeded)
+    frame:SetParent(tooltipFrame)
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", tooltipFrame:GetLeftLine(currentLine + 1), "TOPLEFT", 0, -verticalPadding)
+
+    if not tooltipFrame.insertedFrames then
+        tooltipFrame.insertedFrames = {}
+    end
+
+    if tooltipFrame:GetMinimumWidth() < frameWidth then
+        tooltipFrame:SetMinimumWidth(frameWidth)
+    end
+
+    frame:Show()
+    tinsert(tooltipFrame.insertedFrames, frame)
+
+    -- return space taken so inserted frame can resize if needed
+    return (numLinesNeeded * textHeight) + (numLinesNeeded - 1) * textSpacing
+end
+
+local function GuardTooltipWidgetSets()
+    local BlizzardAddWidgetSet = GameTooltip_AddWidgetSet
+    if BlizzardAddWidgetSet then
+        function GameTooltip_AddWidgetSet(self, widgetSetID, verticalPadding)
+            local ok, heightUsed = pcall(BlizzardAddWidgetSet, self, widgetSetID, verticalPadding)
+            if ok then return heightUsed end
+        end
+    end
+
+    local BlizzardClearWidgetSet = GameTooltip_ClearWidgetSet
+    if BlizzardClearWidgetSet then
+        function GameTooltip_ClearWidgetSet(self)
+            pcall(BlizzardClearWidgetSet, self)
+        end
+    end
+end
+
+-- The suppressed pin container lays out cloned map pins (FrameCloneManager), whose anchoring is
+-- secret, so ResizeLayoutMixin:Layout throws while walking them. Its own mixin is applied after
+-- ResizeLayoutMixin, so defining Layout here overrides it for this one frame type and nothing
+-- else - never guard ResizeLayoutMixin itself, that drags our taint into every layout frame.
+--
+-- The cloned pins cannot be measured either way, so that list stays invisible. What containment
+-- buys is the rest of the tooltip: AddCustomTooltipData adds a header before each section and
+-- loops over several of them, so an escaping error leaves a bare header with nothing under it and
+-- drops both the remaining sections and the trailing instruction line.
+local function GuardSuppressedPinTooltipLayout()
+    if not SuppressedPinTooltipContainerMixin or SuppressedPinTooltipContainerMixin.Layout then return end
+    if not ResizeLayoutMixin or not ResizeLayoutMixin.Layout then return end
+
+    local BlizzardLayout = ResizeLayoutMixin.Layout
+    SuppressedPinTooltipContainerMixin.Layout = function(self)
+        -- probe first so a container that is itself secret keeps its previous size instead of
+        -- being reset to 1x1 by the SetSize at the top of Blizzard's layout
+        if GW.IsSecretValue(self:GetNumPoints()) then return end
+
+        pcall(BlizzardLayout, self)
+    end
+end
+
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
     local fontOutline = ""
@@ -1266,6 +1356,27 @@ local function LoadTooltips()
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 
     if GW.Retail then
+        GuardTooltipWidgetSets()
+
+        if GameTooltip_InsertFrame then
+            GameTooltip_InsertFrame = GwGameTooltip_InsertFrame
+        end
+
+        -- Blizzard_SharedMapDataProviders is load on demand; the container is not built until a
+        -- pin is hovered, which is always later than the addon load, so this is early enough.
+        if C_AddOns.IsAddOnLoaded("Blizzard_SharedMapDataProviders") then
+            GuardSuppressedPinTooltipLayout()
+        else
+            local mapProviderWaitFrame = CreateFrame("Frame")
+            mapProviderWaitFrame:RegisterEvent("ADDON_LOADED")
+            mapProviderWaitFrame:SetScript("OnEvent", function(_, _, addonName)
+                if addonName == "Blizzard_SharedMapDataProviders" then
+                    GuardSuppressedPinTooltipLayout()
+                    mapProviderWaitFrame:UnregisterAllEvents()
+                end
+            end)
+        end
+
         GameTooltipDefaultContainer:GwKillEditMode()
 
         if not GW.ShouldBlockIncompatibleAddon("LfgInfo") then
