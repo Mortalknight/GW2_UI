@@ -367,14 +367,18 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
             end
         elseif self.showItemLevel == "PVP_LEVEL" then
             local honorLevel = GW.Retail and UnitHonorLevel(unit) or 0
-            local prestigeLevel = (honorLevel > 199 and 4) or (honorLevel > 99 and 3) or
-                                (honorLevel > 49 and 2) or (honorLevel > 9 and 1) or 0
 
+            -- UnitHonorLevel is secret while unit identity is restricted, and comparing a
+            -- secret number errors out. Skip the prestige border/text instead of blowing up.
+            if GW.NotSecretValue(honorLevel) then
+                local prestigeLevel = (honorLevel > 199 and 4) or (honorLevel > 99 and 3) or
+                                    (honorLevel > 49 and 2) or (honorLevel > 9 and 1) or 0
 
-            if prestigeLevel > 0 and TARGET_FRAME_ART["prestige" .. prestigeLevel] then
-                border = "prestige" .. prestigeLevel
+                if prestigeLevel > 0 and TARGET_FRAME_ART["prestige" .. prestigeLevel] then
+                    border = "prestige" .. prestigeLevel
+                end
+                txt = honorLevel
             end
-            txt = honorLevel
         end
     end
 
