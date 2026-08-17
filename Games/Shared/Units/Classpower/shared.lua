@@ -18,6 +18,9 @@ local function HandleUnitAuraEvent(unit, ...)
     local debuffsChanged = false
     local dataTable = unit == "pet" and petAuras or unit == "player" and playerAuras or nil
     if not dataTable then return end
+    -- every lookup below is one of the RequiresUnitAuraAccess APIs, so while the restriction is
+    -- in effect they cannot return data either way - this trades an error for a skipped refresh
+    if GW.AreAurasSecret() then return end
 
     if isFullUpdate then
         table.wipe(dataTable.buffs)
