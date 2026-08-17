@@ -420,6 +420,7 @@
                 </Frames>
             </Frame>
             <Button parentKey="tieredEntranceTraitsFrame" inherits="GwTieredEntranceTraitsContainer" hidden="true"/>
+            <Button parentKey="mawBuffsFrame" inherits="GwTieredEntranceTraitsContainer" hidden="true"/>
             <Button hidden="true" parentKey="turnin" mixin="GwObjectivesAnimationMixin">
                 <size x="90" y="90"></size>
                 <Anchors>

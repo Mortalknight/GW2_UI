@@ -1,6 +1,5 @@
 ---@class GW2
 local GW = select(2, ...)
-
 local LIST_ROW_SPACING = 40
 local LIST_SAFE_WIDTH = 300
 
@@ -18,7 +17,11 @@ function GwTieredEntranceTraitsContainerMixin:OnClick()
     if showList then
         if self.needSet then
             self.needSet = nil
-            self.List:SetSpells(self.spells or {})
+            if self.auras then
+                self.List:SetAuras(self.auras)
+            else
+                self.List:SetSpells(self.spells or {})
+            end
         end
         self:UpdateAlignment()
     end
@@ -28,15 +31,8 @@ function GwTieredEntranceTraitsContainerMixin:OnClick()
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 end
 
-function GwTieredEntranceTraitsContainerMixin:SetSpells(spells)
-    self.spells = spells
-    self.numTraits = spells and #spells or 0
-    self.needSet = true
-    self.List:Hide()
-    self.Arrow:Hide()
-
-    local buttonText = SCENARIO_CHALLENGES_BUTTON
-    self.Text:SetFormattedText(buttonText, self.numTraits)
+local function ApplyButtonText(self, labelFormat)
+    self.Text:SetFormattedText(labelFormat or SCENARIO_CHALLENGES_BUTTON, self.numTraits)
     self.Text:SetTextColor(0.08, 0.07, 0.05, 1)
     self.Text:SetShadowColor(1, 1, 1, 0.35)
     self.Text:SetShadowOffset(1, -1)
@@ -44,6 +40,37 @@ function GwTieredEntranceTraitsContainerMixin:SetSpells(spells)
     local hasTraits = self.numTraits > 0
     self:SetEnabled(hasTraits)
     self:SetAlpha(hasTraits and 1 or 0.55)
+end
+
+function GwTieredEntranceTraitsContainerMixin:SetSpells(spells)
+    self.spells = spells
+    self.auras = nil
+    self.numTraits = spells and #spells or 0
+    self.needSet = true
+    self.List:Hide()
+    self.Arrow:Hide()
+
+    ApplyButtonText(self)
+end
+
+-- aura mode (Maw buff button): same look, rows carry aura instance ids. Keeps an
+-- open list open — the aura set changes live while collecting powers
+function GwTieredEntranceTraitsContainerMixin:SetAuras(auras, labelFormat)
+    local listWasShown = self.List:IsShown()
+    self.spells = nil
+    self.auras = auras
+    self.numTraits = auras and #auras or 0
+    self.needSet = true
+
+    ApplyButtonText(self, labelFormat)
+
+    if listWasShown and self.numTraits > 0 then
+        self.needSet = nil
+        self.List:SetAuras(auras)
+    else
+        self.List:Hide()
+        self.Arrow:Hide()
+    end
 end
 
 function GwTieredEntranceTraitsContainerMixin:UpdateAlignment()
@@ -86,6 +113,27 @@ function GwTieredEntranceTraitsListMixin:CalculateHeight(numTraits)
     return (rows * LIST_ROW_SPACING) + ((rows - 1) * self.paddingY) + self.topPadding + self.bottomPadding
 end
 
+local function ApplyIconMask(frame)
+    if not frame.mask then
+        frame.mask = frame:CreateMaskTexture()
+        frame.mask:SetAllPoints(frame.Icon)
+        frame.mask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        frame.Icon:AddMaskTexture(frame.mask)
+    end
+end
+
+local function AcquireIconFrame(self, i)
+    local frame = self.framePool:Acquire()
+    local col = (i - 1) % self.stride
+    local row = math.floor((i - 1) / self.stride)
+
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", self, "TOPLEFT", 27 + (col * LIST_ROW_SPACING), -self.topPadding - (row * (LIST_ROW_SPACING + self.paddingY)))
+    ApplyIconMask(frame)
+
+    return frame
+end
+
 function GwTieredEntranceTraitsListMixin:SetSpells(spells)
     self.framePool:ReleaseAll()
     self:SetHeight(self:CalculateHeight(#spells))
@@ -93,32 +141,38 @@ function GwTieredEntranceTraitsListMixin:SetSpells(spells)
     for i, spellID in ipairs(spells) do
         local iconTexture = C_Spell.GetSpellTexture(spellID)
         if iconTexture then
-            local frame = self.framePool:Acquire()
-            local col = (i - 1) % self.stride
-            local row = math.floor((i - 1) / self.stride)
-
-            frame:ClearAllPoints()
-            frame:SetPoint("TOPLEFT", self, "TOPLEFT", 27 + (col * LIST_ROW_SPACING), -self.topPadding - (row * (LIST_ROW_SPACING + self.paddingY)))
+            local frame = AcquireIconFrame(self, i)
             frame.Icon:SetTexture(iconTexture)
             frame.spellID = spellID
-
-            if not frame.mask then
-                frame.mask = frame:CreateMaskTexture()
-                frame.mask:SetAllPoints(frame.Icon)
-                frame.mask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-                frame.Icon:AddMaskTexture(frame.mask)
-            end
-
+            frame.auraInstanceID = nil
             frame:Show()
         end
     end
 end
 
+-- icon textures may be secret values — the setter accepts them
+function GwTieredEntranceTraitsListMixin:SetAuras(auras)
+    self.framePool:ReleaseAll()
+    self:SetHeight(self:CalculateHeight(#auras))
+
+    for i, auraData in ipairs(auras) do
+        local frame = AcquireIconFrame(self, i)
+        frame.Icon:SetTexture(auraData.icon)
+        frame.spellID = nil
+        frame.auraInstanceID = auraData.auraInstanceID
+        frame:Show()
+    end
+end
+
 function GwTieredEntranceTraitSpellMixin:OnEnter()
-    if not self.spellID then return end
+    if not (self.spellID or self.auraInstanceID) then return end
 
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetSpellByID(self.spellID)
+    if self.auraInstanceID then
+        GameTooltip:SetUnitBuffByAuraInstanceID("player", self.auraInstanceID, "MAW")
+    else
+        GameTooltip:SetSpellByID(self.spellID)
+    end
     GameTooltip:Show()
 end
 

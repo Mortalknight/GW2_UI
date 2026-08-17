@@ -7,6 +7,43 @@ local UI_WIDGET_TYPE_STATUS_BAR = 2
 local UI_WIDGET_TYPE_DOUBLE_STATUS_BAR = 3
 local UI_WIDGET_TYPE_SCENARIO_CURRENCIES = 11
 
+-- Blizzards scenario tracker calls the global ShouldShowMawBuffs on every layout;
+-- our tracker skin taints that path and the unguarded MAW aura read then throws
+-- while auras are secret. The UI is reused outside Torghast (scenario world
+-- events), so a failed read falls back to slot enumeration — GetAuraSlots hands
+-- out handles without touching aura data and works on secret auras.
+if GW.Retail and ShouldShowMawBuffs then
+    local origShouldShowMawBuffs = ShouldShowMawBuffs
+    function ShouldShowMawBuffs()
+        local ok, result = pcall(origShouldShowMawBuffs)
+        if ok then
+            return result
+        end
+        local slotOk, _, slot = pcall(C_UnitAuras.GetAuraSlots, "player", "MAW", 1)
+        return (slotOk and slot ~= nil) or false
+    end
+
+    -- Maw aura enumeration via slot handles — works while aura data is secret;
+    -- the returned aura tables may carry secret values (fine for setters/tooltips)
+    function GW.CollectMawAuras()
+        local auras = {}
+        pcall(function()
+            local continuation
+            repeat
+                local results = { C_UnitAuras.GetAuraSlots("player", "MAW", 40, continuation) }
+                continuation = results[1]
+                for i = 2, #results do
+                    local auraData = C_UnitAuras.GetAuraDataBySlot("player", results[i])
+                    if auraData then
+                        tinsert(auras, auraData)
+                    end
+                end
+            until not continuation
+        end)
+        return auras
+    end
+end
+
 GwObjectivesScenarioContainerWidgetMixin = {}
 GwObjectivesScenarioContainerMixin = {}
 GwQuesttrackerScenarioBlockMixin = {}
@@ -432,6 +469,27 @@ local function AddScenarioTieredEntranceTraitsObjective(block)
     return true
 end
 
+local function AddScenarioMawBuffsObjective(block)
+    if not (GW.Retail and ShouldShowMawBuffs()) then
+        return false
+    end
+
+    block.numObjectives = block.numObjectives + 1
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, nil, -5)
+
+    block.mawBuffsFrame:SetAuras(GW.CollectMawAuras(), JAILERS_TOWER_BUFFS_BUTTON_TEXT)
+    PrepareScenarioCustomObjectiveBlock(objectiveBlock, block.mawBuffsFrame:GetHeight() + GW.GetObjectivesEntrySpacing())
+
+    block.mawBuffsFrame:SetParent(objectiveBlock)
+    block.mawBuffsFrame:ClearAllPoints()
+    block.mawBuffsFrame:SetPoint("TOPRIGHT", objectiveBlock, "TOPRIGHT", -10, 0)
+    block.mawBuffsFrame:Show()
+
+    block.height = block.height + objectiveBlock:GetHeight()
+
+    return true
+end
+
 local function ScenarioContainerLayoutRunnerOnUpdate(frame)
     frame:SetScript("OnUpdate", nil)
 
@@ -492,6 +550,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         block.currenciesFrame.currency[i]:Hide()
     end
     block.tieredEntranceTraitsFrame:Hide()
+    block.mawBuffsFrame:Hide()
 
     if not isDelveScenario then
         GW.StopNemesisCounter()
@@ -663,6 +722,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         end
     end
     AddScenarioTieredEntranceTraitsObjective(block)
+    AddScenarioMawBuffsObjective(block)
 
     for criteriaIndex = 1, numCriteria do
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
@@ -1055,6 +1115,19 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     if GW.Retail then
         hooksecurefunc(ScenarioObjectiveTracker, "SlideInContents", function(container)
             if container:ShouldShowCriteria() and IsInJailersTower() then
+                self:QueueUpdateLayout()
+            end
+        end)
+
+        -- own Maw buff button: re-layout when the power count changes (appear on
+        -- the first collected buff, live count/list while running)
+        local lastMawCount = -1
+        local mawWatcher = CreateFrame("Frame")
+        mawWatcher:RegisterUnitEvent("UNIT_AURA", "player")
+        mawWatcher:SetScript("OnEvent", function()
+            local count = #GW.CollectMawAuras()
+            if count ~= lastMawCount then
+                lastMawCount = count
                 self:QueueUpdateLayout()
             end
         end)
