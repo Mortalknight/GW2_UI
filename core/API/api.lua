@@ -188,7 +188,11 @@ local function SetAlphaRecursive(frame, alpha)
     -- skip forbidden subtrees (e.g. AuraContainer buttons) — SetAlpha would error
     -- there; their effective alpha follows the accessible parent anyway
     if frame.IsForbidden and frame:IsForbidden() then return end
-    frame:SetAlpha(alpha)
+    -- IsForbidden does not catch all of it on 12.x: an AuraContainer button reports false and
+    -- still rejects the call with "Attempt to access forbidden object from code tainted by an
+    -- AddOn". Give up on the whole subtree when that happens, since walking its children would
+    -- fail the same way, and the alpha we cannot set is only a fade.
+    if not pcall(frame.SetAlpha, frame, alpha) then return end
 
     local numChildren = frame:GetNumChildren()
     if numChildren == 0 then
