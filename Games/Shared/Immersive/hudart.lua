@@ -238,29 +238,74 @@ local ACTION_HUD_AURAS = {
 
     -- PALADIN
     { class = GW.Enum.ClassIndex.Paladin, auraID = 31842, unit = "player", -- Avenging Wrath (Holy)
-        left = TEXTURE_PATH .. "leftshadow_holy.png", right = TEXTURE_PATH .. "rightshadow_holy.png" },
+        left = TEXTURE_PATH .. "leftshadow_holy.png", right = TEXTURE_PATH .. "rightshadow_holy.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 100 },
+            modelID = 2481207, -- cfx_paladin_avengingwrath_statechest.m2 (wings)
+            modelPosition = { x = 0, y = 0, z = 0, rotation = 0 },
+        } },
     { class = GW.Enum.ClassIndex.Paladin, auraID = 31884, unit = "player", -- Avenging Wrath
-        left = TEXTURE_PATH .. "leftshadow_holy.png", right = TEXTURE_PATH .. "rightshadow_holy.png" },
+        left = TEXTURE_PATH .. "leftshadow_holy.png", right = TEXTURE_PATH .. "rightshadow_holy.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 100 },
+            modelID = 2481207, -- cfx_paladin_avengingwrath_statechest.m2 (wings)
+            modelPosition = { x = 0, y = 0, z = 0, rotation = 0 },
+        } },
 
     -- DEATH KNIGHT
     { class = GW.Enum.ClassIndex.Deathknight, auraID = 51271, unit = "player", -- Pillar of Frost
-        left = TEXTURE_PATH .. "leftshadow_frost.png", right = TEXTURE_PATH .. "rightshadow_frost.png" },
+        left = TEXTURE_PATH .. "leftshadow_frost.png", right = TEXTURE_PATH .. "rightshadow_frost.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 50 },
+            modelID = 165900, -- deathknight_frostpresence.m2 (frost aura loop)
+            modelPosition = { x = 0, y = 0, z = 0, rotation = 0 },
+        } },
     { class = GW.Enum.ClassIndex.Deathknight, auraID = 63560, unit = "pet", -- Dark Transformation
-        left = TEXTURE_PATH .. "leftshadow_unholy.png", right = TEXTURE_PATH .. "rightshadow_unholy.png" },
+        left = TEXTURE_PATH .. "leftshadow_unholy.png", right = TEXTURE_PATH .. "rightshadow_unholy.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 50 },
+            modelID = 240852, -- deathknight_unholyblight_state.m2 (unholy miasma)
+            modelPosition = { x = 0, y = 0, z = 0, rotation = 0 },
+        } },
 
     -- DEMON HUNTER
     { class = GW.Enum.ClassIndex.Demonhunter, auraID = 162264, unit = "player", -- Metamorphosis (Havoc)
-        left = TEXTURE_PATH .. "leftshadow_metamorph.png", right = TEXTURE_PATH .. "rightshadow_metamorph.png" },
+        left = TEXTURE_PATH .. "leftshadow_metamorph.png", right = TEXTURE_PATH .. "rightshadow_metamorph.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 50 },
+            modelID = 1308539, -- cfx_demonhunter_metamorphosisdps_impactbase.m2
+            modelPosition = { x = 0, y = 0, z = 0, rotation = 0 },
+        } },
     { class = GW.Enum.ClassIndex.Demonhunter, auraID = 187827, unit = "player", -- Metamorphosis (Vengeance)
-        left = TEXTURE_PATH .. "leftshadow_metamorph.png", right = TEXTURE_PATH .. "rightshadow_metamorph.png" },
+        left = TEXTURE_PATH .. "leftshadow_metamorph.png", right = TEXTURE_PATH .. "rightshadow_metamorph.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 50 },
+            modelID = 1308539, -- cfx_demonhunter_metamorphosisdps_impactbase.m2
+            modelPosition = { x = 0, y = 0, z = 0, rotation = 0 },
+        } },
 
     -- SHAMAN
     { class = GW.Enum.ClassIndex.Shaman, auraID = 215785, unit = "player", -- Hot Hand
-        left = TEXTURE_PATH .. "leftshadow_shaman_fire.png", right = TEXTURE_PATH .. "rightshadow_shaman_fire.png" },
+        left = TEXTURE_PATH .. "leftshadow_shaman_fire.png", right = TEXTURE_PATH .. "rightshadow_shaman_fire.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 50 },
+            modelID = 1568420, -- cfx_shaman_lavaburst_casthands.m2 (burning hands)
+            modelPosition = { x = 0, y = 0, z = 0, rotation = 0 },
+        } },
     { class = GW.Enum.ClassIndex.Shaman, auraID = 77762, unit = "player", -- Lava Surge
-        left = TEXTURE_PATH .. "leftshadow_shaman_fire.png", right = TEXTURE_PATH .. "rightshadow_shaman_fire.png" },
+        left = TEXTURE_PATH .. "leftshadow_shaman_fire.png", right = TEXTURE_PATH .. "rightshadow_shaman_fire.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 50 },
+            modelID = 1113663, -- cfx_shaman_lavaburst_precastbase.m2 (lava swirl)
+            modelPosition = { x = 0, y = 0, z = 0, rotation = 0 },
+        } },
     { class = GW.Enum.ClassIndex.Shaman, auraID = 201846, unit = "player", -- Stormbringer
-        left = TEXTURE_PATH .. "leftshadow_shaman_storm.png", right = TEXTURE_PATH .. "rightshadow_shaman_storm.png" },
+        left = TEXTURE_PATH .. "leftshadow_shaman_storm.png", right = TEXTURE_PATH .. "rightshadow_shaman_storm.png",
+        modelFX = {
+            anchor = { point = "BOTTOM", relPoint = "BOTTOM", target = "Gw2_HudBackgroud", x = 0, y = 50 },
+            modelID = 1380810, -- cfx_shaman_crashingstorm_statebase.m2 (storm state)
+            modelPosition = { x = 0, y = 0, z = 0, rotation = 0 },
+        } },
 
     -- EVOKER
     { class = GW.Enum.ClassIndex.Evoker, auraID = 375087, unit = "player", -- Dragonrage
