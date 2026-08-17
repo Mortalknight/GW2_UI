@@ -587,6 +587,10 @@ local function AddTargetInfo(self, unit)
 end
 
 local function AddMountInfo(self, unit)
+    -- GetBuffDataByIndex errors outright while aura access is restricted, and SetUnitInfo only
+    -- gates this on InCombatLockdown(), which does not cover encounters, keys or PvP matches
+    if GW.AreAurasSecret() then return end
+
     local index = 1
     local auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
     while auraData do
