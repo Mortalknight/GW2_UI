@@ -10,7 +10,7 @@ local function LoadTooltipPanel(sWindow)
     p.header:SetText(L["Tooltips"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    p.sub:SetText(L["Edit tooltip appearance and content."])
 
     p:AddOption(ENABLE, L["Replace the default UI tooltips."], {getterSetter = "TOOLTIPS_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
     p:AddOption(L["Cursor Tooltips"], L["Anchor the tooltips to the cursor."], {getterSetter = "TOOLTIP_MOUSE", dependence = {["TOOLTIPS_ENABLED"] = true}})
@@ -65,6 +65,6 @@ local function LoadTooltipPanel(sWindow)
     p:AddOptionSlider(L["Health Bar Text"], nil, { getterSetter = "TooltipHealthBarTextFontSize", callback = GW.SetTooltipFonts, min = 5, max = 20, decimalNumbers = 0, step = 1, dependence = {["TOOLTIPS_ENABLED"] = true}})
 
 
-    sWindow:AddSettingsPanel(p, L["Tooltips"], L["Edit the modules in the Heads-Up Display for more customization."])
+    sWindow:AddSettingsPanel(p, L["Tooltips"], L["Edit tooltip appearance and content."])
 end
 GW.LoadTooltipPanel = LoadTooltipPanel

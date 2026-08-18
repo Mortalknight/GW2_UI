@@ -114,14 +114,25 @@ local function LoadTargetPanel(sWindow)
     party.header:SetWidth(party.header:GetStringWidth())
     party.sub:SetFont(UNIT_NAME_FONT, 12)
     party.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    party.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    party.sub:SetText(L["Modify the party frame settings."])
     party.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     party.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     -- "Party Frames", not just "Party": the raid style party grid has its own page under
     -- Group Frames and users kept mixing the two up while both were labelled "Party"
     party.breadcrumb:SetText(L["Party Frames"])
     party.preview:SetWidth(party.preview:GetFontString():GetStringWidth() + 5)
-    party.preview:SetScript("OnClick", GW.TogglePartyPreview)
+    party.preview:SetScript("OnClick", function()
+        if InCombatLockdown() then return end
+        if GW.IsPartyFramesPreviewActive and GW.IsPartyFramesPreviewActive() then
+            GW.TogglePartyPreview()
+            GW.DeactivateSettingsPreview("PARTY_FRAMES")
+        else
+            GW.ActivateSettingsPreview("PARTY_FRAMES", function()
+                if GW.IsPartyFramesPreviewActive() then GW.TogglePartyPreview() end
+            end)
+            GW.TogglePartyPreview()
+        end
+    end)
     party.preview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
         GameTooltip:ClearLines()

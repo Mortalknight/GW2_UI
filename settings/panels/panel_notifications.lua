@@ -2,7 +2,6 @@
 local GW = select(2, ...)
 local L = GW.L
 
-
 local function LoadNotificationsPanel(sWindow)
     if GW.Classic or GW.TBC or GW.Wrath then return end
 
@@ -14,7 +13,7 @@ local function LoadNotificationsPanel(sWindow)
     p.header:SetWidth(p.header:GetStringWidth())
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(nil)
+    p.sub:SetText(L["Edit vignette notification settings."])
     p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     p.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     p.breadcrumb:SetText(L["Vignettes"])
@@ -61,6 +60,6 @@ local function LoadNotificationsPanel(sWindow)
     p:AddOption(L["Mage portal"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_MAGE_PORTAL", dependence = {["ALERTFRAME_ENABLED"] = true}, hidden = GW.Retail})
     p:AddOptionDropdown(nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_MAGE_PORTAL"] = true}, hasSound = true, noNewLine = true, hidden = GW.Retail})
 
-    sWindow:AddSettingsPanel(p, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL)
+    sWindow:AddSettingsPanel(p, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, L["Edit vignette notification settings."])
 end
 GW.LoadNotificationsPanel = LoadNotificationsPanel

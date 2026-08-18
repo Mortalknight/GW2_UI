@@ -19,6 +19,11 @@ local MASTER_TOGGLE_SEPARATOR_EXTENT = 5
 local GROUP_GAP_EXTENT = 12 -- empty spacer row between different option groups (proximity grouping)
 local SEARCH_HIGHLIGHT_ALPHA = 0.08
 
+local MENU_MAIN_ROW_HEIGHT = 32
+local MENU_SUB_ROW_HEIGHT = 26
+local MENU_MAIN_FONT_SIZE = 14
+local MENU_SUB_FONT_SIZE = 12
+
 local SEARCH_ACTIVE = false
 
 
@@ -656,41 +661,54 @@ GW.RefreshConditionalOptions = RefreshConditionalOptions
 -- Menu + Panel-Switch
 -- =========================
 local function BuildFlatMenuData()
-    local list, idx = {}, 1
+    local list, idx, mainOrdinal = {}, 1, 0
     for _, item in ipairs(menuItems) do
         item.isExpanded = false
-        tinsert(list, { index = idx, itemData = item, isSubCat = false, parent = nil })
+        mainOrdinal = mainOrdinal + 1
+        -- zebra keyed on the category order, not the flat index: collapsed sub rows
+        -- keep their index, which would otherwise break the alternation visibly
+        tinsert(list, { index = idx, itemData = item, isSubCat = false, parent = nil, zebra = (mainOrdinal % 2 == 1) })
         item.index = idx; idx = idx + 1
 
         if item.hasSubFrames then
             for _, sub in ipairs(item.subFrameData) do
-                tinsert(list, { index = idx, itemData = sub, isSubCat = true, parent = item })
-                sub.index = idx; idx = idx + 1
+                if sub == item.generalSub then
+                    sub.index = item.index -- shown through the category row, no own menu entry
+                else
+                    tinsert(list, { index = idx, itemData = sub, isSubCat = true, parent = item })
+                    sub.index = idx; idx = idx + 1
+                end
             end
         end
     end
     return list
 end
 
-local function SwitchPanel(panelIndex)
+-- expandOverride: explicit expansion state for the category the panel belongs to
+-- (used by the header toggle); without it, showing a panel expands its category
+local function SwitchPanel(panelIndex, expandOverride)
     currentPanelIndex = panelIndex
     for _, main in ipairs(menuItems) do
-        local isSubFrameShown = false
         if main.hasSubFrames then
             main.basePanel:Hide()
+            local belongsHere = false
             for _, sub in ipairs(main.subFrameData) do
                 if sub.index == panelIndex then
                     sub.frame:Show()
                     main.basePanel:Show()
-                    isSubFrameShown = true
+                    belongsHere = true
                 else
                     sub.frame:Hide()
                 end
             end
+            if belongsHere and expandOverride ~= nil then
+                main.isExpanded = expandOverride
+            else
+                main.isExpanded = belongsHere
+            end
         else
             main.basePanel:SetShown(main.index == panelIndex)
         end
-        main.isExpanded = isSubFrameShown
     end
     settingsMenuFrame.ScrollBox:Rebuild(ScrollBoxConstants.RetainScrollPosition)
 end
@@ -698,7 +716,9 @@ end
 local function FindMenuItemByPanelId(panelId)
     local foundItem
     settingsMenuFrame.ScrollBox:GetDataProvider():ForEach(function(ed)
-        if (ed.isSubCat and ed.itemData.frame.panelId == panelId) or (not ed.isSubCat and ed.itemData.basePanel.panelId == panelId) then
+        if (ed.isSubCat and ed.itemData.frame.panelId == panelId)
+            or (not ed.isSubCat and ed.itemData.basePanel.panelId == panelId)
+            or (not ed.isSubCat and ed.itemData.generalSub and ed.itemData.generalSub.frame.panelId == panelId) then
             foundItem = ed
             return true
         end
@@ -721,27 +741,94 @@ end
 -- =========================
 -- API for adding panels
 -- =========================
+-- Stacked panel header: small context line (category) on top, the page name as
+-- accented title below it, description underneath, hairline towards the options.
+-- Runs after the panel code has set its texts/fonts, so it overrides the
+-- per-panel styling in one place. Panels without a breadcrumb skip the context
+-- line; their header text becomes the title.
+local function LayoutPanelHeader(panel)
+    local crumb = panel.breadcrumb:GetText()
+    local hasCrumb = crumb and crumb ~= ""
+
+    local title = hasCrumb and panel.breadcrumb or panel.header
+    local titleY = hasCrumb and -24 or -12
+
+    if hasCrumb then
+        panel.header:SetFont(UNIT_NAME_FONT, 11, "")
+        panel.header:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+        panel.header:SetWidth(500)
+        panel.header:SetHeight(12)
+        panel.header:ClearAllPoints()
+        panel.header:SetPoint("TOPLEFT", 6, -9)
+    end
+
+    title:SetFont(DAMAGE_TEXT_FONT, 24, "")
+    title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    title:SetWidth(500)
+    title:ClearAllPoints()
+    title:SetPoint("TOPLEFT", 15, titleY)
+
+    -- accent bar on the title, mirrors the menu selection accent
+    panel.gwAccentBar = panel.gwAccentBar or panel:CreateTexture(nil, "OVERLAY")
+    panel.gwAccentBar:SetColorTexture(GW.Colors.Accent:GetRGB())
+    panel.gwAccentBar:SetSize(3, 18)
+    panel.gwAccentBar:ClearAllPoints()
+    panel.gwAccentBar:SetPoint("LEFT", title, "LEFT", -9, 0)
+
+    panel.sub:ClearAllPoints()
+    panel.sub:SetHeight(14)
+    panel.sub:SetPoint("TOPLEFT", 6, titleY - 28)
+
+    -- preview button (GwSettingsPanelPreviewTmpl) joins the title row instead of
+    -- floating above the header block
+    if panel.preview then
+        panel.preview:ClearAllPoints()
+        panel.preview:SetPoint("TOPRIGHT", -14, titleY - 2)
+    end
+
+    local lineY = titleY - 46
+    panel.gwHeaderLine = panel.gwHeaderLine or panel:CreateTexture(nil, "OVERLAY")
+    panel.gwHeaderLine:SetColorTexture(1, 1, 1, 0.12)
+    panel.gwHeaderLine:SetHeight(1)
+    panel.gwHeaderLine:ClearAllPoints()
+    panel.gwHeaderLine:SetPoint("TOPLEFT", 6, lineY)
+    panel.gwHeaderLine:SetPoint("TOPRIGHT", -14, lineY)
+
+    panel.scroll:SetPoint("TOPLEFT", 0, lineY - 6)
+end
+
 function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc, subFrameData, isAddon)
-    tinsert(menuItems, {
+    local item = {
         basePanel = basePanel,
         name = name,
         desc = desc,
         isExpanded = false,
         hasSubFrames = subFrameData and #subFrameData > 0,
         subFrameData = subFrameData,
+        -- a leading "General" sub panel is folded into the category row itself:
+        -- it gets no own menu entry, clicking the header shows it
+        generalSub = subFrameData and subFrameData[1] and subFrameData[1].name == GENERAL and subFrameData[1] or nil,
         isAddon = isAddon,
-    })
+    }
+    tinsert(menuItems, item)
 
     -- init panel
     if subFrameData and #subFrameData > 0 then
         for _, sub in ipairs(subFrameData) do
             InitOptionPanel(sub.frame)
+            if sub == item.generalSub then
+                -- opened through the category row itself, so the category name is the
+                -- page title - drop the redundant "General" context line
+                sub.frame.breadcrumb:SetText("")
+            end
+            LayoutPanelHeader(sub.frame)
         end
         basePanel.header:Hide()
         basePanel.sub:Hide()
         basePanel.scroll:Hide()
     else
         InitOptionPanel(basePanel)
+        LayoutPanelHeader(basePanel)
     end
 
     if isAddon then
@@ -995,6 +1082,20 @@ end
 -- =========================
 -- Settings Tab Setup
 -- =========================
+-- selection accent: hover and selection share the same row texture, the red bar
+-- and brighter text keep the active entry recognizable while hovering others
+local function SetMenuRowActive(button, active)
+    button.activeTexture:SetShown(active)
+    if button.activeBar then
+        button.activeBar:SetShown(active)
+    end
+    if active then
+        button.text:SetTextColor(1, 1, 1)
+    else
+        button.text:SetTextColor(1, 0.9450, 0.8196)
+    end
+end
+
 local function InitMenuButton(button, elementData)
     if not button.isGwInit then
         button.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
@@ -1002,24 +1103,69 @@ local function InitMenuButton(button, elementData)
         button.arrow:ClearAllPoints()
         button.arrow:SetPoint("LEFT", 5, 0)
         button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png")
-        button.arrow:SetSize(16, 16)
+        button.arrow:SetSize(14, 14)
+
+        -- sub rows: uniform dark block with a guide rail instead of zebra stripes
+        button.subBg = button:CreateTexture(nil, "BACKGROUND", nil, 1)
+        button.subBg:SetAllPoints()
+        button.subBg:SetColorTexture(0, 0, 0, 0.35)
+        button.subRail = button:CreateTexture(nil, "BACKGROUND", nil, 2)
+        button.subRail:SetPoint("TOPLEFT", 24, 0)
+        button.subRail:SetPoint("BOTTOMLEFT", 24, 0)
+        button.subRail:SetWidth(1)
+        button.subRail:SetColorTexture(1, 1, 1, 0.18)
+
+        button.activeBar = button:CreateTexture(nil, "OVERLAY")
+        button.activeBar:SetPoint("TOPLEFT", 0, 0)
+        button.activeBar:SetPoint("BOTTOMLEFT", 0, 0)
+        button.activeBar:SetWidth(3)
+        button.activeBar:SetColorTexture(GW.Colors.Accent:GetRGB())
+        button.activeBar:Hide()
+
+        button:HookScript("OnEnter", function(self)
+            if self.gwTooltipDesc then
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(self.name, GW.Colors.TextColors.LightHeader:GetRGB())
+                GameTooltip:AddLine(self.gwTooltipDesc, 181 / 255, 160 / 255, 128 / 255, true)
+                GameTooltip:Show()
+            end
+        end)
+        button:HookScript("OnLeave", GameTooltip_Hide)
+
         button:SetScript("OnClick", function()
             CloseSearch()
-            SwitchPanel(button.index)
-            menuItemSelectionBehavior:SelectElementData(button.elementData)
+            local ed = button.elementData
+            if not ed.isSubCat and ed.itemData.hasSubFrames and ed.itemData.isExpanded then
+                SwitchPanel(button.index, false) -- header toggle: collapse, keep its panel
+            else
+                SwitchPanel(button.index)
+            end
+            menuItemSelectionBehavior:SelectElementData(ed)
         end)
         button.isGwInit = true
     end
 
-    if elementData.index % 2 == 0 then
+    if elementData.isSubCat then
         button:ClearNormalTexture()
-    else
+    elseif elementData.zebra then
         button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
+    else
+        button:ClearNormalTexture()
+    end
+    button.subBg:SetShown(elementData.isSubCat)
+    button.subRail:SetShown(elementData.isSubCat)
+
+    local fontSize = elementData.isSubCat and MENU_SUB_FONT_SIZE or MENU_MAIN_FONT_SIZE
+    if button.gwFontSize ~= fontSize then
+        local face = button.text:GetFont()
+        button.text:SetFont(face, fontSize, "")
+        button.gwFontSize = fontSize
     end
 
     button.arrow:SetShown(elementData.itemData.hasSubFrames)
-    button.text:SetPoint("LEFT", button, "LEFT", 20 + (elementData.isSubCat and 10 or 0), 0)
+    button.text:SetPoint("LEFT", button, "LEFT", elementData.isSubCat and 36 or 22, 0)
     button.text:SetText(elementData.itemData.name)
+    button.gwTooltipDesc = (not elementData.isSubCat and elementData.itemData.desc) or nil
 
     button.name = elementData.itemData.name
     button.itemData = elementData.itemData
@@ -1027,20 +1173,18 @@ local function InitMenuButton(button, elementData)
     button.hasSubCat = elementData.itemData.hasSubFrames
     button.elementData = elementData
 
-    if elementData.isSubCat then
-        button.index = elementData.index
-    elseif elementData.itemData.hasSubFrames then
-        button.index = elementData.index + 1
+    if not elementData.isSubCat and elementData.itemData.hasSubFrames and not elementData.itemData.generalSub then
+        button.index = elementData.index + 1 -- no folded General panel: header selects the first sub
     else
         button.index = elementData.index
     end
 
-    button.activeTexture:SetShown(menuItemSelectionBehavior:IsSelected(button))
+    SetMenuRowActive(button, menuItemSelectionBehavior:IsSelected(button))
 
     local hidden = elementData.isSubCat and elementData.parent and not elementData.parent.isExpanded
     button:EnableMouse(not hidden)
     button:SetAlpha(hidden and 0 or 1)
-    button:SetHeight(hidden and 0 or 36)
+    button:SetHeight(hidden and 0 or (elementData.isSubCat and MENU_SUB_ROW_HEIGHT or MENU_MAIN_ROW_HEIGHT))
 
     if not elementData.isSubCat and elementData.itemData.hasSubFrames then
         if elementData.itemData.isExpanded and not button.rotationDone then
@@ -1088,7 +1232,10 @@ local function LoadSettingsTab(container)
 
     settingsTab.name = "GwSettingsSettings"
     settingsTab.headerBreadcrumbText = SETTINGS
-    settingsTab.callbackOnClose = CloseSearch
+    settingsTab.callbackOnClose = function()
+        CloseSearch()
+        GW.CloseActiveSettingsPreview()
+    end
     container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_settings.png", settingsTab)
 
     --load settings panels
@@ -1113,7 +1260,7 @@ local function LoadSettingsTab(container)
         if ed.isSubCat and ed.parent and not ed.parent.isExpanded then
             return 0.1
         end
-        return 36
+        return ed.isSubCat and MENU_SUB_ROW_HEIGHT or MENU_MAIN_ROW_HEIGHT
     end)
 
     view:SetElementInitializer("GwSettingsSettingsTabMenuButtonTemplate", InitMenuButton)
@@ -1125,9 +1272,10 @@ local function LoadSettingsTab(container)
             CloseSearch()
         end
         local btn = settingsTab.menu.ScrollBox:FindFrame(ed)
-        if btn then btn.activeTexture:SetShown(selected) end
+        if btn then SetMenuRowActive(btn, selected) end
 
-        if ed.isSubCat or not ed.itemData.hasSubFrames then return end
+        -- category rows without a folded General panel hand the selection to their first sub entry
+        if ed.isSubCat or not ed.itemData.hasSubFrames or ed.itemData.generalSub then return end
         local dp = settingsTab.menu.ScrollBox:GetDataProvider()
         local firstSub
         dp:ForEach(function(x) if x.isSubCat and x.index == ed.index + 1 then firstSub = x; return true end end)
@@ -1159,6 +1307,7 @@ local function LoadSettingsTab(container)
     searchPanel.sub:SetFont(UNIT_NAME_FONT, 12)
     searchPanel.sub:SetTextColor(181/255, 160/255, 128/255)
     searchPanel.sub:SetText(SETTINGS_SEARCH_NOTHING_FOUND)
+    LayoutPanelHeader(searchPanel)
     searchPanel:Hide()
     searchPanel:ClearAllPoints()
     searchPanel:SetPoint("TOPLEFT", settingsTab, "TOPLEFT", 0, 0)

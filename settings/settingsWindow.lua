@@ -92,6 +92,7 @@ local function BuildSettingsWindow()
     settingsContainer:HookScript("OnShow", GW.UpdateReloadIndicator)
 
     settingsContainer:SetScript("OnHide", function()
+        GW.CloseActiveSettingsPreview()
         if not GW.InMoveHudMode and GW.ShowRlPopup then
             -- the pending list is NOT cleared here: if the reload is declined, the
             -- changes still require one - the hint stays and toggling a setting

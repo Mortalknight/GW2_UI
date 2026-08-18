@@ -1,7 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 local L = GW.L
-local StrUpper = GW.StrUpper
 
 local function setMultibarCols(barName, setting)
     local mb = GW.settings[barName]
@@ -42,7 +41,7 @@ local function LoadActionbarPanel(sWindow)
     mainBar.breadcrumb:SetText(L["Main Action Bar"])
     mainBar.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     mainBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    mainBar.sub:SetText("")
+    mainBar.sub:SetText(L["Edit the main action bar settings."])
 
     local extraBars = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     extraBars.panelId = "actionbar_extra"
@@ -51,7 +50,7 @@ local function LoadActionbarPanel(sWindow)
     extraBars.header:SetText(BINDING_HEADER_ACTIONBAR)
     extraBars.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     extraBars.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    extraBars.sub:SetText("")
+    extraBars.sub:SetText(L["Edit the multi action bar settings."])
     extraBars.header:SetWidth(extraBars.header:GetStringWidth())
     extraBars.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     extraBars.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -65,7 +64,7 @@ local function LoadActionbarPanel(sWindow)
     stanceBar.header:SetText(BINDING_HEADER_ACTIONBAR)
     stanceBar.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     stanceBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    stanceBar.sub:SetText("")
+    stanceBar.sub:SetText(L["Edit the stance bar settings."])
     stanceBar.header:SetWidth(stanceBar.header:GetStringWidth())
     stanceBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     stanceBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())

@@ -5,6 +5,10 @@ GW.Colors.TextColors = {
     LightHeader = CreateColor(1, 0.9450, 0.8196)
 }
 
+-- wine red: the dominant tone of the settings panel background (settingspanelbg.png,
+-- ~48/24/24) lifted to accent brightness while keeping its 2:1:1 hue
+GW.Colors.Accent = CreateColor(150 / 255, 50 / 255, 50 / 255)
+
 GW.Colors.DebuffColors = {
     [GW.Enum.DispelType.None] = CreateColor(220 / 255, 0, 0),
     [GW.Enum.DispelType.Curse] = CreateColor(97 / 255, 72 / 255, 177 / 255),

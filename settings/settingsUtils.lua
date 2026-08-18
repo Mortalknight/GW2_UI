@@ -3,6 +3,48 @@ local GW = select(2, ...)
 local L = GW.L
 local RoundDec = GW.RoundDec
 
+-- =========================
+-- Settings preview tracking: only one preview is active at a time, and the
+-- active one closes with the settings window / on tab switch
+-- =========================
+local activeSettingsPreview
+local previewCombatCloser
+
+local function CloseActiveSettingsPreview()
+    if not activeSettingsPreview then return end
+    if InCombatLockdown() then
+        -- previews drive protected frames, retry once combat ends
+        if not previewCombatCloser then
+            previewCombatCloser = CreateFrame("Frame")
+            previewCombatCloser:SetScript("OnEvent", function(self)
+                self:UnregisterAllEvents()
+                CloseActiveSettingsPreview()
+            end)
+        end
+        previewCombatCloser:RegisterEvent("PLAYER_REGEN_ENABLED")
+        return
+    end
+    local preview = activeSettingsPreview
+    activeSettingsPreview = nil
+    preview.close()
+end
+GW.CloseActiveSettingsPreview = CloseActiveSettingsPreview
+
+-- a preview turns ON: any other active preview closes first
+function GW.ActivateSettingsPreview(key, close)
+    if activeSettingsPreview and activeSettingsPreview.key ~= key then
+        CloseActiveSettingsPreview()
+    end
+    activeSettingsPreview = {key = key, close = close}
+end
+
+-- a preview turned OFF through its own button
+function GW.DeactivateSettingsPreview(key)
+    if activeSettingsPreview and activeSettingsPreview.key == key then
+        activeSettingsPreview = nil
+    end
+end
+
 --helper functions for settings
 local function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect)
     local keys = {}

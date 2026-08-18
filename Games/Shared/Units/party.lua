@@ -1049,6 +1049,7 @@ local function TogglePartyPreview()
     end
 end
 GW.TogglePartyPreview = TogglePartyPreview
+GW.IsPartyFramesPreviewActive = function() return previewMode end
 
 local function LoadPartyFrames()
     GW.CreateRaidControlFrame()

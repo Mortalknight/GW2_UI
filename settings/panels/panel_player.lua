@@ -1,7 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 local L = GW.L
-local StrUpper = GW.StrUpper
 
 local auraGrowthOptions = {"UP", "DOWN", "UPR", "DOWNR", "UPL_COLUMN", "UPR_COLUMN", "DOWNL_COLUMN", "DOWNR_COLUMN"}
 local auraGrowthOptionNames = {L["Rows: left, wrap up"], L["Rows: left, wrap down"], L["Rows: right, wrap up"], L["Rows: right, wrap down"], L["Columns: up, wrap left"], L["Columns: up, wrap right"], L["Columns: down, wrap left"], L["Columns: down, wrap right"]}
@@ -55,7 +54,7 @@ local function LoadPlayerPanel(sWindow)
     fader.header:SetText(PLAYER)
     fader.sub:SetFont(UNIT_NAME_FONT, 12)
     fader.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    fader.sub:SetText("")
+    fader.sub:SetText(L["Controls when the player frame fades in and out."])
     fader.header:SetWidth(fader.header:GetStringWidth())
     fader.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     fader.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -68,7 +67,7 @@ local function LoadPlayerPanel(sWindow)
     classpower.header:SetText(PLAYER)
     classpower.sub:SetFont(UNIT_NAME_FONT, 12)
     classpower.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    classpower.sub:SetText("")
+    classpower.sub:SetText(L["Edit class resources like combo points or runes."])
     classpower.header:SetWidth(fader.header:GetStringWidth())
     classpower.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     classpower.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -81,7 +80,7 @@ local function LoadPlayerPanel(sWindow)
     totemBar.header:SetText(PLAYER)
     totemBar.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     totemBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    totemBar.sub:SetText("")
+    totemBar.sub:SetText(L["Edit the totem bar settings."])
     totemBar.header:SetWidth(totemBar.header:GetStringWidth())
     totemBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     totemBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())

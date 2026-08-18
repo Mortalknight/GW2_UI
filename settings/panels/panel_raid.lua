@@ -5,7 +5,6 @@ local MapTable = GW.MapTable
 local StrUpper = GW.StrUpper
 local StrLower = GW.StrLower
 
-
 -- tri-state aura filters: properties block + filter token block
 local auraOptions = {
     "HEADER", "isAuraPlayer", "isAuraRaidPlayerDispellable", "isAuraStealable", "isAuraBoss", "isAuraPriority", "isAuraRole",
@@ -39,6 +38,24 @@ local function IsGridPreviewActive(profile)
     return header and header.forceShow
 end
 
+-- preview buttons share one handler: registers with the settings preview
+-- tracker so only one preview is active and it closes with the window
+local function GridPreviewOnClick(profileKey)
+    return function()
+        if InCombatLockdown() then return end
+        local header = GW.GridGroupHeaders[profileKey]
+        if header.forceShow then
+            GW.ToggleGridConfigurationMode(header, nil)
+            GW.DeactivateSettingsPreview(profileKey)
+        else
+            GW.ActivateSettingsPreview(profileKey, function()
+                GW.ToggleGridConfigurationMode(GW.GridGroupHeaders[profileKey], nil)
+            end)
+            GW.ToggleGridConfigurationMode(header, true)
+        end
+    end
+end
+
 local function UpdateGridSettingsThrottled(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     if not IsGridPreviewActive(profile) then
         GW.UpdateGridSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
@@ -70,7 +87,7 @@ local function LoadGeneralGridSettings(panel)
     general.header:SetText(L["Group Frames"])
     general.sub:SetFont(UNIT_NAME_FONT, 12)
     general.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    general.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    general.sub:SetText(L["General settings for all group frames."])
 
     general.header:SetWidth(general.header:GetStringWidth())
     general.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
@@ -149,7 +166,7 @@ local function LoadRaid10Profile(panel)
     raid10.header:SetText(L["Group Frames"])
     raid10.sub:SetFont(UNIT_NAME_FONT, 12)
     raid10.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    raid10.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    raid10.sub:SetText(L["Edit size, layout and aura display for this grid."])
 
     raid10.header:SetWidth(raid10.header:GetStringWidth())
     raid10.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
@@ -157,9 +174,7 @@ local function LoadRaid10Profile(panel)
     raid10.breadcrumb:SetText(RAID..": 10")
 
     raid10.preview:SetWidth(raid10.preview:GetFontString():GetStringWidth() + 5)
-    raid10.preview:SetScript("OnClick", function()
-        GW.ToggleGridConfigurationMode(GW.GridGroupHeaders.RAID10, GW.GridGroupHeaders.RAID10.forceShow ~= true or nil)
-    end)
+    raid10.preview:SetScript("OnClick", GridPreviewOnClick("RAID10"))
     raid10.preview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
         GameTooltip:ClearLines()
@@ -263,7 +278,7 @@ local function LoadRaid25Profile(panel)
     raid25.header:SetText(L["Group Frames"])
     raid25.sub:SetFont(UNIT_NAME_FONT, 12)
     raid25.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    raid25.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    raid25.sub:SetText(L["Edit size, layout and aura display for this grid."])
 
     raid25.header:SetWidth(raid25.header:GetStringWidth())
     raid25.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
@@ -271,9 +286,7 @@ local function LoadRaid25Profile(panel)
     raid25.breadcrumb:SetText(RAID..": 25")
 
     raid25.preview:SetWidth(raid25.preview:GetFontString():GetStringWidth() + 5)
-    raid25.preview:SetScript("OnClick", function()
-        GW.ToggleGridConfigurationMode(GW.GridGroupHeaders.RAID25, GW.GridGroupHeaders.RAID25.forceShow ~= true or nil)
-    end)
+    raid25.preview:SetScript("OnClick", GridPreviewOnClick("RAID25"))
     raid25.preview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
         GameTooltip:ClearLines()
@@ -377,7 +390,7 @@ local function LoadRaid40Profile(panel)
     raid40.header:SetText(L["Group Frames"])
     raid40.sub:SetFont(UNIT_NAME_FONT, 12)
     raid40.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    raid40.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    raid40.sub:SetText(L["Edit size, layout and aura display for this grid."])
 
     raid40.header:SetWidth(raid40.header:GetStringWidth())
     raid40.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
@@ -385,9 +398,7 @@ local function LoadRaid40Profile(panel)
     raid40.breadcrumb:SetText(RAID..": 40")
 
     raid40.preview:SetWidth(raid40.preview:GetFontString():GetStringWidth() + 5)
-    raid40.preview:SetScript("OnClick", function()
-        GW.ToggleGridConfigurationMode(GW.GridGroupHeaders.RAID40, GW.GridGroupHeaders.RAID40.forceShow ~= true or nil)
-    end)
+    raid40.preview:SetScript("OnClick", GridPreviewOnClick("RAID40"))
     raid40.preview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
         GameTooltip:ClearLines()
@@ -482,7 +493,7 @@ local function LoadMaintankProfile(panel)
     tank.header:SetText(L["Group Frames"])
     tank.sub:SetFont(UNIT_NAME_FONT, 12)
     tank.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    tank.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    tank.sub:SetText(L["Edit size, layout and aura display for this grid."])
 
     tank.header:SetWidth(tank.header:GetStringWidth())
     tank.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
@@ -490,9 +501,7 @@ local function LoadMaintankProfile(panel)
     tank.breadcrumb:SetText(MAINTANK)
 
     tank.preview:SetWidth(tank.preview:GetFontString():GetStringWidth() + 5)
-    tank.preview:SetScript("OnClick", function()
-        GW.ToggleGridConfigurationMode(GW.GridGroupHeaders.TANK, GW.GridGroupHeaders.TANK.forceShow ~= true or nil)
-    end)
+    tank.preview:SetScript("OnClick", GridPreviewOnClick("TANK"))
     tank.preview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
         GameTooltip:ClearLines()
@@ -590,7 +599,7 @@ local function LoadRaidPetProfile(panel)
     p.header:SetText(L["Group Frames"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    p.sub:SetText(L["Edit size, layout and aura display for this grid."])
 
     p.header:SetWidth(p.header:GetStringWidth())
     p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
@@ -598,9 +607,7 @@ local function LoadRaidPetProfile(panel)
     p.breadcrumb:SetText(PET)
 
     p.preview:SetWidth(p.preview:GetFontString():GetStringWidth() + 5)
-    p.preview:SetScript("OnClick", function()
-        GW.ToggleGridConfigurationMode(GW.GridGroupHeaders.RAID_PET, GW.GridGroupHeaders.RAID_PET.forceShow ~= true or nil)
-    end)
+    p.preview:SetScript("OnClick", GridPreviewOnClick("RAID_PET"))
     p.preview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
         GameTooltip:ClearLines()
@@ -691,7 +698,7 @@ local function LoadPartyProfile(panel)
     party.header:SetText(L["Group Frames"])
     party.sub:SetFont(UNIT_NAME_FONT, 12)
     party.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    party.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    party.sub:SetText(L["Edit size, layout and aura display for this grid."])
 
     party.header:SetWidth(party.header:GetStringWidth())
     party.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
@@ -701,9 +708,7 @@ local function LoadPartyProfile(panel)
     party.breadcrumb:SetText(L["Party Grid"])
 
     party.preview:SetWidth(party.preview:GetFontString():GetStringWidth() + 5)
-    party.preview:SetScript("OnClick", function()
-        GW.ToggleGridConfigurationMode(GW.GridGroupHeaders.PARTY, GW.GridGroupHeaders.PARTY.forceShow ~= true or nil)
-    end)
+    party.preview:SetScript("OnClick", GridPreviewOnClick("PARTY"))
     party.preview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
         GameTooltip:ClearLines()
@@ -832,7 +837,7 @@ local function LoadPartyPetProfile(panel)
     p.header:SetText(L["Group Frames"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    p.sub:SetText(L["Edit size, layout and aura display for this grid."])
 
     p.header:SetWidth(p.header:GetStringWidth())
     p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
@@ -840,9 +845,7 @@ local function LoadPartyPetProfile(panel)
     p.breadcrumb:SetText(L["Party Grid"] .. ": " .. PET)
 
     p.preview:SetWidth(p.preview:GetFontString():GetStringWidth() + 5)
-    p.preview:SetScript("OnClick", function()
-        GW.ToggleGridConfigurationMode(GW.GridGroupHeaders.PARTY_PET, GW.GridGroupHeaders.PARTY_PET.forceShow ~= true or nil)
-    end)
+    p.preview:SetScript("OnClick", GridPreviewOnClick("PARTY_PET"))
     p.preview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
         GameTooltip:ClearLines()
