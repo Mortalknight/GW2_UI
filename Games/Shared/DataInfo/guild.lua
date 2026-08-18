@@ -90,9 +90,11 @@ local function FetchGuildMembers_Internal()
             end
         end
 
-        local members = guildClubID and CommunitiesUtil.GetAndSortMemberInfo(guildClubID)
-        if members then
-            for _, data in next, members do
+        local members = CommunitiesUtil.GetMemberIdsSortedByName(guildClubID)
+		local memberInfo = GW.NotSecretValue(members) and CommunitiesUtil.GetMemberInfo(guildClubID, members)
+		local membersSorted = memberInfo and CommunitiesUtil.SortMemberInfo(guildClubID, memberInfo)
+        if membersSorted then
+            for _, data in next, membersSorted do
                 if data.guid then
                     clubTable[data.guid] = data
                 end
