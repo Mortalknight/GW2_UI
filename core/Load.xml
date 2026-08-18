@@ -7,7 +7,7 @@
     <Script file ="enum.lua"/>
     <Script file ="color.lua"/>
     <Script file ="consts.lua"/>
-    <Include file ="Api\Load.xml"/>
+    <Include file ="API\Load.xml"/>
     <Script file ="..\changelog.lua"/>
     <Script file ="debug.lua"/>
     <Script file ="migration.lua"/>

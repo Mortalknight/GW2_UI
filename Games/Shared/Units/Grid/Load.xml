@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file ="elements\GridFrameAuraIndicator.xml"/>
+    <Include file ="elements\gridFrameAuraIndicator.xml"/>
     <Script file ="elements\auras.lua"/>
     <Script file ="elements\predictionBars.lua"/>
     <Script file ="elements\middleIcon.lua"/>
