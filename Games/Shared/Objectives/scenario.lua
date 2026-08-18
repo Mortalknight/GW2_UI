@@ -406,6 +406,12 @@ function GwObjectivesScenarioContainerMixin:ClearWidgetSet()
     self:UpdateWidgetRegistration()
 end
 
+-- both managers share the timer block and classify timers purely by widget data,
+-- so a timer can be driven from either widget set
+function GwObjectivesScenarioContainerMixin:HasRunningWidgetTimer()
+    return self.timerWidgetManager:IsTimerRunning() or self.statusBarWidgetManager:IsTimerRunning()
+end
+
 function GwObjectivesScenarioContainerMixin:UpdateWidgetRegistration(widgetSetID)
     self.timerWidgetManager:RegisterForWidgetSet(widgetSetID)
     if widgetSetID ~= nil then
@@ -748,6 +754,19 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     local name, instanceType, difficultyID, difficultyName = GetInstanceInfo()
     local isDelveScenario = GW.Retail and difficultyID == 208
 
+    local hasNoScenario = numStages == 0 or (GW.Retail and IsOnGroundFloorInJailersTower())
+
+    -- The timer frame stays up for a challenge mode timer or a still registered
+    -- scenario widget timer. A widget that disappears without a Hidden update never
+    -- runs HandleTimer, so the frame would stay shown and its height gets folded
+    -- into the block below - the container then keeps that height with nothing in
+    -- it, which pushes every container after it down (empty gap in the tracker).
+    if not timerBlock.needToShowTimer and (hasNoScenario or not self:HasRunningWidgetTimer()) then
+        timerBlock.timer:Hide()
+        timerBlock.height = 1
+        timerBlock:SetHeight(timerBlock.height)
+    end
+
     block.height = 0.1
 
     if timerBlock.timer:IsShown() then
@@ -768,7 +787,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         GW.StopNemesisCounter()
     end
     block:Show()
-    if numStages == 0 or (GW.Retail and IsOnGroundFloorInJailersTower()) then
+    if hasNoScenario then
         if instanceType == "raid" then
             compassData.TITLE = name
             compassData.DESC = difficultyName
@@ -779,6 +798,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
             GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Torghast)
             block:Hide()
         end
+
         GW.CombatQueue:Queue(nil, block.UpdateObjectiveActionButton, {block})
         if block.hasItem then
             block.fromContainerTopHeight = block.height
@@ -791,11 +811,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
 
         block:SetHeight(block.height)
         self:SetHeight(block.height)
-        if not timerBlock.needToShowTimer then
-            timerBlock.timer:Hide()
-            timerBlock.height = 1
-            timerBlock:SetHeight(timerBlock.height)
-        end
         self:ClearWidgetSet()
 
         return
