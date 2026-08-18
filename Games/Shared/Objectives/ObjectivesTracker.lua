@@ -118,20 +118,50 @@ function GW.IsObjectivesTrackerCompactMode()
     return GW.settings.OBJECTIVES_TRACKER_COMPACT_MODE
 end
 
+-- an empty container must not be exactly 0 high: the fixed containers are chained
+-- through anchors, and a 0 height frame is not reliably positioned by them
+GW.OBJECTIVES_EMPTY_HEIGHT = 0.1
+
+-- Height of a container whose frames sit in fixed slots (boss and arena unit frames).
+-- Those are SecureUnitButtons: they must not be moved in combat, so they keep their
+-- slot chain and a hidden frame in between keeps its space - the height therefore has
+-- to reach down to the last shown slot. Returns the height and that slot number.
+function GW.GetFixedSlotContainerHeight(frames)
+    local lastShown = 0
+    for index, frame in pairs(frames) do
+        if frame:IsShown() then
+            lastShown = math.max(lastShown, index)
+        end
+    end
+
+    if lastShown == 0 then
+        return GW.OBJECTIVES_EMPTY_HEIGHT, 0
+    end
+
+    local height = 0
+    for index, frame in pairs(frames) do
+        if index <= lastShown then
+            height = height + frame:GetHeight()
+        end
+    end
+
+    return height, lastShown
+end
+
 function GW.GetObjectivesHeaderHeight()
     return GW.IsObjectivesTrackerCompactMode() and 16 or 20
 end
 
 function GW.GetObjectivesBlockBaseHeight()
-    return GW.IsObjectivesTrackerCompactMode() and 20 or 25
+    return -GW.GetObjectivesFirstObjectiveOffset()
 end
 
-function GW.GetObjectivesWideBlockBaseHeight()
-    return GW.IsObjectivesTrackerCompactMode() and 28 or 35
+function GW.GetObjectivesRowGap()
+    return GW.IsObjectivesTrackerCompactMode() and 6 or 10
 end
 
-function GW.GetObjectivesBottomPadding()
-    return GW.IsObjectivesTrackerCompactMode() and 4 or 5
+function GW.GetObjectivesBlockGap()
+    return GW.IsObjectivesTrackerCompactMode() and 5 or 8
 end
 
 function GW.GetObjectivesEntrySpacing()
@@ -143,15 +173,31 @@ function GW.GetObjectivesStatusBarGap()
 end
 
 function GW.GetObjectivesTextPadding()
-    return GW.IsObjectivesTrackerCompactMode() and 3 or 15
+    return GW.IsObjectivesTrackerCompactMode() and 3 or 5
+end
+
+function GW.GetObjectivesRowTextOffset()
+    return GW.IsObjectivesTrackerCompactMode() and 3 or 5
 end
 
 function GW.GetObjectivesFirstObjectiveOffset()
     return GW.IsObjectivesTrackerCompactMode() and -14 or -25
 end
 
-function GW.GetObjectivesTimerSpacing()
-    return GW.IsObjectivesTrackerCompactMode() and 12 or 15
+function GW.GetObjectivesTimerLabelHeight()
+    return 10
+end
+
+function GW.GetObjectivesTimerIconSize()
+    return GW.IsObjectivesTrackerCompactMode() and 12 or 14
+end
+
+function GW.GetObjectivesTimerGap()
+    return GW.IsObjectivesTrackerCompactMode() and 5 or 8
+end
+
+function GW.GetObjectivesStatusBarBorderOverhang()
+    return 2
 end
 
 function GW.ApplyObjectivesHeaderStyle(header)

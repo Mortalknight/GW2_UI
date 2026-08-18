@@ -100,22 +100,8 @@ GW.UpdateBossFramesHealthbarColor = UpdateBossFramesHealthbarColor
 GwObjectivesBossContainerMixin = {}
 
 function GwObjectivesBossContainerMixin:UpdateBossFrameHeight()
-    local lastIndex = 0
-    local totalHeight = 0
-
-    for index, frame in pairs(bossFrames) do
-        if frame:IsShown() then
-            lastIndex = index
-        end
-    end
-
-    for index, frame in pairs(bossFrames) do
-        if index <= lastIndex then
-            totalHeight = totalHeight + frame:GetHeight()
-        end
-    end
-
-    self:SetHeight(lastIndex > 0 and totalHeight or 0.1)
+    local height = GW.GetFixedSlotContainerHeight(bossFrames)
+    self:SetHeight(height)
 end
 
 function GwObjectivesBossContainerMixin:SetUpFramePosition()

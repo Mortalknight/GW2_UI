@@ -30,7 +30,6 @@ local function TimerBarOnUpdate(self, elapsed)
 
     local timeNow = GetTime()
 	local timeRemaining = self.duration - (timeNow - self.startTime)
-	self.TimerBar:SetValue(timeRemaining)
     if timeRemaining < 0 then
 		-- hold at 0 for a moment
 		if timeRemaining > -1 then
@@ -42,7 +41,9 @@ local function TimerBarOnUpdate(self, elapsed)
 		end
 	end
 	self.TimerBar.Label:SetText(SecondsToClock(timeRemaining))
-	self.TimerBar.Label:SetTextColor(GetTextColor(self, timeRemaining))
+	local r, g, b = GetTextColor(self, timeRemaining)
+	self.TimerBar.Label:SetTextColor(r, g, b)
+	self.TimerBar.clock:SetVertexColor(r, g, b)
 end
 
 local function statusBarSetValue(self, v)
@@ -69,26 +70,23 @@ end
 function GwQuestTrackerObjectiveMixin:AddTimer(duration, startTime)
     if not self.TimerBar then return end
     self.TimerBar:Show()
-    self.TimerBar:SetMinMaxValues(0, duration)
     self.startTime = startTime
     self.duration = duration
 
-    self:SetHeight(self:GetHeight() + GW.GetObjectivesTimerSpacing())
+    -- Same visual distance in both cases: below the text rect its padding already provides
+    -- empty space, below the status bar the border texture overhangs instead.
+    local anchorToBar = self.StatusBar:IsShown()
+    local offset = GW.GetObjectivesTimerGap()
+    if anchorToBar then
+        offset = offset + GW.GetObjectivesStatusBarBorderOverhang()
+    else
+        offset = offset - GW.GetObjectivesTextPadding()
+    end
+
+    self:SetHeight(self:GetHeight() + offset + GW.GetObjectivesTimerLabelHeight())
 
     self.TimerBar:ClearAllPoints()
-    if GW.IsObjectivesTrackerCompactMode() then
-        if self.StatusBar:IsShown() then
-            self.TimerBar:SetPoint("TOPRIGHT", self.StatusBar, "BOTTOMRIGHT", 0, -GW.GetObjectivesStatusBarGap())
-        else
-            self.TimerBar:SetPoint("TOPRIGHT", self.ObjectiveText, "BOTTOMRIGHT", 0, -GW.GetObjectivesStatusBarGap())
-        end
-    else
-        if self.StatusBar:IsShown() then
-            self.TimerBar:SetPoint("BOTTOMRIGHT", self.StatusBar, 0, -20)
-        else
-            self.TimerBar:SetPoint("BOTTOMRIGHT", self.ObjectiveText)
-        end
-    end
+    self.TimerBar:SetPoint("TOPRIGHT", anchorToBar and self.StatusBar or self.ObjectiveText, "BOTTOMRIGHT", 0, -offset)
 
     self:SetScript("OnUpdate", TimerBarOnUpdate)
 end
@@ -98,19 +96,21 @@ function GwQuestTrackerObjectiveMixin:ApplyLayoutStyle()
     self.StatusBar.progress:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     self.TimerBar.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     self.ObjectiveText:ClearAllPoints()
-    self.ObjectiveText:SetPoint("TOPRIGHT", self, "TOPRIGHT", -10, GW.IsObjectivesTrackerCompactMode() and -3 or -5)
+    self.ObjectiveText:SetPoint("TOPRIGHT", self, "TOPRIGHT", -10, -GW.GetObjectivesRowTextOffset())
+    -- both bars stack below the text in both modes; the row height in AddObjective is
+    -- derived from exactly this geometry, so the two cannot drift apart
     self.StatusBar:ClearAllPoints()
-    if GW.IsObjectivesTrackerCompactMode() then
-        self.StatusBar:SetPoint("TOPRIGHT", self.ObjectiveText, "BOTTOMRIGHT", 0, -GW.GetObjectivesStatusBarGap())
-    else
-        self.StatusBar:SetPoint("BOTTOMRIGHT", self.ObjectiveText)
-    end
+    self.StatusBar:SetPoint("TOPRIGHT", self.ObjectiveText, "BOTTOMRIGHT", 0, -GW.GetObjectivesStatusBarGap())
     self.TimerBar:ClearAllPoints()
-    if GW.IsObjectivesTrackerCompactMode() then
-        self.TimerBar:SetPoint("TOPRIGHT", self.ObjectiveText, "BOTTOMRIGHT", 0, -GW.GetObjectivesStatusBarGap())
-    else
-        self.TimerBar:SetPoint("BOTTOMRIGHT", self.ObjectiveText)
-    end
+    self.TimerBar:SetHeight(GW.GetObjectivesTimerLabelHeight())
+    self.TimerBar:SetPoint("TOPRIGHT", self.ObjectiveText, "BOTTOMRIGHT", 0, -(GW.GetObjectivesTimerGap() - GW.GetObjectivesTextPadding()))
+    -- clock size and the text offset behind it are the only mode dependent parts, the
+    -- elements themselves come from the template
+    local iconSize = GW.GetObjectivesTimerIconSize()
+    self.TimerBar.clock:SetSize(iconSize, iconSize)
+    self.TimerBar.Label:ClearAllPoints()
+    self.TimerBar.Label:SetPoint("TOPLEFT", self.TimerBar, "TOPLEFT", iconSize + 3, 0)
+    self.TimerBar.Label:SetPoint("BOTTOMRIGHT", self.TimerBar, "BOTTOMRIGHT", 0, 0)
 end
 
 function GwQuestTrackerObjectiveMixin:OnShow()

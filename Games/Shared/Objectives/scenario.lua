@@ -421,6 +421,11 @@ function GwObjectivesScenarioContainerMixin:UpdateWidgetRegistration(widgetSetID
     end
 end
 
+-- Rows that the scenario fills itself (currency, trait icons, maw buffs, spell rows)
+-- sit closer to the block top and a bit further apart than AddObjective rows. Used as
+-- the first row origin AND as the gap between rows, so both are the same number.
+local CUSTOM_ROW_Y_OFFSET = -5
+
 -- the Blizzard scenario tracker renders a FIXED bottom widget set besides the
 -- per-step set — the Torghast blessing/torment rows live there. Rendered with
 -- own visuals: GW font labels plus the trait icon tiles.
@@ -559,7 +564,7 @@ local function AddScenarioCurrencyObjective(block, widgetInfo)
     end
 
     block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, -5)
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
 
     PrepareScenarioCustomObjectiveBlock(objectiveBlock, block.currenciesFrame:GetHeight())
 
@@ -584,7 +589,7 @@ local function AddScenarioCurrencyObjective(block, widgetInfo)
         currencyFrame:Show()
     end
 
-    block.height = block.height + objectiveBlock:GetHeight() + (block.numObjectives > 1 and 5 or 0)
+    block:AccountObjectiveRow(objectiveBlock, CUSTOM_ROW_Y_OFFSET)
 
     return true
 end
@@ -603,7 +608,7 @@ local function AddScenarioSpellRowsObjective(block, container)
     end
 
     block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, nil, -5)
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
 
     frame:SetParent(objectiveBlock)
     frame:ClearAllPoints()
@@ -614,10 +619,7 @@ local function AddScenarioSpellRowsObjective(block, container)
     PrepareScenarioCustomObjectiveBlock(objectiveBlock, height + GW.GetObjectivesEntrySpacing())
     frame:Show()
 
-    -- the -5 row offset (GetObjectiveBlock override) adds real distance between
-    -- rows — account it, otherwise the block ends up too short and the last row
-    -- bleeds into the next tracker section
-    block.height = block.height + objectiveBlock:GetHeight() + (block.numObjectives > 1 and 5 or 0)
+    block:AccountObjectiveRow(objectiveBlock, CUSTOM_ROW_Y_OFFSET)
 
     return true
 end
@@ -670,7 +672,7 @@ local function AddScenarioTieredEntranceTraitsObjective(block)
     end
 
     block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, nil, -5)
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
 
     block.tieredEntranceTraitsFrame:SetSpells(spells)
     PrepareScenarioCustomObjectiveBlock(objectiveBlock, block.tieredEntranceTraitsFrame:GetHeight() + GW.GetObjectivesEntrySpacing())
@@ -680,7 +682,7 @@ local function AddScenarioTieredEntranceTraitsObjective(block)
     block.tieredEntranceTraitsFrame:SetPoint("TOPRIGHT", objectiveBlock, "TOPRIGHT", -10, 0)
     block.tieredEntranceTraitsFrame:Show()
 
-    block.height = block.height + objectiveBlock:GetHeight() + (block.numObjectives > 1 and 5 or 0)
+    block:AccountObjectiveRow(objectiveBlock, CUSTOM_ROW_Y_OFFSET)
 
     return true
 end
@@ -692,7 +694,7 @@ local function AddScenarioMawBuffsObjective(block)
     end
 
     block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, nil, -5)
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
 
     -- a failed read (secret state) keeps the last known power set
     local auras = GW.CollectMawAuras() or block.mawBuffsFrame.auras or {}
@@ -704,7 +706,7 @@ local function AddScenarioMawBuffsObjective(block)
     block.mawBuffsFrame:SetPoint("TOPRIGHT", objectiveBlock, "TOPRIGHT", -10, 0)
     block.mawBuffsFrame:Show()
 
-    block.height = block.height + objectiveBlock:GetHeight() + (block.numObjectives > 1 and 5 or 0)
+    block:AccountObjectiveRow(objectiveBlock, CUSTOM_ROW_Y_OFFSET)
 
     return true
 end
@@ -940,7 +942,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         objectiveType = "monster",
         qty = 0,
         isMythicKeystone = false,
-        firstObjectivesYValue = -5,
+        firstObjectivesYValue = CUSTOM_ROW_Y_OFFSET,
     }
 
     for _, widgetInfo in ipairs( self.timerWidgetManager.widgetInfoForCurrency or {} ) do
@@ -1014,7 +1016,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
                 objectiveType = "progressbar"
                 quantity = math.min(1, widgetInfo.barValue / widgetInfo.barMax) * 100
             end
-            block:AddObjective(widgetInfo.text or "", { finished = false, objectiveType = objectiveType, qty = quantity, totalqty = widgetInfo.barMax, firstObjectivesYValue = -5 })
+            block:AddObjective(widgetInfo.text or "", { finished = false, objectiveType = objectiveType, qty = quantity, totalqty = widgetInfo.barMax, firstObjectivesYValue = CUSTOM_ROW_Y_OFFSET })
             local objectiveBlock = block:GetObjectiveBlock(block.numObjectives)
             UpdateStatusBarPartitions(objectiveBlock.StatusBar, widgetInfo)
         end
@@ -1027,7 +1029,8 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         block.objectiveBlocks[i]:Hide()
     end
 
-    block.height = block.height + 5
+    -- the origin of the first row, which no row books itself
+    block.height = block.height - CUSTOM_ROW_Y_OFFSET
     if block.hasItem then
         block.fromContainerTopHeight = block.height
         GW.CombatQueue:Queue("update_tracker_scenario_itembutton_position", block.UpdateObjectiveActionButtonPosition, {block})

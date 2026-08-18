@@ -12,7 +12,7 @@ function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
     local description = select(8, GetAchievementInfo(self.id))
     local showCompletedObjectives = GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES
 
-    self.height = GW.GetObjectivesWideBlockBaseHeight()
+    self.height = GW.GetObjectivesBlockBaseHeight()
     self.numObjectives = 0
 
     if numCriteria > 0 then
@@ -220,7 +220,6 @@ function GwAchievementTrackerContainerMixin:QueueUpdateLayout(event, ...)
 end
 
 function GwAchievementTrackerContainerMixin:UpdateLayout()
-    local savedHeight = 0.1
     local shownIndex = 1
     local trackedAchievements = GW.Retail and C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement) or {GetTrackedAchievements()}
 
@@ -230,7 +229,6 @@ function GwAchievementTrackerContainerMixin:UpdateLayout()
     if self.collapsed and numAchievements > 0 then
         self.header:Show()
         numAchievements = 0
-        savedHeight = GW.GetObjectivesHeaderHeight()
     end
 
     for i = 1, numAchievements do
@@ -239,10 +237,6 @@ function GwAchievementTrackerContainerMixin:UpdateLayout()
         local wasEarnedByMe = select(13, GetAchievementInfo(achievementID))
 
         if not wasEarnedByMe then
-            if shownIndex == 1 then
-                savedHeight = GW.GetObjectivesHeaderHeight()
-            end
-
             self.header:Show()
             local block = self:GetBlock(shownIndex, GW.Enum.ObjectivesNotificationType.Achievement, false)
             block.id = achievementID
@@ -254,18 +248,15 @@ function GwAchievementTrackerContainerMixin:UpdateLayout()
 
             block:SetScript("OnClick", block.OnClick)
 
-            savedHeight = savedHeight + block.height
-
             shownIndex = shownIndex + 1
         end
     end
-
-    self:SetHeight(savedHeight)
 
     for i = shownIndex, #self.blocks do
         self.blocks[i]:Hide()
     end
 
+    self:LayoutBlocks(shownIndex - 1)
 end
 
 local function OnEvent(self, event, ...)

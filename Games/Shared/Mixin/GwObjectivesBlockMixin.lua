@@ -169,14 +169,14 @@ function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(type)
     self.color = GW.Colors.ObjectivesTypeColors[type]
 end
 
-function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectivesYValue, overrideYOffet)
+function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectivesYValue, rowYOffset)
     local objective = self.objectiveBlocks and self.objectiveBlocks[index]
     if objective then
         objective:ClearAllPoints()
         if index == 1 then
             objective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or GW.GetObjectivesFirstObjectiveOffset()))
         else
-            objective:SetPoint("TOPRIGHT", self.objectiveBlocks[index - 1], "BOTTOMRIGHT", 0, overrideYOffet or 0)
+            objective:SetPoint("TOPRIGHT", self.objectiveBlocks[index - 1], "BOTTOMRIGHT", 0, rowYOffset or 0)
         end
         -- fonts and the row internal anchors only depend on the compact mode setting,
         -- re-applying them on every content update is the expensive part of row reuse
@@ -204,7 +204,6 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectives
     end
 
     newObjective.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-    newObjective.TimerBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
     newObjective.ObjectiveText:SetText("")
 
     newObjective.notChangeSize = true
@@ -231,14 +230,25 @@ local function GetObjectiveTextHeight(objectiveText)
     return textHeight
 end
 
+-- Books what a row contributes to the block height. A row offset is negative: it pushes
+-- the row further down, so it enlarges the block by its own magnitude. Deriving that here
+-- instead of hard coding the number at every caller keeps block.height and the real
+-- geometry in sync - an unaccounted offset makes the block too short and its last row
+-- bleeds into the tracker section below.
+function GwObjectivesBlockTemplateMixin:AccountObjectiveRow(row, rowYOffset)
+    self.height = self.height + row:GetHeight()
+    if self.numObjectives > 1 and rowYOffset then
+        self.height = self.height - rowYOffset
+    end
+end
+
 function GwObjectivesBlockTemplateMixin:AddObjective(text, options)
     if not text then return end
     self.numObjectives = self.numObjectives + 1
-    local objectiveBlock = self:GetObjectiveBlock(self.numObjectives, options.firstObjectivesYValue)
+    local objectiveBlock = self:GetObjectiveBlock(self.numObjectives, options.firstObjectivesYValue, options.rowYOffset)
     local precentageComplete = 0
     local objectiveText = objectiveBlock.ObjectiveText
     local statusBar = objectiveBlock.StatusBar
-    local objectiveSpacing = GW.GetObjectivesEntrySpacing()
 
     -- widget partition ticks are re-applied by their caller (see the scenario
     -- status bar widgets) — clear stale ones from objective block reuse
@@ -311,15 +321,28 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, options)
         statusBar:Hide()
     end
 
-    local h = textHeight + objectiveSpacing
-    objectiveBlock:SetHeight(h)
+    -- The row holds what ApplyLayoutStyle anchors into it: the text offset, the text rect,
+    -- an optional status bar stacked below it - plus exactly ONE spacing to the next row.
+    -- Counting that spacing twice for bar rows was why rows without a bar ended up with no
+    -- gap at all while bar rows had one.
+    local h = GW.GetObjectivesRowTextOffset() + textHeight + GW.GetObjectivesTextPadding()
+    local ownWhitespace = GW.GetObjectivesTextPadding()
     if statusBar:IsShown() then
-        h = h + statusBar:GetHeight() + objectiveSpacing
-        objectiveBlock:SetHeight(h)
+        -- the bar sits inside the space the text padding would leave empty
+        h = h + GW.GetObjectivesStatusBarGap() + statusBar:GetHeight()
+        ownWhitespace = 0
     end
+    -- The gap to the next row is what is left of the target once the whitespace this row
+    -- already carries below its content and the next row's text offset are subtracted.
+    -- Block separation is NOT part of it, that is added once per block in LayoutBlocks.
+    h = h + math.max(GW.GetObjectivesRowGap() - ownWhitespace - GW.GetObjectivesRowTextOffset(), 0)
+    objectiveBlock:SetHeight(h)
 
+    -- a bar without a label sits centered in the row: the text rect it hangs under is
+    -- sized so that the bar center lands on the row center
     if statusBar:IsShown() and strtrim(text) == "" then
-        objectiveText:SetHeight((h + statusBar:GetHeight()) / 2)
+        local textRect = (h - statusBar:GetHeight()) / 2 - GW.GetObjectivesStatusBarGap() - GW.GetObjectivesRowTextOffset()
+        objectiveText:SetHeight(math.max(textRect, 1))
     end
 
     if options.timerShown then
@@ -329,7 +352,7 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, options)
         objectiveBlock.TimerBar:SetScript("OnUpdate", nil)
     end
 
-    self.height = self.height + objectiveBlock:GetHeight()
+    self:AccountObjectiveRow(objectiveBlock, options.rowYOffset)
 
     return precentageComplete
 end
@@ -415,28 +438,24 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition()
         return
     end
 
+    -- The button is a SecureActionButton and cannot be moved in combat, so it is
+    -- anchored to a frame that already carries the layout above it instead of to a
+    -- position summed up from every container. For a block in the scrolled part that
+    -- frame is the scroll child: it hangs below the fixed containers and moves with
+    -- the scroll bar, so scrolling needs no reposition at all. Only the offset within
+    -- the own column is left to add.
+    local container = self:GetParent()
+    local scrollChild = GwQuestTracker.ScrollFrame.Child
+    local isScrolled = container:GetParent() == scrollChild
+    local column = isScrolled and GW.QuestTrackerScrollableContainer or GW.QuestTrackerFixedContainer
     local height = self.fromContainerTopHeight or 0
-    if GW.Retail then
-        height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight()
-    end
-    if not (GW.Classic or GW.TBC or GW.Wrath) then
-        height = height + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
+
+    for _, other in ipairs(column) do
+        if other == container then
+            break
+        end
+        height = height + other:GetHeight()
     end
 
-    if GW.ObjectiveTrackerContainer.Notification:IsShown() then
-        height = height + GW.ObjectiveTrackerContainer.Notification.desc:GetHeight()
-    else
-        height = height - 40
-    end
-    if self:GetParent().type == GW.Enum.ObjectivesBlockType.Scenario then
-        height = height - (GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight())
-    end
-    if self:GetParent().type == GW.Enum.ObjectivesBlockType.Bonus then
-        height = height + GW.ObjectiveTrackerContainer.Quests:GetHeight() + GW.ObjectiveTrackerContainer.Campaign:GetHeight()
-    end
-    if GW.Retail and self:GetParent().type == GW.Enum.ObjectivesBlockType.Quests then
-        height = height + GW.ObjectiveTrackerContainer.Campaign:GetHeight()
-    end
-
-    self.actionButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
+    self.actionButton:SetPoint("TOPLEFT", isScrolled and scrollChild or GwQuestTracker, "TOPRIGHT", -330, -height)
 end

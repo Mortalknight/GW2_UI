@@ -5,10 +5,28 @@ local NavigableContentTrackingTargets = {
     [Enum.ContentTrackingTargetType.Vendor] = true,
     [Enum.ContentTrackingTargetType.JournalEncounter] = true,
 };
+local MAX_BLOCKS = 25
 local blockIndex
-local savedHeight
 
 GwObjectivesCollectionBlockMixin = CreateFromMixins(POIButtonOwnerMixin)
+
+-- POIButtonOwnerMixin:Init creates a NEW button pool on every call, so it may only run
+-- once per block: per layout pass it would orphan the previous pool while its buttons
+-- stay shown. The per-pass entry point is ResetUsage, which releases them back.
+function GwObjectivesCollectionBlockMixin:EnsurePoiButtonOwner()
+    if self.gwPoiOwnerInitialized then
+        return
+    end
+    self.gwPoiOwnerInitialized = true
+    self:Init()
+end
+
+function GwObjectivesCollectionBlockMixin:ReleasePoiButtons()
+    if not self.gwPoiOwnerInitialized then
+        return -- no pool yet, nothing to release
+    end
+    self:ResetUsage()
+end
 
 function GwObjectivesCollectionBlockMixin:UpdateBlock()
     local ignoreWaypoint = true
@@ -83,16 +101,19 @@ local function updateCollectionLayout(self, trackableType, trackableID)
     local targetType, targetID = C_ContentTracking.GetCurrentTrackingTarget(trackableType, trackableID)
 
     if targetType then
+        if blockIndex >= MAX_BLOCKS then
+            return false -- cap reached, stop the enumeration before creating another block
+        end
         blockIndex = blockIndex + 1
 
         local block = self:GetBlock(blockIndex, GW.Enum.ObjectivesNotificationType.Recipe, false)
-        block:Init() -- POIButtonOwnerTemplate
+        block:EnsurePoiButtonOwner()
         block.poiButton = nil
         block.trackableID = trackableID
         block.trackableType = trackableType
         block.targetType = targetType
         block.targetID = targetID
-        block.height = GW.GetObjectivesWideBlockBaseHeight()
+        block.height = GW.GetObjectivesBlockBaseHeight()
         block.numObjectives = 0
 
         local title = C_ContentTracking.GetTitle(trackableType, trackableID)
@@ -100,33 +121,9 @@ local function updateCollectionLayout(self, trackableType, trackableID)
         block.Header:SetText(title)
         block:UpdateBlock()
 
-        if blockIndex == 1 then
-            savedHeight = GW.GetObjectivesHeaderHeight()
-        end
-        savedHeight = savedHeight + block.height
-
         block:SetHeight(block.height)
-        self:SetHeight(savedHeight)
-
-        if blockIndex <= 25 then
-            self.header:Show()
-            block:Show()
-        else
-            block:Hide()
-        end
-    end
-
-    for i = blockIndex + 1, #self.blocks do
-        local block = self.blocks[i]
-        block:Hide()
-        block.id = nil
-        block.isRecraft = nil
-        block.poiButton = nil
-    end
-    GwQuestTracker:LayoutChanged()
-
-    if blockIndex > 25 then
-        return false
+        self.header:Show()
+        block:Show()
     end
 
     return true
@@ -135,7 +132,6 @@ end
 local function EnumerateTrackables(self, callback)
     local hasSomethingToTrack = false
     blockIndex = 0
-    savedHeight = 0.1
 
     for _, trackableType in ipairs(C_ContentTracking.GetCollectableSourceTypes()) do
         local trackedIDs = C_ContentTracking.GetTrackedIDs(trackableType)
@@ -146,19 +142,24 @@ local function EnumerateTrackables(self, callback)
             end
         end
     end
-    if not hasSomethingToTrack or (hasSomethingToTrack and self.collapsed) then
-        if not hasSomethingToTrack then
-            self.header:Hide()
-        else
-            savedHeight = GW.GetObjectivesHeaderHeight()
-        end
-        for i = 1, #self.blocks do
-            self.blocks[i]:Hide()
-        end
 
-        self:SetHeight(savedHeight)
-        GwQuestTracker:LayoutChanged()
+    if not hasSomethingToTrack then
+        self.header:Hide()
     end
+
+    -- collapsed keeps the header and drops every block
+    local numShown = (hasSomethingToTrack and not self.collapsed) and blockIndex or 0
+    for i = numShown + 1, #self.blocks do
+        local block = self.blocks[i]
+        block:Hide()
+        block.id = nil
+        block.isRecraft = nil
+        block.poiButton = nil
+    end
+
+    -- one layout pass for the whole list instead of one per tracked entry
+    self:LayoutBlocks(numShown)
+    GwQuestTracker:LayoutChanged()
 end
 
 local function StopTrackingCollectedItems(self)
@@ -178,12 +179,10 @@ local function StopTrackingCollectedItems(self)
 end
 
 function GwObjectivesCollectionContainerMixin:UpdateLayout()
-    -- POIButtonOwnerTemplate
-    for i = 1, 25 do
-        local block = _G["GwQuesttrackerContainerCollectionBlock" .. i]
-        if block then
-            block:ResetUsage()
-        end
+    -- release the POI buttons of the previous pass, the blocks re-acquire the ones they
+    -- still need; the blocks are created unnamed, so they come from the block list
+    for _, block in ipairs(self.blocks) do
+        block:ReleasePoiButtons()
     end
     StopTrackingCollectedItems(self)
     EnumerateTrackables(self, GenerateClosure(updateCollectionLayout, self))

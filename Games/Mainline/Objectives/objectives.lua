@@ -202,7 +202,6 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, 
 		end
     end
 
-    self.height = self.height + GW.GetObjectivesBottomPadding()
     self:SetHeight(self.height)
 end
 
@@ -397,7 +396,6 @@ function GwQuestLogMixin:UpdateLayout()
     self.isUpdating = true
 
     local counterQuest = 0
-    local savedContainerHeight = self.collapsed and GW.GetObjectivesHeaderHeight() or 0.1
     local shouldShowHeader = not self.collapsed
     local frameName = self:GetName()
     local watchedQuestIDs = {}
@@ -440,9 +438,6 @@ function GwQuestLogMixin:UpdateLayout()
                 if shouldShowHeader then
                     self.header:Show()
                     counterQuest = counterQuest + 1
-                    if counterQuest == 1 then
-                        savedContainerHeight = GW.GetObjectivesHeaderHeight()
-                    end
 
                     local isFrequency = IsQuestFrequency(q)
                     local colorKey = self.isCampaignContainer and GW.Enum.ObjectivesNotificationType.Campaign or (isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest)
@@ -471,8 +466,6 @@ function GwQuestLogMixin:UpdateLayout()
                         block:UpdateBlock(self, q, curQuestId, questLogIndex, signature)
                         block:Show()
                     end
-                    savedContainerHeight = savedContainerHeight + block.height
-                    block.fromContainerTopHeight = savedContainerHeight
                     GW.CombatQueue:Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
                 else
                     counterQuest = counterQuest + 1
@@ -486,7 +479,6 @@ function GwQuestLogMixin:UpdateLayout()
             end
         end
     end
-    self:SetHeight(counterQuest > 0 and savedContainerHeight or 0.1)
     self.numQuests = counterQuest
 
     -- hide other quests
@@ -501,6 +493,9 @@ function GwQuestLogMixin:UpdateLayout()
     if counterQuest == 0 and self.isCampaignContainer then
         self.header:Hide()
     end
+
+
+    self:LayoutBlocks(counterQuest)
 
     local headerCounterText = " (" .. counterQuest .. ")"
     self.header.title:SetText(self.isCampaignContainer and TRACKER_HEADER_CAMPAIGN_QUESTS .. headerCounterText or TRACKER_HEADER_QUESTS .. headerCounterText)
@@ -554,34 +549,13 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
         end
     end
 
-    local newHeight = GW.GetObjectivesHeaderHeight()
-    local counterQuest = 0
+    local _, counterQuest = self:LayoutBlocks()
+    self.numQuests = counterQuest
 
-    for i = 1, #self.blocks do
-        local b = self.blocks[i]
-        if b:IsShown() then
-            newHeight = newHeight + b.height
-            counterQuest = counterQuest + 1
-        end
-    end
-
-    self:SetHeight(newHeight)
     local headerCounterText = " (" .. counterQuest .. ")"
     self.header.title:SetText(self.isCampaignContainer and TRACKER_HEADER_CAMPAIGN_QUESTS .. headerCounterText or TRACKER_HEADER_QUESTS .. headerCounterText)
 
     if block and block.hasItem then
-        local heightForQuestItem = GW.GetObjectivesHeaderHeight()
-        for i = 1, #self.blocks do
-            local b = self.blocks[i]
-            if b:IsShown() then
-                heightForQuestItem = heightForQuestItem + b.height
-                if b.questID == questID then
-                    break
-                end
-            end
-        end
-
-        block.fromContainerTopHeight = heightForQuestItem
         GW.CombatQueue:Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
     end
 

@@ -31,16 +31,13 @@ GwObjectivesHousingInitiativeContainerMixin = {}
 
 function GwObjectivesHousingInitiativeContainerMixin:UpdateLayout()
     local trackedTasks = C_NeighborhoodInitiative.GetTrackedInitiativeTasks().trackedIDs
-    local savedHeight = 0.1
     local shownIndex = 1
-    local showHeader = false
 
     self.header:Hide()
 
     if self.collapsed and #trackedTasks > 0 then
         self.header:Show()
         wipe(trackedTasks)
-        savedHeight = GW.GetObjectivesHeaderHeight()
     end
 
     for i = 1, #trackedTasks do
@@ -62,24 +59,18 @@ function GwObjectivesHousingInitiativeContainerMixin:UpdateLayout()
             block:UpdateBlock(requirements)
             block:Show()
 
-            savedHeight = savedHeight + block.height
-
             shownIndex = shownIndex + 1
 
             self.header:Show()
-            showHeader = true
         end
     end
-
-    if showHeader and not self.collapsed then
-        savedHeight = savedHeight + GW.GetObjectivesHeaderHeight()
-    end
-    self:SetHeight(savedHeight)
 
     for i = shownIndex, #self.blocks do
         self.blocks[i]:Hide()
         self.blocks[i].id = nil
     end
+
+    self:LayoutBlocks(shownIndex - 1)
 
     GwQuestTracker:LayoutChanged()
 end

@@ -7,6 +7,45 @@ function GwObjectivesContainerMixin:UpdateLayout()
     -- override per module
 end
 
+-- Positions the shown blocks under the header and takes the container height from
+-- their actual rects, so there is one source of truth instead of a parallel height
+-- count. Call it AFTER the unused blocks are hidden.
+-- The anchors are refreshed every pass on purpose: a block hidden in between keeps
+-- its rect (anchors ignore visibility) and would leave a hole, and the header offset
+-- baked in when the block was created goes stale when compact mode changes it.
+function GwObjectivesContainerMixin:LayoutBlocks(numShown)
+    local headerOffset = (self.header and self.header:IsShown()) and GW.GetObjectivesHeaderHeight() or 0
+    local height = headerOffset
+    local shown = 0
+    local previous
+
+    local blockGap = GW.GetObjectivesBlockGap()
+
+    for i = 1, (numShown or #self.blocks) do
+        local block = self.blocks[i]
+        if block and block:IsShown() then
+            block:ClearAllPoints()
+            if previous then
+                block:SetPoint("TOPRIGHT", previous, "BOTTOMRIGHT", 0, -blockGap)
+            else
+                block:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -headerOffset)
+            end
+            -- one gap per block: the anchors consume all but the last, which becomes the
+            -- container's own bottom margin
+            height = height + block:GetHeight() + blockGap
+            -- the item button is placed from this offset: it is a SecureActionButton,
+            -- so it must not be moved in combat and cannot be anchored to the block
+            block.fromContainerTopHeight = height
+            shown = shown + 1
+            previous = block
+        end
+    end
+
+    self:SetHeight(math.max(height, GW.OBJECTIVES_EMPTY_HEIGHT))
+
+    return height, shown
+end
+
 function GwObjectivesContainerMixin:BlockOnClick()
     -- override per module
 end
@@ -78,7 +117,6 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
             block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
             for _, obj in ipairs(block.objectiveBlocks) do
                 obj.StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
-                obj.TimerBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
             end
         end
         for _, obj in ipairs(block.objectiveBlocks) do

@@ -17,7 +17,7 @@ GwObjectivesRecipeBlockMixin = {}
 
 function GwObjectivesRecipeBlockMixin:UpdateBlock(recipeSchematic)
     local allCollacted = true
-    self.height = GW.GetObjectivesWideBlockBaseHeight()
+    self.height = GW.GetObjectivesBlockBaseHeight()
     self.numObjectives = 0
 
     for _, reagentSlotSchematic in ipairs(recipeSchematic.reagentSlotSchematics) do
@@ -47,18 +47,14 @@ end
 
 GwObjectivesRecipeContainerMixin = {}
 
-function GwObjectivesRecipeContainerMixin:CreateTrackedBlock(idx, isRecraft, savedHeight, shownIndex)
+function GwObjectivesRecipeContainerMixin:CreateTrackedBlock(idx, isRecraft, shownIndex)
     local recipeID = C_TradeSkillUI.GetRecipesTracked(isRecraft)[idx]
     local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, isRecraft)
-
-    if idx == 1 then
-        savedHeight = GW.GetObjectivesHeaderHeight()
-    end
 
     self.header:Show()
     local block = self:GetBlock(shownIndex, GW.Enum.ObjectivesNotificationType.Recipe, false)
     if block == nil then
-        return 0, 0
+        return shownIndex
     end
     block.id = recipeID
     block.isRecraft = isRecraft
@@ -68,17 +64,12 @@ function GwObjectivesRecipeContainerMixin:CreateTrackedBlock(idx, isRecraft, sav
 
     block:Show()
 
-    savedHeight = savedHeight + block.height
-
-    shownIndex = shownIndex + 1
-
-    return savedHeight, shownIndex
+    return shownIndex + 1
 end
 
 function GwObjectivesRecipeContainerMixin:ProcessUpdate()
     local numRecipes = #C_TradeSkillUI.GetRecipesTracked(true)
     local numRecipesRecraft = #C_TradeSkillUI.GetRecipesTracked(false)
-    local savedHeight = 0.1
     local shownIndex = 1
 
     self.header:Hide()
@@ -87,17 +78,14 @@ function GwObjectivesRecipeContainerMixin:ProcessUpdate()
         self.header:Show()
         numRecipes = 0
         numRecipesRecraft = 0
-        savedHeight = GW.GetObjectivesHeaderHeight()
     end
 
     for i = 1, numRecipes do
-        savedHeight, shownIndex = self:CreateTrackedBlock(i, true, savedHeight, shownIndex)
+        shownIndex = self:CreateTrackedBlock(i, true, shownIndex)
     end
     for i = 1, numRecipesRecraft do
-        savedHeight, shownIndex = self:CreateTrackedBlock(i, false, savedHeight, shownIndex)
+        shownIndex = self:CreateTrackedBlock(i, false, shownIndex)
     end
-
-    self:SetHeight(savedHeight)
 
     for i = shownIndex, #self.blocks do
         local block = self.blocks[i]
@@ -105,6 +93,8 @@ function GwObjectivesRecipeContainerMixin:ProcessUpdate()
         block.isRecraft = nil
         block:Hide()
     end
+
+    self:LayoutBlocks(shownIndex - 1)
 
     GwQuestTracker:LayoutChanged()
 end

@@ -141,7 +141,6 @@ function GwBonusObjectivesTrackerContainerMixin:BlockOnClick(button)
 end
 
 function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
-    local savedContainerHeight = 0.1
     local shownBlocks = 0
     local blockIndex = 1
     local foundEvent = false
@@ -182,9 +181,6 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
 
                 GW.CombatQueue:Queue(nil, block.UpdateObjectiveActionButton, {block})
 
-                if not foundEvent then
-                    savedContainerHeight = GW.GetObjectivesHeaderHeight()
-                end
                 foundEvent = true
 
                 compassData.PROGRESS = 0
@@ -236,8 +232,6 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                     GwObjectivesNotification:AddNotification(compassData)
                 end
 
-                savedContainerHeight = savedContainerHeight + block.height + GW.GetObjectivesEntrySpacing()
-                block.fromContainerTopHeight = savedContainerHeight
                 if block.hasItem then
                     GW.CombatQueue:Queue("update_tracker_bonus_itembutton_position" .. blockIndex, block.UpdateObjectiveActionButtonPosition, {block})
                 end
@@ -248,11 +242,9 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 blockIndex = blockIndex + 1
             else
                 shownBlocks = shownBlocks + 1
-                savedContainerHeight = GW.GetObjectivesHeaderHeight()
             end
         end
     end
-    self:SetHeight(savedContainerHeight)
 
     return foundEvent, shownBlocks
 end
@@ -311,6 +303,8 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateLayout(newQuestId)
     else
         self.header:Hide()
     end
+
+    self:LayoutBlocks(shownBlocks)
 
     self.isUpdating = false
 end

@@ -157,22 +157,13 @@ function GwObjectivesArenaContainerMixin:SetCompass()
 end
 
 function GwObjectivesArenaContainerMixin:UpdateArenaFrameHeight()
-    local lastIndex = 0
-
-    for index, frame in pairs(arenaFrames) do
-        if frame:IsShown() then
-            lastIndex = index
-        end
+    -- no arena frames yet: the preparation frames hold the slots
+    local height, shownSlots = GW.GetFixedSlotContainerHeight(arenaFrames)
+    if shownSlots == 0 then
+        height = GW.GetFixedSlotContainerHeight(arenaPrepFrames)
     end
 
-    if lastIndex == 0 then
-        for index, frame in pairs(arenaPrepFrames) do
-            if frame:IsShown() then
-                lastIndex = index
-            end
-        end
-    end
-    self:SetHeight(lastIndex > 0 and (48 * lastIndex) or 0.1)
+    self:SetHeight(height)
 end
 
 function GwObjectivesArenaContainerMixin:SetUpFramePosition()

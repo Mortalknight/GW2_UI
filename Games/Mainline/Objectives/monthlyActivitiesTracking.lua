@@ -31,16 +31,13 @@ GwObjectivesMonthlyActivitiesContainerMixin = {}
 
 function GwObjectivesMonthlyActivitiesContainerMixin:UpdateLayout()
     local trackedActivities = C_PerksActivities.GetTrackedPerksActivities().trackedIDs
-    local savedHeight = 0.1
     local shownIndex = 1
-    local showHeader = false
 
     self.header:Hide()
 
     if self.collapsed and #trackedActivities > 0 then
         self.header:Show()
         wipe(trackedActivities)
-        savedHeight = GW.GetObjectivesHeaderHeight()
     end
 
     for i = 1, #trackedActivities do
@@ -62,26 +59,18 @@ function GwObjectivesMonthlyActivitiesContainerMixin:UpdateLayout()
             block:UpdateBlock(requirements)
             block:Show()
 
-            savedHeight = savedHeight + block.height
-
             shownIndex = shownIndex + 1
 
             self.header:Show()
-            showHeader = true
         end
     end
 
-    if showHeader and not self.collapsed then
-        savedHeight = savedHeight + GW.GetObjectivesHeaderHeight()
+    for i = shownIndex, #self.blocks do
+        self.blocks[i]:Hide()
+        self.blocks[i].id = nil
     end
-    self:SetHeight(savedHeight)
 
-    for i = shownIndex, 25 do
-        if _G["GwQuesttrackerContainerMonthlyActivityBlock" .. i] then
-            _G["GwQuesttrackerContainerMonthlyActivityBlock" .. i]:Hide()
-            _G["GwQuesttrackerContainerMonthlyActivityBlock" .. i].id = nil
-        end
-    end
+    self:LayoutBlocks(shownIndex - 1)
 
     GwQuestTracker:LayoutChanged()
 end

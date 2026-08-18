@@ -166,7 +166,7 @@ local function BuildQuestBlockSignature(quest, colorKey)
 end
 
 local function UpdateBlockInternal(self, parent, quest, signature)
-    self.height = 25
+    self.height = GW.GetObjectivesBlockBaseHeight()
     self.numObjectives = 0
     self.turnin:Hide()
 
@@ -302,7 +302,6 @@ function GwQuestLogMixin:UpdateLayout()
     self.isUpdating = true
 
     local counterQuest = 0
-    local savedContainerHeight = self.collapsed and 20 or 0.1
     local shouldShowHeader = not self.collapsed
     local frameName = self:GetName()
 
@@ -378,9 +377,6 @@ function GwQuestLogMixin:UpdateLayout()
             if shouldShowHeader then
                 self.header:Show()
                 counterQuest = counterQuest + 1
-                if counterQuest == 1 then
-                    savedContainerHeight = 20
-                end
 
                 local isFrequency = IsQuestFrequency(quest.questId)
                 local colorKey = isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
@@ -409,8 +405,6 @@ function GwQuestLogMixin:UpdateLayout()
                     block:UpdateBlock(self, quest, signature)
                     block:Show()
                 end
-                savedContainerHeight = savedContainerHeight + block.height
-                block.fromContainerTopHeight = savedContainerHeight
 
                 GW.CombatQueue:Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
                 tinsert(self.trackedQuests, quest)
@@ -428,7 +422,6 @@ function GwQuestLogMixin:UpdateLayout()
         end
     end
 
-    self:SetHeight(counterQuest > 0 and savedContainerHeight or 0.1)
     self.numQuests = counterQuest
 
     -- hide other quests
@@ -440,6 +433,8 @@ function GwQuestLogMixin:UpdateLayout()
         block:Hide()
         GW.CombatQueue:Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
     end
+
+    self:LayoutBlocks(counterQuest)
 
     local headerCounterText = " (" .. counterQuest .. ")"
     self.header.title:SetText(TRACKER_HEADER_QUESTS .. headerCounterText)
