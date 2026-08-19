@@ -187,30 +187,10 @@ local function EnsureItemButton(cf, index, iconSize, opts)
         button.__gwSkinned = true
     end
 
-    -- secure delegate for spell-item-targeting clicks: our buttons are addon created,
-    -- so the inherited handler may not complete a targeting cast (UseContainerItem is
-    -- forbidden from tainted code then). The overlay runs "/use bag slot" securely and
-    -- only shows while a spell awaits an item target (see UpdateSpellTargetOverlays)
-    -- Parented to UIParent, NOT to the button: a protected frame anywhere below GwBagFrame
-    -- makes the bag itself unhideable in combat, GwBagFrame:Hide() then throws
-    -- ADDON_ACTION_BLOCKED. Anchored and levelled onto the button instead, so it keeps
-    -- catching the click without dragging its protection into the bag.
-    local overlay = CreateFrame("Button", nil, UIParent, "SecureActionButtonTemplate")
-    overlay.gwOwner = button
-    overlay:SetAllPoints(button)
-    overlay:RegisterForClicks("AnyDown", "AnyUp")
-    overlay:SetAttribute("type", "macro")
-    overlay:SetScript("OnEnter", function(o)
-        local onEnter = o.gwOwner:GetScript("OnEnter")
-        if onEnter then onEnter(o.gwOwner) end
-    end)
-    overlay:SetScript("OnLeave", function(o)
-        local onLeave = o.gwOwner:GetScript("OnLeave")
-        if onLeave then onLeave(o.gwOwner) end
-    end)
-    overlay:Hide()
-    button.gwSecureUseOverlay = overlay
-
+    -- No secure overlay for spell-item-targeting: the buttons inherit
+    -- ContainerFrameItemButtonTemplate, whose OnClick is a secure template script and
+    -- handles the targeting UseContainerItem itself (Baganator relies on exactly this).
+    -- An overlay button would also make every ancestor unhideable in combat.
     cf.gw_items[index] = button
     allItemButtons[#allItemButtons + 1] = button
     return button
@@ -219,46 +199,6 @@ end
 -- shows/hides the secure "/use" overlays with the item targeting state. Toggling
 -- secure frames is combat locked: in-combat flips are skipped and resynced on
 -- PLAYER_REGEN_ENABLED (item targeting spells in combat are a rare edge)
-local overlaysShown = false
-local function UpdateSpellTargetOverlays(force)
-    if InCombatLockdown() then
-        return
-    end
-
-    local targeting = (SpellCanTargetItem() or SpellCanTargetItemID()) and true or false
-    if targeting == overlaysShown and not force then
-        return
-    end
-    overlaysShown = targeting
-
-    for _, button in ipairs(allItemButtons) do
-        local overlay = button.gwSecureUseOverlay
-        if overlay then
-            -- "/use bag slot" only understands the carried bags (0-4 + reagent bag),
-            -- bank containers keep their normal click path
-            local bagID = button:GetParent():GetID()
-            if targeting and button:IsVisible() and bagID >= 0 and bagID <= 5 then
-                -- no longer inherited from the button, so it has to be matched here
-                overlay:SetFrameStrata(button:GetFrameStrata())
-                overlay:SetFrameLevel(button:GetFrameLevel() + 5)
-                overlay:SetAttribute("macrotext", format("/use %d %d", bagID, button:GetID()))
-                overlay:Show()
-            else
-                overlay:Hide()
-            end
-        end
-    end
-end
-
-do
-    local watcher = CreateFrame("Frame")
-    watcher:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
-    watcher:RegisterEvent("PLAYER_REGEN_ENABLED")
-    watcher:SetScript("OnEvent", function(_, event)
-        UpdateSpellTargetOverlays(event == "PLAYER_REGEN_ENABLED")
-    end)
-end
-
 local function UpdateOwnContainerItemButtons(cf, force)
     if not cf or not cf.gw_items then
         return
