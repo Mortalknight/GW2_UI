@@ -438,6 +438,18 @@ local function SnapToGrid(self, xOfs, yOfs)
     return xOfs + deltaX, yOfs + deltaY
 end
 
+-- mirrors the selected movers anchor offsets into the X/Y inputs
+local function UpdateMoverPositionInputs(mover)
+    local options = GW.MoveHudScaleableFrame.moverSettingsFrame.options
+    if not options.position or options.position.gwUpdating then return end
+
+    local _, _, _, x, y = mover:GetPoint()
+    options.position.gwUpdating = true
+    options.position.inputX:SetText(GW.RoundDec(x or 0, 1))
+    options.position.inputY:SetText(GW.RoundDec(y or 0, 1))
+    options.position.gwUpdating = false
+end
+
 local function mover_OnDragStop(self)
     local settingsName = self.setting
     local wasDragged = self.IsMoving
@@ -483,19 +495,6 @@ local function mover_OnDragStop(self)
     if GW.MoveHudScaleableFrame.moverSettingsFrame.childMover == self then
         UpdateMoverPositionInputs(self)
     end
-end
-
-
--- mirrors the selected movers anchor offsets into the X/Y inputs
-local function UpdateMoverPositionInputs(mover)
-    local options = GW.MoveHudScaleableFrame.moverSettingsFrame.options
-    if not options.position or options.position.gwUpdating then return end
-
-    local _, _, _, x, y = mover:GetPoint()
-    options.position.gwUpdating = true
-    options.position.inputX:SetText(GW.RoundDec(x or 0, 1))
-    options.position.inputY:SetText(GW.RoundDec(y or 0, 1))
-    options.position.gwUpdating = false
 end
 
 local function showExtraOptions(self)
