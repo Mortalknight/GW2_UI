@@ -191,19 +191,22 @@ local function EnsureItemButton(cf, index, iconSize, opts)
     -- so the inherited handler may not complete a targeting cast (UseContainerItem is
     -- forbidden from tainted code then). The overlay runs "/use bag slot" securely and
     -- only shows while a spell awaits an item target (see UpdateSpellTargetOverlays)
-    local overlay = CreateFrame("Button", nil, button, "SecureActionButtonTemplate")
-    overlay:SetAllPoints()
+    -- Parented to UIParent, NOT to the button: a protected frame anywhere below GwBagFrame
+    -- makes the bag itself unhideable in combat, GwBagFrame:Hide() then throws
+    -- ADDON_ACTION_BLOCKED. Anchored and levelled onto the button instead, so it keeps
+    -- catching the click without dragging its protection into the bag.
+    local overlay = CreateFrame("Button", nil, UIParent, "SecureActionButtonTemplate")
+    overlay.gwOwner = button
+    overlay:SetAllPoints(button)
     overlay:RegisterForClicks("AnyDown", "AnyUp")
     overlay:SetAttribute("type", "macro")
     overlay:SetScript("OnEnter", function(o)
-        local owner = o:GetParent()
-        local onEnter = owner:GetScript("OnEnter")
-        if onEnter then onEnter(owner) end
+        local onEnter = o.gwOwner:GetScript("OnEnter")
+        if onEnter then onEnter(o.gwOwner) end
     end)
     overlay:SetScript("OnLeave", function(o)
-        local owner = o:GetParent()
-        local onLeave = owner:GetScript("OnLeave")
-        if onLeave then onLeave(owner) end
+        local onLeave = o.gwOwner:GetScript("OnLeave")
+        if onLeave then onLeave(o.gwOwner) end
     end)
     overlay:Hide()
     button.gwSecureUseOverlay = overlay
@@ -235,6 +238,9 @@ local function UpdateSpellTargetOverlays(force)
             -- bank containers keep their normal click path
             local bagID = button:GetParent():GetID()
             if targeting and button:IsVisible() and bagID >= 0 and bagID <= 5 then
+                -- no longer inherited from the button, so it has to be matched here
+                overlay:SetFrameStrata(button:GetFrameStrata())
+                overlay:SetFrameLevel(button:GetFrameLevel() + 5)
                 overlay:SetAttribute("macrotext", format("/use %d %d", bagID, button:GetID()))
                 overlay:Show()
             else
