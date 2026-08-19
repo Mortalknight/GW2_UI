@@ -1053,3 +1053,5 @@ L["Edit world map settings."] = true
 L["General settings for all group frames."] = true
 L["Edit size, layout and aura display for this grid."] = true
 L["Modify the party frame settings."] = true
+L["Objective Spacing"] = true
+L["Scales the gaps between objective lines and between quest blocks. Lower values pack them tighter."] = true

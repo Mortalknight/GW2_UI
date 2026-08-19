@@ -109,8 +109,15 @@ local function LoadObjectivesPanel(sWindow)
         dependence = {["QUESTTRACKER_ENABLED"] = true}
     })
     p:AddOption(L["Supertracked Quest to Top"], L["Move the currently supertracked quest to the top of the quest tracker list."], {getterSetter = "OBJECTIVES_SUPERTRACKED_QUEST_TOP", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = not GW.Retail})
-    p:AddOption(L["Show Completed Objectives"], L["Show completed quest objectives instead of hiding them."], {getterSetter = "OBJECTIVES_SHOW_COMPLETED_OBJECTIVES", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = not GW.Retail})
+    p:AddOption(L["Show Completed Objectives"], L["Show completed quest objectives instead of hiding them."], {getterSetter = "OBJECTIVES_SHOW_COMPLETED_OBJECTIVES", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["QUESTTRACKER_ENABLED"] = true}})
     p:AddOption(L["Compact Mode"], L["Reduce spacing and font sizes across the Objective Tracker."], {getterSetter = "OBJECTIVES_TRACKER_COMPACT_MODE", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["QUESTTRACKER_ENABLED"] = true}})
+    p:AddOptionSlider(L["Objective Spacing"], L["Scales the gaps between objective lines and between quest blocks. Lower values pack them tighter."], {getterSetter = "OBJECTIVES_TRACKER_SPACING", callback = GW.RefreshObjectivesTrackerLayout, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.05, dependence = {["QUESTTRACKER_ENABLED"] = true}})
+    p:AddOption(L["Toggle Compass"], L["Enable or disable the quest tracker compass."], {getterSetter = "SHOW_QUESTTRACKER_COMPASS", callback = function() if not (GW.Classic or GW.TBC or GW.Wrath) then GwQuesttrackerContainerBossFrames:SetUpFramePosition(); GwQuesttrackerContainerArenaBGFrames:SetUpFramePosition() end; GwObjectivesNotification:OnUpdate() end, dependence = {["QUESTTRACKER_ENABLED"] = true}})
+    p:AddOption(L["Show Objective Tracker progress bars"], L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."], {getterSetter = "QUESTTRACKER_STATUSBARS_ENABLED", callback = UpdateObjectiveTrackerStatusBarSettings, dependence = {["QUESTTRACKER_ENABLED"] = true}})
+    p:AddOption(L["Show Quest XP in Quest Tracker"], nil, {getterSetter = "QUESTTRACKER_SHOW_XP", callback = function() GwQuesttrackerContainerQuests:UpdateLayout() end, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = GW.Retail or GW.Mists})
+
+    p:AddOptionDropdown(L["Quest Tracker Sorting"], nil, { getterSetter = "QUESTTRACKER_SORTING", callback = function() GwQuesttrackerContainerQuests:UpdateLayout() end, optionsList = {"DEFAULT", "LEVEL", "ZONE"}, optionNames = {DEFAULT, GUILD_RECRUITMENT_LEVEL, ZONE .. L[" |cFF888888(required Questie)|r"]}, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = GW.Retail})
+
     local moduleOrderOptions, moduleOrderOptionNames = GetObjectiveTrackerModuleOrderOptions()
     p:AddOptionSortableList(L["Objective Tracker Module Order"], L["Set the order of Objective Tracker modules."], {
         getterSetter = "OBJECTIVES_TRACKER_MODULE_ORDER",
@@ -121,11 +128,6 @@ local function LoadObjectivesPanel(sWindow)
         dependence = {["QUESTTRACKER_ENABLED"] = true},
         hidden = GW.Classic or GW.TBC
     })
-    p:AddOption(L["Toggle Compass"], L["Enable or disable the quest tracker compass."], {getterSetter = "SHOW_QUESTTRACKER_COMPASS", callback = function() if not (GW.Classic or GW.TBC or GW.Wrath) then GwQuesttrackerContainerBossFrames:SetUpFramePosition(); GwQuesttrackerContainerArenaBGFrames:SetUpFramePosition() end; GwObjectivesNotification:OnUpdate() end, dependence = {["QUESTTRACKER_ENABLED"] = true}})
-    p:AddOption(L["Show Objective Tracker progress bars"], L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."], {getterSetter = "QUESTTRACKER_STATUSBARS_ENABLED", callback = UpdateObjectiveTrackerStatusBarSettings, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = not GW.Retail})
-    p:AddOption(L["Show Quest XP in Quest Tracker"], nil, {getterSetter = "QUESTTRACKER_SHOW_XP", callback = function() GwQuesttrackerContainerQuests:UpdateLayout() end, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = GW.Retail or GW.Mists})
-
-    p:AddOptionDropdown(L["Quest Tracker Sorting"], nil, { getterSetter = "QUESTTRACKER_SORTING", callback = function() GwQuesttrackerContainerQuests:UpdateLayout() end, optionsList = {"DEFAULT", "LEVEL", "ZONE"}, optionNames = {DEFAULT, GUILD_RECRUITMENT_LEVEL, ZONE .. L[" |cFF888888(required Questie)|r"]}, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = GW.Retail})
 
     sWindow:AddSettingsPanel(p, OBJECTIVES_TRACKER_LABEL, L["Edit objectives settings."])
 end

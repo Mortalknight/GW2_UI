@@ -56,6 +56,10 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
         end
     end
 
+    if self.gwHasSuperTrackPin then
+        self.superTrackButton:Show()
+    end
+
     if not self.isSuperTracked then
         GW.AddToAnimation(
             (self.animationName or self:GetDebugName()) .. "hover",
@@ -90,6 +94,12 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
     end
     if not self.isSuperTracked then
         self.hover:Hide()
+    end
+
+    -- IsMouseOver, not focus: the pin sits inside the block rect, so moving onto it fires
+    -- this handler and would hide the button under the cursor
+    if self.gwHasSuperTrackPin and not self.isSuperTracked and not self:IsMouseOver() then
+        self.superTrackButton:Hide()
     end
 
     if self.objectiveBlocks then
@@ -163,6 +173,74 @@ function GwObjectivesBlockTemplateMixin:ApplyLayoutStyle()
     self.Difficulty:SetHeight(headerHeight)
     self.SubHeader:ClearAllPoints()
     self.SubHeader:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, compact and -17 or -25)
+end
+
+local SUPER_TRACK_TITLE_INSET = 32
+
+local function SetTitleRightInset(block, inset)
+    block.Header:ClearAllPoints()
+    block.Header:SetPoint("TOPLEFT", block, "TOPLEFT", 0, 0)
+    block.Header:SetPoint("TOPRIGHT", block, "TOPRIGHT", -inset, 0)
+end
+
+GwObjectivesSuperTrackButtonMixin = {}
+
+function GwObjectivesSuperTrackButtonMixin:OnClick()
+    local questID = self:GetParent().questID
+    if not questID then
+        return
+    end
+
+    if C_SuperTrack.GetSuperTrackedQuestID() == questID then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+        C_SuperTrack.ClearAllSuperTracked()
+    else
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+        C_SuperTrack.SetSuperTrackedQuestID(questID)
+    end
+end
+
+function GwObjectivesSuperTrackButtonMixin:OnEnter()
+    local questID = self:GetParent().questID
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(C_SuperTrack.GetSuperTrackedQuestID() == questID and STOP_SUPER_TRACK_QUEST or SUPER_TRACK_QUEST,
+        GW.Colors.TextColors.LightHeader:GetRGB())
+    GameTooltip:Show()
+end
+
+function GwObjectivesSuperTrackButtonMixin:OnLeave()
+    GameTooltip_Hide()
+end
+
+function GwObjectivesBlockTemplateMixin:UpdateSuperTrackButton(isSuperTracked, iconType)
+    local button = self.superTrackButton
+    if not button then
+        return
+    end
+    if not self.questID then
+        self.gwHasSuperTrackPin = nil
+        button:Hide()
+        SetTitleRightInset(self, 0)
+        return
+    end
+
+    local icon = GW.GetObjectivesTypeIcon(iconType) or GW.GetObjectivesTypeIcon(GW.Enum.ObjectivesNotificationType.Quest)
+    if not icon then
+        button:Hide()
+        return
+    end
+
+    button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icon.tex .. ".png")
+    button.icon:SetTexCoord(icon.l, icon.r, icon.t, icon.b)
+    button.icon:SetDesaturated(true)
+    button.icon:SetVertexColor(self.color.r, self.color.g, self.color.b, isSuperTracked and 1 or 0.7)
+
+    -- only the tracked quest keeps its pin, the others appear on hover (OnEnter/OnLeave)
+    self.gwHasSuperTrackPin = true
+    button:SetShown(isSuperTracked)
+
+    -- the inset stays regardless: reserved space keeps titles from reflowing on hover
+    SetTitleRightInset(self, SUPER_TRACK_TITLE_INSET)
 end
 
 function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(type)

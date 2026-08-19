@@ -479,6 +479,27 @@
                 <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png" alphaMode="ADD"/>
                 <DisabledTexture file="Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png"/>
             </Button>
+            <Button parentKey="superTrackButton" mixin="GwObjectivesSuperTrackButtonMixin" hidden="true">
+                <Size x="18" y="18"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-3"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective.png">
+                            <Anchors>
+                                <Anchor point="TOPLEFT"/>
+                                <Anchor point="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnClick method="OnClick"/>
+                    <OnEnter method="OnEnter"/>
+                    <OnLeave method="OnLeave"/>
+                </Scripts>
+            </Button>
         </Frames>
         <Scripts>
             <OnLoad method="OnLoad"/>

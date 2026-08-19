@@ -194,7 +194,7 @@ local function LoadHudPanel(sWindow)
 
     -- CHAT BUBBLES
     chatBubbles:AddOption(ENABLE, L["Replace the default UI chat bubbles. (Only in not protected areas)"], {getterSetter = "CHATBUBBLES_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    chatBubbles:AddOptionSlider(GW.NewSign .. L["Chatbubble Scale"], nil, { getterSetter = "ChatBubbleScale", min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["CHATBUBBLES_ENABLED"] = true}, hidden = not GW.Retail})
+    chatBubbles:AddOptionSlider(GW.NewSign .. L["Chatbubble Scale"], nil, { getterSetter = "ChatBubbleScale", min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["CHATBUBBLES_ENABLED"] = true}})
 
     --MINIMAP
     minimap:AddOption(ENABLE, L["Use the GW2 UI Minimap frame."], {getterSetter = "MINIMAP_ENABLED", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Minimap", isMasterToggle = true})

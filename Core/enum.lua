@@ -40,6 +40,8 @@ GW.Enum.ObjectivesNotificationType = {
     HousingInitiative = 12,
     Delve = 13,
     Dead = 14,
+    LegendaryQuest = 15,
+    ImportantQuest = 16,
 }
 
 GW.Enum.DispelType = {

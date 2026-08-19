@@ -156,12 +156,18 @@ function GW.GetObjectivesBlockBaseHeight()
     return -GW.GetObjectivesFirstObjectiveOffset()
 end
 
+-- scales both gaps below; compact mode keeps its own base values, so the two settings stay
+-- independent - this one only stretches or tightens what compact mode picked
+local function ScaleObjectivesGap(gap)
+    return math.floor(gap * (GW.settings.OBJECTIVES_TRACKER_SPACING or 1) + 0.5)
+end
+
 function GW.GetObjectivesRowGap()
-    return GW.IsObjectivesTrackerCompactMode() and 6 or 10
+    return ScaleObjectivesGap(GW.IsObjectivesTrackerCompactMode() and 6 or 10)
 end
 
 function GW.GetObjectivesBlockGap()
-    return GW.IsObjectivesTrackerCompactMode() and 5 or 8
+    return ScaleObjectivesGap(GW.IsObjectivesTrackerCompactMode() and 5 or 8)
 end
 
 function GW.GetObjectivesEntrySpacing()

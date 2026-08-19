@@ -17,6 +17,10 @@ local icons = {
     [GW.Enum.ObjectivesNotificationType.Delve] = {tex = "icon-delve", l = 0, r = 1, t = 0, b = 1},
 }
 
+function GW.GetObjectivesTypeIcon(notificationType)
+    return icons[notificationType]
+end
+
 local notification_priority = {
     [GW.Enum.ObjectivesNotificationType.Delve] = 1,
     [GW.Enum.ObjectivesNotificationType.Torghast] = 1,
