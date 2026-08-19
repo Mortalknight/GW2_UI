@@ -1,4 +1,4 @@
-## Interface: 38001
+## Interface: 38002
 ## Title: |cffffedbaGW2 UI|r |cFF888888Wrath|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
