@@ -368,6 +368,15 @@ end
 
 function GW.RefreshAllAuraContainers()
     settingsGeneration = settingsGeneration + 1
+
+    -- the refresh writes secure attributes (aurabar layout proxy) - blocked in combat,
+    -- and the dispel type callback can fire there (SPELLS_CHANGED). Rerun once after
+    -- combat instead; the queue key collapses multiple triggers into one refresh.
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("gw_refresh_all_aura_containers", GW.RefreshAllAuraContainers)
+        return
+    end
+
     for _, entry in ipairs(containerRegistry) do
         if entry.refresh then
             entry.refresh(entry.container)

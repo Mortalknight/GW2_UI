@@ -6,4 +6,5 @@ NEW
 
 FIXES
     - Quest tracker (Retail): the group finder eye no longer breaks Blizzards applicant list - clicking it tainted the group finder, and with the secret values of 12.1 every applicant update then errored until reload
+    - Auras (Retail): no more blocked action error when your dispel abilities change during combat - the aura containers now refresh right after the fight instead
     - Bag taint
