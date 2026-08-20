@@ -317,6 +317,15 @@ local function UpdateAuraHeader(header)
         header:SetAuraGroupLayout(info.key, layout)
     end
 
+    -- The enchantment slots take part in the same flow layout as the aura groups, so
+    -- they need the same metrics: with the default options (0 spacing, no element size)
+    -- the flow reserves the wrong cell for them and they drift out of the grid
+    if header.filter == "HELPFUL" then
+        local enchantLayout = CopyTable(groupLayout)
+        enchantLayout.placement = CustomAuraContainerItemEnchantmentPlacement.BeforeAuraGroups
+        header:SetItemEnchantmentLayout(enchantLayout)
+    end
+
     -- Update size + icon crop on all engine owned buttons. Enchant frames live
     -- outside the aura groups and stay cached: their enumeration
     -- (GetActiveItemEnchantmentFrames) sits on ManagedAuraContainerPrivateMixin
