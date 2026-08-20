@@ -86,11 +86,13 @@ local function disableCompactFrame(frame)
 end
 
 -- silences a container and marks its members by name pattern; no SetParent anywhere
-local function hideCompactFrame(frame, pattern)
+local function hideCompactFrame(frame, ...)
     if not frame then return end
 
     disableCompactFrame(frame)
-    compactPatterns[frame] = pattern
+    for i = 1, select("#", ...) do
+        compactPatterns[select(i, ...)] = true
+    end
 
     if not compactHooked[frame] then
         compactHooked[frame] = true
@@ -105,7 +107,7 @@ local function compactSetUpFrame(self, func)
     local name = (not self.IsForbidden or not self:IsForbidden()) and self:GetDebugName()
     if GW.IsSecretValue(name) or not name then return end
 
-    for _, pattern in next, compactPatterns do
+    for pattern in next, compactPatterns do
         if strmatch(name, pattern) then
             compactSetUpUnits[self] = true
         end
@@ -170,7 +172,8 @@ local function DisableBlizzardFrames()
     end
 
     if ourRaidFrames then
-        hideCompactFrame(CompactRaidFrameContainer, "^CompactRaidGroup%d+Member%d+$")
+        -- grouped layout names members CompactRaidGroup<g>Member<n>, combined layout CompactRaidFrame<n>
+        hideCompactFrame(CompactRaidFrameContainer, "^CompactRaidGroup%d+Member%d+$", "^CompactRaidFrame%d+$")
 
         -- Raid Utility
         if CompactRaidFrameManager_SetSetting then
