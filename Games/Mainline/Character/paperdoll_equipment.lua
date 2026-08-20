@@ -358,7 +358,12 @@ end
 local function stat_OnEnter(self)
     if (not self.tooltip) then
         if self.onEnterFunc and not InCombatLockdown() then
-            self.onEnterFunc(self)
+            -- Blizzard's stat handlers do arithmetic on values that are secret while stats are
+            -- restricted - Mastery_OnEnter feeds GetMasteryEffect() straight into
+            -- GetSecondaryBonus, which multiplies it. That throws from inside their code where
+            -- we cannot guard it, and the only thing lost is a tooltip that was not going to
+            -- render anyway.
+            pcall(self.onEnterFunc, self)
         end
         return
     end
