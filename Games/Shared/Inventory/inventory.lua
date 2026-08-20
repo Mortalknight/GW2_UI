@@ -336,6 +336,94 @@ GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 -- flavor extras can decorate every item button after the shared quality skin ran
 -- (e.g. the equipment set name on mists), registered at file scope from the flavors
 local itemButtonDecorators = {}
+-- Unusable detection through the tooltip: a red line means the character cannot use the
+-- item, whatever the reason (level, class, proficiency, reputation) - the tooltip encodes
+-- them all, in every locale. Three red lines that do NOT mean unusable are excluded, the
+-- same set Baganator filters. Cached per item link; level ups and new skills can change
+-- usability, so those bump the generation and invalidate every cached verdict at once.
+local unusableGeneration = 0
+
+local unusableWatcher = CreateFrame("Frame")
+unusableWatcher:RegisterEvent("PLAYER_LEVEL_UP")
+unusableWatcher:RegisterEvent("SKILL_LINES_CHANGED")
+unusableWatcher:SetScript("OnEvent", function()
+    unusableGeneration = unusableGeneration + 1
+    if GW.settings.BAG_ITEM_MARK_UNUSABLE then
+        GW.UpdateAllOwnBagItemButtons()
+    end
+end)
+
+local function IsRedTooltipColor(r, g, b)
+    return r == 1 and g < 0.2 and b < 0.2
+end
+
+-- a red left line means unusable, unless it is one of these three
+local function IsUnusableLeftLine(r, g, b, text)
+    return IsRedTooltipColor(r, g, b)
+        and text ~= ITEM_SCRAPABLE_NOT
+        and text ~= CANNOT_UNEQUIP_COMBAT
+        and text ~= ITEM_DISENCHANT_NOT_DISENCHANTABLE
+end
+
+-- C_TooltipInfo carries the line colors directly, but its query functions only exist on
+-- retail (the classic clients ship the namespace without them) - there a hidden scanning
+-- tooltip provides the same lines through its font strings
+local function ScanBagItemForUnusable(bagID, slot)
+    if C_TooltipInfo and C_TooltipInfo.GetBagItem then
+        local data = C_TooltipInfo.GetBagItem(bagID, slot)
+        if data and data.lines then
+            for _, line in ipairs(data.lines) do
+                local c = line.leftColor
+                if c and IsUnusableLeftLine(c.r, c.g, c.b, line.leftText) then
+                    return true
+                end
+                c = line.rightColor
+                if c and IsRedTooltipColor(c.r, c.g, c.b) then
+                    return true
+                end
+            end
+        end
+        return false
+    end
+
+
+    GW.ScanTooltip:ClearLines()
+    GW.ScanTooltip:SetBagItem(bagID, slot)
+    -- line 1 is the item name, never a restriction
+    for i = 2, GW.ScanTooltip:NumLines() do
+        local left = _G["GW2_UIScanTooltipTextLeft" .. i]
+        if left and left:IsShown() then
+            local r, g, b = left:GetTextColor()
+            if IsUnusableLeftLine(r, g, b, left:GetText()) then
+                return true
+            end
+        end
+        local right = _G["GW2_UIScanTooltipTextRight" .. i]
+        if right and right:IsShown() then
+            local r, g, b = right:GetTextColor()
+            if IsRedTooltipColor(r, g, b) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+local function IsItemUnusable(bagID, button, itemInfo)
+    if not itemInfo or not itemInfo.hyperlink then
+        return false
+    end
+    if button.gwUnusableLink == itemInfo.hyperlink and button.gwUnusableGeneration == unusableGeneration then
+        return button.gwUnusable
+    end
+
+    button.gwUnusableLink = itemInfo.hyperlink
+    button.gwUnusableGeneration = unusableGeneration
+    button.gwUnusable = ScanBagItemForUnusable(bagID, button:GetID())
+
+    return button.gwUnusable
+end
+
 local function RegisterItemButtonDecorator(decorator)
     itemButtonDecorators[#itemButtonDecorators + 1] = decorator
 end
@@ -407,6 +495,19 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
             end
         end
 
+        -- grey out junk; combined with the lock state, which desaturates through the
+        -- same channel (a picked up item must stay grey either way)
+        SetItemButtonDesaturated(button, (button.isJunk and GW.settings.BAG_ITEM_JUNK_DESATURATE) or (itemInfo and itemInfo.isLocked) or false)
+
+        if button.gwOwnItemButton and GetItemButtonIconTexture then
+            local icon = GetItemButtonIconTexture(button)
+            if GW.settings.BAG_ITEM_MARK_UNUSABLE and IsItemUnusable(bag_id, button, itemInfo) then
+                icon:SetVertexColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
+            else
+                icon:SetVertexColor(1, 1, 1)
+            end
+        end
+
         -- Show upgrade icon if active
         if itemInfo and itemInfo.hyperlink and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
             GW.RegisterPawnUpgradeIcon(button, itemInfo.hyperlink)
@@ -447,14 +548,21 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
     else
         if button.junkIcon then button.junkIcon:Hide() end
         if button.scrapIcon then button.scrapIcon:Hide() end
+        if button.gwEquipSetIcon then
+            button.gwEquipSetIcon:Hide()
+            button.gwEquipSetIconBorder:Hide()
+        end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
         if button.itemlevel then
             button.itemlevel:SetText("")
             button.__gwLastItemLink = nil
         end
         if button.gwOwnItemButton and GetItemButtonIconTexture then
-            GetItemButtonIconTexture(button):Hide()
+            local icon = GetItemButtonIconTexture(button)
+            icon:SetVertexColor(1, 1, 1) -- an unusable tint must not survive into the empty slot look
+            icon:Hide()
         end
+        button.gwUnusableLink = nil
     end
 
     if not qualityWinsOverProfession and (GW.settings.BAG_PROFESSION_BAG_COLOR or isReagentBag) and professionColors then

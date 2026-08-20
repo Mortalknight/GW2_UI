@@ -99,5 +99,7 @@ GW.RegisterBagModule({
     onMenu = function(f, rootDescription, addCheck)
         addCheck(L["Show Scrap Icon"], function() return GW.settings.BAG_ITEM_SCRAP_ICON_SHOW end,
                  function() GW.settings.BAG_ITEM_SCRAP_ICON_SHOW = not GW.settings.BAG_ITEM_SCRAP_ICON_SHOW; GW.UpdateAllOwnBagItemButtons() end)
+        addCheck(L["Show Equipment Set Icon"], function() return GW.settings.BAG_ITEM_EQUIPMENT_SET_ICON_SHOW end,
+                 function() GW.settings.BAG_ITEM_EQUIPMENT_SET_ICON_SHOW = not GW.settings.BAG_ITEM_EQUIPMENT_SET_ICON_SHOW; GW.UpdateAllOwnBagItemButtons() end)
     end,
 })

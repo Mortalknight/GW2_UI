@@ -732,11 +732,19 @@ local function bag_OnShow(self)
     updateKeyringButtonState()
     updateBagBar(self.ItemFrame)
     rescanBagContainers(self)
+
+    if GW.settings.BAG_AUTO_SORT_ON_OPEN then
+        -- the sort button's path, minus its click sound
+        if GW_SortBags then GW_SortBags() else C_Container.SortBags() end
+    end
 end
 
 
 local function bag_OnHide(self)
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
+    -- closed by hand (or by anything else): the auto open no longer owns this bag,
+    -- so the matching close event must not re-close it later
+    self.gwAutoOpenedContext = nil
     self:UnregisterAllEvents()
     if C_NewItems and C_NewItems.ClearAll then
         -- blizzards container frames did this on hide, ours have to now
@@ -976,6 +984,43 @@ local function skinStackSplit()
     StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
 end
 
+-- Opens the bag with its interaction window (merchant, mail, auction house, bank, trade)
+-- and closes it again with it. Only what the auto open opened is closed: a bag the player
+-- opened stays, and the ownership dies as soon as the bag is closed by hand (see OnHide).
+-- OpenAllBags/CloseAllBags on purpose - they keep Blizzards open state bookkeeping in sync
+-- with the hooks this bag is driven by.
+local AUTO_OPEN_EVENTS = {
+    MERCHANT_SHOW = "merchant", MERCHANT_CLOSED = "merchant",
+    MAIL_SHOW = "mail", MAIL_CLOSED = "mail",
+    AUCTION_HOUSE_SHOW = "auctionHouse", AUCTION_HOUSE_CLOSED = "auctionHouse",
+    BANKFRAME_OPENED = "bank", BANKFRAME_CLOSED = "bank",
+    TRADE_SHOW = "trade", TRADE_CLOSED = "trade",
+}
+
+local function setupAutoOpenClose(f)
+    local watcher = CreateFrame("Frame")
+    for event in pairs(AUTO_OPEN_EVENTS) do
+        watcher:RegisterEvent(event)
+    end
+    watcher:SetScript("OnEvent", function(_, event)
+        local context = AUTO_OPEN_EVENTS[event]
+        local isOpen = not event:find("_CLOSED", 1, true)
+
+        if isOpen then
+            -- an already visible bag was opened by someone else, leave it theirs
+            if GW.settings.BAG_AUTO_OPEN_CONTEXTS[context] and not f:IsShown() then
+                f.gwAutoOpenedContext = context
+                OpenAllBags()
+            end
+        elseif f.gwAutoOpenedContext == context then
+            f.gwAutoOpenedContext = nil
+            if f:IsShown() then
+                CloseAllBags()
+            end
+        end
+    end)
+end
+
 local function LoadBag(helpers)
     inv = helpers
 
@@ -994,6 +1039,7 @@ local function LoadBag(helpers)
     -- setup show/hide
     f:SetScript("OnShow", bag_OnShow)
     f:SetScript("OnHide", bag_OnHide)
+    setupAutoOpenClose(f)
     f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
 
     -- setup movable stuff
@@ -1163,6 +1209,10 @@ local function LoadBag(helpers)
                 addCheck(L["Mark New Items"], function() return GW.settings.BAG_ITEM_NEW_ITEM_SHOW end,
                          function() GW.settings.BAG_ITEM_NEW_ITEM_SHOW = not GW.settings.BAG_ITEM_NEW_ITEM_SHOW; GW.UpdateAllOwnBagItemButtons() end)
             end
+            addCheck(L["Grey out Junk"], function() return GW.settings.BAG_ITEM_JUNK_DESATURATE end,
+                     function() GW.settings.BAG_ITEM_JUNK_DESATURATE = not GW.settings.BAG_ITEM_JUNK_DESATURATE; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Mark Unusable Items"], function() return GW.settings.BAG_ITEM_MARK_UNUSABLE end,
+                     function() GW.settings.BAG_ITEM_MARK_UNUSABLE = not GW.settings.BAG_ITEM_MARK_UNUSABLE; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(L["Show Junk Icon"], function() return GW.settings.BAG_ITEM_JUNK_ICON_SHOW end,
                      function() GW.settings.BAG_ITEM_JUNK_ICON_SHOW = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(L["Show Upgrade Icon"], function() return GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW end,
@@ -1190,15 +1240,37 @@ local function LoadBag(helpers)
             })
 
 
+            -- flavor item display entries (scrap icon on retail, equipment set names on mists)
+            callBagModules("onMenu", f, rootDescription, addCheck)
+
             rootDescription:CreateTitle(L["Loot & Sorting"])
             addCheck(L["Loot to leftmost Bag"], function() return GW.settings.BAG_REVERSE_NEW_LOOT end,
                      function() local ns = not GW.settings.BAG_REVERSE_NEW_LOOT; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.BAG_REVERSE_NEW_LOOT = ns end)
             addCheck(L["Sort to Last Bag"], function() return GW.settings.BAG_ITEMS_REVERSE_SORT end,
                      function() local ns = not GW.settings.BAG_ITEMS_REVERSE_SORT; if GW.Retail then C_Container.SetSortBagsRightToLeft(ns) end; GW.settings.BAG_ITEMS_REVERSE_SORT = ns end)
 
-            -- flavor specific entries (e.g. equipment set names on mists)
-            callBagModules("onMenu", f, rootDescription, addCheck)
+            addCheck(L["Sort when opening"], function() return GW.settings.BAG_AUTO_SORT_ON_OPEN end,
+                     function() GW.settings.BAG_AUTO_SORT_ON_OPEN = not GW.settings.BAG_AUTO_SORT_ON_OPEN end)
 
+
+
+            rootDescription:CreateTitle(L["Behavior"])
+            local autoOpenMenu = rootDescription:CreateButton(L["Open automatically at"])
+            for _, context in ipairs({
+                {key = "merchant", label = MERCHANT},
+                {key = "mail", label = MAIL_LABEL},
+                {key = "auctionHouse", label = AUCTIONS},
+                {key = "bank", label = BANK},
+                {key = "trade", label = TRADE},
+            }) do
+                local check = autoOpenMenu:CreateCheckbox(context.label,
+                    function() return GW.settings.BAG_AUTO_OPEN_CONTEXTS[context.key] end,
+                    function() GW.settings.BAG_AUTO_OPEN_CONTEXTS[context.key] = not GW.settings.BAG_AUTO_OPEN_CONTEXTS[context.key] end)
+                check:AddInitializer(function(button, description, menu)
+                    GW.BlizzardDropdownCheckButtonInitializer(button, description, menu,
+                        function() return GW.settings.BAG_AUTO_OPEN_CONTEXTS[context.key] end)
+                end)
+            end
 
             rootDescription:CreateTitle(L["Bag Sections"])
             addCheck(L["Separate bags"], function() return GW.settings.BAG_SEPARATE_BAGS end,

@@ -22,12 +22,31 @@ function GwObjectivesBlockTemplateMixin:UpdateFindGroupButton(id, isScenario)
     else
         hasButton = C_LFGList.CanCreateScenarioGroup(id)
     end
-    if hasButton then
-		self.groupButton:SetUp(id, isScenario)
-		self.groupButton:Show()
+    -- the same key for apply AND hide: a pending show for a quest this block no longer
+    -- carries is overwritten instead of firing later against the wrong content
+    local queueKey = self.secureGroupButton and ("gw_secure_groupbutton_" .. (self.index or 0) .. "_" .. self:GetParent():GetName())
+
+    if hasButton and not isScenario and self.secureGroupButton then
+        self.groupButton:Hide()
+        -- the attribute write runs through the restricted environment and only works out
+        -- of combat, so it goes through the combat queue like the other tracker buttons
+        GW.CombatQueue:Queue(queueKey, function(btn, questID)
+            if GW.SetSecureAttribute(btn, "questID", questID) then
+                btn:Show()
+            end
+        end, {self.secureGroupButton, id})
+    elseif hasButton then
+        if self.secureGroupButton then
+            GW.CombatQueue:Queue(queueKey, self.secureGroupButton.Hide, {self.secureGroupButton})
+        end
+        self.groupButton:SetUp(id, isScenario)
+        self.groupButton:Show()
     else
         self.groupButton:Hide()
-	end
+        if self.secureGroupButton then
+            GW.CombatQueue:Queue(queueKey, self.secureGroupButton.Hide, {self.secureGroupButton})
+        end
+    end
 end
 
 function GwObjectivesBlockTemplateMixin:OnEnter()
@@ -150,15 +169,36 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     self.groupButton:SetScript("OnEnter", self.groupButton.OnEnter)
     self.groupButton:SetScript("OnLeave", self.groupButton.OnLeave)
 
+    if GW.Retail and QuestObjectiveFindGroupButtonMixin then
+        local secureButton = CreateFrame("Button", nil, self, "QuestObjectiveFindGroupButtonTemplate")
+        secureButton:SetSize(25, 25)
+        secureButton:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, -25)
+        secureButton:Hide()
+        -- restyle to the GW look of the old button (texture swaps do not taint)
+        secureButton.Icon:Hide()
+        local tex = "Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png"
+        secureButton:SetNormalTexture(tex)
+        secureButton:SetPushedTexture(tex)
+        secureButton:SetDisabledTexture(tex)
+        secureButton:SetHighlightTexture(tex, "ADD")
+        self.secureGroupButton = secureButton
+    end
+
     self.turnin:SetScale(GwQuestTracker:GetScale() * 0.9)
     self.popupQuestAccept:SetScale(GwQuestTracker:GetScale() * 0.9)
     self.groupButton:SetScale(GwQuestTracker:GetScale() * 0.9)
+    if self.secureGroupButton then
+        self.secureGroupButton:SetScale(GwQuestTracker:GetScale() * 0.9)
+    end
 
     -- hooks for scaling
     hooksecurefunc(GwQuestTracker, "SetScale", function(_, scale)
         self.turnin:SetScale(scale * 0.9)
         self.popupQuestAccept:SetScale(scale * 0.9)
         self.groupButton:SetScale(scale * 0.9)
+        if self.secureGroupButton then
+            self.secureGroupButton:SetScale(scale * 0.9)
+        end
     end)
 end
 

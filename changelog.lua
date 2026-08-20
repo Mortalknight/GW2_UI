@@ -14,6 +14,9 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("11.1.4", {
+    {GW.Enum.ChangelogType.feature, [=[Bags: the bag can open and close itself with the merchant, mailbox, auction house, bank and trade window - pick the contexts in the new "Open automatically at" submenu of the bag settings. Only what the auto open opened gets closed: a bag you opened yourself stays]=]},
+    {GW.Enum.ChangelogType.feature, [=[Bags: new display options - sort on open, grey out junk, tint items red that your character cannot use, and an equipment set icon on set items (Retail) so they are safe from accidental selling]=]},
+    {GW.Enum.ChangelogType.bug, [=[Quest tracker (Retail): the group finder eye no longer breaks Blizzards applicant list - clicking it tainted the group finder, and with the secret values of 12.1 every applicant update then errored until reload]=]},
     {GW.Enum.ChangelogType.bug, [=[Bag taint]=]},
 })
 
