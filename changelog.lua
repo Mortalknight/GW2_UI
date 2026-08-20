@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("11.1.4", {
+    {GW.Enum.ChangelogType.bug, [=[Bag taint]=]},
+})
+
 addChange("11.1.3", {
     {GW.Enum.ChangelogType.change, [=[Advanced aura filters (Retail): rebuilt from the ground up so an aura can never appear twice again - even with the secret aura values of patch 12.1. Every selected filter now narrows the display, and each entry cycles through three states: off, required (check) or excluded (red cross)]=]},
     {GW.Enum.ChangelogType.feature, [=[New aura property filters (Retail): Dispellable, Stealable, Boss Aura, Priority Debuff and Role Aura - these stay accurate even while aura data is secret]=]},

@@ -340,13 +340,6 @@ local function UpdateAuraHeader(header)
     local minHeight = ((maxWraps == 1 and 0 or verticalSpacing) + height) * (isColumnLayout and wrapAfter or maxWraps)
     header:SetSize(math.max(minWidth, width + 1), math.max(minHeight, height + 1))
 
-    -- MaxWraps has to be enforced by geometry: the per group frame budget cannot cap the
-    -- TOTAL - own/others (and the dispel split) are separate groups, each with its own
-    -- budget, and the shown counts are secret, so no distribution can be computed. The
-    -- container is already sized to exactly the MaxWraps box, so everything the flow
-    -- lays out beyond it is cut here, including its mouse interaction.
-    header:SetClipsChildren(true)
-
     -- anchoring: buffs to the mover, debuffs relative to the buffs (as long as not moved separately)
     if header.filter == "HELPFUL" then
         header:ClearAllPoints()
