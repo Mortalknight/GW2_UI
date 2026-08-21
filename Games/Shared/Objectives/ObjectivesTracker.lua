@@ -311,6 +311,14 @@ GW.FormatObjectiveNumbers = FormatObjectiveNumbers
 
 GwObjectivesTrackerMixin = {}
 function GwObjectivesTrackerMixin:LayoutChanged()
+    -- the secure item buttons anchor to the scroll child, so the scroll frames
+    -- size is combat protected along the anchor chain — re-run with fresh values
+    -- once combat ends (keyed: repeated layout changes collapse into one run)
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("GwQuestTrackerScrollLayout", self.LayoutChanged, {self})
+        return
+    end
+
     -- adjust scrolframe height
     local scrollContentHeight = 0
     local trackerHeight = GW.settings.QuestTracker_pos_height
@@ -364,6 +372,20 @@ local function DisableBlizzardsObjevtiveTracker()
             end
         end)
         EventRegistry:UnregisterFrameEventAndCallback("PLAYER_ENTERING_WORLD", ObjectiveTrackerManager)
+
+        -- the tracker modules register their events on themselves once the manager
+        -- assigns them to the (hidden) container after PLAYER_ENTERING_WORLD, so an
+        -- unregister here alone gets undone. Once our taint reaches the scenario
+        -- modules state, C_Spell.GetSpellCooldown hands its cooldown update secret
+        -- values CooldownFrame_Set cannot compare — its spell buttons are invisible
+        -- anyway. Only this one event is muted: the module keeps running for its
+        -- banners and toasts
+        if ScenarioObjectiveTracker then
+            ScenarioObjectiveTracker:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
+            hooksecurefunc(ScenarioObjectiveTracker, "SetContainer", function(module)
+                module:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
+            end)
+        end
     elseif GW.Mists or GW.Wrath then
         WatchFrame:SetMovable(1)
         WatchFrame:SetUserPlaced(true)

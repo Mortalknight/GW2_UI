@@ -7,23 +7,24 @@ local UI_WIDGET_TYPE_STATUS_BAR = 2
 local UI_WIDGET_TYPE_DOUBLE_STATUS_BAR = 3
 local UI_WIDGET_TYPE_SCENARIO_CURRENCIES = 11
 
--- Blizzards scenario tracker calls the global ShouldShowMawBuffs on every layout;
--- our tracker skin taints that path and the unguarded MAW aura read then throws
--- while auras are secret. The UI is reused outside Torghast (scenario world
--- events), so a failed read falls back to slot enumeration — GetAuraSlots hands
--- out handles without touching aura data and works on secret auras.
+-- Blizzards ShouldShowMawBuffs only short circuits inside Torghast: outside it
+-- (the UI is reused for scenario world events) it boolean-tests the first MAW
+-- auras secret icon, which throws from our insecure execution. So our trigger
+-- calls the original guarded and falls back to slot enumeration — GetAuraSlots
+-- hands out handles without touching aura data and works on secret auras. The
+-- global itself stays untouched: overriding it tainted every secure caller in
+-- Blizzards scenario module (its UNIT_AURA branch compares the result)
 if GW.Retail and ShouldShowMawBuffs then
-    -- our tracker renders its own Maw buff button: mute Blizzards container — its
-    -- UNIT_AURA update calls the (tainted) wrapper below and would then trip over
-    -- the secret aura reads in its own display loop
+    -- our tracker renders its own Maw buff button: mute Blizzards container in
+    -- the hidden default tracker — its display loop compares secret aura data
+    -- (applications) and its updates are invisible anyway
     if ScenarioObjectiveTracker and ScenarioObjectiveTracker.MawBuffsBlock and ScenarioObjectiveTracker.MawBuffsBlock.Container then
         ScenarioObjectiveTracker.MawBuffsBlock.Container:UnregisterAllEvents()
     end
 
-    local origShouldShowMawBuffs = ShouldShowMawBuffs
     local lastKnown = false
-    function ShouldShowMawBuffs()
-        local ok, result = pcall(origShouldShowMawBuffs)
+    function GW.ShouldShowMawBuffs()
+        local ok, result = pcall(ShouldShowMawBuffs)
         if ok then
             lastKnown = result and true or false
             return lastKnown
@@ -426,6 +427,9 @@ end
 -- the first row origin AND as the gap between rows, so both are the same number.
 local CUSTOM_ROW_Y_OFFSET = -5
 
+-- aligns the secure item button with the first row of the scenario block
+local SCENARIO_ITEM_BUTTON_TOP_OFFSET = 20
+
 -- the Blizzard scenario tracker renders a FIXED bottom widget set besides the
 -- per-step set — the Torghast blessing/torment rows live there. Rendered with
 -- own visuals: GW font labels plus the trait icon tiles.
@@ -688,7 +692,7 @@ local function AddScenarioTieredEntranceTraitsObjective(block)
 end
 
 local function AddScenarioMawBuffsObjective(block)
-    if not (GW.Retail and ShouldShowMawBuffs()) then
+    if not (GW.ShouldShowMawBuffs and GW.ShouldShowMawBuffs()) then
         block.mawBuffsFrame:Hide()
         return false
     end
@@ -1032,7 +1036,10 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     -- the origin of the first row, which no row books itself
     block.height = block.height - CUSTOM_ROW_Y_OFFSET
     if block.hasItem then
-        block.fromContainerTopHeight = block.height
+        -- the button sits next to the first rows of the block: book only the offset
+        -- above the block content (timer bar), never the summed row heights — the
+        -- button must not sink with every additional objective row
+        block.fromContainerTopHeight = (timerBlock.timer:IsShown() and timerBlock.height or 0) + SCENARIO_ITEM_BUTTON_TOP_OFFSET
         GW.CombatQueue:Queue("update_tracker_scenario_itembutton_position", block.UpdateObjectiveActionButtonPosition, {block})
     end
 
