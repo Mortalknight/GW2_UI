@@ -592,7 +592,7 @@ local function AddScenarioCurrencyObjective(block, widgetInfo)
     end
 
     block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, block.gwFirstRowYOffset or CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
 
     PrepareScenarioCustomObjectiveBlock(objectiveBlock, block.currenciesFrame:GetHeight())
 
@@ -636,7 +636,7 @@ local function AddScenarioSpellRowsObjective(block, container)
     end
 
     block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, block.gwFirstRowYOffset or CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
 
     frame:SetParent(objectiveBlock)
     frame:ClearAllPoints()
@@ -700,7 +700,7 @@ local function AddScenarioTieredEntranceTraitsObjective(block)
     end
 
     block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, block.gwFirstRowYOffset or CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
 
     block.tieredEntranceTraitsFrame:SetSpells(spells)
     PrepareScenarioCustomObjectiveBlock(objectiveBlock, block.tieredEntranceTraitsFrame:GetHeight() + GW.GetObjectivesEntrySpacing())
@@ -722,7 +722,7 @@ local function AddScenarioMawBuffsObjective(block)
     end
 
     block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
+    local objectiveBlock = block:GetObjectiveBlock(block.numObjectives, block.gwFirstRowYOffset or CUSTOM_ROW_Y_OFFSET, CUSTOM_ROW_Y_OFFSET)
 
     -- a failed read (secret state) keeps the last known power set
     local auras = GW.CollectMawAuras() or block.mawBuffsFrame.auras or {}
@@ -805,6 +805,9 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
 
     block.numObjectives = 0
     block.questLogIndex = 0
+    -- origin of the first objective row; the delve branch moves it further down when
+    -- the icon row needs its own space (see there)
+    block.gwFirstRowYOffset = CUSTOM_ROW_Y_OFFSET
     block.groupButton:Hide()
     block.delvesFrame:Hide()
     block.currenciesFrame:Hide()
@@ -894,6 +897,17 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         GwObjectivesNotification.iconFrame.tooltipSpellID = delvesWidgetInfo.tierTooltipSpellID
         compassData.TITLE = difficultyName .. " |cFFFFFFFF(" .. tierLevel .. ")|r - " .. delvesWidgetInfo.headerText
         block.delvesFrame:Show()
+        -- without a stage description the icon row floats in the notifications empty
+        -- lower half (InitModule anchor, +35). WITH one that space holds the description
+        -- text - the row then gets its own slot at the top of the block and pushes the
+        -- objective rows down by its height
+        block.delvesFrame:ClearAllPoints()
+        if strtrim(stageDescription) ~= "" then
+            block.delvesFrame:SetPoint("TOPRIGHT", block, "TOPRIGHT", 0, 0)
+            block.gwFirstRowYOffset = CUSTOM_ROW_Y_OFFSET - block.delvesFrame:GetHeight()
+        else
+            block.delvesFrame:SetPoint("TOPRIGHT", GwObjectivesNotification, "BOTTOMRIGHT", 0, 35)
+        end
         block.delvesFrame.reward:Show()
         local id = 1
         for _, spellInfo in ipairs(delvesWidgetInfo.spells) do
@@ -976,7 +990,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         objectiveType = "monster",
         qty = 0,
         isMythicKeystone = false,
-        firstObjectivesYValue = CUSTOM_ROW_Y_OFFSET,
+        firstObjectivesYValue = block.gwFirstRowYOffset,
     }
 
     for _, widgetInfo in ipairs( self.timerWidgetManager.widgetInfoForCurrency or {} ) do
@@ -1050,7 +1064,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
                 objectiveType = "progressbar"
                 quantity = math.min(1, widgetInfo.barValue / widgetInfo.barMax) * 100
             end
-            block:AddObjective(widgetInfo.text or "", { finished = false, objectiveType = objectiveType, qty = quantity, totalqty = widgetInfo.barMax, firstObjectivesYValue = CUSTOM_ROW_Y_OFFSET })
+            block:AddObjective(widgetInfo.text or "", { finished = false, objectiveType = objectiveType, qty = quantity, totalqty = widgetInfo.barMax, firstObjectivesYValue = block.gwFirstRowYOffset })
             local objectiveBlock = block:GetObjectiveBlock(block.numObjectives)
             UpdateStatusBarPartitions(objectiveBlock.StatusBar, widgetInfo)
         end
@@ -1063,13 +1077,16 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         block.objectiveBlocks[i]:Hide()
     end
 
-    -- the origin of the first row, which no row books itself
-    block.height = block.height - CUSTOM_ROW_Y_OFFSET
+    -- the origin of the first row, which no row books itself (includes the delve
+    -- icon rows height when it occupies its own slot at the block top)
+    block.height = block.height - (block.gwFirstRowYOffset or CUSTOM_ROW_Y_OFFSET)
     if block.hasItem then
         -- the button sits next to the first rows of the block: book only the offset
-        -- above the block content (timer bar), never the summed row heights — the
-        -- button must not sink with every additional objective row
-        block.fromContainerTopHeight = (timerBlock.timer:IsShown() and timerBlock.height or 0) + SCENARIO_ITEM_BUTTON_TOP_OFFSET
+        -- above the block content (timer bar, delve icon row), never the summed row
+        -- heights — the button must not sink with every additional objective row
+        block.fromContainerTopHeight = (timerBlock.timer:IsShown() and timerBlock.height or 0)
+            + SCENARIO_ITEM_BUTTON_TOP_OFFSET
+            + (CUSTOM_ROW_Y_OFFSET - (block.gwFirstRowYOffset or CUSTOM_ROW_Y_OFFSET))
         GW.CombatQueue:Queue("update_tracker_scenario_itembutton_position", block.UpdateObjectiveActionButtonPosition, {block})
     end
 
