@@ -7,13 +7,17 @@ local UI_WIDGET_TYPE_STATUS_BAR = 2
 local UI_WIDGET_TYPE_DOUBLE_STATUS_BAR = 3
 local UI_WIDGET_TYPE_SCENARIO_CURRENCIES = 11
 
--- Blizzards ShouldShowMawBuffs only short circuits inside Torghast: outside it
--- (the UI is reused for scenario world events) it boolean-tests the first MAW
--- auras secret icon, which throws from our insecure execution. So our trigger
--- calls the original guarded and falls back to slot enumeration — GetAuraSlots
--- hands out handles without touching aura data and works on secret auras. The
--- global itself stays untouched: overriding it tainted every secure caller in
--- Blizzards scenario module (its UNIT_AURA branch compares the result)
+-- Blizzards ShouldShowMawBuffs reads MAW auras unguarded, which throws when our
+-- taint sits on the calling chain while auras are secret. And it periodically
+-- does: the trackers dirty updates run through RunNextFrame (DirtiableMixin), and
+-- timer callbacks inherit the taint of whoever SCHEDULED them — whenever a GW
+-- action is the first to dirty the tracker in a frame (edit mode anchor ripples
+-- etc.), the whole next layout runs tainted from its first instruction. That is
+-- unavoidable from our side, so the global gets the guarded version below: on a
+-- failed read it falls back to slot enumeration — GetAuraSlots hands out handles
+-- without touching aura data and works on secret auras. The taint the override
+-- itself puts on every layout is covered: the only known downstream victim, the
+-- spell button cooldown, is handled via duration objects (see next block).
 if GW.Retail and ShouldShowMawBuffs then
     -- our tracker renders its own Maw buff button: mute Blizzards container in
     -- the hidden default tracker — its display loop compares secret aura data
@@ -22,9 +26,10 @@ if GW.Retail and ShouldShowMawBuffs then
         ScenarioObjectiveTracker.MawBuffsBlock.Container:UnregisterAllEvents()
     end
 
+    local origShouldShowMawBuffs = ShouldShowMawBuffs
     local lastKnown = false
     function GW.ShouldShowMawBuffs()
-        local ok, result = pcall(ShouldShowMawBuffs)
+        local ok, result = pcall(origShouldShowMawBuffs)
         if ok then
             lastKnown = result and true or false
             return lastKnown
@@ -61,11 +66,30 @@ if GW.Retail and ShouldShowMawBuffs then
         end
         return auras
     end
+
+    ShouldShowMawBuffs = GW.ShouldShowMawBuffs
 end
 
 GwObjectivesScenarioContainerWidgetMixin = {}
 GwObjectivesScenarioContainerMixin = {}
 GwQuesttrackerScenarioBlockMixin = {}
+
+-- Blizzards own scenario spell buttons run UpdateCooldown from layout chains that
+-- can carry our taint: C_Spell.GetSpellCooldown then hands them secret values and
+-- the comparisons in CooldownFrame_Set throw. The duration object route needs no
+-- comparisons at all, so the mixin method is replaced before any button copies
+-- it — this covers Blizzards pool buttons and our own action button (which mixes
+-- this in on InitModule). Blizzard stores the id as self.spellID (capital D)
+if GW.Retail and ScenarioSpellButtonMixin then
+    function ScenarioSpellButtonMixin:UpdateCooldown()
+        local durationObject = self.spellID and C_Spell.GetSpellCooldownDuration(self.spellID)
+        if durationObject then
+            self.Cooldown:SetCooldownFromDurationObject(durationObject)
+        else
+            self.Cooldown:Clear()
+        end
+    end
+end
 
 local function HasValidTimerData(widgetInfo)
     return type(widgetInfo) == "table"
@@ -816,7 +840,13 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         end
 
         block:SetHeight(block.height)
-        self:SetHeight(block.height)
+        -- bottom margin only when something is actually on screen (raid notification
+        -- block or a still running timer), an empty container stays collapsed
+        if block:IsShown() or timerBlock.timer:IsShown() then
+            self:SetHeight(block.height + GW.GetObjectivesBlockGap())
+        else
+            self:SetHeight(block.height)
+        end
         self:ClearWidgetSet()
 
         return
@@ -1053,7 +1083,9 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
 
     timerBlock:SetHeight(timerBlock.height)
     block:SetHeight(block.height - intGWQuestTrackerHeight)
-    self:SetHeight(block.height)
+    -- like LayoutBlocks: one block gap per block, the (single) last one becomes the
+    -- container's bottom margin - without it the next container sits too close
+    self:SetHeight(block.height + GW.GetObjectivesBlockGap())
 end
 
 function GwQuesttrackerScenarioBlockMixin:UpdateAffixes(fakeIds)
@@ -1461,6 +1493,8 @@ function GwObjectivesScenarioContainerMixin:InitModule()
 
     self.block = self:GetBlock(1, GW.Enum.ObjectivesNotificationType.Scenario, GW.Retail) -- only create an actionbutton for retail here
     if GW.Retail then
+        -- the mixin carries our secret safe UpdateCooldown (replaced at the top of
+        -- this file), so the button inherits it here
         Mixin(self.block.actionButton, ScenarioSpellButtonMixin)
         self.block.actionButton:SetScript("OnEnter", self.block.actionButton.OnEnter)
     end

@@ -6,6 +6,13 @@ GwObjectivesItemButtonMixin = {}
 function GwObjectivesItemButtonMixin:UpdateCooldown()
    local itemCooldown = self.Cooldown
 	local start, duration, enable = GetQuestLogSpecialItemCooldown(self.questLogIndex)
+	-- in combat the cooldown values are secret to our insecure execution: the
+	-- bare setter accepts them, the CooldownFrame_Set comparisons would throw.
+	-- The vertex color needs a readable state and keeps its last value then
+	if GW.IsSecretValue(start) or GW.IsSecretValue(duration) or GW.IsSecretValue(enable) then
+		itemCooldown:SetCooldown(start, duration)
+		return
+	end
 	CooldownFrame_Set(itemCooldown, start, duration, enable)
 	if ( duration and duration > 0 and enable and enable == 0 ) then
 		SetItemButtonTextureVertexColor(self, 0.4, 0.4, 0.4)
