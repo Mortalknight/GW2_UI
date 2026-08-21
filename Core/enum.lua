@@ -55,6 +55,12 @@ GW.Enum.DispelType = {
 	Bleed = 11,
 }
 
+-- login shift direction for the insecure HUD frames, see GetHudClusterShift in mainBarLayout.lua
+GW.Enum.HudShiftDirection = {
+    Left = -1,
+    Right = 1,
+}
+
 GW.Enum.TextSizeType = {
     BigHeader = 1,
     Header = 2,

@@ -179,11 +179,10 @@ local function LoadClassPowers()
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", "Unitframe,Power", { 312, 32 },
         { "default", "scaleable" }, true)
 
-    -- position mover
+    -- position mover, shift values are central in mainBarLayout.lua
     if (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not cpf.isMoved then
         local framePoint = GW.settings.ClasspowerBar_pos
-        local yOff = not GW.settings.XPBAR_ENABLED and 14 or 0
-        local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and 52 or 0
+        local xOff, yOff = GW.GetHudClusterShift(GW.Enum.HudShiftDirection.Right)
         cpf.gwMover:ClearAllPoints()
         cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff,
             framePoint.yOfs - yOff)

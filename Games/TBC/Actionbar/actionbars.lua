@@ -1004,17 +1004,8 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         end
     end)
 
-    -- position mover
-    if (barName == "MultiBarBottomLeft" or barName == "MultiBarBottomRight") and (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not fmMultibar.isMoved  then
-        local yOff = not GW.settings.XPBAR_ENABLED and 14 or 0
-        local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and 56 or 0
-        fmMultibar.gwMover:ClearAllPoints()
-        if barName == "MultiBarBottomLeft" then
-            fmMultibar.gwMover:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs + xOff, settings.yOfs - yOff)
-        elseif barName == "MultiBarBottomRight" then
-            fmMultibar.gwMover:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs - xOff, settings.yOfs - yOff)
-        end
-    end
+    -- bottom bar movers are positioned by the mainbar layout manager (mainBarLayout.lua),
+    -- kicked once via lm:RegisterMultiBarLeft/Right above
 
     -- set fader logic
     createFaderAnim(fmMultibar, state)

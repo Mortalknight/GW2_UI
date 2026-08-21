@@ -482,11 +482,10 @@ local function LoadPowerBar()
     local point = GW.ClassPowers and GW.ClassPowers.GetAnchorPoint("TOPLEFT") or "TOPLEFT"
     playerPowerBar:SetPoint(point, playerPowerBar.gwMover, point)
 
-    -- position mover
+    -- position mover, shift values are central in mainBarLayout.lua
     if (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not playerPowerBar.isMoved  then
         local framePoint = GW.settings.PowerBar_pos
-        local yOff = not GW.settings.XPBAR_ENABLED and 14 or 0
-        local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and -52 or 0
+        local xOff, yOff = GW.GetHudClusterShift(GW.Enum.HudShiftDirection.Left)
         playerPowerBar.gwMover:ClearAllPoints()
         playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
