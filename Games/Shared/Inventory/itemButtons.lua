@@ -26,19 +26,22 @@ local allItemButtons = {}
 local function updateCooldown(bagID, button)
     if ContainerFrame_UpdateCooldown then
         ContainerFrame_UpdateCooldown(bagID, button)
-        return
-    end
-    local cooldown = button.cooldown
-    if not cooldown then
-        return
-    end
-    local start, duration, enable = C_Container.GetContainerItemCooldown(bagID, button:GetID())
-    CooldownFrame_Set(cooldown, start, duration, enable)
-    if duration > 0 and enable == 0 then
-        SetItemButtonTextureVertexColor(button, 0.4, 0.4, 0.4)
     else
-        SetItemButtonTextureVertexColor(button, 1, 1, 1)
+        local cooldown = button.cooldown
+        if not cooldown then
+            return
+        end
+        local start, duration, enable = C_Container.GetContainerItemCooldown(bagID, button:GetID())
+        CooldownFrame_Set(cooldown, start, duration, enable)
+        if duration > 0 and enable == 0 then
+            SetItemButtonTextureVertexColor(button, 0.4, 0.4, 0.4)
+        else
+            SetItemButtonTextureVertexColor(button, 1, 1, 1)
+        end
     end
+    -- both paths (blizzards helper and the fallback above) reset the icon color to
+    -- white, wiping the unusable tint the quality skin applied - put it back on top
+    GW.ReapplyBagItemUnusableTint(button)
 end
 
 local function GetQuestTexture(button)
@@ -101,11 +104,11 @@ local function UpdateOwnContainerItemButton(button, force)
     local itemID = info and info.itemID
 
     SetItemButtonTexture(button, texture)
+    SetItemButtonCount(button, itemCount)
+    SetItemButtonDesaturated(button, locked)
     button.gwItemInfo = info
     SetItemButtonQuality(button, quality, info and info.hyperlink or itemID)
     button.gwItemInfo = nil
-    SetItemButtonCount(button, itemCount)
-    SetItemButtonDesaturated(button, locked)
 
     -- toggle the quest icon (the skin owns the textures look)
     local questTexture = GetQuestTexture(button)
@@ -277,7 +280,8 @@ local function UpdateOwnContainerLockedState(cf, slotID)
         local button = cf.gw_items[i]
         if button and (not slotID or button:GetID() == slotID) then
             local info = C_Container.GetContainerItemInfo(bagID, button:GetID())
-            SetItemButtonDesaturated(button, info and info.isLocked)
+            -- an unlock must not clear the junk grey out (the quality skin combined both)
+            SetItemButtonDesaturated(button, (info and info.isLocked) or (button.isJunk and GW.settings.BAG_ITEM_JUNK_DESATURATE) or false)
             -- the remembered slot state has to follow, or the next content update would skip
             -- a slot whose lock state it thinks it never wrote
             button.gw_slotLocked = info and info.isLocked

@@ -424,6 +424,17 @@ local function IsItemUnusable(bagID, button, itemInfo)
     return button.gwUnusable
 end
 
+-- cooldown updates (blizzards ContainerFrame_UpdateCooldown and our retail fallback)
+-- reset the icon vertex color to white, wiping the unusable tint - the content update
+-- calls this afterwards to put the tint back. Relies on the gwUnusable verdict cached
+-- by IsItemUnusable, which the quality skin refreshed earlier in the same update
+local function ReapplyUnusableTint(button)
+    if button.gwUnusable and GW.settings.BAG_ITEM_MARK_UNUSABLE and button.gwOwnItemButton then
+        SetItemButtonTextureVertexColor(button, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
+    end
+end
+GW.ReapplyBagItemUnusableTint = ReapplyUnusableTint
+
 local function RegisterItemButtonDecorator(decorator)
     itemButtonDecorators[#itemButtonDecorators + 1] = decorator
 end

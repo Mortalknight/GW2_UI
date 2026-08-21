@@ -1209,10 +1209,10 @@ local function LoadBag(helpers)
                 addCheck(L["Mark New Items"], function() return GW.settings.BAG_ITEM_NEW_ITEM_SHOW end,
                          function() GW.settings.BAG_ITEM_NEW_ITEM_SHOW = not GW.settings.BAG_ITEM_NEW_ITEM_SHOW; GW.UpdateAllOwnBagItemButtons() end)
             end
-            addCheck(L["Grey out Junk"], function() return GW.settings.BAG_ITEM_JUNK_DESATURATE end,
-                     function() GW.settings.BAG_ITEM_JUNK_DESATURATE = not GW.settings.BAG_ITEM_JUNK_DESATURATE; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(L["Mark Unusable Items"], function() return GW.settings.BAG_ITEM_MARK_UNUSABLE end,
                      function() GW.settings.BAG_ITEM_MARK_UNUSABLE = not GW.settings.BAG_ITEM_MARK_UNUSABLE; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Grey out Junk"], function() return GW.settings.BAG_ITEM_JUNK_DESATURATE end,
+                     function() GW.settings.BAG_ITEM_JUNK_DESATURATE = not GW.settings.BAG_ITEM_JUNK_DESATURATE; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(L["Show Junk Icon"], function() return GW.settings.BAG_ITEM_JUNK_ICON_SHOW end,
                      function() GW.settings.BAG_ITEM_JUNK_ICON_SHOW = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(L["Show Upgrade Icon"], function() return GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW end,

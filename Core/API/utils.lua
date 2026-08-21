@@ -1063,7 +1063,7 @@ local function SetItemLevel(button, quality, itemInput, slot, minItemLevel)
         return
     end
 
-    if button.__gwLastItemLink == itemInput then return end
+    if button.__gwLastItemLink == itemInput and button.__gwLastMinItemLevel == minItemLevel then return end
 
     local function applyItemLevel(ilvl, color, usedLink)
         if not ilvl or ilvl <= 0 or (minItemLevel and ilvl < minItemLevel) then
@@ -1078,6 +1078,7 @@ local function SetItemLevel(button, quality, itemInput, slot, minItemLevel)
         end
 
         button.__gwLastItemLink = usedLink
+        button.__gwLastMinItemLevel = minItemLevel
     end
 
     LoadItemAsync(itemInput, function(itemLink)
