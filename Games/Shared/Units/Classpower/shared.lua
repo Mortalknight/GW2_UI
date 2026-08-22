@@ -423,6 +423,7 @@ local function EnableAuraTracker(f, key, config)
         tracker:SetAuraGroupCandidateFilters("tracker", { includeSpellIDs = config.spellIDs })
     end
     tracker.gwConfiguredWidth = config.width or 1
+    tracker:SetAuraGroupMaxFrameCount("tracker", 1)
     tracker:Show()
     tracker:SetEnabled(true)
     tracker:UpdateAllAuras()
@@ -433,7 +434,7 @@ local function DisableAuraTrackers(f)
     if not f.gwAuraTrackers then return end
     for _, tracker in pairs(f.gwAuraTrackers) do
         tracker:SetEnabled(false)
-        -- disabled containers keep their last button state — hide the whole tracker
+        tracker:SetAuraGroupMaxFrameCount("tracker", 0)
         tracker:Hide()
     end
 end

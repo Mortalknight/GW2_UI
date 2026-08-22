@@ -108,39 +108,7 @@ end
 -- this needs also the essence bar
 
 -- Ebon Might Spell that applies Aura on Self
-local EBON_MIGHT_SELF_AURA_SPELL_ID = 395296;
--- Design-specified, useful visual range from testing, roughly based on upper potential duration range
-local EBON_MIGHT_DISPLAY_MAX = 20
-local function evokerEbonMight(unitToken, auraUpdateInfo)
-    if unitToken ~= "player" or auraUpdateInfo == nil then
-        return
-    end
-
-    local isUpdatePopulated = auraUpdateInfo.isFullUpdate
-        or (auraUpdateInfo.addedAuras ~= nil and #auraUpdateInfo.addedAuras > 0)
-        or (auraUpdateInfo.removedAuraInstanceIDs ~= nil and #auraUpdateInfo.removedAuraInstanceIDs > 0)
-        or (auraUpdateInfo.updatedAuraInstanceIDs ~= nil and #auraUpdateInfo.updatedAuraInstanceIDs > 0)
-
-    if isUpdatePopulated then
-        local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(EBON_MIGHT_SELF_AURA_SPELL_ID)
-        local auraExpirationTime = auraInfo and auraInfo.expirationTime or nil
-
-        if auraInfo and auraExpirationTime ~= CP.frame.auraExpirationTime then
-            CP.frame.auraExpirationTime = auraExpirationTime
-
-            local remainingPrecantage = math.min(1, (auraExpirationTime - GetTime()) / EBON_MIGHT_DISPLAY_MAX) -- hard coded max duration of 20 sec like blizzard
-            CP.frame.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, auraInfo.duration)
-        end
-    end
-end
-local function evokerEvent(self, event, ...)
-    if event == "UNIT_AURA" then
-        local unitToken, auraUpdateInfo = ...
-        evokerEbonMight(unitToken, auraUpdateInfo)
-    else
-        powerEssence(self, event, ...)
-    end
-end
+local EBON_MIGHT_SELF_AURA_SPELL_ID = 395296
 
 local function setEvoker(f)
     CP.SetClassPowerAnchor(f, f.gwMover, "TOPLEFT")
@@ -153,19 +121,22 @@ local function setEvoker(f)
     CP.SetClassPowerAnchor(f.evoker, f, "LEFT")
     f.evoker:Show()
 
-    f:SetScript("OnEvent", evokerEvent)
+    f:SetScript("OnEvent", powerEssence)
     powerEssence(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     f:RegisterUnitEvent("UNIT_POWER_POINT_CHARGE", "player")
 
     if GW.myspec == 3 then
-        f.customResourceBar:SetWidth(115)
-        CP.SetClassPowerCustomResourceBarAnchor(f.customResourceBar, f.gwMover, f, 0, 0, 2, 4)
-        f.customResourceBar:Show()
-
-        CP.setPowerTypeEbonMight(f.customResourceBar)
-        f:RegisterUnitEvent("UNIT_AURA", "player")
+        local tracker = CP.EnableAuraTracker(f, "EvokerEbonMight", {
+            unit = "player",
+            filter = "HELPFUL",
+            spellIDs = { [EBON_MIGHT_SELF_AURA_SPELL_ID] = true },
+            width = 115,
+            height = 14,
+            createWidgets = function(button) return CP.BuildTrackerBarWidgets(button, "agu", "furyspark", false, true) end,
+        })
+        CP.SetClassPowerCustomResourceBarAnchor(tracker, f.gwMover, f, 0, 0, 2, 4)
     end
     return true
 end
