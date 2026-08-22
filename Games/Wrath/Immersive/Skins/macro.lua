@@ -1,9 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function LoadMacroOptionsSkin()
-    MacroFrame_LoadUI()
-
+local function ApplyMacroOptionsSkin()
     if not GW.settings.MACRO_SKIN_ENABLED then return end
     local macroHeaderText
 
@@ -118,60 +116,17 @@ local function LoadMacroOptionsSkin()
         end
     end
 
-    --Icon selection frame
-    ShowUIPanel(MacroFrame) --Toggle frame to create necessary variables needed for popup frame
-    HideUIPanel(MacroFrame)
-    local MacroPopupFrame = _G.MacroPopupFrame
-    MacroPopupFrame:Show() --Toggle the frame in order to create the necessary button elements
-    MacroPopupFrame:Hide()
-
-    -- Popout Frame
-    MacroPopupFrame.BorderBox.OkayButton:GwSkinButton(false, true)
-    MacroPopupFrame.BorderBox.CancelButton:GwSkinButton(false, true)
-
-    GW.HandleTrimScrollBar(MacroPopupFrame.IconSelector.ScrollBar)
-    GW.SkinTextBox(MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameMiddle, MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameLeft, MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameRight, nil, nil, 4, 4)
-
-    local r = {MacroPopupFrame.BorderBox:GetRegions()}
-    for _,c in pairs(r) do
-        if c:GetObjectType() == "Texture" then
-            c:Hide()
-        end
-    end
-    MacroPopupFrame.BG:Hide()
-
-    MacroPopupFrame:SetSize(MacroPopupFrame:GetSize(), MacroPopupFrame:GetSize() + 5)
-    MacroPopupFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-
-
-    MacroPopupFrame.BorderBox:GwStripTextures()
-    local button = MacroPopupFrame.BorderBox.SelectedIconArea and MacroPopupFrame.BorderBox.SelectedIconArea.SelectedIconButton
-    if button then
-        button:DisableDrawLayer("BACKGROUND")
-        GW.HandleItemButton(button, true)
-    end
-
     MacroPopupFrame:HookScript("OnShow", function(self)
         self:ClearAllPoints()
         self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
 
-        for _, button in next, { MacroPopupFrame.IconSelector.ScrollBox.ScrollTarget:GetChildren() } do
-            local icon, texture = button.Icon, nil
-            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
-            if icon then
-                icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-                icon:GwSetInside(button)
-                texture = icon:GetTexture()
-            end
-
-            button:GwStripTextures()
-            button:GwCreateBackdrop()
-            button:GwStyleButton(nil, true)
-
-            if texture then
-                icon:SetTexture(texture)
-            end
+        if not self.isSkinned then
+            GW.HandleIconSelectionFrame(self)
         end
     end)
+end
+
+local function LoadMacroOptionsSkin()
+    GW.RegisterLoadHook(ApplyMacroOptionsSkin, "Blizzard_MacroUI", MacroFrame)
 end
 GW.LoadMacroOptionsSkin = LoadMacroOptionsSkin

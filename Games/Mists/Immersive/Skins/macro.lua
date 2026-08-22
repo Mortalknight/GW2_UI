@@ -128,39 +128,6 @@ local function ApplyMacroOptionsSkin()
         end
     end
 
-    --Icon selection frame
-    ShowUIPanel(MacroFrame) --Toggle frame to create necessary variables needed for popup frame
-    HideUIPanel(MacroFrame)
-    local MacroPopupFrame = _G.MacroPopupFrame
-    MacroPopupFrame:Show() --Toggle the frame in order to create the necessary button elements
-    MacroPopupFrame:Hide()
-
-    -- Popout Frame
-    MacroPopupFrame.BorderBox.OkayButton:GwSkinButton(false, true)
-    MacroPopupFrame.BorderBox.CancelButton:GwSkinButton(false, true)
-
-    GW.HandleTrimScrollBar(MacroPopupFrame.IconSelector.ScrollBar)
-    GW.SkinTextBox(MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameMiddle, MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameLeft, MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameRight, nil, nil, 4, 4)
-
-    local r = {MacroPopupFrame.BorderBox:GetRegions()}
-    for _,c in pairs(r) do
-        if c:GetObjectType() == "Texture" then
-            c:Hide()
-        end
-    end
-    MacroPopupFrame.BG:Hide()
-
-    MacroPopupFrame:SetSize(MacroPopupFrame:GetSize(), MacroPopupFrame:GetSize() + 5)
-    MacroPopupFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-
-
-    MacroPopupFrame.BorderBox:GwStripTextures()
-    local button = MacroPopupFrame.BorderBox.SelectedIconArea and MacroPopupFrame.BorderBox.SelectedIconArea.SelectedIconButton
-    if button then
-        button:DisableDrawLayer("BACKGROUND")
-        GW.HandleItemButton(button, true)
-    end
-
     MacroPopupFrame:HookScript("OnShow", function(self)
         self:ClearAllPoints()
         self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
