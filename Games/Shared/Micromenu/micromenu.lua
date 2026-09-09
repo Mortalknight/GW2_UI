@@ -1152,8 +1152,11 @@ local function setupMicroButtons(mbf)
 
         disableMicroButton(SpellbookMicroButton)
         SetSlotButton("spellbook", sref)
+        sref:HookScript("OnEnter", GW.Professions_OnEnter)
+        sref:HookScript("OnLeave", GameTooltip_Hide)
     else
         SetSlotButton("spellbook", SpellbookMicroButton)
+        SpellbookMicroButton:HookScript("OnEnter", GW.Professions_OnEnter)
     end
 
     -- TalentMicroButton (none retail)
@@ -1191,6 +1194,7 @@ local function setupMicroButtons(mbf)
     -- AchievementMicroButton
     if GW.Retail or GW.Mists or GW.Wrath then
         SetSlotButton("achievements", AchievementMicroButton)
+        AchievementMicroButton:HookScript("OnEnter", GW.Achievements_OnEnter)
     end
 
     -- QuestLogMicroButton
@@ -1247,6 +1251,9 @@ local function setupMicroButtons(mbf)
         SetSlotButton("lfd", LFDMicroButton)
         SetSlotButton("encounterjournal", EJMicroButton)
         SetSlotButton("collections", CollectionsMicroButton)
+        LFDMicroButton:HookScript("OnEnter", GW.GroupFinder_OnEnter)
+        LFDMicroButton.UpdateTooltip = GW.RefreshMicroMenuTooltip -- queue times
+        CollectionsMicroButton:HookScript("OnEnter", GW.Collections_OnEnter)
         RegisterMicroMenuNotificationIcon(EJMicroButton)
         RegisterMicroMenuNotificationIcon(CollectionsMicroButton)
         hooksecurefunc("MicroButtonPulse", function(self)
@@ -1284,11 +1291,14 @@ local function setupMicroButtons(mbf)
             pref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(pref); GameTooltip:Hide() end)
             disableMicroButton(ProfessionMicroButton, true)
             SetSlotButton("professions", pref)
+            pref:HookScript("OnEnter", GW.Professions_OnEnter)
         else
             SetSlotButton("professions", ProfessionMicroButton)
+            ProfessionMicroButton:HookScript("OnEnter", GW.Professions_OnEnter)
         end
     elseif GW.Mists or GW.Wrath then
         SetSlotButton("collections", CollectionsMicroButton)
+        CollectionsMicroButton:HookScript("OnEnter", GW.Collections_OnEnter)
 
         -- PVPMicroButton
         if GW.Wrath and GW.settings.USE_CHARACTER_WINDOW then
@@ -1311,14 +1321,19 @@ local function setupMicroButtons(mbf)
             PVPMicroButton:SetAlpha(0)
             PVPMicroButton:EnableMouse(false)
             SetSlotButton("pvp", pvpref, PVPMicroButton)
+            pvpref:HookScript("OnEnter", GW.Pvp_OnEnter)
+            pvpref:HookScript("OnLeave", GameTooltip_Hide)
         else
             if GW.Mists then
                 PVPMicroButtonTexture:SetAlpha(0)
             end
             SetSlotButton("pvp", PVPMicroButton)
+            PVPMicroButton:HookScript("OnEnter", GW.Pvp_OnEnter)
         end
 
         SetSlotButton("lfg", LFGMicroButton)
+        LFGMicroButton:HookScript("OnEnter", GW.GroupFinder_OnEnter)
+        LFGMicroButton.UpdateTooltip = GW.RefreshMicroMenuTooltip -- queue times
 
         if GW.Mists then
             SetSlotButton("encounterjournal", EJMicroButton)
