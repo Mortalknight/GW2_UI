@@ -25,6 +25,7 @@ addChange("11.2.0", {
     {GW.Enum.ChangelogType.change, [=[Settings migrations from versions before 11.0.0 removed]=]},
     {GW.Enum.ChangelogType.bug, [=[Micro bar fade: the bar no longer ends up invisible but clickable when the mouse comes back during the fade out, and hovering the update, mail or work order icon keeps the bar shown]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix the addon update notification: the version comparison never matched release versions and compared numbers as text]=]},
+    {GW.Enum.ChangelogType.bug, [=[Spellbook on Classic, TBC and Wrath: no more stutter when opening, the book is only rebuilt after spell or talent changes and the unknown spell filter runs a lot cheaper]=]},
     {GW.Enum.ChangelogType.bug, [=[Chat tabs no longer change their size on hover on Classic, TBC, Wrath and Mists]=]},
 })
 

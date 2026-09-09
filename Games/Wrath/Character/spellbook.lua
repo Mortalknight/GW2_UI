@@ -453,47 +453,62 @@ local function setUnknowSpellButton(self, icon, spellID, rank, ispassive, level,
     self:SetScript("OnLeave", GameTooltip_Hide)
 end
 
-local function depIsTalentAndLearned(name)
+local talentLearnedByName, requirementMap, higherRankCache
+local function BuildUnknownSpellCaches()
+    talentLearnedByName, requirementMap, higherRankCache = {}, {}, {}
+
+    local talentInfoQuery = {isInspect = false, isPet = false, groupIndex = GW.GetTalentSpec()}
     for i = 1, GetNumTalentTabs(false, false) do
         for y = 1, MAX_NUM_TALENTS do
-            local talentInfoQuery = {}
-            talentInfoQuery.isInspect = false
-            talentInfoQuery.isPet = false
-            talentInfoQuery.groupIndex = GW.GetTalentSpec()
             talentInfoQuery.specializationIndex = i
             talentInfoQuery.talentIndex = y
             local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
-            if talentInfo and talentInfo.isExceptional then
+            if talentInfo and talentInfo.isExceptional and talentInfo.name then
                 local spellInfo = C_Spell.GetSpellInfo(talentInfo.name)
-                if spellInfo and name == talentInfo.name then
-                    return true, (talentInfo.rank == talentInfo.maxRank and spellInfo.spellID ~= nil and spellInfo.spellID > 0)
-                end
+                talentLearnedByName[talentInfo.name] = (talentInfo.rank == talentInfo.maxRank and spellInfo ~= nil and spellInfo.spellID ~= nil and spellInfo.spellID > 0)
             end
-
         end
     end
 
-    return false, false
+    -- required spell id -> entries that need it
+    for level = 1, 80 do
+        for _, spellData in pairs(GW.Skills[GW.myclass][level] or {}) do
+            if spellData.req then
+                requirementMap[spellData.req] = requirementMap[spellData.req] or {}
+                tinsert(requirementMap[spellData.req], spellData)
+            end
+        end
+    end
+end
+
+local function depIsTalentAndLearned(name)
+    local learned = talentLearnedByName[name]
+    if learned == nil then
+        return false, false
+    end
+    return true, learned
 end
 
 local function isHigherRankKnownAndThisNot(spellId, isPet)
     if not spellId then return false end
-    if GW.IsPlayerSpell(spellId) or GW.IsSpellKnown(spellId, isPet) then return false end
-    for i = 1, 60 do
-        if GW.Skills[GW.myclass][i] then
-            for _ ,reqData in pairs(GW.Skills[GW.myclass][i]) do
-                if spellId == reqData.req then
-                    isPet = reqData.pet ~= nil and reqData.pet == true
-                    if (GW.IsPlayerSpell(reqData[1]) or GW.IsSpellKnown(reqData[1], isPet) or GW.IsSpellInSpellBook (reqData[1], isPet)) and (not GW.IsPlayerSpell(spellId) or not GW.IsSpellKnown(spellId, isPet) or not GW.IsSpellInSpellBook (spellId, isPet)) then
-                        return true
-                    else
-                        return isHigherRankKnownAndThisNot(reqData[1], isPet)
-                    end
-                end
+    local key = isPet and ("p" .. spellId) or spellId
+    local cached = higherRankCache[key]
+    if cached ~= nil then return cached end
+
+    local result = false
+    if not (GW.IsPlayerSpell(spellId) or GW.IsSpellKnown(spellId, isPet)) then
+        local reqData = requirementMap[spellId] and requirementMap[spellId][1]
+        if reqData then
+            isPet = reqData.pet ~= nil and reqData.pet == true
+            if (GW.IsPlayerSpell(reqData[1]) or GW.IsSpellKnown(reqData[1], isPet) or GW.IsSpellInSpellBook(reqData[1], isPet)) and (not GW.IsPlayerSpell(spellId) or not GW.IsSpellKnown(spellId, isPet) or not GW.IsSpellInSpellBook(spellId, isPet)) then
+                result = true
+            else
+                result = isHigherRankKnownAndThisNot(reqData[1], isPet)
             end
         end
     end
-    return false
+    higherRankCache[key] = result
+    return result
 end
 
 local function isAnyDependencieKnown(spellData, isPet)
@@ -554,6 +569,7 @@ local function filterUnknownSpell(spellData)
 end
 
 local function updateUnknownTab()
+    BuildUnknownSpellCaches()
     for i = 1, #unknownFrame.spellItems do
         unknownFrame.spellItems[i]:Hide()
     end
@@ -838,6 +854,7 @@ local function updateSpellbookTab(self)
 
     updateUnknownTab()
 
+    self.spellbookDirty = false
     self.updating = false
 end
 
@@ -865,6 +882,7 @@ local function OnEvent(self, event)
     end
 
     if not self:IsShown() then
+        self.spellbookDirty = true
         return
     end
     self:SetScript("OnUpdate", QueuedUpdate)
@@ -882,6 +900,7 @@ local function LoadSpellBook(tabContainer)
     spellBook:RegisterEvent("SPELLS_CHANGED")
     spellBook:RegisterEvent("SKILL_LINES_CHANGED")
     spellBook:RegisterEvent("PLAYER_LEVEL_UP")
+    spellBook:RegisterEvent("CHARACTER_POINTS_CHANGED")
     spellBook:SetScript("OnEvent", OnEvent)
 
     spellBook.tabs = {}
@@ -1010,13 +1029,12 @@ local function LoadSpellBook(tabContainer)
 
     menu:SetAttribute("tabopen", 2)
     menu:SetScript("OnShow", function()
-        if InCombatLockdown() then return end
+        if InCombatLockdown() or spellBook.spellbookDirty == false then return end
         updateSpellbookTab(spellBook)
     end)
     hooksecurefunc("ToggleSpellBook", function()
         if InCombatLockdown() then return end
         GwCharacterWindow:SetAttribute("windowPanelOpen", "spellbook")
-        updateSpellbookTab(spellBook)
     end)
 
     SpellBookFrame:UnregisterAllEvents()
