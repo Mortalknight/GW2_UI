@@ -42,9 +42,7 @@ local GridAuraFilter = {
     isAuraRaidPlayer = false,
     isAuraRaidPlayerDispellable = false,
     isAuraExternalDefensive = false,
-    isAuraExternalDefensivePlayer = false,
     isAuraImportant = false,
-    isAuraImportantPlayer = false,
     -- aura property candidates (see ADVANCED_CANDIDATE_FIELDS in the factory)
     isAuraStealable = false,
     isAuraBoss = false,
@@ -55,11 +53,8 @@ local GridAuraFilter = {
     isAuraNameplateAll = false,
     isAuraNameplatePersonal = false,
     isAuraCrowdControl = false,
-    isAuraCrowdControlPlayer = false,
     isAuraBigDefensive = false,
-    isAuraBigDefensivePlayer = false,
     isAuraRaidInCombat = false,
-    isAuraRaidInCombatPlayer = false,
     isAuraCancelable = false,
     isAuraCancelablePlayer = false,
     notAuraCancelable = false,
@@ -107,7 +102,6 @@ GW.privateDefaults = {
 GW.globalDefault = {
     profile = {
         -- reset settings
-        Reset_Container_Loot_Order = false,
         ObjectivesAutoCollapse = {
             MythicPlus = false,
             Raid = false,
@@ -127,7 +121,6 @@ GW.globalDefault = {
         FOCUS_ENABLED = true,
         POWERBAR_ENABLED = true,
         CHATBUBBLES_ENABLED = true,
-        NAMEPLATES_ENABLED = true,
         MINIMAP_ENABLED = true,
         QUESTTRACKER_ENABLED = true,
         TOOLTIPS_ENABLED = true,
@@ -321,13 +314,6 @@ GW.globalDefault = {
 
         EXTENDED_VENDOR_NUM_PAGES= 2,
 
-        BAG_DEFAULT_CONTAINER_POSITION= {
-            point= "BOTTOMRIGHT",
-            relativePoint= "BOTTOMRIGHT",
-            xOfs= -400,
-            yOfs= 20,
-            hasMoved= false,
-        },
 
         BAG_POSITION= {
             point= "TOPRIGHT",
@@ -384,14 +370,6 @@ GW.globalDefault = {
         },
         LOOTFRAME_POS_scale= 1,
 
-        VEHICLE_SEAT_POS= {
-            point= "LEFT",
-            relativePoint= "LEFT",
-            xOfs= 20,
-            yOfs= -45,
-            hasMoved= false,
-        },
-        VEHICLE_SEAT_POS_scale= 1,
 
         WORLDMAP_POSITION= {
             point= "CENTER",
@@ -427,12 +405,6 @@ GW.globalDefault = {
         FADE_MULTIACTIONBAR_6= "ALWAYS",
         FADE_MULTIACTIONBAR_7= "ALWAYS",
         FADE_MULTIACTIONBAR_8= "ALWAYS",
-        HIDE_CHATSHADOW= false,
-        HIDE_QUESTVIEW= false,
-        USE_CHAT_BUBBLES= false,
-        DISABLE_NAMEPLATES= false,
-        DISABLE_TOOLTIPS= false,
-        DISABLE_CHATFRAME= false,
         CHATFRAME_FADE= true,
         CHATFRAME_EDITBOX_HIDE= true,
         CHAT_BUTTONS_POSITION= "LEFT",
@@ -479,9 +451,6 @@ GW.globalDefault = {
         focus_TARGET_SHOW_ABSORB_BAR = true,
         focus_SHOW_ABSORB_BAR = true,
         focus_SHOW_CASTBAR= true,
-        focus_DEBUFFS= true,
-        focus_DEBUFFS_FILTER= true,
-        focus_BUFFS= true,
         focus_AURAS_ON_TOP= false,
         focus_Buff_Filter = "all",
         focus_Buff_Filter_advanced = CopyTable(GridAuraFilter),
@@ -607,7 +576,6 @@ GW.globalDefault = {
             hasMoved= false,
             size= 38,
             ButtonsPerRow= 6,
-            hideDefaultBackground= true,
             invert = false,
         },
         MultiBarBottomLeft_scale= 1,
@@ -620,7 +588,6 @@ GW.globalDefault = {
             hasMoved= false,
             size= 38,
             ButtonsPerRow= 6,
-            hideDefaultBackground= true,
             invert = false,
         },
         MultiBarBottomRight_scale= 1,
@@ -633,7 +600,6 @@ GW.globalDefault = {
             hasMoved= false,
             size= 38,
             ButtonsPerRow= 1,
-            hideDefaultBackground= true,
             invert = false,
         },
         MultiBarRight_scale= 1,
@@ -646,7 +612,6 @@ GW.globalDefault = {
             hasMoved= false,
             size= 38,
             ButtonsPerRow= 1,
-            hideDefaultBackground= true,
             invert = false,
         },
         MultiBarLeft_scale= 1,
@@ -659,7 +624,6 @@ GW.globalDefault = {
             hasMoved= false,
             size= 38,
             ButtonsPerRow= 1,
-            hideDefaultBackground= true,
             invert = false,
         },
         MultiBar5_scale= 1,
@@ -672,7 +636,6 @@ GW.globalDefault = {
             hasMoved= false,
             size= 38,
             ButtonsPerRow= 1,
-            hideDefaultBackground= true,
             invert = false,
         },
         MultiBar6_scale= 1,
@@ -685,7 +648,6 @@ GW.globalDefault = {
             hasMoved= false,
             size= 38,
             ButtonsPerRow= 1,
-            hideDefaultBackground= true,
             invert = false,
         },
         MultiBar7_scale= 1,
@@ -902,7 +864,6 @@ GW.globalDefault = {
             yOfs= 300,
             hasMoved= false,
         },
-        AlertPos_scale= 1,
 
         MinimapPos= {
             point= "BOTTOMRIGHT",
@@ -911,7 +872,6 @@ GW.globalDefault = {
             yOfs= 21,
             hasMoved= false,
         },
-        MinimapPos_scale= 1,
 
         MicromenuPos= {
             point= "TOPLEFT",
@@ -926,7 +886,7 @@ GW.globalDefault = {
             relativePoint= "TOPRIGHT",
             xOfs= 0,
             yOfs= 0,
-            asMoved= false,
+            hasMoved= false,
         },
         QuestTracker_pos_height= 700,
         QuestTracker_pos_scale= 1,
@@ -964,7 +924,7 @@ GW.globalDefault = {
         RAID_GROUPS_PER_COLUMN_TANK= 1,
         RAID_GROW_TANK= "DOWN+RIGHT",
         RAID_SHOW_DEBUFFS_TANK= true,
-        RAID_ONLY_DISPELL_DEBUFFS_TANKT= false,
+        RAID_ONLY_DISPELL_DEBUFFS_TANK= false,
         RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_TANK= true,
         RAID_AURA_TOOLTIP_INCOMBAT_TANK= "IN_COMBAT",
         RAID_UNIT_HEALTH_TANK= "NONE",
@@ -1371,7 +1331,6 @@ GW.globalDefault = {
         MAINMENU_SKIN_ENABLED= true,
         STATICPOPUP_SKIN_ENABLED= true,
         BNTOASTFRAME_SKIN_ENABLED= true,
-        GHOSTFRAME_SKIN_ENABLED= true,
         DEATHRECAPFRAME_SKIN_ENABLED= true,
         DROPDOWN_SKIN_ENABLED= true,
         LFG_FRAMES_SKIN_ENABLED= true,
@@ -1383,7 +1342,6 @@ GW.globalDefault = {
         FLIGHTMAP_SKIN_ENABLED= true,
         BLIZZARDCLASSCOLOR_ENABLED= false,
         ADDONLIST_SKIN_ENABLED= true,
-        BINDINGS_SKIN_ENABLED= true,
         BLIZZARD_OPTIONS_SKIN_ENABLED= true,
         MACRO_SKIN_ENABLED= true,
         MAIL_SKIN_ENABLED= true,
@@ -1465,7 +1423,6 @@ GW.globalDefault = {
 
         MAINBAR_RANGEINDICATOR= "RED_INDICATOR",
 
-        ACTIVE_PROFILE= nil, --???????????
 
         PlayerBuffFrame= {
             point= "BOTTOMLEFT",
