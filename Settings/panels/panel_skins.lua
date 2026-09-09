@@ -38,6 +38,7 @@ local function LoadSkinsPanel(sWindow)
     general:AddOption(ADDON_LIST, nil, {getterSetter = "ADDONLIST_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end})
     general:AddOption(MINIMAP_TRACKING_MAILBOX, nil, {getterSetter = "MAIL_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = GW.Classic or GW.TBC or GW.Wrath})
     general:AddOption(HELP_FRAME_TITLE, nil, {getterSetter = "HELPFRAME_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end})
+    general:AddOption(GW.NewSign .. SETTINGS_TITLE, nil, {getterSetter = "BLIZZARD_OPTIONS_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end})
     general:AddOption(TIMEMANAGER_TITLE, nil, {getterSetter = "TIMEMANAGER_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end})
 
     gameFrames:AddOption(QUEST_LOG, nil, {getterSetter = "QUESTLOG_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = GW.Retail})
