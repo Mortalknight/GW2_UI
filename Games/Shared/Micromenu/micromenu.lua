@@ -658,34 +658,223 @@ local function workOrderIconOnEnter(self)
     GameTooltip:Show()
 end
 
-local function ToggleEventTimerIcon(mbf)
-    Gw2UpdateMicroMenuButton:ClearAllPoints()
+---------- micro bar layout ----------
+local function IsShownRule(frame)
+    return frame:IsShown()
+end
 
-    if GW.settings.MICROMENU_EVENT_TIMER_ICON then
-        if not Gw2EventTimerMicroMenuButton then
-            local eventTimerIcon = CreateFrame("Button", "Gw2EventTimerMicroMenuButton", mbf, "MainMenuBarMicroButton")
-            eventTimerIcon.newbieText = nil
-            eventTimerIcon.tooltipText = L["Event timer"]
-            eventTimerIcon.textureName = "EventMicroButton"
-            reskinMicroButton(eventTimerIcon, "EventMicroButton", mbf)
-            eventTimerIcon:ClearAllPoints()
-            eventTimerIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
-            eventTimerIcon:SetScript("OnEnter", GW.EventTracker.OnEnterAll)
-        end
+local function TalentsRule(frame)
+    -- our own talent button is always shown, blizzards only while it is unlocked
+    return frame ~= TalentMicroButton or frame:IsShown()
+end
 
-        Gw2EventTimerMicroMenuButton:Show()
+-- display names, resolved late because the global strings differ between the clients
+local SLOT_NAMES = {
+    character = function() return CHARACTER_BUTTON end,
+    bags = function() return INVENTORY_TOOLTIP end,
+    spellbook = function() return SPELLBOOK_ABILITIES_BUTTON end,
+    talents = function() return TALENTS end,
+    achievements = function() return ACHIEVEMENT_BUTTON end,
+    questlog = function() return QUESTLOG_BUTTON end,
+    housing = function() return HOUSING_MICRO_BUTTON or HOUSING or HousingMicroButton and HousingMicroButton.tooltipText end,
+    guild = function() return GUILD end,
+    lfd = function() return DUNGEONS_BUTTON end,
+    encounterjournal = function() return ADVENTURE_JOURNAL end,
+    collections = function() return COLLECTIONS end,
+    professions = function() return PROFESSIONS_BUTTON end,
+    mainmenu = function() return MAINMENU_BUTTON end,
+    help = function() return HELP_BUTTON end,
+    store = function() return BLIZZARD_STORE end,
+    greatvault = function() return RATED_PVP_WEEKLY_VAULT end,
+    eventtimer = function() return L["Event timer"] end,
+    update = function() return L["GW2 UI Update"] end,
+    mail = function() return MAIL_LABEL end,
+    workorders = function() return MAILFRAME_CRAFTING_ORDERS_TOOLTIP_TITLE end,
+    pvp = function() return PLAYER_V_PLAYER end,
+    lfg = function() return LFG_TITLE end,
+    worldmap = function() return WORLDMAP_BUTTON end,
+}
 
-        updateIcon:SetPoint("BOTTOMLEFT", Gw2EventTimerMicroMenuButton, "BOTTOMRIGHT", 4, 0)
-    else
-        if Gw2EventTimerMicroMenuButton then
-            Gw2EventTimerMicroMenuButton:Hide()
-        end
-        updateIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
+local MICRO_BAR_LAYOUTS = {
+    Retail = {
+        {key = "character"},
+        {key = "bags"},
+        {key = "spellbook"},
+        {key = "achievements"},
+        {key = "questlog"},
+        {key = "housing", available = IsShownRule},
+        {key = "guild"},
+        {key = "lfd"},
+        {key = "encounterjournal"},
+        {key = "collections"},
+        {key = "professions"},
+        {key = "mainmenu"},
+        {key = "help"},
+        {key = "store", available = function() return not C_AddOns.IsAddOnLoaded("Dominos") end}, -- Dominos removes the store button
+        {key = "greatvault"},
+        {key = "eventtimer", available = function() return GW.settings.MICROMENU_EVENT_TIMER_ICON end},
+        {key = "update", notification = true},
+        {key = "mail", notification = true},
+        {key = "workorders", notification = true},
+    },
+    Mists = {
+        {key = "character"},
+        {key = "bags"},
+        {key = "spellbook"},
+        {key = "talents", available = TalentsRule},
+        {key = "achievements"},
+        {key = "questlog"},
+        {key = "guild"},
+        {key = "collections"},
+        {key = "pvp"},
+        {key = "lfg"},
+        {key = "encounterjournal"},
+        {key = "store"},
+        {key = "mainmenu"},
+        {key = "help"},
+        {key = "update", notification = true},
+        {key = "mail", notification = true},
+    },
+    Wrath = {
+        {key = "character"},
+        {key = "bags"},
+        {key = "spellbook"},
+        {key = "talents", available = TalentsRule},
+        {key = "achievements"},
+        {key = "questlog"},
+        {key = "guild"},
+        {key = "collections"},
+        {key = "pvp"},
+        {key = "lfg"},
+        {key = "mainmenu"},
+        {key = "help"},
+        {key = "update", notification = true},
+        {key = "mail", notification = true},
+    },
+    Classic = { -- era and tbc
+        {key = "character"},
+        {key = "bags"},
+        {key = "spellbook"},
+        {key = "talents", available = TalentsRule},
+        {key = "questlog"},
+        {key = "guild"},
+        {key = "worldmap"},
+        {key = "mainmenu"},
+        {key = "help"},
+        {key = "update", notification = true},
+        {key = "mail", notification = true},
+    },
+}
+local MICRO_BAR_LAYOUT = GW.Retail and MICRO_BAR_LAYOUTS.Retail or GW.Mists and MICRO_BAR_LAYOUTS.Mists or GW.Wrath and MICRO_BAR_LAYOUTS.Wrath or MICRO_BAR_LAYOUTS.Classic
+GW.MicroBarLayout = MICRO_BAR_LAYOUT
+
+local function GetMicroBarSlotName(key)
+    local name = SLOT_NAMES[key] and SLOT_NAMES[key]()
+    if type(name) ~= "string" or name == "" then
+        return key
     end
+    -- blizzard tooltip texts carry the keybind, keep the plain label
+    name = name:gsub("%s*|c.*$", ""):gsub("%s*%b()%s*$", "")
+    return name
+end
+GW.GetMicroBarSlotName = GetMicroBarSlotName
+
+-- slots in the user's order: stored keys first, everything the stored order does not know in default order
+local function GetMicroBarSlotSequence()
+    local byKey, used, sequence = {}, {}, {}
+    for _, slot in ipairs(MICRO_BAR_LAYOUT) do
+        byKey[slot.key] = slot
+    end
+    for _, key in ipairs(GW.settings.MICROMENU_BUTTON_ORDER or {}) do
+        if byKey[key] and not used[key] then
+            tinsert(sequence, byKey[key])
+            used[key] = true
+        end
+    end
+    for _, slot in ipairs(MICRO_BAR_LAYOUT) do
+        if not used[slot.key] then
+            tinsert(sequence, slot)
+        end
+    end
+    return sequence
+end
+
+local function IsMicroBarSlotHidden(key)
+    local visibility = GW.settings.MICROMENU_BUTTON_VISIBILITY
+    return visibility and visibility[key] == false
+end
+
+local layoutContainer
+local slotButtons = {}
+local slotCompanions = {}
+
+-- frame fills the slot, every further argument is a companion anchored on the same spot
+local function SetSlotButton(key, frame, ...)
+    slotButtons[key] = frame
+    slotCompanions[key] = select("#", ...) > 0 and {...} or nil
+end
+
+local function LayoutMicroButtons()
+    if not layoutContainer then return end
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("Layout Micromenu", LayoutMicroButtons)
+        return
+    end
+
+    local previous
+    for _, slot in ipairs(GetMicroBarSlotSequence()) do
+        local frame = slotButtons[slot.key]
+        if frame and IsMicroBarSlotHidden(slot.key) then
+            -- parked off screen, not hidden: blizzard toggles and alerts on the button must keep working
+            frame:ClearAllPoints()
+            frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
+            if slotCompanions[slot.key] then
+                for _, companion in ipairs(slotCompanions[slot.key]) do
+                    companion:ClearAllPoints()
+                    companion:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
+                end
+            end
+        elseif frame and (not slot.available or slot.available(frame)) then
+            frame:ClearAllPoints()
+            if previous then
+                frame:SetPoint("BOTTOMLEFT", previous, "BOTTOMRIGHT", 4, 0)
+            else
+                frame:SetPoint("TOPLEFT", layoutContainer, "TOPLEFT", 5, -3)
+            end
+            if slotCompanions[slot.key] then
+                for _, companion in ipairs(slotCompanions[slot.key]) do
+                    companion:ClearAllPoints()
+                    companion:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
+                end
+            end
+            previous = frame
+        end
+    end
+end
+GW.LayoutMicroButtons = LayoutMicroButtons
+
+local function ToggleEventTimerIcon(mbf)
+    if GW.settings.MICROMENU_EVENT_TIMER_ICON and not Gw2EventTimerMicroMenuButton then
+        local eventTimerIcon = CreateFrame("Button", "Gw2EventTimerMicroMenuButton", mbf, "MainMenuBarMicroButton")
+        eventTimerIcon.newbieText = nil
+        eventTimerIcon.tooltipText = L["Event timer"]
+        eventTimerIcon.textureName = "EventMicroButton"
+        reskinMicroButton(eventTimerIcon, "EventMicroButton", mbf)
+        eventTimerIcon:SetScript("OnEnter", GW.EventTracker.OnEnterAll)
+        SetSlotButton("eventtimer", eventTimerIcon)
+    end
+
+    if Gw2EventTimerMicroMenuButton then
+        Gw2EventTimerMicroMenuButton:SetShown(GW.settings.MICROMENU_EVENT_TIMER_ICON)
+    end
+
+    LayoutMicroButtons()
 end
 GW.ToggleEventTimerMicroMenuIcon = ToggleEventTimerIcon
 
 local function setupMicroButtons(mbf)
+    layoutContainer = mbf
+
     -- CharacterMicroButton
     -- determine if we are using the default char button (for default charwin)
     -- or if we need to create our own char button for the custom hero panel
@@ -732,12 +921,7 @@ local function setupMicroButtons(mbf)
             MicroButtonPortrait:Hide()
         end
     end
-    cref.GwSetAnchorPoint = function(self)
-        -- this must also happen in the auto-layout update hook which is why we do it like this
-        self:ClearAllPoints()
-        self:SetPoint("TOPLEFT", mbf, "TOPLEFT", 5, -3)
-    end
-    cref:GwSetAnchorPoint()
+    SetSlotButton("character", cref)
 
     -- custom bag microbutton
     local bref = CreateFrame("Button", nil, mbf, "")
@@ -745,8 +929,6 @@ local function setupMicroButtons(mbf)
     bref.newbieText = nil
     bref.textureName = "BagMicroButton"
     reskinMicroButton(bref, "BagMicroButton", mbf)
-    bref:ClearAllPoints()
-    bref:SetPoint("BOTTOMLEFT", cref, "BOTTOMRIGHT", 4, 0)
     bref:HookScript("OnClick", ToggleAllBags)
     bref:HookScript("OnEvent", updateBagButton)
     bref:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -755,49 +937,39 @@ local function setupMicroButtons(mbf)
     updateBagButton(bref)
     bref:HookScript("OnEnter", GW.Bags_OnEnter)
     bref:HookScript("OnLeave", GameTooltip_Hide)
+    SetSlotButton("bags", bref)
 
     -- SpellbookMicroButton
-    local sref
-    if not GW.Retail then
-        if GW.settings.USE_SPELLBOOK_WINDOW then
-            sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, "SecureHandlerClickTemplate")
-            sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
-            sref.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
-            reskinMicroButton(sref, "SpellbookMicroButton", mbf)
-            sref:ClearAllPoints()
-            sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
-            sref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-            sref:SetAttribute(
-                "_onclick",
-                [=[
-                local f = self:GetFrameRef("GwCharacterWindow")
-                f:SetAttribute("keytoggle", "1")
-                f:SetAttribute("windowpanelopen", "spellbook")
-                ]=]
-            )
+    if GW.Retail then
+        SetSlotButton("spellbook", PlayerSpellsMicroButton)
+    elseif GW.settings.USE_SPELLBOOK_WINDOW then
+        local sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, "SecureHandlerClickTemplate")
+        sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
+        sref.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
+        reskinMicroButton(sref, "SpellbookMicroButton", mbf)
+        sref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+        sref:SetAttribute(
+            "_onclick",
+            [=[
+            local f = self:GetFrameRef("GwCharacterWindow")
+            f:SetAttribute("keytoggle", "1")
+            f:SetAttribute("windowpanelopen", "spellbook")
+            ]=]
+        )
 
-            disableMicroButton(SpellbookMicroButton)
-        else
-            sref = SpellbookMicroButton
-            sref:ClearAllPoints()
-            sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
-        end
+        disableMicroButton(SpellbookMicroButton)
+        SetSlotButton("spellbook", sref)
     else
-        PlayerSpellsMicroButton:ClearAllPoints()
-        PlayerSpellsMicroButton:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
-        sref = PlayerSpellsMicroButton
+        SetSlotButton("spellbook", SpellbookMicroButton)
     end
 
-    --TalentMicroButton
-    local tref
+    -- TalentMicroButton (none retail)
     if not GW.Retail then
         if GW.settings.USE_TALENT_WINDOW then
-            tref = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate")
+            local tref = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate")
             tref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
             tref.newbieText = NEWBIE_TOOLTIP_TALENTS
             reskinMicroButton(tref, "TalentMicroButton", mbf)
-            tref:ClearAllPoints()
-            tref:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
 
             tref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
             tref:SetAttribute(
@@ -811,61 +983,42 @@ local function setupMicroButtons(mbf)
 
             if GW.Classic or GW.TBC then
                 disableMicroButton(TalentMicroButton, true)
-            elseif GW.Mists or GW.Wrath then
-                TalentMicroButton:ClearAllPoints()
-                TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 8, 0) -- 8 because blizzard is setting is Achievement Button position back to 0, so we add the space here
+                SetSlotButton("talents", tref)
+            else
+                -- blizzard anchors its achievement button to the talent button, keep it invisible on our slot
                 TalentMicroButton:SetAlpha(0)
                 TalentMicroButton:EnableMouse(false)
+                SetSlotButton("talents", tref, TalentMicroButton)
             end
         else
-            -- TalentMicroButton
-            if TalentMicroButton:IsShown() then
-                tref = TalentMicroButton
-                tref:ClearAllPoints()
-                tref:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
-            else
-                tref = sref
-            end
+            SetSlotButton("talents", TalentMicroButton)
         end
-    else
-        tref = sref
     end
 
     -- AchievementMicroButton
-    local aref
     if GW.Retail or GW.Mists or GW.Wrath then
-        AchievementMicroButton:ClearAllPoints()
-        AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
-        aref = AchievementMicroButton
-    else
-        aref = tref
+        SetSlotButton("achievements", AchievementMicroButton)
     end
 
     -- QuestLogMicroButton
-    QuestLogMicroButton:ClearAllPoints()
-    QuestLogMicroButton:SetPoint("BOTTOMLEFT", aref, "BOTTOMRIGHT", 4, 0)
     QuestLogMicroButton:RegisterEvent("QUEST_LOG_UPDATE")
     QuestLogMicroButton:HookScript("OnEvent", updateQuestLogButton)
     updateQuestLogButton()
+    SetSlotButton("questlog", QuestLogMicroButton)
 
     -- Retail HousingMicroButton
-    local qref = QuestLogMicroButton
-    if HousingMicroButton and HousingMicroButton:IsShown() then
-        HousingMicroButton:ClearAllPoints()
-        HousingMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-        qref = HousingMicroButton
+    if HousingMicroButton then
+        SetSlotButton("housing", HousingMicroButton)
     end
 
-    -- GuildMicroButton
-   local gref
+    -- GuildMicroButton (and the SocialsMicroButton blizzard toggles with it on the classics)
     for i = 1, (GW.Classic or GW.TBC or GW.Wrath or GW.Mists) and 2 or 1 do
+        local gref
         if i == 1 then
             gref = GuildMicroButton
         else
             gref = SocialsMicroButton
         end
-        gref:ClearAllPoints()
-        gref:SetPoint("BOTTOMLEFT", qref, "BOTTOMRIGHT", 4, 0)
         gref:RegisterEvent("GUILD_ROSTER_UPDATE")
         gref:RegisterEvent("MODIFIER_STATE_CHANGED")
         gref:RegisterEvent("GUILD_MOTD")
@@ -891,20 +1044,16 @@ local function setupMicroButtons(mbf)
         requestGuildRosterUpdate(gref, true)
         updateGuildButton(gref, "GUILD_ROSTER_UPDATE")
     end
-
-    local pref
     if GW.Retail then
-        -- LFDMicroButton
-        LFDMicroButton:ClearAllPoints()
-        LFDMicroButton:SetPoint("BOTTOMLEFT", gref, "BOTTOMRIGHT", 4, 0)
+        SetSlotButton("guild", GuildMicroButton)
+    else
+        SetSlotButton("guild", GuildMicroButton, SocialsMicroButton)
+    end
 
-        -- EJMicroButton
-        EJMicroButton:ClearAllPoints()
-        EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
-
-        -- CollectionsMicroButton
-        CollectionsMicroButton:ClearAllPoints()
-        CollectionsMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
+    if GW.Retail then
+        SetSlotButton("lfd", LFDMicroButton)
+        SetSlotButton("encounterjournal", EJMicroButton)
+        SetSlotButton("collections", CollectionsMicroButton)
         RegisterMicroMenuNotificationIcon(EJMicroButton)
         RegisterMicroMenuNotificationIcon(CollectionsMicroButton)
         hooksecurefunc("MicroButtonPulse", function(self)
@@ -921,16 +1070,12 @@ local function setupMicroButtons(mbf)
 
         --ProfessionMicroButton
         if GW.settings.USE_PROFESSION_WINDOW then
-            pref = CreateFrame("Button", "GwProfessionMicroButton", mbf, "SecureHandlerClickTemplate")
-            if GW.Retail then
-                Mixin(pref, MainMenuBarMicroButtonMixin)
-            end
+            local pref = CreateFrame("Button", "GwProfessionMicroButton", mbf, "SecureHandlerClickTemplate")
+            Mixin(pref, MainMenuBarMicroButtonMixin)
             pref.tooltipText = MicroButtonTooltipText(PROFESSIONS_BUTTON, "TOGGLEPROFESSIONBOOK")
             pref.newbieText = nil
             pref.textureName = "Professions"
             reskinMicroButton(pref, "ProfessionMicroButton", mbf, true)
-            pref:ClearAllPoints()
-            pref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
             pref:RegisterForClicks("AnyUp")
             pref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
             pref:SetAttribute(
@@ -945,79 +1090,52 @@ local function setupMicroButtons(mbf)
             pref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
             pref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(pref); GameTooltip:Hide() end)
             disableMicroButton(ProfessionMicroButton, true)
+            SetSlotButton("professions", pref)
         else
-            pref = ProfessionMicroButton
-            pref:ClearAllPoints()
-            pref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+            SetSlotButton("professions", ProfessionMicroButton)
         end
     elseif GW.Mists or GW.Wrath then
-        -- CollectionsMicroButton
-        CollectionsMicroButton:ClearAllPoints()
-        CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
+        SetSlotButton("collections", CollectionsMicroButton)
 
         -- PVPMicroButton
-        local pvpref
-        if GW.Wrath then
-            if GW.settings.USE_CHARACTER_WINDOW then
-                pvpref = CreateFrame("Button", "GwPvpMicroButton", mbf, "SecureHandlerClickTemplate")
-                pvpref.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4")
-                pvpref.newbieText = NEWBIE_TOOLTIP_PVP
-                reskinMicroButton(pvpref, "PvpMicroButton", mbf)
-                pvpref:ClearAllPoints()
-                pvpref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+        if GW.Wrath and GW.settings.USE_CHARACTER_WINDOW then
+            local pvpref = CreateFrame("Button", "GwPvpMicroButton", mbf, "SecureHandlerClickTemplate")
+            pvpref.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4")
+            pvpref.newbieText = NEWBIE_TOOLTIP_PVP
+            reskinMicroButton(pvpref, "PvpMicroButton", mbf)
 
-                pvpref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-                pvpref:SetAttribute(
-                    "_onclick",
-                    [=[
-                    local f = self:GetFrameRef("GwCharacterWindow")
-                    f:SetAttribute("keytoggle", "1")
-                    f:SetAttribute("windowpanelopen", "pvp")
-                    ]=]
-                )
+            pvpref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+            pvpref:SetAttribute(
+                "_onclick",
+                [=[
+                local f = self:GetFrameRef("GwCharacterWindow")
+                f:SetAttribute("keytoggle", "1")
+                f:SetAttribute("windowpanelopen", "pvp")
+                ]=]
+            )
 
-                --disableMicroButton(PVPMicroButton, true)
-                PVPMicroButton:ClearAllPoints()
-                PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-                PVPMicroButton:SetAlpha(0)
-                PVPMicroButton:EnableMouse(false)
-            else
-                pvpref = PVPMicroButton
-                pvpref:ClearAllPoints()
-                pvpref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-            end
+            -- blizzards button stays invisible on our slot so its events and alerts keep working
+            PVPMicroButton:SetAlpha(0)
+            PVPMicroButton:EnableMouse(false)
+            SetSlotButton("pvp", pvpref, PVPMicroButton)
         else
-            pvpref = PVPMicroButton
-            pvpref:ClearAllPoints()
-            pvpref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-            PVPMicroButtonTexture:SetAlpha(0)
+            if GW.Mists then
+                PVPMicroButtonTexture:SetAlpha(0)
+            end
+            SetSlotButton("pvp", PVPMicroButton)
         end
 
-        -- LFGMicroButton
-        LFGMicroButton:ClearAllPoints()
-        LFGMicroButton:SetPoint("BOTTOMLEFT", pvpref, "BOTTOMRIGHT", 4, 0)
+        SetSlotButton("lfg", LFGMicroButton)
 
         if GW.Mists then
-            -- EJMicroButton
-            EJMicroButton:ClearAllPoints()
-            EJMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
-
-            StoreMicroButton:ClearAllPoints()
-            StoreMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
-            pref = StoreMicroButton
-        else
-            pref = LFGMicroButton
+            SetSlotButton("encounterjournal", EJMicroButton)
+            SetSlotButton("store", StoreMicroButton)
         end
     else
-         -- WorldMapMicroButton
-        WorldMapMicroButton:ClearAllPoints()
-        WorldMapMicroButton:SetPoint("BOTTOMLEFT", gref, "BOTTOMRIGHT", 4, 0)
-        pref = WorldMapMicroButton
+        SetSlotButton("worldmap", WorldMapMicroButton)
     end
 
     -- MainMenuMicroButton
-    MainMenuMicroButton:ClearAllPoints()
-    MainMenuMicroButton:SetPoint("BOTTOMLEFT", pref, "BOTTOMRIGHT", 4, 0)
     if MainMenuMicroButton.MainMenuBarPerformanceBar then
         MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
         MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
@@ -1030,23 +1148,22 @@ local function setupMicroButtons(mbf)
         if MainMenuBarDownload then MainMenuBarDownload:Hide() end
     end
     MainMenuMicroButton:HookScript("OnUpdate", refreshMainMenuMicroButton)
+    SetSlotButton("mainmenu", MainMenuMicroButton)
 
     -- HelpMicroButton
-    HelpMicroButton:ClearAllPoints()
-    HelpMicroButton:SetPoint("BOTTOMLEFT", MainMenuMicroButton, "BOTTOMRIGHT", 4, 0)
+    SetSlotButton("help", HelpMicroButton)
 
     if GW.Retail then
-        StoreMicroButton:ClearAllPoints()
-        StoreMicroButton:SetPoint("BOTTOMLEFT", HelpMicroButton, "BOTTOMRIGHT", 4, 0)
-        -- great vault icom
+        SetSlotButton("store", StoreMicroButton)
+
+        -- great vault icon
         local greatVaultIcon = CreateFrame("Button", "Gw2GreateVaultMicroMenuButton", mbf, "MainMenuBarMicroButton")
         greatVaultIcon.newbieText = nil
         greatVaultIcon.tooltipText = RATED_PVP_WEEKLY_VAULT
         greatVaultIcon.textureName = "GreatVaultMicroButton"
         reskinMicroButton(greatVaultIcon, "GreatVaultMicroButton", mbf)
         RegisterMicroMenuNotificationIcon(greatVaultIcon)
-        greatVaultIcon:ClearAllPoints()
-        greatVaultIcon:SetPoint("BOTTOMLEFT", C_AddOns.IsAddOnLoaded("Dominos") and HelpMicroButton or StoreMicroButton, "BOTTOMRIGHT", 4, 0)
+        greatVaultIcon:SetScript("OnEnter", GW.GreatVault_OnEnter)
         greatVaultIcon:SetScript("OnMouseUp", function(self, button, upInside)
             if button == "LeftButton" and upInside and self:IsEnabled() then
                 GW.StopFlash(self) -- Hide flasher if playing
@@ -1081,7 +1198,10 @@ local function setupMicroButtons(mbf)
                 end)
             end
         end)
+        SetSlotButton("greatvault", greatVaultIcon)
     end
+
+    LayoutMicroButtons()
 end
 
 local function UpdateHelpTicketButtonAnchor()
@@ -1102,12 +1222,11 @@ local function SetupNotificationArea(mbf)
     updateIcon.tooltipText = ""
     updateIcon.textureName = "UpdateMicroButton"
     reskinMicroButton(updateIcon, "UpdateMicroButton", mbf)
-    updateIcon:ClearAllPoints()
-    updateIcon:SetPoint("BOTTOMLEFT", GW.Retail and Gw2GreateVaultMicroMenuButton or HelpMicroButton, "BOTTOMRIGHT", 4, 0)
     updateIcon:Hide()
     updateIcon:HookScript("OnEnter", update_OnEnter)
     updateIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
     RegisterMicroMenuNotificationIcon(updateIcon)
+    SetSlotButton("update", updateIcon)
 
     -- Mail icon
     local mailIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
@@ -1116,8 +1235,6 @@ local function SetupNotificationArea(mbf)
     mailIcon.tooltipText = ""
     mailIcon.textureName = "MailMicroButton"
     reskinMicroButton(mailIcon, "MailMicroButton", mbf)
-    mailIcon:ClearAllPoints()
-    mailIcon:SetPoint("BOTTOMLEFT", updateIcon, "BOTTOMRIGHT", 4, 0)
     mailIcon:Hide()
     mailIcon:HookScript("OnEnter", mailIconOnEnter)
     mailIcon:HookScript("OnLeave", GameTooltip_Hide)
@@ -1126,6 +1243,7 @@ local function SetupNotificationArea(mbf)
     RegisterMicroMenuNotificationIcon(mailIcon, function(frame)
         mailIconOnEvent(frame)
     end)
+    SetSlotButton("mail", mailIcon)
 
     if GW.Retail then
         -- workorder icon
@@ -1136,8 +1254,6 @@ local function SetupNotificationArea(mbf)
         workOrderIcon.tooltipText = ""
         workOrderIcon.textureName = "ProfessionMicroButton"
         reskinMicroButton(workOrderIcon, "ProfessionMicroButton", mbf)
-        workOrderIcon:ClearAllPoints()
-        workOrderIcon:SetPoint("BOTTOMLEFT", mailIcon, "BOTTOMRIGHT", 4, 0)
         workOrderIcon:Hide()
         workOrderIcon:HookScript("OnEnter", workOrderIconOnEnter)
         workOrderIcon:HookScript("OnLeave", GameTooltip_Hide)
@@ -1146,7 +1262,10 @@ local function SetupNotificationArea(mbf)
         RegisterMicroMenuNotificationIcon(workOrderIcon, function(frame)
             workOrderIconOnEvent(frame, "PLAYER_ENTERING_WORLD")
         end)
+        SetSlotButton("workorders", workOrderIcon)
     end
+
+    LayoutMicroButtons()
 
     -- blizzard ticket icon
 	if MicroMenu and MicroMenu.UpdateHelpTicketButtonAnchor then
@@ -1273,62 +1392,8 @@ hook_UpdateMicroButtons = function(fromDeferredUpdate)
 
     reskinMicroButtons(Gw2MicroBarFrame.cf)
 
-    if GW.Classic or GW.TBC then
-        local tref
-        if GW.settings.USE_TALENT_WINDOW then
-            tref = GwTalentMicroButton
-        elseif TalentMicroButton:IsShown() then
-            tref = TalentMicroButton
-        else
-            tref = GW.settings.USE_SPELLBOOK_WINDOW and GwPlayerSpellsMicroButton or SpellbookMicroButton
-        end
-        QuestLogMicroButton:ClearAllPoints()
-        QuestLogMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
-
-        SocialsMicroButton:ClearAllPoints()
-        SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-
-        GuildMicroButton:ClearAllPoints()
-        GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-    elseif GW.Wrath then
-        local tref
-        if GW.settings.USE_TALENT_WINDOW then
-            tref = GwTalentMicroButton
-        elseif TalentMicroButton:IsShown() then
-            tref = TalentMicroButton
-        else
-            tref = GW.settings.USE_SPELLBOOK_WINDOW and GwPlayerSpellsMicroButton or SpellbookMicroButton
-        end
-        QuestLogMicroButton:ClearAllPoints()
-        QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
-
-        SocialsMicroButton:ClearAllPoints()
-        SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-
-        GuildMicroButton:ClearAllPoints()
-        GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-
-        AchievementMicroButton:ClearAllPoints()
-        AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
-
-        CollectionsMicroButton:ClearAllPoints()
-        CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
-
-        PVPMicroButton:ClearAllPoints()
-        PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-    elseif GW.Mists then
-        AchievementMicroButton:ClearAllPoints()
-        AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
-
-        CollectionsMicroButton:ClearAllPoints()
-        CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
-
-        PVPMicroButton:ClearAllPoints()
-        PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-
-        MainMenuMicroButton:ClearAllPoints()
-        MainMenuMicroButton:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
-    end
+    -- blizzard re-anchors some of its buttons on every update, put the row back into our order
+    LayoutMicroButtons()
 end
 
 

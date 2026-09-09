@@ -13,6 +13,12 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("11.2.0", {
+    {GW.Enum.ChangelogType.change, [=[New skin for the Blizzard settings panel (all game versions): frame, tabs, category list, checkboxes, sliders, dropdowns, buttons and keybinding rows]=]},
+    {GW.Enum.ChangelogType.feature, [=[Great Vault micro menu button: the tooltip now shows the weekly progress of all three raid, dungeon and world slots]=]},
+    {GW.Enum.ChangelogType.feature, [=[Micro bar: the order of the buttons can be changed and single buttons can be hidden (HUD settings, micro bar section)]=]},
+    })
+
 addChange("11.1.6", {
     {GW.Enum.ChangelogType.change, [=[Dressing room skin: GW2 header with framed portrait, framed model area with skinned controls, the transmog set panel and its list are skinned as well]=]},
     {GW.Enum.ChangelogType.change, [=[Merchant and flight master skins: the npc portrait in the header is framed like the inspect portrait]=]},

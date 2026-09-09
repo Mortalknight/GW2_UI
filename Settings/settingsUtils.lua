@@ -399,6 +399,8 @@ function GwSettingsPanelMixin:AddOptionSortableList(name, desc, values)
     opt.optionsNames = values.optionNames or values.optionsNames
     opt.entryHeight = values.entryHeight or 24
     opt.maxVisibleRows = values.maxVisibleRows
+    -- optional {get = function(value) -> bool, set = function(value, enabled)}: a checkbox per row
+    opt.toggle = values.toggle
 
     return opt
 end
@@ -901,10 +903,10 @@ local function UpdateListDragVisual(of, v)
     if not of.dragIndex then return end
 
     local cursorX, cursorY = GetCursorPosition()
-    local scale = UIParent:GetEffectiveScale() or 1
     local dragFrame = EnsureListDragFrame(of, v.entryHeight or 24)
+    local scale = dragFrame:GetEffectiveScale() or 1
     dragFrame:ClearAllPoints()
-    dragFrame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", (cursorX / scale) + 12, (cursorY / scale) - 8)
+    dragFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", (cursorX / scale) - (of.dragOffsetX or 0), (cursorY / scale) - (of.dragOffsetY or 0))
 
     local dropIndex = GetListDropIndex(of, v)
     local indicator = EnsureListDropIndicator(of)
@@ -957,8 +959,13 @@ local function StartListDrag(of, v, row)
     row:SetAlpha(0.55)
 
     local dragFrame = EnsureListDragFrame(of, v.entryHeight or 24)
+    dragFrame:SetScale(row:GetEffectiveScale() / UIParent:GetEffectiveScale())
     dragFrame:SetWidth((of.list:GetWidth() or 260) - LIST_BUTTON_SPACE)
     dragFrame.label:SetText(row.label:GetText() or "")
+    local cursorX, cursorY = GetCursorPosition()
+    local rowScale = row:GetEffectiveScale() or 1
+    of.dragOffsetX = cursorX / rowScale - (row:GetLeft() or 0)
+    of.dragOffsetY = cursorY / rowScale - (row:GetTop() or 0)
     dragFrame:Show()
 
     of.list:SetScript("OnUpdate", function()
@@ -1144,6 +1151,23 @@ local function RefreshListOption(of, v)
             row.label:SetPoint("LEFT", 6, 0)
             row.label:SetPoint("RIGHT", row, "RIGHT", -50, 0)
 
+            if v.toggle then
+                row.toggle = CreateFrame("CheckButton", nil, row)
+                row.toggle:SetSize(16, 16)
+                row.toggle:SetPoint("LEFT", 4, 0)
+                row.toggle:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
+                row.toggle:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
+                row.toggle:SetScript("OnClick", function(self)
+                    local parent = self:GetParent()
+                    v.toggle.set(parent.value, self:GetChecked() and true or false)
+                    of:RefreshList()
+                    if v.callback then
+                        v.callback(GetOrderedListValues(of, v), parent.value)
+                    end
+                end)
+                row.label:SetPoint("LEFT", 24, 0)
+            end
+
             row.upButton = CreateListMoveButton(row, "up")
             row.upButton:SetPoint("RIGHT", row, "RIGHT", -24, 0)
             row.upButton:SetScript("OnClick", function(self, button)
@@ -1191,6 +1215,12 @@ local function RefreshListOption(of, v)
         row.index = i
         row.label:SetText(labels[values[i]] or tostring(values[i]))
         row.label:SetTextColor(unpack(listTextColor))
+        if row.toggle then
+            local enabled = v.toggle.get(values[i]) and true or false
+            row.toggle:SetChecked(enabled)
+            row.toggle:SetEnabled(listEnabled)
+            row.label:SetAlpha(enabled and 1 or 0.5)
+        end
         row:SetShown(isVisible)
 
         SetListButtonState(row.upButton, listEnabled and i > 1)

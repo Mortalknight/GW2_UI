@@ -185,6 +185,34 @@ local function LoadHudPanel(sWindow)
         hidden = not GW.Retail,
         dependence = {["micromenu.enabled"] = true}
     })
+    local microBarSlotKeys, microBarSlotNames = {}, {}
+    for _, slot in ipairs(GW.MicroBarLayout or {}) do
+        tinsert(microBarSlotKeys, slot.key)
+        tinsert(microBarSlotNames, GW.GetMicroBarSlotName(slot.key))
+    end
+    microBar:AddOptionSortableList(GW.NewSign .. L["Micro bar buttons"], L["Set the order of the micro bar buttons, uncheck a button to hide it."], {
+        getterSetter = "MICROMENU_BUTTON_ORDER",
+        callback = function()
+            if GW.LayoutMicroButtons then
+                GW.LayoutMicroButtons()
+            end
+        end,
+        optionsList = microBarSlotKeys,
+        optionNames = microBarSlotNames,
+        toggle = {
+            get = function(key) return GW.settings.MICROMENU_BUTTON_VISIBILITY[key] ~= false end,
+            set = function(key, enabled)
+                -- only hidden buttons are stored, a visible one falls back to the default
+                if enabled then
+                    GW.settings.MICROMENU_BUTTON_VISIBILITY[key] = nil
+                else
+                    GW.settings.MICROMENU_BUTTON_VISIBILITY[key] = false
+                end
+            end,
+        },
+        maxVisibleRows = 8,
+        dependence = {["micromenu.enabled"] = true}
+    })
     microBar:AddOption(L["Animate micro menu notification icons"], L["Play entrance animations and flashes for micro menu notification icons (mail, great vault, collections, encounter journal and work orders)."], {
         getterSetter = "MICROMENU_NOTIFICATION_ICON_ANIMATION",
         callback = GW.ToggleMicroMenuNotificationIconAnimation,
