@@ -32,7 +32,7 @@ local WORKORDER_ICON_ANIMATION_CONFIG = {
 }
 
 local function IsMicroMenuNotificationAnimationEnabled()
-    return GW.settings.MICROMENU_NOTIFICATION_ICON_ANIMATION
+    return GW.settings.micromenu.notificationIconAnimation
 end
 
 local function PlayMicroMenuNotificationFlash(frame)
@@ -162,6 +162,8 @@ GW.GetAvailableAddonUpdate = GetAvailableAddonUpdate
 
 local function RefreshUpdateIcon(announce)
     local version, _, part = GetAvailableAddonUpdate()
+    -- the icon itself always shows, only flash and chat notice can be switched off
+    announce = announce and GW.settings.micromenu.updateNotification
     if updateIcon then
         if version then
             updateIcon.tooltipText = GetUpdateText(part)
@@ -812,7 +814,7 @@ local MICRO_BAR_LAYOUTS = {
         {key = "help"},
         {key = "store", available = function() return not C_AddOns.IsAddOnLoaded("Dominos") end}, -- Dominos removes the store button
         {key = "greatvault"},
-        {key = "eventtimer", available = function() return GW.settings.MICROMENU_EVENT_TIMER_ICON end},
+        {key = "eventtimer", available = function() return GW.settings.micromenu.eventTimerIcon end},
         {key = "update", notification = true},
         {key = "mail", notification = true},
         {key = "workorders", notification = true},
@@ -885,7 +887,7 @@ local function GetMicroBarSlotSequence()
     for _, slot in ipairs(MICRO_BAR_LAYOUT) do
         byKey[slot.key] = slot
     end
-    for _, key in ipairs(GW.settings.MICROMENU_BUTTON_ORDER or {}) do
+    for _, key in ipairs(GW.settings.micromenu.buttonOrder or {}) do
         if byKey[key] and not used[key] then
             tinsert(sequence, byKey[key])
             used[key] = true
@@ -900,13 +902,91 @@ local function GetMicroBarSlotSequence()
 end
 
 local function IsMicroBarSlotHidden(key)
-    local visibility = GW.settings.MICROMENU_BUTTON_VISIBILITY
+    local visibility = GW.settings.micromenu.buttonVisibility
     return visibility and visibility[key] == false
 end
 
 local layoutContainer
 local slotButtons = {}
 local slotCompanions = {}
+
+local MICRO_BAR_LENGTH = GW.Retail and 500 or (GW.Mists or GW.Wrath) and 370 or 280
+local MICRO_BAR_THICKNESS = 41
+local MICRO_BAR_BUTTON_INSET_ALONG = 5
+local MICRO_BAR_BUTTON_INSET_ACROSS = 3
+local barLayout = {vertical = false, mirrorAlong = false, mirrorAcross = false}
+
+local function GetBarArtTexCoords(vertical, mirrorAlong, mirrorAcross)
+    local ul, ll, ur, lr
+    local mirrorX, mirrorY
+    if vertical then
+        ul, ll, ur, lr = {0, 0}, {1, 0}, {0, 1}, {1, 1}
+        mirrorX, mirrorY = mirrorAcross, mirrorAlong
+    else
+        ul, ll, ur, lr = {0, 0}, {0, 1}, {1, 0}, {1, 1}
+        mirrorX, mirrorY = mirrorAlong, mirrorAcross
+    end
+    if mirrorX then
+        ul, ur = ur, ul
+        ll, lr = lr, ll
+    end
+    if mirrorY then
+        ul, ll = ll, ul
+        ur, lr = lr, ur
+    end
+    return ul[1], ul[2], ll[1], ll[2], ur[1], ur[2], lr[1], lr[2]
+end
+
+local function GetBarScreenHalf(mbf)
+    local mover = mbf.gwMover
+    if not mover then return false, false end
+    local x, y = mover:GetCenter()
+    if not x or not y then return false, false end
+    local scale = mover:GetScale()
+    return x * scale > UIParent:GetWidth() / 2, y * scale < UIParent:GetHeight() / 2
+end
+
+local function GetBarCornerPoint(vertical, mirrorAlong, mirrorAcross)
+    if vertical then
+        return (mirrorAlong and "BOTTOM" or "TOP") .. (mirrorAcross and "RIGHT" or "LEFT")
+    end
+    return (mirrorAcross and "BOTTOM" or "TOP") .. (mirrorAlong and "RIGHT" or "LEFT")
+end
+
+local function UpdateMicroBarOrientation()
+    local mbf = Gw2MicroBarFrame
+    if not mbf then return end
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("Micromenu Orientation", UpdateMicroBarOrientation)
+        return
+    end
+
+    local vertical = GW.settings.micromenu.orientation == "VERTICAL"
+    barLayout.vertical = vertical
+    if vertical then
+        mbf:SetSize(MICRO_BAR_THICKNESS, MICRO_BAR_LENGTH)
+    else
+        mbf:SetSize(MICRO_BAR_LENGTH, MICRO_BAR_THICKNESS)
+    end
+
+    local rightHalf, lowerHalf = GetBarScreenHalf(mbf)
+    local mirrorAlong = vertical and lowerHalf or (not vertical and rightHalf)
+    local mirrorAcross = vertical and rightHalf or (not vertical and lowerHalf)
+    barLayout.mirrorAlong, barLayout.mirrorAcross = mirrorAlong, mirrorAcross
+
+    local bg = mbf.cf.bg
+    local corner = GetBarCornerPoint(vertical, mirrorAlong, mirrorAcross)
+    if vertical then
+        bg:SetSize(128, 512)
+    else
+        bg:SetSize(512, 128)
+    end
+    bg:ClearAllPoints()
+    bg:SetPoint(corner, mbf.cf, corner)
+    bg:SetTexCoord(GetBarArtTexCoords(vertical, mirrorAlong, mirrorAcross))
+    bg:SetShown(GW.settings.micromenu.showBackground and GW.settings.BORDER_ENABLED)
+end
+GW.UpdateMicroBarOrientation = UpdateMicroBarOrientation
 
 -- frame fills the slot, every further argument is a companion anchored on the same spot
 local function SetSlotButton(key, frame, ...)
@@ -921,6 +1001,17 @@ local function LayoutMicroButtons()
         return
     end
 
+    local vertical, mirrorAcross = barLayout.vertical, barLayout.mirrorAcross
+    local firstPoint = GetBarCornerPoint(vertical, false, mirrorAcross)
+    local firstX = vertical and MICRO_BAR_BUTTON_INSET_ACROSS or MICRO_BAR_BUTTON_INSET_ALONG
+    local firstY = vertical and MICRO_BAR_BUTTON_INSET_ALONG or MICRO_BAR_BUTTON_INSET_ACROSS
+    if vertical and mirrorAcross then
+        firstX = -firstX
+    end
+    if not vertical and mirrorAcross then
+        firstY = -firstY
+    end
+    firstY = -firstY
     local previous
     for _, slot in ipairs(GetMicroBarSlotSequence()) do
         local frame = slotButtons[slot.key]
@@ -936,10 +1027,12 @@ local function LayoutMicroButtons()
             end
         elseif frame and (not slot.available or slot.available(frame)) then
             frame:ClearAllPoints()
-            if previous then
-                frame:SetPoint("BOTTOMLEFT", previous, "BOTTOMRIGHT", 4, 0)
+            if not previous then
+                frame:SetPoint(firstPoint, layoutContainer, firstPoint, firstX, firstY)
+            elseif vertical then
+                frame:SetPoint("TOPLEFT", previous, "BOTTOMLEFT", 0, -4)
             else
-                frame:SetPoint("TOPLEFT", layoutContainer, "TOPLEFT", 5, -3)
+                frame:SetPoint("BOTTOMLEFT", previous, "BOTTOMRIGHT", 4, 0)
             end
             if slotCompanions[slot.key] then
                 for _, companion in ipairs(slotCompanions[slot.key]) do
@@ -954,7 +1047,7 @@ end
 GW.LayoutMicroButtons = LayoutMicroButtons
 
 local function ToggleEventTimerIcon(mbf)
-    if GW.settings.MICROMENU_EVENT_TIMER_ICON and not Gw2EventTimerMicroMenuButton then
+    if GW.settings.micromenu.eventTimerIcon and not Gw2EventTimerMicroMenuButton then
         local eventTimerIcon = CreateFrame("Button", "Gw2EventTimerMicroMenuButton", mbf, "MainMenuBarMicroButton")
         eventTimerIcon.newbieText = nil
         eventTimerIcon.tooltipText = L["Event timer"]
@@ -965,7 +1058,7 @@ local function ToggleEventTimerIcon(mbf)
     end
 
     if Gw2EventTimerMicroMenuButton then
-        Gw2EventTimerMicroMenuButton:SetShown(GW.settings.MICROMENU_EVENT_TIMER_ICON)
+        Gw2EventTimerMicroMenuButton:SetShown(GW.settings.micromenu.eventTimerIcon)
     end
 
     LayoutMicroButtons()
@@ -1334,6 +1427,9 @@ local function SetupNotificationArea(mbf)
     RegisterMicroMenuNotificationIcon(updateIcon)
     SetSlotButton("update", updateIcon)
     RefreshUpdateIcon(false)
+    -- parented to the bar frame, not the fading container: always visible, but the fade must not treat
+    -- the mouse over them as leaving the bar (see the auto hide set in LoadMicroMenu)
+    mbf.notificationIcons = {updateIcon}
 
     -- Mail icon
     local mailIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
@@ -1351,6 +1447,7 @@ local function SetupNotificationArea(mbf)
         mailIconOnEvent(frame)
     end)
     SetSlotButton("mail", mailIcon)
+    tinsert(mbf.notificationIcons, mailIcon)
 
     if GW.Retail then
         -- workorder icon
@@ -1370,6 +1467,7 @@ local function SetupNotificationArea(mbf)
             workOrderIconOnEvent(frame, "PLAYER_ENTERING_WORLD")
         end)
         SetSlotButton("workorders", workOrderIcon)
+        tinsert(mbf.notificationIcons, workOrderIcon)
     end
 
     LayoutMicroButtons()
@@ -1505,7 +1603,7 @@ end
 
 
 local function mbf_OnLeave(self)
-    if not self:IsMouseOver() and GW.settings.FADE_MICROMENU then
+    if not self:IsMouseOver() and GW.settings.micromenu.fade then
         self:fadeOut()
     end
 end
@@ -1520,12 +1618,15 @@ local function LoadMicroMenu()
 
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")
-    mbf:SetSize(GW.Retail and 500 or (GW.Mists or GW.Wrath) and 370 or 280, 41)
-    local postDragFunction = function(mbf)
-        mbf.cf.bg:SetShown(not mbf.isMoved)
+    UpdateMicroBarOrientation() -- size only, the mover does not exist yet
+    local postDragFunction = function()
+        -- art and button offset follow the screen position
+        UpdateMicroBarOrientation()
+        LayoutMicroButtons()
     end
-    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "Blizzard,Widgets", nil, {"default"}, nil, postDragFunction)
+    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "Blizzard,Widgets", nil, {"default", "scaleable"}, nil, postDragFunction)
     mbf:SetPoint("TOPLEFT", mbf.gwMover)
+    UpdateMicroBarOrientation() -- now with the position: the art corner follows the screen half
 
     -- reskin all default (and custom) micro buttons to our styling
     reskinMicroButtons(mbf.cf, true)
@@ -1544,13 +1645,9 @@ local function LoadMicroMenu()
 
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
 
-    -- if borders are hidden, hide the bg
-    if not GW.settings.BORDER_ENABLED then
-        mbf.cf.bg:Hide()
-    end
 
     -- if set to fade micro menu, add fader
-    mbf.cf:SetAttribute("shouldFade", GW.settings.FADE_MICROMENU)
+    mbf.cf:SetAttribute("shouldFade", GW.settings.micromenu.fade)
     mbf.cf:SetAttribute("fadeTime", 0.15)
 
     local fo = mbf.cf:CreateAnimationGroup("fadeOut")
@@ -1559,6 +1656,11 @@ local function LoadMicroMenu()
     local fadeIn = fi:CreateAnimation("Alpha")
     fo:SetScript("OnFinished", function(self)
         self:GetParent():SetAlpha(0)
+    end)
+    fo:SetScript("OnUpdate", function(self)
+        if mbf:IsMouseOver() then
+            self:Stop()
+        end
     end)
     fadeOut:SetStartDelay(0.25)
     fadeOut:SetFromAlpha(1.0)
@@ -1573,27 +1675,42 @@ local function LoadMicroMenu()
         fo:Play()
     end
     mbf.cf.fadeIn = function(self)
+        local wasFadingOut = fo:IsPlaying()
+        fo:Stop()
+        if wasFadingOut or (self:GetAlpha() >= 1 and not fi:IsPlaying()) then
+            self:SetAlpha(1)
+            return
+        end
         self:SetAlpha(1)
         fi:Stop()
-        fo:Stop()
         fi:Play()
     end
 
     mbf:SetFrameRef("cf", mbf.cf)
+    for i, icon in ipairs(mbf.notificationIcons or {}) do
+        mbf:SetFrameRef("notificationIcon" .. i, icon)
+    end
 
     mbf:SetAttribute("_onenter", [=[
         local cf = self:GetFrameRef("cf")
         local shouldFade = cf:GetAttribute("shouldFade")
-        if cf:IsShown() or not shouldFade then
+        if not shouldFade then
             return
         end
         cf:UnregisterAutoHide()
         cf:Show()
         cf:CallMethod("fadeIn", cf)
         cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
+        -- the notification icons hang next to the container, hovering them keeps the bar shown
+        for i = 1, 3 do
+            local icon = self:GetFrameRef("notificationIcon" .. i)
+            if icon then
+                cf:AddToAutoHide(icon)
+            end
+        end
     ]=])
     mbf.cf:HookScript("OnLeave", mbf_OnLeave)
-    mbf.cf:SetShown(not GW.settings.FADE_MICROMENU)
+    mbf.cf:SetShown(not GW.settings.micromenu.fade)
 
     if GW.Retail then
         -- fix alert positions and hide the micromenu bar

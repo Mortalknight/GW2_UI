@@ -157,6 +157,14 @@ GW.globalDefault = {
 
         micromenu = {
             enabled = true,
+            orientation = "HORIZONTAL",
+            buttonOrder = {}, -- slot keys in the user's order, empty = default order
+            buttonVisibility = {}, -- [slot key] = false for hidden buttons
+            notificationIconAnimation = true,
+            showBackground = true,
+            fade = false,
+            eventTimerIcon = false,
+            updateNotification = true, -- chat notice and flash when a newer version is seen
         },
 
         NumberFormat = "POINT",
@@ -422,11 +430,7 @@ GW.globalDefault = {
         CHATFRAME_FADE= true,
         CHATFRAME_EDITBOX_HIDE= true,
         CHAT_BUTTONS_POSITION= "LEFT",
-        FADE_MICROMENU= false,
-        MICROMENU_EVENT_TIMER_ICON= false,
-        MICROMENU_BUTTON_ORDER= {},
-        MICROMENU_BUTTON_VISIBILITY= {},
-        MICROMENU_NOTIFICATION_ICON_ANIMATION= true,
+        MicromenuPos_scale= 1,
         AFK_MODE= true,
         CHAT_MAX_COPY_CHAT_LINES= 100,
         CHAT_USE_GW2_STYLE= true,

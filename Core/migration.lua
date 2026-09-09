@@ -285,6 +285,20 @@ local function DatabaseValueMigration()
         GW.settings.StanceBarEnabled = nil
     end
 
+    -- micro menu settings moved into the micromenu table
+    if GW.settings.MICROMENU_NOTIFICATION_ICON_ANIMATION ~= nil then
+        GW.settings.micromenu.notificationIconAnimation = GW.settings.MICROMENU_NOTIFICATION_ICON_ANIMATION
+        GW.settings.MICROMENU_NOTIFICATION_ICON_ANIMATION = nil
+    end
+    if GW.settings.FADE_MICROMENU ~= nil then
+        GW.settings.micromenu.fade = GW.settings.FADE_MICROMENU
+        GW.settings.FADE_MICROMENU = nil
+    end
+    if GW.settings.MICROMENU_EVENT_TIMER_ICON ~= nil then
+        GW.settings.micromenu.eventTimerIcon = GW.settings.MICROMENU_EVENT_TIMER_ICON
+        GW.settings.MICROMENU_EVENT_TIMER_ICON = nil
+    end
+
     -- one time split of the bank item settings from the previously shared bag values
     if not GW.settings.BANK_ITEM_SETTINGS_SPLIT then
         GW.settings.BANK_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE

@@ -17,9 +17,13 @@ addChange("11.2.0", {
     {GW.Enum.ChangelogType.change, [=[New skin for the Blizzard settings panel (all game versions): frame, tabs, category list, checkboxes, sliders, dropdowns, buttons and keybinding rows]=]},
     {GW.Enum.ChangelogType.feature, [=[Great Vault micro menu button: the tooltip now shows the weekly progress of all three raid, dungeon and world slots]=]},
     {GW.Enum.ChangelogType.feature, [=[Micro bar: the order of the buttons can be changed and single buttons can be hidden (HUD settings, micro bar section), a reset button restores the defaults]=]},
-    {GW.Enum.ChangelogType.feature, [=[Update icon: remembers the newest version seen in group or guild across reloads, the tooltip shows installed and available version, how many features, changes and fixes it brings and who reported it, a click opens the changelog; the settings overview shows the available update as well]=]},
+    {GW.Enum.ChangelogType.feature, [=[Micro bar: can be arranged vertically (HUD settings) and scaled in Move HUD mode, the background art follows the screen position and has its own show option instead of disappearing once the bar is moved]=]},
+    {GW.Enum.ChangelogType.feature, [=[Update icon: remembers the newest version seen in group or guild across reloads, a click opens the changelog; the settings overview shows the available update in a banner above the changelog]=]},
+    {GW.Enum.ChangelogType.feature, [=[Update icon tooltip: installed and available version, how many features, changes and fixes the update brings and who reported it; chat notice and flash can be switched off in the micro bar settings]=]},
+    {GW.Enum.ChangelogType.bug, [=[Micro bar fade: the bar no longer ends up invisible but clickable when the mouse comes back during the fade out, and hovering the update, mail or work order icon keeps the bar shown]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix the addon update notification: the version comparison never matched release versions and compared numbers as text]=]},
-    })
+    {GW.Enum.ChangelogType.bug, [=[Chat tabs no longer change their size on hover on Classic, TBC, Wrath and Mists]=]},
+})
 
 addChange("11.1.6", {
     {GW.Enum.ChangelogType.change, [=[Dressing room skin: GW2 header with framed portrait, framed model area with skinned controls, the transmog set panel and its list are skinned as well]=]},

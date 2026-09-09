@@ -346,8 +346,11 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
         GW.updateSettingsFrameSettingsValue(mf.setting .. ".NewAuraAnimation", nil, nil, true)
         GW.UpdateAuraHeader(mf.parent)
     elseif mf.setting == "MicromenuPos" then
-        -- Hide/Show BG here
-        mf.parent.cf.bg:Show()
+        -- bar art and button offset follow the (default) position
+        if GW.UpdateMicroBarOrientation then
+            GW.UpdateMicroBarOrientation()
+            GW.LayoutMicroButtons()
+        end
     end
 
     -- Set Scale back to default

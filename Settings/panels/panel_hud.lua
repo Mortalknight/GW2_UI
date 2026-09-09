@@ -161,7 +161,7 @@ local function LoadHudPanel(sWindow)
     -- MICRO BAR
     microBar:AddOption(ENABLE, L["Micro Bar"], {getterSetter = "micromenu.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
     microBar:AddOption(L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], {
-        getterSetter = "FADE_MICROMENU",
+        getterSetter = "micromenu.fade",
         callback = function(value)
             if Gw2MicroBarFrame and Gw2MicroBarFrame.cf then
                 Gw2MicroBarFrame.cf:SetAttribute("shouldFade", value)
@@ -175,8 +175,23 @@ local function LoadHudPanel(sWindow)
         end,
         dependence = {["micromenu.enabled"] = true}
     })
+    microBar:AddOption(GW.NewSign .. L["Show Background"], nil, {
+        getterSetter = "micromenu.showBackground",
+        callback = function() GW.UpdateMicroBarOrientation() end,
+        dependence = {["micromenu.enabled"] = true}
+    })
+    microBar:AddOptionDropdown(GW.NewSign .. L["Orientation"], nil, {
+        getterSetter = "micromenu.orientation",
+        callback = function()
+            GW.UpdateMicroBarOrientation()
+            GW.LayoutMicroButtons()
+        end,
+        optionsList = {"HORIZONTAL", "VERTICAL"},
+        optionNames = {L["Horizontal"], L["Vertical"]},
+        dependence = {["micromenu.enabled"] = true}
+    })
     microBar:AddOption(L["Show event timer micro menu icon"], L["Displays an micro menu icon for the world map event timers"], {
-        getterSetter = "MICROMENU_EVENT_TIMER_ICON",
+        getterSetter = "micromenu.eventTimerIcon",
         callback = function()
             if Gw2MicroBarFrame and Gw2MicroBarFrame.cf then
                 GW.ToggleEventTimerMicroMenuIcon(Gw2MicroBarFrame.cf)
@@ -191,7 +206,7 @@ local function LoadHudPanel(sWindow)
         tinsert(microBarSlotNames, GW.GetMicroBarSlotName(slot.key))
     end
     microBar:AddOptionSortableList(GW.NewSign .. L["Micro bar buttons"], L["Set the order of the micro bar buttons, uncheck a button to hide it."], {
-        getterSetter = "MICROMENU_BUTTON_ORDER",
+        getterSetter = "micromenu.buttonOrder",
         callback = function()
             if GW.LayoutMicroButtons then
                 GW.LayoutMicroButtons()
@@ -200,13 +215,13 @@ local function LoadHudPanel(sWindow)
         optionsList = microBarSlotKeys,
         optionNames = microBarSlotNames,
         toggle = {
-            get = function(key) return GW.settings.MICROMENU_BUTTON_VISIBILITY[key] ~= false end,
+            get = function(key) return GW.settings.micromenu.buttonVisibility[key] ~= false end,
             set = function(key, enabled)
                 -- only hidden buttons are stored, a visible one falls back to the default
                 if enabled then
-                    GW.settings.MICROMENU_BUTTON_VISIBILITY[key] = nil
+                    GW.settings.micromenu.buttonVisibility[key] = nil
                 else
-                    GW.settings.MICROMENU_BUTTON_VISIBILITY[key] = false
+                    GW.settings.micromenu.buttonVisibility[key] = false
                 end
             end,
         },
@@ -215,9 +230,9 @@ local function LoadHudPanel(sWindow)
     })
     microBar:AddOptionButton(L["Reset micro bar layout"], L["Restores the default order and shows all buttons."], {
         callback = function()
-            wipe(GW.settings.MICROMENU_BUTTON_ORDER)
-            wipe(GW.settings.MICROMENU_BUTTON_VISIBILITY)
-            local widget = GW.FindSettingsWidgetByOption("MICROMENU_BUTTON_ORDER")
+            wipe(GW.settings.micromenu.buttonOrder)
+            wipe(GW.settings.micromenu.buttonVisibility)
+            local widget = GW.FindSettingsWidgetByOption("micromenu.buttonOrder")
             if widget and widget.RefreshList then
                 widget:RefreshList()
             end
@@ -229,8 +244,12 @@ local function LoadHudPanel(sWindow)
         forceNewLine = true,
         dependence = {["micromenu.enabled"] = true}
     })
+    microBar:AddOption(GW.NewSign .. L["Show update notifications"], L["Chat notice and flashing icon when a group or guild member runs a newer GW2 UI version. The update icon itself stays visible."], {
+        getterSetter = "micromenu.updateNotification",
+        dependence = {["micromenu.enabled"] = true}
+    })
     microBar:AddOption(L["Animate micro menu notification icons"], L["Play entrance animations and flashes for micro menu notification icons (mail, great vault, collections, encounter journal and work orders)."], {
-        getterSetter = "MICROMENU_NOTIFICATION_ICON_ANIMATION",
+        getterSetter = "micromenu.notificationIconAnimation",
         callback = GW.ToggleMicroMenuNotificationIconAnimation,
         dependence = {["micromenu.enabled"] = true}
     })
