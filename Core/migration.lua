@@ -1,48 +1,12 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function loopTableForIntConv(tbl, settingToChange)
-    for setting, value in next, tbl do
-        if type(value) == "table" then
-            loopTableForIntConv(value, settingToChange[setting])
-        else
-            if tonumber(value) then
-                settingToChange = tonumber(value)
-            end
-        end
-    end
-end
-
-local function ConvertDbStringToInteger(tbl)
-    for setting, value in next, tbl do
-        if type(value) == "table" then
-            loopTableForIntConv(value, tbl[setting])
-        else
-            if tonumber(value) then
-                tbl[setting] = tonumber(value)
-            end
-        end
-    end
-    return tbl
-end
-GW.ConvertDbStringToInteger = ConvertDbStringToInteger
-
 local function DatabaseValueMigration()
-    -- migration for font module
-    if GW.settings.FONTS_ENABLED then
-        if not GW.settings.FONTS_ENABLED then
-            GW.settings.FONT_STYLE_TEMPLATE = "BLIZZARD"
-            GW.settings.FONTS_BIG_HEADER_SIZE = 16
-            GW.settings.FONTS_HEADER_SIZE = 14
-            GW.settings.FONTS_NORMAL_SIZE = 12
-            GW.settings.FONTS_SMALL_SIZE = 11
-            GW.settings.FONTS_OUTLINE = ""
-            GW.settings.FONT_NORMAL = ""
-            GW.settings.FONT_HEADERS = ""
-        end
-
-        GW.settings.FONTS_ENABLED = nil
-    end
+    -- marker flags of migrations that have been removed again (everything before 11.0.0), cleaned out of the profiles
+    GW.settings.updateFramePositionMigrationDone = nil
+    GW.settings.chatTimeStampMigrationDone = nil
+    GW.settings.profileMetaDataFixed = nil
+    GW.settings.BANK_ITEM_SETTINGS_SPLIT = nil
 
     -- migration of the player cast bar details: the single "Advanced Casting Bar" toggle was
     -- split into one setting per element. Only profiles that had it enabled carry the key
@@ -82,12 +46,6 @@ local function DatabaseValueMigration()
         end
     end
 
-    -- migration minimap scale setting
-    if GW.settings.MINIMAP_SCALE then
-        GW.settings.MINIMAP_SIZE = GW.settings.MINIMAP_SCALE
-        GW.settings.MINIMAP_SCALE = nil
-    end
-
     -- migration of the player aura sorting: SortMethod + SortDir were combined into
     -- a single Sort preset (shared values with the unit frame aura sorting)
     if not GW.settings.playerAuraSortMigrationDone then
@@ -107,183 +65,6 @@ local function DatabaseValueMigration()
         GW.settings.playerAuraSortMigrationDone = true
     end
 
-    -- migration for chat timestap
-    if not GW.settings.chatTimeStampMigrationDone then
-        local timestampFormat = GetChatTimestampFormat()
-        GW.settings.timeStampFormat = timestampFormat
-
-        GW.settings.chatTimeStampMigrationDone = true
-    end
-
-    -- migration of tooltip item count
-    if type(GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT) == "string" then
-        local db = {
-            Bank = true,
-            Bag = true,
-            Stack = false
-        }
-        if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BANK" then
-            db.Bank = true
-            db.Bag = false
-        elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BAG" then
-            db.Bank = false
-            db.Bag = true
-        elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BOTH" then
-            db.Bank = true
-            db.Bag = true
-        elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "NONE" then
-            db.Bank = false
-            db.Bag = false
-        end
-
-        GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT = db
-    end
-
-    -- migrationtarget frame itemlevel
-    if type(GW.settings.target_ILVL) == "boolean" then
-        GW.settings.target_ILVL = GW.settings.target_ILVL == true and "ITEM_LEVEL" or "PVP_LEVEL"
-    end
-
-    if GW.settings.TARGET_UNIT_HEALTH_SHORT_VALUES ~= nil then
-        GW.settings.target_SHORT_VALUES = GW.settings.TARGET_UNIT_HEALTH_SHORT_VALUES
-        GW.settings.TARGET_UNIT_HEALTH_SHORT_VALUES = nil
-    end
-
-    if GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES ~= nil then
-        GW.settings.focus_SHORT_VALUES = GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES
-        GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES = nil
-    end
-
-    -- fix Default Profile tag
-    if not GW.settings.profileMetaDataFixed and GW.private.GW2_UI_VERSION ~= "WELCOME" then
-        local profiles = GW.globalSettings:GetProfiles()
-        for _, profile in pairs( profiles ) do
-            if profile == "Default" and GW.globalSettings.profiles[profile].profileCreatedCharacter == UNKNOWN then
-                GW.globalSettings.profiles[profile].profileCreatedCharacter = "GW2_UI"
-                GW.globalSettings.profiles[profile].profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"])
-            end
-            local dateString = GW.globalSettings.profiles[profile].profileCreatedDate
-            if dateString and dateString:match("^(%d+)/(%d+)/(%d+) (%d+):(%d+):(%d+)$") then
-                local month, day, year, hour, min, sec = dateString:match("(%d+)/(%d+)/(%d+) (%d+):(%d+):(%d+)")
-                year = tonumber(year)
-                if year < 70 then
-                    year = 2000 + year
-                else
-                    year = 1900 + year
-                end
-                local t = {
-                    year = year,
-                    month = tonumber(month),
-                    day = tonumber(day),
-                    hour = tonumber(hour),
-                    min = tonumber(min),
-                    sec = tonumber(sec),
-                }
-                local timestamp = time(t)
-                GW.globalSettings.profiles[profile].profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"], timestamp)
-            elseif dateString == UNKNOWN then
-                GW.globalSettings.profiles[profile].profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"])
-            end
-        end
-        GW.settings.profileMetaDataFixed = true
-    end
-
-    --player buff size
-    if GW.settings.PlayerBuffFrame_ICON_SIZE then
-        GW.settings.PlayerBuffs.Seperate = GW.settings.PlayerBuffFrame_Seperate or GW.settings.PlayerBuffs.Seperate
-        GW.settings.PlayerBuffs.SortDir = GW.settings.PlayerBuffFrame_SortDir or GW.settings.PlayerBuffs.SortDir
-        GW.settings.PlayerBuffs.SortMethod = GW.settings.PlayerBuffFrame_SortMethod or GW.settings.PlayerBuffs.SortMethod
-        GW.settings.PlayerBuffs.IconSize = GW.RoundDec(GW.settings.PlayerBuffFrame_ICON_SIZE or GW.settings.PlayerBuffs.IconSize)
-        GW.settings.PlayerBuffs.IconHeight = GW.RoundDec(GW.settings.PlayerBuffFrame_ICON_SIZE or GW.settings.PlayerBuffs.IconSize)
-        GW.settings.PlayerBuffs.GrowDirection = GW.settings.PlayerBuffFrame_GrowDirection or GW.settings.PlayerBuffs.GrowDirection
-        GW.settings.PlayerBuffs.HorizontalSpacing = GW.settings.PlayerBuffFrame_HorizontalSpacing or GW.settings.PlayerBuffs.HorizontalSpacing
-        GW.settings.PlayerBuffs.VerticalSpacing = GW.settings.PlayerBuffFrame_VerticalSpacing or GW.settings.PlayerBuffs.VerticalSpacing
-        GW.settings.PlayerBuffs.MaxWraps = GW.settings.PlayerBuffFrame_MaxWraps or GW.settings.PlayerBuffs.MaxWraps
-        GW.settings.PlayerBuffs.WrapAfter = GW.settings.PLAYER_AURA_WRAP_NUM or GW.settings.PlayerBuffs.WrapAfter
-        GW.settings.PlayerBuffs.NewAuraAnimation = GW.settings.PLAYER_AURA_ANIMATION or GW.settings.PlayerBuffs.NewAuraAnimation
-
-        GW.settings.PlayerBuffFrame_Seperate = nil
-        GW.settings.PlayerBuffFrame_SortDir = nil
-        GW.settings.PlayerBuffFrame_SortMethod = nil
-        GW.settings.PlayerBuffFrame_ICON_SIZE = nil
-        GW.settings.PlayerBuffFrame_GrowDirection = nil
-        GW.settings.PlayerBuffFrame_HorizontalSpacing = nil
-        GW.settings.PlayerBuffFrame_VerticalSpacing = nil
-        GW.settings.PLAYER_AURA_WRAP_NUM = nil
-        GW.settings.PlayerBuffFrame_MaxWraps = nil
-        GW.settings.PLAYER_AURA_ANIMATION = nil
-    end
-    if GW.settings.PlayerDebuffFrame_ICON_SIZE then
-        GW.settings.PlayerDebuffs.Seperate = GW.settings.PlayerDebuffFrame_Seperate or GW.settings.PlayerDebuffs.Seperate
-        GW.settings.PlayerDebuffs.SortDir = GW.settings.PlayerDebuffFrame_SortDir or GW.settings.PlayerDebuffs.SortDir
-        GW.settings.PlayerDebuffs.SortMethod = GW.settings.PlayerDebuffFrame_SortMethod or GW.settings.PlayerDebuffs.SortMethod
-        GW.settings.PlayerDebuffs.IconSize = GW.RoundDec(GW.settings.PlayerDebuffFrame_ICON_SIZE or GW.settings.PlayerDebuffs.IconSize)
-        GW.settings.PlayerDebuffs.IconHeight = GW.RoundDec(GW.settings.PlayerDebuffFrame_ICON_SIZE or GW.settings.PlayerDebuffs.IconSize)
-        GW.settings.PlayerDebuffs.GrowDirection = GW.settings.PlayerDebuffFrame_GrowDirection or GW.settings.PlayerDebuffs.GrowDirection
-        GW.settings.PlayerDebuffs.HorizontalSpacing = GW.settings.PlayerDebuffFrame_HorizontalSpacing or GW.settings.PlayerDebuffs.HorizontalSpacing
-        GW.settings.PlayerDebuffs.VerticalSpacing = GW.settings.PlayerDebuffFrame_VerticalSpacing or GW.settings.PlayerDebuffs.VerticalSpacing
-        GW.settings.PlayerDebuffs.MaxWraps = GW.settings.PlayerDebuffFrame_MaxWraps or GW.settings.PlayerDebuffs.MaxWraps
-        GW.settings.PlayerDebuffs.WrapAfter = GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF or GW.settings.PlayerDebuffs.WrapAfter
-        GW.settings.PlayerDebuffs.NewAuraAnimation = GW.settings.PLAYER_AURA_ANIMATION or GW.settings.PlayerDebuffs.NewAuraAnimation
-
-        GW.settings.PlayerDebuffFrame_Seperate = nil
-        GW.settings.PlayerDebuffFrame_SortDir = nil
-        GW.settings.PlayerDebuffFrame_SortMethod = nil
-        GW.settings.PlayerDebuffFrame_ICON_SIZE = nil
-        GW.settings.PlayerDebuffFrame_GrowDirection = nil
-        GW.settings.PlayerDebuffFrame_HorizontalSpacing = nil
-        GW.settings.PlayerDebuffFrame_VerticalSpacing = nil
-        GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF = nil
-        GW.settings.PlayerDebuffFrame_MaxWraps = nil
-    end
-
-    -- raid power bar settings
-    if GW.settings.RAID_POWER_BARS_RAID10 ~= nil then
-        GW.settings.raid10_show_powerbar = GW.settings.RAID_POWER_BARS_RAID10 and "ALL" or "NONE"
-        GW.settings.RAID_POWER_BARS_RAID10 = nil
-    end
-    if GW.settings.RAID_POWER_BARS_RAID25 ~= nil then
-        GW.settings.raid25_show_powerbar = GW.settings.RAID_POWER_BARS_RAID25 and "ALL" or "NONE"
-        GW.settings.RAID_POWER_BARS_RAID25 = nil
-    end
-    if GW.settings.RAID_POWER_BARS ~= nil then
-        GW.settings.raid40_show_powerbar = GW.settings.RAID_POWER_BARS and "ALL" or "NONE"
-        GW.settings.RAID_POWER_BARS = nil
-    end
-    if GW.settings.RAID_POWER_BARS_PARTY ~= nil then
-        GW.settings.party_grid_show_powerbar = GW.settings.RAID_POWER_BARS_PARTY and "ALL" or "NONE"
-        GW.settings.RAID_POWER_BARS_PARTY = nil
-    end
-
-    if GW.settings.QUESTVIEW_ENABLED ~= nil then
-        GW.settings.immersiveQuesting.enabled = GW.settings.QUESTVIEW_ENABLED
-        GW.settings.QUESTVIEW_ENABLED = nil
-    end
-
-    if GW.settings.OBJECTIVES_COLLAPSE_IN_M_PLUS ~= nil then
-        GW.settings.ObjectivesAutoCollapse.MythicPlus = GW.settings.OBJECTIVES_COLLAPSE_IN_M_PLUS == true
-        GW.settings.OBJECTIVES_COLLAPSE_IN_M_PLUS = nil
-    end
-
-    if GW.settings.TotemBar_GrowDirection ~= nil then
-        GW.settings.TotemBar.growDirection = GW.settings.TotemBar_GrowDirection
-        GW.settings.TotemBar_GrowDirection = nil
-    end
-    if GW.settings.TotemBar_SortDirection ~= nil then
-        GW.settings.TotemBar.sortDirection = GW.settings.TotemBar_SortDirection
-        GW.settings.TotemBar_SortDirection = nil
-    end
-
-    if GW.settings.StanceBar_GrowDirection ~= nil then
-        GW.settings.StanceBar.growDirection = GW.settings.StanceBar_GrowDirection
-        GW.settings.StanceBar_GrowDirection = nil
-
-        GW.settings.StanceBar.containerState = GW.settings.StanceBarContainerState
-        GW.settings.StanceBarContainerState = nil
-
-        GW.settings.StanceBar.enabled = GW.settings.StanceBarEnabled
-        GW.settings.StanceBarEnabled = nil
-    end
 
     -- micro menu settings moved into the micromenu table
     if GW.settings.MICROMENU_NOTIFICATION_ICON_ANIMATION ~= nil then
@@ -297,14 +78,6 @@ local function DatabaseValueMigration()
     if GW.settings.MICROMENU_EVENT_TIMER_ICON ~= nil then
         GW.settings.micromenu.eventTimerIcon = GW.settings.MICROMENU_EVENT_TIMER_ICON
         GW.settings.MICROMENU_EVENT_TIMER_ICON = nil
-    end
-
-    -- one time split of the bank item settings from the previously shared bag values
-    if not GW.settings.BANK_ITEM_SETTINGS_SPLIT then
-        GW.settings.BANK_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
-        GW.settings.BANK_ITEM_SPACING_X = GW.settings.BAG_ITEM_SPACING_X
-        GW.settings.BANK_ITEM_SPACING_Y = GW.settings.BAG_ITEM_SPACING_Y
-        GW.settings.BANK_ITEM_SETTINGS_SPLIT = true
     end
 
     -- hero panel stats moved from the profile into the character settings (11.2.0)
@@ -327,35 +100,3 @@ local function DatabaseValueMigration()
     end
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
-
-local function Migration()
-    -- migration for frame positions
-    if not GW.settings.updateFramePositionMigrationDone then
-        GW.InMoveHudMode = true
-        -- new Powerbar and Classpowerbar default position
-        if GwPlayerPowerBar then
-            if GwPlayerPowerBar.isMoved == false then
-                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerPowerBar.gwMover)
-            end
-        end
-        if GwPlayerClassPower then
-            if GwPlayerClassPower.isMoved == false then
-                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerClassPower.gwMover)
-            end
-        end
-        if GwMultiBarBottomRight then
-            if GwMultiBarBottomRight.isMoved == false then
-                GW.ResetMoverFrameToDefaultValues(nil, nil, GwMultiBarBottomRight.gwMover)
-            end
-        end
-
-        if GW.MoveHudScaleableFrame then
-            GW.MoveHudScaleableFrame.layoutManager:SetAttribute("inMoveHudMode", false)
-            GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
-        end
-
-        GW.InMoveHudMode = false
-        GW.settings.updateFramePositionMigrationDone = true
-    end
-end
-GW.Migration = Migration

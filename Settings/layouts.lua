@@ -231,9 +231,6 @@ local function specSwitchHandlerOnEvent(self, event)
 
     if layoutToUse and (GW.private.Layouts.currentSelected ~= layoutToUse.name or event == "PLAYER_ENTERING_WORLD") then
         UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true, event == "PLAYER_ENTERING_WORLD")
-
-        -- also do the migration here
-        GW.Migration()
     end
 
     if event == "PLAYER_ENTERING_WORLD" then

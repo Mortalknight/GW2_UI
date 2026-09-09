@@ -7,6 +7,17 @@ local ICONS = {}
 local ProfileWin
 local IconSelectionFrame
 
+local function ConvertImportedValuesToNumbers(tbl)
+    for key, value in next, tbl do
+        if type(value) == "table" then
+            ConvertImportedValuesToNumbers(value)
+        elseif tonumber(value) then
+            tbl[key] = tonumber(value)
+        end
+    end
+    return tbl
+end
+
 ------------------------------------------------------------
 -- Data / ScrollBox
 ------------------------------------------------------------
@@ -275,7 +286,7 @@ local function AddProfile(name, addNewProfile, importProfileString)
     end
 
     if importProfileString then
-        GW.globalSettings.profiles[name] = GW.ConvertDbStringToInteger(importProfileString)
+        GW.globalSettings.profiles[name] = ConvertImportedValuesToNumbers(importProfileString)
     elseif addNewProfile then
         local currentProfile = GW.globalSettings:GetCurrentProfile()
         GW.globalSettings:SetProfile(name)

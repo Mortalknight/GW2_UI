@@ -21,6 +21,8 @@ addChange("11.2.0", {
     {GW.Enum.ChangelogType.feature, [=[Micro bar: can be arranged vertically (HUD settings) and scaled in Move HUD mode, the background art follows the screen position and has its own show option instead of disappearing once the bar is moved]=]},
     {GW.Enum.ChangelogType.feature, [=[Update icon: remembers the newest version seen in group or guild across reloads, a click opens the changelog; the settings overview shows the available update in a banner above the changelog]=]},
     {GW.Enum.ChangelogType.feature, [=[Update icon tooltip: installed and available version, how many features, changes and fixes the update brings and who reported it; chat notice and flash can be switched off in the micro bar settings]=]},
+    {GW.Enum.ChangelogType.change, [=[Hero panel stats picker: order and visibility are stored per character now (existing profile settings are carried over once), the set bonus tile is hidden via the picker instead of an option]=]},
+    {GW.Enum.ChangelogType.change, [=[Settings migrations from versions before 11.0.0 removed]=]},
     {GW.Enum.ChangelogType.bug, [=[Micro bar fade: the bar no longer ends up invisible but clickable when the mouse comes back during the fade out, and hovering the update, mail or work order icon keeps the bar shown]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix the addon update notification: the version comparison never matched release versions and compared numbers as text]=]},
     {GW.Enum.ChangelogType.bug, [=[Chat tabs no longer change their size on hover on Classic, TBC, Wrath and Mists]=]},
