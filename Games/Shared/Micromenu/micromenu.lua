@@ -97,51 +97,133 @@ local MICRO_BUTTONS_LOCAL = {
     "LFGMicroButton" --none Retail
     }
 
+---------- addon version check ----------
+local function ParseVersion(text)
+    local major, minor, patch = string.match(text or "", "(%d+)%.(%d+)%.(%d+)")
+    if not major then return nil end
+    return tonumber(major), tonumber(minor), tonumber(patch)
+end
+
+local function CompareVersions(a, b)
+    local a1, a2, a3 = ParseVersion(a)
+    local b1, b2, b3 = ParseVersion(b)
+    if not a1 or not b1 then return nil end
+    if a1 ~= b1 then return a1 - b1, 1 end
+    if a2 ~= b2 then return a2 - b2, 2 end
+    if a3 ~= b3 then return a3 - b3, 3 end
+    return 0, nil
+end
+
+local function GetUpdateText(part)
+    if part == 1 then
+        return L["New update available for download."]
+    elseif part == 2 then
+        return L["New update available containing new features."]
+    end
+    return L["A |cFFFF0000major|r update is available.\nIt's strongly recommended that you update."]
+end
+
+-- number of features, changes and fixes of the installed version, taken from the top changelog entry
+local function GetInstalledChangelogCounts()
+    local features, changes, bugs = 0, 0, 0
+    local entry = GW.changelog and GW.changelog[1]
+    for _, change in ipairs(entry and entry.changes or {}) do
+        if change[1] == GW.Enum.ChangelogType.feature then
+            features = features + 1
+        elseif change[1] == GW.Enum.ChangelogType.change then
+            changes = changes + 1
+        else
+            bugs = bugs + 1
+        end
+    end
+    return features, changes, bugs
+end
+
+local function GetAddonUpdateSummary()
+    local seen = GW.private and GW.private.NewestSeenAddonVersion
+    if not seen or not seen.features then return nil end
+    if (seen.features + seen.changes + seen.bugs) == 0 then return nil end
+    return format("%d %s | %d %s | %d %s", seen.features, L["New Features"], seen.changes, L["Changes"], seen.bugs, L["Fixes"])
+end
+GW.GetAddonUpdateSummary = GetAddonUpdateSummary
+
+local function GetAvailableAddonUpdate()
+    local seen = GW.private.NewestSeenAddonVersion
+    if not seen or not seen.version or seen.version == "" then return nil end
+
+    local diff, part = CompareVersions(seen.version, GW.GetVersionString())
+    if not diff or diff <= 0 then
+        seen.version, seen.sender = "", ""
+        return nil
+    end
+    return seen.version, seen.sender, part
+end
+GW.GetAvailableAddonUpdate = GetAvailableAddonUpdate
+
+local function RefreshUpdateIcon(announce)
+    local version, _, part = GetAvailableAddonUpdate()
+    if updateIcon then
+        if version then
+            updateIcon.tooltipText = GetUpdateText(part)
+            updateIcon:Show()
+            if announce then
+                PlayMicroMenuNotificationFlash(updateIcon)
+            end
+        else
+            updateIcon:Hide()
+        end
+    end
+    if announce and version then
+        GW.Notice(GetUpdateText(part))
+    end
+    if GW.RefreshSettingsUpdateHint then
+        GW.RefreshSettingsUpdateHint()
+    end
+end
+
 do
     local SendMessageWaiting
     local function SendMessage()
+        -- "version;features;changes;fixes", the counts describe the sender's changelog entry
+        local payload = format("%s;%d;%d;%d", GW.GetVersionString(), GetInstalledChangelogCounts())
         if IsInRaid() then
-            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.GetVersionString(), (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")
+            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", payload, (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")
         elseif IsInGroup() then
-            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.GetVersionString(), (not IsInGroup(LE_PARTY_CATEGORY_HOME) and IsInGroup(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "PARTY")
+            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", payload, (not IsInGroup(LE_PARTY_CATEGORY_HOME) and IsInGroup(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "PARTY")
         elseif IsInGuild() then
-            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.GetVersionString(), "GUILD")
+            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", payload, "GUILD")
         end
 
         SendMessageWaiting = nil
     end
 
-
     local SendRecieveGroupSize = 0
     local myRealm = gsub(GW.myrealm, "[%s%-]", "")
     local myName = GW.myname .. "-" .. myRealm
-    local printChatMessage = false
+    local announced = false
     local function SendRecieve(_, event, prefix, message, _, sender)
         if event == "CHAT_MSG_ADDON" then
             if sender == myName then return end
             if prefix == "GW2UI_VERSIONCHK" then
-                local version, subversion, hotfix = string.match(message, "GW2_UI (%d+).(%d+).(%d+)")
-                local currentVersion, currentSubversion, currentHotfix = string.match(GW.GetVersionString(), "GW2_UI (%d+).(%d+).(%d+)")
-                local isUpdate = false
-                if version == nil or subversion == nil or hotfix == nil or currentVersion == nil or currentSubversion == nil or currentHotfix == nil then return end
+                local diff = CompareVersions(message, GW.GetVersionString())
+                if not diff or diff <= 0 then return end
 
-                if version > currentVersion then
-                    updateIcon.tooltipText = L["New update available for download."]
-                    isUpdate = true
-                elseif subversion > currentSubversion then
-                    updateIcon.tooltipText = L["New update available containing new features."]
-                    isUpdate = true
-                elseif hotfix > currentHotfix then
-                    updateIcon.tooltipText = L["A |cFFFF0000major|r update is available.\nIt's strongly recommended that you update."]
-                    isUpdate = true
+                -- remember the newest version anyone reported
+                local seen = GW.private.NewestSeenAddonVersion
+                local seenDiff = CompareVersions(message, seen.version)
+                if seenDiff == nil or seenDiff > 0 then
+                    seen.version = format("%d.%d.%d", ParseVersion(message))
+                    seen.sender = sender
+                    -- counts are optional, older senders only send the version
+                    local features, changes, bugs = string.match(message, ";(%d+);(%d+);(%d+)")
+                    seen.features = tonumber(features) or 0
+                    seen.changes = tonumber(changes) or 0
+                    seen.bugs = tonumber(bugs) or 0
                 end
 
-                if isUpdate and not printChatMessage then
-                    PlayMicroMenuNotificationFlash(updateIcon)
-                    GW.Notice(updateIcon.tooltipText)
-                    updateIcon:Show()
-                    printChatMessage = true
-                end
+                -- chat notice and flash only once per session
+                RefreshUpdateIcon(not announced)
+                announced = true
             end
         elseif event == "GROUP_ROSTER_UPDATE" or event == "RAID_ROSTER_UPDATE" then
             local num = GetNumGroupMembers()
@@ -157,6 +239,8 @@ do
             if not SendMessageWaiting then
                 SendMessageWaiting = C_Timer.After(10, SendMessage)
             end
+            -- a version seen in an earlier session keeps the icon until the addon is updated
+            RefreshUpdateIcon(false)
         end
     end
 
@@ -465,6 +549,22 @@ local function update_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip_SetTitle(GameTooltip, L["GW2 UI Update"])
     GameTooltip:AddLine(self.tooltipText)
+
+    local version, sender = GetAvailableAddonUpdate()
+    if version then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddDoubleLine(L["Installed version"], GW.GetVersionString(), 0.8, 0.8, 0.8, 1, 1, 1)
+        GameTooltip:AddDoubleLine(L["Available version"], version, 0.8, 0.8, 0.8, GREEN_FONT_COLOR:GetRGB())
+        local summary = GetAddonUpdateSummary()
+        if summary then
+            GameTooltip:AddLine(summary, 1, 0.82, 0)
+        end
+        if sender and sender ~= "" then
+            GameTooltip:AddDoubleLine(L["Reported by"], sender, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8)
+        end
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine(L["Click to open the changelog"], 0.7, 0.7, 0.7)
+    end
     GameTooltip:Show()
 end
 
@@ -1224,9 +1324,16 @@ local function SetupNotificationArea(mbf)
     reskinMicroButton(updateIcon, "UpdateMicroButton", mbf)
     updateIcon:Hide()
     updateIcon:HookScript("OnEnter", update_OnEnter)
+    updateIcon:HookScript("OnLeave", GameTooltip_Hide)
+    updateIcon:SetScript("OnClick", function()
+        if GW.ShowSettingsChangelog then
+            GW.ShowSettingsChangelog()
+        end
+    end)
     updateIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
     RegisterMicroMenuNotificationIcon(updateIcon)
     SetSlotButton("update", updateIcon)
+    RefreshUpdateIcon(false)
 
     -- Mail icon
     local mailIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")

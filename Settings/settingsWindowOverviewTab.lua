@@ -638,6 +638,66 @@ function GW.LoadSettingsOverview(container)
 
     settingsOverview.header:SetFont(DAMAGE_TEXT_FONT, 30)
 
+    -- newer version seen in group or guild (see the version check in the micro menu): a banner row at the
+    -- top of the dark page block, the list moves down while it is shown
+    -- the search box reaches into the top right corner of the page block (207 wide, see the xml), the
+    -- banner stops left of it; anchoring to the search box itself would close an anchor cycle via the scroll box
+    local updateHint = CreateFrame("Frame", nil, settingsOverview)
+    updateHint:SetHeight(26)
+    updateHint:SetPoint("TOPLEFT", settingsOverview.pageblock, "TOPLEFT", 0, -5)
+    updateHint:SetPoint("TOPRIGHT", settingsOverview.pageblock, "TOPRIGHT", -215, -5)
+    updateHint.bg = updateHint:CreateTexture(nil, "BACKGROUND")
+    updateHint.bg:SetAllPoints()
+    updateHint.bg:SetColorTexture(1, 0.82, 0, 0.08)
+    updateHint.icon = updateHint:CreateTexture(nil, "ARTWORK")
+    updateHint.icon:SetSize(18, 18)
+    updateHint.icon:SetPoint("LEFT", 8, 0)
+    updateHint.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/updatemicrobutton-up.png")
+    updateHint.text = updateHint:CreateFontString(nil, "OVERLAY")
+    updateHint.text:SetFont(UNIT_NAME_FONT, 13, "")
+    updateHint.text:SetShadowColor(0, 0, 0, 1)
+    updateHint.text:SetShadowOffset(1, -1)
+    updateHint.text:SetTextColor(1, 0.82, 0)
+    updateHint.text:SetJustifyH("LEFT")
+    updateHint.text:SetWordWrap(true)
+    updateHint.text:SetPoint("LEFT", updateHint.icon, "RIGHT", 8, 0)
+    settingsOverview.updateHint = updateHint
+    local function RefreshUpdateHint()
+        local version = GW.GetAvailableAddonUpdate and GW.GetAvailableAddonUpdate()
+        settingsOverview.ScrollBox:ClearAllPoints()
+        settingsOverview.ScrollBox:SetPoint("BOTTOMRIGHT", settingsOverview.pageblock, "BOTTOMRIGHT", -5, 0)
+        if version then
+            local text = format(L["Update available: %s (installed: %s)"], version, GW.GetVersionString())
+            local summary = GW.GetAddonUpdateSummary and GW.GetAddonUpdateSummary()
+            if summary then
+                text = text .. "  •  " .. summary
+            end
+            -- explicit text width so the wrapped height is known right away, two lines when needed
+            updateHint.text:SetWidth(settingsOverview.pageblock:GetWidth() - 215 - 42)
+            updateHint.text:SetText(text)
+            updateHint:SetHeight(math.max(26, updateHint.text:GetStringHeight() + 10))
+            updateHint:Show()
+            settingsOverview.ScrollBox:SetPoint("TOPLEFT", updateHint, "BOTTOMLEFT", 0, -2)
+        else
+            updateHint:Hide()
+            settingsOverview.ScrollBox:SetPoint("TOPLEFT", settingsOverview.pageblock, "TOPLEFT", 0, -5)
+        end
+    end
+    GW.RefreshSettingsUpdateHint = RefreshUpdateHint
+    settingsOverview:HookScript("OnShow", RefreshUpdateHint)
+    RefreshUpdateHint()
+
+    -- used by the update micro menu icon
+    GW.ShowSettingsChangelog = function()
+        if InCombatLockdown() then
+            GW.Notice(L["Settings are not available in combat!"])
+            return
+        end
+        ShowUIPanel(GwSettingsWindow)
+        GwSettingsWindow:SwitchTab("GwSettingsOverview")
+        ShowChangelog(settingsOverview.ScrollBox)
+    end
+
     local odd = true
     for _, button in ipairs(buttons) do
         GW.SettingsMenuButtonSetUp(button.button, odd)

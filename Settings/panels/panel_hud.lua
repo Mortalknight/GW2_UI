@@ -213,6 +213,22 @@ local function LoadHudPanel(sWindow)
         maxVisibleRows = 8,
         dependence = {["micromenu.enabled"] = true}
     })
+    microBar:AddOptionButton(L["Reset micro bar layout"], L["Restores the default order and shows all buttons."], {
+        callback = function()
+            wipe(GW.settings.MICROMENU_BUTTON_ORDER)
+            wipe(GW.settings.MICROMENU_BUTTON_VISIBILITY)
+            local widget = GW.FindSettingsWidgetByOption("MICROMENU_BUTTON_ORDER")
+            if widget and widget.RefreshList then
+                widget:RefreshList()
+            end
+            if GW.LayoutMicroButtons then
+                GW.LayoutMicroButtons()
+            end
+        end,
+        isNegativeButton = true,
+        forceNewLine = true,
+        dependence = {["micromenu.enabled"] = true}
+    })
     microBar:AddOption(L["Animate micro menu notification icons"], L["Play entrance animations and flashes for micro menu notification icons (mail, great vault, collections, encounter journal and work orders)."], {
         getterSetter = "MICROMENU_NOTIFICATION_ICON_ANIMATION",
         callback = GW.ToggleMicroMenuNotificationIconAnimation,

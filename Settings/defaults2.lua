@@ -70,6 +70,7 @@ local GridAuraFilter = {
 GW.privateDefaults = {
     profile = {
         GW2_UI_VERSION = "WELCOME",
+        NewestSeenAddonVersion = {version = "", sender = "", features = 0, changes = 0, bugs = 0}, -- newest GW2 UI version seen in group or guild
         Layouts = {},
         questWatch = { TrackedQuests = {}, AutoUntrackedQuests = {} }, -- era clients: manual quest tracking state
         PLAYER_TRACKED_DODGEBAR_SPELL_ID = 0,

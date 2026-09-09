@@ -16,7 +16,9 @@ AddChange(string addonVersion, table changeList)
 addChange("11.2.0", {
     {GW.Enum.ChangelogType.change, [=[New skin for the Blizzard settings panel (all game versions): frame, tabs, category list, checkboxes, sliders, dropdowns, buttons and keybinding rows]=]},
     {GW.Enum.ChangelogType.feature, [=[Great Vault micro menu button: the tooltip now shows the weekly progress of all three raid, dungeon and world slots]=]},
-    {GW.Enum.ChangelogType.feature, [=[Micro bar: the order of the buttons can be changed and single buttons can be hidden (HUD settings, micro bar section)]=]},
+    {GW.Enum.ChangelogType.feature, [=[Micro bar: the order of the buttons can be changed and single buttons can be hidden (HUD settings, micro bar section), a reset button restores the defaults]=]},
+    {GW.Enum.ChangelogType.feature, [=[Update icon: remembers the newest version seen in group or guild across reloads, the tooltip shows installed and available version, how many features, changes and fixes it brings and who reported it, a click opens the changelog; the settings overview shows the available update as well]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fix the addon update notification: the version comparison never matched release versions and compared numbers as text]=]},
     })
 
 addChange("11.1.6", {
