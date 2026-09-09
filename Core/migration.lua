@@ -306,6 +306,25 @@ local function DatabaseValueMigration()
         GW.settings.BANK_ITEM_SPACING_Y = GW.settings.BAG_ITEM_SPACING_Y
         GW.settings.BANK_ITEM_SETTINGS_SPLIT = true
     end
+
+    -- hero panel stats moved from the profile into the character settings (11.2.0)
+    if GW.settings.CHARACTER_STAT_ORDER ~= nil or GW.settings.CHARACTER_STAT_VISIBILITY ~= nil or GW.settings.CHARACTER_SHOW_SET_BONUS ~= nil then
+        local stats = GW.private.heroPanel.stats
+        if #stats.order == 0 and next(stats.visibility) == nil then
+            for _, key in ipairs(GW.settings.CHARACTER_STAT_ORDER or {}) do
+                tinsert(stats.order, key)
+            end
+            for key, visible in pairs(GW.settings.CHARACTER_STAT_VISIBILITY or {}) do
+                stats.visibility[key] = visible
+            end
+            if GW.settings.CHARACTER_SHOW_SET_BONUS == false then
+                stats.visibility.SETBONUS = false
+            end
+        end
+        GW.settings.CHARACTER_STAT_ORDER = nil
+        GW.settings.CHARACTER_STAT_VISIBILITY = nil
+        GW.settings.CHARACTER_SHOW_SET_BONUS = nil
+    end
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
 

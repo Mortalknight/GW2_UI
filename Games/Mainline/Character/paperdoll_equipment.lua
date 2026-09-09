@@ -701,14 +701,12 @@ local function updateStats(self)
         tinsert(entries, frame)
     end
 
-    if GW.settings.CHARACTER_SHOW_SET_BONUS then
-        local set = GetBestEquippedSet()
-        if set then
-            local color = set.allBonusesActive and GREEN_FONT_COLOR or set.anyBonusActive and YELLOW_FONT_COLOR or GRAY_FONT_COLOR
-            AddSpecialTile("SETBONUS", "Set", set.worn .. "/" .. set.total, color, setBonus_OnEnter, set)
-        elseif editMode then
-            AddSpecialTile("SETBONUS", "Set", "-", GRAY_FONT_COLOR, setBonus_OnEnter)
-        end
+    local set = GetBestEquippedSet()
+    if set then
+        local color = set.allBonusesActive and GREEN_FONT_COLOR or set.anyBonusActive and YELLOW_FONT_COLOR or GRAY_FONT_COLOR
+        AddSpecialTile("SETBONUS", "Set", set.worn .. "/" .. set.total, color, setBonus_OnEnter, set)
+    elseif editMode then
+        AddSpecialTile("SETBONUS", "Set", "-", GRAY_FONT_COLOR, setBonus_OnEnter)
     end
 
     local dungeonScore = C_ChallengeMode.GetOverallDungeonScore() or 0

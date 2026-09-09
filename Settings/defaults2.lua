@@ -77,6 +77,12 @@ GW.privateDefaults = {
         CHAT_KEYWORDS_ALERT_COLOR = {r = .5, g = .5, b = .5},
         ChatHistoryLog = {},
         ChatEditHistory = {},
+        heroPanel = {
+            stats = {
+                order = {},
+                visibility = {},
+            },
+        },
 
         -- GW2 Class colors
         Gw2ClassColor = {
@@ -1680,9 +1686,6 @@ GW.globalDefault = {
         SHOW_CHARACTER_ITEM_INFO= false,
         CHARACTER_ITEM_INFO_MISSING= true,
         CHARACTER_ITEMLEVEL_RELATIVE_COLOR= false,
-        CHARACTER_SHOW_SET_BONUS= true,
-        CHARACTER_STAT_VISIBILITY= {},
-        CHARACTER_STAT_ORDER= {},
 
         pulltimerSeconds = 10,
 

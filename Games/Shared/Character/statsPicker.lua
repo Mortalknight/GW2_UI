@@ -6,7 +6,7 @@ local L = GW.L
 -- * the cog button toggles an edit mode in which every tile of the spec is shown, hidden ones dimmed
 -- * a click on a tile toggles its visibility, drag and drop changes the order
 -- * a right click on the cog (in edit mode) resets both
--- Visibility and order live in the profile (CHARACTER_STAT_VISIBILITY / CHARACTER_STAT_ORDER).
+-- Visibility and order live in the private settings (GW.private.heroPanel.stats.visibility / GW.private.heroPanel.stats.order).
 -- Tiles are children of the stats box; the box carries the edit state and the registered tiles.
 local TILE_WIDTH = 92
 local HEADER_HEIGHT = 35
@@ -17,7 +17,7 @@ end
 
 -- user choice (true / false) wins, otherwise the automatic rule of the caller
 local function IsStatVisible(key, autoVisible)
-    local forced = GW.settings.CHARACTER_STAT_VISIBILITY[key]
+    local forced = GW.private.heroPanel.stats.visibility[key]
     if forced ~= nil then
         return forced
     end
@@ -89,7 +89,7 @@ local function ReorderStat(stats, fromKey, toKey)
     tremove(sequence, fromIndex)
     tinsert(sequence, toIndex, fromKey)
 
-    local order = GW.settings.CHARACTER_STAT_ORDER
+    local order = GW.private.heroPanel.stats.order
     wipe(order)
     for _, key in ipairs(sequence) do
         tinsert(order, key)
@@ -166,7 +166,7 @@ local function tile_OnMouseUp(self, button)
     if not IsEditMode(stats) or self.stat == "DURABILITY" then
         return
     end
-    GW.settings.CHARACTER_STAT_VISIBILITY[self.stat] = not self.gwStatVisible
+    GW.private.heroPanel.stats.visibility[self.stat] = not self.gwStatVisible
     stats.gwRefresh()
 end
 
@@ -207,7 +207,7 @@ local function Layout(stats, entries, rowHeight, minHeight)
     -- stored order first; a tile the stored order does not know yet (new stat, first mythic+ rating)
     -- goes right behind its predecessor of the default order instead of to the end
     local orderIndex = {}
-    for i, key in ipairs(GW.settings.CHARACTER_STAT_ORDER) do
+    for i, key in ipairs(GW.private.heroPanel.stats.order) do
         orderIndex[key] = i
     end
     local ordered = {}
@@ -289,8 +289,8 @@ local function Setup(stats, dressingRoom, refresh)
         if button == "RightButton" then
             -- back to the defaults: automatic visibility and default order, only while editing
             if not stats.gwEditMode then return end
-            wipe(GW.settings.CHARACTER_STAT_VISIBILITY)
-            wipe(GW.settings.CHARACTER_STAT_ORDER)
+            wipe(GW.private.heroPanel.stats.visibility)
+            wipe(GW.private.heroPanel.stats.order)
         else
             SetEditMode(not stats.gwEditMode)
         end
