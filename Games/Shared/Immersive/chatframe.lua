@@ -3080,16 +3080,25 @@ local function LoadChat()
         chatFrame:SetFading(GW.settings.CHATFRAME_FADE)
     end)
 
-    if GW.Retail then
+    if FCFDock_UpdateTabs then
         hooksecurefunc("FCFDock_UpdateTabs", function(dock)
             for _, chatFrame in ipairs(dock.DOCKED_CHAT_FRAMES) do
                 EnforceTabSize(chatFrame)
             end
         end)
+    end
+    if FCF_SetWindowName then
         hooksecurefunc("FCF_SetWindowName", function(chatFrame)
             EnforceTabSize(chatFrame)
         end)
     end
+    hooksecurefunc("PanelTemplates_TabResize", function(tab)
+        local name = tab.GetName and tab:GetName()
+        local id = name and strmatch(name, "^ChatFrame(%d+)Tab$")
+        if id and _G["ChatFrame" .. id] then
+            EnforceTabSize(_G["ChatFrame" .. id])
+        end
+    end)
 
     hooksecurefunc("FCF_DockUpdate", function()
         for _, frameName in ipairs(CHAT_FRAMES) do
