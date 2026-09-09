@@ -358,7 +358,7 @@ end
 local function stat_OnEnter(self)
     if (not self.tooltip) then
         if self.onEnterFunc and not InCombatLockdown() then
-            self.onEnterFunc(self)
+            pcall(self.onEnterFunc, self)
         end
         return
     end
