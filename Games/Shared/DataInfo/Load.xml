@@ -8,4 +8,5 @@
     <Script file ="system.lua"/>
     <Script file ="durability.lua"/>
     <Script file ="characterItemInfo.lua"/>
+    <Script file ="greatVault.lua"/>
 </Ui>
