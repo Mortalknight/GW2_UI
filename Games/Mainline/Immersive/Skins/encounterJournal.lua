@@ -254,11 +254,9 @@ local function encounterJournalSkin()
     EJ.navBar.tex:SetPoint("BOTTOMRIGHT", EJ.navBar, "BOTTOMRIGHT", 0, 1)
     EJ.navBar.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header.png")
 
-    EJ.innertex = EJ:CreateTexture(nil, "BACKGROUND", nil, 7)
+    EJ.innertex = GW.CreateDetailsBackgroundTexture(EJ)
     EJ.innertex:SetPoint("TOPLEFT", EJ.navBar, "BOTTOMLEFT", -1, 1)
     EJ.innertex:SetPoint("BOTTOMRIGHT", EJ, "BOTTOMRIGHT", 1, -1)
-    EJ.innertex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
-    EJ.innertex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
     EJ.navBar.homeButton:GwStripTextures()
     local r = {EJ.navBar.homeButton:GetRegions()}
@@ -515,11 +513,9 @@ local function encounterJournalSkin()
     local suggestion = suggestFrame.Suggestion1
     suggestion.bg:Hide()
 
-    suggestion.tex = suggestion:CreateTexture(nil, "BACKGROUND", nil, 0)
+    suggestion.tex = GW.CreateDetailsBackgroundTexture(suggestion, 0)
     suggestion.tex:SetPoint("TOPLEFT", suggestion, "TOPLEFT", -1, 1)
     suggestion.tex:SetPoint("BOTTOMRIGHT", suggestion, "BOTTOMRIGHT", 1, -1)
-    suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
-    suggestion.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
     local centerDisplay = suggestion.centerDisplay
     centerDisplay.title.text:SetTextColor(1, 1, 1)
@@ -537,11 +533,9 @@ local function encounterJournalSkin()
         suggestion.bg:Hide()
         suggestion.icon:SetPoint("TOPLEFT", 10, -10)
 
-        suggestion.tex = suggestion:CreateTexture(nil, "BACKGROUND", nil, 0)
+        suggestion.tex = GW.CreateDetailsBackgroundTexture(suggestion, 0)
         suggestion.tex:SetPoint("TOPLEFT", suggestion, "TOPLEFT", -1, 1)
         suggestion.tex:SetPoint("BOTTOMRIGHT", suggestion, "BOTTOMRIGHT", 1, -1)
-        suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
-        suggestion.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
         centerDisplay = suggestion.centerDisplay
         centerDisplay:ClearAllPoints()

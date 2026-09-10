@@ -377,10 +377,8 @@ local function SkinTokenFrame()
     TokenFramePopup:SetPoint("TOPLEFT", _G.TokenFrame, "TOPRIGHT", 3, -28)
     TokenFrame.CurrencyTransferLogToggleButton:SetAlpha(0)
 
-    TokenFramePopup.InactiveCheckbox:GwSkinCheckButton()
-    TokenFramePopup.BackpackCheckbox:GwSkinCheckButton()
-    TokenFramePopup.InactiveCheckbox:SetSize(15, 15)
-    TokenFramePopup.BackpackCheckbox:SetSize(15, 15)
+    TokenFramePopup.InactiveCheckbox:GwSkinCheckButton(false, 15)
+    TokenFramePopup.BackpackCheckbox:GwSkinCheckButton(false, 15)
     TokenFramePopup.CurrencyTransferToggleButton:GwSkinButton(false, true)
 
     TokenFramePopup.InactiveCheckbox:ClearAllPoints()

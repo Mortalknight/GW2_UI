@@ -27,8 +27,7 @@ function GW.SkinRaidList()
     local RaidView = SocialUIFrame.RaidFrame
     if not RaidView then return end
 
-    RaidView.AllAssistCheckButton:GwSkinCheckButton()
-    RaidView.AllAssistCheckButton:SetSize(18, 18)
+    RaidView.AllAssistCheckButton:GwSkinCheckButton(false, 18)
 
     RaidView.RaidInfoButton:GwSkinButton(false, true)
     RaidView.ConvertToRaidButton:GwSkinButton(false, true)

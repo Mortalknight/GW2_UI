@@ -852,6 +852,7 @@ local function evLoadSkins()
         GW.LoadOrderBar()
 
         GW.LoadEncounterJournalSkin()
+        GW.LoadCollectionsSkin()
         GW.LoadAchivementSkin()
         GW.LoadAlliedRacesUISkin()
         GW.LoadBarShopUISkin()

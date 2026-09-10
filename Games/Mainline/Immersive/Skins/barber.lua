@@ -103,8 +103,7 @@ local function SetSelectedCategory(list)
         for frame in optionPool:EnumerateActive() do
             if not frame.IsSkinned then
                 if frame.Button then
-                    frame.Button:GwSkinCheckButton()
-                    frame.Button:SetSize(20, 20)
+                    frame.Button:GwSkinCheckButton(false, 20)
                 end
 
                 frame.IsSkinned = true

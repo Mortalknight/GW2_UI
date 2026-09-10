@@ -212,8 +212,7 @@ local function SkinAuctionator()
 
     for _, duration in next, selling.AuctionatorSaleItem.Duration.radioButtons do
         if duration.RadioButton then
-            duration.RadioButton:GwSkinCheckButton(true)
-            duration.RadioButton:SetSize(15, 15)
+            duration.RadioButton:GwSkinCheckButton(true, 15)
         end
     end
 
@@ -436,8 +435,8 @@ local function SkinAuctionator()
         for frame in export.checkBoxPool:EnumerateActive() do
             local checkbox = frame.CheckBox
             if checkbox and not frame.isSkinned then
-                checkbox:GwSkinCheckButton()
-                checkbox:SetSize(25, 25)
+                checkbox:GwSkinCheckButton(false, 25)
+
             end
         end
     end)

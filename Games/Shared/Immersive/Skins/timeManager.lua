@@ -186,8 +186,7 @@ local function SkinTimeManagerFrame()
         TimeManagerLocalTimeCheck,
     }) do
         if checkButton then
-            checkButton:GwSkinCheckButton()
-            checkButton:SetSize(16, 16)
+            checkButton:GwSkinCheckButton(false, 16)
             SkinCheckButtonText(checkButton)
         end
     end

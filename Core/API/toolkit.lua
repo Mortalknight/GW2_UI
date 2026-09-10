@@ -205,14 +205,16 @@ end
 
 local function buttonHighlightTexture(frame, texture) if texture ~= nil then frame:SetHighlightTexture(nil) end end
 
-local function GwSkinCheckButton(button, isRadio)
+local function GwSkinCheckButton(button, isRadio, size)
+    if button.isSkinned then return end
+    if size then
+        button:SetSize(size, size)
+    end
     if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png") end
     if button.SetCheckedTexture then button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png") end
-    if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture(
-        "Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png") end
+    if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png") end
     if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png") end
-    if button.SetDisabledTexture then button:SetDisabledTexture(
-        "Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png") end
+    if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png") end
 
     if isRadio then
         local Check = button:GetCheckedTexture()
@@ -225,6 +227,14 @@ local function GwSkinCheckButton(button, isRadio)
         if Disabled then Disabled:SetTexCoord(0, 1, 0, 1) end
 
         hooksecurefunc(button, "SetHighlightTexture", buttonHighlightTexture)
+    end
+
+    for _, getter in ipairs({"GetNormalTexture", "GetPushedTexture", "GetCheckedTexture", "GetDisabledTexture", "GetDisabledCheckedTexture", "GetHighlightTexture"}) do
+        local texture = button[getter] and button[getter](button)
+        if texture then
+            texture:ClearAllPoints()
+            texture:SetAllPoints(button)
+        end
     end
 
     button.isSkinned = true
@@ -667,6 +677,8 @@ local function GwSkinScrollBar(frame)
 end
 
 local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdownTag, width)
+    if frame.gwSkinned then return end
+    frame.gwSkinned = true
     local text = frame.Text
     if frame.Arrow then frame.Arrow:SetAlpha(0) end
 
@@ -1194,3 +1206,22 @@ end
 
 addapi(GameFontNormal)
 addapi(CreateFrame("ScrollFrame"))
+
+-- widget types that may not exist yet while we load: load on demand addons (collections, encounter journal ...)
+-- create their models and bars later, EnumerateFrames above cannot see those types
+for _, frameType in ipairs({"Button", "CheckButton", "EditBox", "StatusBar", "Slider", "Cooldown", "SimpleHTML", "MessageFrame", "ScrollingMessageFrame", "PlayerModel", "DressUpModel", "CinematicModel", "ModelScene", "ColorSelect"}) do
+    local ok, widget = pcall(CreateFrame, frameType, nil, GW.HiddenFrame)
+    if ok and widget then
+        -- the probe frames must never take input: an edit box auto focuses and would swallow the keyboard
+        if widget.SetAutoFocus then
+            widget:SetAutoFocus(false)
+            widget:ClearFocus()
+        end
+        if widget.EnableKeyboard then
+            widget:EnableKeyboard(false)
+        end
+        widget:EnableMouse(false)
+        widget:Hide()
+        addapi(widget)
+    end
+end

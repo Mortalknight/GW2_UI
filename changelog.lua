@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("11.2.0", {
+    {GW.Enum.ChangelogType.change, [=[New skin for the collections journal (Retail): frame and tabs, mount and pet lists, pet card and battle pet loadout, toy and heirloom grids with quality borders, wardrobe items, sets and the transmog vendor models, warband scenes, plus scroll bars, dropdowns, search boxes and summon buttons]=]},
     {GW.Enum.ChangelogType.change, [=[New skin for the Blizzard settings panel (all game versions): frame, tabs, category list, checkboxes, sliders, dropdowns, buttons and keybinding rows]=]},
     {GW.Enum.ChangelogType.feature, [=[Great Vault micro menu button: the tooltip now shows the weekly progress of all three raid, dungeon and world slots]=]},
     {GW.Enum.ChangelogType.feature, [=[Micro bar: the order of the buttons can be changed and single buttons can be hidden (HUD settings, micro bar section), a reset button restores the defaults]=]},

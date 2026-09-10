@@ -112,8 +112,7 @@ function GW.SkinGuildList()
 	GuildFrameColumnHeader2:SetPoint("LEFT", GuildFrameColumnHeader1, "RIGHT", -2, -0)
 	GuildFrameColumnHeader2:SetWidth(127)
 
-    GuildFrameLFGButton:GwSkinCheckButton()
-    GuildFrameLFGButton:SetSize(15, 15)
+    GuildFrameLFGButton:GwSkinCheckButton(false, 15)
 
     GW.HandleNextPrevButton(GuildFrameGuildListToggleButton, "right")
     GuildFrameAddMemberButton:GwSkinButton(false, true)

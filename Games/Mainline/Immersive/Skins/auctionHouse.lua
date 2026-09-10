@@ -92,8 +92,7 @@ local function HandleSellFrame(frame)
 	frame.CreateAuctionLabel:Hide()
 
 	if frame.BuyoutModeCheckButton then
-		frame.BuyoutModeCheckButton:GwSkinCheckButton()
-		frame.BuyoutModeCheckButton:SetSize(20, 20)
+		frame.BuyoutModeCheckButton:GwSkinCheckButton(false, 20)
 		frame.BuyoutModeCheckButton.Text:SetTextColor(1, 1, 1)
 	end
 	if frame.QuantityInput then

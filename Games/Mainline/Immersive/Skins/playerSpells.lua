@@ -42,8 +42,7 @@ local function SkinAddonButtons()
     end
 
     if ClassTalentLoadoutImportDialog and ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox then
-        ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox:GwSkinCheckButton()
-        ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox:SetSize(13, 13)
+        ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox:GwSkinCheckButton(false, 13)
         ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox.text:SetTextColor(1, 1, 1)
     end
 end
@@ -226,8 +225,7 @@ local function skinPlayerSpells()
 
         local check = ClassTalentLoadoutEditDialog.UsesSharedActionBars
         if check then
-            check.CheckButton:GwSkinCheckButton()
-            check.CheckButton:SetSize(20, 20)
+            check.CheckButton:GwSkinCheckButton(false, 20)
             check.Label:SetTextColor(1, 1, 1)
         end
     end
@@ -257,8 +255,7 @@ local function skinPlayerSpells()
         GW.SkinTextBox(SpellBookFrame.SearchBox.Middle, SpellBookFrame.SearchBox.Left, SpellBookFrame.SearchBox.Right)
         SpellBookFrame.SearchBox:SetHeight(20)
         if SpellBookFrame.HidePassivesCheckButton then
-            SpellBookFrame.HidePassivesCheckButton.Button:GwSkinCheckButton()
-            SpellBookFrame.HidePassivesCheckButton.Button:SetSize(20, 20)
+            SpellBookFrame.HidePassivesCheckButton.Button:GwSkinCheckButton(false, 20)
             SpellBookFrame.HidePassivesCheckButton.Label:SetTextColor(1, 1, 1)
         end
 

@@ -10,6 +10,7 @@
     <Script file="worldmap.lua"/>
     <Script file="itemUpgrade.lua"/>
     <Script file="encounterJournal.lua"/>
+    <Script file="collections.lua"/>
     <Script file="covenantSanctum.lua"/>
     <Script file="soulbinds.lua"/>
     <Script file="chromieTimer.lua"/>

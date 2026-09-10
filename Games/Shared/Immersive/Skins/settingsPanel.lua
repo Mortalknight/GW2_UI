@@ -127,8 +127,7 @@ local function SkinCheckbox(checkbox)
     if checkbox.gwSkinned then return end
     checkbox.gwSkinned = true
 
-    checkbox:GwSkinCheckButton()
-    checkbox:SetSize(20, 20)
+    checkbox:GwSkinCheckButton(false, 20)
     for _, texture in ipairs({checkbox:GetNormalTexture(), checkbox:GetPushedTexture(), checkbox:GetCheckedTexture(), checkbox:GetDisabledCheckedTexture()}) do
         if texture then
             texture:ClearAllPoints()

@@ -297,14 +297,9 @@ local function SkinPerksProgram()
         PerksProgramFrame.FooterFrame.RotateButtonContainer.RotateLeftButton.Icon:SetDesaturated(true)
         PerksProgramFrame.FooterFrame.RotateButtonContainer.RotateRightButton.Icon:SetDesaturated(true)
 
-        PerksProgramFrame.FooterFrame.TogglePlayerPreview:GwSkinCheckButton()
-        PerksProgramFrame.FooterFrame.TogglePlayerPreview:SetSize(20, 20)
-
-        PerksProgramFrame.FooterFrame.ToggleHideArmor:GwSkinCheckButton()
-        PerksProgramFrame.FooterFrame.ToggleHideArmor:SetSize(20, 20)
-
-        PerksProgramFrame.FooterFrame.ToggleMountSpecial:GwSkinCheckButton()
-        PerksProgramFrame.FooterFrame.ToggleMountSpecial:SetSize(20, 20)
+        PerksProgramFrame.FooterFrame.TogglePlayerPreview:GwSkinCheckButton(false, 20)
+        PerksProgramFrame.FooterFrame.ToggleHideArmor:GwSkinCheckButton(false, 20)
+        PerksProgramFrame.FooterFrame.ToggleMountSpecial:GwSkinCheckButton(false, 20)
 
         PerksProgramFrame.FooterFrame.PurchaseButton:HookScript("OnEnter", PurchaseButton_OnEnter)
         PerksProgramFrame.FooterFrame.PurchaseButton:HookScript("OnLeave", PurchaseButton_OnLeave)

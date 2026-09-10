@@ -297,6 +297,10 @@ do
         end
     end
 
+    local function iconBorderShow(border)
+        border:Hide(0)
+    end
+
     local function HandleIconBorder(border, backdrop, customFunc)
         if not backdrop then
             local parent = border:GetParent()
@@ -331,7 +335,7 @@ do
             hooksecurefunc(border, "SetVertexColor", iconBorderColorVertex)
             hooksecurefunc(border, "Hide", iconBorderHide)
             hooksecurefunc(border, "SetShown", iconBorderShown)
-            hooksecurefunc(border, "Show", iconBorderShown)
+            hooksecurefunc(border, "Show", iconBorderShow)
 
         end
     end
@@ -400,6 +404,8 @@ end
 GW.HandleScrollControls = HandleScrollControls
 
 local function HandleTrimScrollBar(frame)
+    if frame.gwSkinned then return end
+    frame.gwSkinned = true
     frame:GwStripTextures()
 
     ReskinScrollBarArrow(frame.Back, "up")
@@ -681,13 +687,56 @@ local function HandleRotateButton(btn)
 end
 GW.HandleRotateButton = HandleRotateButton
 
+function GW.CreateDetailsBackgroundTexture(parent, sublevel)
+    local tex = parent:CreateTexture(nil, "BACKGROUND", nil, sublevel or 7)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
+    tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+    return tex
+end
+
 function GW.AddDetailsBackground(frame, detailBackgroundsXOffset, detailBackgroundsYOffset)
-    local detailBg = frame:CreateTexture(nil, "BACKGROUND", nil, 7)
+    local detailBg = GW.CreateDetailsBackgroundTexture(frame)
     detailBg:SetPoint("TOPLEFT", frame, "TOPLEFT", detailBackgroundsXOffset or 0, detailBackgroundsYOffset or 0)
     detailBg:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-    detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
-    detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
     frame.tex = detailBg
+end
+
+function GW.AddStatusBarFrame(bar)
+    local background = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
+    background:SetAllPoints(bar)
+    background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
+    background:SetVertexColor(0, 0, 0, 0.6)
+    local top = bar:CreateTexture(nil, "BACKGROUND", nil, 1)
+    top:SetHeight(2)
+    top:SetPoint("TOPLEFT", bar, "TOPLEFT", -1, 2)
+    top:SetPoint("TOPRIGHT", bar, "TOPRIGHT", 1, 2)
+    top:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
+    local bottom = bar:CreateTexture(nil, "BACKGROUND", nil, 1)
+    bottom:SetHeight(2)
+    bottom:SetPoint("BOTTOMLEFT", bar, "BOTTOMLEFT", -1, -2)
+    bottom:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", 1, -2)
+    bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
+    bottom:SetTexCoord(0, 1, 1, 0)
+    local right = bar:CreateTexture(nil, "BACKGROUND", nil, 1)
+    right:SetWidth(2)
+    right:SetPoint("TOPRIGHT", bar, "TOPRIGHT", 2, 0)
+    right:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", 2, 0)
+    right:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
+    local left = bar:CreateTexture(nil, "BACKGROUND", nil, 1)
+    left:SetWidth(2)
+    left:SetPoint("TOPLEFT", bar, "TOPLEFT", -2, 0)
+    left:SetPoint("BOTTOMLEFT", bar, "BOTTOMLEFT", -2, 0)
+    left:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
+    left:SetTexCoord(1, 0, 0, 1)
+end
+
+function GW.WhitenFontStrings(frame)
+    if not frame then return end
+    for _, region in next, {frame:GetRegions()} do
+        if region:IsObjectType("FontString") then
+            region:SetTextColor(1, 1, 1)
+        end
+    end
 end
 
 local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, detailBackgroundsXOffset, addLeftSidePanel, addFrameOpenAnimation)

@@ -107,8 +107,7 @@ function GW.SkinRaidList()
         RaidFrame.RoleCount.DamagerIcon:SetSize(20, 20)
     end
 
-    RaidFrameAllAssistCheckButton:GwSkinCheckButton()
-    RaidFrameAllAssistCheckButton:SetSize(18, 18)
+    RaidFrameAllAssistCheckButton:GwSkinCheckButton(false, 18)
 
     if RaidFrameReadyCheckButton then
         RaidFrameReadyCheckButton:GwSkinButton(false, true)

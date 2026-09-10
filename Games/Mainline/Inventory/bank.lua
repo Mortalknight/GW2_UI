@@ -289,8 +289,7 @@ local function SkinAccountBankTabMenu(self)
     self.DepositSettingsMenu.ExpansionFilterDropdown:SetWidth(120)
     for _, checkBox in pairs(checkBoxes) do
         if checkBox then
-            checkBox:GwSkinCheckButton()
-            checkBox:SetSize(15, 15)
+            checkBox:GwSkinCheckButton(false, 15)
         end
     end
 
@@ -398,8 +397,7 @@ local function LoadBank(helpers)
     f.BankPanel.AutoDepositFrame.DepositButton:SetPoint("TOPLEFT", f.BankPanel, "BOTTOMLEFT", 5, -6)
     f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox:ClearAllPoints()
     f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox:SetPoint("TOPLEFT", f.BankPanel, "BOTTOMLEFT", 5, 20)
-    f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox:GwSkinCheckButton()
-    f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox:SetSize(15, 15)
+    f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox:GwSkinCheckButton(false, 15)
     f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox.Text:SetTextColor(1, 1, 1)
     hooksecurefunc(f.BankPanel.AutoDepositFrame, "SetEnabled", function(_, enabled)
         local fontColor = enabled and WHITE_FONT_COLOR or GRAY_FONT_COLOR
@@ -434,8 +432,7 @@ local function LoadBank(helpers)
     BankCleanUpConfirmationPopup.Text:SetTextColor(1, 1, 1)
     BankCleanUpConfirmationPopup.AcceptButton:GwSkinButton(false, true)
     BankCleanUpConfirmationPopup.CancelButton:GwSkinButton(false, true)
-    BankCleanUpConfirmationPopup.HidePopupCheckbox.Checkbox:GwSkinCheckButton(false, true)
-    BankCleanUpConfirmationPopup.HidePopupCheckbox.Checkbox:SetSize(15, 15)
+    BankCleanUpConfirmationPopup.HidePopupCheckbox.Checkbox:GwSkinCheckButton(false, 15)
     BankCleanUpConfirmationPopup.HidePopupCheckbox.Label:SetTextColor(1, 1, 1)
 
     hooksecurefunc(f.BankPanel.Header, "SetShown", function(self) self:Hide() end)

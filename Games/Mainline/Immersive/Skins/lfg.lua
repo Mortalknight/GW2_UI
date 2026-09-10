@@ -211,15 +211,11 @@ local function SkinLookingForGroupFrames()
 
     for _, roleButton in pairs(RoleButtons1) do
         local checkButton = roleButton.checkButton or roleButton.CheckButton
-        checkButton:GwSkinCheckButton()
-        checkButton:SetSize(15, 15)
+        checkButton:GwSkinCheckButton(false, 15)
     end
 
     hooksecurefunc("SetCheckButtonIsRadio", function(self)
-        if not self.isSkinned then
-            self:GwSkinCheckButton()
-            self:SetSize(15, 15)
-        end
+        self:GwSkinCheckButton(false, 15)
     end)
 
     local repositionCheckButtons = {
@@ -493,21 +489,13 @@ local function SkinLookingForGroupFrames()
     EntryCreation.ActivityDropdown:GwHandleDropDownBox()
     EntryCreation.PlayStyleDropdown:GwHandleDropDownBox()
 
-    EntryCreation.CrossFactionGroup.CheckButton:GwSkinCheckButton()
-    EntryCreation.ItemLevel.CheckButton:GwSkinCheckButton()
-    EntryCreation.MythicPlusRating.CheckButton:GwSkinCheckButton()
-    EntryCreation.PrivateGroup.CheckButton:GwSkinCheckButton()
-    EntryCreation.PVPRating.CheckButton:GwSkinCheckButton()
-    EntryCreation.PvpItemLevel.CheckButton:GwSkinCheckButton()
-    EntryCreation.VoiceChat.CheckButton:GwSkinCheckButton()
-
-    EntryCreation.CrossFactionGroup.CheckButton:SetSize(15, 15)
-    EntryCreation.ItemLevel.CheckButton:SetSize(15, 15)
-    EntryCreation.MythicPlusRating.CheckButton:SetSize(15, 15)
-    EntryCreation.PrivateGroup.CheckButton:SetSize(15, 15)
-    EntryCreation.PVPRating.CheckButton:SetSize(15, 15)
-    EntryCreation.PvpItemLevel.CheckButton:SetSize(15, 15)
-    EntryCreation.VoiceChat.CheckButton:SetSize(15, 15)
+    EntryCreation.CrossFactionGroup.CheckButton:GwSkinCheckButton(false, 15)
+    EntryCreation.ItemLevel.CheckButton:GwSkinCheckButton(false, 15)
+    EntryCreation.MythicPlusRating.CheckButton:GwSkinCheckButton(false, 15)
+    EntryCreation.PrivateGroup.CheckButton:GwSkinCheckButton(false, 15)
+    EntryCreation.PVPRating.CheckButton:GwSkinCheckButton(false, 15)
+    EntryCreation.PvpItemLevel.CheckButton:GwSkinCheckButton(false, 15)
+    EntryCreation.VoiceChat.CheckButton:GwSkinCheckButton(false, 15)
 
     EntryCreation.ActivityFinder.Dialog:GwStripTextures()
     EntryCreation.ActivityFinder.Dialog.BorderFrame:GwStripTextures()
@@ -967,24 +955,18 @@ local function ApplyPvPUISkin()
         if s.bg then s.bg:SetDesaturated(true) end
     end)
 
-    HonorFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton()
-    HonorFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton()
-    HonorFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton()
-    HonorFrame.RoleList.TankIcon.checkButton:SetSize(15, 15)
-    HonorFrame.RoleList.HealerIcon.checkButton:SetSize(15, 15)
-    HonorFrame.RoleList.DPSIcon.checkButton:SetSize(15, 15)
+    HonorFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton(false, 15)
+    HonorFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton(false, 15)
+    HonorFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton(false, 15)
 
     -- Conquest Frame
     ConquestFrame.ShadowOverlay:Hide()
 
     ConquestJoinButton:GwSkinButton(false, true)
 
-    ConquestFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton()
-    ConquestFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton()
-    ConquestFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton()
-    ConquestFrame.RoleList.TankIcon.checkButton:SetSize(15, 15)
-    ConquestFrame.RoleList.HealerIcon.checkButton:SetSize(15, 15)
-    ConquestFrame.RoleList.DPSIcon.checkButton:SetSize(15, 15)
+    ConquestFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton(false, 15)
+    ConquestFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton(false, 15)
+    ConquestFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton(false, 15)
 
     for _, bu in pairs({ConquestFrame.RatedSoloShuffle, ConquestFrame.Arena2v2, ConquestFrame.Arena3v3, ConquestFrame.RatedBG}) do
         local reward = bu.Reward
@@ -1099,13 +1081,9 @@ local function ApplyPvPUISkin()
     TrainingGroundsFrame.BonusTrainingGroundList.WorldBattlesTexture:Hide()
     GW.HandleTrimScrollBar(TrainingGroundsFrame.SpecificTrainingGroundList.ScrollBar)
     TrainingGroundsFrame.Inset:GwStripTextures()
-    TrainingGroundsFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton()
-    TrainingGroundsFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton()
-    TrainingGroundsFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton()
-    TrainingGroundsFrame.RoleList.TankIcon.checkButton:SetSize(15, 15)
-    TrainingGroundsFrame.RoleList.HealerIcon.checkButton:SetSize(15, 15)
-    TrainingGroundsFrame.RoleList.DPSIcon.checkButton:SetSize(15, 15)
-
+    TrainingGroundsFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton(false, 15)
+    TrainingGroundsFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton(false, 15)
+    TrainingGroundsFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton(false, 15)
 end
 
 local function ApplyChallengesUISkin()
