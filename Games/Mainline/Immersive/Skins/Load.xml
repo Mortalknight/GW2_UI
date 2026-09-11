@@ -36,4 +36,5 @@
     <Script file="addons\WorldQuestTracker.lua"/>
     <Script file="addons\petTracker.lua"/>
     <Script file="addons\todoloo.lua"/>
+    <Script file="addons\extendedSets.lua"/>
 </Ui>

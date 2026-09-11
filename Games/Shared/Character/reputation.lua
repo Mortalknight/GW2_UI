@@ -658,7 +658,7 @@ local function detailsShowAsBar_OnClick(self)
 end
 
 local function InitDetailsButton(button, elementData)
-    if not button.isSkinned then
+    if not button.gwSkinned then
 
         SetFontWithShadow(button.controles.atwar.string, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         SetFontWithShadow(button.controles.inactive.string, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
@@ -771,14 +771,14 @@ local function InitDetailsButton(button, elementData)
         button.repbg:SetTexCoord(0, 1, REPBG_T, REPBG_B)
         button.repbg:SetDesaturated(true)
 
-        button.isSkinned = true
+        button.gwSkinned = true
     end
     button.data = elementData
     setReputationDetails(button, elementData)
 end
 
 local function InitCategorieButton(button, elementData)
-    if not button.isSkinned then
+    if not button.gwSkinned then
         SetFontWithShadow(button.name, DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
         SetFontWithShadow(button.StatusBar.percentage, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, -2)
 
@@ -855,7 +855,7 @@ local function InitCategorieButton(button, elementData)
            button:StopParagonIdicatorAnimation()
         end)
 
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 
     button.factionIndexFirst = elementData.idx

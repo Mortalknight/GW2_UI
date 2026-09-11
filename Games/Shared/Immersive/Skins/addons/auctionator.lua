@@ -23,7 +23,7 @@ end
 
 local function SetGroupTitleFrame(header)
     local button = header.GroupTitle
-    if button and not button.IsSkinned then
+    if button and not button.gwSkinned then
         button:DisableDrawLayer("BACKGROUND")
 
         if not button.backdrop then
@@ -38,7 +38,7 @@ local function SetGroupTitleFrame(header)
             button.Text:SetTextColor(1, 1, 1)
         end
 
-        button.IsSkinned = true
+        button.gwSkinned = true
     end
 end
 
@@ -60,8 +60,8 @@ local function SkinDialog()
             if frame.altButton then
                 frame.altButton:GwSkinButton(false, true)
             end
-            if frame.editBox and not frame.editBox.isSkinned then
-                frame.editBox.isSkinned = true
+            if frame.editBox and not frame.editBox.gwSkinned then
+                frame.editBox.gwSkinned = true
                 GW.SkinTextBox(frame.editBox.Middle, frame.editBox.Left, frame.editBox.Right, nil, nil, 5, 5)
             end
         end
@@ -80,7 +80,7 @@ local function SkinAuctionator()
         for _, details in ipairs(Auctionator.Tabs.State.knownTabs) do
             local tab = libAhTab:GetButton("AuctionatorTabs_" .. details.name)
             if tab then
-                if not tab.isSkinned and details.name ~= nil then
+                if not tab.gwSkinned and details.name ~= nil then
                     local id = ""
                     if details.name == "Shopping" then
                         id = "addon_buy"
@@ -276,13 +276,14 @@ local function SkinAuctionator()
         for _, child in next, { frame.ScrollTarget:GetChildren() } do
             child.Text:SetTextColor(1, 1, 1)
 
-            if not child.IsSkinned then
+            -- own flag: the hover helper hooked above marks the rows as skinned before this runs
+            if not child.gwTextSkinned then
                 child.Text:SetShadowColor(0, 0, 0, 0)
                 child.Text:SetShadowOffset(1, -1)
                 child.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
                 child.Text:SetJustifyH("LEFT")
                 child.Text:SetJustifyV("MIDDLE")
-                child.IsSkinned = true
+                child.gwTextSkinned = true
             end
 
             if not child.arrow then
@@ -434,7 +435,7 @@ local function SkinAuctionator()
     hooksecurefunc(export.ScrollBox, "Update", function()
         for frame in export.checkBoxPool:EnumerateActive() do
             local checkbox = frame.CheckBox
-            if checkbox and not frame.isSkinned then
+            if checkbox and not frame.gwSkinned then
                 checkbox:GwSkinCheckButton(false, 25)
 
             end

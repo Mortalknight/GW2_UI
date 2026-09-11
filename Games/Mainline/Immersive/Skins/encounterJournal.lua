@@ -71,7 +71,7 @@ do
 
     SkinOverviewInfo = function(self, _, index)
         local header = self.overviews[index]
-        if not header.isSkinned then
+        if not header.gwSkinned then
             for i = 4, 18 do
                 select(i, header.button:GetRegions()):SetTexture()
             end
@@ -85,7 +85,7 @@ do
             header.descriptionBGBottom:SetAlpha(0)
             header.description:SetTextColor(1, 1, 1)
 
-            header.isSkinned = true
+            header.gwSkinned = true
         end
     end
 end
@@ -107,7 +107,7 @@ local function SkinAbilitiesInfo()
     local index = 1
     local header = _G["EncounterJournalInfoHeader" .. index]
     while header do
-        if not header.isSkinned then
+        if not header.gwSkinned then
             header.flashAnim.Play = GW.NoOp
 
             header.descriptionBG:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png")
@@ -128,7 +128,7 @@ local function SkinAbilitiesInfo()
             header.button.bg = CreateFrame("Frame", nil, header.button)
             header.button.bg:SetFrameLevel(header.button.bg:GetFrameLevel() - 1)
             header.button.abilityIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-            header.isSkinned = true
+            header.gwSkinned = true
         end
 
         if header.button.abilityIcon:IsShown() then
@@ -210,13 +210,13 @@ local function ItemSetElements(set)
             end
 
             local border = button.Border
-            if border and not border.IsSkinned then
+            if border and not border.gwSkinned then
                 border:SetAlpha(0)
 
                 ItemSetsItemBorder(border, border:GetAtlas()) -- handle first one
                 hooksecurefunc(border, 'SetAtlas', ItemSetsItemBorder)
 
-                border.IsSkinned = true
+                border.gwSkinned = true
             end
         end
     end
@@ -577,7 +577,7 @@ local function encounterJournalSkin()
 
     hooksecurefunc(EncounterJournal.instanceSelect.ScrollBox, "Update", function(frame)
         for _, child in next, { frame.ScrollTarget:GetChildren() } do
-            if not child.isSkinned then
+            if not child.gwSkinned then
                 child:SetNormalTexture("")
                 child:SetHighlightTexture("")
                 child:SetPushedTexture("")
@@ -596,20 +596,18 @@ local function encounterJournalSkin()
                 child.name:SetFont(DAMAGE_TEXT_FONT, 16)
                 child.name:SetShadowColor(0, 0, 0, 0)
                 child.name:SetShadowOffset(1, -1)
-                child.isSkinned = true
+                child.gwSkinned = true
             end
         end
     end)
 
     hooksecurefunc(EncounterJournal.encounter.info.BossesScrollBox, "Update", function(frame)
         for _, child in next, { frame.ScrollTarget:GetChildren() } do
-            if not child.isSkinned then
+            if not child.gwSkinned then
                 HandleButton(child, true)
                 child.creature:ClearAllPoints()
                 child.creature:SetPoint("TOPLEFT", 1, -4)
-                child.isSkinned = true
-
-                child.isSkinned = true
+                child.gwSkinned = true
             end
             -- check for selceted boss
             if (child.encounterID == EncounterJournal.encounter.infoFrame.encounterID) then
@@ -626,7 +624,7 @@ local function encounterJournalSkin()
 
     hooksecurefunc(_G.EncounterJournal.encounter.info.LootContainer.ScrollBox, "Update", function(frame)
         for _, child in next, { frame.ScrollTarget:GetChildren() } do
-            if not child.isSkinned then
+            if not child.gwSkinned then
                 if child.bossTexture then child.bossTexture:SetAlpha(0) end
                 if child.bosslessTexture then child.bosslessTexture:SetAlpha(0) end
 
@@ -675,7 +673,7 @@ local function encounterJournalSkin()
                     child.backdrop:SetPoint("BOTTOMRIGHT", 0, 1)
                 end
 
-                child.isSkinned = true
+                child.gwSkinned = true
             end
         end
     end)

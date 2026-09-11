@@ -847,6 +847,7 @@ local function evLoadSkins()
         GW.LoadCooldownManagerSkin()
         GW.LoadImmersionAddonSkin()
         GW.LoadAuctionatorAddonSkin()
+        GW.LoadExtendedSetsAddonSkin()
         GW.LoadTSMAddonSkin()
 
         GW.LoadOrderBar()

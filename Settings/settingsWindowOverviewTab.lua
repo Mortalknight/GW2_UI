@@ -430,7 +430,7 @@ local function SetTitleTextAnchors(button, xOffset, yOffset)
 end
 
 local function InitButton(button, elementData)
-    if not button.isSkinned then
+    if not button.gwSkinned then
         button.title.text:SetFont(DAMAGE_TEXT_FONT, 14)
         button.title.text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
         button.title.text:SetJustifyV("TOP")
@@ -453,7 +453,7 @@ local function InitButton(button, elementData)
         button.content.iconRight:Hide()
         GW.AddListItemChildHoverTexture(button)
 
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 
     button:SetScript("OnClick", nil)

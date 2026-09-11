@@ -18,7 +18,7 @@ local function ButtonOnLeave(self)
 end
 
 local function HandleResizeButton(button)
-    if not button or button.IsSkinned then return end
+    if not button or button.gwSkinned then return end
 
     button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
@@ -40,7 +40,7 @@ local function HandleResizeButton(button)
     button:HookScript("OnEnter", ButtonOnEnter)
     button:HookScript("OnLeave", ButtonOnLeave)
 
-    button.IsSkinned = true
+    button.gwSkinned = true
 end
 
 local function BackdropSetAlpha(self, alpha)
@@ -74,7 +74,7 @@ local function HandleSessionTimer(window, sessionTimer)
 end
 
 local function HandleTypeDropdown(window, dropdown)
-    if not dropdown or dropdown.IsSkinned then return end
+    if not dropdown or dropdown.gwSkinned then return end
 
     dropdown:SetSize(20, 20)
     dropdown:GwNudgePoint(0, -2)
@@ -97,11 +97,11 @@ local function HandleTypeDropdown(window, dropdown)
         dropdown.TypeName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     end
 
-    dropdown.IsSkinned = true
+    dropdown.gwSkinned = true
 end
 
 local function HandleSessionDropdown(window, dropdown)
-    if not dropdown or dropdown.IsSkinned then return end
+    if not dropdown or dropdown.gwSkinned then return end
 
     dropdown:GwSkinButton(false, true)
 
@@ -125,11 +125,10 @@ local function HandleSessionDropdown(window, dropdown)
         dropdown.SessionName:SetTextColor(0, 0, 0)
     end
 
-    dropdown.IsSkinned = true
 end
 
 local function HandleSettingsDropdown(window, dropdown)
-    if not dropdown or dropdown.IsSkinned then return end
+    if not dropdown or dropdown.gwSkinned then return end
 
     dropdown:GwSkinButton(false, false, false, true, false, true)
 
@@ -149,7 +148,6 @@ local function HandleSettingsDropdown(window, dropdown)
         dropdown.customIcon = customIcon
     end
 
-    dropdown.IsSkinned = true
 end
 
 local function HandleHeader(window, header)
@@ -189,12 +187,12 @@ local function HandleScrollBoxes(window)
     end
 
     local ScrollBox = window.GetScrollBox and window:GetScrollBox()
-    if ScrollBox and not ScrollBox.IsSkinned then
+    if ScrollBox and not ScrollBox.gwSkinned then
         hooksecurefunc(ScrollBox, "Update", ScrollBoxUpdate)
 
         ScrollBoxUpdate(ScrollBox)
 
-        ScrollBox.IsSkinned = true
+        ScrollBox.gwSkinned = true
     end
 end
 
@@ -215,14 +213,14 @@ local function RepositionResizeButton(container)
 end
 
 local function HandleSourceWindow(window, sourceWindow)
-    if not sourceWindow or sourceWindow.IsSkinned then return end
+    if not sourceWindow or sourceWindow.gwSkinned then return end
 
     HandleBackground(sourceWindow, sourceWindow.Background, -4, nil, -18)
     HandleScrollBoxes(sourceWindow)
     if sourceWindow.AnchorToSessionWindow then
         hooksecurefunc(sourceWindow, "AnchorToSessionWindow", RepositionResizeButton)
     end
-    sourceWindow.IsSkinned = true
+    sourceWindow.gwSkinned = true
 end
 
 local function HandleLocalPlayerEntry(self)
@@ -264,16 +262,16 @@ local function SetMinimized(self, collapsed)
 end
 
 local function HandleMinimizeContainer(window, container)
-    if not container or container.IsSkinned then return end
+    if not container or container.gwSkinned then return end
 
     HandleBackground(window, container.Background, 13, nil, -18)
     RepositionResizeButton(container)
 
-    container.IsSkinned = true
+    container.gwSkinned = true
 end
 
 local function HandleMinimizeButton(window, button)
-    if not button or button.IsSkinned then return end
+    if not button or button.gwSkinned then return end
 
     button:SetSize(16, 16)
     button:GwNudgePoint(0)
@@ -281,11 +279,11 @@ local function HandleMinimizeButton(window, button)
     SetMinimized(window, window.isMinimized)
     hooksecurefunc(window, "SetMinimized", SetMinimized)
 
-    button.IsSkinned = true
+    button.gwSkinned = true
 end
 
 local function HandleSessionWindow(self)
-    if self.IsSkinned then return end
+    if self.gwSkinned then return end
 
     HandleHeader(self, self.Header)
     HandleMinimizeButton(self, self.MinimizeButton)
@@ -301,7 +299,7 @@ local function HandleSessionWindow(self)
         hooksecurefunc(self, "ShowLocalPlayerEntry", HandleLocalPlayerEntry)
     end
 
-    self.IsSkinned = true
+    self.gwSkinned = true
 end
 
 local function SetupSessionWindow()

@@ -303,7 +303,7 @@ GW.AddProfile = AddProfile
 -- Row initializer
 ------------------------------------------------------------
 local function InitButton(button, elementData)
-    if not button.isSkinned then
+    if not button.gwSkinned then
         button:SetScript("OnEnter", item_OnEnter)
         button:SetScript("OnLeave", item_OnLeave)
         item_OnLoad(button)
@@ -314,7 +314,7 @@ local function InitButton(button, elementData)
 
         GW.AddListItemChildHoverTexture(button)
 
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 
     local profileName = elementData.data
@@ -567,7 +567,7 @@ local function LoadSettingsProfileTab(container)
             self.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetFontObject(GameFontHighlightSmall)
         end)
 
-        if not self.isSkinned then
+        if not self.gwSkinned then
             GW.HandleIconSelectionFrame(self)
         end
     end)

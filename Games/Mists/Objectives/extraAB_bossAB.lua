@@ -116,7 +116,7 @@ local function ExtraAB_BossAB_Setup()
     hooksecurefunc(ZoneAbilityFrame.SpellButtonContainer, "SetSize", ExtraButtons_ZoneScale)
     hooksecurefunc(ZoneAbilityFrame, "UpdateDisplayedZoneAbilities", function(frame)
         for spellButton in frame.SpellButtonContainer:EnumerateActive() do
-            if spellButton and not spellButton.IsSkinned then
+            if spellButton and not spellButton.gwSkinned then
                 spellButton.NormalTexture:SetAlpha(0)
                 spellButton:GetHighlightTexture():SetColorTexture(1, 1, 1, 0.25)
                 spellButton.Icon:SetDrawLayer("ARTWORK", -1)
@@ -131,14 +131,14 @@ local function ExtraAB_BossAB_Setup()
 
                 spellButton.holder = ZoneAbilityHolder
 
-                spellButton.IsSkinned = true
+                spellButton.gwSkinned = true
             end
         end
     end)
 
     hooksecurefunc(ExtraAbilityContainer, "AddFrame", function(frame)
         local button = frame.button
-        if button and not button.IsSkinned then
+        if button and not button.gwSkinned then
             local name = button.GetName and button:GetName()
             local cooldown = name and _G[name .. "Cooldown"]
             if cooldown then
@@ -162,7 +162,7 @@ local function ExtraAB_BossAB_Setup()
             button.HotKey:SetText(GetBindingKey(button.commandName))
             tinsert(ExtraButtons, button)
 
-            button.IsSkinned = true
+            button.gwSkinned = true
         end
     end)
 

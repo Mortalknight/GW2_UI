@@ -270,7 +270,7 @@ end
 
 
 local function SkinAccountBankTabMenu(self)
-    if self.isSkinned then return end
+    if self.gwSkinned then return end
     -- skin tab menu
     local checkBoxes = {
         self.DepositSettingsMenu.AssignEquipmentCheckbox,
@@ -293,7 +293,7 @@ local function SkinAccountBankTabMenu(self)
         end
     end
 
-    self.isSkinned = true
+    self.gwSkinned = true
 end
 
 local function LoadBank(helpers)

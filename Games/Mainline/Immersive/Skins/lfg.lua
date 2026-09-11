@@ -126,7 +126,7 @@ local function SkinLookingForGroupFrames()
 
     local tabs = {PVEFrameTab1, PVEFrameTab2, PVEFrameTab3, PVEFrameTab4}
     for idx, tab in pairs(tabs) do
-        if not tab.isSkinned then
+        if not tab.gwSkinned then
             local id = idx == 1 and "dungeon" or idx == 2 and "pvp" or idx == 3 and "mythic" or idx == 4 and "delve" or "dungeon"
             local iconTexture = "Interface/AddOns/GW2_UI/Textures/Groups/tabicon_" .. id .. ".png"
 
@@ -532,11 +532,11 @@ local function SkinLookingForGroupFrames()
 
     hooksecurefunc(LFGListFrame.SearchPanel.ScrollBox, "Update", function(self)
         for _, child in next, {self.ScrollTarget:GetChildren()} do
-            if not child.IsSkinned and child.Name then
+            if not child.gwSkinned and child.Name then
                 child.Name:SetTextColor(1, 1, 1)
                 hooksecurefunc(child.Name, "SetTextColor", GW.LockWhiteButtonColor)
                 GW.AddListItemChildHoverTexture(child)
-                child.IsSkinned = true
+                child.gwSkinned = true
             end
         end
         GW.HandleItemListScrollBoxHover(self)
@@ -551,19 +551,19 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.SearchPanel.RefreshButton.Icon:SetPoint("CENTER")
 
     hooksecurefunc("LFGListApplicationViewer_UpdateApplicant", function(button)
-        if not button.DeclineButton.isSkinned then
+        if not button.DeclineButton.gwSkinned then
             button.DeclineButton:GwSkinButton(false, true)
             if button.DeclineButton.Icon then
                 button.DeclineButton.Icon:SetDrawLayer("ARTWORK", 7)
             end
         end
-        if not button.InviteButton.isSkinned then
+        if not button.InviteButton.gwSkinned then
             button.InviteButton:GwSkinButton(false, true)
             if button.InviteButton.Icon then
                 button.InviteButton.Icon:SetDrawLayer("ARTWORK", 7)
             end
         end
-        if not button.InviteButtonSmall.isSkinned then
+        if not button.InviteButtonSmall.gwSkinned then
             button.InviteButtonSmall:GwSkinButton(false, true)
             if button.InviteButtonSmall.Icon then
                 button.InviteButtonSmall.Icon:SetDrawLayer("ARTWORK", 7)
@@ -572,7 +572,7 @@ local function SkinLookingForGroupFrames()
     end)
 
     hooksecurefunc("LFGListSearchEntry_Update", function(button)
-        if not button.CancelButton.isSkinned then
+        if not button.CancelButton.gwSkinned then
             button.CancelButton:GwSkinButton(true)
             button.CancelButton:SetSize(18, 18)
         end
@@ -580,9 +580,8 @@ local function SkinLookingForGroupFrames()
 
     hooksecurefunc("LFGListSearchPanel_UpdateAutoComplete", function(panel)
         for _, child in next, { LFGListFrame.SearchPanel.AutoCompleteFrame:GetChildren() } do
-            if not child.isSkinned and child:IsObjectType("Button") then
+            if not child.gwSkinned and child:IsObjectType("Button") then
                 child:GwSkinButton(false, true)
-                child.isSkinned = true
             end
         end
 
@@ -671,7 +670,7 @@ local function SkinLookingForGroupFrames()
     hooksecurefunc("LFGListCategorySelection_AddButton", function(btn, btnIndex, categoryID, filters)
         local button = btn.CategoryButtons[btnIndex]
         if button then
-            if not button.isSkinned then
+            if not button.gwSkinned then
                 if not button.SetBackdrop then
                     _G.Mixin(button, _G.BackdropTemplateMixin)
                     button:HookScript("OnSizeChanged", button.OnBackdropSizeChanged)
@@ -701,7 +700,7 @@ local function SkinLookingForGroupFrames()
                     end)
                 end
 
-                button.isSkinned = true
+                button.gwSkinned = true
             end
 
             button.SelectedTexture:Hide()
@@ -942,11 +941,11 @@ local function ApplyPvPUISkin()
     -- Honor Frame Specific Buttons
     hooksecurefunc(HonorFrame.SpecificScrollBox, "Update", function (box)
         for _, bu in next, {box.ScrollTarget:GetChildren()} do
-            if not bu.IsSkinned then
+            if not bu.gwSkinned then
                 bu.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
                 bu.Icon:SetPoint("TOPLEFT", 5, -3)
 
-                bu.IsSkinned = true
+                bu.gwSkinned = true
             end
         end
     end)
@@ -1123,7 +1122,7 @@ local function ApplyChallengesUISkin()
 
     hooksecurefunc(ChallengesFrame, "Update", function(frame)
         for _, child in ipairs(frame.DungeonIcons) do
-            if not child.isSkinned then
+            if not child.gwSkinned then
                 child:GetRegions():SetAlpha(0)
                 if not child.SetBackdrop then
                     _G.Mixin(child, _G.BackdropTemplateMixin)
@@ -1145,7 +1144,7 @@ local function ApplyChallengesUISkin()
                 child.HighestLevel:SetDrawLayer("OVERLAY")
                 child.Icon:GwSetInside()
 
-                child.isSkinned = true
+                child.gwSkinned = true
             end
         end
     end)
@@ -1234,13 +1233,13 @@ local function ApplyDelvesDifficultyPickerSkin()
     hooksecurefunc(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame, "SetRewards", function(self)
         C_Timer.After(0, function()
             for rewardFrame in self.rewardPool:EnumerateActive() do
-                if not rewardFrame.IsSkinned then
+                if not rewardFrame.gwSkinned then
                     rewardFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
                     rewardFrame.NameFrame:SetAlpha(0)
                     rewardFrame.IconBorder:SetAlpha(0)
                     GW.HandleIcon(rewardFrame.Icon)
 
-                    rewardFrame.IsSkinned = true
+                    rewardFrame.gwSkinned = true
                 end
             end
         end)

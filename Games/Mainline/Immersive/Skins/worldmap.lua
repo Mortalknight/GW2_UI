@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function SkinHeaders(header)
-    if header.IsSkinned then
+    if header.gwSkinned then
         return
     end
 
@@ -15,7 +15,7 @@ local function SkinHeaders(header)
     header.HighlightTexture:SetAllPoints(header.Background)
     header.HighlightTexture:SetAlpha(0)
 
-    header.IsSkinned = true
+    header.gwSkinned = true
 end
 
 
@@ -35,7 +35,7 @@ end
 
 
 local function hook_NotifyDialogShow(_, dialog)
-    if not dialog.isSkinned then
+    if not dialog.gwSkinned then
         dialog:GwStripTextures()
         dialog:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
         dialog.ButtonContainer.Confirm:GwSkinButton(false, true)
@@ -48,7 +48,7 @@ local function hook_NotifyDialogShow(_, dialog)
             dialog.MinimizeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png")
             dialog.MinimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png", "ADD")
         end
-        dialog.isSkinned = true
+        dialog.gwSkinned = true
     end
 end
 
@@ -70,7 +70,7 @@ end
 local function hook_QuestLogQuests_Update()
     for button in QuestScrollFrame.headerFramePool:EnumerateActive() do
         if button.ButtonText then
-            if not button.IsSkinned then
+            if not button.gwSkinned then
                 button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
                 button.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
                 button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
@@ -81,13 +81,13 @@ local function hook_QuestLogQuests_Update()
                     hooksecurefunc(button.CollapseButton, "UpdateCollapsedState", updateCollapse)
                 end
 
-                button.IsSkinned = true
+                button.gwSkinned = true
             end
         end
     end
 
     for button in QuestScrollFrame.titleFramePool:EnumerateActive() do
-        if not button.IsSkinned then
+        if not button.gwSkinned then
             if button.Checkbox then
                 if button.Checkbox then
                     button.Checkbox:GwStripTextures(true)
@@ -95,12 +95,12 @@ local function hook_QuestLogQuests_Update()
                 end
             end
 
-            button.IsSkinned = true
+            button.gwSkinned = true
         end
     end
 
     for header in QuestScrollFrame.campaignHeaderMinimalFramePool:EnumerateActive() do
-        if header.CollapseButton and not header.IsSkinned then
+        if header.CollapseButton and not header.gwSkinned then
             header.minimumCollapsedHeight = 25
             header.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
             header.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
@@ -108,7 +108,7 @@ local function hook_QuestLogQuests_Update()
             header.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
             header.Highlight:SetColorTexture(1, 0.93, 0.73, 0.25)
             hooksecurefunc(header.CollapseButton, "UpdateCollapsedState", updateCollapse)
-            header.IsSkinned = true
+            header.gwSkinned = true
         end
     end
 end
@@ -171,10 +171,10 @@ local EventsFrameFunctions = {
     end,
     function(element) -- 4: ScheduledEvent
         if element.Highlight then
-            if not element.IsSkinned then
+            if not element.gwSkinned then
                 GW.AddListItemChildHoverTexture(element)
 
-                element.IsSkinned = true
+                element.gwSkinned = true
             end
             EventsFrameHighlightTexture(element.Highlight)
         end

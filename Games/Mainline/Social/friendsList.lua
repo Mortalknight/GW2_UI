@@ -179,7 +179,7 @@ local function UpdateHeaderCollapseIcon(collapseButton)
 end
 
 local function HandleActionButton(button)
-    if not button or button.IsSkinned then return end
+    if not button or button.gwSkinned then return end
 
     button:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
@@ -190,7 +190,7 @@ local function HandleActionButton(button)
         button.HighlightTexture:SetAllPoints()
     end
 
-    button.IsSkinned = true
+    button.gwSkinned = true
 end
 
 local function HandleSocialCard(card)
@@ -198,6 +198,8 @@ local function HandleSocialCard(card)
     card.gwSkinned = true
 
     card:GwStripTextures()
+    -- the hover kit used to come from HandleItemListScrollBoxHover, which now skips rows marked as skinned
+    GW.AddListItemChildHoverTexture(card)
 
     if card.CollapseButton then
         hooksecurefunc(card.CollapseButton, "UpdateCollapsedState", UpdateHeaderCollapseIcon)
@@ -216,10 +218,6 @@ local function HandleSocialCard(card)
 
     if not card.Background and not card.PartyButton and not card.AcceptButton then
         return
-    end
-
-    if card.Background then
-        card.Background:SetAlpha(0)
     end
 
     if card.SetSelected then
@@ -255,7 +253,7 @@ local function HandleInitializedCard(card)
     -- Blizzards InitializeBackground writes its card atlas on every element
     -- assignment — straight onto the background texture the GW hover kit
     -- (AddListItemChildHoverTexture) swapped in; reset it to the GW zebra texture
-    if card.IsSkinned and card.Background and not card.ButtonText then
+    if card.gwSkinned and card.Background and not card.ButtonText then
         card.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
     end
 end

@@ -314,7 +314,7 @@ local function LoadPDEquipset(parent, fmMenu)
     fmGPDO.newOutfit:SetScript("OnClick", fnGPDO_newOutfit_OnClick)
 
     hooksecurefunc(GwGearManagerPopupFrame, "OnShow", function(frame)
-        if not frame.isSkinned then
+        if not frame.gwSkinned then
             GW.HandleIconSelectionFrame(frame)
         end
     end)

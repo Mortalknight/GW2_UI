@@ -22,8 +22,6 @@ end
 ---------- header ----------
 local function SkinTab(tab)
     if not tab or tab.gwSkinned then return end
-    tab.gwSkinned = true
-
     GW.HandleTabs(tab, "top")
     local function HideArt(self)
         self.Left:SetAlpha(0)
@@ -125,8 +123,6 @@ end
 ---------- controls ----------
 local function SkinCheckbox(checkbox)
     if checkbox.gwSkinned then return end
-    checkbox.gwSkinned = true
-
     checkbox:GwSkinCheckButton(false, 20)
     for _, texture in ipairs({checkbox:GetNormalTexture(), checkbox:GetPushedTexture(), checkbox:GetCheckedTexture(), checkbox:GetDisabledCheckedTexture()}) do
         if texture then
@@ -139,8 +135,6 @@ end
 
 local function SkinArrowButton(button, direction)
     if not button or button.gwSkinned then return end
-    button.gwSkinned = true
-
     HideTextureRegions(button)
     GW.HandleNextPrevButton(button, direction, true)
 end
@@ -238,13 +232,13 @@ end
 local function SkinRowButton(row)
     local button = row.Button
     if button.gwSkinned then return end
-    button.gwSkinned = true
 
     local atlas = button.Left and button.Left:GetAtlas()
     if not (atlas and strfind(atlas, "Options_ListExpand", 1, true)) then
         button:GwSkinButton(false, true)
         return
     end
+    button.gwSkinned = true
 
     HideTextureRegions(button)
     button:SetHighlightTexture(MENU_HOVER)

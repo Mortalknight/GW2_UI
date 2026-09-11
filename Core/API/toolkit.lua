@@ -206,7 +206,7 @@ end
 local function buttonHighlightTexture(frame, texture) if texture ~= nil then frame:SetHighlightTexture(nil) end end
 
 local function GwSkinCheckButton(button, isRadio, size)
-    if button.isSkinned then return end
+    if button.gwSkinned then return end
     if size then
         button:SetSize(size, size)
     end
@@ -237,7 +237,7 @@ local function GwSkinCheckButton(button, isRadio, size)
         end
     end
 
-    button.isSkinned = true
+    button.gwSkinned = true
 end
 
 local function GwSkinSliderFrame(frame)
@@ -414,7 +414,7 @@ end
 
 local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip, transparent, desaturatedIcon)
     if not button then return end
-    if button.isSkinned then return end
+    if button.gwSkinned then return end
 
     if strip then button:GwStripTextures(nil, true) end
 
@@ -498,7 +498,7 @@ local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover,
         GwAddHover(button)
     end
 
-    button.isSkinned = true
+    button.gwSkinned = true
 end
 
 local function SetButtonFontStringColor(button, r, g, b, a)
@@ -766,7 +766,7 @@ end
 
 local btns = { MaximizeButton = "up", MinimizeButton = "down" }
 local function GwHandleMaxMinFrame(frame)
-    if frame.isSkinned then return end
+    if frame.gwSkinned then return end
 
     frame:GwStripTextures(true)
 
@@ -787,11 +787,11 @@ local function GwHandleMaxMinFrame(frame)
         end
     end
 
-    frame.isSkinned = true
+    frame.gwSkinned = true
 end
 
 local function HandleNextPrevButton(button, arrowDir, noBackdrop)
-    if button.isSkinned then return end
+    if button.gwSkinned then return end
 
     if not arrowDir then
         arrowDir = "down"
@@ -844,7 +844,7 @@ local function HandleNextPrevButton(button, arrowDir, noBackdrop)
         end
     end
 
-    button.isSkinned = true
+    button.gwSkinned = true
 end
 GW.HandleNextPrevButton = HandleNextPrevButton
 

@@ -10,13 +10,13 @@ local function ReskinConfirmIcon(frame)
 end
 
 local function SkinRewardIcon(itemFrame)
-    if not itemFrame.IsSkinned then
+    if not itemFrame.gwSkinned then
         itemFrame:GwCreateBackdrop("Transparent")
         itemFrame:DisableDrawLayer("BORDER")
         itemFrame.Icon:SetPoint("LEFT", 6, 0)
         GW.HandleIcon(itemFrame.Icon, true)
         itemFrame.backdrop:SetBackdropBorderColor(epicColor.r, epicColor.g, epicColor.b)
-        itemFrame.IsSkinned = true
+        itemFrame.gwSkinned = true
     end
 end
 

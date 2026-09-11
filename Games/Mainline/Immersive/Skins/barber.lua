@@ -13,7 +13,7 @@ end
 local function SetSelectedCategory(list)
     if list.selectionPopoutPool then
         for frame in list.selectionPopoutPool:EnumerateActive() do
-            if not frame.IsSkinned then
+            if not frame.gwSkinned then
                 if frame.DecrementButton then
                     HandleNextPrev(frame.DecrementButton)
                     HandleNextPrev(frame.IncrementButton)
@@ -52,14 +52,14 @@ local function SetSelectedCategory(list)
 
                 end
 
-                frame.IsSkinned = true
+                frame.gwSkinned = true
             end
         end
     end
 
     if list.dropdownPool then
         for option in list.dropdownPool:EnumerateActive() do
-            if not option.IsSkinned then
+            if not option.gwSkinned then
                 option.Dropdown:GwSkinButton(false, true)
                 option.Label:SetTextColor(1, 1, 1)
                 option.Dropdown.Text:SetTextColor(0, 0, 0)
@@ -83,17 +83,17 @@ local function SetSelectedCategory(list)
                 option.DecrementButton:GwSkinButton(false, true, nil, nil, nil, nil, true)
                 option.IncrementButton:GwSkinButton(false, true, nil, nil, nil, nil, true)
 
-                option.IsSkinned = true
+                option.gwSkinned = true
             end
         end
     end
 
     if list.sliderPool then
         for slider in list.sliderPool:EnumerateActive() do
-            if not slider.IsSkinned then
+            if not slider.gwSkinned then
                 slider:GwSkinSliderFrame()
 
-                slider.IsSkinned = true
+                slider.gwSkinned = true
             end
         end
     end
@@ -101,12 +101,12 @@ local function SetSelectedCategory(list)
     local optionPool = list.pools and list.pools:GetPool("CharCustomizeOptionCheckButtonTemplate")
     if optionPool then
         for frame in optionPool:EnumerateActive() do
-            if not frame.IsSkinned then
+            if not frame.gwSkinned then
                 if frame.Button then
                     frame.Button:GwSkinCheckButton(false, 20)
                 end
 
-                frame.IsSkinned = true
+                frame.gwSkinned = true
             end
         end
     end

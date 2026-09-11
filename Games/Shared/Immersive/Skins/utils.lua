@@ -129,7 +129,7 @@ local function NavBarPoint(button, _, anchor, _, _, _, skip)
 end
 
 local function SkinNavBarButton(button, index)
-    if button and not button.isSkinned then
+    if button and not button.gwSkinned then
         button:GwStripTextures()
         button:GetFontString():SetTextColor(1, 1, 1, 1)
         button:GetFontString():SetShadowOffset(0, 0)
@@ -155,7 +155,7 @@ local function SkinNavBarButton(button, index)
             hooksecurefunc(button, "SetPoint", NavButtonXOffset)
         end
 
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 end
 
@@ -435,7 +435,7 @@ end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
 
 local function HandleItemButton(b, setInside)
-    if b.isSkinned then return end
+    if b.gwSkinned then return end
 
     local name = b:GetName()
     local icon = b.icon or b.Icon or b.IconTexture or b.iconTexture or (name and (_G[name .. "IconTexture"] or _G[name .. "Icon"]))
@@ -461,7 +461,7 @@ local function HandleItemButton(b, setInside)
         end
     end
 
-    b.isSkinned = true
+    b.gwSkinned = true
 end
 GW.HandleItemButton = HandleItemButton
 
@@ -483,7 +483,7 @@ do
     end
 
     local function HandleIconSelectionFrame(frame)
-        if frame.isSkinned then return end
+        if frame.gwSkinned then return end
 
         local borderBox = frame.BorderBox
         local editBox = borderBox.IconSelectorEditBox
@@ -529,13 +529,13 @@ do
             handleButton(button)
         end
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
     GW.HandleIconSelectionFrame = HandleIconSelectionFrame
 end
 
 local function HandleTabs(self, direction, textures, setDesaturated)
-    if self and not self.isSkinned then
+    if self and not self.gwSkinned then
         local oldTexture = {}
         if textures then
             for _, texture in pairs(textures) do
@@ -659,13 +659,13 @@ local function HandleTabs(self, direction, textures, setDesaturated)
             end
         end
 
-        self.isSkinned = true
+        self.gwSkinned = true
     end
 end
 GW.HandleTabs = HandleTabs
 
 local function HandleRotateButton(btn)
-    if btn.isSkinned then return end
+    if btn.gwSkinned then return end
 
     btn:GwSkinButton(false, true)
     btn:SetSize(btn:GetWidth() - 14, btn:GetHeight() - 14)
@@ -683,7 +683,6 @@ local function HandleRotateButton(btn)
     highlightTex:SetAllPoints(normTex)
     highlightTex:SetColorTexture(1, 1, 1, 0.3)
 
-    btn.isSkinned = true
 end
 GW.HandleRotateButton = HandleRotateButton
 
@@ -835,14 +834,14 @@ local function HandleListIcon(frame)
             for j = 1, 4 do
                 local cell = row.cells and row.cells[j]
                 if cell and cell.Icon then
-                    if not cell.IsSkinned then
+                    if not cell.gwSkinned then
                         GW.HandleIcon(cell.Icon)
 
                         if cell.IconBorder then
                             cell.IconBorder:GwKill()
                         end
 
-                        cell.IsSkinned = true
+                        cell.gwSkinned = true
                     end
                 end
             end
@@ -853,7 +852,7 @@ end
 local function HandleHeaders(frame)
     local maxHeaders = frame.HeaderContainer:GetNumChildren()
     for i, header in next, { frame.HeaderContainer:GetChildren() } do
-        if not header.IsSkinned then
+        if not header.gwSkinned then
             header:DisableDrawLayer("BACKGROUND")
 
             if not header.backdrop then
@@ -861,7 +860,7 @@ local function HandleHeaders(frame)
                 header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
             end
 
-            header.IsSkinned = true
+            header.gwSkinned = true
         end
 
         if header.backdrop then
@@ -874,7 +873,7 @@ end
 GW.HandleSrollBoxHeaders = HandleHeaders
 
 local function HandleScrollFrameHeaderButton(button, isLastButton)
-    if not button.IsSkinned then
+    if not button.gwSkinned then
         if button.DisableDrawLayer then
             button:DisableDrawLayer("BACKGROUND")
         end
@@ -885,7 +884,7 @@ local function HandleScrollFrameHeaderButton(button, isLastButton)
             button.backdrop:SetFrameLevel(button:GetFrameLevel())
         end
 
-        button.IsSkinned = true
+        button.gwSkinned = true
     end
 
     if button.backdrop then
@@ -961,10 +960,10 @@ GW.AddListItemChildHoverTexture = AddListItemChildHoverTexture
 
 local function HandleItemListScrollBoxHover(self)
     for _, child in next, { self.ScrollTarget:GetChildren() } do
-        if not child.IsSkinned then
+        if not child.gwSkinned then
             AddListItemChildHoverTexture(child)
 
-            child.IsSkinned = true
+            child.gwSkinned = true
         end
         if not InCombatLockdown() then
             child:SetPropagateMouseMotion(true)
@@ -997,7 +996,7 @@ end
 GW.HandleItemListScrollBoxHover = HandleItemListScrollBoxHover
 
 local function SkinSideTabButton(self, iconTexture, tooltipText)
-    self.isSkinned = true
+    self.gwSkinned = true
     self:GwStripTextures()
     self:SetSize(64, 40)
     if self.Text then
@@ -1173,7 +1172,7 @@ local function QuestInfo_Display(template, parentFrame)
         end
 
         for followerReward in fRwd.followerRewardPool:EnumerateActive() do
-            if not followerReward.isSkinned then
+            if not followerReward.gwSkinned then
                 followerReward:GwCreateBackdrop()
                 followerReward.backdrop:SetAllPoints(followerReward.BG)
                 followerReward.backdrop:SetPoint("TOPLEFT", 40, -5)
@@ -1198,7 +1197,7 @@ local function QuestInfo_Display(template, parentFrame)
                 squareBG:SetPoint("BOTTOMRIGHT", -2, 2)
                 followerReward.PortraitFrame.squareBG = squareBG
 
-                followerReward.isSkinned = true
+                followerReward.gwSkinned = true
             end
 
             local r, g, b = followerReward.PortraitFrame.PortraitRingQuality:GetVertexColor()

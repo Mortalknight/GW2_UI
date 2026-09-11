@@ -267,9 +267,9 @@ local function reskinItemButtons()
         local isBank = bagID == BANK_CONTAINER or bagID > NUM_BAG_SLOTS
         local iconSize = isBank and GW.settings.BANK_ITEM_SIZE or GW.settings.BAG_ITEM_SIZE
 
-        if not slot.__gwSkinned then
+        if not slot.gwSkinned then
             GW.SkinBagItemButton(slot, iconSize)
-            slot.__gwSkinned = true
+            slot.gwSkinned = true
         elseif slot:IsShown() then
             GW.UpdateBagItemButtonVisuals(slot, iconSize)
         else

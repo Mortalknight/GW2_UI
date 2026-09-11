@@ -1099,3 +1099,4 @@ L["Choose stats"] = true
 L["Click a stat to hide or show it"] = true
 L["Drag a stat to change the order"] = true
 L["Right click to reset to the defaults"] = true
+L["Shown"] = true

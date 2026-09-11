@@ -16,7 +16,7 @@ end
 
 local function ReskinTalents(self)
     for frame in self.talentPool:EnumerateActive() do
-        if not frame.IsSkinned then
+        if not frame.gwSkinned then
             frame.Border:SetAlpha(0)
             frame.IconBorder:SetAlpha(0)
             frame.TierBorder:SetAlpha(0)
@@ -36,18 +36,18 @@ local function ReskinTalents(self)
             HandleIconString(frame.InfoText)
             hooksecurefunc(frame.InfoText, "SetText", HandleIconString)
 
-            frame.IsSkinned = true
+            frame.gwSkinned = true
         end
     end
 end
 
 local function ReplaceCurrencies(displayGroup)
     for frame in displayGroup.currencyFramePool:EnumerateActive() do
-        if not frame.IsSkinned then
+        if not frame.gwSkinned then
             HandleIconString(frame.Text)
             hooksecurefunc(frame.Text, "SetText", HandleIconString)
 
-            frame.IsSkinned = true
+            frame.gwSkinned = true
         end
     end
 end
@@ -83,7 +83,7 @@ local function ApplyCovenantSanctumSkin()
     TalentList.BackgroundTile:SetAlpha(0)
 
     CovenantSanctumFrame:HookScript("OnShow", function()
-        if not CovenantSanctumFrame.IsSkinned then
+        if not CovenantSanctumFrame.gwSkinned then
             --CovenantSanctumFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
             local tex = CovenantSanctumFrame:CreateTexture(nil, "BACKGROUND")
@@ -100,7 +100,7 @@ local function ApplyCovenantSanctumSkin()
             CovenantSanctumFrame.CloseButton:ClearAllPoints()
             CovenantSanctumFrame.CloseButton:SetPoint("TOPRIGHT", CovenantSanctumFrame, "TOPRIGHT", 2, 2)
 
-            CovenantSanctumFrame.IsSkinned = true
+            CovenantSanctumFrame.gwSkinned = true
         end
     end)
 end

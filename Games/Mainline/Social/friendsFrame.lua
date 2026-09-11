@@ -14,7 +14,7 @@ local function HandleTabs(self)
 
     local friendsFrameTabsAdded = 0
     for _, tab in ipairs(sortedTabs) do
-        if not tab.isSkinned then
+        if not tab.gwSkinned then
             local iconName
             if tab.tabData.tabType == SocialUITabType.Friends then
                 iconName = "tabicon_friends"
@@ -29,7 +29,7 @@ local function HandleTabs(self)
             elseif tab.tabData.tabType == SocialUITabType.QuickJoin then
                 iconName = "tabicon_quickjoin"
             end
-            tab.isSkinned = true
+            tab.gwSkinned = true
 
             local iconTexture = "Interface/AddOns/GW2_UI/textures/social/" .. iconName .. ".png"
             GW.SkinSideTabButton(tab, iconTexture, tab:GetText())

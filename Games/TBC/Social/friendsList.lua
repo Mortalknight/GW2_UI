@@ -184,7 +184,7 @@ local function HandleInviteTexDisabled(self)
 end
 
 local function UpdateFriendButton(button)
-    if not button.isSkinned then
+    if not button.gwSkinned then
         local normal = button.travelPassButton:GetNormalTexture()
         normal:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png")
         normal:SetTexCoord(0, 1, 0, 1)
@@ -215,7 +215,7 @@ local function UpdateFriendButton(button)
             hooksecurefunc(button.travelPassButton.DisabledTexture, "SetAtlas", HandleInviteTexDisabled)
         end
 
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 
 

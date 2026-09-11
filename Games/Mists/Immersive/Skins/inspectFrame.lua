@@ -271,9 +271,9 @@ local function SkinInspectFrameOnLoad()
     end
 
     InspectTalentFrame:HookScript("OnShow", function(frame)
-        if frame.isSkinned then return end
+        if frame.gwSkinned then return end
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
 
         local InspectGlyphs = frame.InspectGlyphs
         for i = 1, 6 do

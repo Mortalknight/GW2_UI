@@ -84,7 +84,7 @@ local function ApplyMacroOptionsSkin()
 
     hooksecurefunc(MacroFrame.MacroSelector.ScrollBox, "Update", function()
         for _, button in next, { MacroFrame.MacroSelector.ScrollBox.ScrollTarget:GetChildren() } do
-            if button.Icon and not button.isSkinned then
+            if button.Icon and not button.gwSkinned then
                 GW.HandleItemButton(button, true)
             end
         end
@@ -120,7 +120,7 @@ local function ApplyMacroOptionsSkin()
         self:ClearAllPoints()
         self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
 
-        if not self.isSkinned then
+        if not self.gwSkinned then
             GW.HandleIconSelectionFrame(self)
         end
     end)

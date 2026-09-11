@@ -145,7 +145,7 @@ local function SkinBubble(frame, backdrop)
         UpdateBubbleBorder(frame)
     end
 
-    frame.isSkinned = true
+    frame.gwSkinned = true
 end
 
 local POLL_DURATION = 3 -- seconds to keep polling for a new bubble after a chat message
@@ -168,7 +168,7 @@ local function ChatBubble_OnUpdate(self, elapsed)
         local chatBubbles = C_ChatBubbles.GetAllChatBubbles()
         for _, chatBubble in pairs(chatBubbles) do
             local backdrop = chatBubble:GetChildren()
-            if backdrop and not backdrop:IsForbidden() and not chatBubble.isSkinned then
+            if backdrop and not backdrop:IsForbidden() and not chatBubble.gwSkinned then
                 SkinBubble(chatBubble, backdrop)
             end
         end

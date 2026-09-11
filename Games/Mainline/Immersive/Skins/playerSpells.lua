@@ -72,7 +72,7 @@ local function UpdateSpecFrame(frame)
     if not frame.SpecContentFramePool then return end
 
     for specContentFrame in frame.SpecContentFramePool:EnumerateActive() do
-        if not specContentFrame.IsSkinned then
+        if not specContentFrame.gwSkinned then
             specContentFrame.ActivateButton:GwSkinButton(false, true)
 
             local role = LFGRoleEnumToString[GetSpecializationRoleEnum(specContentFrame.specIndex, false, false)]
@@ -118,7 +118,7 @@ local function UpdateSpecFrame(frame)
                 end
             end
 
-            specContentFrame.IsSkinned = true
+            specContentFrame.gwSkinned = true
         end
 
         if specContentFrame.isInGlowState then
@@ -136,7 +136,7 @@ local function HandleHeroTalents(frame)
     if not frame then return end
 
     for specFrame in frame.SpecContentFramePool:EnumerateActive() do
-        if specFrame and not specFrame.IsSkinned then
+        if specFrame and not specFrame.gwSkinned then
             if specFrame.SpecName then
                 specFrame.SpecName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader)
                 specFrame.SpecName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -153,7 +153,7 @@ local function HandleHeroTalents(frame)
             specFrame.ActivateButton:GwSkinButton(false, true)
             specFrame.ApplyChangesButton:GwSkinButton(false, true)
 
-            specFrame.IsSkinned = true
+            specFrame.gwSkinned = true
         end
     end
 end

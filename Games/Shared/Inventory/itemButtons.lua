@@ -187,7 +187,7 @@ local function EnsureItemButton(cf, index, iconSize, opts)
 
     if GW.SkinBagItemButton then
         GW.SkinBagItemButton(button, iconSize)
-        button.__gwSkinned = true
+        button.gwSkinned = true
     end
 
     -- No secure overlay for spell-item-targeting: the buttons inherit

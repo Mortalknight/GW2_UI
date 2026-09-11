@@ -147,7 +147,7 @@ end
 
 
 local function EquipmentSet_InitButton(button, elementData)
-    if not button.isSkinned then
+    if not button.gwSkinned then
         button:RegisterForDrag("LeftButton")
         button:SetScript("OnDragStart", function()
             if button.setID then
@@ -198,7 +198,7 @@ local function EquipmentSet_InitButton(button, elementData)
 
         GW.AddListItemChildHoverTexture(button)
 
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 
     local name, texture, setID, isEquipped, _, _, _, numLost = C_EquipmentSet.GetEquipmentSetInfo(elementData.setId)
@@ -258,7 +258,7 @@ local function LoadPDEquipset(fmMenu, parent)
     fmMenu:SetupBackButton(fmGPDO.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
 
     hooksecurefunc(GwGearManagerPopupFrame, "OnShow", function(frame)
-        if not frame.isSkinned then
+        if not frame.gwSkinned then
             GW.HandleIconSelectionFrame(frame)
         end
     end)

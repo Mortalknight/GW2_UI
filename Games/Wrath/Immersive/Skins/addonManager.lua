@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function HandleAddonEntry(entry, treeNode)
-    if not entry.IsSkinned then
+    if not entry.gwSkinned then
         entry.Enabled:GwSkinCheckButton(false, 15)
         entry.Enabled:SetHitRectInsets(0, 0, 0, 0)
         entry.LoadAddonButton:GwSkinButton(false, true)
@@ -15,7 +15,7 @@ local function HandleAddonEntry(entry, treeNode)
         entry.LoadAddonButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
 
         GW.AddListItemChildHoverTexture(entry)
-        entry.IsSkinned = true
+        entry.gwSkinned = true
     end
     local addonIndex = treeNode:GetData().addonIndex
     local checkstate = C_AddOns.GetAddOnEnableState(addonIndex)

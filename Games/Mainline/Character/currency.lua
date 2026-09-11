@@ -124,7 +124,7 @@ end
 
 local function RaidInfo_InitButton(button, elementData)
     local instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled
-    if not button.isSkinned then
+    if not button.gwSkinned then
         button.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         button.name:SetTextColor(1, 1, 1)
         button.difficult:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
@@ -142,7 +142,7 @@ local function RaidInfo_InitButton(button, elementData)
         end
         GW.AddListItemChildHoverTexture(button)
 
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 
     if elementData.type == "SAVED_INSTANCE" then
@@ -280,7 +280,7 @@ end
 
 local function UpdateTokenSkins(frame)
     for _, child in next, { frame.ScrollTarget:GetChildren() } do
-        if not child.IsSkinned then
+        if not child.gwSkinned then
             if child.Right then
                 child:GwStripTextures()
                 child:GwCreateBackdrop()
@@ -352,7 +352,7 @@ local function UpdateTokenSkins(frame)
 
             GW.AddListItemChildHoverTexture(child)
 
-            child.IsSkinned = true
+            child.gwSkinned = true
         end
 
         if child.elementData.maxQuantity and child.elementData.maxQuantity > 0 then
@@ -446,7 +446,7 @@ local function UpdateTransferHistorySkins(self)
         self.view:SetElementExtent(32)
     end
     for _, child in next, { self.ScrollTarget:GetChildren() } do
-        if not child.IsSkinned then
+        if not child.gwSkinned then
             child:SetHeight(32)
 
             if child.SourceName then
@@ -490,7 +490,7 @@ local function UpdateTransferHistorySkins(self)
 
             GW.AddListItemChildHoverTexture(child)
 
-            child.IsSkinned = true
+            child.gwSkinned = true
         end
     end
     GW.HandleItemListScrollBoxHover(self)

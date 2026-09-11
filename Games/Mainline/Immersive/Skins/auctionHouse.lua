@@ -43,7 +43,7 @@ local function HandleTabs(arg1)
 	if not arg1 or arg1 ~= AuctionHouseFrame then return end
 
 	for index, tab in next, AuctionHouseFrame.Tabs do
-		if not tab.isSkinned then
+		if not tab.gwSkinned then
 			local id = index == 1 and "buy" or index == 2 and "sell" or "listings"
 			local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id .. ".png"
 			GW.SkinSideTabButton(tab, iconTexture, tab:GetText())
@@ -119,7 +119,7 @@ end
 local function HandleSummaryIcons(frame)
 	for _, child in next, { frame.ScrollTarget:GetChildren() } do
 		if child.Icon then
-			if not child.IsSkinned then
+			if not child.gwSkinned then
 				GW.HandleIcon(child.Icon, true)
 
 				child.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -130,7 +130,7 @@ local function HandleSummaryIcons(frame)
 
 				GW.AddListItemChildHoverTexture(child)
 
-				child.IsSkinned = true
+				child.gwSkinned = true
 			end
 		end
 	end
@@ -282,7 +282,7 @@ local function ApplyAuctionHouseSkin()
 	hooksecurefunc("AuctionHouseFilterButton_SetUp", function(button, info)
 		local r, g, b = 0.5, 0.5, 0.5
 
-		if not button.IsSkinned then
+		if not button.gwSkinned then
 			button.Background = button:CreateTexture(nil, "BACKGROUND", nil, 0)
 			button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
 			button.Background:ClearAllPoints()
@@ -302,7 +302,7 @@ local function ApplyAuctionHouseSkin()
 			button.arrow:SetSize(16,16)
 			button.arrow:Hide()
 
-			button.IsSkinned = true
+			button.gwSkinned = true
 		end
 
 		button:SetHeight(28)

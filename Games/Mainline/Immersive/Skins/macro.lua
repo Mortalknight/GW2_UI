@@ -110,7 +110,7 @@ local function ApplyMacroOptionsSkin()
         self:ClearAllPoints()
         self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
 
-        if not self.isSkinned then
+        if not self.gwSkinned then
             GW.HandleIconSelectionFrame(self)
         end
     end)

@@ -6,7 +6,7 @@ local friendsFrameTabsAdded = 0
 
 local function HandleTabs()
     for idx, tab in ipairs({FriendsFrameTab1, FriendsFrameTab2, FriendsFrameTab3, FriendsFrameTab4}) do
-        if not tab.isSkinned then
+        if not tab.gwSkinned then
             local iconName
             if GW.Retail then
                 iconName = idx == 1 and "tabicon_friends" or idx == 2 and "tabicon_who" or idx == 3 and "tabicon_raid" or "tabicon_quickjoin"

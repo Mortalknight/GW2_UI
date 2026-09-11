@@ -1266,7 +1266,7 @@ local function skinAchevement()
         frame:SetHeight(36)
         local button = frame.Button
         if button then
-            if not button.IsSkinned then
+            if not button.gwSkinned then
                 button:GwStripTextures()
                 button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
                 button.Background:ClearAllPoints()
@@ -1278,7 +1278,7 @@ local function skinAchevement()
                 CatMenuButton(frame, button)
                 hooksecurefunc(frame, "UpdateSelectionState", catMenuButtonState)
 
-                button.IsSkinned = true
+                button.gwSkinned = true
             end
         end
     end

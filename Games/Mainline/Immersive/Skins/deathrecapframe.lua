@@ -4,7 +4,7 @@ local constBackdropFrame = GW.BackdropTemplates.Default
 
 local function DeathRecapScrollUpdateChild(child)
     local spellInfo = child.SpellInfo
-    if not spellInfo or spellInfo.IsSkinned then return end
+    if not spellInfo or spellInfo.gwSkinned then return end
 
     if spellInfo.Icon then
         spellInfo.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -17,7 +17,7 @@ local function DeathRecapScrollUpdateChild(child)
         spellInfo.tombstone:SetPoint("RIGHT", spellInfo.DamageInfo.Amount, "LEFT", 0, 0)
     end
 
-    spellInfo.IsSkinned = true
+    spellInfo.gwSkinned = true
 end
 
 local function SkinDeathRecapFrame_Loaded()

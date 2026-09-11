@@ -103,7 +103,7 @@ local function SetFlyoutButtonVisible(self, visible)
 end
 
 local function SkinMinimapButton(button)
-    if not button or button.isSkinned then return end
+    if not button or button.gwSkinned then return end
 
     local width = button:GetWidth() or 0
     if width < 15 or width > 40 or not (button:IsObjectType("Button") or button:IsObjectType("Frame")) then
@@ -171,7 +171,7 @@ local function SkinMinimapButton(button)
         if self.texture then self.texture:SetBlendMode("BLEND") end
     end)
 
-    button.isSkinned = true
+    button.gwSkinned = true
     tinsert(buttons, button)
 end
 

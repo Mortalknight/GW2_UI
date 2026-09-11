@@ -2,13 +2,13 @@
 local GW = select(2, ...)
 
 local function ReskinWhoFrameButton(button)
-    if not button.isSkinned then
+    if not button.gwSkinned then
         button.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         button.Variable:SetFont(UNIT_NAME_FONT, 11)
         button.Level:SetFont(UNIT_NAME_FONT, 11)
         button.Class:SetFont(UNIT_NAME_FONT, 11)
         GW.AddListItemChildHoverTexture(button)
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 end
 
@@ -20,10 +20,11 @@ function GW.SkinWhoList()
         GW.HandleTrimScrollBar(WhoFrame.ScrollBar)
         GW.HandleScrollControls(WhoFrame)
 
-        hooksecurefunc(WhoFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
+        -- rows first, the hover helper skips rows already marked as skinned
         hooksecurefunc(WhoFrame.ScrollBox, "Update", function(scrollBox)
             scrollBox:ForEachFrame(ReskinWhoFrameButton)
         end)
+        hooksecurefunc(WhoFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
     else
         WHOS_TO_DISPLAY = 30
         for i = 18, 30 do

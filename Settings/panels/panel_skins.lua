@@ -82,6 +82,7 @@ local function LoadSkinsPanel(sWindow)
     addonSkins:AddOption("|cffaaaaaa[AddOn]|r PetTracker", nil, {getterSetter = "SKIN_PETTRACKER_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["QUESTTRACKER_ENABLED"] = true}, incompatibleAddons = "Objectives", hidden = not GW.Retail})
     addonSkins:AddOption("|cffaaaaaa[AddOn]|r Auctionator", nil, {getterSetter = "AUCTIONATOR_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["AuctionHouseSkinEnabled"] = true}, hidden = not GW.Retail})
     addonSkins:AddOption("|cffaaaaaa[AddOn]|r Todoloo", nil, {getterSetter = "SKIN_TODOLOO_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
+    addonSkins:AddOption("|cffaaaaaa[AddOn]|r Extended Transmog Sets", nil, {getterSetter = "EXTENDED_SETS_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["COLLECTIONS_SKIN_ENABLED"] = true}, hidden = not GW.Retail})
 
     local panels = {
         {name = GENERAL, frame = general},

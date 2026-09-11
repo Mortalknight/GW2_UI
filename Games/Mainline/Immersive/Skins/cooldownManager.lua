@@ -20,7 +20,7 @@ local function updateTextColor(self, r, g, b)
 end
 
 local function SkinHeaders(header)
-    if header.IsSkinned then return end
+    if header.gwSkinned then return end
 
     if header.HighlightMiddle then header.HighlightMiddle:SetAlpha(0) end
     if header.HighlightLeft then header.HighlightLeft:SetAlpha(0) end
@@ -51,7 +51,7 @@ local function SkinHeaders(header)
     hooksecurefunc(header, "UpdateCollapsedState", updateCollapse)
     hooksecurefunc(header.Name, "SetTextColor", updateTextColor)
 
-    header.IsSkinned = true
+    header.gwSkinned = true
 end
 
 function CooldownManagerFunctions:CountText(text, parent)
@@ -224,7 +224,7 @@ function CooldownManagerFunctions:HandleViewer(element)
 end
 
 local function HandleSettingItem(item)
-	if item.IsSkinned then return end
+	if item.gwSkinned then return end
 
 	local icon = item.Icon
 	if icon then
@@ -237,7 +237,7 @@ local function HandleSettingItem(item)
 		GW.HandleIcon(icon, true)
 	end
 
-	item.IsSkinned = true
+	item.gwSkinned = true
 end
 
 local function HandleSettingItemPool(self)
@@ -254,7 +254,7 @@ do
 
         for _, child in next, { content:GetChildren() } do
             local header = child.Header
-            if header and not header.IsSkinned then
+            if header and not header.gwSkinned then
                 SkinHeaders(child.Header)
             end
 

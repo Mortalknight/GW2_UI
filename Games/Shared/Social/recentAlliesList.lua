@@ -4,7 +4,7 @@ local GW = select(2, ...)
 local delimiter = format("|cff%s | |r", "979fad")
 
 local function ReskinRecentAllyButton(button)
-    if not button.isSkinned then
+    if not button.gwSkinned then
         local normal = button.PartyButton:GetNormalTexture()
         normal:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png")
         normal:SetTexCoord(0, 1, 0, 1)
@@ -30,7 +30,7 @@ local function ReskinRecentAllyButton(button)
         highlight:SetPoint("CENTER")
         highlight:SetVertexColor(1, 1, 1, 1)
 
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 
     local data = button.elementData
@@ -131,11 +131,12 @@ end
 function GW.SkinRecentAlliesList()
     if not GW.Retail then return end
 
-    hooksecurefunc(RecentAlliesFrame.List.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
     GW.HandleTrimScrollBar(RecentAlliesFrame.List.ScrollBar)
     GW.HandleScrollControls(RecentAlliesFrame.List)
+    -- rows first, the hover helper skips rows already marked as skinned
     hooksecurefunc(RecentAlliesFrame.List.ScrollBox, "Update", function(scrollBox)
         scrollBox:ForEachFrame(ReskinRecentAllyButton)
     end)
+    hooksecurefunc(RecentAlliesFrame.List.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 end
 

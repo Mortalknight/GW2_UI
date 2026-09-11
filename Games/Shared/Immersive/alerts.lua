@@ -283,7 +283,7 @@ local function skinCriteriaAlert(frame)
 end
 
 local function skinWorldQuestCompleteAlert(frame)
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame:SetAlpha(1)
         hooksecurefunc(frame, "SetAlpha", forceAlpha)
         frame:GwCreateBackdrop(constBackdropAlertFrame)
@@ -319,7 +319,7 @@ local function skinWorldQuestCompleteAlert(frame)
         --flare
         AddFlare(frame, frame.QuestTexture.b)
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 end
 
@@ -453,7 +453,7 @@ local function skinHonorAwardedAlert(frame)
 end
 
 local function skinLegendaryItemAlert(frame, itemLink)
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame.Background:GwKill()
         frame.Background2:GwKill()
         frame.Background3:GwKill()
@@ -482,7 +482,7 @@ local function skinLegendaryItemAlert(frame, itemLink)
         --flare
         AddFlare(frame, frame.Icon.b)
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 
     local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
@@ -783,7 +783,7 @@ local function skinNewPetAlert(frame)
 end
 
 local function skinInvasionAlert(frame)
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame:SetAlpha(1)
         hooksecurefunc(frame, "SetAlpha", forceAlpha)
 
@@ -817,7 +817,7 @@ local function skinInvasionAlert(frame)
                 end
             end
         end
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 end
 
@@ -872,7 +872,7 @@ end
 
 local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
     -- /run GarrisonFollowerAlertSystem:AddAlert(204, "Ben Stone", 90, 3, false, C_Garrison.GetFollowerInfo(204))
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame.glow:GwKill()
         frame.shine:GwKill()
         frame.FollowerBG:SetAlpha(0)
@@ -919,7 +919,7 @@ local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
         --flare
         AddFlare(frame, frame.PortraitFrame.squareBG)
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 
     local color = GW.GetQualityColor(quality)
@@ -931,7 +931,7 @@ local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
 end
 
 local function skinGarrisonShipFollowerAlert(frame)
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame.glow:GwKill()
         frame.shine:GwKill()
 
@@ -948,12 +948,12 @@ local function skinGarrisonShipFollowerAlert(frame)
         frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         frame.Class:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 end
 
 local function skinGarrisonTalentAlert(frame)
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame:GetRegions():Hide()
         frame.glow:GwKill()
         frame.shine:GwKill()
@@ -974,12 +974,12 @@ local function skinGarrisonTalentAlert(frame)
         --flare
         AddFlare(frame, frame.Icon.b)
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 end
 
 local function skinGarrisonBuildingAlert(frame)
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame.glow:GwKill()
         frame.shine:GwKill()
         frame:GetRegions():Hide()
@@ -1003,13 +1003,13 @@ local function skinGarrisonBuildingAlert(frame)
         --flare
         AddFlare(frame, frame.Icon.b)
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 end
 
 local function skinGarrisonMissionAlert(frame)
     -- /run GarrisonMissionAlertSystem:AddAlert(C_Garrison.GetBasicMissionInfo(391))
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame.glow:GwKill()
         frame.shine:GwKill()
         frame.IconBG:GwKill()
@@ -1041,13 +1041,13 @@ local function skinGarrisonMissionAlert(frame)
         --flare
         AddFlare(frame, frame.MissionType.b)
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 end
 
 local function skinGarrisonShipMissionAlert(frame)
     -- /run GarrisonShipMissionAlertSystem:AddAlert(C_Garrison.GetBasicMissionInfo(517))
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame.glow:GwKill()
         frame.shine:GwKill()
         frame.Background:GwKill()
@@ -1074,13 +1074,13 @@ local function skinGarrisonShipMissionAlert(frame)
         --flare
         AddFlare(frame, frame.MissionType.b)
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 end
 
 local function skinGarrisonRandomMissionAlert(frame, _, _, _, _, _, quality)
     -- /run GarrisonRandomMissionAlertSystem:AddAlert(C_Garrison.GetBasicMissionInfo(391))
-    if not frame.isSkinned then
+    if not frame.gwSkinned then
         frame.glow:GwKill()
         frame.shine:GwKill()
         frame.Background:GwKill()
@@ -1109,7 +1109,7 @@ local function skinGarrisonRandomMissionAlert(frame, _, _, _, _, _, quality)
         --flare
         AddFlare(frame, frame.MissionType.b)
 
-        frame.isSkinned = true
+        frame.gwSkinned = true
     end
 
     if frame.PortraitFrame and frame.PortraitFrame.squareBG then

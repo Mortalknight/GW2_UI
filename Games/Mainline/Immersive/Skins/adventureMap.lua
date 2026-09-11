@@ -3,7 +3,7 @@ local GW = select(2, ...)
 
 local function SkinRewards()
     for reward in AdventureMapQuestChoiceDialog.rewardPool:EnumerateActive() do
-        if not reward.IsSkinned then
+        if not reward.gwSkinned then
             reward.ItemNameBG:GwStripTextures()
             reward.ItemNameBG:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
@@ -12,7 +12,6 @@ local function SkinRewards()
             GW.HandleIcon(reward.Icon)
             reward.Icon:SetDrawLayer('OVERLAY')
 
-            reward.IsSkinned = true
         end
     end
 end

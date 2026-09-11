@@ -2,12 +2,12 @@
 local GW = select(2, ...)
 
 local function ReskinWhoFrameButton(button)
-    if not button.isSkinned then
+    if not button.gwSkinned then
         button.Variable:SetFont(UNIT_NAME_FONT, 11)
         button.Level:SetFont(UNIT_NAME_FONT, 11)
         button.Class:SetFont(UNIT_NAME_FONT, 11)
         GW.AddListItemChildHoverTexture(button)
-        button.isSkinned = true
+        button.gwSkinned = true
     end
 end
 
@@ -55,10 +55,11 @@ function GW.SkinWhoList()
     GW.HandleTrimScrollBar(WhoFrame.ScrollBar)
     GW.HandleScrollControls(WhoFrame)
 
-    hooksecurefunc(WhoFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
+    -- rows first, the hover helper skips rows already marked as skinned
     hooksecurefunc(WhoFrame.ScrollBox, "Update", function(scrollBox)
         scrollBox:ForEachFrame(ReskinWhoFrameButton)
     end)
+    hooksecurefunc(WhoFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 
     if WhoFrameEditBox.Backdrop then
         WhoFrameEditBox.Backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg.png")
