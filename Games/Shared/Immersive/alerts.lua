@@ -1,26 +1,689 @@
 ---@class GW2
 local GW = select(2, ...)
+local L = GW.L
 
-local toastQueue = {} --Prevent from showing all "new" spells after spec change
-local hasMail = false
-local showRepair = true
-local numInvites = 0
-local LFG_Timer = 0
-local guildInviteCache = {}
-local slots = {
-    [1] = {1, INVTYPE_HEAD, 1000},
-    [2] = {3, INVTYPE_SHOULDER, 1000},
-    [3] = {5, INVTYPE_ROBE, 1000},
-    [4] = {6, INVTYPE_WAIST, 1000},
-    [5] = {9, INVTYPE_WRIST, 1000},
-    [6] = {10, INVTYPE_HAND, 1000},
-    [7] = {7, INVTYPE_LEGS, 1000},
-    [8] = {8, INVTYPE_FEET, 1000},
-    [9] = {16, INVTYPE_WEAPONMAINHAND, 1000},
-    [10] = {17, INVTYPE_WEAPONOFFHAND, 1000},
-    [11] = {18, INVTYPE_RANGED, 1000}
+-- Alert toasts: the skin of blizzards alert systems (achievements, loot, dungeons, garrisons ...), our own
+-- alert system for level ups, mail, repairs, calendar invites, rares and call to arms, and the previews of
+-- both for the notification settings.
+
+local ICON_SIZE = 45
+local BORDER_IDLE = {0.3, 0.3, 0.3}
+local FLARE_TEXTURE = "Interface/AddOns/GW2_UI/textures/hud/level-up-flare.png"
+
+-- blizzards loot border atlases name the quality of the item shown
+local LOOT_BORDER_QUALITY = {
+    ["loottoast-itemborder-white"] = Enum.ItemQuality.Common,
+    ["loottoast-itemborder-green"] = Enum.ItemQuality.Uncommon,
+    ["loottoast-itemborder-blue"] = Enum.ItemQuality.Rare,
+    ["loottoast-itemborder-purple"] = Enum.ItemQuality.Epic,
+    ["loottoast-itemborder-orange"] = Enum.ItemQuality.Legendary,
+    ["loottoast-itemborder-heirloom"] = Enum.ItemQuality.Heirloom,
+    ["loottoast-itemborder-artifact"] = Enum.ItemQuality.Artifact,
 }
 
+-- how far the toast background reaches beyond the blizzard frame: left, top, right, bottom
+local BACKDROP_OFFSETS = {
+    achievement = {-10, 0, 5, 0}, -- around the Background texture
+    criteria = {-25, 15, 27, -10},
+    dungeon = {-25, 15, 27, -10},
+    worldQuest = {-10, 0, 0, 0},
+    guildChallenge = {-25, 5, 20, 0},
+    invasion = {-15, 0, 0, 0},
+    scenario = {-15, 0, 0, 0},
+    legendary = {25, -15, 5, 20},
+    loot = {-25, 15, 227, -15}, -- around the icon holder, the text runs to the right of it
+    delivered = {-15, 5, 10, 10},
+    digsite = {-15, 0, 5, 0},
+    recipe = {-15, 5, 0, 10},
+    garrison = {-5, 0, 0, 0},
+    follower = {-5, 0, 0, 10},
+}
+
+local constBackdropAlertFrame = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-bg.png",
+    edgeFile = "",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+GW.BackdropTemplates.AlertFrame = constBackdropAlertFrame
+
+local constBackdropLevelUpAlertFrame = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-levelup.png",
+    edgeFile = "",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+GW.BackdropTemplates.LevelUpAlertFrame = constBackdropLevelUpAlertFrame
+
+---------- shared pieces ----------
+local function forceAlpha(self, alpha, forced)
+    if alpha ~= 1 and forced ~= true then
+        self:SetAlpha(1, true)
+    end
+end
+GW.ForceAlpha = forceAlpha
+
+local function KeepVisible(frame)
+    frame:SetAlpha(1)
+    if frame.glow then
+        frame.glow.suppressGlow = true
+    end
+    if frame.gwAlphaHooked then return end
+    frame.gwAlphaHooked = true
+    hooksecurefunc(frame, "SetAlpha", forceAlpha)
+end
+
+local function StopFlare(frame)
+    frame.flareIcon.animationGroup:Stop()
+end
+
+local function AddFlare(frame, flareFrame, offsetX, offsetY)
+    if not flareFrame then return end
+    if not frame.flareIcon then
+        frame.flareIcon = flareFrame
+        frame:HookScript("OnHide", StopFlare)
+    end
+    if flareFrame.animationGroup then return end
+
+    flareFrame.animationGroup = flareFrame:CreateAnimationGroup()
+    flareFrame.animationGroup:SetLooping("REPEAT")
+    for _, degrees in ipairs({2000, -2000}) do
+        local flare = flareFrame:CreateTexture(nil, "BACKGROUND")
+        flare:SetTexture(FLARE_TEXTURE)
+        flare:SetPoint("CENTER", offsetX or 0, offsetY or 0)
+        flare:SetSize(120, 120)
+        local rotation = flareFrame.animationGroup:CreateAnimation("Rotation")
+        rotation:SetTarget(flare)
+        rotation:SetDegrees(degrees)
+        rotation:SetDuration(60)
+        rotation:SetSmoothing("OUT")
+        rotation:SetOrder(1)
+    end
+end
+
+local FLASH_PEAK = 0.55
+local function AddIntroGlow(frame)
+    local flash = frame.backdrop:CreateTexture(nil, "OVERLAY")
+    flash:SetTexture(constBackdropAlertFrame.bgFile)
+    flash:SetBlendMode("ADD")
+    flash:SetVertexColor(1, 1, 1)
+    flash:SetAllPoints(frame.backdrop)
+    flash:SetAlpha(0)
+
+    local group = flash:CreateAnimationGroup()
+    local fadeIn = group:CreateAnimation("Alpha")
+    fadeIn:SetFromAlpha(0)
+    fadeIn:SetToAlpha(FLASH_PEAK)
+    fadeIn:SetDuration(0.15)
+    fadeIn:SetOrder(1)
+    local fadeOut = group:CreateAnimation("Alpha")
+    fadeOut:SetFromAlpha(FLASH_PEAK)
+    fadeOut:SetToAlpha(0)
+    fadeOut:SetDuration(0.7)
+    fadeOut:SetSmoothing("OUT")
+    fadeOut:SetOrder(2)
+    frame.gwGlow = group
+end
+
+local function AddToastBackdrop(frame, key, anchor)
+    if frame.backdrop then return end
+    local offsets = BACKDROP_OFFSETS[key]
+    anchor = anchor or frame
+    frame:GwCreateBackdrop(constBackdropAlertFrame)
+    frame.backdrop:SetPoint("TOPLEFT", anchor, "TOPLEFT", offsets[1], offsets[2])
+    frame.backdrop:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", offsets[3], offsets[4])
+    AddIntroGlow(frame)
+end
+
+local function ColorBorder(backdrop, quality)
+    local color = quality and GW.GetBagItemQualityColor(quality)
+    if color then
+        backdrop:SetBackdropBorderColor(color.r, color.g, color.b, 1)
+    else
+        backdrop:SetBackdropBorderColor(BORDER_IDLE[1], BORDER_IDLE[2], BORDER_IDLE[3], 1)
+    end
+end
+
+local function FrameIcon(frame, icon, withoutBorder, flareX, flareY)
+    -- atlases bring their own coordinates
+    if not icon:GetAtlas() then
+        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    end
+    if icon.b then return icon.b end
+
+    local holder = CreateFrame("Frame", nil, frame)
+    holder:SetAllPoints(icon)
+    icon:SetParent(holder)
+    if not withoutBorder then
+        GW.HandleIcon(icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
+        ColorBorder(icon.backdrop)
+    end
+    icon.b = holder
+    AddFlare(frame, holder, flareX, flareY)
+    return holder
+end
+
+local function ColorIconBorder(icon, quality)
+    ColorBorder(icon.backdrop, quality)
+end
+
+local function ColorIconBorderByAtlas(icon, border)
+    ColorIconBorder(icon, border and LOOT_BORDER_QUALITY[border:GetAtlas()])
+end
+
+local function Kill(...)
+    for i = 1, select("#", ...) do
+        local object = select(i, ...)
+        if object then
+            object:GwKill()
+        end
+    end
+end
+
+local function KillUnkeyedTextures(frame)
+    local keyed = {}
+    for _, value in pairs(frame) do
+        if type(value) == "table" then
+            keyed[value] = true
+        end
+    end
+    for _, region in next, {frame:GetRegions()} do
+        if region:IsObjectType("Texture") and not region:IsObjectType("MaskTexture") and not keyed[region] then
+            region:GwKill()
+        end
+    end
+end
+
+local function KillRegionsWithAtlas(frame, atlases)
+    for _, region in next, {frame:GetRegions()} do
+        if region:IsObjectType("Texture") and atlases[region:GetAtlas()] then
+            region:GwKill()
+        end
+    end
+end
+
+local function SetTitle(title)
+    title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    title:SetTextColor(1, 1, 1)
+end
+
+local function SetName(name, quality)
+    name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    if quality == false then return end
+    local color = quality and GW.GetBagItemQualityColor(quality)
+    if color then
+        name:SetTextColor(color.r, color.g, color.b)
+    else
+        name:SetTextColor(1, 1, 1)
+    end
+end
+
+local function SetTexts(title, name, quality)
+    if title then SetTitle(title) end
+    if name then SetName(name, quality) end
+end
+
+local function SetUnkeyedTitles(frame, ...)
+    local keep = {...}
+    for _, region in next, {frame:GetRegions()} do
+        if region:IsObjectType("FontString") and not tContains(keep, region) then
+            SetTitle(region)
+        end
+    end
+end
+
+local function SkinRewardFrames(frame)
+    for _, reward in ipairs(frame.RewardFrames or {}) do
+        if not reward.gwSkinned then
+            reward.gwSkinned = true
+            if reward.CircleMask then
+                reward.texture:RemoveMaskTexture(reward.CircleMask)
+            end
+            for _, region in next, {reward:GetRegions()} do
+                if region:IsObjectType("Texture") and not region:IsObjectType("MaskTexture") and region ~= reward.texture then
+                    region:GwKill()
+                end
+            end
+            reward.texture:SetSize(24, 24)
+            GW.HandleIcon(reward.texture, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
+            ColorBorder(reward.texture.backdrop)
+        end
+    end
+end
+
+local function GetLinkQuality(itemLink)
+    return itemLink and select(3, C_Item.GetItemInfo(itemLink))
+end
+
+---------- achievements ----------
+local function skinAchievementAlert(frame)
+    KeepVisible(frame)
+    AddToastBackdrop(frame, "achievement", frame.Background)
+    frame.Background:SetTexture()
+    Kill(frame.OldAchievement, frame.glow, frame.shine, frame.GuildBanner, frame.GuildBorder, frame.Icon.Overlay)
+    SetTexts(frame.Unlocked, frame.Name)
+
+    frame.Icon.Texture:SetSize(ICON_SIZE, ICON_SIZE)
+    frame.Icon.Texture:ClearAllPoints()
+    frame.Icon.Texture:SetPoint("LEFT", frame, 7, 0)
+    FrameIcon(frame, frame.Icon.Texture)
+end
+
+local function skinCriteriaAlert(frame)
+    KeepVisible(frame)
+    AddToastBackdrop(frame, "criteria")
+    Kill(frame.Background, frame.glow, frame.shine, frame.Icon.Bling, frame.Icon.Overlay)
+    SetTexts(frame.Unlocked, frame.Name)
+
+    frame.Icon.Texture:SetSize(ICON_SIZE, ICON_SIZE)
+    FrameIcon(frame, frame.Icon.Texture)
+end
+
+---------- encounters ----------
+local function skinWorldQuestCompleteAlert(frame)
+    KeepVisible(frame)
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        AddToastBackdrop(frame, "worldQuest")
+        Kill(frame.shine, frame.ToastBackground)
+        KillUnkeyedTextures(frame)
+        frame.QuestTexture:SetDrawLayer("ARTWORK")
+    end
+    SetTexts(frame.ToastText, frame.QuestName)
+    FrameIcon(frame, frame.QuestTexture)
+    SkinRewardFrames(frame)
+end
+
+local function skinDungeonCompletionAlert(frame)
+    KeepVisible(frame)
+    AddToastBackdrop(frame, "dungeon")
+    Kill(frame.shine, frame.glowFrame, frame.glowFrame and frame.glowFrame.glow, frame.raidArt, frame.dungeonArt,
+        frame.dungeonArt1, frame.dungeonArt2, frame.dungeonArt3, frame.dungeonArt4, frame.heroicIcon)
+    SetTexts(frame.completionText, frame.instanceName)
+
+    frame.dungeonTexture:SetDrawLayer("OVERLAY")
+    frame.dungeonTexture:ClearAllPoints()
+    frame.dungeonTexture:SetPoint("LEFT", frame, 7, 0)
+    FrameIcon(frame, frame.dungeonTexture)
+    SkinRewardFrames(frame)
+end
+
+local function skinGuildChallengeAlert(frame)
+    KeepVisible(frame)
+    AddToastBackdrop(frame, "guildChallenge")
+    KillUnkeyedTextures(frame)
+    Kill(frame.glow, frame.shine, frame.EmblemBorder)
+    SetTexts(frame.Type, frame.Count)
+    SetUnkeyedTitles(frame, frame.Type, frame.Count)
+
+    frame.EmblemIcon:ClearAllPoints()
+    frame.EmblemIcon:SetPoint("LEFT", frame.backdrop, 25, 0)
+    frame.EmblemBackground:ClearAllPoints()
+    frame.EmblemBackground:SetPoint("LEFT", frame.backdrop, 25, 0)
+    if not frame.EmblemIcon.b then
+        local holder = CreateFrame("Frame", nil, frame)
+        holder:SetAllPoints(frame.EmblemIcon)
+        frame.EmblemBackground:SetParent(holder)
+        frame.EmblemBackground:SetDrawLayer("BORDER")
+        frame.EmblemIcon:SetParent(holder)
+        frame.EmblemIcon:SetDrawLayer("ARTWORK")
+        frame.EmblemIcon:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true, 3, 3)
+        ColorBorder(frame.EmblemIcon.backdrop)
+        frame.EmblemIcon.b = holder
+        AddFlare(frame, holder)
+    end
+    SetLargeGuildTabardTextures("player", frame.EmblemIcon)
+end
+
+local function skinInvasionAlert(frame)
+    KeepVisible(frame)
+    if frame.gwSkinned then return end
+    frame.gwSkinned = true
+
+    AddToastBackdrop(frame, "invasion")
+    local art, icon = frame:GetRegions()
+    if art:GetAtlas() == "legioninvasion-Toast-Frame" then
+        art:GwKill()
+    end
+    if icon and icon:IsObjectType("Texture") and icon:GetTexture() == 236293 then
+        icon:SetDrawLayer("OVERLAY")
+        FrameIcon(frame, icon)
+    end
+    SetTexts(nil, frame.ZoneName)
+    SetUnkeyedTitles(frame, frame.ZoneName)
+    SkinRewardFrames(frame)
+end
+
+local function skinScenarioAlert(frame)
+    KeepVisible(frame)
+    AddToastBackdrop(frame, "scenario")
+    KillRegionsWithAtlas(frame, {["Toast-IconBG"] = true, ["Toast-Frame"] = true})
+    Kill(frame.shine, frame.glowFrame, frame.glowFrame.glow)
+    SetTexts(nil, frame.dungeonName)
+    SetUnkeyedTitles(frame, frame.dungeonName)
+
+    frame.dungeonTexture:SetDrawLayer("OVERLAY")
+    frame.dungeonTexture:ClearAllPoints()
+    frame.dungeonTexture:SetPoint("LEFT", frame.backdrop, 30, 0)
+    FrameIcon(frame, frame.dungeonTexture)
+    SkinRewardFrames(frame)
+end
+
+---------- loot ----------
+local function skinLegendaryItemAlert(frame, itemLink)
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        Kill(frame.Background, frame.Background2, frame.Background3, frame.Ring1, frame.Particles1, frame.Particles2,
+            frame.Particles3, frame.Starglow, frame.glow, frame.shine)
+        frame.Icon:SetDrawLayer("ARTWORK")
+        AddToastBackdrop(frame, "legendary")
+        SetUnkeyedTitles(frame, frame.ItemName)
+    end
+    local quality = GetLinkQuality(itemLink)
+    SetName(frame.ItemName, quality)
+    FrameIcon(frame, frame.Icon)
+    ColorIconBorder(frame.Icon, quality)
+end
+
+local function AddLootBackdrop(frame, holder)
+    AddToastBackdrop(frame, "loot", holder)
+end
+local function skinLootWonAlert(frame)
+    KeepVisible(frame)
+    Kill(frame.Background, frame.glow, frame.shine, frame.BGAtlas, frame.PvPBackground, frame.RatedPvPBackground)
+
+    local lootItem = frame.lootItem or frame
+    lootItem.IconBorder:GwKill()
+    if lootItem.SpecRing then
+        lootItem.SpecRing:SetTexture("")
+    end
+    lootItem.Icon:SetDrawLayer("BORDER")
+    AddLootBackdrop(frame, FrameIcon(frame, lootItem.Icon))
+    ColorIconBorderByAtlas(lootItem.Icon, lootItem.IconBorder)
+    SetTexts(frame.Label, frame.ItemName, false)
+end
+
+local function skinLootUpgradeAlert(frame, itemLink)
+    KeepVisible(frame)
+    Kill(frame.Background, frame.BorderGlow, frame.Sheen, frame.BaseQualityBorder, frame.UpgradeQualityBorder)
+    frame.Icon:SetDrawLayer("BORDER", 5)
+    AddLootBackdrop(frame, FrameIcon(frame, frame.Icon))
+    ColorIconBorder(frame.Icon, GetLinkQuality(itemLink))
+    SetTitle(frame.TitleText)
+    for _, key in ipairs({"BaseQualityItemName", "UpgradeQualityItemName", "WhiteText", "WhiteText2"}) do
+        SetName(frame[key], false)
+    end
+end
+
+local function skinMoneyWonAlert(frame)
+    KeepVisible(frame)
+    Kill(frame.Background, frame.IconBorder)
+    AddLootBackdrop(frame, FrameIcon(frame, frame.Icon))
+    SetTitle(frame.Label)
+end
+
+local function skinDeliveredAlert(frame, background)
+    KeepVisible(frame)
+    AddToastBackdrop(frame, "delivered")
+    Kill(background, frame.glow, frame.shine)
+    SetTexts(frame.Title, frame.Description)
+    frame.Icon:ClearAllPoints()
+    frame.Icon:SetPoint("LEFT", frame.backdrop, 25, 0)
+    FrameIcon(frame, frame.Icon)
+end
+
+local function skinEntitlementDeliveredAlert(frame)
+    skinDeliveredAlert(frame, frame.Background)
+end
+
+local function skinRafRewardDeliveredAlert(frame)
+    skinDeliveredAlert(frame, frame.StandardBackground)
+end
+
+---------- professions ----------
+local function skinDigsiteCompleteAlert(frame)
+    KeepVisible(frame)
+    AddToastBackdrop(frame, "digsite")
+    Kill(frame.glow, frame.shine, (frame:GetRegions()))
+    SetTexts(frame.Title, frame.DigsiteType)
+
+    frame.DigsiteTypeTexture:SetDrawLayer("ARTWORK", 7)
+    frame.DigsiteTypeTexture:ClearAllPoints()
+    frame.DigsiteTypeTexture:SetPoint("LEFT", frame.backdrop, 25, -18)
+    FrameIcon(frame, frame.DigsiteTypeTexture, true, -20, 16)
+end
+
+local function skinNewRecipeLearnedAlert(frame)
+    KeepVisible(frame)
+    AddToastBackdrop(frame, "recipe")
+    Kill(frame.glow, frame.shine, (frame:GetRegions()))
+    SetTexts(frame.Title, frame.Name)
+
+    frame.Icon:SetMask("")
+    frame.Icon:SetDrawLayer("BORDER", 5)
+    frame.Icon:SetSize(ICON_SIZE, ICON_SIZE)
+    frame.Icon:ClearAllPoints()
+    frame.Icon:SetPoint("LEFT", frame.backdrop, 30, 0)
+    FrameIcon(frame, frame.Icon)
+end
+
+---------- honor, pets, mounts, toys, cosmetics ----------
+local function skinHonorAwardedAlert(frame)
+    KeepVisible(frame)
+    Kill(frame.Background, frame.IconBorder)
+    AddLootBackdrop(frame, FrameIcon(frame, frame.Icon))
+    SetTitle(frame.Label)
+end
+
+local function skinNewItemAlert(frame)
+    KeepVisible(frame)
+    Kill(frame.Background, frame.IconBorder, frame.glow, frame.shine)
+    frame.Icon:SetMask("")
+    frame.Icon:SetDrawLayer("BORDER", 5)
+    AddLootBackdrop(frame, FrameIcon(frame, frame.Icon))
+    ColorIconBorderByAtlas(frame.Icon, frame.IconBorder)
+    SetTexts(frame.Label, frame.Name, false)
+end
+
+---------- garrisons ----------
+local function SkinMissionType(frame)
+    frame.MissionType:SetSize(ICON_SIZE, ICON_SIZE)
+    frame.MissionType:SetDrawLayer("ARTWORK")
+    frame.MissionType:ClearAllPoints()
+    frame.MissionType:SetPoint("LEFT", frame.backdrop, 30, 0)
+    FrameIcon(frame, frame.MissionType)
+end
+
+local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
+    KeepVisible(frame)
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        Kill(frame.glow, frame.shine)
+        frame.FollowerBG:SetAlpha(0)
+        frame.DieIcon:SetAlpha(0)
+        KillRegionsWithAtlas(frame, {["Garr_MissionToast"] = true})
+        AddToastBackdrop(frame, "follower")
+
+        local portrait = frame.PortraitFrame
+        portrait.PortraitRing:Hide()
+        portrait.PortraitRingQuality:SetTexture()
+        portrait.LevelBorder:SetAlpha(0)
+        portrait.Level:ClearAllPoints()
+        portrait.Level:SetPoint("TOP", portrait.Portrait, "BOTTOM", 0, -2)
+
+        portrait.Portrait:SetTexCoord(0.146, 0.854, 0.146, 0.854)
+
+        local square = CreateFrame("Frame", nil, portrait, "BackdropTemplate")
+        square:SetFrameLevel(portrait:GetFrameLevel() + 1)
+        square:SetPoint("TOPLEFT", portrait.Portrait, "TOPLEFT", -1, 1)
+        square:SetPoint("BOTTOMRIGHT", portrait.Portrait, "BOTTOMRIGHT", 1, -1)
+        square:SetBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
+        portrait.squareBG = square
+        if portrait.PortraitRingCover then
+            portrait.PortraitRingCover:SetColorTexture(0, 0, 0)
+            portrait.PortraitRingCover:SetAllPoints(square)
+        end
+        local flareHolder = CreateFrame("Frame", nil, frame)
+        flareHolder:SetFrameLevel(math.max(portrait:GetFrameLevel() - 1, 0))
+        flareHolder:SetAllPoints(portrait.Portrait)
+        AddFlare(frame, flareHolder)
+    end
+    ColorBorder(frame.PortraitFrame.squareBG, quality)
+    SetTexts(frame.Title, frame.Name, quality)
+end
+
+local function skinGarrisonShipFollowerAlert(frame, _, _, _, _, _, quality)
+    KeepVisible(frame)
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        Kill(frame.glow, frame.shine, frame.Background)
+        frame.FollowerBG:SetAlpha(0)
+        frame.DieIcon:SetAlpha(0)
+        AddToastBackdrop(frame, "garrison")
+        frame.Class:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
+    end
+    SetTexts(frame.Title, frame.Name, quality)
+end
+
+local function skinGarrisonTalentAlert(frame)
+    KeepVisible(frame)
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        Kill(frame.glow, frame.shine, (frame:GetRegions()))
+        AddToastBackdrop(frame, "garrison")
+    end
+    SetTexts(frame.Title, frame.Name)
+    FrameIcon(frame, frame.Icon)
+end
+
+local function skinGarrisonBuildingAlert(frame)
+    KeepVisible(frame)
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        Kill(frame.glow, frame.shine, (frame:GetRegions()))
+        AddToastBackdrop(frame, "garrison")
+    end
+    SetTexts(frame.Title, frame.Name)
+    FrameIcon(frame, frame.Icon)
+end
+
+local function skinGarrisonMissionAlert(frame)
+    KeepVisible(frame)
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        Kill(frame.glow, frame.shine, frame.IconBG, frame.Background, frame.EncounterIcon.EliteOverlay, frame.EncounterIcon.RareOverlay)
+        AddToastBackdrop(frame, "garrison")
+    end
+    SetTexts(frame.Title, frame.Name)
+    SkinMissionType(frame)
+end
+
+local function skinGarrisonShipMissionAlert(frame)
+    KeepVisible(frame)
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        Kill(frame.glow, frame.shine, frame.Background)
+        AddToastBackdrop(frame, "garrison")
+    end
+    SetTexts(frame.Title, frame.Name)
+    SkinMissionType(frame)
+end
+
+local function skinGarrisonRandomMissionAlert(frame)
+    KeepVisible(frame)
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        Kill(frame.glow, frame.shine, frame.Background, frame.Blank, frame.IconBG)
+        AddToastBackdrop(frame, "garrison")
+    end
+    SetTexts(frame.Title)
+    SkinMissionType(frame)
+end
+
+---------- our own alert system ----------
+local function GW2_UIAlertFrame_OnClick(self, ...)
+    if self.delay == -1 then
+        self:SetScript("OnLeave", AlertFrame_ResumeOutAnimation)
+        self.delay = 0
+    end
+    if self.onClick then
+        if AlertFrame_OnClick(self, ...) then return end -- right click hides the frame
+        self.onClick(self, ...)
+    elseif self.onClick == false then
+        AlertFrame_OnClick(self, ...)
+    end
+end
+
+local function GW2_UIAlertFrame_OnIconEnter(self)
+    local spellID = self:GetParent().spellID
+    if not spellID then return end
+    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetSpellByID(spellID)
+    GameTooltip:Show()
+end
+
+local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID, targetName)
+    AchievementAlertFrame_SetUp(frame, 2416, true)
+    frame.Name:SetFormattedText(name)
+    frame.Unlocked:SetFormattedText(toptext or "")
+    SetTexts(frame.Unlocked, frame.Name)
+    frame.onClick = onClick
+    frame.delay = delay
+    frame.spellID = spellID
+    frame.levelup = levelup
+    frame:SetScript("OnLeave", delay ~= -1 and AlertFrame_ResumeOutAnimation or nil)
+
+    if not frame.gwSkinned then
+        frame.gwSkinned = true
+        frame:HookScript("OnClick", GW2_UIAlertFrame_OnClick)
+        frame:RegisterForClicks("AnyUp", "AnyDown")
+        frame.Icon:SetScript("OnEnter", GW2_UIAlertFrame_OnIconEnter)
+        frame.Icon:SetScript("OnLeave", GameTooltip_Hide)
+        AddToastBackdrop(frame, "achievement", frame.Background)
+    end
+    KeepVisible(frame)
+    frame.backdrop:SetBackdrop(levelup and constBackdropLevelUpAlertFrame or constBackdropAlertFrame)
+
+    if not InCombatLockdown() and targetName then
+        frame:SetAttribute("type", "macro")
+        frame:SetAttribute("macrotext", "/target " .. targetName)
+    end
+
+    frame.Background:SetTexture()
+    Kill(frame.OldAchievement, frame.glow, frame.shine, frame.GuildBanner, frame.GuildBorder, frame.Icon.Overlay)
+
+    frame.Icon.Texture:ClearAllPoints()
+    frame.Icon.Texture:SetPoint("LEFT", frame, 7, 0)
+    if icon and C_Texture.GetAtlasInfo(icon) then
+        frame.Icon.Texture:SetAtlas(icon)
+    else
+        frame.Icon.Texture:SetTexture(icon)
+    end
+    FrameIcon(frame, frame.Icon.Texture, true)
+end
+
+---------- our alerts: what triggers them ----------
+local toastQueue = {} -- collects new spells so a spec change does not toast every spell of the new spec
+local hasMail = false
+local bagsFull = false
+local hasVaultRewards = false
+local showRepair = true
+local numInvites = 0
+local callToArmsTime = 0
+local guildInviteCache = {}
+local DURABILITY_SLOTS = {
+    {1, INVTYPE_HEAD}, {3, INVTYPE_SHOULDER}, {5, INVTYPE_ROBE}, {6, INVTYPE_WAIST}, {9, INVTYPE_WRIST},
+    {10, INVTYPE_HAND}, {7, INVTYPE_LEGS}, {8, INVTYPE_FEET}, {16, INVTYPE_WEAPONMAINHAND},
+    {17, INVTYPE_WEAPONOFFHAND}, {18, INVTYPE_RANGED},
+}
+local REPAIR_THRESHOLD = 20
+
+-- skyriding basics are learned silently on every new character, no toast for them
 local ignoreDragonRidingSpells = {
     [372608] = true,
     [372610] = true,
@@ -28,65 +691,66 @@ local ignoreDragonRidingSpells = {
     [361584] = true,
 }
 
-local PARAGON_QUEST_ID = { --[questID] = {factionID}
-    --Legion
-    [48976] = {2170}, -- Argussian Reach
-    [46777] = {2045}, -- Armies of Legionfall
-    [48977] = {2165}, -- Army of the Light
-    [46745] = {1900}, -- Court of Farondis
-    [46747] = {1883}, -- Dreamweavers
-    [46743] = {1828}, -- Highmountain Tribes
-    [46748] = {1859}, -- The Nightfallen
-    [46749] = {1894}, -- The Wardens
-    [46746] = {1948}, -- Valarjar
-
-    --Battle for Azeroth
-    --Neutral
-    [54453] = {2164}, --Champions of Azeroth
-    [58096] = {2415}, --Rajani
-    [55348] = {2391}, --Rustbolt Resistance
-    [54451] = {2163}, --Tortollan Seekers
-    [58097] = {2417}, --Uldum Accord
-
-    --Horde
-    [54460] = {2156}, --Talanji's Expedition
-    [54455] = {2157}, --The Honorbound
-    [53982] = {2373}, --The Unshackled
-    [54461] = {2158}, --Voldunai
-    [54462] = {2103}, --Zandalari Empire
-
-    --Alliance
-    [54456] = {2161}, --Order of Embers
-    [54458] = {2160}, --Proudmoore Admiralty
-    [54457] = {2162}, --Storm's Wake
-    [54454] = {2159}, --The 7th Legion
-    [55976] = {2400}, --Waveblade Ankoan
-
-    --Shadowlands
-    [61100] = {2413}, --Court of Harvesters
-    [61097] = {2407}, --The Ascended
-    [61095] = {2410}, --The Undying Army
-    [61098] = {2465}, --The Wild Hunt
-    [64012] = {2470}, --The Death Advance
-    [64266] = {2472}, --The Archivist's Codex
-    [64267] = {2432}, --Ve'nari
-    [64867] = {2478}, --The Enlightened
-
-    --TWW
-    [79219] = {2590}, --Council of Dornogal
-    [29218] = {2570}, --Hallowfall Arathi
-    [79220] = {2594}, --The Assembly of the Deep
-    [79196] = {2600}, --The Severed Threads
-    [83739] = {2605}, --The General
-    [83740] = {2607}, --The Vizier
-    [83738] = {2601}, --The Weaver
-    [85805] = {2653}, --Cartels of Undermine
-    [85471] = {2685}, --Gallagio Loyalty Rewards Club
-	[85806] = {2673}, --Bilgewater Cartel
-	[85807] = {2675}, --Blackwater Cartel
-	[85808] = {2669}, --Darkfuse Solutions
-	[85809] = {2677}, --Steamwheedle Cartel
-	[85810] = {2671}, --Venture Company
+-- fallback for paragon reward quests of factions the reputation API does not list at that moment (collapsed
+-- headers); [questID] = factionID
+local PARAGON_QUEST_ID = {
+    -- Legion
+    [48976] = 2170, -- Argussian Reach
+    [46777] = 2045, -- Armies of Legionfall
+    [48977] = 2165, -- Army of the Light
+    [46745] = 1900, -- Court of Farondis
+    [46747] = 1883, -- Dreamweavers
+    [46743] = 1828, -- Highmountain Tribes
+    [46748] = 1859, -- The Nightfallen
+    [46749] = 1894, -- The Wardens
+    [46746] = 1948, -- Valarjar
+    -- Battle for Azeroth
+    [54453] = 2164, -- Champions of Azeroth
+    [58096] = 2415, -- Rajani
+    [55348] = 2391, -- Rustbolt Resistance
+    [54451] = 2163, -- Tortollan Seekers
+    [58097] = 2417, -- Uldum Accord
+    [54460] = 2156, -- Talanji's Expedition
+    [54455] = 2157, -- The Honorbound
+    [53982] = 2373, -- The Unshackled
+    [54461] = 2158, -- Voldunai
+    [54462] = 2103, -- Zandalari Empire
+    [54456] = 2161, -- Order of Embers
+    [54458] = 2160, -- Proudmoore Admiralty
+    [54457] = 2162, -- Storm's Wake
+    [54454] = 2159, -- The 7th Legion
+    [55976] = 2400, -- Waveblade Ankoan
+    -- Shadowlands
+    [61100] = 2413, -- Court of Harvesters
+    [61097] = 2407, -- The Ascended
+    [61095] = 2410, -- The Undying Army
+    [61098] = 2465, -- The Wild Hunt
+    [64012] = 2470, -- The Death Advance
+    [64266] = 2472, -- The Archivist's Codex
+    [64267] = 2432, -- Ve'nari
+    [64867] = 2478, -- The Enlightened
+    -- Dragonflight
+    [66156] = 2507, -- Dragonscale Expedition
+    [76425] = 2574, -- Dream Wardens
+    [66511] = 2511, -- Iskaara Tuskarr
+    [75290] = 2564, -- Loamm Niffen
+    [65606] = 2503, -- Maruuk Centaur
+    [71023] = 2510, -- Valdrakken Accord
+    -- The War Within
+    [79219] = 2590, -- Council of Dornogal
+    [79218] = 2570, -- Hallowfall Arathi
+    [79220] = 2594, -- The Assembly of the Deep
+    [79196] = 2600, -- The Severed Threads
+    [83739] = 2605, -- The General
+    [83740] = 2607, -- The Vizier
+    [83738] = 2601, -- The Weaver
+    [85805] = 2653, -- Cartels of Undermine
+    [85471] = 2685, -- Gallagio Loyalty Rewards Club
+    [85806] = 2673, -- Bilgewater Cartel
+    [85807] = 2675, -- Blackwater Cartel
+    [85808] = 2669, -- Darkfuse Solutions
+    [85809] = 2677, -- Steamwheedle Cartel
+    [85810] = 2671, -- Venture Company
 }
 
 local VignetteExclusionMapIDs = {
@@ -110,1172 +774,57 @@ local VignetteBlackListIDs = {
     [5485] = true, -- Tuskarr Tacklebox
 }
 
-local constBackdropAlertFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-bg.png",
-    edgeFile = "",
-    tile = false,
-    tileSize = 64,
-    edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
-}
-GW.BackdropTemplates.AlertFrame = constBackdropAlertFrame
-
-local constBackdropLevelUpAlertFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-levelup.png",
-    edgeFile = "",
-    tile = false,
-    tileSize = 64,
-    edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
-}
-GW.BackdropTemplates.LevelUpAlertFrame = constBackdropLevelUpAlertFrame
+local function PlayAlertSound(setting)
+    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings[setting]), "Master")
+end
 
 local function isUsefulAtlas(info)
     local atlas = info.atlasName
-    if atlas then
-        return strfind(atlas, "[Vv]ignette") or (atlas == "nazjatar-nagaevent")
-    end
+    return atlas and (strfind(atlas, "[Vv]ignette") or atlas == "nazjatar-nagaevent")
 end
 
-local function GetTextureStrByAtlas(info, sizeX, sizeY)
-    local file = info and info.file
-    if not file then return end
-
-    local width, height, txLeft, txRight, txTop, txBottom = info.width, info.height, info.leftTexCoord, info.rightTexCoord, info.topTexCoord, info.bottomTexCoord
-    local atlasWidth = width / (txRight - txLeft)
-    local atlasHeight = height / (txBottom - txTop)
-
-    return format("|T%s:%d:%d:0:0:%d:%d:%d:%d:%d:%d|t", file, (sizeX or 0), (sizeY or 0), atlasWidth, atlasHeight, atlasWidth*txLeft, atlasWidth*txRight, atlasHeight*txTop, atlasHeight*txBottom)
-end
-
-local function forceAlpha(self, alpha, forced)
-    if alpha ~= 1 and forced ~= true then
-        self:SetAlpha(1, true)
-    end
-end
-GW.ForceAlpha = forceAlpha
-
-local function AddFlare(frame, flarFrame)
-    if not flarFrame then return end
-
-    if not frame.flareIcon then
-        frame.flareIcon = flarFrame
-    end
-
-    if not flarFrame.flare then
-        flarFrame.flare = flarFrame:CreateTexture(nil, "BACKGROUND")
-        flarFrame.flare:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-up-flare.png")
-        flarFrame.flare:SetPoint("CENTER")
-        flarFrame.flare:SetSize(120, 120)
-        flarFrame.flare:Show()
-    end
-    if not flarFrame.flare2 then
-        flarFrame.flare2 = flarFrame:CreateTexture(nil, "BACKGROUND")
-        flarFrame.flare2:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-up-flare.png")
-        flarFrame.flare2:SetPoint("CENTER")
-        flarFrame.flare2:SetSize(120, 120)
-        flarFrame.flare2:Show()
-    end
-
-    if not flarFrame.animationGroup then
-        flarFrame.animationGroup = flarFrame:CreateAnimationGroup()
-        local rotation = flarFrame.animationGroup:CreateAnimation("Rotation")
-        rotation:SetTarget(flarFrame.flare)
-        rotation:SetDegrees(2000)
-        rotation:SetDuration(60)
-        rotation:SetSmoothing("OUT")
-        rotation:SetOrder(1)
-
-        local rotation2 = flarFrame.animationGroup:CreateAnimation("Rotation")
-        rotation2:SetTarget(flarFrame.flare2)
-        rotation2:SetDegrees(-2000)
-        rotation2:SetDuration(60)
-        rotation2:SetSmoothing("OUT")
-        rotation2:SetOrder(1)
-
-        flarFrame.animationGroup:SetLooping("REPEAT")
-    end
-end
-GW.AddFlareAnimationToObject = AddFlare
-
-local function skinAchievementAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame.Background, "TOPLEFT", -10, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Background, "BOTTOMRIGHT", 5, 0)
-    end
-
-    -- Background
-    frame.Background:SetTexture()
-    if frame.OldAchievement then frame.OldAchievement:GwKill() end
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-    frame.GuildBanner:GwKill()
-    frame.GuildBorder:GwKill()
-    -- Text
-    frame.Unlocked:SetTextColor(1, 1, 1)
-
-    -- Icon
-    frame.Icon.Texture:SetSize(45, 45)
-    frame.Icon.Texture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.Icon.Overlay:GwKill()
-
-    frame.Icon.Texture:ClearAllPoints()
-    frame.Icon.Texture:SetPoint("LEFT", frame, 7, 0)
-
-    if not frame.Icon.Texture.b then
-        frame.Icon.Texture.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.Texture.b:SetAllPoints(frame.Icon.Texture)
-        frame.Icon.Texture:SetParent(frame.Icon.Texture.b)
-        frame.Icon.iconBorder = frame.Icon.Texture.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.Texture.b)
-    end
-
-    --flare
-    AddFlare(frame, frame.Icon.Texture.b)
-end
-
-local function skinCriteriaAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 15)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 27, -10)
-    end
-
-    frame.Unlocked:SetTextColor(1, 1, 1)
-    frame.Name:SetTextColor(1, 1, 0)
-    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    frame.Unlocked:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    frame.Background:GwKill()
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-    frame.Icon.Bling:GwKill()
-    frame.Icon.Overlay:GwKill()
-
-    -- Icon border
-    if not frame.Icon.Texture.b then
-        frame.Icon.Texture.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.Texture.b:SetAllPoints(frame.Icon.Texture)
-        frame.Icon.Texture:SetParent(frame.Icon.Texture.b)
-        frame.Icon.iconBorder = frame.Icon.Texture.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.Texture.b)
-    end
-    frame.Icon.Texture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.Icon.Texture:SetSize(45, 45)
-    --flare
-    AddFlare(frame, frame.Icon.Texture.b)
-end
-
-local function skinWorldQuestCompleteAlert(frame)
-    if not frame.gwSkinned then
-        frame:SetAlpha(1)
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -10, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-
-        frame.shine:GwKill()
-        frame.ToastBackground:GwKill()
-        -- Background
-        if frame.GetNumRegions then
-            for i = 1, frame:GetNumRegions() do
-                local region = select(i, frame:GetRegions())
-                if region:IsObjectType("Texture") then
-                    if region:GetTexture() == "Interface/LFGFrame/UI-LFG-DUNGEONTOAST" then
-                        region:GwKill()
-                    end
+local function GetParagonFaction(questID)
+    local isParagon = C_Reputation.IsFactionParagonForCurrentPlayer or C_Reputation.IsFactionParagon
+    if isParagon and C_Reputation.GetNumFactions then
+        for i = 1, C_Reputation.GetNumFactions() do
+            local data = C_Reputation.GetFactionDataByIndex(i)
+            if data and not data.isHeader and isParagon(data.factionID) then
+                local _, _, rewardQuestID = C_Reputation.GetFactionParagonInfo(data.factionID)
+                if rewardQuestID == questID then
+                    return data
                 end
             end
         end
-
-        frame.ToastText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-
-        --Icon
-        frame.QuestTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        frame.QuestTexture:SetDrawLayer("ARTWORK")
-        frame.QuestTexture.b = CreateFrame("Frame", nil, frame)
-        frame.QuestTexture.b:SetAllPoints(frame.QuestTexture)
-        frame.QuestTexture:SetParent(frame.QuestTexture.b)
-        frame.QuestTexture.iconBorder = frame.QuestTexture.b:CreateTexture(nil, "ARTWORK")
-        frame.QuestTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.QuestTexture.iconBorder:SetAllPoints(frame.QuestTexture.b)
-
-        --flare
-        AddFlare(frame, frame.QuestTexture.b)
-
-        frame.gwSkinned = true
     end
+    local factionID = PARAGON_QUEST_ID[questID]
+    return factionID and C_Reputation.GetFactionDataByID(factionID)
 end
 
-local function skinDungeonCompletionAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 15)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 27, -10)
-    end
-
-    if frame.shine then frame.shine:GwKill() end
-    if frame.glowFrame then
-        frame.glowFrame:GwKill()
-        if frame.glowFrame.glow then
-            frame.glowFrame.glow:GwKill()
-        end
-    end
-
-    if frame.raidArt then frame.raidArt:GwKill() end
-    if frame.dungeonArt then frame.dungeonArt:GwKill() end
-    if frame.dungeonArt1 then frame.dungeonArt1:GwKill() end
-    if frame.dungeonArt2 then frame.dungeonArt2:GwKill() end
-    if frame.dungeonArt3 then frame.dungeonArt3:GwKill() end
-    if frame.dungeonArt4 then frame.dungeonArt4:GwKill() end
-    if frame.heroicIcon then frame.heroicIcon:GwKill() end
-
-    -- Icon
-    frame.dungeonTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.dungeonTexture:SetDrawLayer("OVERLAY")
-    frame.dungeonTexture:ClearAllPoints()
-    frame.dungeonTexture:SetPoint("LEFT", frame, 7, 0)
-
-    if not frame.dungeonTexture.b then
-        frame.dungeonTexture.b = CreateFrame("Frame", nil, frame)
-        frame.dungeonTexture.b:SetAllPoints(frame.dungeonTexture)
-        frame.dungeonTexture:SetParent(frame.dungeonTexture.b)
-        frame.dungeonTexture.iconBorder = frame.dungeonTexture.b:CreateTexture(nil, "ARTWORK")
-        frame.dungeonTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.dungeonTexture.iconBorder:SetAllPoints(frame.dungeonTexture.b)
-    end
-
-    --flare
-    AddFlare(frame, frame.dungeonTexture.b)
-end
-
-local function skinGuildChallengeAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -25, 5)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 20, 0)
-    end
-
-    -- Background
-    local region = select(2, frame:GetRegions())
-    if region:IsObjectType("Texture") then
-        if region:GetTexture() == "Interface/GuildFrame/GuildChallenges" then
-            region:GwKill()
-        end
-    end
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-    frame.EmblemBorder:GwKill()
-
-    -- Icon
-    frame.EmblemIcon:ClearAllPoints()
-    frame.EmblemIcon:SetPoint("LEFT", frame.backdrop, 25, 0)
-    frame.EmblemBackground:ClearAllPoints()
-    frame.EmblemBackground:SetPoint("LEFT", frame.backdrop, 25, 0)
-
-    -- Icon border
-    local EmblemIcon = frame.EmblemIcon
-    if not EmblemIcon.b then
-        EmblemIcon.b = CreateFrame("Frame", nil, frame)
-        EmblemIcon.b:SetPoint("TOPLEFT", EmblemIcon, "TOPLEFT", -3, 3)
-        EmblemIcon.b:SetPoint("BOTTOMRIGHT", EmblemIcon, "BOTTOMRIGHT", 3, -2)
-        EmblemIcon:SetParent(EmblemIcon.b)
-        EmblemIcon.iconBorder = EmblemIcon.b:CreateTexture(nil, "ARTWORK")
-        EmblemIcon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        EmblemIcon.iconBorder:SetAllPoints(EmblemIcon.b)
-    end
-    SetLargeGuildTabardTextures("player", EmblemIcon)
-
-    --flare
-    AddFlare(frame, EmblemIcon.b)
-end
-
-local function skinHonorAwardedAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    frame.Background:GwKill()
-    frame.IconBorder:GwKill()
-    frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-
-    -- Icon border
-    if not frame.Icon.b then
-        frame.Icon.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.b:SetAllPoints(frame.Icon)
-        frame.Icon:SetParent(frame.Icon.b)
-        frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-    end
-
-    --flare
-    AddFlare(frame, frame.Icon.b)
-end
-
-local function skinLegendaryItemAlert(frame, itemLink)
-    if not frame.gwSkinned then
-        frame.Background:GwKill()
-        frame.Background2:GwKill()
-        frame.Background3:GwKill()
-        frame.Ring1:GwKill()
-        frame.Particles1:GwKill()
-        frame.Particles2:GwKill()
-        frame.Particles3:GwKill()
-        frame.Starglow:GwKill()
-        frame.glow:GwKill()
-        frame.shine:GwKill()
-
-        --Icon
-        frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        frame.Icon:SetDrawLayer("ARTWORK")
-        frame.Icon.b = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-        frame.Icon.b:SetAllPoints(frame.Icon)
-        frame.Icon:SetParent(frame.Icon.b)
-        frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-        --Create Backdrop
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", 25, -15)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 5, 20)
-
-        --flare
-        AddFlare(frame, frame.Icon.b)
-
-        frame.gwSkinned = true
-    end
-
-    local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
-    local color = GW.GetQualityColor(itemRarity)
-    if color then
-        frame.Icon.b:SetBackdropBorderColor(color.r, color.g, color.b)
-    else
-        frame.Icon.b:SetBackdropBorderColor(0, 0, 0)
-    end
-end
-
-local function skinLootWonAlert(frame)
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    frame:SetAlpha(1)
-    frame.Background:GwKill()
-
-    local lootItem = frame.lootItem or frame
-    lootItem.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    lootItem.Icon:SetDrawLayer("BORDER")
-    lootItem.IconBorder:GwKill()
-    lootItem.SpecRing:SetTexture("")
-
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-    frame.BGAtlas:GwKill()
-    frame.PvPBackground:GwKill()
-
-    -- Icon border
-    if not lootItem.Icon.b then
-        lootItem.Icon.b = CreateFrame("Frame", nil, frame)
-        lootItem.Icon.b:SetAllPoints(lootItem.Icon)
-        lootItem.Icon:SetParent(lootItem.Icon.b)
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", lootItem.Icon.b, "TOPLEFT", -25, 15)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", lootItem.Icon.b, "BOTTOMRIGHT", 227, -15)
-    end
-
-    --flare
-    AddFlare(frame, lootItem.Icon.b)
-end
-
-local function skinLootUpgradeAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    frame.Background:GwKill()
-    frame.BorderGlow:GwKill()
-    frame.Sheen:GwKill()
-
-    frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.Icon:SetDrawLayer("BORDER", 5)
-
-    -- Icon border
-    if not frame.Icon.b then
-        frame.Icon.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.b:SetAllPoints(frame.Icon)
-        frame.Icon:SetParent(frame.Icon.b)
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-    end
-
-    --flare
-    AddFlare(frame, frame.Icon.b)
-end
-
-local function skinMoneyWonAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    frame.Background:GwKill()
-    frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.IconBorder:GwKill()
-
-    -- Icon border
-    if not frame.Icon.b then
-        frame.Icon.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.b:SetAllPoints(frame.Icon)
-        frame.Icon:SetParent(frame.Icon.b)
-        frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-    end
-
-    --flare
-    AddFlare(frame, frame.Icon.b)
-end
-
-local function skinEntitlementDeliveredAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 10, 10)
-    end
-
-    -- Background
-    frame.Background:GwKill()
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-
-    -- Icon
-    frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.Icon:ClearAllPoints()
-    frame.Icon:SetPoint("LEFT", frame.backdrop, 25, 0)
-
-    -- Icon border
-    if not frame.Icon.b then
-        frame.Icon.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.b:SetPoint("TOPLEFT", frame.Icon, "TOPLEFT", -2, 2)
-        frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
-        frame.Icon:SetParent(frame.Icon.b)
-        frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-    end
-
-    --flare
-    AddFlare(frame, frame.Icon.b)
-end
-
-local function skinRafRewardDeliveredAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 10, 10)
-    end
-
-    -- Background
-    frame.StandardBackground:GwKill()
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-
-    -- Icon
-    frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.Icon:ClearAllPoints()
-    frame.Icon:SetPoint("LEFT", frame.backdrop, 25, 0)
-
-    -- Icon border
-    if not frame.Icon.b then
-        frame.Icon.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.b:SetPoint("TOPLEFT", frame.Icon, "TOPLEFT", -2, 2)
-        frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
-        frame.Icon:SetParent(frame.Icon.b)
-        frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-    end
-
-    --flare
-    AddFlare(frame, frame.Icon.b)
-end
-
-local function skinDigsiteCompleteAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 5, 0)
-    end
-
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-    frame:GetRegions():Hide()
-    frame.DigsiteTypeTexture.b = CreateFrame("Frame", nil, frame)
-    frame.DigsiteTypeTexture.b:SetPoint("TOPLEFT", frame.DigsiteTypeTexture, "TOPLEFT", -2, 2)
-    frame.DigsiteTypeTexture.b:SetPoint("BOTTOMRIGHT", frame.DigsiteTypeTexture, "BOTTOMRIGHT", 2, -2)
-    frame.DigsiteTypeTexture:SetParent(frame.DigsiteTypeTexture.b)
-    frame.DigsiteTypeTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.DigsiteTypeTexture:SetDrawLayer("ARTWORK", 7)
-    frame.DigsiteTypeTexture:ClearAllPoints()
-    frame.DigsiteTypeTexture:SetPoint("LEFT", frame.backdrop, 25,-18)
-end
-
-local function skinNewRecipeLearnedAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 5)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 10)
-    end
-
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-    frame:GetRegions():Hide()
-
-    frame.Icon:SetMask("")
-    frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.Icon:SetDrawLayer("BORDER", 5)
-    frame.Icon:ClearAllPoints()
-    frame.Icon:SetPoint("LEFT", frame.backdrop, 30, 0)
-    frame.Icon:SetSize(45, 45)
-
-    -- Icon border
-    if not frame.Icon.b then
-        frame.Icon.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.b:SetPoint("TOPLEFT", frame.Icon, "TOPLEFT", -2, 2)
-        frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
-        frame.Icon:SetParent(frame.Icon.b)
-        frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-    end
-
-    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-
-    --flare
-    AddFlare(frame, frame.Icon.b)
-end
-
-local function skinNewPetAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    frame.Background:GwKill()
-    frame.IconBorder:GwKill()
-
-    frame.Icon:SetMask("")
-    frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.Icon:SetDrawLayer("BORDER", 5)
-
-    -- Icon border
-    if not frame.Icon.b then
-        frame.Icon.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.b:SetPoint("TOPLEFT", frame.Icon, "TOPLEFT", -2, 2)
-        frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
-        frame.Icon:SetParent(frame.Icon.b)
-        frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-    end
-
-    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    frame.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-
-    --flare
-    AddFlare(frame, frame.Icon.b)
-end
-
-local function skinInvasionAlert(frame)
-    if not frame.gwSkinned then
-        frame:SetAlpha(1)
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-
-        --Background contains the item border too, so have to remove it
-        if frame.GetRegions then
-            local region, icon = frame:GetRegions()
-            if region and region:IsObjectType("Texture") then
-                if region:GetAtlas() == "legioninvasion-Toast-Frame" then
-                    region:GwKill()
-                end
-            end
-            -- Icon border
-            if icon and icon:IsObjectType('Texture') then
-                if icon:GetTexture() == 236293 then
-                    icon.b = CreateFrame("Frame", nil, frame)
-                    icon.b:SetPoint("TOPLEFT", icon, "TOPLEFT", -2, 2)
-                    icon.b:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 2, -2)
-                    icon:SetParent(icon.b)
-                    icon.iconBorder = icon.b:CreateTexture(nil, "ARTWORK")
-                    icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-                    icon.iconBorder:SetAllPoints(icon.b)
-                    icon:SetDrawLayer("OVERLAY")
-                    icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-
-                    --flare
-                    AddFlare(frame, icon.b)
-                end
-            end
-        end
-        frame.gwSkinned = true
-    end
-end
-
-local function skinScenarioAlert(frame)
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-    end
-
-    -- Background
-    for i = 1, frame:GetNumRegions() do
-        local region = select(i, frame:GetRegions())
-        if region:IsObjectType('Texture') then
-            if region:GetAtlas() == "Toast-IconBG" or region:GetAtlas() == "Toast-Frame" then
-                region:GwKill()
+local function GetRoleShortage()
+    local forTank, forHealer, forDamage = false, false, false
+    for i = 1, GetNumRandomDungeons() do
+        local dungeonID = GetLFGRandomDungeonInfo(i)
+        for shortageIndex = 1, LFG_ROLE_NUM_SHORTAGE_TYPES do
+            local eligible, tank, healer, damage = GetLFGRoleShortageRewards(dungeonID, shortageIndex)
+            if eligible then
+                forTank, forHealer, forDamage = forTank or tank, forHealer or healer, forDamage or damage
             end
         end
     end
-
-    frame.shine:GwKill()
-    frame.glowFrame:GwKill()
-    frame.glowFrame.glow:GwKill()
-
-    -- Icon
-    frame.dungeonTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.dungeonTexture:ClearAllPoints()
-    frame.dungeonTexture:SetPoint("LEFT", frame.backdrop, 30, 0)
-    frame.dungeonTexture:SetDrawLayer("OVERLAY")
-
-    -- Icon border
-    if not frame.dungeonTexture.b then
-        frame.dungeonTexture.b = CreateFrame("Frame", nil, frame)
-        frame.dungeonTexture.b:SetPoint("TOPLEFT", frame.dungeonTexture, "TOPLEFT", -2, 2)
-        frame.dungeonTexture.b:SetPoint("BOTTOMRIGHT", frame.dungeonTexture, "BOTTOMRIGHT", 2, -2)
-        frame.dungeonTexture:SetParent(frame.dungeonTexture.b)
-        frame.dungeonTexture.iconBorder = frame.dungeonTexture.b:CreateTexture(nil, "ARTWORK")
-        frame.dungeonTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.dungeonTexture.iconBorder:SetAllPoints(frame.dungeonTexture.b)
-    end
-
-    --flare
-    AddFlare(frame, frame.dungeonTexture.b)
+    return forTank, forHealer, forDamage
 end
 
-local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
-    -- /run GarrisonFollowerAlertSystem:AddAlert(204, "Ben Stone", 90, 3, false, C_Garrison.GetFollowerInfo(204))
-    if not frame.gwSkinned then
-        frame.glow:GwKill()
-        frame.shine:GwKill()
-        frame.FollowerBG:SetAlpha(0)
-        frame.DieIcon:SetAlpha(0)
-        --Background
-        if frame.GetNumRegions then
-            for i = 1, frame:GetNumRegions() do
-                local region = select(i, frame:GetRegions())
-                if region:IsObjectType('Texture') then
-                    if region:GetAtlas() == "Garr_MissionToast" then
-                        region:GwKill()
-                    end
-                end
+local function GetLowestDurability()
+    local lowest, lowestSlot = 1, nil
+    for _, slot in ipairs(DURABILITY_SLOTS) do
+        if GetInventoryItemLink("player", slot[1]) then
+            local current, max = GetInventoryItemDurability(slot[1])
+            if current and max and max > 0 and current / max < lowest then
+                lowest, lowestSlot = current / max, slot[2]
             end
         end
-        --Create Backdrop
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 10)
-
-        frame.PortraitFrame.PortraitRing:Hide()
-        frame.PortraitFrame.PortraitRingQuality:SetTexture()
-        frame.PortraitFrame.LevelBorder:SetAlpha(0)
-
-        local level = frame.PortraitFrame.Level
-        level:ClearAllPoints()
-        level:SetPoint("BOTTOM", frame.PortraitFrame, 0, 12)
-
-        local squareBG = CreateFrame("Frame", nil, frame.PortraitFrame, "BackdropTemplate")
-        squareBG:SetFrameLevel(frame.PortraitFrame:GetFrameLevel() - 1)
-        squareBG:SetPoint("TOPLEFT", 3, -3)
-        squareBG:SetPoint("BOTTOMRIGHT", -3, 11)
-        frame.PortraitFrame.squareBG = squareBG
-
-        local cover = frame.PortraitFrame.PortraitRingCover
-        if cover then
-            cover:SetColorTexture(0, 0, 0)
-            cover:SetAllPoints(squareBG)
-        end
-
-        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-
-        --flare
-        AddFlare(frame, frame.PortraitFrame.squareBG)
-
-        frame.gwSkinned = true
     end
-
-    local color = GW.GetQualityColor(quality)
-    if color then
-        frame.PortraitFrame.squareBG:SetBackdropBorderColor(color.r, color.g, color.b)
-    else
-        frame.PortraitFrame.squareBG:SetBackdropBorderColor(0, 0, 0)
-    end
-end
-
-local function skinGarrisonShipFollowerAlert(frame)
-    if not frame.gwSkinned then
-        frame.glow:GwKill()
-        frame.shine:GwKill()
-
-        frame.FollowerBG:SetAlpha(0)
-        frame.DieIcon:SetAlpha(0)
-        --Background
-        frame.Background:GwKill()
-        --Create Backdrop
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-
-        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
-        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        frame.Class:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
-
-        frame.gwSkinned = true
-    end
-end
-
-local function skinGarrisonTalentAlert(frame)
-    if not frame.gwSkinned then
-        frame:GetRegions():Hide()
-        frame.glow:GwKill()
-        frame.shine:GwKill()
-        --Icon
-        frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        frame.Icon.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.b:SetPoint("TOPLEFT", frame.Icon, "TOPLEFT", -2, 2)
-        frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
-        frame.Icon:SetParent(frame.Icon.b)
-        frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-        --Create Backdrop
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-
-        --flare
-        AddFlare(frame, frame.Icon.b)
-
-        frame.gwSkinned = true
-    end
-end
-
-local function skinGarrisonBuildingAlert(frame)
-    if not frame.gwSkinned then
-        frame.glow:GwKill()
-        frame.shine:GwKill()
-        frame:GetRegions():Hide()
-        --Create Backdrop
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        --Icon
-        frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        frame.Icon.b = CreateFrame("Frame", nil, frame)
-        frame.Icon.b:SetPoint("TOPLEFT", frame.Icon, "TOPLEFT", -2, 2)
-        frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
-        frame.Icon:SetParent(frame.Icon.b)
-        frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-
-        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-
-        --flare
-        AddFlare(frame, frame.Icon.b)
-
-        frame.gwSkinned = true
-    end
-end
-
-local function skinGarrisonMissionAlert(frame)
-    -- /run GarrisonMissionAlertSystem:AddAlert(C_Garrison.GetBasicMissionInfo(391))
-    if not frame.gwSkinned then
-        frame.glow:GwKill()
-        frame.shine:GwKill()
-        frame.IconBG:GwKill()
-        frame.Background:GwKill()
-        if frame.EncounterIcon.EliteOveraly then frame.EncounterIcon.EliteOveraly:GwKill() end
-
-        --Create Backdrop
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-
-        --Icon
-        frame.MissionType:ClearAllPoints()
-        frame.MissionType:SetPoint("LEFT", frame.backdrop, 30, 0)
-        frame.MissionType:SetSize(45, 45)
-        frame.MissionType:SetDrawLayer("ARTWORK")
-        frame.MissionType:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        frame.MissionType.b = CreateFrame("Frame", nil, frame)
-        frame.MissionType.b:SetPoint("TOPLEFT", frame.MissionType, "TOPLEFT", -2, 2)
-        frame.MissionType.b:SetPoint("BOTTOMRIGHT", frame.MissionType, "BOTTOMRIGHT", 2, -2)
-        frame.MissionType:SetParent(frame.MissionType.b)
-        frame.MissionType.iconBorder = frame.MissionType.b:CreateTexture(nil, "ARTWORK")
-        frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.MissionType.iconBorder:SetAllPoints(frame.MissionType.b)
-
-        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-
-        --flare
-        AddFlare(frame, frame.MissionType.b)
-
-        frame.gwSkinned = true
-    end
-end
-
-local function skinGarrisonShipMissionAlert(frame)
-    -- /run GarrisonShipMissionAlertSystem:AddAlert(C_Garrison.GetBasicMissionInfo(517))
-    if not frame.gwSkinned then
-        frame.glow:GwKill()
-        frame.shine:GwKill()
-        frame.Background:GwKill()
-
-        --Create Backdrop
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-
-        --Icon
-        frame.MissionType:ClearAllPoints()
-        frame.MissionType:SetPoint("LEFT", frame.backdrop, 30, 0)
-        frame.MissionType:SetSize(45, 45)
-        frame.MissionType:SetDrawLayer("ARTWORK")
-        frame.MissionType:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        frame.MissionType.b = CreateFrame("Frame", nil, frame)
-        frame.MissionType.b:SetPoint("TOPLEFT", frame.MissionType, "TOPLEFT", -2, 2)
-        frame.MissionType.b:SetPoint("BOTTOMRIGHT", frame.MissionType, "BOTTOMRIGHT", 2, -2)
-        frame.MissionType:SetParent(frame.MissionType.b)
-        frame.MissionType.iconBorder = frame.MissionType.b:CreateTexture(nil, "ARTWORK")
-        frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.MissionType.iconBorder:SetAllPoints(frame.MissionType.b)
-
-        --flare
-        AddFlare(frame, frame.MissionType.b)
-
-        frame.gwSkinned = true
-    end
-end
-
-local function skinGarrisonRandomMissionAlert(frame, _, _, _, _, _, quality)
-    -- /run GarrisonRandomMissionAlertSystem:AddAlert(C_Garrison.GetBasicMissionInfo(391))
-    if not frame.gwSkinned then
-        frame.glow:GwKill()
-        frame.shine:GwKill()
-        frame.Background:GwKill()
-        frame.Blank:GwKill()
-        frame.IconBG:GwKill()
-
-        --Create Backdrop
-        frame:GwCreateBackdrop(constBackdropAlertFrame)
-        frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-
-        --Icon
-        frame.MissionType:ClearAllPoints()
-        frame.MissionType:SetPoint("LEFT", frame.backdrop, 30, 0)
-        frame.MissionType:SetSize(45, 45)
-        frame.MissionType:SetDrawLayer("ARTWORK")
-        frame.MissionType:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        frame.MissionType.b = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-        frame.MissionType.b:SetPoint("TOPLEFT", frame.MissionType, "TOPLEFT", -2, 2)
-        frame.MissionType.b:SetPoint("BOTTOMRIGHT", frame.MissionType, "BOTTOMRIGHT", 2, -2)
-        frame.MissionType:SetParent(frame.MissionType.b)
-        frame.MissionType.iconBorder = frame.MissionType.b:CreateTexture(nil, "ARTWORK")
-        frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        frame.MissionType.iconBorder:SetAllPoints(frame.MissionType.b)
-
-        --flare
-        AddFlare(frame, frame.MissionType.b)
-
-        frame.gwSkinned = true
-    end
-
-    if frame.PortraitFrame and frame.PortraitFrame.squareBG then
-        local color = quality and GW.GetQualityColor(quality)
-        if color then
-            frame.PortraitFrame.squareBG:SetBackdropBorderColor(color.r, color.g, color.b)
-        else
-            frame.PortraitFrame.squareBG:SetBackdropBorderColor(0, 0, 0)
-        end
-    end
-end
-
-local function skinBonusRollMoney()
-    local frame = BonusRollMoneyWonFrame
-    frame:SetAlpha(1)
-    hooksecurefunc(frame, "SetAlpha", forceAlpha)
-
-    frame.Background:GwKill()
-    frame.IconBorder:GwKill()
-
-    frame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-
-    -- Icon border
-    frame.Icon.b = CreateFrame("Frame", nil, frame)
-    frame.Icon.b:SetPoint("TOPLEFT", frame.Icon, "TOPLEFT", -2, 2)
-    frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
-    frame.Icon:SetParent(frame.Icon.b)
-    frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-    frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
-
-    --Create Backdrop
-    frame:GwCreateBackdrop(constBackdropAlertFrame)
-    frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
-    frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-
-    --flare
-    AddFlare(frame, frame.Icon.b)
-end
-
-local function skinBonusRollLoot()
-    local frame = BonusRollLootWonFrame
-    frame:SetAlpha(1)
-    hooksecurefunc(frame, "SetAlpha", forceAlpha)
-
-    frame.Background:GwKill()
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-
-    local lootItem = frame.lootItem or frame
-    lootItem.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    lootItem.IconBorder:GwKill()
-
-    -- Icon border
-    lootItem.Icon.b = CreateFrame("Frame", nil, frame)
-    lootItem.Icon.b:SetPoint("TOPLEFT", lootItem.Icon, "TOPLEFT", -2, 2)
-    lootItem.Icon.b:SetPoint("BOTTOMRIGHT", lootItem.Icon, "BOTTOMRIGHT", 2, -2)
-    lootItem.Icon:SetParent(lootItem.Icon.b)
-    lootItem.Icon.iconBorder = lootItem.Icon.b:CreateTexture(nil, "ARTWORK")
-    lootItem.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    lootItem.Icon.iconBorder:SetAllPoints(lootItem.Icon.b)
-
-    --Create Backdrop
-    frame:GwCreateBackdrop(constBackdropAlertFrame)
-    frame.backdrop:SetPoint("TOPLEFT", lootItem.Icon.b, "TOPLEFT", -25, 15)
-    frame.backdrop:SetPoint("BOTTOMRIGHT", lootItem.Icon.b, "BOTTOMRIGHT", 227, -15)
-
-    --flare
-    AddFlare(frame, lootItem.Icon.b)
-end
-
-local function GW2_UIAlertFrame_OnClick(self, ...)
-    if (self.delay == -1) then
-        self:SetScript("OnLeave", AlertFrame_ResumeOutAnimation)
-        self.delay = 0
-    end
-    if (self.onClick) then
-        if (AlertFrame_OnClick(self, ...)) then  return  end -- Handle right-clicking to hide the frame.
-        self.onClick(self, ...)
-    elseif (self.onClick == false) then
-        AlertFrame_OnClick(self, ...)
-    end
-end
-
-local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID, targetName)
-    -- An alert flagged as alreadyEarned has more space for the text to display since there's no shield+points icon.
-    AchievementAlertFrame_SetUp(frame, 2416, true)
-    frame:HookScript("OnClick", GW2_UIAlertFrame_OnClick)
-    frame.Name:SetFormattedText(name)
-    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    frame.Unlocked:SetFormattedText(toptext or "")
-    frame.Unlocked:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    frame.onClick = onClick
-    frame.delay = delay
-    frame.spellID = spellID
-    frame.levelup = levelup
-    frame:RegisterForClicks("AnyUp", "AnyDown")
-
-    frame.Icon:SetScript("OnEnter", function(self)
-        if self:GetParent().spellID then
-            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
-            GameTooltip:ClearLines()
-            GameTooltip:SetSpellByID(self:GetParent().spellID)
-            GameTooltip:Show()
-        end
-    end)
-    frame.Icon:SetScript("OnLeave", GameTooltip_Hide)
-
-    frame:SetAlpha(1)
-
-    if not frame.hooked then
-        hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        frame.hooked = true
-    end
-
-    if not frame.backdrop then
-        frame:GwCreateBackdrop()
-        frame.backdrop:SetPoint("TOPLEFT", frame.Background, "TOPLEFT", -10, 0)
-        frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Background, "BOTTOMRIGHT", 5, 0)
-    end
-    frame.backdrop:SetBackdrop(levelup and constBackdropLevelUpAlertFrame or constBackdropAlertFrame)
-
-    if delay == -1 then
-        frame:SetScript("OnLeave", nil)
-    else
-        frame:SetScript("OnLeave", AlertFrame_ResumeOutAnimation)
-    end
-
-    -- target by name
-    if not InCombatLockdown() and targetName then
-        frame:SetAttribute("type", "macro")
-        frame:SetAttribute("macrotext", "/target " .. targetName)
-    end
-
-    -- Background
-    frame.Background:SetTexture()
-    if frame.OldAchievement then frame.OldAchievement:GwKill() end
-    frame.glow:GwKill()
-    frame.shine:GwKill()
-    frame.GuildBanner:GwKill()
-    frame.GuildBorder:GwKill()
-
-    -- Text
-    frame.Unlocked:SetTextColor(1, 1, 1)
-
-    -- Icon
-    frame.Icon.Texture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    frame.Icon.Overlay:GwKill()
-
-    frame.Icon.Texture:ClearAllPoints()
-    frame.Icon.Texture:SetPoint("LEFT", frame, 7, 0)
-
-    if icon and C_Texture.GetAtlasInfo(icon) then
-        frame.Icon.Texture:SetAtlas(icon)
-    else
-        frame.Icon.Texture:SetTexture(icon)
-    end
-
-    frame.Icon.Texture.b = CreateFrame("Frame", nil, frame)
-    frame.Icon.Texture.b:SetAllPoints(frame.Icon.Texture)
-    frame.Icon.Texture:SetParent(frame.Icon.Texture.b)
-
-    --flare
-    if not frame.flareIcon then
-        AddFlare(frame, frame.Icon.Texture.b)
-    end
+    return lowest, lowestSlot
 end
 
 local function GetGuildInvites()
@@ -1284,9 +833,7 @@ local function GetGuildInvites()
     for index = 1, C_Calendar.GetNumGuildEvents() do
         local info = C_Calendar.GetGuildEventInfo(index)
         local monthOffset = info.month - date.month
-        local numDayEvents = C_Calendar.GetNumDayEvents(monthOffset, info.monthDay)
-
-        for i = 1, numDayEvents do
+        for i = 1, C_Calendar.GetNumDayEvents(monthOffset, info.monthDay) do
             local event = C_Calendar.GetDayEvent(monthOffset, info.monthDay, i)
             if event.inviteStatus == CALENDAR_INVITESTATUS_NOT_SIGNEDUP and not guildInviteCache[info.eventID] then
                 numGuildInvites = numGuildInvites + 1
@@ -1294,7 +841,6 @@ local function GetGuildInvites()
             end
         end
     end
-
     return numGuildInvites
 end
 
@@ -1303,372 +849,504 @@ local function toggleCalendar()
     ShowUIPanel(CalendarFrame)
 end
 
+---------- the toasts themselves, used by the events and by the previews in the settings ----------
+local ICONS = "Interface/AddOns/GW2_UI/textures/icons/"
+
+local function ShowCalendarAlert(text)
+    GW.AlertSystem:AddAlert(text, nil, CALENDAR_STATUS_INVITED, toggleCalendar, ICONS .. "clock.png", false)
+end
+
+local function ShowLevelUpAlert(level, talentPoints, numNewPvpTalentSlots)
+    GW.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, ICONS .. "icon-levelup.png", true)
+    if talentPoints and talentPoints > 0 then
+        GW.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, ICONS .. "talent-icon.png", false)
+    end
+    if GW.Retail and C_SpecializationInfo.CanPlayerUsePVPTalentUI() and numNewPvpTalentSlots and numNewPvpTalentSlots > 0 then
+        GW.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, ICONS .. "talent-icon.png", false)
+    end
+    PlayAlertSound("ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND")
+end
+
+local function ShowSpellAlert(name, icon, spellID)
+    GW.AlertSystem:AddAlert(SPELL_BUCKET_ABILITIES_UNLOCKED, nil, name, false, icon, false, spellID)
+end
+
+local function ShowMailAlert()
+    GW.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, ICONS .. "mail-window-icon.png", false)
+    PlayAlertSound("ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND")
+end
+
+local function ShowRepairAlert(slotName, value)
+    GW.AlertSystem:AddAlert(format(L["%s slot needs to repair, current durability is %d."], slotName, value), nil, MINIMAP_TRACKING_REPAIR, false, ICONS .. "repair.png", false)
+    PlayAlertSound("ALERTFRAME_NOTIFICATION_REPAIR_SOUND")
+end
+
+local function ShowParagonAlert(factionName, questText)
+    local text = GW.RGBToHex(0.22, 0.37, 0.98) .. factionName .. "|r"
+    GW.AlertSystem:AddAlert(questText or "", nil, text, false, "Interface/Icons/Achievement_Quests_Completed_08", false)
+    PlayAlertSound("ALERTFRAME_NOTIFICATION_PARAGON_SOUND")
+end
+
+local function ShowRareAlert(name, atlas)
+    local nameColored = format("|cff00c0fa%s|r", name:utf8sub(1, 28))
+    GW.AlertSystem:AddAlert(L["has appeared on the Minimap!"], nil, nameColored, false, atlas, false, nil, name)
+end
+
+local function ShowCallToArmsAlert(roles)
+    GW.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, roles), nil, BATTLEGROUND_HOLIDAY, false, ICONS .. "garrison-up.png", false)
+    PlayAlertSound("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND")
+end
+
+local function ShowBagsFullAlert()
+    GW.AlertSystem:AddAlert(ERR_INV_FULL, nil, INVTYPE_BAG, false, "Interface/Icons/INV_Misc_Bag_08", false)
+    PlayAlertSound("ALERTFRAME_NOTIFICATION_BAGS_FULL_SOUND")
+end
+
+local function ShowVaultAlert()
+    GW.AlertSystem:AddAlert(MYTHIC_PLUS_COLLECT_GREAT_VAULT, nil, RATED_PVP_WEEKLY_VAULT, WeeklyRewards_ShowUI, "greatVault-whole-normal", false)
+    PlayAlertSound("ALERTFRAME_NOTIFICATION_GREAT_VAULT_SOUND")
+end
+
+-- group member spells worth a toast; classic clients only, retail hides the caster behind secret values
+local function ShowGroupSpellAlert(spellID, text, setting)
+    local spellInfo = C_Spell.GetSpellInfo(spellID)
+    GW.AlertSystem:AddAlert(text, nil, spellInfo.name, false, spellInfo.iconID, false)
+    PlayAlertSound(setting)
+end
+
+local ROLE_COLORS = {TANK = "|cff00B2EE", HEALER = "|cff00EE00", DAMAGER = "|cffd62c35"}
+local function ColorRole(role, wanted)
+    return wanted and ROLE_COLORS[role] .. _G[role] .. "|r" or ""
+end
+
+-- the play buttons in the notification settings, keyed like the settings without their prefix
+local function PlayerName()
+    return UnitName("player")
+end
+GW.AlertPreviews = {
+    LEVEL_UP = function() ShowLevelUpAlert(UnitLevel("player"), 1) end,
+    NEW_SPELL = function()
+        local spellInfo = C_Spell.GetSpellInfo(8690) -- Hearthstone
+        ShowSpellAlert(spellInfo.name, spellInfo.iconID, 8690)
+        PlayAlertSound("ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND")
+    end,
+    NEW_MAIL = ShowMailAlert,
+    REPAIR = function() ShowRepairAlert(INVTYPE_HEAD, 15) end,
+    PARAGON = function()
+        local watched = C_Reputation and C_Reputation.GetWatchedFactionData and C_Reputation.GetWatchedFactionData()
+        ShowParagonAlert(watched and watched.name or L["Paragon"], L["Paragon chest"])
+    end,
+    RARE = function()
+        ShowRareAlert(PlayerName(), "VignetteKillElite")
+        PlayAlertSound("ALERTFRAME_NOTIFICATION_RARE_SOUND")
+    end,
+    CALENDAR_INVITE = function()
+        ShowCalendarAlert(L["You have %s pending calendar invite(s)."]:format(1))
+        PlayAlertSound("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND")
+    end,
+    CALL_TO_ARMS = function() ShowCallToArmsAlert(ColorRole("TANK", true) .. " " .. ColorRole("HEALER", true) .. " " .. ColorRole("DAMAGER", true)) end,
+    BAGS_FULL = ShowBagsFullAlert,
+    GREAT_VAULT = ShowVaultAlert,
+    MAGE_TABLE = function() ShowGroupSpellAlert(190336, format(L["%s created a table of Conjured Refreshments."], PlayerName()), "ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND") end,
+    RITUAL_OF_SUMMONING = function() ShowGroupSpellAlert(698, format(L["%s is performing a Ritual of Summoning."], PlayerName()), "ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND") end,
+    SPOULWELL = function() ShowGroupSpellAlert(29893, format(L["%s created a Soulwell."], PlayerName()), "ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND") end,
+    MAGE_PORTAL = function() ShowGroupSpellAlert(10059, format(L["%s placed a portal to %s."], PlayerName(), C_Spell.GetSpellInfo(10059).name:gsub("^.+:%s+", "")), "ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND") end,
+}
+
+for key, preview in pairs(GW.AlertPreviews) do
+    GW.AlertPreviews[key] = function()
+        if GW.AlertSystem then
+            preview()
+        end
+    end
+end
+
+local function WithItem(itemID, callback)
+    local item = Item:CreateFromItemID(itemID)
+    item:ContinueOnItemLoad(function() callback(item:GetItemLink()) end)
+end
+
+local BLIZZARD_PREVIEWS = {
+    {"achievement", ACHIEVEMENT_UNLOCKED, "AchievementAlertSystem", function() AchievementAlertSystem:AddAlert(6) end},
+    {"criteria", ACHIEVEMENT_PROGRESSED, "CriteriaAlertSystem", function() CriteriaAlertSystem:AddAlert(6, (select(2, GetAchievementInfo(6)))) end},
+    {"loot", LOOT, "LootAlertSystem", function() WithItem(50818, function(link) LootAlertSystem:AddAlert(link, 1, nil, nil, nil, false, false, nil, false, false) end) end},
+    {"lootUpgrade", ITEM_UPGRADE, "LootUpgradeAlertSystem", function() WithItem(50818, function(link) LootUpgradeAlertSystem:AddAlert(link, 1, nil, Enum.ItemQuality.Rare) end) end},
+    {"legendary", ITEM_QUALITY5_DESC, "LegendaryItemAlertSystem", function() WithItem(19019, function(link) LegendaryItemAlertSystem:AddAlert(link) end) end},
+    {"money", MONEY, "MoneyWonAlertSystem", function() MoneyWonAlertSystem:AddAlert(1234567) end},
+    {"honor", HONOR, "HonorAwardedAlertSystem", function() HonorAwardedAlertSystem:AddAlert(250) end},
+    {"dungeon", DUNGEON_COMPLETED, "DungeonCompletionAlertSystem", function()
+        DungeonCompletionAlertSystem:AddAlert({name = DUNGEONS, subtypeID = LFG_SUBTYPEID_HEROIC, iconTextureFile = "Interface/Icons/Achievement_Boss_Ragnaros", moneyAmount = 123456, experienceGained = 0, numRewards = 0, rewards = {}})
+    end},
+    {"scenario", SCENARIOS, "ScenarioAlertSystem", function()
+        ScenarioAlertSystem:AddAlert({name = SCENARIOS, iconTextureFile = "Interface/Icons/Achievement_Boss_Ragnaros", moneyAmount = 123456, experienceGained = 0, numRewards = 0, rewards = {}})
+    end},
+    {"worldQuest", WORLD_QUEST_COMPLETE, "WorldQuestCompleteAlertSystem", function()
+        WorldQuestCompleteAlertSystem:AddAlert({questID = 0, taskName = QUESTS_LABEL, icon = "Interface/Icons/INV_Misc_Map02", money = 123456, xp = 0})
+    end},
+    {"guildChallenge", GUILD, "GuildChallengeAlertSystem", function() GuildChallengeAlertSystem:AddAlert(1, 2, 7) end},
+    {"digsite", PROFESSIONS_ARCHAEOLOGY, "DigsiteCompleteAlertSystem", function()
+        local raceName, raceTexture = GetArchaeologyRaceInfo(1)
+        if raceName then
+            DigsiteCompleteAlertSystem:AddAlert(raceName, raceTexture)
+        end
+    end},
+    {"pet", PETS, "NewPetAlertSystem", function()
+        local petID, _, owned = C_PetJournal.GetPetInfoByIndex(1)
+        if petID and owned then
+            NewPetAlertSystem:AddAlert(petID)
+        end
+    end},
+    {"mount", MOUNTS, "NewMountAlertSystem", function()
+        local mountID = C_MountJournal.GetMountIDs()[1]
+        if mountID then
+            NewMountAlertSystem:AddAlert(mountID)
+        end
+    end},
+    {"toy", TOY_BOX, "NewToyAlertSystem", function() WithItem(54452, function() NewToyAlertSystem:AddAlert(54452) end) end},
+    {"entitlement", BLIZZARD_STORE, "EntitlementDeliveredAlertSystem", function()
+        EntitlementDeliveredAlertSystem:AddAlert(Enum.WoWEntitlementType.Item, "Interface/Icons/INV_Misc_Gift_01", BLIZZARD_STORE, 0, false)
+    end},
+    {"follower", GARRISON_FOLLOWERS, "GarrisonFollowerAlertSystem", function()
+        local info = C_Garrison.GetFollowerInfo(204)
+        if info then
+            GarrisonFollowerAlertSystem:AddAlert(204, info.name, info.level, info.quality, false, info)
+        end
+    end},
+    {"mission", GARRISON_MISSIONS, "GarrisonMissionAlertSystem", function()
+        GarrisonMissionAlertSystem:AddAlert({name = GARRISON_MISSIONS, typeAtlas = "GarrMission_MissionIcon-Combat", followerTypeID = Enum.GarrisonFollowerType.FollowerType_6_0_GarrisonFollower, missionID = 0})
+    end},
+}
+
+GW.BlizzardAlertPreviews = {keys = {}, names = {}, show = {}}
+for _, entry in ipairs(BLIZZARD_PREVIEWS) do
+    if _G[entry[3]] then
+        tinsert(GW.BlizzardAlertPreviews.keys, entry[1])
+        tinsert(GW.BlizzardAlertPreviews.names, entry[2])
+        GW.BlizzardAlertPreviews.show[entry[1]] = entry[4]
+    end
+end
+
+---------- what triggers them ----------
 local function alertEvents()
     if CalendarFrame and CalendarFrame:IsShown() then return false end
-    local showAlert = false
     local num = C_Calendar.GetNumPendingInvites()
-    if num ~= numInvites then
-        if num > 0 then
-            GW.AlertSystem:AddAlert(GW.L["You have %s pending calendar invite(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock.png", false)
-            showAlert = true
-        end
-        numInvites = num
+    if num == numInvites then return false end
+    numInvites = num
+    if num > 0 then
+        ShowCalendarAlert(L["You have %s pending calendar invite(s)."]:format(num))
+        return true
     end
-
-    return showAlert
+    return false
 end
 
 local function alertGuildEvents()
     if CalendarFrame and CalendarFrame:IsShown() then return false end
-    local showAlert = false
     local num = GetGuildInvites()
     if num > 0 then
-        -- /run GW2_ADDON.AlertSystem:AddAlert("tt", nil, CALENDAR_STATUS_INVITED, function() if not CalendarFrame then C_AddOns.LoadAddOn("Blizzard_Calendar") end ShowUIPanel(CalendarFrame) end , "Interface/AddOns/GW2_UI/textures/icons/clock.png", false)
-        GW.AlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock.png", false)
-        showAlert = true
+        ShowCalendarAlert(L["You have %s pending guild event(s)."]:format(num))
+        return true
     end
-
-    return showAlert
+    return false
 end
 
-local function CLEUHandling(self, _, subEvent, _, sourceGUID, srcName, sourceFlags, _, destGUID, destName, _, _, ...)
-    if IsInRaid() or IsInGroup() then
-        local spellID = ...
-        if not spellID or not srcName then return end
+local function CLEUHandling(_, _, subEvent, _, _, srcName, _, _, _, _, _, _, spellID)
+    if not (IsInRaid() or IsInGroup()) or not spellID or not srcName then return end
+    local groupStatus = GW.IsGroupMember(srcName)
+    if not groupStatus or groupStatus == 3 then return end
 
-        local groupStatus = GW.IsGroupMember(srcName)
-        if not groupStatus or groupStatus == 3 then
-            return
+    if subEvent == "SPELL_CAST_SUCCESS" then
+        if GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE and spellID == 190336 then -- Refreshment Table
+            ShowGroupSpellAlert(spellID, format(L["%s created a table of Conjured Refreshments."], srcName), "ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND")
         end
+    elseif subEvent == "SPELL_CREATE" then
+        if GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING and spellID == 698 then -- Ritual of Summoning
+            ShowGroupSpellAlert(spellID, format(L["%s is performing a Ritual of Summoning."], srcName), "ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND")
+        elseif GW.settings.ALERTFRAME_NOTIFICATION_SPOULWELL and spellID == 29893 then -- Soul Well
+            ShowGroupSpellAlert(spellID, format(L["%s created a Soulwell."], srcName), "ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND")
+        elseif GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL and GW.MagePortals[spellID] then
+            local destination = C_Spell.GetSpellInfo(spellID).name:gsub("^.+:%s+", "")
+            ShowGroupSpellAlert(spellID, format(L["%s placed a portal to %s."], srcName, destination), "ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND")
+        end
+    end
+end
 
-        if subEvent == "SPELL_CAST_SUCCESS" then
-            if GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE and spellID == 190336 then -- Refreshment Table
-                local spellInfo = C_Spell.GetSpellInfo(190336)
-                -- /run GW.AlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, C_Spell.GetSpellInfo(190336), false, select(3, C_Spell.GetSpellInfo(190336)), false)
-                GW.AlertSystem:AddAlert(format(GW.L["%s created a table of Conjured Refreshments."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND), "Master")
-            end
-        elseif subEvent == "SPELL_CREATE" then
-            if GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING and spellID == 698 then -- Ritual of Summoning
-                local spellInfo = C_Spell.GetSpellInfo(698)
-                -- /run GW.AlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, C_Spell.GetSpellInfo(698), false, select(3, C_Spell.GetSpellInfo(698)), false)
-                GW.AlertSystem:AddAlert(format(GW.L["%s is performing a Ritual of Summoning."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND), "Master")
-            elseif GW.settings.ALERTFRAME_NOTIFICATION_SPOULWELL and spellID == 29893 then -- Soul Well
-                local spellInfo = C_Spell.GetSpellInfo(29893)
-                -- /run GW.AlertSystem:AddAlert(format("%s created a Soulwell.", "Hansi"), nil, C_Spell.GetSpellInfo(29893), false, select(3, C_Spell.GetSpellInfo(29893)), false)
-                GW.AlertSystem:AddAlert(format(GW.L["%s created a Soulwell."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND), "Master")
-            elseif GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL and GW.MagePortals[spellID] then
-                local spellInfo = C_Spell.GetSpellInfo(spellID)
-                -- /run GW2_ADDON.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", C_Spell.GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, "test", false, C_Spell.GetSpellInfo(224871).iconID, false)
-                GW.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, spellInfo.name:gsub("^.+:%s+", "")), nil, spellInfo.name, false, spellInfo.iconID, false)
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND), "Master")
-            end
+local function OnLevelUp(level, talentPoints, numNewPvpTalentSlots)
+    ShowLevelUpAlert(level, talentPoints, numNewPvpTalentSlots)
+    for _, v in pairs(toastQueue) do
+        if v.event == "LEARNED_SPELL_IN_SKILL_LINE" then
+            v.event = ""
         end
+    end
+end
+
+local function OnSpellLearned(spellID)
+    if ignoreDragonRidingSpells[spellID] then return end
+    local spellInfo = C_Spell.GetSpellInfo(spellID)
+    toastQueue[#toastQueue + 1] = {name = spellInfo.name, spellID = spellID, icon = spellInfo.iconID, event = "LEARNED_SPELL_IN_SKILL_LINE"}
+    C_Timer.After(1.5, function()
+        for _, v in pairs(toastQueue) do
+            ShowSpellAlert(v.name, v.icon, v.spellID)
+        end
+        wipe(toastQueue)
+        PlayAlertSound("ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND")
+    end)
+end
+
+local function OnMailUpdate()
+    if InCombatLockdown() then return end
+    local newMail = HasNewMail()
+    if hasMail == newMail then return end
+    hasMail = newMail
+    if hasMail then
+        ShowMailAlert()
+    end
+end
+
+local function OnDurabilityUpdate()
+    local lowest, slotName = GetLowestDurability()
+    local value = floor(lowest * 100)
+    if not showRepair or not slotName or value >= REPAIR_THRESHOLD then return end
+    showRepair = false
+    C_Timer.After(30, function() showRepair = true end)
+    ShowRepairAlert(slotName, value)
+end
+
+local function OnQuestAccepted(questID)
+    local factionData = GetParagonFaction(questID)
+    if not factionData then return end
+    ShowParagonAlert(factionData.name, GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questID)))
+end
+
+local function PrintVignetteToChat(vignetteGUID, vignetteInfo, mapID)
+    local position = mapID and C_VignetteInfo.GetVignettePosition(vignetteGUID, mapID)
+    local place = ""
+    if position then
+        local x, y = position:GetXY()
+        place = format(" |cffffff00|Hworldmap:%d:%d:%d|h[|A:Waypoint-MapPin-ChatIcon:13:13:0:0|a%s]|h|r", mapID, x * 10000, y * 10000, MAP_PIN_HYPERLINK)
+    end
+    GW.Notice(format("|cff00c0fa%s|r %s%s", vignetteInfo.name, L["has appeared on the Minimap!"], place))
+end
+
+local function OnVignetteUpdated(self, vignetteGUID, onMinimap)
+    local mapID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
+    if not onMinimap or VignetteExclusionMapIDs[mapID] then return end
+    if IsInGroup() or IsInRaid() or IsPartyLFG() or C_PartyInfo.IsPartyWalkIn() then return end
+
+    local vignetteInfo = C_VignetteInfo.GetVignetteInfo(vignetteGUID)
+    if not vignetteInfo or not C_Texture.GetAtlasInfo(vignetteInfo.atlasName) then return end
+    if VignetteBlackListIDs[vignetteInfo.vignetteID] or not isUsefulAtlas(vignetteInfo) then return end
+    if vignetteGUID == self.lastMinimapRare.id then return end
+
+    GW.Debug("Minimap vignette with id", vignetteInfo.vignetteID, "and name", vignetteInfo.name, "appeared on the minimap.")
+    ShowRareAlert(vignetteInfo.name, vignetteInfo.atlasName)
+    if GW.settings.ALERTFRAME_NOTIFICATION_RARE_CHAT then
+        PrintVignetteToChat(vignetteGUID, vignetteInfo, mapID)
+    end
+    self.lastMinimapRare.id = vignetteGUID
+
+    local now = GetTime()
+    if now > self.lastMinimapRare.time + 20 then
+        PlayAlertSound("ALERTFRAME_NOTIFICATION_RARE_SOUND")
+        self.lastMinimapRare.time = now
+    end
+end
+
+local function OnRandomDungeonInfo()
+    if IsInGroup(LE_PARTY_CATEGORY_HOME) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then return end
+    local forTank, forHealer, forDamage = GetRoleShortage()
+    local isTank, isHealer, isDamage = C_LFGList.GetAvailableRoles()
+    local tank = ColorRole("TANK", isTank and forTank)
+    local healer = ColorRole("HEALER", isHealer and forHealer)
+    local damager = ColorRole("DAMAGER", isDamage and forDamage)
+    if tank == "" and healer == "" and damager == "" then return end
+
+    local now = GetTime()
+    if now - callToArmsTime <= 20 then return end
+    callToArmsTime = now
+    ShowCallToArmsAlert(tank .. " " .. healer .. " " .. damager)
+end
+
+local function OnBagUpdate()
+    local free = 0
+    for bag = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+        local freeSlots, bagFamily = C_Container.GetContainerNumFreeSlots(bag)
+        if bagFamily == 0 then
+            free = free + freeSlots
+        end
+    end
+    local full = free == 0
+    if bagsFull == full then return end
+    bagsFull = full
+    if full then
+        ShowBagsFullAlert()
+    end
+end
+
+local function OnWeeklyRewardsUpdate()
+    local available = C_WeeklyRewards.HasAvailableRewards()
+    if hasVaultRewards == available then return end
+    hasVaultRewards = available
+    if available then
+        ShowVaultAlert()
     end
 end
 
 local function AlertContainerFrameOnEvent(self, event, ...)
-    local currentTime = GetTime()
-    if event == "PLAYER_LEVEL_UP" and GW.settings.ALERTFRAME_NOTIFICATION_LEVEL_UP then
+    local settings = GW.settings
+    if event == "PLAYER_LEVEL_UP" and settings.ALERTFRAME_NOTIFICATION_LEVEL_UP then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
-        GW.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
-        -- /run GW2_ADDON.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
-
-        if talentPoints and talentPoints > 0 then
-            GW.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon.png", false)
-            --/run GW.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon.png", false)
-        end
-        if GW.Retail and C_SpecializationInfo.CanPlayerUsePVPTalentUI() and numNewPvpTalentSlots and numNewPvpTalentSlots > 0 then
-            GW.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon.png", false)
-            --/run GW.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon.png", false)
-        end
-
-        -- if we learn a spell here we should show the new spell so we remove the event from the toastQueue list
-        for _, v in pairs(toastQueue) do
-            if v ~= nil and v.event == "LEARNED_SPELL_IN_SKILL_LINE" then
-                v.event = ""
-            end
-        end
-        PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND), "Master")
-    elseif event == "LEARNED_SPELL_IN_SKILL_LINE" and GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL and not self.ignoreNewSpells then
-        local spellID = ...
-        if ignoreDragonRidingSpells[spellID] then return end
-        local spellInfo = C_Spell.GetSpellInfo(spellID)
-        toastQueue[#toastQueue + 1] = {name = spellInfo.name, spellID = spellID, icon = spellInfo.iconID, event = event}
-        C_Timer.After(1.5, function()
-            for _, v in pairs(toastQueue) do
-                if v ~= nil then
-                    GW.AlertSystem:AddAlert(SPELL_BUCKET_ABILITIES_UNLOCKED, nil, v.name, false, v.icon, false, v.spellID)
-                end
-            end
-            wipe(toastQueue)
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND), "Master")
-        end)
-        -- /run GW2_ADDON.AlertSystem:AddAlert(C_Spell.GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, C_Spell.GetSpellInfo(48181)), false, 48181)
-    elseif event == "PLAYER_SPECIALIZATION_CHANGED" and GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL then
+        OnLevelUp(level, talentPoints, numNewPvpTalentSlots)
+    elseif event == "LEARNED_SPELL_IN_SKILL_LINE" and settings.ALERTFRAME_NOTIFICATION_NEW_SPELL and not self.ignoreNewSpells then
+        OnSpellLearned(...)
+    elseif event == "PLAYER_SPECIALIZATION_CHANGED" and settings.ALERTFRAME_NOTIFICATION_NEW_SPELL then
         C_Timer.After(0.5, function()
             for k, v in pairs(toastQueue) do
-                if v ~= nil and v.event == "LEARNED_SPELL_IN_SKILL_LINE" then
+                if v.event == "LEARNED_SPELL_IN_SKILL_LINE" then
                     toastQueue[k] = nil
                 end
             end
         end)
-    elseif event == "UPDATE_PENDING_MAIL" and GW.settings.ALERTFRAME_NOTIFICATION_NEW_MAIL then
-        if InCombatLockdown() then return end
-        local newMail = HasNewMail()
-        if hasMail ~= newMail then
-            hasMail = newMail
-
-            if hasMail then
-                -- /run GW.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon.png", false)
-                GW.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon.png", false)
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND), "Master")
-            end
-        end
-    elseif event == "UPDATE_INVENTORY_DURABILITY" and GW.settings.ALERTFRAME_NOTIFICATION_REPAIR then
-        local current, max
-
-        for i = 1, 11 do
-            if GetInventoryItemLink("player", slots[i][1]) then
-                current, max = GetInventoryItemDurability(slots[i][1])
-                if current then
-                    slots[i][3] = current / max
-                end
-            end
-        end
-        table.sort(slots, function(a, b) return a[3] < b[3] end)
-
-        local value = floor(slots[1][3] * 100)
-        if showRepair and value < 20 then
-            showRepair = false
-            C_Timer.After(30, function() showRepair = true end)
-            -- /run GW.AlertSystem:AddAlert(format("%s slot needs to repair, current durability is %d.", INVTYPE_HEAD, 20), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair.png", false)
-            GW.AlertSystem:AddAlert(format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair.png", false)
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_REPAIR_SOUND), "Master")
-        end
-    elseif event == "QUEST_ACCEPTED" and GW.settings.ALERTFRAME_NOTIFICATION_PARAGON then
-        local questId = ...
-        if PARAGON_QUEST_ID[questId] then
-            local factionData = C_Reputation.GetFactionDataByID(PARAGON_QUEST_ID[questId][1])
-            local text = GW.RGBToHex(0.22, 0.37, 0.98) .. (factionData and factionData.name or UNKNOWN) .. "|r"
-            local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
-            -- /run GW.AlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface/Icons/Achievement_Quests_Completed_08", false)
-            GW.AlertSystem:AddAlert(name or "", nil, text, false, "Interface/Icons/Achievement_Quests_Completed_08", false)
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_PARAGON_SOUND), "Master")
-        end
-    elseif event == "VIGNETTE_MINIMAP_UPDATED" and GW.settings.ALERTFRAME_NOTIFICATION_RARE then
-        if VignetteExclusionMapIDs[GW.Libs.GW2Lib:GetPlayerLocationMapID()] then return end
-
-        local inGroup, inRaid, inPartyLFG = IsInGroup(), IsInRaid(), IsPartyLFG() or C_PartyInfo.IsPartyWalkIn()
-        if inGroup or inRaid or inPartyLFG then
-            return
-        end
-
-        local vignetteGUID, onMinimap = ...
-
-        if onMinimap then
-            local vignetteInfo = C_VignetteInfo.GetVignetteInfo(vignetteGUID)
-            if not vignetteInfo then return end
-
-            local atlasInfo = C_Texture.GetAtlasInfo(vignetteInfo.atlasName)
-            if not atlasInfo then return end
-
-            local tex = GetTextureStrByAtlas(atlasInfo, 15, 15)
-            if not tex then return end
-
-            if VignetteBlackListIDs[vignetteInfo.vignetteID] or not isUsefulAtlas(vignetteInfo) then return end
-
-            if vignetteGUID ~= self.lastMinimapRare.id then
-                GW.Debug("Minimap vignette with id", vignetteInfo.vignetteID, "and name", vignetteInfo.name, "appeared on the minimap.")
-                vignetteInfo.nameColored = format("|cff00c0fa%s|r", vignetteInfo.name:utf8sub(1, 28))
-                GW.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.nameColored, false, vignetteInfo.atlasName, false, nil, vignetteInfo.name)
-                self.lastMinimapRare.id = vignetteGUID
-
-                if currentTime > (self.lastMinimapRare.time + 20) then
-                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_RARE_SOUND), "Master")
-                    self.lastMinimapRare.time = currentTime
-                end
-            end
-        end
-    elseif event == "CALENDAR_UPDATE_PENDING_INVITES" and GW.settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE then
+    elseif event == "BAG_UPDATE_DELAYED" and settings.ALERTFRAME_NOTIFICATION_BAGS_FULL then
+        OnBagUpdate()
+    elseif event == "WEEKLY_REWARDS_UPDATE" and settings.ALERTFRAME_NOTIFICATION_GREAT_VAULT then
+        OnWeeklyRewardsUpdate()
+    elseif event == "UPDATE_PENDING_MAIL" and settings.ALERTFRAME_NOTIFICATION_NEW_MAIL then
+        OnMailUpdate()
+    elseif event == "UPDATE_INVENTORY_DURABILITY" and settings.ALERTFRAME_NOTIFICATION_REPAIR then
+        OnDurabilityUpdate()
+    elseif event == "QUEST_ACCEPTED" and settings.ALERTFRAME_NOTIFICATION_PARAGON then
+        OnQuestAccepted(...)
+    elseif event == "VIGNETTE_MINIMAP_UPDATED" and settings.ALERTFRAME_NOTIFICATION_RARE then
+        OnVignetteUpdated(self, ...)
+    elseif event == "CALENDAR_UPDATE_PENDING_INVITES" and settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE then
         if alertEvents() or alertGuildEvents() then
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND), "Master")
+            PlayAlertSound("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND")
         end
-    elseif event == "CALENDAR_UPDATE_GUILD_EVENTS" and GW.settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE then
+    elseif event == "CALENDAR_UPDATE_GUILD_EVENTS" and settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE then
         if alertGuildEvents() then
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND), "Master")
+            PlayAlertSound("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND")
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
-        -- collect open invites
         C_Timer.After(7, function() AlertContainerFrameOnEvent(self, "CALENDAR_UPDATE_PENDING_INVITES") end)
-
-        -- disable "LEARNED_SPELL_IN_SKILL_LINE" for 3 sec after after PLAYER_ENTERING_WORLD to prevent a false LEARNED_SPELL_IN_SKILL_LINE trigger
+        -- the login fires LEARNED_SPELL_IN_SKILL_LINE for spells the character already knows
         self.ignoreNewSpells = true
         C_Timer.After(3, function() self.ignoreNewSpells = false end)
-    elseif event == "LFG_UPDATE_RANDOM_INFO" and GW.settings.ALERTFRAME_NOTIFICATION_CALL_TO_ARMS then
-        local _, forTank, forHealer, forDamage = GetLFGRoleShortageRewards(2087, LFG_ROLE_SHORTAGE_RARE) -- 2087 Random Shadowlands Heroic
-        local IsTank, IsHealer, IsDamage = C_LFGList.GetAvailableRoles()
-
-        local ingroup = IsInGroup(LE_PARTY_CATEGORY) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE)
-
-        local tank = IsTank and forTank and "|cff00B2EE" .. TANK .. "|r" or ""
-        local healer = IsHealer and forHealer and "|cff00EE00" .. HEALER .. "|r" or ""
-        local damager = IsDamage and forDamage and "|cffd62c35" .. DAMAGER .. "|r" or ""
-
-        if ((IsTank and forTank) or (IsHealer and forHealer) or (IsDamage and forDamage)) and not ingroup then
-            if currentTime - LFG_Timer > 20 then
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND), "Master")
-                -- /run GW2_ADDON.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up.png", false)
-                GW.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up.png", false)
-                LFG_Timer = currentTime
-            end
-        end
+    elseif event == "LFG_UPDATE_RANDOM_INFO" and settings.ALERTFRAME_NOTIFICATION_CALL_TO_ARMS then
+        OnRandomDungeonInfo()
     end
 end
 
-local function LoadAlertSystem()
+---------- load ----------
+function GW.LoadAlertSystem()
     if not AchievementFrame then
         AchievementFrame_LoadUI()
     end
 
     if GW.settings.ALERTFRAME_SKIN_ENABLED then
-        -- Achievements
-        hooksecurefunc(AchievementAlertSystem, "setUpFunction", skinAchievementAlert)
-        hooksecurefunc(CriteriaAlertSystem, "setUpFunction", skinCriteriaAlert)
+        local systems = {
+            {AchievementAlertSystem, skinAchievementAlert},
+            {CriteriaAlertSystem, skinCriteriaAlert},
+            {DungeonCompletionAlertSystem, skinDungeonCompletionAlert},
+            {WorldQuestCompleteAlertSystem, skinWorldQuestCompleteAlert},
+            {GuildChallengeAlertSystem, skinGuildChallengeAlert},
+            {InvasionAlertSystem, skinInvasionAlert},
+            {ScenarioAlertSystem, skinScenarioAlert},
+            {LegendaryItemAlertSystem, skinLegendaryItemAlert},
+            {LootAlertSystem, skinLootWonAlert},
+            {LootUpgradeAlertSystem, skinLootUpgradeAlert},
+            {MoneyWonAlertSystem, skinMoneyWonAlert},
+            {DigsiteCompleteAlertSystem, skinDigsiteCompleteAlert},
+            {NewRecipeLearnedAlertSystem, skinNewRecipeLearnedAlert},
+            {HonorAwardedAlertSystem, skinHonorAwardedAlert},
+            {NewPetAlertSystem, skinNewItemAlert},
+            {NewMountAlertSystem, skinNewItemAlert},
+            {NewToyAlertSystem, skinNewItemAlert},
+            {GarrisonFollowerAlertSystem, skinGarrisonFollowerAlert},
+            {GarrisonShipFollowerAlertSystem, skinGarrisonShipFollowerAlert},
+            {GarrisonTalentAlertSystem, skinGarrisonTalentAlert},
+            {GarrisonBuildingAlertSystem, skinGarrisonBuildingAlert},
+            {GarrisonMissionAlertSystem, skinGarrisonMissionAlert},
+            {GarrisonShipMissionAlertSystem, skinGarrisonShipMissionAlert},
+            {GarrisonRandomMissionAlertSystem, skinGarrisonRandomMissionAlert},
+        }
         if GW.Retail then
-            hooksecurefunc(MonthlyActivityAlertSystem, "setUpFunction", skinCriteriaAlert)
+            tinsert(systems, {MonthlyActivityAlertSystem, skinCriteriaAlert})
+            tinsert(systems, {EntitlementDeliveredAlertSystem, skinEntitlementDeliveredAlert})
+            tinsert(systems, {RafRewardDeliveredAlertSystem, skinRafRewardDeliveredAlert})
+            tinsert(systems, {NewCosmeticAlertFrameSystem, skinNewItemAlert})
+           hooksecurefunc("LootWonAlertFrame_SetUp", function(frame, ...)
+                if frame == BonusRollLootWonFrame then
+                    skinLootWonAlert(frame, ...)
+                end
+            end)
+            hooksecurefunc("MoneyWonAlertFrame_SetUp", function(frame)
+                if frame == BonusRollMoneyWonFrame then
+                    skinMoneyWonAlert(frame)
+                end
+            end)
         end
-
-        -- Encounters
-        hooksecurefunc(DungeonCompletionAlertSystem, "setUpFunction", skinDungeonCompletionAlert)
-        hooksecurefunc(WorldQuestCompleteAlertSystem, "setUpFunction", skinWorldQuestCompleteAlert)
-        hooksecurefunc(GuildChallengeAlertSystem, "setUpFunction", skinGuildChallengeAlert)
-        hooksecurefunc(InvasionAlertSystem, "setUpFunction", skinInvasionAlert)
-        hooksecurefunc(ScenarioAlertSystem, "setUpFunction", skinScenarioAlert)
-
-        -- Loot
-        hooksecurefunc(LegendaryItemAlertSystem, "setUpFunction", skinLegendaryItemAlert)
-        hooksecurefunc(LootAlertSystem, "setUpFunction", skinLootWonAlert)
-        hooksecurefunc(LootUpgradeAlertSystem, "setUpFunction", skinLootUpgradeAlert)
-        hooksecurefunc(MoneyWonAlertSystem, "setUpFunction", skinMoneyWonAlert)
-        if GW.Retail then
-            hooksecurefunc(EntitlementDeliveredAlertSystem, "setUpFunction", skinEntitlementDeliveredAlert)
-            hooksecurefunc(RafRewardDeliveredAlertSystem, "setUpFunction", skinRafRewardDeliveredAlert)
-        end
-
-        -- Professions
-        hooksecurefunc(DigsiteCompleteAlertSystem, "setUpFunction", skinDigsiteCompleteAlert)
-        hooksecurefunc(NewRecipeLearnedAlertSystem, "setUpFunction", skinNewRecipeLearnedAlert)
-
-        -- Honor
-        hooksecurefunc(HonorAwardedAlertSystem, "setUpFunction", skinHonorAwardedAlert)
-
-        -- Pets/Mounts
-        hooksecurefunc(NewPetAlertSystem, "setUpFunction", skinNewPetAlert)
-        hooksecurefunc(NewMountAlertSystem, "setUpFunction", skinNewPetAlert)
-        hooksecurefunc(NewToyAlertSystem, "setUpFunction", skinNewPetAlert)
-
-        -- Cosmetics
-        if GW.Retail then
-            hooksecurefunc(NewCosmeticAlertFrameSystem, "setUpFunction", skinNewPetAlert)
-        end
-
-        -- Garrisons
-        hooksecurefunc(GarrisonFollowerAlertSystem, "setUpFunction", skinGarrisonFollowerAlert)
-        hooksecurefunc(GarrisonShipFollowerAlertSystem, "setUpFunction", skinGarrisonShipFollowerAlert)
-        hooksecurefunc(GarrisonTalentAlertSystem, "setUpFunction", skinGarrisonTalentAlert)
-        hooksecurefunc(GarrisonBuildingAlertSystem, "setUpFunction", skinGarrisonBuildingAlert)
-        hooksecurefunc(GarrisonMissionAlertSystem, "setUpFunction", skinGarrisonMissionAlert)
-        hooksecurefunc(GarrisonShipMissionAlertSystem, "setUpFunction", skinGarrisonShipMissionAlert)
-        hooksecurefunc(GarrisonRandomMissionAlertSystem, "setUpFunction", skinGarrisonRandomMissionAlert)
-
-        --Bonus Roll Money
-        if GW.Retail then
-            skinBonusRollMoney()
-            skinBonusRollLoot()
+        for _, entry in ipairs(systems) do
+            hooksecurefunc(entry[1], "setUpFunction", entry[2])
         end
     end
 
-    -- add flare animation
     hooksecurefunc("AlertFrame_PlayIntroAnimation", function(self)
-        -- show flare
         if self.flareIcon then
             self.flareIcon.animationGroup:Play()
         end
-    end)
-    hooksecurefunc("AlertFrame_PlayOutAnimation", function(self)
-        if self.flareIcon then
-            if self.timer then
-                self.timer:Cancel()
-                self.timer = nil
-            end
-            self.timer = C_Timer.NewTicker(self.duration or 4, function()
-                self.flareIcon.animationGroup:Stop()
-                self.timer:Cancel()
-                self.timer = nil
-            end, 1)
+        if self.gwGlow then
+            self.gwGlow:Play()
+        end
+        if self.shine and self.backdrop then
+            self.shine.animIn:Stop()
+            self.shine:Hide()
         end
     end)
 
-    if GW.settings.ALERTFRAME_ENABLED then
-        GW.AlertContainerFrame = CreateFrame("Frame", nil, UIParent)
-        GW.AlertContainerFrame:SetSize(300, 5) -- 265
+    if not GW.settings.ALERTFRAME_ENABLED then return end
 
-        local point = GW.settings.AlertPos
-        GW.AlertContainerFrame:ClearAllPoints()
-        GW.AlertContainerFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
+    local container = CreateFrame("Frame", nil, UIParent)
+    GW.AlertContainerFrame = container
+    container:SetSize(300, 5)
+    local point = GW.settings.AlertPos
+    container:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
 
-        local postDragFunction = function(self)
-            local _, y = self.gwMover:GetCenter()
-            local screenHeight = UIParent:GetTop()
-            if y > (screenHeight / 2) then
-                if self.gwMover.frameName and self.gwMover.frameName.SetText then
-                    self.gwMover.frameName:SetText(GW.L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_DOWN .. ")")
-                end
-            else
-                if self.gwMover.frameName and self.gwMover.frameName.SetText then
-                    self.gwMover.frameName:SetText(GW.L["Alert Frames"] .. " (" .. COMBAT_TEXT_SCROLL_UP .. ")")
-                end
-            end
-        end
-
-        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"], "AlertPos", "Blizzard,Widgets", {300, 5}, {"default"}, nil, postDragFunction)
-
-        GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
-        if not GW.Retail and not GW.Wrath then
-            GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
-            GW.Libs.GW2Lib:RegisterCombatEvent(GW.AlertContainerFrame, "SPELL_CAST_SUCCESS", CLEUHandling)
-            GW.Libs.GW2Lib:RegisterCombatEvent(GW.AlertContainerFrame, "SPELL_CREATE", CLEUHandling)
-        end
-        GW.AlertContainerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-        GW.AlertContainerFrame:RegisterEvent("UPDATE_PENDING_MAIL")
-        GW.AlertContainerFrame:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
-        GW.AlertContainerFrame:RegisterEvent("QUEST_ACCEPTED")
-        GW.AlertContainerFrame:RegisterEvent("CALENDAR_UPDATE_PENDING_INVITES")
-        GW.AlertContainerFrame:RegisterEvent("CALENDAR_UPDATE_GUILD_EVENTS")
-        GW.AlertContainerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-        GW.AlertContainerFrame:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-
-        if GW.Retail then
-            GW.AlertContainerFrame:RegisterEvent("VIGNETTE_MINIMAP_UPDATED")
-        end
-
-        GW.AlertContainerFrame.lastMinimapRare = {time = 0, id = nil}
-        GW.AlertContainerFrame.ignoreNewSpells = true
-
-        GW.AlertContainerFrame:SetScript("OnEvent", AlertContainerFrameOnEvent)
+    local function postDragFunction(self)
+        local _, y = self.gwMover:GetCenter()
+        local direction = y > UIParent:GetTop() / 2 and COMBAT_TEXT_SCROLL_DOWN or COMBAT_TEXT_SCROLL_UP
+        self.gwMover.text:SetText(L["Alert Frames"] .. " (" .. direction .. ")")
     end
-end
-GW.LoadAlertSystem = LoadAlertSystem
+    GW.RegisterMovableFrame(container, L["Alert Frames"], "AlertPos", "Blizzard,Widgets", {300, 5}, {"default"}, nil, postDragFunction)
 
-local function LoadOurAlertSubSystem()
+    container:RegisterEvent("PLAYER_LEVEL_UP")
+    container:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    container:RegisterEvent("UPDATE_PENDING_MAIL")
+    container:RegisterEvent("BAG_UPDATE_DELAYED")
+    container:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
+    container:RegisterEvent("QUEST_ACCEPTED")
+    container:RegisterEvent("CALENDAR_UPDATE_PENDING_INVITES")
+    container:RegisterEvent("CALENDAR_UPDATE_GUILD_EVENTS")
+    container:RegisterEvent("PLAYER_ENTERING_WORLD")
+    container:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
+    if GW.Retail then
+        container:RegisterEvent("VIGNETTE_MINIMAP_UPDATED")
+        container:RegisterEvent("WEEKLY_REWARDS_UPDATE")
+    end
+
+    if not GW.Retail and not GW.Wrath then
+        container:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+        GW.Libs.GW2Lib:RegisterCombatEvent(container, "SPELL_CAST_SUCCESS", CLEUHandling)
+        GW.Libs.GW2Lib:RegisterCombatEvent(container, "SPELL_CREATE", CLEUHandling)
+    end
+
+    container.lastMinimapRare = {time = 0, id = nil}
+    container.ignoreNewSpells = true
+    container:SetScript("OnEvent", AlertContainerFrameOnEvent)
+end
+
+function GW.LoadOurAlertSubSystem()
     if not AchievementFrame then
         AchievementFrame_LoadUI()
     end
-
-    -- Add customs alert system
     GW.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
 end
-GW.LoadOurAlertSubSystem = LoadOurAlertSubSystem

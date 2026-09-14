@@ -1193,7 +1193,7 @@ end
 GW.ColorGradient = ColorGradient
 
 local function TextGradient(text, ...)
-    local msg, total = "", string.utf8len(text)
+    local msg, total = "", strlenutf8(text)
     local idx, num = 0, select("#", ...) / 3
 
     for i = 1, total do

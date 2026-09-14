@@ -633,6 +633,11 @@ L["Play entrance animations and flashes for micro menu notification icons (mail,
 L["Repair needed"] = true
 L["Paragon chest"] = true
 L["Rare on minimap"] = true
+L["Rare position in chat"] = true
+L["Adds a chat line with a clickable map pin link to the position of the rare."] = true
+L["Bags full"] = true
+L["Blizzard toast preview"] = true
+L["Shows the chosen Blizzard toast once with sample data."] = true
 L["Calendar invite"] = true
 L["Mage Table"] = true
 L["Ritual of Summoning"] = true

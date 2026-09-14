@@ -98,6 +98,43 @@ local function SetFontWithShadow(element, font, size, sizeAddition)
     element:GwSetFontTemplate(font, size, "SHADOW", sizeAddition)
 end
 
+-- the reward icon of a faction with a pending paragon chest: a slowly turning flare behind it and a soft pulse
+-- of the icon itself, both looping while the row is shown
+local function AddParagonIndicatorAnimation(indicator)
+    local flare = indicator:CreateTexture(nil, "BACKGROUND")
+    flare:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-up-flare.png")
+    flare:SetPoint("CENTER")
+    flare:SetSize(32, 32)
+
+    local group = indicator:CreateAnimationGroup()
+    group:SetLooping("REPEAT")
+
+    local rotation = group:CreateAnimation("Rotation")
+    rotation:SetTarget(flare)
+    rotation:SetDegrees(-360)
+    rotation:SetDuration(12)
+    rotation:SetOrder(1)
+
+    local fadeOut = group:CreateAnimation("Alpha")
+    fadeOut:SetTarget(indicator.Icon)
+    fadeOut:SetFromAlpha(1)
+    fadeOut:SetToAlpha(0.6)
+    fadeOut:SetDuration(1.5)
+    fadeOut:SetSmoothing("IN_OUT")
+    fadeOut:SetOrder(1)
+
+    local fadeIn = group:CreateAnimation("Alpha")
+    fadeIn:SetTarget(indicator.Icon)
+    fadeIn:SetFromAlpha(0.6)
+    fadeIn:SetToAlpha(1)
+    fadeIn:SetDuration(1.5)
+    fadeIn:SetSmoothing("IN_OUT")
+    fadeIn:SetStartDelay(1.5)
+    fadeIn:SetOrder(1)
+
+    indicator.animationGroup = group
+end
+
 local function sortFactionsStatus(tbl)
     table.sort(tbl, function(a, b)
             if a.isFriend ~= b.isFriend then
@@ -837,18 +874,16 @@ local function InitCategorieButton(button, elementData)
         end)
         button.paragonIndicator:SetScript("OnLeave", GameTooltip_Hide)
 
-        GW.AddFlareAnimationToObject(button, button.paragonIndicator)
-        button.paragonIndicator.flare:SetSize(32, 32)
-        button.paragonIndicator.flare2:SetSize(32, 32)
+        AddParagonIndicatorAnimation(button.paragonIndicator)
 
         function button:StopParagonIdicatorAnimation()
             self.paragonIndicator:Hide()
-            self.flareIcon.animationGroup:Stop()
+            self.paragonIndicator.animationGroup:Stop()
         end
 
         function button:StartParagonIdicatorAnimation()
             self.paragonIndicator:Show()
-            self.flareIcon.animationGroup:Play()
+            self.paragonIndicator.animationGroup:Play()
         end
 
         GwPaperReputation:HookScript("OnHide", function()

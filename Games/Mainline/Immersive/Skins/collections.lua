@@ -113,12 +113,9 @@ local function SkinSearchBox(box)
 end
 
 -- xp bars have no color of their own and would vanish white on the gray background
-local function SkinStatusBar(bar, artFrame, color)
+local function SkinStatusBar(bar, color)
     if bar.gwSkinned then return end
     bar.gwSkinned = true
-    if artFrame then
-        artFrame:GwStripTextures()
-    end
     bar:GwStripTextures()
     GW.AddStatusBarFrame(bar)
     bar:SetStatusBarTexture(STATUSBAR_TEXTURE)
@@ -684,18 +681,25 @@ local function SkinLoadoutPet(pet)
     pet.shadows:SetAlpha(0)
     pet.iconBorder:SetAlpha(0)
     pet.levelBG:SetAlpha(0)
-    pet.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    BackdropAroundIcon(pet.icon, GW.BackdropTemplates.DefaultWithColorableBorder)
+    pet.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
+    pet.name:SetTextColor(1, 1, 1)
+    pet.subName:SetTextColor(1, 1, 1)
+    BackdropAroundIcon(pet.icon, GW.BackdropTemplates.ColorableBorderOnly)
+    pet.icon.backdrop:SetFrameLevel(pet:GetFrameLevel() + 2)
     GW.HandleIconBorder(pet.qualityBorder, pet.icon.backdrop)
-    pet:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+    local function ColorLevel(backdrop)
+        pet.level:SetTextColor(backdrop:GetBackdropBorderColor())
+    end
+    hooksecurefunc(pet.icon.backdrop, "SetBackdropBorderColor", ColorLevel)
     local highlight = pet:GetHighlightTexture()
     if highlight then
         highlight:SetColorTexture(unpack(HIGHLIGHT_COLOR))
         highlight:SetAllPoints(pet.icon)
     end
     StripFrames(pet.helpFrame, pet.setButton)
-    SkinStatusBar(pet.healthFrame.healthBar, pet.healthFrame)
-    SkinStatusBar(pet.xpBar, nil, XP_COLOR)
+    SkinStatusBar(pet.healthFrame.healthBar)
+    SkinStatusBar(pet.xpBar, XP_COLOR)
+    ColorLevel(pet.icon.backdrop)
     for i = 1, 3 do
         local spell = pet["spell" .. i]
         SkinIconButton(spell)
@@ -709,14 +713,20 @@ local function SkinPetCard(card)
     info:GwNudgePoint(10, 0)
     GW.AddDetailsBackground(card, 8, 2)
     info.levelBG:SetAlpha(0)
-    info.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    info.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
+    info.name:SetTextColor(1, 1, 1)
     BackdropAroundIcon(info.icon, GW.BackdropTemplates.DefaultWithColorableBorder)
     GW.HandleIconBorder(info.qualityBorder, info.icon.backdrop)
+    local function ColorLevel(backdrop)
+        info.level:SetTextColor(backdrop:GetBackdropBorderColor())
+    end
+    hooksecurefunc(info.icon.backdrop, "SetBackdropBorderColor", ColorLevel)
     for i = 1, 6 do
         SkinIconButton(card["spell" .. i])
     end
-    SkinStatusBar(card.HealthFrame.healthBar, card.HealthFrame)
-    SkinStatusBar(card.xpBar, nil, XP_COLOR)
+    SkinStatusBar(card.HealthFrame.healthBar)
+    SkinStatusBar(card.xpBar, XP_COLOR)
+    ColorLevel(info.icon.backdrop)
 end
 
 local function SkinPetJournal()

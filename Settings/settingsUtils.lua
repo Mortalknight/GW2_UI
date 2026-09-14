@@ -313,6 +313,7 @@ local function CreateOption(optionType, panel, name, desc, values)
         optionUpdateFunc = values.optionUpdateFunc,
         isMasterToggle = values.isMasterToggle,
         isNegativeButton = values.isNegativeButton,
+        previewFunc = values.previewFunc, -- a play button at the right edge of the row runs it
 
         getter = values.getter, --for addons
         setter = values.setter, --for addons
@@ -1535,6 +1536,29 @@ local function SettingsInitOptionWidget(of, v, panel)
         GameTooltip:Show()
     end)
     of:SetScript("OnLeave", GameTooltip_Hide)
+
+    if v.previewFunc then
+        local play = of.previewButton
+        if not play then
+            play = CreateFrame("Button", nil, of)
+            play:SetSize(14, 14)
+            play:SetPoint("RIGHT", of, "RIGHT", -8, 0)
+            play:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png")
+            play:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png", "ADD")
+            play:GetNormalTexture():SetVertexColor(0.8, 0.8, 0.8)
+            play:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(PREVIEW, 1, 1, 1)
+                GameTooltip:Show()
+            end)
+            play:SetScript("OnLeave", GameTooltip_Hide)
+            of.previewButton = play
+        end
+        play:SetScript("OnClick", function() v.previewFunc() end)
+        play:Show()
+    elseif of.previewButton then
+        of.previewButton:Hide()
+    end
 
     if v.optionType == "colorPicker" then
         local setting = of.get()
