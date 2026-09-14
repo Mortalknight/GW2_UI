@@ -802,6 +802,57 @@ end
 local LIST_BUTTON_SPACE = 50
 local LIST_SCROLLBAR_WIDTH = 12
 local LIST_SCROLLBAR_GAP = 4
+local LIST_SCROLL_ARROW = 12
+local LIST_SCROLL_ARROW_GAP = 2
+
+local function CreateListScrollArrows(parent, onScroll)
+    local arrows = {}
+    for _, direction in ipairs({"up", "down"}) do
+        local button = CreateFrame("Button", nil, parent)
+        button:SetSize(LIST_SCROLL_ARROW, LIST_SCROLL_ARROW)
+        button:EnableMouseWheel(true)
+        button.bg = button:CreateTexture(nil, "BACKGROUND")
+        button.bg:SetAllPoints()
+        button.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton.png")
+        if direction == "down" then
+            button.bg:SetTexCoord(0, 1, 1, 0)
+        end
+        button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow" .. direction .. "_up.png")
+        button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow" .. direction .. "_down.png")
+        button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow" .. direction .. "_down.png")
+        local delta = direction == "up" and 1 or -1
+        button:SetScript("OnClick", function() onScroll(delta) end)
+        button:SetScript("OnMouseWheel", function(_, wheel) onScroll(wheel) end)
+        arrows[direction] = button
+    end
+    return arrows
+end
+
+local function LayoutListScrollbar(list, track, thumb, arrows, visibleRows, entryHeight, totalRows, offset)
+    local trackHeight = (visibleRows * entryHeight) - 2 - 2 * (LIST_SCROLL_ARROW + LIST_SCROLL_ARROW_GAP)
+    local thumbHeight = math.max(12, trackHeight * (visibleRows / totalRows))
+    local maxOffset = math.max(totalRows - visibleRows, 1)
+    local thumbOffset = (trackHeight - thumbHeight) * ((offset or 0) / maxOffset)
+
+    arrows.up:ClearAllPoints()
+    arrows.up:SetPoint("TOPLEFT", list, "TOPRIGHT", LIST_SCROLLBAR_GAP, -1)
+    track:ClearAllPoints()
+    track:SetPoint("TOP", arrows.up, "BOTTOM", 0, -LIST_SCROLL_ARROW_GAP)
+    track:SetHeight(trackHeight)
+    arrows.down:ClearAllPoints()
+    arrows.down:SetPoint("TOP", track, "BOTTOM", 0, -LIST_SCROLL_ARROW_GAP)
+
+    thumb:ClearAllPoints()
+    thumb:SetPoint("TOP", track, "TOP", 0, -thumbOffset)
+    thumb:SetHeight(thumbHeight)
+end
+
+local function SetListScrollbarShown(track, thumb, arrows, shown)
+    track:SetShown(shown)
+    thumb:SetShown(shown)
+    arrows.up:SetShown(shown)
+    arrows.down:SetShown(shown)
+end
 
 local function SetListButtonState(button, enabled)
     if not button then return end
@@ -1083,28 +1134,17 @@ local function UpdateListScrollbar(of, v, totalRows, visibleRows, entryHeight)
                 ScrollListOption(of, v, delta)
             end)
         end
+        of.listScrollArrows = CreateListScrollArrows(of, function(delta) ScrollListOption(of, v, delta) end)
     end
 
     local showScrollbar = totalRows > visibleRows
-    of.listScrollTrack:SetShown(showScrollbar)
-    of.listScrollThumb:SetShown(showScrollbar)
+    SetListScrollbarShown(of.listScrollTrack, of.listScrollThumb, of.listScrollArrows, showScrollbar)
     if not showScrollbar then
         StopListScrollbarDrag(of)
         return
     end
 
-    local trackHeight = (visibleRows * entryHeight) - 2
-    local thumbHeight = math.max(12, trackHeight * (visibleRows / totalRows))
-    local maxOffset = math.max(totalRows - visibleRows, 1)
-    local thumbOffset = (trackHeight - thumbHeight) * ((of.listScrollOffset or 0) / maxOffset)
-
-    of.listScrollTrack:ClearAllPoints()
-    of.listScrollTrack:SetPoint("TOPLEFT", of.list, "TOPRIGHT", LIST_SCROLLBAR_GAP, -1)
-    of.listScrollTrack:SetHeight(trackHeight)
-
-    of.listScrollThumb:ClearAllPoints()
-    of.listScrollThumb:SetPoint("TOP", of.listScrollTrack, "TOP", 0, -thumbOffset)
-    of.listScrollThumb:SetHeight(thumbHeight)
+    LayoutListScrollbar(of.list, of.listScrollTrack, of.listScrollThumb, of.listScrollArrows, visibleRows, entryHeight, totalRows, of.listScrollOffset)
 end
 
 local function CreateListMoveButton(parent, direction)
@@ -1337,28 +1377,20 @@ local function UpdateSpellListScrollbar(of, v, totalRows, visibleRows, entryHeig
                 RefreshSpellListOption(of, v)
             end)
         end
+        of.spellScrollArrows = CreateListScrollArrows(of, function(delta)
+            of.spellListScrollOffset = (of.spellListScrollOffset or 0) - delta
+            RefreshSpellListOption(of, v)
+        end)
     end
 
     local showScrollbar = totalRows > visibleRows
-    of.spellScrollTrack:SetShown(showScrollbar)
-    of.spellScrollThumb:SetShown(showScrollbar)
+    SetListScrollbarShown(of.spellScrollTrack, of.spellScrollThumb, of.spellScrollArrows, showScrollbar)
     if not showScrollbar then
         of.spellScrollTrack:SetScript("OnUpdate", nil)
         return
     end
 
-    local trackHeight = (visibleRows * entryHeight) - 2
-    local thumbHeight = math.max(12, trackHeight * (visibleRows / totalRows))
-    local maxOffset = math.max(totalRows - visibleRows, 1)
-    local thumbOffset = (trackHeight - thumbHeight) * ((of.spellListScrollOffset or 0) / maxOffset)
-
-    of.spellScrollTrack:ClearAllPoints()
-    of.spellScrollTrack:SetPoint("TOPLEFT", of.list, "TOPRIGHT", LIST_SCROLLBAR_GAP, -1)
-    of.spellScrollTrack:SetHeight(trackHeight)
-
-    of.spellScrollThumb:ClearAllPoints()
-    of.spellScrollThumb:SetPoint("TOP", of.spellScrollTrack, "TOP", 0, -thumbOffset)
-    of.spellScrollThumb:SetHeight(thumbHeight)
+    LayoutListScrollbar(of.list, of.spellScrollTrack, of.spellScrollThumb, of.spellScrollArrows, visibleRows, entryHeight, totalRows, of.spellListScrollOffset)
 end
 
 local function GetListEntryInfo(v, id, stored)
