@@ -2,6 +2,11 @@
 local GW = select(2, ...)
 local L = GW.L
 
+local function VignetteName(id, stored)
+    if type(stored) == "string" then return stored end
+    return GW.VignetteNames[id] or UNKNOWN
+end
+
 local function LoadNotificationsPanel(sWindow)
     if GW.Classic or GW.TBC or GW.Wrath then return end
 
@@ -42,6 +47,23 @@ local function LoadNotificationsPanel(sWindow)
     p:AddOption(L["Rare on minimap"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_RARE", previewFunc = GW.AlertPreviews.RARE, dependence = {["ALERTFRAME_ENABLED"] = true}, hidden = not GW.Retail, group = "rare"})
     p:AddOptionDropdown(nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_RARE_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_RARE"] = true}, hasSound = true, noNewLine = true, hidden = not GW.Retail, group = "rare"})
     p:AddOption(L["Rare position in chat"], L["Adds a chat line with a clickable map pin link to the position of the rare."], {getterSetter = "ALERTFRAME_NOTIFICATION_RARE_CHAT", dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_RARE"] = true}, hidden = not GW.Retail, group = "rare", forceNewLine = true})
+
+    p:AddOptionNote(L["Rares on this list get no toast. Shift + right click on a rare toast adds it, the toast tooltip shows the ID."], {group = "rare", hidden = not GW.Retail})
+    p:AddOptionIDList(L["Ignored rares"], L["Rares on this list get no toast. Shift + right click on a rare toast adds it, the toast tooltip shows the ID."], {
+        getterSetter = "ALERTFRAME_NOTIFICATION_RARE_IGNORED",
+        dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_RARE"] = true},
+        hidden = not GW.Retail,
+        group = "rare",
+        maxVisibleRows = 4,
+        invalidInputText = L["Invalid ID"],
+        resolveEntry = function(id, stored)
+            return {name = VignetteName(id, stored), atlas = "VignetteKill"}
+        end,
+        entryTooltip = function(tooltip, id, stored)
+            tooltip:SetText(VignetteName(id, stored), 1, 1, 1)
+            tooltip:AddLine(format("ID %d", id), 0.6, 0.6, 0.6)
+        end,
+    })
 
     p:AddOption(L["Bags full"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_BAGS_FULL", previewFunc = GW.AlertPreviews.BAGS_FULL, dependence = {["ALERTFRAME_ENABLED"] = true}})
     p:AddOptionDropdown(nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_BAGS_FULL_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_BAGS_FULL"] = true}, hasSound = true, noNewLine = true})

@@ -1405,6 +1405,20 @@ GW.globalDefault = {
         ALERTFRAME_NOTIFICATION_RARE= true,
         ALERTFRAME_NOTIFICATION_RARE_SOUND= "None",
         ALERTFRAME_NOTIFICATION_RARE_CHAT= false,
+        -- vignettes that are no rares but use a rare atlas; [vignetteID] = true, the name is filled in once the
+        -- vignette is seen (the client has no lookup by id), removed entries hold false
+        ALERTFRAME_NOTIFICATION_RARE_IGNORED= {
+            [4024] = true, -- Soul Cage (The Maw and Torghast)
+            [4578] = true, -- Gateway to Hero's Rest (Bastion)
+            [4583] = true, -- Gateway to Hero's Rest (Bastion)
+            [4553] = true, -- Recoverable Corpse (The Maw)
+            [4581] = true, -- Grappling Growth (Maldraxxus)
+            [4582] = true, -- Ripe Purian (Bastion)
+            [4602] = true, -- Aimless Soul (The Maw)
+            [4617] = true, -- Imprisoned Soul (The Maw)
+            [5020] = true, -- Console (Zereth Mortis)
+            [5485] = true, -- Tuskarr Tacklebox (Dragon Isles)
+        },
         ALERTFRAME_NOTIFICATION_BAGS_FULL= true,
         ALERTFRAME_NOTIFICATION_BAGS_FULL_SOUND= "None",
         ALERTFRAME_NOTIFICATION_GREAT_VAULT= true,

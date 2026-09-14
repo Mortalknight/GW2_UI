@@ -605,16 +605,43 @@ local function skinGarrisonRandomMissionAlert(frame)
 end
 
 ---------- our own alert system ----------
-local function GW2_UIAlertFrame_OnClick(self, ...)
+local function IgnoreVignette(vignetteID, name)
+    GW.settings.ALERTFRAME_NOTIFICATION_RARE_IGNORED[vignetteID] = name
+    GW.Notice(format(L["%s is now ignored, the list is in the notification settings."], name))
+    local widget = GW.FindSettingsWidgetByOption("ALERTFRAME_NOTIFICATION_RARE_IGNORED")
+    if widget and widget.RefreshSpellList then
+        widget:RefreshSpellList()
+    end
+end
+
+local function GW2_UIAlertFrame_OnClick(self, button)
     if self.delay == -1 then
-        self:SetScript("OnLeave", AlertFrame_ResumeOutAnimation)
         self.delay = 0
     end
+    if button == "RightButton" and IsShiftKeyDown() and self.vignetteID then
+        IgnoreVignette(self.vignetteID, self.vignetteName)
+    end
     if self.onClick then
-        if AlertFrame_OnClick(self, ...) then return end -- right click hides the frame
-        self.onClick(self, ...)
+        if AlertFrame_OnClick(self, button) then return end -- right click hides the frame
+        self.onClick(self, button)
     elseif self.onClick == false then
-        AlertFrame_OnClick(self, ...)
+        AlertFrame_OnClick(self, button)
+    end
+end
+
+local function GW2_UIAlertFrame_OnEnter(self)
+    if not self.vignetteID then return end
+    GameTooltip:SetOwner(self, "ANCHOR_TOP")
+    GameTooltip:SetText(self.vignetteName, 1, 1, 1)
+    GameTooltip:AddLine(format("|cFF888888ID %d|r", self.vignetteID))
+    GameTooltip:AddLine(L["Shift + right click: ignore this rare"], 1, 0.82, 0)
+    GameTooltip:Show()
+end
+
+local function GW2_UIAlertFrame_OnLeave(self)
+    GameTooltip:Hide()
+    if self.delay ~= -1 then
+        AlertFrame_ResumeOutAnimation(self)
     end
 end
 
@@ -627,7 +654,7 @@ local function GW2_UIAlertFrame_OnIconEnter(self)
     GameTooltip:Show()
 end
 
-local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID, targetName)
+local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID, targetName, vignetteID)
     AchievementAlertFrame_SetUp(frame, 2416, true)
     frame.Name:SetFormattedText(name)
     frame.Unlocked:SetFormattedText(toptext or "")
@@ -636,11 +663,14 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
     frame.delay = delay
     frame.spellID = spellID
     frame.levelup = levelup
-    frame:SetScript("OnLeave", delay ~= -1 and AlertFrame_ResumeOutAnimation or nil)
+    frame.vignetteID = vignetteID
+    frame.vignetteName = targetName
 
     if not frame.gwSkinned then
         frame.gwSkinned = true
         frame:HookScript("OnClick", GW2_UIAlertFrame_OnClick)
+        frame:HookScript("OnEnter", GW2_UIAlertFrame_OnEnter)
+        frame:SetScript("OnLeave", GW2_UIAlertFrame_OnLeave)
         frame:RegisterForClicks("AnyUp", "AnyDown")
         frame.Icon:SetScript("OnEnter", GW2_UIAlertFrame_OnIconEnter)
         frame.Icon:SetScript("OnLeave", GameTooltip_Hide)
@@ -753,25 +783,25 @@ local PARAGON_QUEST_ID = {
     [85810] = 2671, -- Venture Company
 }
 
+GW.VignetteNames = {
+    [4024] = "Soul Cage",
+    [4578] = "Gateway to Hero's Rest",
+    [4583] = "Gateway to Hero's Rest",
+    [4553] = "Recoverable Corpse",
+    [4581] = "Grappling Growth",
+    [4582] = "Ripe Purian",
+    [4602] = "Aimless Soul",
+    [4617] = "Imprisoned Soul",
+    [5020] = "Console",
+    [5485] = "Tuskarr Tacklebox",
+}
+
 local VignetteExclusionMapIDs = {
     [579] = true, -- Lunarfall: Alliance garrison
     [585] = true, -- Frostwall: Horde garrison
     [646] = true, -- Scenario: The Broken Shore
     [1911] = true, -- Thorgast
     [1912] = true, -- Thorgast
-}
-
-local VignetteBlackListIDs = {
-    [4024] = true, -- Soul Cage (The Maw and Torghast)
-    [4578] = true, -- Gateway to Hero's Rest (Bastion)
-    [4583] = true, -- Gateway to Hero's Rest (Bastion)
-    [4553] = true, -- Recoverable Corpse (The Maw)
-    [4581] = true, -- Grappling Growth (Maldraxxus)
-    [4582] = true, -- Ripe Purian (Bastion)
-    [4602] = true, -- Aimless Soul (The Maw)
-    [4617] = true, -- Imprisoned Soul (The Maw)
-    [5020] = true, -- Consol (Zereth Mortis)
-    [5485] = true, -- Tuskarr Tacklebox
 }
 
 local function PlayAlertSound(setting)
@@ -887,9 +917,9 @@ local function ShowParagonAlert(factionName, questText)
     PlayAlertSound("ALERTFRAME_NOTIFICATION_PARAGON_SOUND")
 end
 
-local function ShowRareAlert(name, atlas)
+local function ShowRareAlert(name, atlas, vignetteID)
     local nameColored = format("|cff00c0fa%s|r", name:utf8sub(1, 28))
-    GW.AlertSystem:AddAlert(L["has appeared on the Minimap!"], nil, nameColored, false, atlas, false, nil, name)
+    GW.AlertSystem:AddAlert(L["has appeared on the Minimap!"], nil, nameColored, false, atlas, false, nil, name, vignetteID)
 end
 
 local function ShowCallToArmsAlert(roles)
@@ -1134,11 +1164,18 @@ local function OnVignetteUpdated(self, vignetteGUID, onMinimap)
 
     local vignetteInfo = C_VignetteInfo.GetVignetteInfo(vignetteGUID)
     if not vignetteInfo or not C_Texture.GetAtlasInfo(vignetteInfo.atlasName) then return end
-    if VignetteBlackListIDs[vignetteInfo.vignetteID] or not isUsefulAtlas(vignetteInfo) then return end
+    if not isUsefulAtlas(vignetteInfo) then return end
+    local ignored = GW.settings.ALERTFRAME_NOTIFICATION_RARE_IGNORED
+    if ignored[vignetteInfo.vignetteID] then
+        if ignored[vignetteInfo.vignetteID] == true then
+            ignored[vignetteInfo.vignetteID] = vignetteInfo.name
+        end
+        return
+    end
     if vignetteGUID == self.lastMinimapRare.id then return end
 
     GW.Debug("Minimap vignette with id", vignetteInfo.vignetteID, "and name", vignetteInfo.name, "appeared on the minimap.")
-    ShowRareAlert(vignetteInfo.name, vignetteInfo.atlasName)
+    ShowRareAlert(vignetteInfo.name, vignetteInfo.atlasName, vignetteInfo.vignetteID)
     if GW.settings.ALERTFRAME_NOTIFICATION_RARE_CHAT then
         PrintVignetteToChat(vignetteGUID, vignetteInfo, mapID)
     end

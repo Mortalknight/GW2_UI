@@ -420,6 +420,20 @@ function GwSettingsPanelMixin:AddOptionSpellList(name, desc, values)
     return opt
 end
 
+-- ID list with its own lookup: like the spell list, but values.resolveEntry(id, storedValue) names the entry
+-- ({name, iconID or atlas}, nil for an invalid id) and values.entryTooltip(tooltip, id, storedValue) fills the
+-- row tooltip. The stored value may carry the name (the entry is added from where it is known).
+function GwSettingsPanelMixin:AddOptionIDList(name, desc, values)
+    local opt = self:AddOptionSpellList(name, desc, values)
+    if not opt then return end
+
+    opt.resolveEntry = values.resolveEntry
+    opt.entryTooltip = values.entryTooltip
+    opt.invalidInputText = values.invalidInputText
+
+    return opt
+end
+
 -- Single spell setting: an input box takes a spell ID and the resolved spell is shown
 -- next to it with icon, name and tooltip. Stores the ID, an empty input clears it.
 function GwSettingsPanelMixin:AddOptionSpellInput(name, desc, values)
@@ -1347,7 +1361,14 @@ local function UpdateSpellListScrollbar(of, v, totalRows, visibleRows, entryHeig
     of.spellScrollThumb:SetHeight(thumbHeight)
 end
 
-function RefreshSpellListOption(of, v)
+local function GetListEntryInfo(v, id, stored)
+    if v.resolveEntry then
+        return v.resolveEntry(id, stored)
+    end
+    return GetSpellListSpellInfo(id)
+end
+
+RefreshSpellListOption = function(of, v)
     local ids = GetSpellListIDs(of)
     local entryHeight = v.entryHeight or 24
     local visibleRows = tonumber(v.maxVisibleRows) or 5
@@ -1404,7 +1425,11 @@ function RefreshSpellListOption(of, v)
             row:SetScript("OnEnter", function(self)
                 if not self.spellID then return end
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetSpellByID(self.spellID)
+                if v.entryTooltip then
+                    v.entryTooltip(GameTooltip, self.spellID, self.stored)
+                else
+                    GameTooltip:SetSpellByID(self.spellID)
+                end
                 GameTooltip:Show()
             end)
             row:SetScript("OnLeave", GameTooltip_Hide)
@@ -1423,9 +1448,15 @@ function RefreshSpellListOption(of, v)
         row:SetPoint("TOPLEFT", of.list, "TOPLEFT", 0, -((visibleIndex - 1) * entryHeight))
         row:SetPoint("RIGHT", of.list, "RIGHT", 0, 0)
         row.spellID = spellID
+        row.stored = (of.get() or {})[spellID]
 
-        local spellInfo = GetSpellListSpellInfo(spellID)
-        row.icon:SetTexture(spellInfo and spellInfo.iconID or 134400)
+        local spellInfo = GetListEntryInfo(v, spellID, row.stored)
+        if spellInfo and spellInfo.atlas then
+            row.icon:SetAtlas(spellInfo.atlas)
+        else
+            row.icon:SetTexture(spellInfo and spellInfo.iconID or 134400)
+            row.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        end
         row.label:SetText(format("%s |cFF888888(%d)|r", spellInfo and spellInfo.name or UNKNOWN, spellID))
         row.label:SetTextColor(textColor, textColor, textColor)
         row.removeButton:SetShown(enabled)
@@ -1485,10 +1516,10 @@ end
 
 local function TryAddSpellToList(of, v)
     local spellID = tonumber((of.inputFrame.input:GetText() or ""):trim())
-    local spellInfo = GetSpellListSpellInfo(spellID)
+    local spellInfo = spellID and spellID > 0 and GetListEntryInfo(v, spellID)
 
     if not spellInfo then
-        UIErrorsFrame:AddMessage(L["Invalid spell ID"], 1, 0.2, 0.2)
+        UIErrorsFrame:AddMessage(v.invalidInputText or L["Invalid spell ID"], 1, 0.2, 0.2)
         return
     end
 
