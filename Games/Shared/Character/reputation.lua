@@ -135,6 +135,102 @@ local function AddParagonIndicatorAnimation(indicator)
     indicator.animationGroup = group
 end
 
+local GLOW_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/rowglow.png"
+local GLOW_MIN, GLOW_MAX = 0.35, 0.62
+local PULSE_PEAK = 0.28
+local CYCLE = 4
+local function AddParagonRowAnimation(button)
+    local function Burst(sublevel, blend)
+        local texture = button:CreateTexture(nil, "ARTWORK", nil, sublevel)
+        texture:SetTexture(GLOW_TEXTURE)
+        texture:SetBlendMode(blend)
+        texture:SetVertexColor(GW.Colors.FactionBarColors[9]:GetRGB())
+        texture:SetPoint("TOPLEFT")
+        texture:SetPoint("BOTTOMLEFT")
+        texture:SetPoint("RIGHT", button, "CENTER", 0, 0) -- runs out around the middle of the row
+        texture:Hide()
+        return texture
+    end
+    local glow = Burst(3, "BLEND")
+    glow:SetAlpha(GLOW_MIN)
+    local pulse = Burst(4, "ADD")
+    pulse:SetAlpha(0)
+
+    local group = button:CreateAnimationGroup()
+    group:SetLooping("REPEAT")
+
+    local function Alpha(target, from, to, duration, delay)
+        local anim = group:CreateAnimation("Alpha")
+        anim:SetTarget(target)
+        anim:SetFromAlpha(from)
+        anim:SetToAlpha(to)
+        anim:SetDuration(duration)
+        anim:SetStartDelay(delay or 0)
+        anim:SetSmoothing("IN_OUT")
+        anim:SetOrder(1)
+    end
+
+    Alpha(glow, GLOW_MIN, GLOW_MAX, CYCLE / 2)
+    Alpha(glow, GLOW_MAX, GLOW_MIN, CYCLE / 2, CYCLE / 2)
+
+    Alpha(pulse, 0, PULSE_PEAK, 0.5)
+    Alpha(pulse, PULSE_PEAK, 0, 1.3, 0.5)
+    Alpha(pulse, 0, 0, CYCLE - 1.8, 1.8)
+
+    local grow = group:CreateAnimation("Scale")
+    grow:SetTarget(pulse)
+    grow:SetScaleFrom(0.9, 1)
+    grow:SetScaleTo(1.15, 1)
+    grow:SetOrigin("LEFT", 0, 0)
+    grow:SetDuration(1.8)
+    grow:SetSmoothing("OUT")
+    grow:SetOrder(1)
+
+    group:SetScript("OnPlay", function()
+        glow:Show()
+        pulse:Show()
+    end)
+    group:SetScript("OnStop", function()
+        glow:Hide()
+        pulse:Hide()
+    end)
+    button.paragonRowAnimation = group
+end
+
+local DETAIL_INDICATOR_SIZE = 24
+local function SetDetailsParagon(frame, pending)
+    if pending and not frame.paragonIndicator then
+        local indicator = CreateFrame("Frame", nil, frame)
+        indicator:SetSize(DETAIL_INDICATOR_SIZE, DETAIL_INDICATOR_SIZE)
+        indicator.Icon = indicator:CreateTexture(nil, "ARTWORK")
+        indicator.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/rewards-icon.png")
+        indicator.Icon:SetAllPoints()
+        indicator:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(L["Paragon"], 1, 1, 1)
+            GameTooltip:Show()
+        end)
+        indicator:SetScript("OnLeave", GameTooltip_Hide)
+        AddParagonIndicatorAnimation(indicator)
+        AddParagonRowAnimation(frame)
+        frame.paragonIndicator = indicator
+    end
+    if not frame.paragonIndicator then return end
+
+    local indicator = frame.paragonIndicator
+    if pending then
+        indicator:ClearAllPoints()
+        indicator:SetPoint("LEFT", frame.name, "LEFT", frame.name:GetStringWidth() + 6, 0)
+        indicator:Show()
+        indicator.animationGroup:Play()
+        frame.paragonRowAnimation:Play()
+    else
+        indicator:Hide()
+        indicator.animationGroup:Stop()
+        frame.paragonRowAnimation:Stop()
+    end
+end
+
 local function sortFactionsStatus(tbl)
     table.sort(tbl, function(a, b)
             if a.isFriend ~= b.isFriend then
@@ -497,6 +593,7 @@ local function setReputationDetails(frame, data)
     end
 
     local remaining, remainingTarget -- points to the next rank / reward; nil at max rank
+    local pendingParagonReward = false
     if data.factionID and C_Reputation and C_Reputation.IsFactionParagonForCurrentPlayer and C_Reputation.IsFactionParagonForCurrentPlayer(data.factionID) then
         local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(data.factionID)
         local value = currentValue % threshold
@@ -504,9 +601,7 @@ local function setReputationDetails(frame, data)
         local majorFactionData = isMajorFaction and C_MajorFactions.GetMajorFactionData(data.factionID)
         local currentRankText = majorFactionData and RENOWN_LEVEL_LABEL:format(majorFactionData.renownLevel) or friendInfo.friendshipFactionID and friendInfo.reaction or currentRank
 
-        if hasRewardPending then
-            frame.name:SetText(frame.name:GetText() .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon.png:32:32:0:0|t")
-        end
+        pendingParagonReward = hasRewardPending
 
         frame.currentRank:SetText(currentRankText)
         frame.nextRank:SetText(L["Paragon"] .. (currentValue > threshold and (" (" .. RoundDec(currentValue / threshold, 0) .. "x)") or ""))
@@ -633,6 +728,8 @@ local function setReputationDetails(frame, data)
     else
         frame.repbg:SetVertexColor(1, 1, 1)
     end
+
+    SetDetailsParagon(frame, pendingParagonReward)
 end
 
 local function status_SetValue(self)
@@ -1012,6 +1109,9 @@ function GW.LoadReputation(tabContainer)
     local detailsView = CreateScrollBoxListLinearView()
     detailsView:SetElementInitializer("GwReputationDetailsTemplate", function(button, elementData)
         InitDetailsButton(button, elementData)
+    end)
+    detailsView:SetElementResetter(function(button)
+        SetDetailsParagon(button, false)
     end)
     detailsView:SetPadding(5, 5, 12, 12, 10)
     detailsView:SetElementExtentCalculator(function(dataIndex, elementData)

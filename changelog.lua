@@ -15,6 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("11.2.0", {
     {GW.Enum.ChangelogType.change, [=[Alert toasts: icons carry the 1px border of the other skins and show the item quality on loot, legendary items, followers, pets, mounts and toys, titles and names use the same fonts on every toast, bonus roll toasts are skinned on every show]=]},
+    {GW.Enum.ChangelogType.feature, [=[Reputation overview: rows of factions with a paragon chest waiting glow softly and a band of light sweeps across them, the reward icon turns with its own flare]=]},
     {GW.Enum.ChangelogType.feature, [=[Rare toast: shift + right click puts the rare on an ignore list, the list can be edited in the notification settings]=]},
     {GW.Enum.ChangelogType.feature, [=[Notification settings: a play button next to every toast option shows that toast once, with its sound]=]},
     {GW.Enum.ChangelogType.feature, [=[Alerts: new toasts for full bags and a Great Vault with rewards to collect (Retail), the rare toast can add a chat line with a clickable map pin to the position; the paragon toast covers the Dragonflight factions and the durability, call to arms and paragon checks are more reliable]=]},
