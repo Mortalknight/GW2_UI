@@ -779,6 +779,34 @@ local function RegisterMovableFrame(frame, displayName, settingsName, tags, size
 end
 GW.RegisterMovableFrame = RegisterMovableFrame
 
+-- A profile switch without a reload (the dual spec switch) hands the movers a new settings table, but they still
+-- carry the positions of the old profile and the frames stay where they were. This puts every mover back onto
+-- the position its setting asks for; the values then match the setting again, so the drag handler only lets the
+-- real frames follow and writes nothing back.
+local function ApplyMoverPositionsFromSettings()
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("GwApplyMoverPositions", ApplyMoverPositionsFromSettings)
+        return
+    end
+
+    for _, mf in ipairs(GW.MOVABLE_FRAMES) do
+        local saved = GW.settings[mf.setting]
+        if not (saved and saved.point and saved.relativePoint and saved.xOfs and saved.yOfs) then
+            saved = mf.defaultPoint
+        end
+        mf.savedPoint = GW.CopyTable(saved)
+
+        mf:ClearAllPoints()
+        mf:SetPoint(mf.savedPoint.point, UIParent, mf.savedPoint.relativePoint, mf.savedPoint.xOfs, mf.savedPoint.yOfs)
+
+        -- sets hasMoved on the frame and hands the point table back to the settings
+        CheckForDefaultPosition(mf, mf.savedPoint.point, mf.savedPoint.relativePoint, mf.savedPoint.xOfs, mf.savedPoint.yOfs, mf.savedPoint)
+
+        mover_OnDragStop(mf)
+    end
+end
+GW.ApplyMoverPositionsFromSettings = ApplyMoverPositionsFromSettings
+
 local function MoveFrameByPixel(nudgeX, nudgeY)
     local mover = GwSmallSettingsContainer.moverSettingsFrame.childMover
 

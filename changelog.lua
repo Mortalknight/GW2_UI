@@ -14,6 +14,8 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("11.2.0", {
+    {GW.Enum.ChangelogType.bug, [=[Profile switch by specialization: the frames now move to the positions of the incoming profile instead of staying where the old profile had them]=]},
+    {GW.Enum.ChangelogType.bug, [=[Layouts: renaming a layout keeps its specializations assigned, deleting one no longer leaves the buttons pointing at it, empty names are rejected and a new layout no longer follows later frame moves]=]},
     {GW.Enum.ChangelogType.feature, [=[Classic, TBC and Wrath: the inspect window is skinned now, with the portrait of the inspected player in the header, item levels on the equipment slots and the gw2 paperdoll background behind the model]=]},
     {GW.Enum.ChangelogType.feature, [=[Classic, TBC, Wrath and Mists: the dressing room and the small preview window of quest rewards follow the skin of the other windows]=]},
     {GW.Enum.ChangelogType.change, [=[Alert toasts: icons carry the 1px border of the other skins and show the item quality on loot, legendary items, followers, pets, mounts and toys, titles and names use the same fonts on every toast, bonus roll toasts are skinned on every show]=]},

@@ -164,12 +164,10 @@ local function rename_OnClick(self)
                 GW.global.layouts[newName] = GW.CopyTable(GW.global.layouts[oldLayoutName])
                 GW.global.layouts[oldLayoutName] = nil
 
-                -- private Layouts aktualisieren
-                local privateLayouts = GW.GetAllPrivateLayouts()
-                for i = 0, #privateLayouts do
-                    if privateLayouts[i] and privateLayouts[i].layoutName == oldLayoutName then
-                        GW.private.Layouts[i].layoutName = L["Profiles"] .. " - " .. newName
-                    end
+                -- private Layouts aktualisieren; ein numerischer Lauf würde Einträge hinter einer Lücke verpassen
+                local privateLayoutSettings = GW.GetPrivateLayoutByLayoutName(oldLayoutName)
+                if privateLayoutSettings then
+                    privateLayoutSettings.layoutName = L["Profiles"] .. " - " .. newName
                 end
             end
 

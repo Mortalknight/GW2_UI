@@ -723,6 +723,9 @@ local function RefreshSettingsAfterProfileSwitch()
             end
         end
     end
+    -- the movers are not settings widgets, they have to be pulled over to the new profile as well
+    GW.ApplyMoverPositionsFromSettings()
+
     CheckDependencies()
     GW.ClearPendingReloadSettings()
     GW.disableGridUpdate = false
