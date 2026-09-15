@@ -218,7 +218,11 @@ local function ReplaceGossipText(button, text)
 end
 
 local function Resize(self)
-    self:SetHeight(math.max(32, self:GetTextHeight() + 2, self.Icon:GetHeight()))
+    local height = math.max(32, self:GetTextHeight() + 2, self.Icon:GetHeight())
+    if math.abs(self:GetHeight() - height) < 0.1 then return false end
+
+    self:SetHeight(height)
+    return true
 end
 
 local function skinGossipOption(self)
@@ -273,8 +277,10 @@ local function updateGossipOption(self, elementData)
         skinGossipOption(self)
     end
 
+    local isSpacer = elementData and (elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER or elementData.buttonType == GOSSIP_BUTTON_TYPE_TITLE)
+
     if elementData then
-        if elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER or elementData.buttonType == GOSSIP_BUTTON_TYPE_TITLE then
+        if isSpacer then
             self:SetHeight(0)
         else
             if elementData.index then
@@ -303,6 +309,12 @@ local function updateGossipOption(self, elementData)
             end
         end
     end
+
+    if not isSpacer and self.Icon and self.GetTextHeight then
+        return Resize(self)
+    end
+
+    return false
 end
 local function comparePosition(p1, p2)
     p1 = string.format("%.5f", p1)
@@ -441,6 +453,32 @@ local function setGreetingsText(text)
     setGreetingsTextPaging(0, 1)
 end
 
+local configuredGreetingPanelView
+local function setupGreetingPanelView()
+    local view = GossipFrame.GreetingPanel.ScrollBox.view
+    if not view or view == configuredGreetingPanelView then return false end
+    configuredGreetingPanelView = view
+
+    GossipFrame.GreetingPanel.ScrollBar:SetHideIfUnscrollable(true)
+    view:SetPadding(10, 10, 10, 10, 0)
+    view:SetPanExtent(32)
+    view:SetElementExtentCalculator(function(_, elementData)
+        if elementData.greetingTextFrame then
+            setGreetingsText(elementData.text)
+            return 0.1
+        elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
+            return 0.1
+        elseif elementData.titleOptionButton then
+            elementData.titleOptionButton:Setup(elementData.info)
+            return math.max(32, elementData.titleOptionButton:GetHeight())
+        else
+            return 32
+        end
+    end)
+
+    return true
+end
+
 local function createCoordDebugInput(self, labelText, index)
     local f = CreateFrame("EditBox", nil, self)
     f:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -(22 * index))
@@ -528,6 +566,7 @@ local function LoadGossipSkin()
     end)
 
     ItemTextFrame:GwStripTextures(true)
+    GW.HandlePortraitFrameArt(ItemTextFrame)
     ItemTextFrame:GwCreateBackdrop()
     QuestFont:SetTextColor(1, 1, 1)
     if GossipFrameInset then
@@ -549,6 +588,7 @@ local function LoadGossipSkin()
     ItemTextScrollFrame:GwStripTextures()
 
     GossipFrame:GwStripTextures()
+    GW.HandlePortraitFrameArt(GossipFrame)
     if GossipFrame.GreetingPanel then
         GossipFrame.GreetingPanel:GwStripTextures()
     end
@@ -671,6 +711,10 @@ local function LoadGossipSkin()
     GossipFrame.GreetingPanel.ScrollBox:ClearAllPoints()
     GossipFrame.GreetingPanel.ScrollBox:SetPoint("TOPLEFT", GossipFrame.ListBackground, "TOPLEFT")
     GossipFrame.GreetingPanel.ScrollBox:SetPoint("BOTTOMRIGHT", GossipFrame.ListBackground, "BOTTOMRIGHT", 0, 126)
+    setupGreetingPanelView()
+    if GossipFrame.UpdateScrollBox then
+        hooksecurefunc(GossipFrame, "UpdateScrollBox", setupGreetingPanelView)
+    end
     GW.HandleNextPrevButton(ItemTextPrevPageButton)
     GW.HandleNextPrevButton(ItemTextNextPageButton)
 
@@ -751,17 +795,20 @@ local function LoadGossipSkin()
         )
     end)
 
-    local GreetingPanelFirstLoad = true
+    local relayoutInProgress = false
     hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
         --Reset pointers for buttons
         gossipOptionPointer = {}
         -- we need to check each button for button type so we dont count titles and spacers
         local hasButton = false
+        local resized = false
         GossipFrame.GreetingPanel.ScrollBox:ForEachFrame(function(self, elementData)
             if elementData.buttonType ~= GOSSIP_BUTTON_TYPE_DIVIDER and elementData.buttonType ~= GOSSIP_BUTTON_TYPE_TITLE then
                 hasButton = true
             end
-            updateGossipOption(self, elementData)
+            if updateGossipOption(self, elementData) then
+                resized = true
+            end
         end)
         if hasButton then
             GossipFrame.ListBackground:Show()
@@ -771,24 +818,13 @@ local function LoadGossipSkin()
             GossipFrame.GreetingPanel:Hide()
         end
 
-        if GreetingPanelFirstLoad then
-            GreetingPanelFirstLoad = false
-            -- replace the element default size calculator
-            GossipFrame.GreetingPanel.ScrollBar:SetHideIfUnscrollable(true)
-            GossipFrame.GreetingPanel.ScrollBox.view:SetPadding(10, 10, 10, 10, 0)
-            GossipFrame.GreetingPanel.ScrollBox.view:SetElementExtentCalculator(function(_, elementData)
-                if elementData.greetingTextFrame then
-                    setGreetingsText(elementData.text)
-                    return 0.1
-                elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
-                    return 0.1
-                elseif elementData.titleOptionButton then
-                    elementData.titleOptionButton:Setup(elementData.info)
-                    return math.max(32, elementData.titleOptionButton:GetHeight())
-                else
-                    return 32
-                end
-            end)
+        if setupGreetingPanelView() then
+            frame:RecalculateDerivedExtent()
+            frame:FullUpdate(ScrollBoxConstants.UpdateImmediately)
+        elseif resized and not relayoutInProgress then
+            relayoutInProgress = true
+            frame:FullUpdate(ScrollBoxConstants.UpdateImmediately)
+            relayoutInProgress = false
         end
     end)
 
