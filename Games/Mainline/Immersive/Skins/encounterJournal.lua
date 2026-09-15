@@ -344,62 +344,34 @@ local function encounterJournalSkin()
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
     GW.HandleScrollControls(InstanceSelect)
 
-    for _, tab in next, {
-        EncounterJournalJourneysTab,
-		EncounterJournalSuggestTab,
-		EncounterJournalDungeonTab,
-		EncounterJournalRaidTab,
-		EncounterJournalLootJournalTab,
-		EncounterJournalMonthlyActivitiesTab,
-        EncounterJournal.TutorialsTab,
-        EncounterJournal.DelvesTab
-	} do
-        if tab then
-		    GW.HandleTabs(tab)
+    EncounterJournal:HookScript("OnShow", function()
+        local tabInfo = {
+            { EncounterJournal.JourneysTab, GameRulesUtil.EJShouldShowJourneys },
+            { EncounterJournal.MonthlyActivitiesTab, GameRulesUtil.EJShouldShowTravelersLog },
+            { EncounterJournal.suggestTab, GameRulesUtil.EJShouldShowSuggestedContent },
+            { EncounterJournal.dungeonsTab, GameRulesUtil.EJShouldShowDungeons },
+            { EncounterJournal.raidsTab, GameRulesUtil.EJShouldShowRaids },
+            { EncounterJournal.LootJournalTab, GameRulesUtil.EJShouldShowItemSets },
+            { EncounterJournal.TutorialsTab, GameRulesUtil.EJShouldShowTutorials },
+            { EncounterJournal.DelvesTab, function() return EncounterJournal.DelvesTab end },
+        }
+
+        local previousTab = nil;
+        for _, tabData in ipairs(tabInfo) do
+            local tab, shouldShow = unpack(tabData)
+            GW.HandleTabs(tab)
+            if shouldShow() and tab then
+                tab:ClearAllPoints()
+                if previousTab then
+                    tab:SetPoint("LEFT", previousTab, "RIGHT", 0, 0)
+                else
+                    tab:SetPoint("TOPLEFT", EncounterJournal, "BOTTOMLEFT", 0, 0)
+                end
+
+                previousTab = tab
+            end
         end
-	end
-
-    EncounterJournalJourneysTab:ClearAllPoints()
-	EncounterJournalJourneysTab:SetPoint('TOPLEFT', EncounterJournal, 'BOTTOMLEFT', 0, 0)
-    EncounterJournalJourneysTab.ClearAllPoints = GW.NoOp
-    EncounterJournalJourneysTab.SetPoint = GW.NoOp
-
-    EncounterJournalMonthlyActivitiesTab:ClearAllPoints()
-	EncounterJournalMonthlyActivitiesTab:SetPoint('LEFT', EncounterJournalJourneysTab, 'RIGHT', 0, 0)
-    EncounterJournalMonthlyActivitiesTab.ClearAllPoints = GW.NoOp
-    EncounterJournalMonthlyActivitiesTab.SetPoint = GW.NoOp
-
-	EncounterJournalSuggestTab:ClearAllPoints()
-	EncounterJournalSuggestTab:SetPoint('LEFT', EncounterJournalMonthlyActivitiesTab, 'RIGHT', 0, 0)
-    EncounterJournalSuggestTab.ClearAllPoints = GW.NoOp
-    EncounterJournalSuggestTab.SetPoint = GW.NoOp
-
-	EncounterJournalDungeonTab:ClearAllPoints()
-	EncounterJournalDungeonTab:SetPoint('LEFT', EncounterJournalSuggestTab, 'RIGHT', 0, 0)
-    EncounterJournalDungeonTab.ClearAllPoints = GW.NoOp
-    EncounterJournalDungeonTab.SetPoint = GW.NoOp
-
-	EncounterJournalRaidTab:ClearAllPoints()
-	EncounterJournalRaidTab:SetPoint('LEFT', EncounterJournalDungeonTab, 'RIGHT', 0, 0)
-    EncounterJournalRaidTab.ClearAllPoints = GW.NoOp
-    EncounterJournalRaidTab.SetPoint = GW.NoOp
-
-	EncounterJournalLootJournalTab:ClearAllPoints()
-	EncounterJournalLootJournalTab:SetPoint('LEFT', EncounterJournalRaidTab, 'RIGHT', 0, 0)
-    EncounterJournalLootJournalTab.ClearAllPoints = GW.NoOp
-    EncounterJournalLootJournalTab.SetPoint = GW.NoOp
-
-    EncounterJournal.TutorialsTab:ClearAllPoints()
-	EncounterJournal.TutorialsTab:SetPoint('LEFT', EncounterJournalLootJournalTab, 'RIGHT', 0, 0)
-    EncounterJournal.TutorialsTab.ClearAllPoints = GW.NoOp
-    EncounterJournal.TutorialsTab.SetPoint = GW.NoOp
-
-    if EncounterJournal.DelvesTab then
-        EncounterJournal.DelvesTab:ClearAllPoints()
-        EncounterJournal.DelvesTab:SetPoint('LEFT', EncounterJournal.TutorialsTab, 'RIGHT', 0, 0)
-        EncounterJournal.DelvesTab.ClearAllPoints = GW.NoOp
-        EncounterJournal.DelvesTab.SetPoint = GW.NoOp
-    end
+    end)
 
     EncounterJournalMonthlyActivitiesFrame.HelpButton:GwKill()
 
