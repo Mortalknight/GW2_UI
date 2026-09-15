@@ -356,6 +356,7 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.private = GW.charSettings.profile
 
         GW.DatabaseValueMigration()
+        GW.LayoutMigration()
         GW.ApplyMissingIncompatibleAddonsDefaults()
         GW.UpdateUnitFrameReactionColors()
         GW.UpdateGw2ClassColors()

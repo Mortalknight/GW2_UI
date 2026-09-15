@@ -26,7 +26,21 @@ local function GetFreePrivateLayoutIndex()
     return free
 end
 
+local function IsLayoutLocked(layout)
+    if not layout or not layout.profileLayout then return false end
+    return layout.profileName ~= nil and GW.globalSettings.profiles[layout.profileName] ~= nil
+end
+
+local function RefreshSpecsDropdown()
+    local view = GwSmallSettingsContainer and GwSmallSettingsContainer.layoutView
+    if not view then return end
+
+    view.specsDropDown:GenerateMenu() -- rebuilds the entries and the button text
+end
+
 local function UpdateMatchingLayout(self, new_point)
+    if GW.IsApplyingMoverPositions then return end -- a profile switch is moving the frames, not the user
+
     local selectedLayoutName = GW.private.Layouts.currentSelected
     local layout = selectedLayoutName and GW.GetLayoutByName(selectedLayoutName)
     if not layout then return end
@@ -43,23 +57,35 @@ local function UpdateMatchingLayout(self, new_point)
 end
 GW.UpdateMatchingLayout = UpdateMatchingLayout
 
+local function GetUsablePoint(point)
+    if point and point.point and point.relativePoint and point.xOfs and point.yOfs then
+        return point
+    end
+end
+
 local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown, startUp)
     if not layout then return end
     if updateDropdown then
         GW.private.Layouts.currentSelected = layout.name
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown:GenerateMenu()
-        GwSmallSettingsContainer.layoutView.specsDropDown:GenerateMenu()
+        RefreshSpecsDropdown()
 
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.setByUpdateFramePositionForLayout = true
 
-        GwSmallSettingsContainer.layoutView.delete:SetEnabled(not layout.profileLayout)
-        GwSmallSettingsContainer.layoutView.rename:SetEnabled(not layout.profileLayout)
+        GwSmallSettingsContainer.layoutView.delete:SetEnabled(not IsLayoutLocked(layout))
+        GwSmallSettingsContainer.layoutView.rename:SetEnabled(not IsLayoutLocked(layout))
     end
 
+    local points = {}
     for _, frame in pairs(layout.frames) do
-        local mover = frame.settingName and _G["Gw_" .. frame.settingName]
-        local point = frame.point
-        if mover and point and point.point and point.relativePoint and point.xOfs and point.yOfs then
+        if frame.settingName then
+            points[frame.settingName] = GetUsablePoint(frame.point)
+        end
+    end
+
+    for _, mover in ipairs(GW.MOVABLE_FRAMES) do
+        local point = points[mover.setting] or GetUsablePoint(mover.defaultPoint)
+        if point then
             mover:ClearAllPoints()
             mover:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
             if not startUp then
@@ -83,7 +109,7 @@ local function AssignLayoutToSpec(specId, layoutName, toSet)
         end)
         if takenBy then
             GW.Notice(format(L["Spec is already assigned to the layout %s!"], GW.Gw2Color .. takenBy .. "|r"))
-            GwSmallSettingsContainer.layoutView.specsDropDown:GenerateMenu()
+            RefreshSpecsDropdown()
             return
         end
     end
@@ -100,9 +126,11 @@ local function AssignLayoutToSpec(specId, layoutName, toSet)
     privateLayoutSettings.assignedSpecs[specId] = toSet
 end
 
--- the positions are copied, otherwise the layout would share its tables with the profile settings and follow
--- every move of a frame until the next reload
-local function BuildLayout(name, profileName)
+-- The positions are copied, otherwise the layout would share its tables with the profile settings and follow
+-- every move of a frame until the next reload. Only real positions are stored; what a profile never moved is
+-- not in its settings either and falls back to the default of the frame when the layout is applied.
+local function BuildLayout(name, profileName, settings)
+    settings = settings or GW.settings
     local layout = {
         name = name,
         frames = {},
@@ -112,29 +140,38 @@ local function BuildLayout(name, profileName)
 
     local index = 0
     for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
-        -- straight from the settings: the mover still holds the position of the profile it was registered with
-        layout.frames[index] = {
-            settingName = moveableFrame.setting,
-            point = GW.CopyTable(GW.settings[moveableFrame.setting] or moveableFrame.savedPoint),
-        }
-        index = index + 1
+        local point = GetUsablePoint(settings[moveableFrame.setting])
+        if point then
+            layout.frames[index] = {settingName = moveableFrame.setting, point = GW.CopyTable(point)}
+            index = index + 1
+        end
     end
 
     GW.global.layouts[name] = layout
     return layout
 end
 
-local function CreateProfileLayout()
-    local profileName = GW.globalSettings:GetCurrentProfile()
+local function EnsureProfileLayout(profileName, settings)
     if not profileName then return end
 
     local name = L["Profiles"] .. " - " .. profileName
     local existing = GW.GetAllLayouts()[name]
-    if existing and existing.profileLayout then return end
+    if existing and existing.profileLayout then return existing end
 
-    BuildLayout(name, profileName)
+    return BuildLayout(name, profileName, settings)
+end
+
+local function CreateProfileLayout()
+    EnsureProfileLayout(GW.globalSettings:GetCurrentProfile())
 end
 GW.CreateProfileLayout = CreateProfileLayout
+
+local function CreateProfileLayouts()
+    for profileName, settings in pairs(GW.globalSettings.profiles) do
+        EnsureProfileLayout(profileName, settings)
+    end
+end
+GW.CreateProfileLayouts = CreateProfileLayouts
 
 -- returns the trimmed name, or nothing when it is empty or already taken
 local function GetNewLayoutName(popup)
@@ -180,7 +217,7 @@ local function DeleteSelectedLayout(self)
             local view = self:GetParent()
             GW.private.Layouts.currentSelected = nil
             view.savedLayoutDropDown:GenerateMenu()
-            view.specsDropDown:GenerateMenu()
+            RefreshSpecsDropdown()
             view.delete:Disable()
             view.rename:Disable()
         end}
@@ -291,14 +328,16 @@ local function GetSpecializations()
     for index = 1, endIdx do
         local id, name, _, icon, role = C_SpecializationInfo.GetSpecializationInfo(index)
         if id then
-            local label = name or UNKNOWN
-            if role and _G[role] then
-                label = label .. " |cFF888888(" .. _G[role] .. ")|r"
-            end
-            if icon then
-                label = format("|T%s:14:14:0:0:64:64:4:60:4:60|t %s", icon, label)
-            end
-            specs[index] = {name = label, idx = index}
+            local iconMarkup = icon and format("|T%s:14:14:0:0:64:64:4:60:4:60|t", icon) or ""
+            local specName = name or UNKNOWN
+            local roleName = role and _G[role]
+
+            specs[#specs + 1] = {
+                idx = index,
+                icon = iconMarkup,
+                buttonText = strtrim(iconMarkup .. " " .. specName),
+                menuText = strtrim(iconMarkup .. " " .. specName .. (roleName and " |cFF888888(" .. roleName .. ")|r" or "")),
+            }
         end
     end
 
@@ -321,7 +360,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
 
     --create or get profile layout
     C_Timer.After(3, function()
-        CreateProfileLayout()
+        CreateProfileLayouts()
         smallSettingsFrame.layoutView.savedLayoutDropDown:GenerateMenu()
         if not smallSettingsFrame.layoutView.savedLayoutDropDown.setByUpdateFramePositionForLayout then
             -- get the current profile layout
@@ -353,10 +392,10 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     local function SetLayoutSelected(layoutName)
         GW.private.Layouts.currentSelected = layoutName
 
-        smallSettingsFrame.layoutView.specsDropDown:GenerateMenu()
+        RefreshSpecsDropdown()
         -- prevent profile layouts from deletion
         local layout = GW.GetLayoutByName(layoutName)
-        local canEdit = not (layout and layout.profileLayout)
+        local canEdit = not IsLayoutLocked(layout)
         GwSmallSettingsContainer.layoutView.delete:SetEnabled(canEdit)
         GwSmallSettingsContainer.layoutView.rename:SetEnabled(canEdit)
 
@@ -396,7 +435,6 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     --load spec dropdown
     local specScrollFrame = smallSettingsFrame.layoutView.specsDropDown
     specScrollFrame:SetDefaultText(L["<Assign specializations>"])
-    specScrollFrame:OverrideText(L["<Assign specializations>"])
     specScrollFrame:SetWidth(150)
     specScrollFrame:GwHandleDropDownBox(nil, nil, 150)
 
@@ -413,9 +451,27 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
         AssignLayoutToSpec(specIdx, currentLayout, not IsSpecSelected(specIdx))
     end
 
+    specScrollFrame:SetSelectionText(function()
+        local assigned = {}
+        for _, data in ipairs(GetSpecializations()) do
+            if IsSpecSelected(data.idx) then
+                assigned[#assigned + 1] = data
+            end
+        end
+
+        if #assigned == 0 then
+            return L["<Assign specializations>"]
+        end
+        local specs = {}
+        for _, data in ipairs(assigned) do
+            specs[#specs + 1] = data.buttonText
+        end
+        return table.concat(specs, ", ")
+    end)
+
     specScrollFrame:SetupMenu(function(drowpdown, rootDescription)
         for _, data in pairs(GetSpecializations()) do
-            local check = rootDescription:CreateCheckbox(data.name, IsSpecSelected, SetSpecSelected, data.idx)
+            local check = rootDescription:CreateCheckbox(data.menuText, IsSpecSelected, SetSpecSelected, data.idx)
             check:AddInitializer(function(button, description, menu)
                 GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, IsSpecSelected, data.idx)
             end)

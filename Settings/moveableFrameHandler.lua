@@ -789,6 +789,8 @@ local function ApplyMoverPositionsFromSettings()
         return
     end
 
+    GW.IsApplyingMoverPositions = true
+
     for _, mf in ipairs(GW.MOVABLE_FRAMES) do
         local saved = GW.settings[mf.setting]
         if not (saved and saved.point and saved.relativePoint and saved.xOfs and saved.yOfs) then
@@ -804,6 +806,8 @@ local function ApplyMoverPositionsFromSettings()
 
         mover_OnDragStop(mf)
     end
+
+    GW.IsApplyingMoverPositions = nil
 end
 GW.ApplyMoverPositionsFromSettings = ApplyMoverPositionsFromSettings
 

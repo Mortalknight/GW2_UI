@@ -45,11 +45,13 @@ local function deleteProfile(name)
     if not name then return end
     GW.globalSettings:DeleteProfile(name, true)
 
-    -- gekoppelte Layouts entfernen
-    local allLayouts = GW.GetAllLayouts()
-    local profileName = L["Profiles"] .. " - " .. name
-    if allLayouts[profileName] then
-        GW.global.layouts[profileName] = nil
+    local layoutName = L["Profiles"] .. " - " .. name
+    if GW.GetAllLayouts()[layoutName] then
+        GW.global.layouts[layoutName] = nil
+        GW.DeletePrivateLayoutByLayoutName(layoutName)
+        if GW.private.Layouts.currentSelected == layoutName then
+            GW.private.Layouts.currentSelected = nil
+        end
     end
 end
 
@@ -158,16 +160,21 @@ local function rename_OnClick(self)
             GW.globalSettings:SetProfile(currentProfile)
 
             local oldLayoutName = L["Profiles"] .. " - " .. oldName
-            if GW.global.layouts[oldLayoutName] then
-                GW.global.layouts[oldLayoutName].name = L["Profiles"] .. " - " .. newName
-                GW.global.layouts[oldLayoutName].profileName = newName
-                GW.global.layouts[newName] = GW.CopyTable(GW.global.layouts[oldLayoutName])
+            local newLayoutName = L["Profiles"] .. " - " .. newName
+            local layout = GW.global.layouts[oldLayoutName]
+            if layout then
+                layout.name = newLayoutName
+                layout.profileName = newName
+                GW.global.layouts[newLayoutName] = layout
                 GW.global.layouts[oldLayoutName] = nil
 
                 -- private Layouts aktualisieren; ein numerischer Lauf würde Einträge hinter einer Lücke verpassen
                 local privateLayoutSettings = GW.GetPrivateLayoutByLayoutName(oldLayoutName)
                 if privateLayoutSettings then
-                    privateLayoutSettings.layoutName = L["Profiles"] .. " - " .. newName
+                    privateLayoutSettings.layoutName = newLayoutName
+                end
+                if GW.private.Layouts.currentSelected == oldLayoutName then
+                    GW.private.Layouts.currentSelected = newLayoutName
                 end
             end
 

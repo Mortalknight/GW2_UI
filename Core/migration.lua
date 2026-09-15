@@ -100,3 +100,64 @@ local function DatabaseValueMigration()
     end
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
+
+local function GetLayoutKeys(layouts)
+    local keys = {}
+    for key in pairs(layouts) do
+        keys[#keys + 1] = key
+    end
+    return keys
+end
+
+-- moves a layout onto another key and takes its name, the spec assignment and the current selection along
+local function MoveLayout(layouts, oldKey, newName)
+    local layout = layouts[oldKey]
+    layouts[newName] = layout
+    layouts[oldKey] = nil
+    layout.name = newName
+
+    local privateLayoutSettings = GW.GetPrivateLayoutByLayoutName(oldKey)
+    if privateLayoutSettings then
+        privateLayoutSettings.layoutName = newName
+    end
+    if GW.private.Layouts.currentSelected == oldKey then
+        GW.private.Layouts.currentSelected = newName
+    end
+end
+
+local function LayoutMigration()
+    local layouts = GW.global and GW.global.layouts
+    if not layouts then return end
+
+    for _, key in ipairs(GetLayoutKeys(layouts)) do
+        local layout = layouts[key]
+        if type(layout) == "table" and layout.name and layout.name ~= key then
+            if layouts[layout.name] then
+                layout.name = key -- that name is taken, the key is the only thing left to name it after
+            else
+                MoveLayout(layouts, key, layout.name)
+            end
+        end
+    end
+
+    local prefix = GW.L["Profiles"] .. " - "
+    for _, key in ipairs(GetLayoutKeys(layouts)) do
+        local layout = layouts[key]
+        if type(layout) == "table" and layout.profileLayout
+            and not (layout.profileName and GW.globalSettings.profiles[layout.profileName]) then
+
+            local plainName = layout.profileName
+            if not plainName and key:sub(1, #prefix) == prefix then
+                plainName = key:sub(#prefix + 1)
+            end
+
+            layout.profileLayout = false
+            layout.profileName = nil
+
+            if plainName and plainName ~= key and not layouts[plainName] then
+                MoveLayout(layouts, key, plainName)
+            end
+        end
+    end
+end
+GW.LayoutMigration = LayoutMigration
