@@ -18,6 +18,12 @@
     <Script file="socket.lua"/>
     <Script file="colorPicker.lua"/>
     <Script file="settingsPanel.lua"/>
+    <Script file="addonManager.lua"/>
+    <Script file="inspectFrame.lua"/>
+    <Script file="dressUpFrameClassic.lua"/>
+    <Script file="questTimers.lua"/>
+    <Script file="flightmapClassic.lua"/>
+    <Script file="macro.lua"/>
 
     <Script file="addons\auctionator.lua"/>
     <Script file="addons\masqueSkin.lua"/>

@@ -14,6 +14,8 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("11.2.0", {
+    {GW.Enum.ChangelogType.feature, [=[Classic, TBC and Wrath: the inspect window is skinned now, with the portrait of the inspected player in the header, item levels on the equipment slots and the gw2 paperdoll background behind the model]=]},
+    {GW.Enum.ChangelogType.feature, [=[Classic, TBC, Wrath and Mists: the dressing room and the small preview window of quest rewards follow the skin of the other windows]=]},
     {GW.Enum.ChangelogType.change, [=[Alert toasts: icons carry the 1px border of the other skins and show the item quality on loot, legendary items, followers, pets, mounts and toys, titles and names use the same fonts on every toast, bonus roll toasts are skinned on every show]=]},
     {GW.Enum.ChangelogType.feature, [=[Reputation overview: rows of factions with a paragon chest waiting glow softly and a band of light sweeps across them, the reward icon turns with its own flare]=]},
     {GW.Enum.ChangelogType.feature, [=[Rare toast: shift + right click puts the rare on an ignore list, the list can be edited in the notification settings]=]},

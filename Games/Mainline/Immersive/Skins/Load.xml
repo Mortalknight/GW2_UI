@@ -2,8 +2,6 @@
     <Script file="deathrecapframe.lua"/>
     <Script file="talkinghead.lua"/>
     <Script file="flightmap.lua"/>
-    <Script file="addonManager.lua"/>
-    <Script file="macro.lua"/>
     <Script file="barber.lua"/>
     <Script file="dressUpFrame.lua"/>
     <Script file="inspectFrame.lua"/>

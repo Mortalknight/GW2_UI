@@ -224,6 +224,45 @@ local function HandlePortraitFrame(frame, createBackdrop)
 end
 GW.HandlePortraitFrame = HandlePortraitFrame
 
+-- PortraitFrameTemplate/ButtonFrameTemplate frames draw their border either as a NineSlice
+-- child frame or as a set of named regions. GwStripTextures can not get rid of them reliably:
+-- the NineSlice pieces are (re)created by NineSliceUtil.ApplyLayout after we skinned the frame
+-- and atlas based art survives a SetTexture() call. Hide the art itself instead.
+local portraitFrameArt = {
+    "NineSlice",
+    "Bg",
+    "TitleBg",
+    "TopTileStreaks",
+    "PortraitContainer",
+    "portrait",
+    "PortraitFrame",
+    "PortraitOverlay",
+    "TopLeftCorner",
+    "TopRightCorner",
+    "TopBorder",
+    "BotLeftCorner",
+    "BotRightCorner",
+    "BottomBorder",
+    "LeftBorder",
+    "RightBorder",
+    "BtnCornerLeft",
+    "BtnCornerRight",
+    "ButtonBottomBorder",
+}
+
+local function HandlePortraitFrameArt(frame)
+    if not frame then return end
+
+    local name = frame.GetName and frame:GetName()
+    for _, key in ipairs(portraitFrameArt) do
+        local art = frame[key] or (name and _G[name .. key])
+        if art and art.Hide then
+            art:Hide()
+        end
+    end
+end
+GW.HandlePortraitFrameArt = HandlePortraitFrameArt
+
 local function HandleIcon(icon, backdrop, backdropTexture, isBorder)
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 

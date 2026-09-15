@@ -120,8 +120,7 @@ local function SkinOpenMailFrame()
     OpenMailBodyText:SetFont("P", UNIT_NAME_FONT, 14, "")
     OpenMailBodyText:SetTextColor("P", 1, 1, 1, 1)
 
-    OpenMailFrame.NineSlice:Hide()
-    OpenMailFrame.TopTileStreaks:Hide()
+    GW.HandlePortraitFrameArt(OpenMailFrame)
     OpenMailFrame:GwCreateBackdrop(nil)
     OpenMailFrame:SetParent(MailFrame)
 
@@ -327,10 +326,8 @@ local function ClearMailTextures()
 
     if GW.Retail then
         SendMailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-
-        MailFrame.NineSlice:Hide()
     end
-    MailFrame.TopTileStreaks:Hide()
+    GW.HandlePortraitFrameArt(MailFrame)
     MailFrame:GwCreateBackdrop()
 
     OpenMailLetterButtonIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)

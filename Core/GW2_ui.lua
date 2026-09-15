@@ -839,9 +839,10 @@ local function evLoadSkins()
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
 
+    GW.LoadDressUpFrameSkin()
+
     if GW.Retail then
         GW.LoadTalkingHeadSkin()
-        GW.LoadDressUpFrameSkin()
         GW.LoadExpansionLadningPageSkin()
         GW.LoadGenericTraitFrameSkin()
         GW.LoadCooldownManagerSkin()
@@ -875,7 +876,6 @@ local function evLoadSkins()
         GW.LoadCalendarSkin()
     else
         GW.LoadQuestLogFrameSkin()
-        GW.LoadQuestTimersSkin()
     end
 
     if not (GW.Classic or GW.TBC) then
@@ -884,9 +884,11 @@ local function evLoadSkins()
         GW.LoadMailSkin()
     end
 
+    GW.LoadQuestTimersSkin()
+    GW.LoadInspectFrameSkin()
+
     if not (GW.Classic or GW.TBC or GW.Wrath) then
         GW.LoadSocketUISkin()
-        GW.LoadInspectFrameSkin()
     end
 end
 

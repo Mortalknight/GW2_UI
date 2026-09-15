@@ -21,7 +21,5 @@ end
 local function LoadQuestTimersSkin()
     if not GW.settings.QUESTTIMERS_SKIN_ENABLED then return end
     GW.RegisterLoadHook(ApplyQuestTimersSkin, "Blizzard_QuestTimer", QuestTimerFrame)
-
-    C_AddOns.LoadAddOn("Blizzard_QuestTimer")
 end
 GW.LoadQuestTimersSkin = LoadQuestTimersSkin

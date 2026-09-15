@@ -1,33 +1,13 @@
 ---@class GW2
 local GW = select(2, ...)
 
+-- Window, header, tabs, paperdoll and model come from the shared base skin; what is left here are the panels
+-- mists brings on top: the talent tree with its specialisation and the glyph sockets.
+
 local passiveHighlight = "Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png"
 local activeHighlight = "Interface/AddOns/GW2_UI/textures/talents/active_highlight.png"
 local passiveOutline = "Interface/AddOns/GW2_UI/textures/talents/passive_outline.png"
 local activeOutline = "Interface/AddOns/GW2_UI/textures/talents/background_border.png"
-
-local function Update_InspectPaperDollItemSlotButton(button)
-    local unit = button.hasItem and InspectFrame.unit
-    local quality = unit and GetInventoryItemQuality(unit, button:GetID())
-
-    if button.itemlevel then
-        local itemLink = unit and GetInventoryItemLink(unit, button:GetID())
-        if itemLink then
-            GW.SetItemLevel(button, quality, itemLink)
-        else
-            button.itemlevel:SetText("")
-            button.__gwLastItemLink = nil
-        end
-    end
-
-    if quality and quality > 1 then
-        local r, g, b = C_Item.GetItemQualityColor(quality)
-        button.backdrop:SetBackdropBorderColor(r, g, b)
-        return
-    end
-
-    button.backdrop:SetBackdropBorderColor(1, 1, 1, 1, 0.8)
-end
 
 local function UpdateGlyph(frame)
     local talentGroup = PlayerTalentFrame and PlayerTalentFrame.talentGroup
@@ -45,134 +25,52 @@ local function UpdateGlyph(frame)
     end
 end
 
-local function SkinInspectFrameOnLoad()
-    if not GW.settings.INSPECTION_SKIN_ENABLED then return end
+local function UpdateTalentButtons()
+    local talentInfoQuery = {
+        groupIndex = 1,
+        isInspect = false,
+        target = INSPECTED_UNIT
+    }
 
-    InspectFrame:GwStripTextures()
-    GW.CreateFrameHeaderWithBody(InspectFrame, InspectNameText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {}, 20)
-    InspectFrame.gwHeader.windowIcon:SetSize(48, 48)
-    InspectFrame.gwHeader.windowIcon:ClearAllPoints()
-    InspectFrame.gwHeader.windowIcon:SetPoint("CENTER", InspectFrame.gwHeader, "BOTTOMLEFT", 6 + 24, 19)
-    InspectFrameCloseButton:GwSkinButton(true)
-    InspectFrameCloseButton:SetSize(20, 20)
-    InspectFrameCloseButton:SetPoint("TOPRIGHT", -5, -5)
-    InspectFramePortrait:Hide()
-    InspectNameText:SetWidth(250)
-    InspectNameText:ClearAllPoints()
-    InspectNameText:SetPoint("BOTTOMLEFT", InspectFrame.gwHeader, "BOTTOMLEFT", 64, 20)
-    InspectNameText:SetJustifyH("LEFT")
-    InspectNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-    InspectLevelText:ClearAllPoints()
-    InspectLevelText:SetPoint("TOPLEFT", InspectFrame.gwHeader, "BOTTOMLEFT", 64, 17)
-    InspectLevelText:SetJustifyH("LEFT")
-    InspectLevelText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    for i = 1, 6 do
+        for j = 1, 3 do
+            local button = _G["InspectTalentFrameTalentRow" .. i .. "Talent" .. j]
+            if button then
+                talentInfoQuery.tier = i
+                talentInfoQuery.column = j
+                local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+                local isPassive = IsPassiveSpell(talentInfo.spellID)
+                if isPassive then
+                    button.highlight:SetTexture(passiveHighlight)
+                    button.icon:AddMaskTexture(button.mask)
+                    button.outline:SetTexture(passiveOutline)
+                else
+                    button.highlight:SetTexture(activeHighlight)
+                    button.icon:RemoveMaskTexture(button.mask)
+                    button.outline:SetTexture(activeOutline)
+                end
 
-    InspectModelFrameBorderTopLeft:GwKill()
-    InspectModelFrameBorderTopRight:GwKill()
-    InspectModelFrameBorderTop:GwKill()
-    InspectModelFrameBorderLeft:GwKill()
-    InspectModelFrameBorderRight:GwKill()
-    InspectModelFrameBorderBottomLeft:GwKill()
-    InspectModelFrameBorderBottomRight:GwKill()
-    InspectModelFrameBorderBottom:GwKill()
-
-    hooksecurefunc("InspectFrame_UnitChanged", function(self)
-        GW.SetHeaderPortrait(InspectFrame.gwHeader, self.unit)
-    end)
-
-    InspectFrame:HookScript("OnShow", function(self)
-        GW.SetHeaderPortrait(InspectFrame.gwHeader, self.unit)
-    end)
-
-    for i = 1, 4 do
-        GW.HandleTabs(_G["InspectFrameTab" .. i])
-        _G["InspectFrameTab" .. i]:SetSize(80, 24)
-        _G["InspectFrameTab" .. i]:ClearAllPoints()
-        if i == 1 then
-            _G["InspectFrameTab" .. i]:SetPoint("BOTTOMLEFT",  InspectFrame, "BOTTOMLEFT", 0, -24)
-        else
-            _G["InspectFrameTab" .. i]:SetPoint("RIGHT",  _G["InspectFrameTab" .. i - 1], "RIGHT", 75, 0)
+                button.icon:SetVertexColor(1, 1, 1, 1)
+                button:SetAlpha(1)
+                if talentInfo.selected or button.available then
+                    button.highlight:Show()
+                    button.icon:SetDesaturated(false)
+                else
+                    button.highlight:Hide()
+                    button.icon:SetDesaturated(true)
+                end
+            end
         end
     end
+end
 
-    InspectPaperDollFrame:GwStripTextures()
-
-    InspectFrame.mover = CreateFrame("Frame", nil, InspectFrame)
-    InspectFrame.mover:EnableMouse(true)
-    InspectFrame:SetMovable(true)
-    InspectFrame.mover:SetSize(InspectFrame:GetWidth(), 30)
-    InspectFrame.mover:SetPoint("BOTTOMLEFT", InspectFrame, "TOPLEFT", 0, -20)
-    InspectFrame.mover:SetPoint("BOTTOMRIGHT", InspectFrame, "TOPRIGHT", 0, 20)
-    InspectFrame.mover:RegisterForDrag("LeftButton")
-    InspectFrame:SetClampedToScreen(true)
-    InspectFrame.mover:SetScript("OnDragStart", function(self)
-        self:GetParent():StartMoving()
-    end)
-    InspectFrame.mover:SetScript("OnDragStop", function(self)
-        local self = self:GetParent()
-
-        self:StopMovingOrSizing()
-    end)
-
-    for _, slot in ipairs({InspectPaperDollItemsFrame:GetChildren()}) do
-        local icon = _G[slot:GetName() .. "IconTexture"]
-        local cooldown = _G[slot:GetName() .. "Cooldown"]
-
-        slot:GwStripTextures()
-        slot:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-        slot.backdrop:SetAllPoints()
-        slot:SetFrameLevel(slot:GetFrameLevel() + 2)
-        slot:GwStyleButton()
-
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        icon:GwSetInside()
-
-        if cooldown then
-            GW.RegisterCooldown(cooldown)
-        end
-
-        slot.gwTextOverlay = CreateFrame("Frame", nil, slot)
-        slot.gwTextOverlay:SetAllPoints()
-        slot.gwTextOverlay:SetFrameLevel(slot:GetFrameLevel() + 3)
-        slot.itemlevel = slot.gwTextOverlay:CreateFontString(nil, "OVERLAY")
-        slot.itemlevel:SetSize(100, 10)
-        slot.itemlevel:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 1, 2)
-        slot.itemlevel:SetTextColor(1, 1, 1)
-        slot.itemlevel:SetJustifyH("LEFT")
-        slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
-    end
-
-    hooksecurefunc("InspectPaperDollItemSlotButton_Update", Update_InspectPaperDollItemSlotButton)
-    hooksecurefunc("PanelTemplates_SelectTab", function(tab)
-        local name = tab:GetName()
-        local text = tab.Text or _G[name .. "Text"]
-        text:SetPoint("CENTER", tab, "CENTER", (tab.deselectedTextX or 0), (tab.deselectedTextY or 2))
-    end)
-
-    GW.HandleRotateButton(InspectModelFrameRotateLeftButton)
-    InspectModelFrameRotateLeftButton:SetPoint("TOPLEFT", 3, -3)
-    InspectModelFrameRotateLeftButton:SetNormalTexture([[Interface\Buttons\UI-RefreshButton]])
-    InspectModelFrameRotateLeftButton:GetNormalTexture():SetTexCoord(0, 1, 1, 1, 0, 0, 1, 0)
-    InspectModelFrameRotateLeftButton:SetPushedTexture([[Interface\Buttons\UI-RefreshButton]])
-    InspectModelFrameRotateLeftButton:GetPushedTexture():SetTexCoord(1, 1, 1, 0, 0, 1, 0, 0)
-
-    GW.HandleRotateButton(InspectModelFrameRotateRightButton)
-    InspectModelFrameRotateRightButton:SetPoint("TOPLEFT", InspectModelFrameRotateLeftButton, "TOPRIGHT", 3, 0)
-    InspectModelFrameRotateRightButton:SetNormalTexture([[Interface\Buttons\UI-RefreshButton]])
-    InspectModelFrameRotateRightButton:GetNormalTexture():SetTexCoord(0, 0, 1, 0, 0, 1, 1, 1)
-    InspectModelFrameRotateRightButton:SetPushedTexture([[Interface\Buttons\UI-RefreshButton]])
-    InspectModelFrameRotateRightButton:GetPushedTexture():SetTexCoord(0, 1, 0, 0, 1, 1, 1, 0)
-
-    InspectTalentFrame:GwStripTextures()
-    local InspectTalents = InspectTalentFrame.InspectTalents
-    InspectTalents.tier1:SetPoint("TOPLEFT", 20, -142)
-
+local function SkinSpec()
     local InspectSpec = InspectTalentFrame.InspectSpec
     InspectSpec:GwCreateBackdrop(GW.BackdropTemplates.Default)
     InspectSpec.backdrop:SetPoint("TOPLEFT", 15, -13)
     InspectSpec.backdrop:SetPoint("BOTTOMRIGHT", 20, 8)
     InspectSpec:SetHitRectInsets(15, -13, 20, 8)
-    InspectSpec.backdrop:SetFrameLevel(InspectTalents:GetFrameLevel())
+    InspectSpec.backdrop:SetFrameLevel(InspectTalentFrame.InspectTalents:GetFrameLevel())
 
     InspectSpec.ring:SetTexture("")
 
@@ -195,51 +93,11 @@ local function SkinInspectFrameOnLoad()
             frame.specName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
         end
 
-        local talentInfoQuery = {
-            groupIndex = 1,
-            isInspect = false,
-            target = INSPECTED_UNIT
-        }
-
-        for i = 1, 6 do
-            for j = 1, 3 do
-                local button = _G["InspectTalentFrameTalentRow" .. i .. "Talent" .. j]
-                if button then
-                    talentInfoQuery.tier = i
-                    talentInfoQuery.column = j
-                    local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
-                    local isPassive = IsPassiveSpell(talentInfo.spellID)
-                    if isPassive then
-                        button.highlight:SetTexture(passiveHighlight)
-                        button.icon:AddMaskTexture(button.mask)
-                        button.outline:SetTexture(passiveOutline)
-                    else
-                        button.highlight:SetTexture(activeHighlight)
-                        button.icon:RemoveMaskTexture(button.mask)
-                        button.outline:SetTexture(activeOutline)
-                    end
-
-                    if talentInfo.selected then
-                        button.highlight:Show()
-                        button.icon:SetDesaturated(false)
-                        button.icon:SetVertexColor(1, 1, 1, 1)
-                        button:SetAlpha(1)
-                    elseif button.available then
-                        button.highlight:Show()
-                        button.icon:SetDesaturated(false)
-                        button.icon:SetVertexColor(1, 1, 1, 1)
-                        button:SetAlpha(1)
-                    else
-                        button.highlight:Hide()
-                        button.icon:SetDesaturated(true)
-                        button.icon:SetVertexColor(1, 1, 1, 1)
-                        button:SetAlpha(1)
-                    end
-                end
-            end
-        end
+        UpdateTalentButtons()
     end)
+end
 
+local function SkinTalentButtons()
     for i = 1, 6 do
         for j = 1, 3 do
             local button = _G["InspectTalentFrameTalentRow" .. i .. "Talent" .. j]
@@ -269,68 +127,47 @@ local function SkinInspectFrameOnLoad()
             end
         end
     end
+end
 
-    InspectTalentFrame:HookScript("OnShow", function(frame)
-        if frame.gwSkinned then return end
+-- the sockets only exist once the talent frame has been shown for the first time
+local function SkinGlyphs(frame)
+    if frame.gwSkinned then return end
+    frame.gwSkinned = true
 
-        frame.gwSkinned = true
+    local InspectGlyphs = frame.InspectGlyphs
+    for i = 1, 6 do
+        local glyph = InspectGlyphs["Glyph" .. i]
 
-        local InspectGlyphs = frame.InspectGlyphs
-        for i = 1, 6 do
-            local glyph = InspectGlyphs["Glyph" .. i]
+        glyph.highlight:SetTexture(nil)
+        glyph.glyph:GwKill()
+        glyph.ring:SetTexture("Interface/AddOns/GW2_UI/textures/character/glyphbgmajorequip.png")
+        glyph:SetSize(i % 2 == 1 and 30 or 50, i % 2 == 1 and 30 or 50)
 
-            glyph.highlight:SetTexture(nil)
-            glyph.glyph:GwKill()
-            glyph.ring:SetTexture("Interface/AddOns/GW2_UI/textures/character/glyphbgmajorequip.png")
+        if not glyph.texture then
+            glyph.texture = glyph:CreateTexture(nil, "OVERLAY", nil, 7)
+            glyph.texture:GwSetInside()
 
-            glyph:SetSize(i % 2 == 1 and 30 or 50, i % 2 == 1 and 30 or 50)
-
-            if not glyph.texture then
-                glyph.texture = glyph:CreateTexture(nil, "OVERLAY", nil, 7)
-                glyph.texture:GwSetInside()
-
-                UpdateGlyph(glyph)
-                hooksecurefunc(glyph, "UpdateSlot", UpdateGlyph)
-            end
-        end
-
-        InspectGlyphs.Glyph1:SetPoint("TOPLEFT", 90, -10)
-        InspectGlyphs.Glyph2:SetPoint("TOPLEFT", 15, 0)
-        InspectGlyphs.Glyph3:SetPoint("TOPLEFT", 90, -100)
-        InspectGlyphs.Glyph4:SetPoint("TOPLEFT", 15, -90)
-        InspectGlyphs.Glyph5:SetPoint("TOPLEFT", 90, -190)
-        InspectGlyphs.Glyph6:SetPoint("TOPLEFT", 15, -180)
-    end)
-
-    -- gw2 paperdoll background behind the model instead of blizzards class artwork corners
-    for _, corner in pairs({"TopLeft", "TopRight", "BotLeft", "BotRight"}) do
-        local bg = _G["InspectModelFrameBackground" .. corner]
-        if bg then
-            bg:SetAlpha(0)
+            UpdateGlyph(glyph)
+            hooksecurefunc(glyph, "UpdateSlot", UpdateGlyph)
         end
     end
-    if InspectModelFrameBackgroundOverlay then
-        InspectModelFrameBackgroundOverlay:SetAlpha(0)
-    end
-    InspectModelFrame.gwBackground = InspectModelFrame:CreateTexture(nil, "BACKGROUND", nil, -8)
-    InspectModelFrame.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/character/paperdollbg.png")
-    InspectModelFrame.gwBackground:SetAllPoints()
-    InspectModelFrame:GwCreateBackdrop("Transparent")
 
-    -- Honor/Arena/PvP Tab
-    InspectPVPFrame:GwStripTextures()
+    InspectGlyphs.Glyph1:SetPoint("TOPLEFT", 90, -10)
+    InspectGlyphs.Glyph2:SetPoint("TOPLEFT", 15, 0)
+    InspectGlyphs.Glyph3:SetPoint("TOPLEFT", 90, -100)
+    InspectGlyphs.Glyph4:SetPoint("TOPLEFT", 15, -90)
+    InspectGlyphs.Glyph5:SetPoint("TOPLEFT", 90, -190)
+    InspectGlyphs.Glyph6:SetPoint("TOPLEFT", 15, -180)
+end
 
-    for _, name in next, { "RatedBG", "Arena2v2", "Arena3v3", "Arena5v5" } do
-        local frame = InspectPVPFrame[name]
+local function SkinInspectFrameOnLoad()
+    if not GW.SkinInspectFrameBase() then return end
 
-        if frame then
-            frame:GwStripTextures()
-            frame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-            frame.backdrop:SetPoint("TOPLEFT", 9, -4)
-            frame.backdrop:SetPoint("BOTTOMRIGHT", -24, 3)
-            frame.backdrop:SetFrameLevel(frame:GetFrameLevel())
-        end
-    end
+    InspectTalentFrame:GwStripTextures()
+    InspectTalentFrame.InspectTalents.tier1:SetPoint("TOPLEFT", 20, -142)
+    SkinSpec()
+    SkinTalentButtons()
+    InspectTalentFrame:HookScript("OnShow", SkinGlyphs)
 end
 
 local function LoadInspectFrameSkin()
