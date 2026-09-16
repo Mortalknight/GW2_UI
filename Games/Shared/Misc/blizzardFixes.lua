@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 function GW:FixBlizzardIssues()
-    if self.settings.FixGuildNewsSpam then
+    if self.settings.general.fixGuildNewsSpam then
         -- https://nga.178.com/read.php?tid=42399961
         local newsRequireUpdate, newsTimer
         CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", function(frame, event)

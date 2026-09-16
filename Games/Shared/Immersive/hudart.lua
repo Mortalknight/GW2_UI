@@ -56,7 +56,7 @@ local function UpdateAuraArtVisibility(self)
         return
     end
 
-    local show = GW.settings.HUD_BACKGROUND and GW.settings.HUD_SPELL_SWAP
+    local show = GW.settings.hud.background and GW.settings.hud.dynamicBackground
     for _, container in next, self.gwAuraArtContainers do
         container:SetShown(show)
     end
@@ -74,7 +74,7 @@ local function GetDruidFormArt()
 end
 
 local function selectBg(self)
-    if not GW.settings.HUD_BACKGROUND or not GW.settings.HUD_SPELL_SWAP then
+    if not GW.settings.hud.background or not GW.settings.hud.dynamicBackground then
         return
     end
 
@@ -154,7 +154,7 @@ end
 
 
 local function combatHealthState(self)
-    if not GW.settings.HUD_BACKGROUND then
+    if not GW.settings.hud.background then
         return
     end
     local healthPercentage = UnitHealth("player") / UnitHealthMax("player")
@@ -186,7 +186,7 @@ local function combatHealthState(self)
 end
 
 local function combatHealthStateRetail(self)
-    if not GW.settings.HUD_BACKGROUND then
+    if not GW.settings.hud.background then
         return
     end
 
@@ -474,7 +474,7 @@ end
 local function ToggleHudBackground()
     if Gw2_HudBackgroud.actionBarHud.HUDBG then
         for _, f in ipairs(Gw2_HudBackgroud.actionBarHud.HUDBG) do
-            if GW.settings.HUD_BACKGROUND then
+            if GW.settings.hud.background then
                 f:Show()
             else
                 f:Hide()
@@ -483,7 +483,7 @@ local function ToggleHudBackground()
     end
 
     if Gw2_HudBackgroud.edgeTint then
-        local showBorder = GW.settings.BORDER_ENABLED
+        local showBorder = GW.settings.hud.screenBorder
         for _, f in ipairs(Gw2_HudBackgroud.edgeTint) do
             if showBorder then
                 f:Show()

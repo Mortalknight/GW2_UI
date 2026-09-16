@@ -1335,7 +1335,7 @@ local function collectionsSkin()
 end
 
 local function LoadCollectionsSkin()
-    if not GW.settings.COLLECTIONS_SKIN_ENABLED then
+    if not GW.settings.skins.collections.enabled then
         return
     end
     GW.RegisterLoadHook(collectionsSkin, "Blizzard_Collections", CollectionsJournal)

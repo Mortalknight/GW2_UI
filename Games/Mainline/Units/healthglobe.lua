@@ -17,7 +17,7 @@ function GwHealthglobeMixin:FlashAnimation(delta, t)
 end
 
 local function formatHealthValue(value)
-    if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
+    if GW.settings.unitframes.healthGlobe.shortHealthValues then
         return GW.ShortValue(value)
     end
 
@@ -25,7 +25,7 @@ local function formatHealthValue(value)
 end
 
 local function formatShieldValue(value)
-    return GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES and GW.ShortValue(value) or BreakUpLargeNumbers(value)
+    return GW.settings.unitframes.healthGlobe.shortShieldValues and GW.ShortValue(value) or BreakUpLargeNumbers(value)
 end
 
 function GwHealthglobeMixin:UpdateHealthData()
@@ -62,15 +62,15 @@ function GwHealthglobeMixin:UpdateHealthData()
     self.healAbsorb:SetMinMaxValues(0, healthMax)
     self.healAbsorb:SetValue(healAbsorbAmount, Enum.StatusBarInterpolation.ExponentialEaseOut)
 
-    if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
+    if GW.settings.unitframes.healthGlobe.healthValue == "PREC" then
         healthValue = string.format("%.0f%%", UnitHealthPercent("player", true, CurveConstants.ScaleTo100))
-    elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
+    elseif GW.settings.unitframes.healthGlobe.healthValue == "VALUE" then
         healthValue = formatHealthValue(health)
-    elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
+    elseif GW.settings.unitframes.healthGlobe.healthValue == "BOTH" then
         healthValue = string.format("%s\n%.0f%%", formatHealthValue(health), UnitHealthPercent("player", true, CurveConstants.ScaleTo100))
     end
 
-    if GW.settings.PLAYER_UNIT_ABSORB == "VALUE" then
+    if GW.settings.unitframes.healthGlobe.absorbValue == "VALUE" then
         absorbValue = allValues.totalDamageAbsorbs --Not yet possible C_StringUtil.TruncateWhenZero only acceps numbers and AbbreviateLargeNumbers returns a string. formatShieldValue(allValues.totalDamageAbsorbs)
     end
 
@@ -146,7 +146,7 @@ function GwHealthglobeMixin:OnEnter()
     end
     GameTooltip:Show()
 
-    if GW.settings.PLAYER_SHOW_PVP_INDICATOR and self.pvp.pvpFlag then
+    if GW.settings.unitframes.player.pvpIndicator and self.pvp.pvpFlag then
         self.pvp:fadeIn()
     end
 end
@@ -281,17 +281,17 @@ local function LoadHealthGlobe()
     hg.hpValues:SetIncomingHealOverflowPercent(1)
 
     -- position based on XP bar space and make it movable if your actionbars are off
-    if GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
-        if GW.settings.XPBAR_ENABLED then
+    if GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
+        if GW.settings.hud.xpBar then
             hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
         else
             hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
         end
     else
-        GW.RegisterMovableFrame(hg, GW.L["Health Globe"], "HealthGlobe_pos", "Unitframe", nil, nil, false)
+        GW.RegisterMovableFrame(hg, GW.L["Health Globe"], "unitframes.healthGlobe", "Unitframe", nil, nil, false)
         hg:SetPoint("TOPLEFT", hg.gwMover)
-        if not GW.settings.XPBAR_ENABLED and not hg.isMoved then
-            local framePoint = GW.settings.HealthGlobe_pos
+        if not GW.settings.hud.xpBar and not hg.isMoved then
+            local framePoint = GW.settings.unitframes.healthGlobe.pos
             hg.gwMover:ClearAllPoints()
             hg.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, 0)
         end
@@ -309,7 +309,7 @@ local function LoadHealthGlobe()
     GW.AddToClique(hg)
 
     -- set text/font stuff
-    if GW.settings.PLAYER_UNIT_ABSORB == "BOTH" then
+    if GW.settings.unitframes.healthGlobe.absorbValue == "BOTH" then
         hg.text_a:ClearAllPoints()
         hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
 
@@ -345,7 +345,7 @@ local function LoadHealthGlobe()
     hg:SetScript("OnEnter", hg.OnEnter)
     hg:SetScript("OnLeave", function(self)
         GameTooltip_Hide()
-        if GW.settings.PLAYER_SHOW_PVP_INDICATOR and self.pvp.pvpFlag then
+        if GW.settings.unitframes.player.pvpIndicator and self.pvp.pvpFlag then
             self.pvp:fadeOut()
         end
     end)
@@ -406,7 +406,7 @@ local function LoadHealthGlobe()
         pagIn:Play()
     end
 
-    if not GW.settings.PLAYER_SHOW_PVP_INDICATOR then pvp:Hide() end
+    if not GW.settings.unitframes.player.pvpIndicator then pvp:Hide() end
 
     return hg
 end

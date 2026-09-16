@@ -1,7 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 local function ApplySocketUISkin()
-    if not GW.settings.SOCKET_SKIN_ENABLED then return end
+    if not GW.settings.skins.socket.enabled then return end
 
     ItemSocketingFrame:SetFrameStrata("DIALOG")
 

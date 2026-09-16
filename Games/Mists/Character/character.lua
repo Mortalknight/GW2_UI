@@ -753,14 +753,14 @@ local function LoadPaperDoll(tabContainer)
     GwCharacterWindow:SetNextAddonMenuButtonAnchor((GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6) and heroPanelMenu.petMenu or heroPanelMenu.equipmentMenu)
     heroPanelMenu.Outfitter = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Outfitter",
-        setting = GW.settings.USE_CHARACTER_WINDOW,
+        setting = GW.settings.windows.character.enabled,
         showFunction = function() hideCharframe = false Outfitter:OpenUI() end,
         hideOurFrame = true,
     })
 
     heroPanelMenu["GearQuipper-TBC"] = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "GearQuipper-TBC",
-        setting = GW.settings.USE_CHARACTER_WINDOW,
+        setting = GW.settings.windows.character.enabled,
         showFunction = function() gearquipper:ToggleUI() end,
         hideOurFrame = false,
         onCreated = function(createdButton)
@@ -772,14 +772,14 @@ local function LoadPaperDoll(tabContainer)
     })
     heroPanelMenu.Clique = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Clique",
-        setting = GW.settings.USE_SPELLBOOK_WINDOW,
+        setting = GW.settings.windows.spellbook.enabled,
         showFunction = function() ShowUIPanel(CliqueConfig) end,
         hideOurFrame = true,
     })
 
     heroPanelMenu.Pawn = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Pawn",
-        setting = GW.settings.USE_CHARACTER_WINDOW,
+        setting = GW.settings.windows.character.enabled,
         showFunction = function() PawnUIShow() end,
         hideOurFrame = false,
     })

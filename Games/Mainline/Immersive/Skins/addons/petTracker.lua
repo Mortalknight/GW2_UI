@@ -140,7 +140,7 @@ function GwPetTrackerContainerMixin:UpdateLayout()
 end
 
 function GwPetTrackerContainerMixin:InitModule()
-    if not GW.settings.SKIN_PETTRACKER_ENABLED or not PetTracker then return end
+    if not GW.settings.skins.petTracker.enabled or not PetTracker then return end
 
     local petTrackerLocals = LibStub("AceLocale-3.0"):GetLocale("PetTracker")
 

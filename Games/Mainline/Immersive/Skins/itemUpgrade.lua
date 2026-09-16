@@ -10,7 +10,7 @@ local function Update(frame)
 end
 
 local function ApplyItemUpgradeSkin()
-    if not GW.settings.ITEMUPGRADE_SKIN_ENABLED then return end
+    if not GW.settings.skins.itemUpgrade.enabled then return end
     ItemUpgradeFrameBg:Hide()
     ItemUpgradeFramePortrait:Hide()
     ItemUpgradeFramePlayerCurrenciesBorder:GwStripTextures()

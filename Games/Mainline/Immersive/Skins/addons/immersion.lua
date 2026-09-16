@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function LoadImmersionAddonSkin()
-    if not GW.settings.IMMERSIONADDON_SKIN_ENABLED then return end
+    if not GW.settings.skins.immersion.enabled then return end
 
     local ImmersionFrame = _G.ImmersionFrame
 

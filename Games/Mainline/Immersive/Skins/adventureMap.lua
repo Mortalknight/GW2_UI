@@ -17,7 +17,7 @@ local function SkinRewards()
 end
 
 local function ApplyAdventureMapSkin()
-    if not GW.settings.ADVENTURE_MAP_SKIN_ENABLED then return end
+    if not GW.settings.skins.adventureMap.enabled then return end
 
     --Quest Choise
     AdventureMapQuestChoiceDialog:GwStripTextures()

@@ -154,12 +154,12 @@ local function setDruid(f)
     elseif barType == "mana" then
         CP.setManaBar(f)
         return true
-    elseif barType == "little_mana" and GW.settings.POWERBAR_ENABLED then -- classic
+    elseif barType == "little_mana" and GW.settings.powerBar.enabled then -- classic
         CP.setLittleManaBar(f, "combo")
         return true
     elseif barType == "combo|little_mana" then
         CP.setComboBar(f)
-        if GW.settings.POWERBAR_ENABLED then
+        if GW.settings.powerBar.enabled then
             CP.setLittleManaBar(f, "combo")
         end
         return true

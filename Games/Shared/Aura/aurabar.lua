@@ -159,7 +159,7 @@ local function UpdateAura_OnUpdate(self, xpr, elapsed)
         if self.duration < 121 then
             setShortCD(self, xpr, self.duration, self.stackCount)
             if self.duration - remains < 0.1 then
-                if GW.settings[self.header.setting].NewAuraAnimation and (self.oldAuraName ~= self.auraName) then
+                if GW.settings.playerAuras[self.header.auraKey].NewAuraAnimation and (self.oldAuraName ~= self.auraName) then
                     self.agZoomIn:Play()
                 end
             end
@@ -373,7 +373,7 @@ local function AuraOnAttributeChanged(self, attribute, value)
 end
 
 local function UpdateIcon(self, updateSize)
-    local db = GW.settings[self.header.setting]
+    local db = GW.settings.playerAuras[self.header.auraKey]
     local width, height = db.IconSize, (db.KeepSizeRatio and db.IconSize) or db.IconHeight
     if updateSize then
         self:SetWidth(width)
@@ -460,7 +460,7 @@ local SECURE_SORT_PRESETS = {
 local function UpdateAuraHeader(header)
     if not header then return end
 
-    local db = GW.settings[header.setting]
+    local db = GW.settings.playerAuras[header.auraKey]
     local width = db.IconSize
     local height = db.KeepSizeRatio and width or db.IconHeight
     local grow_dir = db.GrowDirection
@@ -489,7 +489,7 @@ local function UpdateAuraHeader(header)
         wrapYOffset = 0
     end
 
-    Debug("settings", header.setting, grow_dir, wrapAfter, width, height)
+    Debug("settings", header.auraKey, grow_dir, wrapAfter, width, height)
 
     header:SetAttribute("config-width", width)
     header:SetAttribute("config-height", height)
@@ -557,7 +557,7 @@ local function newHeader(filter)
     h.enchants = {}
     h.spells = {}
     h.filter = filter
-    h.setting = filter == "HELPFUL" and "PlayerBuffs" or "PlayerDebuffs"
+    h.auraKey = filter == "HELPFUL" and "buffs" or "debuffs"
 
     h.visibility = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
     h.visibility:SetScript("OnUpdate", HeaderOnUpdate)
@@ -579,9 +579,9 @@ local function newHeader(filter)
         h:SetAttribute("consolidateTo", 0)
         h:SetAttribute("includeWeapons", 1)
 
-        RegisterMovableFrame(h, SHOW_BUFFS, "PlayerBuffFrame", "Blizzard,Aura", {316, 100}, {GW.MoverOption.Scale}, true)
+        RegisterMovableFrame(h, SHOW_BUFFS, "playerAuras.buffs", "Blizzard,Aura", {316, 100}, {GW.MoverOption.Scale}, true)
     else
-        RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", "Blizzard,Aura", {316, 60}, {GW.MoverOption.Scale}, true)
+        RegisterMovableFrame(h, SHOW_DEBUFFS, "playerAuras.debuffs", "Blizzard,Aura", {316, 60}, {GW.MoverOption.Scale}, true)
     end
 
     UpdateAuraHeader(h)
@@ -597,7 +597,7 @@ local function loadAuras(lm)
 
     lm:RegisterBuffFrame(hb)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GW.settings[hb.setting].GrowDirection
+        local grow_dir = GW.settings.playerAuras[hb.auraKey].GrowDirection
         local anchor_hb = DIRECTION_TO_POINT[grow_dir]
 
         if not InCombatLockdown() then
@@ -611,7 +611,7 @@ local function loadAuras(lm)
     hd:Show()
     lm:RegisterDebuffFrame(hd)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GW.settings[hd.setting].GrowDirection
+        local grow_dir = GW.settings.playerAuras[hd.auraKey].GrowDirection
         local anchor_hd = DIRECTION_TO_POINT[grow_dir]
 
         if not InCombatLockdown() then

@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function ApplyAlliedRacesUISkin()
-    if not GW.settings.ALLIEND_RACES_UI_SKIN_ENABLED then return end
+    if not GW.settings.skins.alliedRaces.enabled then return end
 
     AlliedRacesFrame.NineSlice:SetAlpha(0)
     AlliedRacesFramePortrait:SetAlpha(0)

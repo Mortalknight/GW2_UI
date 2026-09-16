@@ -200,7 +200,7 @@ local function UpdateButtons(self)
         end
     end
 
-    if #shownButtons == 1 and not GW.settings.MINIMAP_ADDON_FLYOUT_ALWAYS then
+    if #shownButtons == 1 and not GW.settings.minimap.addonFlyoutAlways then
         local button = shownButtons[1]
         UnlockButton(button)
 

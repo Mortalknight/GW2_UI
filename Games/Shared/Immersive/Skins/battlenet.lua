@@ -27,7 +27,7 @@ local function hook_SetPoint(self, _, anchor)
 end
 
 local function LoadBNToastSkin()
-    if not GW.settings.BNTOASTFRAME_SKIN_ENABLED then return end
+    if not GW.settings.skins.bnToast.enabled then return end
 
     local skins = {
         BNToastFrame,
@@ -96,7 +96,7 @@ local function LoadBNToastSkin()
     -- do not trigger this code if ElvUI controlls that frame
     if BNToastFrame and BNToastFrame.mover and BNToastFrame.mover:GetName() == "BNETMover" then return end
 
-    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "Blizzard", nil, {GW.MoverOption.Scale}, nil, BNTostPostDrag, true)
+    RegisterMovableFrame(BNToastFrame, "BNet Frame", "skins.bnToast", "Blizzard", nil, {GW.MoverOption.Scale}, nil, BNTostPostDrag, true)
 
     hooksecurefunc(BNToastFrame, "SetPoint", hook_SetPoint)
 end

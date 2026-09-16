@@ -100,7 +100,7 @@ local function HandleAffixIcons(self)
 end
 
 local function SkinLookingForGroupFrames()
-    if not GW.settings.LFG_SKIN_ENABLED then return end
+    if not GW.settings.skins.lfg.enabled then return end
 
     GW.HandlePortraitFrame(PVEFrame, false)
     PVEFrame.CloseButton:SetPoint("TOPRIGHT", -5, -2)
@@ -789,13 +789,13 @@ local function SkinLookingForGroupFrames()
         end
     end)
 
-    GW.MakeFrameMovable(PVEFrame, nil, "PvEWindow", true)
+    GW.MakeFrameMovable(PVEFrame, nil, "lfg", true)
     PVEFrame:SetClampedToScreen(true)
     PVEFrame:SetClampRectInsets(-40, 0, PVEFrameHeader:GetHeight() - 30, 0)
 end
 
 local function ApplyPvPUISkin()
-    if not GW.settings.LFG_SKIN_ENABLED then return end
+    if not GW.settings.skins.lfg.enabled then return end
 
     PVPUIFrame:GwStripTextures()
 
@@ -1004,7 +1004,7 @@ local function ApplyPvPUISkin()
         end
     end)
 
-    if GW.settings.TOOLTIPS_ENABLED then
+    if GW.settings.tooltip.enabled then
         ConquestTooltip.NineSlice:Hide()
         ConquestTooltip:GwCreateBackdrop({
             bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
@@ -1086,7 +1086,7 @@ local function ApplyPvPUISkin()
 end
 
 local function ApplyChallengesUISkin()
-    if not GW.settings.LFG_SKIN_ENABLED then return end
+    if not GW.settings.skins.lfg.enabled then return end
 
     ChallengesFrame:DisableDrawLayer("BACKGROUND")
     ChallengesFrameInset:GwStripTextures()
@@ -1199,7 +1199,7 @@ local function ApplyChallengesUISkin()
 end
 
 local function ApplyDelvesDashboardUISkin()
-    if not GW.settings.LFG_SKIN_ENABLED then return end
+    if not GW.settings.skins.lfg.enabled then return end
 
     DelvesDashboardFrame.DashboardBackground:SetAlpha(0)
     DelvesDashboardFrame.ButtonPanelLayoutFrame.CompanionConfigButtonPanel.CompanionConfigButton:GwSkinButton(false, true)
@@ -1207,7 +1207,7 @@ local function ApplyDelvesDashboardUISkin()
 end
 
 local function ApplyDelvesDifficultyPickerSkin()
-    if not GW.settings.LFG_SKIN_ENABLED then return end
+    if not GW.settings.skins.lfg.enabled then return end
 
     local backround = DelvesDifficultyPickerFrame.DelveBackgroundWidgetContainer
     DelvesDifficultyPickerFrame:GwStripTextures()

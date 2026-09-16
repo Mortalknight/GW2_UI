@@ -40,7 +40,7 @@ local function HandleAddonEntry(entry, treeNode)
 end
 
 local function LoadAddonListSkin()
-    if not GW.settings.ADDONLIST_SKIN_ENABLED then return end
+    if not GW.settings.skins.addonList.enabled then return end
     GW.HandlePortraitFrame(AddonList)
 
     GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {AddonList.ScrollBox}, nil, false, true)

@@ -59,7 +59,7 @@ local function SetEquipSetIconShown(button, shown)
 end
 
 GW.RegisterItemButtonDecorator(function(button)
-    if not GW.settings.BAG_ITEM_EQUIPMENT_SET_ICON_SHOW then
+    if not GW.settings.bags.items.equipmentSetIcon then
         SetEquipSetIconShown(button, false)
         return
     end
@@ -96,7 +96,7 @@ GW.RegisterItemButtonDecorator(function(button, _, _)
     if not button.scrapIcon then
         return
     end
-    if GW.settings.BAG_ITEM_SCRAP_ICON_SHOW then
+    if GW.settings.bags.items.scrapIcon then
         local itemLoc = ItemLocation:CreateFromBagAndSlot(button.gwBagID or button:GetBagID(), button:GetID())
         if itemLoc and itemLoc ~= "" then
             if C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc) then

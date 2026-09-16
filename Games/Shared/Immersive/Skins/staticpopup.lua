@@ -232,7 +232,7 @@ local function ClearSetTexture(texture, tex)
 end
 
 local function LoadStaticPopupSkin()
-    if not GW.settings.STATICPOPUP_SKIN_ENABLED then return end
+    if not GW.settings.skins.staticPopup.enabled then return end
 
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]

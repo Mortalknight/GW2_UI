@@ -43,8 +43,8 @@ end
 GwStanceBarMixin = {}
 
 function GwStanceBarMixin:UpdateVisibility()
-    local visibility = string.gsub(GW.settings.StanceBar.visibility, "[\n\r]", "")
-    RegisterStateDriver(self, "visibility", (not GW.settings.StanceBar.enabled or GetNumShapeshiftForms() == 0) and "hide" or visibility)
+    local visibility = string.gsub(GW.settings.stanceBar.visibility, "[\n\r]", "")
+    RegisterStateDriver(self, "visibility", (not GW.settings.stanceBar.enabled or GetNumShapeshiftForms() == 0) and "hide" or visibility)
 end
 
 function GwStanceBarMixin:UpdateAlpha(isMouseOver)
@@ -52,8 +52,8 @@ function GwStanceBarMixin:UpdateAlpha(isMouseOver)
         isMouseOver = IsStanceBarMouseOver(self)
     end
 
-    local alpha = GW.settings.StanceBar.alpha
-    if GW.settings.StanceBar.mouseOver and not isMouseOver then
+    local alpha = GW.settings.stanceBar.alpha
+    if GW.settings.stanceBar.mouseOver and not isMouseOver then
         alpha = 0
     end
 
@@ -79,8 +79,8 @@ end
 
 function GwStanceBarMixin:PositionsAndSize()
     local numForms = GetNumShapeshiftForms()
-    local buttonSize = GW.settings.StanceBar.buttonSize
-    local spacing = GW.settings.StanceBar.spacing
+    local buttonSize = GW.settings.stanceBar.buttonSize
+    local spacing = GW.settings.stanceBar.spacing
 
     self:SetSize(buttonSize, buttonSize)
 
@@ -92,7 +92,7 @@ function GwStanceBarMixin:PositionsAndSize()
         button:SetPoint("TOPLEFT", self, "TOPLEFT")
         button:SetFrameLevel(self:GetFrameLevel() + 5)
     else
-        local growDirection = GW.settings.StanceBar.growDirection
+        local growDirection = GW.settings.stanceBar.growDirection
         local button, lastbutton
         local containerLongSide = (buttonSize * numForms) + (spacing * (numForms + 1))
         local containerShortSide = buttonSize + (spacing * 2)
@@ -155,7 +155,7 @@ end
 function GwStanceBarMixin:StyleStanceBarButtons()
     local numForms = GetNumShapeshiftForms()
     local stance = GetShapeshiftForm()
-    local buttonSize = GW.settings.StanceBar.buttonSize
+    local buttonSize = GW.settings.stanceBar.buttonSize
 
     for i = 1, NUM_STANCE_SLOTS do
         local button = self.buttons[i]
@@ -240,7 +240,7 @@ function GwStanceBarMixin:OnEvent( event)
         if inCombat then
             NeedAdjustMaxStanceButtons = true
         else
-            self.container:SetShown(GW.settings.StanceBar.containerState == "open" and true or false)
+            self.container:SetShown(GW.settings.stanceBar.containerState == "open" and true or false)
             self:AdjustMaxStanceButtons()
             NeedAdjustMaxStanceButtons = false
         end
@@ -305,10 +305,10 @@ function GW.CreateStanceBar ()
             end
         ]=])
     StanceButtonHolder:HookScript("OnClick", function(self)
-        GW.settings.StanceBar.containerState =  self.container:IsShown() and "open" or "close"
+        GW.settings.stanceBar.containerState =  self.container:IsShown() and "open" or "close"
     end)
 
-    GW.RegisterMovableFrame(StanceButtonHolder, GW.L["Stance Bar"], "StanceBar_pos", "Power,Blizzard", nil, {GW.MoverOption.Scale})
+    GW.RegisterMovableFrame(StanceButtonHolder, GW.L["Stance Bar"], "stanceBar", "Power,Blizzard", nil, {GW.MoverOption.Scale})
     StanceButtonHolder:ClearAllPoints()
     StanceButtonHolder:SetPoint("TOPLEFT", StanceButtonHolder.gwMover)
 end

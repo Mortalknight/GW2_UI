@@ -2,12 +2,12 @@
 local GW = select(2, ...)
 
 local function ApplyMissingIncompatibleAddonsDefaults()
-    for category, defaultData in pairs(GW.globalDefault.profile.IncompatibleAddons) do
+    for category, defaultData in pairs(GW.globalDefault.profile.incompatibleAddons) do
 
-        if not GW.settings.IncompatibleAddons[category] then
-            GW.settings.IncompatibleAddons[category] = GW.CopyTable(defaultData)
+        if not GW.settings.incompatibleAddons[category] then
+            GW.settings.incompatibleAddons[category] = GW.CopyTable(defaultData)
         else
-            GW.settings.IncompatibleAddons[category].Addons = GW.CopyTable(defaultData.Addons)
+            GW.settings.incompatibleAddons[category].Addons = GW.CopyTable(defaultData.Addons)
         end
     end
 end
@@ -19,7 +19,7 @@ local function GetIncompatibleAddonInfo(incompatibleAddonCategory)
     local loadedAddonNames = {}
     local loadedAddonName = ""
 
-    local addonCategoryTable = GW.settings.IncompatibleAddons[incompatibleAddonCategory]
+    local addonCategoryTable = GW.settings.incompatibleAddons[incompatibleAddonCategory]
     if addonCategoryTable then
         isOverride = addonCategoryTable.Override
         for _, addon in ipairs(addonCategoryTable.Addons) do

@@ -49,8 +49,8 @@ local expansionLandingPageTable = {
 }
 
 function GW.UpdateMinimapSize()
-    local size = GW.settings.MINIMAP_SIZE
-    local scale = GW.settings.MinimapScale
+    local size = GW.settings.minimap.size
+    local scale = GW.settings.minimap.scale
 
     Minimap:SetSize(size, size)
     Minimap:SetScale(scale)
@@ -62,7 +62,7 @@ function GW.UpdateMinimapSize()
         Minimap.northTag:ClearAllPoints()
     end
     MinimapBackdrop:ClearAllPoints()
-    if GW.settings.Minimap.KeepSizeRatio then
+    if GW.settings.minimap.keepSizeRatio then
         Minimap:SetMaskTexture(130937)
         Minimap:SetHitRectInsets(0, 0, 0, 0)
         Minimap:SetPoint("CENTER", Minimap.gwMover)
@@ -77,7 +77,7 @@ function GW.UpdateMinimapSize()
         return
     end
 
-    local maskId = floor(GW.settings.Minimap.HeightPercentage / 100 * 128)
+    local maskId = floor(GW.settings.minimap.heightPercentage / 100 * 128)
     local texturePath = format([[Interface\AddOns\GW2_UI\Textures\MinimapMasks\%d.tga]], maskId)
     local heightPct = maskId / 128
     local newHeight = size * heightPct
@@ -86,8 +86,8 @@ function GW.UpdateMinimapSize()
     local mmOffset = 1
 
     effectiveHeight = newHeight
-    Minimap.gwMover:SetSize(GW.settings.MINIMAP_SIZE, effectiveHeight)
-    Minimap.gwBorder:SetSize(GW.settings.MINIMAP_SIZE, effectiveHeight)
+    Minimap.gwMover:SetSize(GW.settings.minimap.size, effectiveHeight)
+    Minimap.gwBorder:SetSize(GW.settings.minimap.size, effectiveHeight)
 
     Minimap:SetClampedToScreen(true)
     Minimap:SetClampRectInsets(0, 0, 0, 0)
@@ -152,7 +152,7 @@ end
 local function mapCoordsMiniMap_setCoords(self)
     local x, y, xT, yT = GW.Libs.GW2Lib:GetPlayerLocationCoords()
     if x and y then
-        self.Coords:SetText(GW.GetLocalizedNumber(xT, GW.settings.MINIMAP_COORDS_PRECISION) .. "/" .. GW.GetLocalizedNumber(yT, GW.settings.MINIMAP_COORDS_PRECISION))
+        self.Coords:SetText(GW.GetLocalizedNumber(xT, GW.settings.minimap.coords.precision) .. "/" .. GW.GetLocalizedNumber(yT, GW.settings.minimap.coords.precision))
     else
         self.Coords:SetText(NOT_APPLICABLE)
     end
@@ -163,10 +163,10 @@ local function MapCoordsMiniMap_OnClick(self, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-        if GW.settings.MINIMAP_COORDS_PRECISION == 0 then
-            GW.settings.MINIMAP_COORDS_PRECISION = 2
+        if GW.settings.minimap.coords.precision == 0 then
+            GW.settings.minimap.coords.precision = 2
         else
-            GW.settings.MINIMAP_COORDS_PRECISION = 0
+            GW.settings.minimap.coords.precision = 0
         end
 
         mapCoordsMiniMap_setCoords(self)
@@ -175,7 +175,7 @@ end
 
 
 local function hoverMiniMapIn()
-    for k, v in pairs(GW.settings.MINIMAP_ALWAYS_SHOW_HOVER_DETAILS) do
+    for k, v in pairs(GW.settings.minimap.alwaysShowHoverDetails) do
         if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
             UIFrameFadeIn(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 1)
         end
@@ -184,7 +184,7 @@ end
 
 
 local function hoverMiniMapOut()
-    for k, v in pairs(GW.settings.MINIMAP_ALWAYS_SHOW_HOVER_DETAILS) do
+    for k, v in pairs(GW.settings.minimap.alwaysShowHoverDetails) do
         if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
             UIFrameFadeOut(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 0)
         end
@@ -254,7 +254,7 @@ local function MinimapPostDrag(self)
 end
 
 local function UpdateMinimapCoordsTicker(self)
-    local shouldRun = GW.settings.MINIMAP_COORDS_TOGGLE and self:IsShown() and self:GetAlpha() > 0
+    local shouldRun = GW.settings.minimap.coords.enabled and self:IsShown() and self:GetAlpha() > 0
     if shouldRun and not self.CoordsTimer then
         mapCoordsMiniMap_setCoords(self)
         self.CoordsTimer = C_Timer.NewTicker(0.5, function() mapCoordsMiniMap_setCoords(self) end)
@@ -265,7 +265,7 @@ local function UpdateMinimapCoordsTicker(self)
 end
 
 function GW.ToogleMinimapCoordsLable()
-    if GW.settings.MINIMAP_COORDS_TOGGLE then
+    if GW.settings.minimap.coords.enabled then
         GwMapCoords:Show()
         GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
         GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
@@ -280,7 +280,7 @@ function GW.ToogleMinimapCoordsLable()
 end
 
 function GW.ToogleMinimapFpsLable()
-    if GW.settings.MINIMAP_FPS then
+    if GW.settings.minimap.fps then
         GW.BuildAddonList()
         GwMapFPS:SetScript("OnEnter", GW.FpsOnEnter)
         GwMapFPS:SetScript("OnLeave", GW.FpsOnLeave)
@@ -582,7 +582,7 @@ function GW.HandleAddonCompartmentButton()
             GW.MixinHideDuringPetAndOverride(AddonCompartmentFrame)
         end
 
-        if GW.settings.MINIMAP_ADDON_COMPARTMENT_TOGGLE then
+        if GW.settings.minimap.addonCompartment then
             AddonCompartmentFrame:SetParent(UIParent)
         else
             AddonCompartmentFrame:SetParent(GW.HiddenFrame)
@@ -607,10 +607,10 @@ do
     end
 
     local function SetupZoomReset()
-        if GW.settings.MinimapResetZoom > 0 and not isResetting then
+        if GW.settings.minimap.resetZoom > 0 and not isResetting then
             isResetting = true
 
-            GW.Wait(GW.settings.MinimapResetZoom, ResetZoom)
+            GW.Wait(GW.settings.minimap.resetZoom, ResetZoom)
         end
     end
     GW.SetupZoomReset = SetupZoomReset
@@ -620,7 +620,7 @@ function GW.LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = GetMinimapShape
 
-    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "Blizzard,Map", {Minimap:GetSize()}, nil, nil, MinimapPostDrag)
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "minimap", "Blizzard,Map", {Minimap:GetSize()}, nil, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("CENTER", Minimap.gwMover)
 

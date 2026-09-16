@@ -105,7 +105,7 @@ function CooldownManagerFunctions:SkinIcon(container, icon)
         container.gwBackdrop = backDrop
     end
 
-    local alpha = tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+    local alpha = tonumber(GW.settings.actionbars.backgroundAlpha)
     container.gwBackdrop.bg:SetAlpha(alpha)
     container.gwBackdrop.border1:SetAlpha(alpha)
     container.gwBackdrop.border2:SetAlpha(alpha)
@@ -271,7 +271,7 @@ do
 end
 
 local function ApplyCooldownManagerSkin()
-    if not GW.settings.CooldownManagerSkinEnabled then return end
+    if not GW.settings.skins.cooldownManager.enabled then return end
 
     CooldownManagerFunctions:HandleViewer(UtilityCooldownViewer)
     CooldownManagerFunctions:HandleViewer(BuffBarCooldownViewer)

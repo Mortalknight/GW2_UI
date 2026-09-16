@@ -1057,13 +1057,13 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
 
     local size
     if textSizeType == GW.Enum.TextSizeType.BigHeader then
-        size = GW.settings.FONTS_BIG_HEADER_SIZE or 18
+        size = GW.settings.fonts.size.bigHeader or 18
     elseif textSizeType == GW.Enum.TextSizeType.Header then
-        size = GW.settings.FONTS_HEADER_SIZE or 16
+        size = GW.settings.fonts.size.header or 16
     elseif textSizeType == GW.Enum.TextSizeType.Normal then
-        size = GW.settings.FONTS_NORMAL_SIZE or 14
+        size = GW.settings.fonts.size.normal or 14
     elseif textSizeType == GW.Enum.TextSizeType.Small then
-        size = GW.settings.FONTS_SMALL_SIZE or 12
+        size = GW.settings.fonts.size.small or 12
     end
     if not size then return end
     size = size + (textSizeAddition or 0)
@@ -1074,7 +1074,7 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
         if style == "" then style = nil end
     end
 
-    style = style or GW.settings.FONTS_OUTLINE or ""
+    style = style or GW.settings.fonts.outline or ""
     if style == "NONE" then style = "" end
 
     if CreateFontFamily and object.SetFontObject then

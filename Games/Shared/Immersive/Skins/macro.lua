@@ -215,7 +215,7 @@ local function SkinMacroButtons()
 end
 
 local function ApplyMacroOptionsSkin()
-    if not GW.settings.MACRO_SKIN_ENABLED then return end
+    if not GW.settings.skins.macro.enabled then return end
 
     local regions = {MacroFrame:GetRegions()}
 

@@ -42,7 +42,7 @@ local function updateLootFrameButtons(self)
 end
 
 local function LoadLootFrameSkin()
-    if not GW.settings.LOOTFRAME_SKIN_ENABLED then return end
+    if not GW.settings.skins.lootFrame.enabled then return end
 
     LootFrame:GwStripTextures()
     LootFrameBg:Hide()
@@ -71,10 +71,10 @@ local function LoadLootFrameSkin()
     })
 
     if not GetCVarBool("lootUnderMouse") then
-        local pos = GW.settings.LOOTFRAME_POS
+        local pos = GW.settings.skins.lootFrame.pos
         LootFrame:ClearAllPoints()
         LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
-        RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POS", "Blizzard", nil, {GW.MoverOption.Scale})
+        RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "skins.lootFrame", "Blizzard", nil, {GW.MoverOption.Scale})
         hooksecurefunc(LootFrame, "SetPoint", function(_, _, holder)
             if holder ~= LootFrame.gwMover then
                 LootFrame:ClearAllPoints()

@@ -105,7 +105,7 @@ function GwObjectivesBossContainerMixin:UpdateBossFrameHeight()
 end
 
 function GwObjectivesBossContainerMixin:SetUpFramePosition()
-    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
+    local yOffset = GW.settings.objectives.compass and 70 or 0
 
     for idx, frame in pairs(bossFrames) do
         if idx == 1 then

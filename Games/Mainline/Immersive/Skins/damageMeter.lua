@@ -307,7 +307,7 @@ local function SetupSessionWindow()
 end
 
 local function ApplyDamageMeterSkin()
-    if not GW.settings.DamageMeterSkinEnabled then return end
+    if not GW.settings.skins.damageMeter.enabled then return end
 
     hooksecurefunc(DamageMeter, "SetupSessionWindow", SetupSessionWindow)
     SetupSessionWindow()

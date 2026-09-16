@@ -108,7 +108,7 @@ local function UpdateVisibility(self, inCombat)
     local shouldBeVisible = self.shouldShowBar and (not self.onlyShowInCombat or inCombat)
     local targetAlpha = shouldBeVisible and 1 or 0
 
-    if self.shouldShowBar and GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame.Fader and GwPlayerUnitFrame.Fader:IsEnabled() then
+    if self.shouldShowBar and GW.settings.unitframes.player.enabled and GwPlayerUnitFrame.Fader and GwPlayerUnitFrame.Fader:IsEnabled() then
         targetAlpha = GwPlayerUnitFrame.Fader.currentAlpha
     end
 
@@ -143,7 +143,7 @@ local VALID_CLASSPOWER_CUSTOM_RESOURCEBAR_SIDES = {
 }
 
 function CP.GetAnchorMode()
-    local mode = GW.settings.CLASSPOWER_ANCHOR_MODE
+    local mode = GW.settings.classpower.anchorMode
     if mode and VALID_CLASSPOWER_ANCHOR_MODES[mode] then
         return mode
     end
@@ -161,7 +161,7 @@ function CP.GetAnchorPoint(defaultPoint)
 end
 
 function CP.GetCustomResourceBarSide()
-    local side = GW.settings.CLASSPOWER_CUSTOMRESOURCEBAR_SIDE
+    local side = GW.settings.classpower.customResourceBarSide
     if not (side and VALID_CLASSPOWER_CUSTOM_RESOURCEBAR_SIDES[side]) then
         side = "AUTO"
     end
@@ -181,7 +181,7 @@ function CP.GetCustomResourceBarSide()
 end
 
 local function GetClassPowerCustomResourceBarGap(fallback)
-    local gap = GW.settings.CLASSPOWER_CUSTOMRESOURCEBAR_GAP
+    local gap = GW.settings.classpower.customResourceBarGap
     if type(gap) ~= "number" then
         gap = fallback or 4
     end
@@ -199,8 +199,8 @@ local function SetClassPowerAnchor(frame, mover, defaultPoint, xOfs, yOfs, relat
     local finalY = yOfs or 0
 
     if CP.frame and mover == CP.frame.gwMover then
-        finalX = finalX + (GW.settings.CLASSPOWER_ANCHOR_OFFSET_X or 0)
-        finalY = finalY + (GW.settings.CLASSPOWER_ANCHOR_OFFSET_Y or 0)
+        finalX = finalX + (GW.settings.classpower.anchorOffsetX or 0)
+        finalY = finalY + (GW.settings.classpower.anchorOffsetY or 0)
     end
 
     frame:ClearAllPoints()
@@ -242,7 +242,7 @@ local function SetClassPowerCustomResourceBarAnchor(bar, mover, ownerFrame, yOfs
 end
 
 local function updateVisibilitySetting(self, updateVis)
-    self.onlyShowInCombat = GW.settings.CLASSPOWER_ONLY_SHOW_IN_COMBAT
+    self.onlyShowInCombat = GW.settings.classpower.onlyInCombat
     if self.onlyShowInCombat then
         self.decay:RegisterEvent("PLAYER_REGEN_ENABLED")
         self.decay:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -528,7 +528,7 @@ local function setManaBar(f)
 
     local yOfs = 0
     if CP.GetAnchorMode() == "DEFAULT" then
-        yOfs = (GW.settings.XPBAR_ENABLED or f.isMoved) and -13 or -3
+        yOfs = (GW.settings.hud.xpBar or f.isMoved) and -13 or -3
     end
     SetClassPowerAnchor(f, f.gwMover, "TOPLEFT", 0, yOfs)
 

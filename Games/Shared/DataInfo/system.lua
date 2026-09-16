@@ -64,7 +64,7 @@ local function displaySort(a, b)
 end
 
 local function FpsOnEnter(self, slow)
-    if GW.settings.MINIMAP_FPS_TOOLTIP_DISABLED then return end
+    if GW.settings.minimap.fpsTooltipDisabled then return end
     enteredInfo = true
     self.nextTooltipRefresh = GetTime() + (InCombatLockdown() and 4 or 1)
     GameTooltip:ClearLines()

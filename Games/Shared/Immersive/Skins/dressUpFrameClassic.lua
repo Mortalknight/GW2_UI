@@ -52,7 +52,7 @@ local function SkinSideDressUpFrame()
 end
 
 local function LoadDressUpFrameSkin()
-    if not GW.settings.INSPECTION_SKIN_ENABLED then return end
+    if not GW.settings.skins.inspection.enabled then return end
 
     DressUpFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(DressUpFrame, DressUpFrameTitleText, WINDOW_ICON, {}, nil, false, true)

@@ -38,15 +38,15 @@ if C_CurveUtil then
 end
 
 local function GetPartyUnit(i)
-    return (i == 1 and GW.settings.PARTY_PLAYER_FRAME) and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+    return (i == 1 and GW.settings.unitframes.party.showPlayer) and "player" or "party" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
 end
 
 local function GetPartyPetUnit(i)
-    return (i == 1 and GW.settings.PARTY_PLAYER_FRAME) and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+    return (i == 1 and GW.settings.unitframes.party.showPlayer) and "pet" or "partypet" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
 end
 
 local function GetVisiblePartyFrameCount()
-    return GW.settings.PARTY_PLAYER_FRAME and 5 or 4
+    return GW.settings.unitframes.party.showPlayer and 5 or 4
 end
 
 -- 12.1 Retail: syncs the AuraContainer with the current layout fields on frame.auras
@@ -56,15 +56,15 @@ local function UpdatePartyAuraContainer(frame)
     local container = frame.aurasContainer
     local element = frame.auras
     local cfg = container.gwConfig
-    local orientation = GW.settings.PARTY_FRAME_ORIENTATION or "VERTICAL"
-    local size = element.smallSize or GW.settings.PARTY_SHOW_AURA_ICON_SIZE or PARTY_VERTICAL_AURA_SIZE
+    local orientation = GW.settings.unitframes.party.orientation or "VERTICAL"
+    local size = element.smallSize or GW.settings.unitframes.party.auraIconSize or PARTY_VERTICAL_AURA_SIZE
 
     -- growth mirrors the old AuraSetPoint: buttons overlap by 1px (stride size-1),
     -- rows are 2px apart (stride size+2)
     cfg.elementSpacing = -1
     cfg.lineSpacing = 2
     cfg.growLeft = false
-    cfg.excludeSpellIDs = GW.settings.PARTY_IGNORED_AURAS
+    cfg.excludeSpellIDs = GW.settings.unitframes.party.ignoredAuras
     if orientation == "HORIZONTAL" then
         cfg.growUp = element.gwGrowUp and true or false
         cfg.anchorPoint = cfg.growUp and "BOTTOMLEFT" or "TOPLEFT"
@@ -75,9 +75,9 @@ local function UpdatePartyAuraContainer(frame)
         cfg.maximumLineSize = (element.gwButtonsPerRow or 11) * (size - 1) + 1
     end
 
-    local showDebuffs = GW.settings.PARTY_SHOW_DEBUFFS
-    local onlyDispellable = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS
-    local showImportant = GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF
+    local showDebuffs = GW.settings.unitframes.party.showDebuffs
+    local onlyDispellable = GW.settings.unitframes.party.onlyDispellableDebuffs
+    local showImportant = GW.settings.unitframes.party.showRaidInstanceDebuffs
 
     -- The debuff display splits along the RAID_PLAYER_DISPELLABLE token into disjoint
     -- group pairs (filters are static, see the group configs): the corner dispel icon
@@ -86,7 +86,7 @@ local function UpdatePartyAuraContainer(frame)
     for _, group in next, cfg.groups do
         group.size = size
         if group.key == "buffs" then
-            group.maxFrameCount = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
+            group.maxFrameCount = GW.settings.unitframes.party.showBuffs and 32 or 0
         elseif group.key == "debuffsDispellable" then
             group.maxFrameCount = showDebuffs and 40 or 0
         elseif group.key == "debuffs" then
@@ -94,10 +94,10 @@ local function UpdatePartyAuraContainer(frame)
         elseif group.key == "importantDebuffsDispellable" then
             -- with the regular debuffs visible their dispellable group already shows these
             group.maxFrameCount = (showImportant and not showDebuffs) and 40 or 0
-            group.size = GW.RoundInt(size * (GW.settings.RAIDDEBUFFS_Scale or 1))
+            group.size = GW.RoundInt(size * (GW.settings.groupFrames.raidDebuffsScale or 1))
         elseif group.key == "importantDebuffs" then
             group.maxFrameCount = (showImportant and (not showDebuffs or onlyDispellable)) and 40 or 0
-            group.size = GW.RoundInt(size * (GW.settings.RAIDDEBUFFS_Scale or 1))
+            group.size = GW.RoundInt(size * (GW.settings.groupFrames.raidDebuffsScale or 1))
         end
     end
 
@@ -153,7 +153,7 @@ end
 local function UpdateAuraDisplaySettings(frame)
     if not frame or not frame.auras then return end
 
-    local orientation = GW.settings.PARTY_FRAME_ORIENTATION or "VERTICAL"
+    local orientation = GW.settings.unitframes.party.orientation or "VERTICAL"
     if orientation == "HORIZONTAL" then
         if frame.isPet then
             frame.auras.smallSize = PARTY_HORIZONTAL_PET_AURA_SIZE
@@ -167,7 +167,7 @@ local function UpdateAuraDisplaySettings(frame)
             frame.auras.gwGrowUp = false
         end
     else
-        local auraSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE or PARTY_VERTICAL_AURA_SIZE
+        local auraSize = GW.settings.unitframes.party.auraIconSize or PARTY_VERTICAL_AURA_SIZE
         if frame.isPet then
             frame.auras.smallSize = auraSize - 6
             frame.auras.bigSize = auraSize - 6
@@ -183,8 +183,8 @@ end
 local function UpdatePartyFrameSubLayout(frame)
     if not frame or not frame.healthContainer or not frame.auras or not frame.PetFrame then return 0 end
 
-    local orientation = GW.settings.PARTY_FRAME_ORIENTATION or "VERTICAL"
-    local showPets = GW.settings.PARTY_SHOW_PETS
+    local orientation = GW.settings.unitframes.party.orientation or "VERTICAL"
+    local showPets = GW.settings.unitframes.party.showPets
 
     if orientation == "HORIZONTAL" then
         UpdateAuraDisplaySettings(frame.PetFrame)
@@ -213,7 +213,7 @@ local function UpdatePartyFrameSubLayout(frame)
             0,
             -PARTY_HORIZONTAL_AURA_GAP,
             frame.powerbar:GetWidth(),
-            frame.auras.smallSize or GW.settings.PARTY_SHOW_AURA_ICON_SIZE or PARTY_VERTICAL_AURA_SIZE
+            frame.auras.smallSize or GW.settings.unitframes.party.auraIconSize or PARTY_VERTICAL_AURA_SIZE
         )
         ForceUpdateAuras(frame)
         local auraHeight = SyncAuraContainerHeight(frame)
@@ -247,13 +247,13 @@ local function UpdatePartyLayout()
     local anchorFrame = partyFrames[1]
     if not anchorFrame then return end
 
-    local orientation = GW.settings.PARTY_FRAME_ORIENTATION or "VERTICAL"
-    local spacing = tonumber(GW.settings.PARTY_FRAME_SPACING) or 0
+    local orientation = GW.settings.unitframes.party.orientation or "VERTICAL"
+    local spacing = tonumber(GW.settings.unitframes.party.spacing) or 0
     local visibleCount = GetVisiblePartyFrameCount()
     local partyWidth = anchorFrame:GetWidth()
     local partyHeight = anchorFrame:GetHeight()
-    local petWidth = GW.settings.PARTY_SHOW_PETS and (anchorFrame.PetFrame:GetWidth() + 15) or 0
-    local petHeight = GW.settings.PARTY_SHOW_PETS and (anchorFrame.PetFrame:GetHeight() + 17) or 0
+    local petWidth = GW.settings.unitframes.party.showPets and (anchorFrame.PetFrame:GetWidth() + 15) or 0
+    local petHeight = GW.settings.unitframes.party.showPets and (anchorFrame.PetFrame:GetHeight() + 17) or 0
     local blockWidth = math.max(partyWidth, petWidth)
     local horizontalExtraHeight = 0
 
@@ -265,7 +265,7 @@ local function UpdatePartyLayout()
         elseif orientation == "HORIZONTAL" then
             frame:SetPoint("TOPLEFT", partyFrames[i - 1], "TOPLEFT", blockWidth + spacing, 0)
         else
-            local currentBlockHeight = frame:GetHeight() + (GW.settings.PARTY_SHOW_PETS and (frame.PetFrame:GetHeight() + 17) or 0)
+            local currentBlockHeight = frame:GetHeight() + (GW.settings.unitframes.party.showPets and (frame.PetFrame:GetHeight() + 17) or 0)
             frame:SetPoint("TOPLEFT", partyFrames[i - 1], "TOPLEFT", 0, -(currentBlockHeight + spacing))
         end
 
@@ -287,10 +287,10 @@ local function FilterAura(element, unit, data)
         return data and data.name
     else
         if GW.Retail then
-            if not GW.settings.PARTY_SHOW_DEBUFFS then
+            if not GW.settings.unitframes.party.showDebuffs then
                 return false
             end
-            if GW.settings.PARTY_ONLY_DISPELL_DEBUFFS then
+            if GW.settings.unitframes.party.onlyDispellableDebuffs then
                 return data.isAuraRaidPlayerDispellable
             else
                 return data and data.name
@@ -299,8 +299,8 @@ local function FilterAura(element, unit, data)
             if data and data.name then
                 local shouldDisplay = false
 
-                if GW.settings.PARTY_SHOW_DEBUFFS then
-                    if GW.settings.PARTY_ONLY_DISPELL_DEBUFFS then
+                if GW.settings.unitframes.party.showDebuffs then
+                    if GW.settings.unitframes.party.onlyDispellableDebuffs then
                         if data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
                             shouldDisplay = data.name and not (data.spellId == 6788 and data.sourceUnit and GW.UnitNotUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
                         end
@@ -309,7 +309,7 @@ local function FilterAura(element, unit, data)
                     end
                 end
 
-                if GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF and not shouldDisplay then
+                if GW.settings.unitframes.party.showRaidInstanceDebuffs and not shouldDisplay then
                     shouldDisplay = GW.ImportantRaidDebuff[data.spellId] or false
                 end
 
@@ -321,7 +321,7 @@ end
 
 local function AuraSetPoint(element, from, to)
     local x, y = 0, 0
-    local orientation = GW.settings.PARTY_FRAME_ORIENTATION
+    local orientation = GW.settings.unitframes.party.orientation
     local rowWidth = element.maxWidth
     local growUp = element.gwGrowUp
     element.gwContentHeight = 0
@@ -473,35 +473,35 @@ function GwPartyFrameMixin:SetUnitName()
 end
 
 function GwPartyFrameMixin:UpdateHealthTextString(healthCur, healthPrec, healthMax)
-    if GW.settings.PARTY_UNIT_HEALTH == "NONE" then
+    if GW.settings.unitframes.party.healthValue == "NONE" then
         self.healthString:Hide()
         return
     end
 
     if GW.Retail then
-        local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and GW.ShortValue or BreakUpLargeNumbers
+        local formatFunc = GW.settings.unitframes.party.shortHealthValues and GW.ShortValue or BreakUpLargeNumbers
 
-        if GW.settings.PARTY_UNIT_HEALTH == "PREC" then
+        if GW.settings.unitframes.party.healthValue == "PREC" then
             self.healthString:SetText(string.format("%.0f%%", UnitHealthPercent(self.gwUnit, true, CurveConstants.ScaleTo100)))
             self.healthString:SetJustifyH("LEFT")
-        elseif GW.settings.PARTY_UNIT_HEALTH == "HEALTH" then
+        elseif GW.settings.unitframes.party.healthValue == "HEALTH" then
             self.healthString:SetText(formatFunc(healthCur))
             self.healthString:SetJustifyH("LEFT")
-        elseif GW.settings.PARTY_UNIT_HEALTH == "LOSTHEALTH" then
+        elseif GW.settings.unitframes.party.healthValue == "LOSTHEALTH" then
             self.healthString:SetText(formatFunc(UnitHealthMissing(self.gwUnit)))
             self.healthString:SetJustifyH("RIGHT")
         end
         local color = UnitHealthPercent(self.gwUnit, true, healtTextColorCurve)
         self.healthString:SetTextColor(color:GetRGB())
     else
-        local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and GW.ShortValue or GW.GetLocalizedNumber
-        if GW.settings.PARTY_UNIT_HEALTH == "PREC" then
+        local formatFunc = GW.settings.unitframes.party.shortHealthValues and GW.ShortValue or GW.GetLocalizedNumber
+        if GW.settings.unitframes.party.healthValue == "PREC" then
             self.healthString:SetText(RoundDec(healthPrec * 100, 0) .. "%")
             self.healthString:SetJustifyH("LEFT")
-        elseif GW.settings.PARTY_UNIT_HEALTH == "HEALTH" then
+        elseif GW.settings.unitframes.party.healthValue == "HEALTH" then
             self.healthString:SetText(formatFunc(healthCur))
             self.healthString:SetJustifyH("LEFT")
-        elseif GW.settings.PARTY_UNIT_HEALTH == "LOSTHEALTH" then
+        elseif GW.settings.unitframes.party.healthValue == "LOSTHEALTH" then
             local lost = (healthMax - healthCur > 0) and formatFunc(healthMax - healthCur) or ""
             self.healthString:SetText(lost)
             self.healthString:SetJustifyH("RIGHT")
@@ -564,7 +564,7 @@ end
 local function UpdatePartyFrames()
     for _, frame in ipairs(partyFrames) do
         -- statusbar texture
-        local textureKey =  GW.settings.partyFrameHealthBarTexture
+        local textureKey =  GW.settings.unitframes.party.healthBarTexture
         if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
             frame.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
             frame.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
@@ -588,21 +588,21 @@ local function UpdatePartyFrames()
             frame.PetFrame.healPrediction:SetStatusBarTexture(texture)
         end
 
-        frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
-        frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
-        frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR
+        frame.displayBuffs = GW.settings.unitframes.party.showBuffs and 32 or 0
+        frame.displayDebuffs = (GW.settings.unitframes.party.showDebuffs or GW.settings.unitframes.party.showRaidInstanceDebuffs) and 40 or 0
+        frame.showAbsorbBar = GW.settings.unitframes.party.showAbsorbBar
         frame.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Friendly:GetRGB())
-        frame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
-        frame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
-        frame.auras.ignoredAuraSpellIDs = GW.settings.PARTY_IGNORED_AURAS -- Classic engine; Retail runs via container excludeSpellIDs
+        frame.auras.smallSize = GW.settings.unitframes.party.auraIconSize
+        frame.auras.bigSize = GW.settings.unitframes.party.auraIconSize
+        frame.auras.ignoredAuraSpellIDs = GW.settings.unitframes.party.ignoredAuras -- Classic engine; Retail runs via container excludeSpellIDs
         frame:OnEvent("load")
-        frame.PetFrame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
-        frame.PetFrame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
-        frame.PetFrame.auras.ignoredAuraSpellIDs = GW.settings.PARTY_IGNORED_AURAS
-        frame.PetFrame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
-        frame.PetFrame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
+        frame.PetFrame.auras.smallSize = GW.settings.unitframes.party.auraIconSize - 6
+        frame.PetFrame.auras.bigSize = GW.settings.unitframes.party.auraIconSize - 6
+        frame.PetFrame.auras.ignoredAuraSpellIDs = GW.settings.unitframes.party.ignoredAuras
+        frame.PetFrame.displayDebuffs = (GW.settings.unitframes.party.showDebuffs or GW.settings.unitframes.party.showRaidInstanceDebuffs) and 40 or 0
+        frame.PetFrame.displayBuffs = GW.settings.unitframes.party.showBuffs and 32 or 0
         frame.PetFrame.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Friendly:GetRGB())
-        frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR
+        frame.showAbsorbBar = GW.settings.unitframes.party.showAbsorbBar
         frame.PetFrame:OnEvent("load")
     end
 
@@ -613,7 +613,7 @@ GW.UpdatePartyFrames = UpdatePartyFrames
 local function UpdatePetVisibility(alwaysHide)
     for i, frame in ipairs(partyFrames) do
         local petFrame = frame.PetFrame
-        if not GW.settings.PARTY_SHOW_PETS or alwaysHide then
+        if not GW.settings.unitframes.party.showPets or alwaysHide then
             RegisterStateDriver(petFrame, "visibility", "hide")
         else
             local petUnit = GetPartyPetUnit(i)
@@ -622,7 +622,7 @@ local function UpdatePetVisibility(alwaysHide)
         end
 
         if i == 5 then
-            if not GW.settings.PARTY_PLAYER_FRAME then
+            if not GW.settings.unitframes.party.showPlayer then
                 petFrame:SetScript("OnEvent", nil)
                 RegisterStateDriver(petFrame, "visibility", "hide")
             else
@@ -660,7 +660,7 @@ local function UpdatePlayerInPartySetting(alwaysHide)
         end
 
         if i == 5 then
-            if not GW.settings.PARTY_PLAYER_FRAME then
+            if not GW.settings.unitframes.party.showPlayer then
                 frame:SetScript("OnEvent", nil)
                 RegisterStateDriver(frame, "visibility", "hide")
             else
@@ -675,12 +675,12 @@ end
 GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
 
 local function CreatePartyFrame(i, isPlayer)
-    local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+    local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, GW.Retail and "GwPartyFrameRetailTemplate" or "GwPartyFrameTemplate")
     GW.SetFrameRoleset(frame, "unitFrames")
 
     if i == 1 then
-        RegisterMovableFrame(frame, PARTY, "party_pos", "Unitframe,Group")
+        RegisterMovableFrame(frame, PARTY, "unitframes.party", "Unitframe,Group")
     end
 
     local hg = frame.healthContainer
@@ -736,7 +736,7 @@ local function CreatePartyFrame(i, isPlayer)
         frame.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     end
 
-    local textureKey =  GW.settings.partyFrameHealthBarTexture
+    local textureKey =  GW.settings.unitframes.party.healthBarTexture
     if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
         frame.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
         frame.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
@@ -760,7 +760,7 @@ local function CreatePartyFrame(i, isPlayer)
     frame.healthString:SetFontObject(GameFontNormalSmall)
 
     --Create party pet frame
-    local petUnit = (registerUnit == "player") and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+    local petUnit = (registerUnit == "player") and "pet" or "partypet" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
     local petFrame = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, GW.Retail and "GwPartyPetFrameRetailTemplate" or "GwPartyPetFrameTemplate")
     GW.SetFrameRoleset(petFrame, "unitFrames")
     petFrame.gwUnit = petUnit
@@ -853,10 +853,10 @@ local function CreatePartyFrame(i, isPlayer)
     -- Standard Auras und Buffs für Pet-Frame
     petFrame.auras.FilterAura = FilterAura
     petFrame.auras.SetPosition = AuraSetPoint
-    petFrame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
-    petFrame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
-    petFrame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
-    petFrame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
+    petFrame.auras.smallSize = GW.settings.unitframes.party.auraIconSize - 6
+    petFrame.auras.bigSize = GW.settings.unitframes.party.auraIconSize - 6
+    petFrame.displayBuffs = GW.settings.unitframes.party.showBuffs and 32 or 0
+    petFrame.displayDebuffs = (GW.settings.unitframes.party.showDebuffs or GW.settings.unitframes.party.showRaidInstanceDebuffs) and 40 or 0
     petFrame.auras.hideDuration = true
     if GW.Retail then
         -- 12.1: party auras run through the AuraContainer factory; layout/filters
@@ -864,22 +864,22 @@ local function CreatePartyFrame(i, isPlayer)
         -- so no forceNewLine here)
         petFrame.aurasContainer = GW.CreateUnitAuraContainer({
             unit = petUnit,
-            pandemicEnabled = function() return GW.settings.PARTY_PANDEMIC_HIGHLIGHT end,
-            dispelIconEnabled = function() return GW.settings.PARTY_DISPEL_ICON end,
+            pandemicEnabled = function() return GW.settings.unitframes.party.pandemicHighlight end,
+            dispelIconEnabled = function() return GW.settings.unitframes.party.dispelIcon end,
             parent = petFrame,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             elementSpacing = -1,
             lineSpacing = 2,
             onSettingsRefresh = function() UpdatePartyAuraContainer(petFrame) end,
             groups = {
-                { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 32, hideDuration = true, showPandemic = true },
+                { key = "buffs", filter = "HELPFUL", size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 32, hideDuration = true, showPandemic = true },
                 -- static disjoint pairs along RAID_PLAYER_DISPELLABLE, the corner dispel
                 -- icon only sits on auras the player can dispel (visibility is driven per
                 -- pair via maxFrameCount in UpdatePartyAuraContainer)
-                { key = "debuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-                { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true },
-                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+                { key = "debuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true },
+                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true },
             },
         })
     else
@@ -928,31 +928,31 @@ local function CreatePartyFrame(i, isPlayer)
 
     frame.auras.FilterAura = FilterAura
     frame.auras.SetPosition = AuraSetPoint
-    frame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
-    frame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
+    frame.auras.smallSize = GW.settings.unitframes.party.auraIconSize
+    frame.auras.bigSize = GW.settings.unitframes.party.auraIconSize
     frame.auras.hideDuration = true
-    frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
-    frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
-    frame.auras.debuffFilter = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS and "RAID|HARMFUL" or "HARMFUL" --TESTING
+    frame.displayBuffs = GW.settings.unitframes.party.showBuffs and 32 or 0
+    frame.displayDebuffs = (GW.settings.unitframes.party.showDebuffs or GW.settings.unitframes.party.showRaidInstanceDebuffs) and 40 or 0
+    frame.auras.debuffFilter = GW.settings.unitframes.party.onlyDispellableDebuffs and "RAID|HARMFUL" or "HARMFUL" --TESTING
     if GW.Retail then
         frame.aurasContainer = GW.CreateUnitAuraContainer({
             unit = registerUnit,
-            pandemicEnabled = function() return GW.settings.PARTY_PANDEMIC_HIGHLIGHT end,
-            dispelIconEnabled = function() return GW.settings.PARTY_DISPEL_ICON end,
+            pandemicEnabled = function() return GW.settings.unitframes.party.pandemicHighlight end,
+            dispelIconEnabled = function() return GW.settings.unitframes.party.dispelIcon end,
             parent = frame,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             elementSpacing = -1,
             lineSpacing = 2,
             onSettingsRefresh = function() UpdatePartyAuraContainer(frame) end,
             groups = {
-                { key = "buffs", filter = "HELPFUL", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 32, hideDuration = true, showPandemic = true },
+                { key = "buffs", filter = "HELPFUL", size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 32, hideDuration = true, showPandemic = true },
                 -- static disjoint pairs along RAID_PLAYER_DISPELLABLE, the corner dispel
                 -- icon only sits on auras the player can dispel (visibility is driven per
                 -- pair via maxFrameCount in UpdatePartyAuraContainer)
-                { key = "debuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-                { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 40, isDebuff = true, hideDuration = true },
-                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.PARTY_SHOW_AURA_ICON_SIZE, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+                { key = "debuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 40, isDebuff = true, hideDuration = true },
+                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 0, isDebuff = true, hideDuration = true },
             },
         })
     else
@@ -1007,7 +1007,7 @@ local function TogglePartyPreview()
             frame.gwUnit = unit
             frame.guid = UnitGUID(unit)
             frame:SetAttribute("unit", unit)
-            local vis = (i == 1 and GW.settings.PARTY_PLAYER_FRAME) and
+            local vis = (i == 1 and GW.settings.unitframes.party.showPlayer) and
                 ("[@raid6,exists][@%s,noexists] hide;show"):format("party1") or
                 ("[@raid6,exists][@%s,noexists] hide;show"):format(unit)
             RegisterStateDriver(frame, "visibility", vis)
@@ -1015,14 +1015,14 @@ local function TogglePartyPreview()
             frame.PetFrame.gwUnit = petUnit
             frame.PetFrame.guid = UnitGUID(petUnit)
             frame.PetFrame:SetAttribute("unit", petUnit)
-            if GW.settings.PARTY_SHOW_PETS then
+            if GW.settings.unitframes.party.showPets then
                 RegisterStateDriver(frame.PetFrame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(petUnit))
             else
                 RegisterStateDriver(frame.PetFrame, "visibility", "hide")
             end
             frame.PetFrame:OnEvent("load")
 
-            if i == 5 and not GW.settings.PARTY_PLAYER_FRAME then
+            if i == 5 and not GW.settings.unitframes.party.showPlayer then
                 RegisterStateDriver(frame, "visibility", "hide")
                 RegisterStateDriver(frame.PetFrame, "visibility", "hide")
             end
@@ -1035,14 +1035,14 @@ local function TogglePartyPreview()
             frame:SetAttribute("unit", "player")
             RegisterStateDriver(frame, "visibility", "show")
             frame:OnEvent("load")
-            if GW.settings.PARTY_SHOW_PETS then
+            if GW.settings.unitframes.party.showPets then
                 frame.PetFrame.gwUnit = "player"
                 frame.PetFrame.guid = GW.myguid
                 frame.PetFrame:SetAttribute("unit", "player")
                 RegisterStateDriver(frame.PetFrame, "visibility", "show")
                 frame.PetFrame:OnEvent("load")
             end
-            if i == 5 and not GW.settings.PARTY_PLAYER_FRAME then
+            if i == 5 and not GW.settings.unitframes.party.showPlayer then
                 RegisterStateDriver(frame, "visibility", "hide")
                 RegisterStateDriver(frame.PetFrame, "visibility", "hide")
             end
@@ -1057,9 +1057,9 @@ local function LoadPartyFrames()
     GW.CreateRaidControlFrame()
 
     for i = 1, MAX_PARTY_MEMBERS + 1 do
-        CreatePartyFrame(i, GW.settings.PARTY_PLAYER_FRAME and (i == 1))
+        CreatePartyFrame(i, GW.settings.unitframes.party.showPlayer and (i == 1))
     end
 
-    UpdatePlayerInPartySetting(GW.settings.RAID_FRAMES and GW.settings.RAID_STYLE_PARTY)
+    UpdatePlayerInPartySetting(GW.settings.groupFrames.enabled and GW.settings.groupFrames.party.enabled)
 end
 GW.LoadPartyFrames = LoadPartyFrames

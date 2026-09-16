@@ -7,7 +7,7 @@ GwTotemBarMixin = {}
 
 function GwTotemBarMixin:UpdateVisibility()
     if not self then return end
-    RegisterStateDriver(self, "visibility", GW.settings.TotemBar.enabled and "show" or "hide")
+    RegisterStateDriver(self, "visibility", GW.settings.totemBar.enabled and "show" or "hide")
 end
 
 local function UpdateButton(button, totem)
@@ -61,10 +61,10 @@ function GwTotemBarMixin:Update()
 end
 
 function GwTotemBarMixin:PositionAndSizeUpdate()
-    local growDirection = GW.settings.TotemBar.growDirection
-    local sortDirection = GW.settings.TotemBar.sortDirection
-    local buttonSize = GW.settings.TotemBar.buttonSize
-    local spacing = GW.settings.TotemBar.spacing
+    local growDirection = GW.settings.totemBar.growDirection
+    local sortDirection = GW.settings.totemBar.sortDirection
+    local buttonSize = GW.settings.totemBar.buttonSize
+    local spacing = GW.settings.totemBar.spacing
 
     for i = 1, MAX_TOTEMS do
         local button = self[i]
@@ -166,7 +166,7 @@ function GW.CreateTotemBar()
     end
     totemBar:SetScript("OnEvent", totemBar.Update)
 
-    GW.RegisterMovableFrame(totemBar, GW.L["Class Totems"], "TotemBar_pos", "Blizzard,Widgets", nil, {GW.MoverOption.Scale})
+    GW.RegisterMovableFrame(totemBar, GW.L["Class Totems"], "totemBar", "Blizzard,Widgets", nil, {GW.MoverOption.Scale})
     totemBar:UpdateVisibility()
     totemBar:ClearAllPoints()
     totemBar:SetPoint("TOPLEFT", totemBar.gwMover)

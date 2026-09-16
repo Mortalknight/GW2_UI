@@ -11,37 +11,37 @@ local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath
 local HAS_REAGENT_BAG = GW.Retail
 
 local BAG_ITEM_SIZE_CONFIG = {
-    defaultValue = GW.globalDefault.profile.BAG_ITEM_SIZE,
+    defaultValue = GW.globalDefault.profile.bags.bag.itemSize,
     minValue = 26,
     maxValue = 48,
     step = 1
 }
 local BAG_ITEM_SPACING_X_CONFIG = {
-    defaultValue = GW.globalDefault.profile.BAG_ITEM_SPACING_X,
+    defaultValue = GW.globalDefault.profile.bags.bag.itemSpacingX,
     minValue = 0,
     maxValue = 20,
     step = 1
 }
 local BAG_ITEM_SPACING_Y_CONFIG = {
-    defaultValue = GW.globalDefault.profile.BAG_ITEM_SPACING_Y,
+    defaultValue = GW.globalDefault.profile.bags.bag.itemSpacingY,
     minValue = 0,
     maxValue = 20,
     step = 1
 }
 local BANK_ITEM_SIZE_CONFIG = {
-    defaultValue = GW.globalDefault.profile.BANK_ITEM_SIZE,
+    defaultValue = GW.globalDefault.profile.bags.bank.itemSize,
     minValue = 26,
     maxValue = 48,
     step = 1
 }
 local BANK_ITEM_SPACING_X_CONFIG = {
-    defaultValue = GW.globalDefault.profile.BANK_ITEM_SPACING_X,
+    defaultValue = GW.globalDefault.profile.bags.bank.itemSpacingX,
     minValue = 0,
     maxValue = 20,
     step = 1
 }
 local BANK_ITEM_SPACING_Y_CONFIG = {
-    defaultValue = GW.globalDefault.profile.BANK_ITEM_SPACING_Y,
+    defaultValue = GW.globalDefault.profile.bags.bank.itemSpacingY,
     minValue = 0,
     maxValue = 20,
     step = 1
@@ -53,7 +53,7 @@ local CONTAINER_FRAME_RIGHT_PADDING = 5
 -- retail only parts are capability guarded
 local function reskinItemButton(b, overrideIconSize)
     if not b then return end
-    local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
+    local iconSize = overrideIconSize or GW.settings.bags.bag.itemSize
     b:SetSize(iconSize, iconSize)
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -189,7 +189,7 @@ GW.SkinBagItemButton = reskinItemButton
 local function updateItemVisuals(b, overrideIconSize)
    if not b or not b:IsShown() then return end
 
-    local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
+    local iconSize = overrideIconSize or GW.settings.bags.bag.itemSize
 
     if b:GetWidth() ~= iconSize or b:GetHeight() ~= iconSize then
         b:SetSize(iconSize, iconSize)
@@ -265,7 +265,7 @@ local function reskinItemButtons()
     GW.ForEachOwnBagItemButton(function(slot)
         local bagID = slot:GetParent():GetID()
         local isBank = bagID == BANK_CONTAINER or bagID > NUM_BAG_SLOTS
-        local iconSize = isBank and GW.settings.BANK_ITEM_SIZE or GW.settings.BAG_ITEM_SIZE
+        local iconSize = isBank and GW.settings.bags.bank.itemSize or GW.settings.bags.bag.itemSize
 
         if not slot.gwSkinned then
             GW.SkinBagItemButton(slot, iconSize)
@@ -348,7 +348,7 @@ unusableWatcher:RegisterEvent("PLAYER_LEVEL_UP")
 unusableWatcher:RegisterEvent("SKILL_LINES_CHANGED")
 unusableWatcher:SetScript("OnEvent", function()
     unusableGeneration = unusableGeneration + 1
-    if GW.settings.BAG_ITEM_MARK_UNUSABLE then
+    if GW.settings.bags.items.markUnusable then
         GW.UpdateAllOwnBagItemButtons()
     end
 end)
@@ -429,7 +429,7 @@ end
 -- calls this afterwards to put the tint back. Relies on the gwUnusable verdict cached
 -- by IsItemUnusable, which the quality skin refreshed earlier in the same update
 local function ReapplyUnusableTint(button)
-    if button.gwUnusable and GW.settings.BAG_ITEM_MARK_UNUSABLE and button.gwOwnItemButton then
+    if button.gwUnusable and GW.settings.bags.items.markUnusable and button.gwOwnItemButton then
         SetItemButtonTextureVertexColor(button, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
     end
 end
@@ -459,7 +459,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
     local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN]
         or isReagentBag and GW.GetBagItemQualityColor(Enum.ItemQuality.Artifact)
         or GW.Colors.ProfessionBagColors[container.gw_bag_family or select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
-    local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
+    local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.bags.items.showItemLevel and not professionColors
 
     -- never store this as button.bagID: blizzards ContainerFrameItemButtonMixin:GetBagID
     -- returns self.bagID before falling back to the parents id, so an own value there taints
@@ -474,7 +474,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
     -- bag id and slot id here, the (stolen) bag bar buttons also have the gw backdrop
     if button.gwNewItem then
         local ownSlot = button.gwOwnItemButton and C_NewItems
-        local isNew = ownSlot and itemIDOrLink and GW.settings.BAG_ITEM_NEW_ITEM_SHOW
+        local isNew = ownSlot and itemIDOrLink and GW.settings.bags.items.newItemGlow
             and C_NewItems.IsNewItem and C_NewItems.IsNewItem(bag_id, button:GetID())
         button.gwNewItem:SetShown(isNew == true)
         if ownSlot and not itemIDOrLink and C_NewItems.RemoveNewItem then
@@ -485,8 +485,8 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
 
     -- by default the profession bag tint wins over an items quality color; with the
     -- quality-over-profession option the tint is applied first so the quality color wins
-    local qualityWinsOverProfession = GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR
-    if qualityWinsOverProfession and (GW.settings.BAG_PROFESSION_BAG_COLOR or isReagentBag) and professionColors then
+    local qualityWinsOverProfession = GW.settings.bags.professionBagQualityColor
+    if qualityWinsOverProfession and (GW.settings.bags.professionBagColor or isReagentBag) and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
@@ -499,7 +499,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
         button.isJunk = itemInfo and ((itemInfo.quality and itemInfo.quality == Enum.ItemQuality.Poor) and not itemInfo.hasNoValue) or false
 
         if button.junkIcon then
-            if button.isJunk and GW.settings.BAG_ITEM_JUNK_ICON_SHOW then
+            if button.isJunk and GW.settings.bags.items.junkIcon then
                 button.junkIcon:Show()
             else
                 button.junkIcon:Hide()
@@ -508,11 +508,11 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
 
         -- grey out junk; combined with the lock state, which desaturates through the
         -- same channel (a picked up item must stay grey either way)
-        SetItemButtonDesaturated(button, (button.isJunk and GW.settings.BAG_ITEM_JUNK_DESATURATE) or (itemInfo and itemInfo.isLocked) or false)
+        SetItemButtonDesaturated(button, (button.isJunk and GW.settings.bags.items.junkDesaturate) or (itemInfo and itemInfo.isLocked) or false)
 
         if button.gwOwnItemButton and GetItemButtonIconTexture then
             local icon = GetItemButtonIconTexture(button)
-            if GW.settings.BAG_ITEM_MARK_UNUSABLE and IsItemUnusable(bag_id, button, itemInfo) then
+            if GW.settings.bags.items.markUnusable and IsItemUnusable(bag_id, button, itemInfo) then
                 icon:SetVertexColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
             else
                 icon:SetVertexColor(1, 1, 1)
@@ -520,7 +520,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
         end
 
         -- Show upgrade icon if active
-        if itemInfo and itemInfo.hyperlink and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
+        if itemInfo and itemInfo.hyperlink and GW.settings.bags.items.upgradeIcon and button.UpgradeIcon then
             GW.RegisterPawnUpgradeIcon(button, itemInfo.hyperlink)
         elseif button.UpgradeIcon then
             button.UpgradeIcon:Hide()
@@ -530,7 +530,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
         if button.itemlevel and showItemLevel then
             local canShowItemLevel = GW.IsItemEligibleForItemLevelDisplay(itemIDOrLink)
             if canShowItemLevel then
-                GW.SetItemLevel(button, quality, itemIDOrLink, nil, GW.settings.BAG_ITEM_LEVEL_THRESHOLD)
+                GW.SetItemLevel(button, quality, itemIDOrLink, nil, GW.settings.bags.items.levelThreshold)
             else
                 button.itemlevel:SetText("")
                 button.__gwLastItemLink = nil
@@ -545,7 +545,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
             itemButtonDecorators[i](button, quality, itemIDOrLink, suppressOverlays)
         end
 
-        if GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW and quality and quality > 0 then
+        if GW.settings.bags.items.qualityBorder and quality and quality > 0 then
             local color = GW.GetBagItemQualityColor(quality)
             t:SetVertexColor(color.r, color.g, color.b)
         end
@@ -576,7 +576,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
         button.gwUnusableLink = nil
     end
 
-    if not qualityWinsOverProfession and (GW.settings.BAG_PROFESSION_BAG_COLOR or isReagentBag) and professionColors then
+    if not qualityWinsOverProfession and (GW.settings.bags.professionBagColor or isReagentBag) and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
@@ -600,14 +600,14 @@ end
 -- prefix differs, so the settings, their limits and their menu entries live in one table
 local ITEM_SIZE_SETTINGS = {
     BAG = {
-        {key = "BAG_ITEM_SIZE", title = "Icon Size", config = BAG_ITEM_SIZE_CONFIG},
-        {key = "BAG_ITEM_SPACING_X", title = "Slot Spacing X", config = BAG_ITEM_SPACING_X_CONFIG},
-        {key = "BAG_ITEM_SPACING_Y", title = "Slot Spacing Y", config = BAG_ITEM_SPACING_Y_CONFIG},
+        {db = "bag", key = "itemSize", title = "Icon Size", config = BAG_ITEM_SIZE_CONFIG},
+        {db = "bag", key = "itemSpacingX", title = "Slot Spacing X", config = BAG_ITEM_SPACING_X_CONFIG},
+        {db = "bag", key = "itemSpacingY", title = "Slot Spacing Y", config = BAG_ITEM_SPACING_Y_CONFIG},
     },
     BANK = {
-        {key = "BANK_ITEM_SIZE", title = "Icon Size", config = BANK_ITEM_SIZE_CONFIG},
-        {key = "BANK_ITEM_SPACING_X", title = "Slot Spacing X", config = BANK_ITEM_SPACING_X_CONFIG},
-        {key = "BANK_ITEM_SPACING_Y", title = "Slot Spacing Y", config = BANK_ITEM_SPACING_Y_CONFIG},
+        {db = "bank", key = "itemSize", title = "Icon Size", config = BANK_ITEM_SIZE_CONFIG},
+        {db = "bank", key = "itemSpacingX", title = "Slot Spacing X", config = BANK_ITEM_SPACING_X_CONFIG},
+        {db = "bank", key = "itemSpacingY", title = "Slot Spacing Y", config = BANK_ITEM_SPACING_Y_CONFIG},
     },
 }
 
@@ -616,7 +616,7 @@ local ITEM_SIZE_SETTINGS = {
 local function normalizeItemSizeSettings()
     for _, entries in next, ITEM_SIZE_SETTINGS do
         for _, entry in ipairs(entries) do
-            GW.settings[entry.key] = NormalizeByConfig(GW.settings[entry.key], entry.config)
+            GW.settings.bags[entry.db][entry.key] = NormalizeByConfig(GW.settings.bags[entry.db][entry.key], entry.config)
         end
     end
 end
@@ -641,11 +641,11 @@ local function addItemSizeMenuEntries(rootDescription, prefix)
             minValue = entry.config.minValue,
             maxValue = entry.config.maxValue,
             step = entry.config.step,
-            getValue = function() return GW.settings[entry.key] end,
+            getValue = function() return GW.settings.bags[entry.db][entry.key] end,
             setValue = function(value)
                 local normalized = NormalizeByConfig(value, entry.config)
-                if GW.settings[entry.key] ~= normalized then
-                    GW.settings[entry.key] = normalized
+                if GW.settings.bags[entry.db][entry.key] ~= normalized then
+                    GW.settings.bags[entry.db][entry.key] = normalized
                     resizeInventory()
                 end
                 return normalized
@@ -941,7 +941,7 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
 
     local isBag = f == GwBagFrame
     local cols = isBag and f.gw_bag_cols or f.gw_bank_cols
-    local sep = isBag and GW.settings.BAG_SEPARATE_BAGS or (not isBag and GW.settings.BANK_SEPARATE_BAGS)
+    local sep = isBag and GW.settings.bags.bag.separateBags or (not isBag and GW.settings.bags.bank.separateBags)
 
     if not cfs then
         f:SetHeight(min_height)
@@ -1020,7 +1020,7 @@ local function onMoved(self, setting, snap_size)
 
     -- store the updated position
     if setting then
-        local pos = GW.settings[setting]
+        local pos = GW.settings.bags[setting].pos
         if pos then
             wipe(pos)
         else
@@ -1030,7 +1030,7 @@ local function onMoved(self, setting, snap_size)
         pos.relativePoint = "BOTTOMLEFT"
         pos.xOfs = x
         pos.yOfs = y
-        GW.settings[setting] = pos
+        GW.settings.bags[setting].pos = pos
     end
 
     -- apply our snap sizing, if necessary

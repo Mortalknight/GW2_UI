@@ -113,7 +113,7 @@ local VIRTUAL_CONDITIONS = {
     PARTY_GRID_ACTIVE = {
         label = function() return L["The party grid is displayed"] end,
         get = function()
-            return GW.settings.RAID_STYLE_PARTY == true or GW.settings.RAID_STYLE_PARTY_AND_FRAMES == true
+            return GW.settings.groupFrames.party.enabled == true or GW.settings.groupFrames.party.withPartyFrames == true
         end,
     },
     -- The mirror image: the stylised party frames are only replaced when the grid module is
@@ -122,7 +122,7 @@ local VIRTUAL_CONDITIONS = {
     PARTY_GRID_REPLACES_FRAMES = {
         label = function() return L["The party grid replaces the party frames"] end,
         get = function()
-            return GW.settings.RAID_FRAMES == true and GW.settings.RAID_STYLE_PARTY == true
+            return GW.settings.groupFrames.enabled == true and GW.settings.groupFrames.party.enabled == true
         end,
     },
 }

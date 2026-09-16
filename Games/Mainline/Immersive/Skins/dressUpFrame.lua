@@ -23,7 +23,7 @@ local function SkinSetListRow(row)
 end
 
 local function LoadDressUpFrameSkin()
-    if not GW.settings.INSPECTION_SKIN_ENABLED then return end
+    if not GW.settings.skins.inspection.enabled then return end
 
     DressUpFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(DressUpFrame, DressUpFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {}, nil, false, true)

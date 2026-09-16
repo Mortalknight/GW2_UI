@@ -332,7 +332,7 @@ do
     local counts
 
     local function insert(t, v)
-        if GW.settings.BAG_ITEMS_REVERSE_SORT then
+        if GW.settings.bags.bag.reverseItemSort then
             tinsert(t, v)
         else
             tinsert(t, 1, v)
@@ -342,7 +342,7 @@ do
     local function assign(slot, item)
         if counts[item] > 0 then
             local count
-            if GW.settings.BAG_ITEMS_REVERSE_SORT and mod(counts[item], itemStacks[item]) ~= 0 then
+            if GW.settings.bags.bag.reverseItemSort and mod(counts[item], itemStacks[item]) ~= 0 then
                 count = mod(counts[item], itemStacks[item])
             else
                 count = min(counts[item], itemStacks[item])
@@ -492,7 +492,7 @@ function Item(container, position)
         tinsert(sortKey, -quality)
         tinsert(sortKey, itemName)
         tinsert(sortKey, itemID)
-        tinsert(sortKey, (GW.settings.BAG_ITEMS_REVERSE_SORT and 1 or -1) * charges)
+        tinsert(sortKey, (GW.settings.bags.bag.reverseItemSort and 1 or -1) * charges)
         tinsert(sortKey, suffixID)
         tinsert(sortKey, enchantID)
         tinsert(sortKey, uniqueID)

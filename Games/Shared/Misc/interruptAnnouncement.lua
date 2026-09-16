@@ -36,7 +36,7 @@ local function OnEvent(self, _, subEvent, _, sourceGUID, srcName, sourceFlags, _
         msg = format(INTERRUPT_MSG, name, spellID, spellName)
     end
 
-    local channel = GW.settings.interruptAnnounce
+    local channel = GW.settings.chat.interruptAnnounce
     if channel == "PARTY" then
         C_ChatInfo.SendChatMessage(msg, inPartyLFG and "INSTANCE_CHAT" or "PARTY")
     elseif channel == "RAID" then
@@ -54,7 +54,7 @@ end
 
 
 local function ToggleInterruptAnncouncement()
-    local announce = GW.settings.interruptAnnounce
+    local announce = GW.settings.chat.interruptAnnounce
     if announce and announce ~= "NONE" then
         GW.Libs.GW2Lib:RegisterCombatEvent(frame, "_INTERRUPT", OnEvent)
     else

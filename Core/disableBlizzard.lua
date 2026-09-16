@@ -130,19 +130,19 @@ end
 
 
 local function DisableBlizzardFrames()
-    local ourPartyFrames = GW.settings.PARTY_FRAMES
-    local ourRaidFrames = GW.settings.RAID_FRAMES
-    local ourBossFrames = GW.settings.QUESTTRACKER_ENABLED and not GW.ShouldBlockIncompatibleAddon("Objectives")
-    local ourArenaFrames = not C_AddOns.IsAddOnLoaded("sArena") and GW.settings.QUESTTRACKER_ENABLED and not GW.ShouldBlockIncompatibleAddon("Objectives")
-    local ourPetFrame = GW.settings.PETBAR_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars")
-    local ourTargetFrame = GW.settings.TARGET_ENABLED
-    local ourTargetTargetFrame = GW.settings.target_TARGET_ENABLED
-    local ourFocusFrame = GW.settings.FOCUS_ENABLED
-    local ourFocusTargetFrame = GW.settings.focus_TARGET_ENABLED
-    local ourPlayerFrame = GW.settings.HEALTHGLOBE_ENABLED
-    local ourCastBar = GW.settings.CASTINGBAR_ENABLED
-    local ourActionbars = GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars")
-    local ourInventory = GW.settings.BAGS_ENABLED
+    local ourPartyFrames = GW.settings.unitframes.party.enabled
+    local ourRaidFrames = GW.settings.groupFrames.enabled
+    local ourBossFrames = GW.settings.objectives.enabled and not GW.ShouldBlockIncompatibleAddon("Objectives")
+    local ourArenaFrames = not C_AddOns.IsAddOnLoaded("sArena") and GW.settings.objectives.enabled and not GW.ShouldBlockIncompatibleAddon("Objectives")
+    local ourPetFrame = GW.settings.unitframes.pet.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars")
+    local ourTargetFrame = GW.settings.unitframes.target.enabled
+    local ourTargetTargetFrame = GW.settings.unitframes.targettarget.enabled
+    local ourFocusFrame = GW.settings.unitframes.focus.enabled
+    local ourFocusTargetFrame = GW.settings.unitframes.focustarget.enabled
+    local ourPlayerFrame = GW.settings.unitframes.healthGlobe.enabled
+    local ourCastBar = GW.settings.castingbar.enabled
+    local ourActionbars = GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.ShouldBlockIncompatibleAddon("Actionbars")
+    local ourInventory = GW.settings.bags.enabled
 
     if ourPartyFrames or ourRaidFrames then
         -- calls to UpdateRaidAndPartyFrames, which as of writing this is used to show/hide the

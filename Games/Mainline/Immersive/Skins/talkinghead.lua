@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function ScaleTalkingHeadFrame()
-    TalkingHeadFrame:SetScale(GW.settings.TalkingHeadFrameScale)
+    TalkingHeadFrame:SetScale(GW.settings.skins.talkingHead.scale)
 
     --Reset Model Camera
     local model = TalkingHeadFrame.MainFrame.Model
@@ -14,7 +14,7 @@ end
 GW.ScaleTalkingHeadFrame = ScaleTalkingHeadFrame
 
 local function InitTalkingHeadFrame()
-    if not GW.settings.TALKINGHEAD_SKIN_ENABLED then return end
+    if not GW.settings.skins.talkingHead.enabled then return end
 
     -- remove TalkingHeadFrame from Alert System
     for i, alertFrameSubSystem in ipairs(AlertFrame.alertFrameSubSystems) do

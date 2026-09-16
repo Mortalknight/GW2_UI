@@ -39,7 +39,7 @@ local function GenericTraitFrameSkin()
 end
 
 local function LoadGenericTraitFrameSkin()
-    if not GW.settings.GENERIC_TRAINT_SKIN_ENABLED then return end
+    if not GW.settings.skins.genericTraits.enabled then return end
     GW.RegisterLoadHook(GenericTraitFrameSkin, "Blizzard_GenericTraitUI", GenericTraitFrame)
 end
 GW.LoadGenericTraitFrameSkin = LoadGenericTraitFrameSkin

@@ -38,45 +38,45 @@ GW.GridPartyPetStyleRegister = GridPartyPetStyleRegister
 
 local function UpdateGridPartyPetFrame(frame)
     -- set frame settings
-    frame.useClassColor = GW.settings.PARTY_CLASS_COLOR_PET
-    frame.hideClassIcon = GW.settings.PARTY_HIDE_CLASS_ICON_PET
-    frame.showResscoureBar = GW.settings.party_pet_show_powerbar
-    frame.showRealmFlags = GW.settings.PARTY_UNIT_FLAGS_PET
-    frame.healthStringFormat = GW.settings.PARTY_UNIT_HEALTH_PET
-    frame.showTargetmarker = GW.settings.PARTY_UNIT_MARKERS_PET
-    frame.unitWidth = tonumber(GW.settings.PARTY_WIDTH_PET)
-    frame.unitHeight = tonumber(GW.settings.PARTY_HEIGHT_PET)
-    frame.raidShowImportantInstanceDebuffs = GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET
-    frame.showDebuffs = GW.settings.PARTY_SHOW_DEBUFFS_PET
-    frame.showOnlyDispelDebuffs = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS_PET
-    frame.showBuffs = GW.settings.PARTY_PET_SHOW_BUFFS
-    frame.showAuraTooltipInCombat = GW.settings.PARTY_AURA_TOOLTIP_INCOMBAT_PET
-    --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
-    frame.shortendHealthValue = GW.settings.PARTY_SHORT_HEALTH_VALUES_PET
-    frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR_PET
-    frame.healthBarTexture = GW.settings.party_pet_FrameHealthBarTexture
+    frame.useClassColor = GW.settings.groupFrames.partyPet.classColor
+    frame.hideClassIcon = GW.settings.groupFrames.partyPet.hideClassIcon
+    frame.showResscoureBar = GW.settings.groupFrames.partyPet.showPowerBar
+    frame.showRealmFlags = GW.settings.groupFrames.partyPet.unitFlags
+    frame.healthStringFormat = GW.settings.groupFrames.partyPet.unitHealth
+    frame.showTargetmarker = GW.settings.groupFrames.partyPet.unitMarkers
+    frame.unitWidth = tonumber(GW.settings.groupFrames.partyPet.width)
+    frame.unitHeight = tonumber(GW.settings.groupFrames.partyPet.height)
+    frame.raidShowImportantInstanceDebuffs = GW.settings.groupFrames.partyPet.showRaidInstanceDebuffs
+    frame.showDebuffs = GW.settings.groupFrames.partyPet.showDebuffs
+    frame.showOnlyDispelDebuffs = GW.settings.groupFrames.partyPet.onlyDispellableDebuffs
+    frame.showBuffs = GW.settings.groupFrames.partyPet.showBuffs
+    frame.showAuraTooltipInCombat = GW.settings.groupFrames.partyPet.auraTooltipInCombat
+    --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.playerAuras.missingAuras:trim():gsub("%s*,%s*", ","))))
+    frame.shortendHealthValue = GW.settings.groupFrames.partyPet.shortHealthValues
+    frame.showAbsorbBar = GW.settings.groupFrames.partyPet.showAbsorbBar
+    frame.healthBarTexture = GW.settings.groupFrames.partyPet.healthBarTexture
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do
-        frame.raidIndicators[pos] = GW.settings["INDICATOR_" .. pos]
+        frame.raidIndicators[pos] = GW.settings.groupFrames.indicators.positions[pos]
     end
-    frame.showRaidIndicatorIcon = GW.settings.INDICATORS_ICON
-    frame.showRaidIndicatorTimer = GW.settings.INDICATORS_TIME
-    frame.showRaidIndicatorStacks = GW.settings.INDICATORS_STACKS
-    frame.raidIndicatorSize = GW.settings.INDICATORS_SIZE
-    frame.raidIndicatorBarWidth = GW.settings.INDICATORS_BAR_WIDTH
-    frame.raidDebuffScale = GW.settings.RAIDDEBUFFS_Scale
-    frame.raidDispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
-    frame.showRoleIcon = GW.settings.PARTY_SHOW_ROLE_ICON_PET
-    frame.showTankIcon = GW.settings.PARTY_SHOW_TANK_ICON_PET
-    frame.showLeaderAssistIcon = GW.settings.PARTY_SHOW_LEADER_ICON_PET
+    frame.showRaidIndicatorIcon = GW.settings.groupFrames.indicators.icon
+    frame.showRaidIndicatorTimer = GW.settings.groupFrames.indicators.time
+    frame.showRaidIndicatorStacks = GW.settings.groupFrames.indicators.stacks
+    frame.raidIndicatorSize = GW.settings.groupFrames.indicators.size
+    frame.raidIndicatorBarWidth = GW.settings.groupFrames.indicators.barWidth
+    frame.raidDebuffScale = GW.settings.groupFrames.raidDebuffsScale
+    frame.raidDispelDebuffScale = GW.settings.groupFrames.dispelDebuffsScale
+    frame.showRoleIcon = GW.settings.groupFrames.partyPet.showRoleIcon
+    frame.showTankIcon = GW.settings.groupFrames.partyPet.showTankIcon
+    frame.showLeaderAssistIcon = GW.settings.groupFrames.partyPet.showLeaderIcon
 
     -- retail filtering
-    frame.debuffFilters = GW.settings.PARTY_PET_DEBUFF_FILTER
-    frame.buffFilters = GW.settings.PARTY_PET_BUFF_FILTER
-    frame.ignoredAuraSpellIDs = GW.settings.PARTY_PET_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
-    frame.pandemicHighlight = GW.settings.PARTY_PET_PANDEMIC_HIGHLIGHT
-    frame.showDispelIcon = GW.settings.PARTY_PET_DISPEL_ICON
+    frame.debuffFilters = GW.settings.groupFrames.partyPet.debuffFilter
+    frame.buffFilters = GW.settings.groupFrames.partyPet.buffFilter
+    frame.ignoredAuraSpellIDs = GW.settings.groupFrames.partyPet.ignoredAuras -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.groupFrames.partyPet.pandemicHighlight
+    frame.showDispelIcon = GW.settings.groupFrames.partyPet.dispelIcon
 
     if not InCombatLockdown() then
         frame:DisableElement("MiddleIcon")
@@ -85,9 +85,9 @@ local function UpdateGridPartyPetFrame(frame)
             frame:ClearAllPoints()
         end
 
-        if GW.settings.PARTY_PET_FRAMES_ENABLED and not frame:IsEnabled() then
+        if GW.settings.groupFrames.partyPet.enabled and not frame:IsEnabled() then
             frame:Enable()
-        elseif not GW.settings.PARTY_PET_FRAMES_ENABLED and frame:IsEnabled() then
+        elseif not GW.settings.groupFrames.partyPet.enabled and frame:IsEnabled() then
             frame:Disable()
         end
     end
@@ -104,7 +104,7 @@ local function UpdateGridPartyPetFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    GW.Update_Faderframe(frame, "gridPartyPet")
+    GW.Update_Faderframe(frame, "partyPet")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")
 end

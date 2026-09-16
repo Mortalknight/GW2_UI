@@ -156,15 +156,15 @@ local function ApplyExpressInstall()
     ApplyChatSetup()
     ApplyCVars()
 
-    GW.settings.PIXEL_PERFECTION = true
+    GW.settings.general.pixelPerfection = true
     C_CVar.SetCVar("useUiScale", "0")
     GW.PixelPerfection()
 
-    GW.settings.FONT_STYLE_TEMPLATE = "GW2"
+    GW.settings.fonts.styleTemplate = "GW2"
     GW.ApplyFontStyleTemplate()
 
     if not GW.Retail then
-        GW.settings.GW_COMBAT_TEXT_MODE = "GW2"
+        GW.settings.combatText.mode = "GW2"
         GW.ApplyCombatTextMode("GW2")
     end
 
@@ -205,33 +205,33 @@ end
 -- ============================
 -- grouped: unit frames, hud bars, ui windows, misc. Dotted settings resolve nested
 local MODULES = {
-    { setting = "HEALTHGLOBE_ENABLED", name = PLAYER },
-    { setting = "POWERBAR_ENABLED", name = L["Power Bar"] },
-    { setting = "CASTINGBAR_ENABLED", name = L["Cast Bar"] },
-    { setting = "PLAYER_BUFFS_ENABLED", name = L["Auras"] },
-    { setting = "CLASS_POWER", name = L["Class Power"] },
-    { setting = "TARGET_ENABLED", name = TARGET },
-    { setting = "FOCUS_ENABLED", name = FOCUS, hidden = GW.Classic },
-    { setting = "PETBAR_ENABLED", name = PET },
-    { setting = "PARTY_FRAMES", name = PARTY },
-    { setting = "RAID_STYLE_PARTY", name = USE_RAID_STYLE_PARTY_FRAMES },
-    { setting = "RAID_FRAMES", name = RAID_FRAMES_LABEL or RAID },
-    { setting = "ACTIONBARS_ENABLED", name = BINDING_HEADER_ACTIONBAR },
+    { setting = "unitframes.healthGlobe.enabled", name = PLAYER },
+    { setting = "powerBar.enabled", name = L["Power Bar"] },
+    { setting = "castingbar.enabled", name = L["Cast Bar"] },
+    { setting = "playerAuras.enabled", name = L["Auras"] },
+    { setting = "classpower.enabled", name = L["Class Power"] },
+    { setting = "unitframes.target.enabled", name = TARGET },
+    { setting = "unitframes.focus.enabled", name = FOCUS, hidden = GW.Classic },
+    { setting = "unitframes.pet.enabled", name = PET },
+    { setting = "unitframes.party.enabled", name = PARTY },
+    { setting = "groupFrames.party.enabled", name = USE_RAID_STYLE_PARTY_FRAMES },
+    { setting = "groupFrames.enabled", name = RAID_FRAMES_LABEL or RAID },
+    { setting = "actionbars.enabled", name = BINDING_HEADER_ACTIONBAR },
     { setting = "micromenu.enabled", name = L["Micro Bar"] },
-    { setting = "XPBAR_ENABLED", name = XPBAR_LABEL },
-    { setting = "MINIMAP_ENABLED", name = MINIMAP_LABEL or MINIMAP_ZOOM },
-    { setting = "BAGS_ENABLED", name = INVENTORY_TOOLTIP },
-    { setting = "USE_CHARACTER_WINDOW", name = L["Character Pane"] },
-    { setting = "USE_TALENT_WINDOW", name = TALENTS, hidden = GW.Retail },
-    { setting = "USE_PROFESSION_WINDOW", name = TRADE_SKILLS },
-    { setting = "USE_SOCIAL_WINDOW", name = FRIENDS },
-    { setting = "USE_BATTLEGROUND_HUD", name = BATTLEGROUND },
-    { setting = "CHATFRAME_ENABLED", name = CHAT },
-    { setting = "CHATBUBBLES_ENABLED", name = CHAT_BUBBLES_TEXT },
-    { setting = "ALERTFRAME_ENABLED", name = COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL },
-    { setting = "QUESTTRACKER_ENABLED", name = OBJECTIVES_TRACKER_LABEL or QUESTS_LABEL },
+    { setting = "hud.xpBar", name = XPBAR_LABEL },
+    { setting = "minimap.enabled", name = MINIMAP_LABEL or MINIMAP_ZOOM },
+    { setting = "bags.enabled", name = INVENTORY_TOOLTIP },
+    { setting = "windows.character.enabled", name = L["Character Pane"] },
+    { setting = "windows.talent.enabled", name = TALENTS, hidden = GW.Retail },
+    { setting = "windows.profession.enabled", name = TRADE_SKILLS },
+    { setting = "windows.social.enabled", name = FRIENDS },
+    { setting = "general.battlegroundHud", name = BATTLEGROUND },
+    { setting = "chat.enabled", name = CHAT },
+    { setting = "chat.bubbles.enabled", name = CHAT_BUBBLES_TEXT },
+    { setting = "notifications.enabled", name = COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL },
+    { setting = "objectives.enabled", name = OBJECTIVES_TRACKER_LABEL or QUESTS_LABEL },
     { setting = "immersiveQuesting.enabled", name = L["Immersive Questing"] },
-    { setting = "TOOLTIPS_ENABLED", name = L["Tooltips"] },
+    { setting = "tooltip.enabled", name = L["Tooltips"] },
 }
 
 -- flavor gated steps drop out entirely, the progress dots follow #STEPS
@@ -244,22 +244,8 @@ local function RemoveHiddenSteps(steps)
     return steps
 end
 
-local function GetModuleValue(setting)
-    local root, sub = strsplit(".", setting)
-    if sub then
-        return GW.settings[root][sub]
-    end
-    return GW.settings[setting]
-end
-
-local function SetModuleValue(setting, value)
-    local root, sub = strsplit(".", setting)
-    if sub then
-        GW.settings[root][sub] = value
-    else
-        GW.settings[setting] = value
-    end
-end
+local GetModuleValue = GW.GetSetting
+local SetModuleValue = GW.SetSetting
 
 -- forward declaration: the final steps summary closure iterates STEPS, and a local
 -- only enters scope AFTER its declaration statement - inline it would capture a
@@ -409,7 +395,7 @@ STEPS = RemoveHiddenSteps({
         onNext = function(content, step)
             local state = content.gwDisplayState
             if state.mode == "pp" then
-                GW.settings.PIXEL_PERFECTION = true
+                GW.settings.general.pixelPerfection = true
                 C_CVar.SetCVar("useUiScale", "0")
                 GW.PixelPerfection()
                 AddCompleteAlert(L["Pixel Perfect Mode"])
@@ -417,7 +403,7 @@ STEPS = RemoveHiddenSteps({
                 step.summaryDetail = format("%s (%.2f)", L["Pixel Perfect Mode"], GW.getBestPixelScale())
             elseif state.mode == "custom" then
                 local value = content.gwScaleSlider:GetValue()
-                GW.settings.PIXEL_PERFECTION = false
+                GW.settings.general.pixelPerfection = false
                 C_CVar.SetCVar("useUiScale", "1")
                 C_CVar.SetCVar("uiScale", value)
                 UIParent:SetScale(value)
@@ -509,9 +495,9 @@ STEPS = RemoveHiddenSteps({
             dropdown:SetupMenu(function(_, rootDescription)
                 for index, template in ipairs(GW.FONT_STYLE_TEMPLATES) do
                     rootDescription:CreateRadio(GW.FONT_STYLE_TEMPLATE_NAMES[index],
-                        function() return GW.settings.FONT_STYLE_TEMPLATE == template end,
+                        function() return GW.settings.fonts.styleTemplate == template end,
                         function()
-                            GW.settings.FONT_STYLE_TEMPLATE = template
+                            GW.settings.fonts.styleTemplate = template
                             GW.ApplyFontStyleTemplate()
                             step.applied = true
                             step.summaryDetail = GW.FONT_STYLE_TEMPLATE_NAMES[index]
@@ -522,7 +508,7 @@ STEPS = RemoveHiddenSteps({
         onNext = function(_, step)
             if not step.summaryDetail then
                 for index, template in ipairs(GW.FONT_STYLE_TEMPLATES) do
-                    if GW.settings.FONT_STYLE_TEMPLATE == template then
+                    if GW.settings.fonts.styleTemplate == template then
                         step.summaryDetail = GW.FONT_STYLE_TEMPLATE_NAMES[index]
                     end
                 end
@@ -541,9 +527,9 @@ STEPS = RemoveHiddenSteps({
             dropdown:SetupMenu(function(_, rootDescription)
                 for index, mode in ipairs(GW.COMBAT_TEXT_MODES) do
                     rootDescription:CreateRadio(GW.COMBAT_TEXT_MODE_NAMES[index],
-                        function() return GW.settings.GW_COMBAT_TEXT_MODE == mode end,
+                        function() return GW.settings.combatText.mode == mode end,
                         function()
-                            GW.settings.GW_COMBAT_TEXT_MODE = mode
+                            GW.settings.combatText.mode = mode
                             GW.ApplyCombatTextMode(mode)
                             step.applied = true
                             step.summaryDetail = GW.COMBAT_TEXT_MODE_NAMES[index]
@@ -554,7 +540,7 @@ STEPS = RemoveHiddenSteps({
         onNext = function(_, step)
             if not step.summaryDetail then
                 for index, mode in ipairs(GW.COMBAT_TEXT_MODES) do
-                    if GW.settings.GW_COMBAT_TEXT_MODE == mode then
+                    if GW.settings.combatText.mode == mode then
                         step.summaryDetail = GW.COMBAT_TEXT_MODE_NAMES[index]
                     end
                 end

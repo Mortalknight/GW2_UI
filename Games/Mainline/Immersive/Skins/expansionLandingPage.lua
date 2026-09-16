@@ -55,7 +55,7 @@ local function ExpansionLadningPageSkin()
 end
 
 local function LoadExpansionLadningPageSkin()
-    if not GW.settings.EXPANSION_LANDING_PAGE_SKIN_ENABLED then return end
+    if not GW.settings.skins.expansionLandingPage.enabled then return end
     GW.RegisterLoadHook(ExpansionLadningPageSkin, "Blizzard_ExpansionLandingPage", ExpansionLandingPage)
 end
 GW.LoadExpansionLadningPageSkin = LoadExpansionLadningPageSkin

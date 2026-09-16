@@ -48,8 +48,8 @@ local function BuildObjectivesTrackerModuleOrderIndex()
         end
     end
 
-    AddOrderList(GW.settings.OBJECTIVES_TRACKER_MODULE_ORDER)
-    AddOrderList(GW.globalDefault.profile.OBJECTIVES_TRACKER_MODULE_ORDER)
+    AddOrderList(GW.settings.objectives.moduleOrder)
+    AddOrderList(GW.globalDefault.profile.objectives.moduleOrder)
 
     return orderIndex
 end
@@ -115,7 +115,7 @@ function GW.ApplyObjectivesTrackerModuleOrder()
 end
 
 function GW.IsObjectivesTrackerCompactMode()
-    return GW.settings.OBJECTIVES_TRACKER_COMPACT_MODE
+    return GW.settings.objectives.compactMode
 end
 
 -- an empty container must not be exactly 0 high: the fixed containers are chained
@@ -159,7 +159,7 @@ end
 -- scales both gaps below; compact mode keeps its own base values, so the two settings stay
 -- independent - this one only stretches or tightens what compact mode picked
 local function ScaleObjectivesGap(gap)
-    return math.floor(gap * (GW.settings.OBJECTIVES_TRACKER_SPACING or 1) + 0.5)
+    return math.floor(gap * (GW.settings.objectives.spacing or 1) + 0.5)
 end
 
 function GW.GetObjectivesRowGap()
@@ -238,7 +238,7 @@ local function ParseObjectiveString(block, text, numItems, numNeeded, overrideSh
     numNeeded = tonumber(numNeeded)
 
     if numItems and numNeeded and numNeeded > 1 and numItems < numNeeded then
-        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
+        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.settings.objectives.statusBars)
         block.StatusBar:SetMinMaxValues(0, numNeeded)
         block.StatusBar:SetValue(numItems)
         block.progress = numItems / numNeeded
@@ -321,7 +321,7 @@ function GwObjectivesTrackerMixin:LayoutChanged()
 
     -- adjust scrolframe height
     local scrollContentHeight = 0
-    local trackerHeight = GW.settings.QuestTracker_pos_height
+    local trackerHeight = GW.settings.objectives.height
     local scroll = 0
 
     for _, container in pairs(GW.QuestTrackerScrollableContainer) do
@@ -538,7 +538,7 @@ local function LoadObjectivesTracker()
     -- Create our own tracker
     local objectivesTracker = CreateFrame("Frame", "GwQuestTracker", UIParent, "GwQuestTracker")
     Mixin(objectivesTracker, GwObjectivesTrackerMixin)
-    objectivesTracker.ScrollFrame = objectivesTracker:CreateTrackerScrollFrame("GwQuestTrackerScroll", GW.settings.QuestTracker_pos_height)
+    objectivesTracker.ScrollFrame = objectivesTracker:CreateTrackerScrollFrame("GwQuestTrackerScroll", GW.settings.objectives.height)
     objectivesTracker.ScrollFrame.Child = CreateFrame("Frame", "GwQuestTrackerScrollChild", objectivesTracker.ScrollFrame, objectivesTracker)
 
     GW.MixinHideDuringPet(objectivesTracker)
@@ -640,9 +640,9 @@ local function LoadObjectivesTracker()
     GW.ObjectiveTrackerContainer.Notification:HookScript("OnShow", function() QueueItemButtonPositionUpdate(0.25) end)
     GW.ObjectiveTrackerContainer.Notification:HookScript("OnHide", function() QueueItemButtonPositionUpdate(0.25) end)
 
-    GW.RegisterMovableFrame(objectivesTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", ALL, nil, {GW.MoverOption.Scale, GW.MoverOption.Height})
+    GW.RegisterMovableFrame(objectivesTracker, OBJECTIVES_TRACKER_LABEL, "objectives", ALL, nil, {GW.MoverOption.Scale, GW.MoverOption.Height})
     objectivesTracker:ClearAllPoints()
     objectivesTracker:SetPoint("TOPLEFT", objectivesTracker.gwMover)
-    objectivesTracker:SetHeight(GW.settings.QuestTracker_pos_height)
+    objectivesTracker:SetHeight(GW.settings.objectives.height)
 end
 GW.LoadObjectivesTracker = LoadObjectivesTracker

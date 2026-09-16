@@ -467,7 +467,7 @@ local function worldMapSkin()
 end
 
 local function LoadWorldMapSkin()
-    if not GW.settings.WORLDMAP_SKIN_ENABLED then return end
+    if not GW.settings.skins.worldmap.enabled then return end
 
     GW.RegisterLoadHook(worldMapSkin, "Blizzard_WorldMap", WorldMapFrame)
 end

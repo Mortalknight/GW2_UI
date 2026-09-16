@@ -141,7 +141,7 @@ end
 
 local function createStatusbar(name, playerFrame)
     local fsr = CreateFrame("Frame", name, playerFrame and playerFrame or GwPlayerPowerBar)
-    local width = playerFrame and GW.settings.playerFrameHealthBarSize.width or 316
+    local width = playerFrame and GW.settings.unitframes.player.healthBarSize.width or 316
 
     fsr:ClearAllPoints()
     if playerFrame then
@@ -173,7 +173,7 @@ local function createStatusbar(name, playerFrame)
     fsr.statusBar.label:SetPoint("CENTER", 0, 0)
     fsr.statusBar.label:SetTextColor(1, 1, 1)
 
-    fsr.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
+    fsr.showTimer = GW.settings.unitframes.player.fiveSecondRuleTimer
     fsr.mp5StartTime = 0
 
     fsr.LastTickTime = GetTime()
@@ -191,7 +191,7 @@ local function createStatusbar(name, playerFrame)
 end
 
 local function Update5SrHot()
-    local hide_ofc = GW.GetSetting("PLAYER_ENERGY_MANA_TICK_HIDE_OFC")
+    local hide_ofc = GW.settings.unitframes.player.energyManaTickHideOutOfCombat
 
     if hide_ofc then
         if fsrMana then
@@ -224,11 +224,11 @@ local function Update5SrHot()
     end
 
     if fsrMana then
-        fsrMana.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
+        fsrMana.showTimer = GW.settings.unitframes.player.fiveSecondRuleTimer
     end
 
     if fsrEnergy then
-        fsrEnergy.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
+        fsrEnergy.showTimer = GW.settings.unitframes.player.fiveSecondRuleTimer
     end
 end
 GW.Update5SrHot = Update5SrHot

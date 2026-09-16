@@ -38,45 +38,45 @@ GW.GridRaidPetStyleRegister = GridRaidPetStyleRegister
 
 local function UpdateGridRaidPetFrame(frame)
     -- set frame settings
-    frame.useClassColor = GW.settings.RAID_CLASS_COLOR_PET
-    frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_PET
-    frame.showResscoureBar = GW.settings.pet_show_powerbar
-    frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_PET
-    frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_PET
-    frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS_PET
-    frame.unitWidth = tonumber(GW.settings.RAID_WIDTH_PET)
-    frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT_PET)
-    frame.raidShowImportantInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET
-    frame.showDebuffs = GW.settings.RAID_SHOW_DEBUFFS_PET
-    frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_PET
-    frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PET
-    --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
-    frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_PET
-    frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_PET
+    frame.useClassColor = GW.settings.groupFrames.raidPet.classColor
+    frame.hideClassIcon = GW.settings.groupFrames.raidPet.hideClassIcon
+    frame.showResscoureBar = GW.settings.groupFrames.raidPet.showPowerBar
+    frame.showRealmFlags = GW.settings.groupFrames.raidPet.unitFlags
+    frame.healthStringFormat = GW.settings.groupFrames.raidPet.unitHealth
+    frame.showTargetmarker = GW.settings.groupFrames.raidPet.unitMarkers
+    frame.unitWidth = tonumber(GW.settings.groupFrames.raidPet.width)
+    frame.unitHeight = tonumber(GW.settings.groupFrames.raidPet.height)
+    frame.raidShowImportantInstanceDebuffs = GW.settings.groupFrames.raidPet.showRaidInstanceDebuffs
+    frame.showDebuffs = GW.settings.groupFrames.raidPet.showDebuffs
+    frame.showOnlyDispelDebuffs = GW.settings.groupFrames.raidPet.onlyDispellableDebuffs
+    frame.showAuraTooltipInCombat = GW.settings.groupFrames.raidPet.auraTooltipInCombat
+    --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.playerAuras.missingAuras:trim():gsub("%s*,%s*", ","))))
+    frame.shortendHealthValue = GW.settings.groupFrames.raidPet.shortHealthValues
+    frame.showAbsorbBar = GW.settings.groupFrames.raidPet.showAbsorbBar
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do
-        frame.raidIndicators[pos] = GW.settings["INDICATOR_" .. pos]
+        frame.raidIndicators[pos] = GW.settings.groupFrames.indicators.positions[pos]
     end
-    frame.showRaidIndicatorIcon = GW.settings.INDICATORS_ICON
-    frame.showRaidIndicatorTimer = GW.settings.INDICATORS_TIME
-    frame.showRaidIndicatorStacks = GW.settings.INDICATORS_STACKS
-    frame.raidIndicatorSize = GW.settings.INDICATORS_SIZE
-    frame.raidIndicatorBarWidth = GW.settings.INDICATORS_BAR_WIDTH
-    frame.raidDebuffScale = GW.settings.RAIDDEBUFFS_Scale
-    frame.raidDispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
-    frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_PET
-    frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_PET
-    frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_PET
-    frame.healthBarTexture = GW.settings.pet_FrameHealthBarTexture
+    frame.showRaidIndicatorIcon = GW.settings.groupFrames.indicators.icon
+    frame.showRaidIndicatorTimer = GW.settings.groupFrames.indicators.time
+    frame.showRaidIndicatorStacks = GW.settings.groupFrames.indicators.stacks
+    frame.raidIndicatorSize = GW.settings.groupFrames.indicators.size
+    frame.raidIndicatorBarWidth = GW.settings.groupFrames.indicators.barWidth
+    frame.raidDebuffScale = GW.settings.groupFrames.raidDebuffsScale
+    frame.raidDispelDebuffScale = GW.settings.groupFrames.dispelDebuffsScale
+    frame.showRoleIcon = GW.settings.groupFrames.raidPet.showRoleIcon
+    frame.showTankIcon = GW.settings.groupFrames.raidPet.showTankIcon
+    frame.showLeaderAssistIcon = GW.settings.groupFrames.raidPet.showLeaderIcon
+    frame.healthBarTexture = GW.settings.groupFrames.raidPet.healthBarTexture
 
     -- retail filtering
-    frame.debuffFilters = GW.settings.RAID_PET_DEBUFF_FILTER
-    frame.buffFilters = GW.settings.RAID_PET_BUFF_FILTER
-    frame.ignoredAuraSpellIDs = GW.settings.RAID_PET_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
-    frame.pandemicHighlight = GW.settings.RAID_PET_PANDEMIC_HIGHLIGHT
-    frame.showDispelIcon = GW.settings.RAID_PET_DISPEL_ICON
-    frame.showBuffs = GW.settings.RAID_PET_SHOW_BUFFS
+    frame.debuffFilters = GW.settings.groupFrames.raidPet.debuffFilter
+    frame.buffFilters = GW.settings.groupFrames.raidPet.buffFilter
+    frame.ignoredAuraSpellIDs = GW.settings.groupFrames.raidPet.ignoredAuras -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.groupFrames.raidPet.pandemicHighlight
+    frame.showDispelIcon = GW.settings.groupFrames.raidPet.dispelIcon
+    frame.showBuffs = GW.settings.groupFrames.raidPet.showBuffs
 
     if not InCombatLockdown() then
         frame:DisableElement("MiddleIcon")
@@ -85,9 +85,9 @@ local function UpdateGridRaidPetFrame(frame)
             frame:ClearAllPoints()
         end
 
-        if GW.settings.RAID_PET_FRAMES and not frame:IsEnabled() then
+        if GW.settings.groupFrames.raidPet.enabled and not frame:IsEnabled() then
             frame:Enable()
-        elseif not GW.settings.RAID_PET_FRAMES and frame:IsEnabled() then
+        elseif not GW.settings.groupFrames.raidPet.enabled and frame:IsEnabled() then
             frame:Disable()
         end
     end
@@ -104,7 +104,7 @@ local function UpdateGridRaidPetFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    GW.Update_Faderframe(frame, "gridPet")
+    GW.Update_Faderframe(frame, "raidPet")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")
 end

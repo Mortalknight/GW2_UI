@@ -7,8 +7,8 @@ end
 GW.Construct_Faderframe = Construct_Faderframe
 
 local function Update_Faderframe(frame, profile)
-    local frameFaderSettings = GW.settings[profile .. "FrameFader"]
-    local RangeframeFaderSettings = GW.settings[profile .. "FrameFaderRange"]
+    local frameFaderSettings = GW.settings.groupFrames[profile].fader
+    local RangeframeFaderSettings = GW.settings.groupFrames[profile].faderRange
     if RangeframeFaderSettings or frameFaderSettings.health or frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.vehicle or frameFaderSettings.playertarget then
 
         if not frame:IsElementEnabled("Fader") then

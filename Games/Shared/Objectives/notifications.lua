@@ -632,7 +632,7 @@ end
 
 local currentCompassData
 function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
-    if not GW.settings.SHOW_QUESTTRACKER_COMPASS then
+    if not GW.settings.objectives.compass then
         self.shouldDisplay = false
         return
     end

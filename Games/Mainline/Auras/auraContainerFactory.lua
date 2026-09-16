@@ -214,7 +214,7 @@ GW.GetDebuffColorCurve = GetDebuffColorCurve
 -- once, but only if the GW tooltip skin is active (TOOLTIPS_ENABLED)
 local tooltipStyled = false
 local function EnsureTooltipStyle()
-    if tooltipStyled or not GW.settings.TOOLTIPS_ENABLED then return end
+    if tooltipStyled or not GW.settings.tooltip.enabled then return end
     tooltipStyled = true
 
     AuraContainerInbound.SetTooltipBackdrop({

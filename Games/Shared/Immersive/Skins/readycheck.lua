@@ -186,7 +186,7 @@ local function ApplyReadyCheckLayout()
 end
 
 function GW.LoadReadyCheckSkin()
-    if not GW.settings.READYCHECK_SKIN_ENABLED then return end
+    if not GW.settings.skins.readyCheck.enabled then return end
 
     local listener = _G.ReadyCheckListenerFrame
     if not listener then return end

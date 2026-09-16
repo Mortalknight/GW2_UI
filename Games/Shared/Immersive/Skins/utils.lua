@@ -109,10 +109,10 @@ GW.MutateInaccessableObject = MutateInaccessableObject
 
 local NavBarCheck = {
     EncounterJournal = function()
-        return GW.settings.ENCOUNTER_JOURNAL_SKIN_ENABLED
+        return GW.settings.skins.encounterJournal.enabled
     end,
     WorldMapFrame = function()
-        return GW.settings.WORLDMAP_SKIN_ENABLED
+        return GW.settings.skins.worldmap.enabled
     end,
 }
 
@@ -1165,12 +1165,12 @@ end
 GW.HandleItemReward = HandleItemReward
 
 local function QuestInfo_Display(template, parentFrame)
-    if not GW.settings.GOSSIP_SKIN_ENABLED and not GW.settings.immersiveQuesting.enabled and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
+    if not GW.settings.skins.gossip.enabled and not GW.settings.immersiveQuesting.enabled and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
         return
     end
     local isMapStyle = false
     if template == QUEST_TEMPLATE_MAP_DETAILS or template == QUEST_TEMPLATE_MAP_REWARDS then
-        if not GW.settings.WORLDMAP_SKIN_ENABLED then
+        if not GW.settings.skins.worldmap.enabled then
             return
         end
         isMapStyle = true

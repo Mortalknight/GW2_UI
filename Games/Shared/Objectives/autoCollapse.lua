@@ -4,7 +4,7 @@ local GW = select(2, ...)
 local eventFrame = CreateFrame("Frame")
 
 local function ShouldCollapseObjectives(inCombat)
-    local settings = GW.settings.ObjectivesAutoCollapse
+    local settings = GW.settings.objectives.autoCollapse
     local _, _, difficultyID = GetInstanceInfo()
 
     if settings.MythicPlus and difficultyID == 8 then
@@ -31,7 +31,7 @@ local function ShouldCollapseObjectives(inCombat)
 end
 
 local function HasAnyAutoCollapseContextEnabled()
-    local settings = GW.settings.ObjectivesAutoCollapse
+    local settings = GW.settings.objectives.autoCollapse
     return settings.MythicPlus or settings.Raid or settings.Party or settings.Delve or settings.Combat
 end
 

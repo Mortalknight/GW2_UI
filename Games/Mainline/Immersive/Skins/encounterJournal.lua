@@ -760,7 +760,7 @@ local function encounterJournalSkin()
     hooksecurefunc("EJSuggestFrame_UpdateRewards", hook_EJSuggestFrame_UpdateRewards)
 
     --Suggestion Reward Tooltips
-    if GW.settings.TOOLTIPS_ENABLED then
+    if GW.settings.tooltip.enabled then
         local tooltip = EncounterJournalTooltip
         local item1 = tooltip.Item1
         local item2 = tooltip.Item2
@@ -932,7 +932,7 @@ end
 
 
 local function LoadEncounterJournalSkin()
-    if not GW.settings.ENCOUNTER_JOURNAL_SKIN_ENABLED then
+    if not GW.settings.skins.encounterJournal.enabled then
         return
     end
     GW.RegisterLoadHook(encounterJournalSkin, "Blizzard_EncounterJournal", EncounterJournal)

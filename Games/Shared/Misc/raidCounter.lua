@@ -10,7 +10,7 @@ local function UpdateRaidCounterVisibility()
         ["IN_RAID_IN_PARTY"] = "[petbattle] hide; [group] show; hide",
     }
 
-    RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GW.settings.ROLE_BAR])
+    RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GW.settings.roleBar.mode])
     GW_RaidCounter_Frame:GetScript("OnEvent")(GW_RaidCounter_Frame)
 end
 GW.UpdateRaidCounterVisibility = UpdateRaidCounterVisibility
@@ -21,7 +21,7 @@ local function Create_Raid_Counter()
     if GwSocialWindow then
         raidCounterFrame:SetFrameRef("GwSocialWindow", GwSocialWindow)
     end
-    raidCounterFrame:SetAttribute("ourWindow", (GW.Retail or GW.TBC) and GW.settings.USE_SOCIAL_WINDOW)
+    raidCounterFrame:SetAttribute("ourWindow", (GW.Retail or GW.TBC) and GW.settings.windows.social.enabled)
     raidCounterFrame.func = function() ToggleRaidFrame() end
     raidCounterFrame:SetAttribute(
         "_onclick",
@@ -90,7 +90,7 @@ local function Create_Raid_Counter()
         raidCounterFrame.damager:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps.png:15:15:0:0:64:64:4:60:4:60|t" .. damage)
     end)
 
-    GW.RegisterMovableFrame(raidCounterFrame, GW.L["Role Bar"], "ROLE_BAR_pos", "Group,Raid", nil, {GW.MoverOption.Scale})
+    GW.RegisterMovableFrame(raidCounterFrame, GW.L["Role Bar"], "roleBar", "Group,Raid", nil, {GW.MoverOption.Scale})
     raidCounterFrame:ClearAllPoints()
     raidCounterFrame:SetPoint("TOPLEFT", raidCounterFrame.gwMover)
 

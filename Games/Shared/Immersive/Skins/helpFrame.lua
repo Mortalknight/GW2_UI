@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function LoadHelperFrameSkin()
-    if not GW.settings.HELPFRAME_SKIN_ENABLED then return end
+    if not GW.settings.skins.helpFrame.enabled then return end
 
     HelpFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     HelpFrameTitleText:ClearAllPoints()

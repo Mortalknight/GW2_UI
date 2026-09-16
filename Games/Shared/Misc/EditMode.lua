@@ -1,7 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local CheckActionBar = function() return (GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED) end
+local CheckActionBar = function() return (GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout) end
 local eventFrame = CreateFrame("Frame")
 local hideFrames = {}
 eventFrame.hideFrames = hideFrames

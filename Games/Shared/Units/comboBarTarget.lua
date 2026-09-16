@@ -100,7 +100,7 @@ local function comboBarOnEvent(self, event, ...)
 	elseif event == "UNIT_MAXPOWER" or event == "PLAYER_ENTERING_WORLD" then
 		ComboFrame_UpdateMax(self)
 	elseif event == "UNIT_ENTERED_VEHICLE" then
-        if not GW.settings.target_HOOK_COMBOPOINTS then
+        if not GW.settings.unitframes.target.hookComboPoints then
             self:RegisterEvent("PLAYER_TARGET_CHANGED")
             self:RegisterEvent("UNIT_POWER_FREQUENT")
             self:RegisterEvent("UNIT_MAXPOWER")
@@ -110,7 +110,7 @@ local function comboBarOnEvent(self, event, ...)
 		self.unit = "vehicle"
 		ComboFrame_UpdateMax(self)
     elseif event == "UNIT_EXITED_VEHICLE" then
-        if not GW.settings.target_HOOK_COMBOPOINTS then
+        if not GW.settings.unitframes.target.hookComboPoints then
             self:UnregisterEvent("PLAYER_TARGET_CHANGED")
             self:UnregisterEvent("UNIT_POWER_FREQUENT")
             self:UnregisterEvent("UNIT_MAXPOWER")
@@ -145,7 +145,7 @@ local function UpdateSettings(targetFrame)
         end
     end
 
-    if GW.settings.target_HOOK_COMBOPOINTS then
+    if GW.settings.unitframes.target.hookComboPoints then
         comboBar:RegisterEvent("PLAYER_TARGET_CHANGED")
         comboBar:RegisterEvent("UNIT_POWER_FREQUENT")
         comboBar:RegisterEvent("UNIT_MAXPOWER")

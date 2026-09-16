@@ -38,45 +38,45 @@ GW.GridPartyStyleRegister = GridPartyStyleRegister
 
 local function UpdateGridPartyFrame(frame)
     -- set frame settings
-    frame.useClassColor = GW.settings.RAID_CLASS_COLOR_PARTY
-    frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_PARTY
-    frame.showResscoureBar = GW.settings.party_grid_show_powerbar
-    frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_PARTY
-    frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_PARTY
-    frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS_PARTY
-    frame.unitWidth = tonumber(GW.settings.RAID_WIDTH_PARTY)
-    frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT_PARTY)
-    frame.raidShowImportantInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY
-    frame.showDebuffs = GW.settings.RAID_SHOW_DEBUFFS_PARTY
-    frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_PARTY
-    frame.showBuffs = GW.settings.RAID_PARTY_SHOW_BUFFS
-    frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PARTY
-    frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
-    frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_PARTY
-    frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_PARTY
+    frame.useClassColor = GW.settings.groupFrames.party.classColor
+    frame.hideClassIcon = GW.settings.groupFrames.party.hideClassIcon
+    frame.showResscoureBar = GW.settings.groupFrames.party.showPowerBar
+    frame.showRealmFlags = GW.settings.groupFrames.party.unitFlags
+    frame.healthStringFormat = GW.settings.groupFrames.party.unitHealth
+    frame.showTargetmarker = GW.settings.groupFrames.party.unitMarkers
+    frame.unitWidth = tonumber(GW.settings.groupFrames.party.width)
+    frame.unitHeight = tonumber(GW.settings.groupFrames.party.height)
+    frame.raidShowImportantInstanceDebuffs = GW.settings.groupFrames.party.showRaidInstanceDebuffs
+    frame.showDebuffs = GW.settings.groupFrames.party.showDebuffs
+    frame.showOnlyDispelDebuffs = GW.settings.groupFrames.party.onlyDispellableDebuffs
+    frame.showBuffs = GW.settings.groupFrames.party.showBuffs
+    frame.showAuraTooltipInCombat = GW.settings.groupFrames.party.auraTooltipInCombat
+    frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.playerAuras.missingAuras:trim():gsub("%s*,%s*", ","))))
+    frame.shortendHealthValue = GW.settings.groupFrames.party.shortHealthValues
+    frame.showAbsorbBar = GW.settings.groupFrames.party.showAbsorbBar
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do
-        frame.raidIndicators[pos] = GW.settings["INDICATOR_" .. pos]
+        frame.raidIndicators[pos] = GW.settings.groupFrames.indicators.positions[pos]
     end
-    frame.showRaidIndicatorIcon = GW.settings.INDICATORS_ICON
-    frame.showRaidIndicatorTimer = GW.settings.INDICATORS_TIME
-    frame.showRaidIndicatorStacks = GW.settings.INDICATORS_STACKS
-    frame.raidIndicatorSize = GW.settings.INDICATORS_SIZE
-    frame.raidIndicatorBarWidth = GW.settings.INDICATORS_BAR_WIDTH
-    frame.raidDebuffScale = GW.settings.RAIDDEBUFFS_Scale
-    frame.raidDispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
-    frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_PARTY
-    frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_PARTY
-    frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_PARTY
-    frame.healthBarTexture = GW.settings.party_grid_FrameHealthBarTexture
+    frame.showRaidIndicatorIcon = GW.settings.groupFrames.indicators.icon
+    frame.showRaidIndicatorTimer = GW.settings.groupFrames.indicators.time
+    frame.showRaidIndicatorStacks = GW.settings.groupFrames.indicators.stacks
+    frame.raidIndicatorSize = GW.settings.groupFrames.indicators.size
+    frame.raidIndicatorBarWidth = GW.settings.groupFrames.indicators.barWidth
+    frame.raidDebuffScale = GW.settings.groupFrames.raidDebuffsScale
+    frame.raidDispelDebuffScale = GW.settings.groupFrames.dispelDebuffsScale
+    frame.showRoleIcon = GW.settings.groupFrames.party.showRoleIcon
+    frame.showTankIcon = GW.settings.groupFrames.party.showTankIcon
+    frame.showLeaderAssistIcon = GW.settings.groupFrames.party.showLeaderIcon
+    frame.healthBarTexture = GW.settings.groupFrames.party.healthBarTexture
 
     -- retail filtering
-    frame.debuffFilters = GW.settings.RAID_PARTY_DEBUFF_FILTER
-    frame.buffFilters = GW.settings.RAID_PARTY_BUFF_FILTER
-    frame.ignoredAuraSpellIDs = GW.settings.RAID_PARTY_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
-    frame.pandemicHighlight = GW.settings.RAID_PARTY_PANDEMIC_HIGHLIGHT
-    frame.showDispelIcon = GW.settings.RAID_PARTY_DISPEL_ICON
+    frame.debuffFilters = GW.settings.groupFrames.party.debuffFilter
+    frame.buffFilters = GW.settings.groupFrames.party.buffFilter
+    frame.ignoredAuraSpellIDs = GW.settings.groupFrames.party.ignoredAuras -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.groupFrames.party.pandemicHighlight
+    frame.showDispelIcon = GW.settings.groupFrames.party.dispelIcon
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
@@ -84,9 +84,9 @@ local function UpdateGridPartyFrame(frame)
             frame:ClearAllPoints()
         end
 
-        if GW.settings.RAID_STYLE_PARTY and not frame:IsEnabled() then
+        if GW.settings.groupFrames.party.enabled and not frame:IsEnabled() then
             frame:Enable()
-        elseif not GW.settings.RAID_STYLE_PARTY and frame:IsEnabled() then
+        elseif not GW.settings.groupFrames.party.enabled and frame:IsEnabled() then
             frame:Disable()
         end
     end
@@ -103,7 +103,7 @@ local function UpdateGridPartyFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    GW.Update_Faderframe(frame, "gridParty")
+    GW.Update_Faderframe(frame, "party")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")
 end

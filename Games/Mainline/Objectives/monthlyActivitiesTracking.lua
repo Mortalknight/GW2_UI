@@ -7,7 +7,7 @@ local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow
 GwObjectivesMonthlyActivitiesBlockMixin = {}
 
 function GwObjectivesMonthlyActivitiesBlockMixin:UpdateBlock(requirements)
-    local showCompletedObjectives = GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES
+    local showCompletedObjectives = GW.settings.objectives.showCompleted
     self.height = GW.GetObjectivesBlockBaseHeight()
     self.numObjectives = 0
 

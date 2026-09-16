@@ -1367,10 +1367,10 @@ local function LoadSettingsTab(container)
 
     settingsTab:SetScript("OnShow", function()
         if GetCVarBool("useUiScale") then
-            local of = FindWidgetByOption("PIXEL_PERFECTION")
+            local of = FindWidgetByOption("general.pixelPerfection")
             if of then
                 of.checkbutton:SetChecked(false)
-                GW.settings.PIXEL_PERFECTION = false
+                GW.settings.general.pixelPerfection = false
             end
         end
         GW.CheckDependencies()

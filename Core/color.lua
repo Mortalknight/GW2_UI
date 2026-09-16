@@ -114,9 +114,9 @@ GW.Colors.UnitFrameReactionColors = { -- will be set with the first update on Ad
 }
 
 function GW.UpdateUnitFrameReactionColors()
-    GW.Colors.UnitFrameReactionColors.Friendly = CreateReactionColor(GW.settings.UnitFrameReactionColors.Friendly, GW.globalDefault.profile.UnitFrameReactionColors.Friendly)
-    GW.Colors.UnitFrameReactionColors.Hostile = CreateReactionColor(GW.settings.UnitFrameReactionColors.Hostile, GW.globalDefault.profile.UnitFrameReactionColors.Hostile)
-    GW.Colors.UnitFrameReactionColors.TappedDenied = CreateReactionColor(GW.settings.UnitFrameReactionColors.TappedDenied, GW.globalDefault.profile.UnitFrameReactionColors.TappedDenied)
+    GW.Colors.UnitFrameReactionColors.Friendly = CreateReactionColor(GW.settings.unitframes.reactionColors.Friendly, GW.globalDefault.profile.unitframes.reactionColors.Friendly)
+    GW.Colors.UnitFrameReactionColors.Hostile = CreateReactionColor(GW.settings.unitframes.reactionColors.Hostile, GW.globalDefault.profile.unitframes.reactionColors.Hostile)
+    GW.Colors.UnitFrameReactionColors.TappedDenied = CreateReactionColor(GW.settings.unitframes.reactionColors.TappedDenied, GW.globalDefault.profile.unitframes.reactionColors.TappedDenied)
 end
 
 GW.Colors.ClassColors = {

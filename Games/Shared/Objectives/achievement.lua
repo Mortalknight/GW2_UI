@@ -10,7 +10,7 @@ function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
     local numIncomplete = 0
     local numCriteria = GetAchievementNumCriteria(self.id)
     local description = select(8, GetAchievementInfo(self.id))
-    local showCompletedObjectives = GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES
+    local showCompletedObjectives = GW.settings.objectives.showCompleted
 
     self.height = GW.GetObjectivesBlockBaseHeight()
     self.numObjectives = 0

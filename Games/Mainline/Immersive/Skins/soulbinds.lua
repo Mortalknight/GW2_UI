@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function ApplySoulbindsSkin()
-	if not GW.settings.SOULBINDS_SKIN_ENABLED then return end
+	if not GW.settings.skins.soulbinds.enabled then return end
 
 	SoulbindViewer:GwStripTextures()
 	local tex = SoulbindViewer:CreateTexture(nil, "BACKGROUND", nil, -7)

@@ -123,7 +123,7 @@ local function SkinGuildFrame()
 end
 
 local function SkinInspectFrameOnLoad()
-    if not GW.settings.INSPECTION_SKIN_ENABLED then return end
+    if not GW.settings.skins.inspection.enabled then return end
 
     local w, _ = InspectFrame:GetSize()
     InspectFrame:GwStripTextures()

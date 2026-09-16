@@ -27,7 +27,7 @@ local function HandleEventIcon(icon)
 end
 
 local function ApplyCalendarFrameSkin()
-    if not GW.settings.CalendarSkinEnabled then return end
+    if not GW.settings.skins.calendar.enabled then return end
 
     CalendarFrame:DisableDrawLayer("BORDER")
     GW.CreateFrameHeaderWithBody(CalendarFrame, nil, "Interface/AddOns/GW2_UI/textures/character/calendar_window_icon.png", nil, nil, nil, true)

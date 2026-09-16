@@ -149,11 +149,63 @@ local function DeserializeLegacy(str)
     return pcall(DeserializeLegacyValue, iter)
 end
 
-local function GetSetting(settingsName)
-    -- Wrapper function to not break other addons/plugins
-    return GW.settings[settingsName]
+local pathCache = {}
+
+local function SplitPath(path)
+    local keys = pathCache[path]
+    if not keys then
+        keys = {}
+        for key in string.gmatch(path, "[^%.]+") do
+            keys[#keys + 1] = tonumber(key) or key
+        end
+        pathCache[path] = keys
+    end
+    return keys
+end
+
+local function GetSettingFromTable(tbl, path)
+    local keys = SplitPath(path)
+    for i = 1, #keys do
+        if type(tbl) ~= "table" then return nil end
+        tbl = tbl[keys[i]]
+    end
+    return tbl
+end
+GW.GetSettingFromTable = GetSettingFromTable
+
+local function SetSettingInTable(tbl, path, value)
+    local keys = SplitPath(path)
+    for i = 1, #keys - 1 do
+        local child = tbl[keys[i]]
+        if type(child) ~= "table" then
+            child = {}
+            tbl[keys[i]] = child
+        end
+        tbl = child
+    end
+    tbl[keys[#keys]] = value
+end
+GW.SetSettingInTable = SetSettingInTable
+
+local function ResolvePath(path)
+    local mapped = GW.SettingsMigrationMap and GW.SettingsMigrationMap[path]
+    return mapped or path
+end
+
+local function GetSetting(path)
+    return GetSettingFromTable(GW.settings, ResolvePath(path))
 end
 GW.GetSetting = GetSetting
+
+local function SetSetting(path, value)
+    SetSettingInTable(GW.settings, ResolvePath(path), value)
+end
+GW.SetSetting = SetSetting
+
+local function GetSettingDefault(path)
+    return GetSettingFromTable(GW.globalDefault.profile, ResolvePath(path))
+end
+GW.GetSettingDefault = GetSettingDefault
 
 local function GetAllLayouts()
     if GW.global.layouts == nil then
@@ -206,7 +258,7 @@ end
 GW.DeletePrivateLayoutByLayoutName = DeletePrivateLayoutByLayoutName
 
 local function SetOverrideIncompatibleAddons(setting, value)
-    GW.settings.IncompatibleAddons[setting].Override = value
+    GW.settings.incompatibleAddons[setting].Override = value
     GW.Notice(GW.L["Incompatible Addons behavior Overridden. Needs a reload to take effect."])
 end
 GW.SetOverrideIncompatibleAddons = SetOverrideIncompatibleAddons

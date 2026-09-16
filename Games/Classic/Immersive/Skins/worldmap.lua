@@ -14,7 +14,7 @@ local function HandleDropdownHeaderText(dropdown)
 end
 
 local function LoadWorldMapSkin()
-    if not GW.settings.WORLDMAP_SKIN_ENABLED then return end
+    if not GW.settings.skins.worldmap.enabled then return end
     WorldMapFrame:GwStripTextures()
     WorldMapFrame.BlackoutFrame:GwKill()
 
@@ -93,7 +93,7 @@ local function LoadWorldMapSkin()
     --HideUIPanel(WorldMapFrame)
 
     table.insert(UISpecialFrames, "WorldMapFrame")
-    WorldMapFrame:SetScale(GW.settings.WORLDMAP_POSITION_scale)
+    WorldMapFrame:SetScale(GW.settings.skins.worldmap.scale)
     WorldMapFrame:EnableKeyboard(false)
     WorldMapFrame:EnableMouse(true)
     WorldMapFrame:SetFrameStrata("HIGH")
@@ -112,19 +112,19 @@ local function LoadWorldMapSkin()
         WorldMapFrame:StopMovingOrSizing()
         WorldMapFrame:SetUserPlaced(false)
         -- Save map frame position
-        local pos = GW.settings.WORLDMAP_POSITION
+        local pos = GW.settings.skins.worldmap.pos
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-        GW.settings.WORLDMAP_POSITION = pos
+        GW.settings.skins.worldmap.pos = pos
     end)
 
     -- Set position on startup
     WorldMapFrame:HookScript("OnShow", function()
-        local pos = GW.settings.WORLDMAP_POSITION
+        local pos = GW.settings.skins.worldmap.pos
         WorldMapFrame:ClearAllPoints()
         WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     end)
@@ -181,23 +181,23 @@ local function LoadWorldMapSkin()
     scaleMouse:SetScript("OnMouseUp", function(frame)
         frame:SetScript("OnUpdate", nil)
         frame:SetAllPoints(scaleHandle)
-        GW.settings.WORLDMAP_POSITION_scale = WorldMapFrame:GetScale()
+        GW.settings.skins.worldmap.scale = WorldMapFrame:GetScale()
         WorldMapFrame:SetScale(WorldMapFrame:GetScale())
         -- Save map frame position
-        local pos = GW.settings.WORLDMAP_POSITION
+        local pos = GW.settings.skins.worldmap.pos
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-        GW.settings.WORLDMAP_POSITION = pos
+        GW.settings.skins.worldmap.pos = pos
     end)
 
     -- Function to set position after Leatrix_Maps has loaded
     local function LeatrixMapsFix()
         hooksecurefunc(WorldMapFrame, "Show", function()
-            local pos = GW.settings.WORLDMAP_POSITION
+            local pos = GW.settings.skins.worldmap.pos
             WorldMapFrame:ClearAllPoints()
             WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
@@ -209,14 +209,14 @@ local function LoadWorldMapSkin()
                 WorldMapFrame:StopMovingOrSizing()
                 WorldMapFrame:SetUserPlaced(false)
                 -- Save map frame position
-                local pos = GW.settings.WORLDMAP_POSITION
+                local pos = GW.settings.skins.worldmap.pos
                 if pos then
                     wipe(pos)
                 else
                     pos = {}
                 end
                 pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-                GW.settings.WORLDMAP_POSITION = pos
+                GW.settings.skins.worldmap.pos = pos
             end)
         end)
     end

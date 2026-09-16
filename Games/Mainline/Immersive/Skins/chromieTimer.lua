@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function ApplyChromieTimerSkin()
-    if not GW.settings.CHROMIE_TIME_SKIN_ENABLED then return end
+    if not GW.settings.skins.chromieTime.enabled then return end
 
     ChromieTimeFrame.CloseButton:GwSkinButton(true)
     ChromieTimeFrame.CloseButton:SetSize(20, 20)

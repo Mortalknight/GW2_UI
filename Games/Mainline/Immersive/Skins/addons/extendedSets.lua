@@ -281,7 +281,7 @@ local function ApplyExtendedSetsSkin()
 end
 
 local function LoadExtendedSetsAddonSkin()
-    if not GW.settings.COLLECTIONS_SKIN_ENABLED or not GW.settings.EXTENDED_SETS_SKIN_ENABLED or not C_AddOns.IsAddOnLoaded("ExtendedSets") then return end
+    if not GW.settings.skins.collections.enabled or not GW.settings.skins.extendedSets.enabled or not C_AddOns.IsAddOnLoaded("ExtendedSets") then return end
     GW.RegisterLoadHook(ApplyExtendedSetsSkin, "Blizzard_Collections", CollectionsJournal)
 end
 GW.LoadExtendedSetsAddonSkin = LoadExtendedSetsAddonSkin

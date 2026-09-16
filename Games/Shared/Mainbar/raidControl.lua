@@ -61,7 +61,7 @@ end
 
 local function ToggleVisibility()
     if not created then return end
-    if GW.settings.FADE_GROUP_MANAGE_FRAME then
+    if GW.settings.hud.fadeGroupManageButton then
         GwManageGroupButton.fadeOut()
     else
         GwManageGroupButton.fadeIn()
@@ -183,10 +183,10 @@ local function CreateRaidControlFrame()
     local fmGGCD_OnClick = function(_, button)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         if IsControlKeyDown() and button == "LeftButton" and C_AddOns.IsAddOnLoaded("DBM-Core") then
-            SlashCmdList.DEADLYBOSSMODSPULL(GW.settings.pulltimerSeconds)
+            SlashCmdList.DEADLYBOSSMODSPULL(GW.settings.groupFrames.pullTimerSeconds)
         else
             if GW.Retail and InCombatLockdown() then return end
-            C_PartyInfo.DoCountdown(GW.settings.pulltimerSeconds)
+            C_PartyInfo.DoCountdown(GW.settings.groupFrames.pullTimerSeconds)
         end
     end
 
@@ -197,16 +197,16 @@ local function CreateRaidControlFrame()
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowOffset(1, -1)
     GwGroupManage.inGroup.countdown:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
 
-    GwGroupManage.inGroup.inputCountdownFrame.input:SetText(GW.settings.pulltimerSeconds)
+    GwGroupManage.inGroup.inputCountdownFrame.input:SetText(GW.settings.groupFrames.pullTimerSeconds)
 
     GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEscapePressed", TextBox_OnEscapePressed)
     GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEnterPressed", function(self)
-        local roundValue = GW.RoundDec(self:GetNumber(), 0) or GW.settings.pulltimerSeconds
+        local roundValue = GW.RoundDec(self:GetNumber(), 0) or GW.settings.groupFrames.pullTimerSeconds
         self:ClearFocus()
         if tonumber(roundValue) == 0 then
-            roundValue = GW.globalDefault.profile.pulltimerSeconds
+            roundValue = GW.globalDefault.profile.groupFrames.pullTimerSeconds
         end
-        GW.settings.pulltimerSeconds = tonumber(roundValue)
+        GW.settings.groupFrames.pullTimerSeconds = tonumber(roundValue)
         self:SetText(roundValue)
     end)
 
@@ -310,7 +310,7 @@ local function CreateRaidControlFrame()
     end
     local fnGMGB_OnEnter = function(self)
         self.arrow:SetSize(21, 42)
-        if GW.settings.FADE_GROUP_MANAGE_FRAME then
+        if GW.settings.hud.fadeGroupManageButton then
             if GwGroupManage:IsShown() then
                 return
             end
@@ -319,7 +319,7 @@ local function CreateRaidControlFrame()
     end
     local fnGMGB_OnLeave = function(self)
         self.arrow:SetSize(16, 32)
-        if GW.settings.FADE_GROUP_MANAGE_FRAME then
+        if GW.settings.hud.fadeGroupManageButton then
             if GwGroupManage:IsShown() then
                 return
             end
@@ -360,7 +360,7 @@ local function CreateRaidControlFrame()
     end
     fmGMGB:SetAlpha(0)
 
-    if GW.settings.FADE_GROUP_MANAGE_FRAME then
+    if GW.settings.hud.fadeGroupManageButton then
         fmGMGB.fadeOut()
     else
         fmGMGB.fadeIn()

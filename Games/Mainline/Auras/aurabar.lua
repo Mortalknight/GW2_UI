@@ -170,11 +170,11 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant, withDis
     end
 
     if not isEnchant then
-        GW.AddPandemicHighlight(button, visual, function() return GW.settings.PLAYER_PANDEMIC_HIGHLIGHT end)
+        GW.AddPandemicHighlight(button, visual, function() return GW.settings.playerAuras.pandemicHighlight end)
     end
     if isDebuff then
         GW.AddDispelTypeIcon(button, visual, { isDebuff = true }, function()
-            local mode = GW.settings.PLAYER_DISPEL_ICON
+            local mode = GW.settings.playerAuras.dispelIcon
             if mode == "ALL" then return true end
             return mode == "DISPELLABLE" and withDispelIcon or false
         end)
@@ -183,13 +183,13 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant, withDis
     button.header = header
     button.gwInit = true
 
-    UpdateButtonSizeAndCrop(button, GW.settings[header.setting])
+    UpdateButtonSizeAndCrop(button, GW.settings.playerAuras[header.auraKey])
 end
 
 local function UpdateAuraHeader(header)
     if not header or not header.gwIsAuraContainer then return end
 
-    local db = GW.settings[header.setting]
+    local db = GW.settings.playerAuras[header.auraKey]
     local mainAxisSize, width, height = GetButtonMainAxisSize(db)
     local grow_dir = db.GrowDirection
     local isColumnLayout = DIRECTION_IS_COLUMN_LAYOUT[grow_dir]
@@ -231,8 +231,8 @@ local function UpdateAuraHeader(header)
 
     -- shared ignore list for both player bars (PLAYER_IGNORED_AURAS)
     local candidateFilters = {}
-    if GW.settings.PLAYER_IGNORED_AURAS and next(GW.settings.PLAYER_IGNORED_AURAS) then
-        candidateFilters.excludeSpellIDs = GW.settings.PLAYER_IGNORED_AURAS
+    if GW.settings.playerAuras.ignoredAuras and next(GW.settings.playerAuras.ignoredAuras) then
+        candidateFilters.excludeSpellIDs = GW.settings.playerAuras.ignoredAuras
     end
 
     -- own/others split via the PLAYER filter token (cast by the player/their pet) —
@@ -331,7 +331,7 @@ local function newContainer(filter)
     end
     h.gwEnchantButtons = {}
     h.filter = filter
-    h.setting = filter == "HELPFUL" and "PlayerBuffs" or "PlayerDebuffs"
+    h.auraKey = filter == "HELPFUL" and "buffs" or "debuffs"
     h.name = name
 
     for _, info in ipairs(h.gwGroupInfo) do
@@ -352,9 +352,9 @@ local function newContainer(filter)
         end
         h:SetItemEnchantmentLayout({ placement = CustomAuraContainerItemEnchantmentPlacement.BeforeAuraGroups })
 
-        RegisterMovableFrame(h, SHOW_BUFFS, "PlayerBuffFrame", "Blizzard,Aura", {316, 100}, {GW.MoverOption.Scale}, true)
+        RegisterMovableFrame(h, SHOW_BUFFS, "playerAuras.buffs", "Blizzard,Aura", {316, 100}, {GW.MoverOption.Scale}, true)
     else
-        RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", "Blizzard,Aura", {316, 60}, {GW.MoverOption.Scale}, true)
+        RegisterMovableFrame(h, SHOW_DEBUFFS, "playerAuras.debuffs", "Blizzard,Aura", {316, 60}, {GW.MoverOption.Scale}, true)
     end
 
     -- The AuraContainer is a "forbidden frame": SecureHandler frame refs (layout manager)
@@ -393,7 +393,7 @@ local function loadAuras(lm)
     hb:Show()
     lm:RegisterBuffFrame(hb.gwLayoutProxy)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function()
-        local grow_dir = GW.settings[hb.setting].GrowDirection
+        local grow_dir = GW.settings.playerAuras[hb.auraKey].GrowDirection
         local anchor_hb = DIRECTION_TO_POINT[grow_dir]
 
         hb:ClearAllPoints()
@@ -404,7 +404,7 @@ local function loadAuras(lm)
     hd:Show()
     lm:RegisterDebuffFrame(hd.gwLayoutProxy)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function()
-        local grow_dir = GW.settings[hd.setting].GrowDirection
+        local grow_dir = GW.settings.playerAuras[hd.auraKey].GrowDirection
         local anchor_hd = DIRECTION_TO_POINT[grow_dir]
 
         hd:ClearAllPoints()

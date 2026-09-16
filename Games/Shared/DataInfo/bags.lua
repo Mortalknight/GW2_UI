@@ -37,7 +37,7 @@ local function Bags_OnEnter(self)
                 icon = GetInventoryItemTexture("player", slotId)
             end
 
-            bagName = GW.settings.BAG_SEPARATE_BAGS and strlen(GW.settings["BAG_HEADER_NAME" .. i]) > 0 and GW.settings["BAG_HEADER_NAME" .. i] or bagName
+            bagName = GW.settings.bags.bag.separateBags and strlen(GW.settings.bags.bag.headerNames[i]) > 0 and GW.settings.bags.bag.headerNames[i] or bagName
 
             GameTooltip:AddDoubleLine(format(iconString, icon or "Interface/Buttons/Button-Backpack-Up") .. bagName, format("%d/%d", usedSlots, numSlots), color.r or 1, color.g or 1, color.b or 1, r2, g2, b2)
         end

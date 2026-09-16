@@ -308,7 +308,7 @@ local function ApplyTimeManagerSkin()
 end
 
 local function LoadTimeManagerSkin()
-    if not GW.settings.TIMEMANAGER_SKIN_ENABLED then
+    if not GW.settings.skins.timeManager.enabled then
         return
     end
 

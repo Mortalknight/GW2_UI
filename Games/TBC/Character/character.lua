@@ -468,7 +468,7 @@ local function PaperDollSlotButton_Update(self)
         if self.repairIcon then self.repairIcon:Hide() end
     end
 
-    if GW.settings.SHOW_CHARACTER_ITEM_INFO and self.itemlevel then
+    if GW.settings.windows.character.itemInfo and self.itemlevel then
         local itemLink = GetInventoryItemLink("player", slot)
         if itemLink then
             local iLvl = C_Item.GetDetailedItemLevelInfo(itemLink)
@@ -779,14 +779,14 @@ local function LoadPaperDoll(tabContainer)
     GwCharacterWindow:SetNextAddonMenuButtonAnchor((GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6) and heroPanelMenu.petMenu or heroPanelMenu.honorMenu)
     heroPanelMenu.Outfitter = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Outfitter",
-        setting = GW.settings.USE_CHARACTER_WINDOW,
+        setting = GW.settings.windows.character.enabled,
         showFunction = function() hideCharframe = false Outfitter:OpenUI() end,
         hideOurFrame = true,
     })
 
     heroPanelMenu["GearQuipper-TBC"] = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "GearQuipper-TBC",
-        setting = GW.settings.USE_CHARACTER_WINDOW,
+        setting = GW.settings.windows.character.enabled,
         showFunction = function() gearquipper:ToggleUI() end,
         hideOurFrame = false,
         onCreated = function(createdButton)
@@ -798,14 +798,14 @@ local function LoadPaperDoll(tabContainer)
     })
     heroPanelMenu.Clique = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Clique",
-        setting = GW.settings.USE_SPELLBOOK_WINDOW,
+        setting = GW.settings.windows.spellbook.enabled,
         showFunction = function() ShowUIPanel(CliqueConfig) end,
         hideOurFrame = true,
     })
 
     heroPanelMenu.Pawn = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Pawn",
-        setting = GW.settings.USE_CHARACTER_WINDOW,
+        setting = GW.settings.windows.character.enabled,
         showFunction = function() PawnUIShow() end,
         hideOurFrame = false,
     })

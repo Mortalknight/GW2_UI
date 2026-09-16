@@ -429,7 +429,7 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, options)
         local progressValue = options.qty or (self.questID and GetQuestProgressBarPercent(self.questID)) or 0
         statusBar:SetMinMaxValues(0, 100)
         statusBar:SetValue(progressValue)
-        statusBar:SetShown(options.isMythicKeystone or options.overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
+        statusBar:SetShown(options.isMythicKeystone or options.overrideShowStatusbarSetting or GW.settings.objectives.statusBars)
         objectiveBlock.progress = progressValue / 100
         statusBar.precentage = true
         precentageComplete = objectiveBlock.progress

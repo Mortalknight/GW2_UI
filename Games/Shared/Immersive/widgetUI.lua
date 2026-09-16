@@ -148,14 +148,14 @@ end
 local function WidgetUISetup()
     -- avoide conflict with elvui
     if not CheckElvUI() then
-        BuildWidgetMover(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", {58, 58})
-        BuildWidgetMover(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", {150, 30})
-        BuildWidgetMover(TicketStatusFrame, "GM Ticket Frame", "TicketStatusFrame_pos")
+        BuildWidgetMover(UIWidgetTopCenterContainerFrame, "TopWidget", "widgets.topCenter", {58, 58})
+        BuildWidgetMover(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "widgets.belowMinimapContainer", {150, 30})
+        BuildWidgetMover(TicketStatusFrame, "GM Ticket Frame", "widgets.ticketStatus")
 
         if GW.Retail then
-           BuildWidgetMover(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", {100, 20})
-            BuildWidgetMover(EventToastManagerFrame, "EventToastWidget", "EventToastWidget_pos", {200, 20})
-            BuildWidgetMover(BossBanner, "BossBannerWidget", "BossBannerWidget_pos", {200, 20})
+           BuildWidgetMover(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "widgets.powerBarContainer", {100, 20})
+            BuildWidgetMover(EventToastManagerFrame, "EventToastWidget", "widgets.eventToast", {200, 20})
+            BuildWidgetMover(BossBanner, "BossBannerWidget", "widgets.bossBanner", {200, 20})
 
             -- handle power bar widgets after reload as Setup will have fired before this
             for _, widget in pairs(UIWidgetPowerBarContainerFrame.widgetFrames) do

@@ -121,7 +121,7 @@ local function CreateSlotStrings()
 end
 
 local function UpdatePageStrings(inspectItem, slotInfo, slotId)
-    local showMissing = GW.settings.CHARACTER_ITEM_INFO_MISSING
+    local showMissing = GW.settings.windows.character.itemInfoMissing
     local width = GW.RoundInt(inspectItem.enchantText:GetWidth())
     if showMissing and slotInfo.iLvl and MISSING_ENCHANT_SLOTS[slotId] and not slotInfo.enchantText then
         -- item without enchant on an enchantable slot
@@ -163,7 +163,7 @@ local function UpdatePageStrings(inspectItem, slotInfo, slotId)
     end
 
     inspectItem.itemlevel:SetText(slotInfo.iLvl or "")
-    if slotInfo.iLvl and GW.settings.CHARACTER_ITEMLEVEL_RELATIVE_COLOR and equippedItemLevel and equippedItemLevel > 0 then
+    if slotInfo.iLvl and GW.settings.windows.character.itemLevelRelativeColor and equippedItemLevel and equippedItemLevel > 0 then
         local diff = slotInfo.iLvl - equippedItemLevel
         if diff >= 0 then
             inspectItem.itemlevel:SetTextColor(0.4, 1, 0.4)
@@ -224,7 +224,7 @@ local function RunCharacterInfoUpdate(self)
 end
 
 local function UpdateCharacterInfo(self, event)
-    if not GW.settings.SHOW_CHARACTER_ITEM_INFO then return end
+    if not GW.settings.windows.character.itemInfo then return end
     -- set the values for the next time the char window gets open
     if event == "PLAYER_EQUIPMENT_CHANGED" or (event == "UPDATE_INVENTORY_DURABILITY" and GwCharacterWindow:IsShown()) then
         self.needsUpdate = true
@@ -242,7 +242,7 @@ local function ToggleCharacterItemInfo(setup)
         CreateSlotStrings()
     end
 
-    if GW.settings.SHOW_CHARACTER_ITEM_INFO then
+    if GW.settings.windows.character.itemInfo then
         f.needsUpdate = true
         f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
         f:RegisterEvent("UPDATE_INVENTORY_DURABILITY")

@@ -135,8 +135,8 @@ local function BuildQuestBlockSignature(quest, colorKey)
     AddSignaturePart(quest.questGroup)
     AddSignaturePart(colorKey)
     AddSignaturePart(GW.ObjectivesTrackerState.layoutGeneration)
-    AddSignaturePart(GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES)
-    AddSignaturePart(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
+    AddSignaturePart(GW.settings.objectives.showCompleted)
+    AddSignaturePart(GW.settings.objectives.statusBars)
     AddSignaturePart(isComplete)
     AddSignaturePart(quest.isFailed)
     AddSignaturePart(quest.isAutoComplete)
@@ -145,7 +145,7 @@ local function BuildQuestBlockSignature(quest, colorKey)
         AddSignaturePart(GetMoney())
     end
     -- the Questie xp reward is part of the header text
-    if Questie and Questie.started and GW.settings.QUESTTRACKER_SHOW_XP and GW.mylevel < GetMaxPlayerLevel() then
+    if Questie and Questie.started and GW.settings.objectives.showXp and GW.mylevel < GetMaxPlayerLevel() then
         AddSignaturePart(QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false))
     end
     if isComplete then
@@ -198,7 +198,7 @@ local function UpdateBlockInternal(self, parent, quest, signature)
 
     GW.CombatQueue:Queue("update_tracker_actionbutton_" .. parent:GetName() .. (self.index or 0), self.UpdateObjectiveActionButton, {self})
 
-    if Questie and Questie.started and GW.settings.QUESTTRACKER_SHOW_XP and GW.mylevel < GetMaxPlayerLevel() then
+    if Questie and Questie.started and GW.settings.objectives.showXp and GW.mylevel < GetMaxPlayerLevel() then
         local xpReward = QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false)
 
         if xpReward then
@@ -241,7 +241,7 @@ end
 GwQuestLogBlockMixin = {}
 
 function GwQuestLogBlockMixin:UpdateBlockObjectives(numObjectives)
-    local showCompletedObjectives = GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES
+    local showCompletedObjectives = GW.settings.objectives.showCompleted
     local infos = C_QuestLog.GetQuestObjectives(self.questID)
     for objectiveIndex = 1, numObjectives do
         local text = infos[objectiveIndex].text
@@ -326,12 +326,12 @@ function GwQuestLogMixin:UpdateLayout()
     end
 
     --sort based on setting
-    if GW.settings.QUESTTRACKER_SORTING == "LEVEL" then
+    if GW.settings.objectives.sorting == "LEVEL" then
         -- Sort by level
         table.sort(sorted, function(a, b)
             return a and b and a.questLevel < b.questLevel
         end)
-    elseif GW.settings.QUESTTRACKER_SORTING == "ZONE" then
+    elseif GW.settings.objectives.sorting == "ZONE" then
         -- Sort by Zone
         if Questie and Questie.started and QuestieLoader then
             local QuestieTrackerUtils = QuestieLoader:ImportModule("TrackerUtils")

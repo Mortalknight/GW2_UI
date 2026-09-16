@@ -210,7 +210,7 @@ end
 
 -- returns false when the skin is switched off, so the flavors can skip their own parts as well
 local function SkinInspectFrameBase()
-    if not GW.settings.INSPECTION_SKIN_ENABLED then return false end
+    if not GW.settings.skins.inspection.enabled then return false end
 
     SkinHeader()
     SkinTabs()

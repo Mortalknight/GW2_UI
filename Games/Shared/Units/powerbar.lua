@@ -420,7 +420,7 @@ local function OnEvent(self, event, unit)
 end
 
 function GwPlayerPowerBarMixin:ToggleBar()
-    if GW.settings.POWERBAR_ENABLED and ((GW.settings.PLAYER_AS_TARGET_FRAME and GW.settings.PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR) or not GW.settings.PLAYER_AS_TARGET_FRAME) then
+    if GW.settings.powerBar.enabled and ((GW.settings.unitframes.player.enabled and GW.settings.unitframes.player.showResourceBar) or not GW.settings.unitframes.player.enabled) then
         self:SetParent(UIParent)
         if self.decay then
             self.decay:SetParent(UIParent)
@@ -441,7 +441,7 @@ function GwPlayerPowerBarMixin:ToggleBar()
 end
 
 function GwPlayerPowerBarMixin:ToggleSettings()
-    self.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
+    self.showBarValues = GW.settings.classpower.showValue
     self:ClearAllPoints()
     local point = GW.ClassPowers and GW.ClassPowers.GetAnchorPoint("TOPLEFT") or "TOPLEFT"
     self:SetPoint(point, self.gwMover, point)
@@ -476,15 +476,15 @@ local function LoadPowerBar()
     end
     playerPowerBar.bar = playerPowerBar
 
-    GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", "Unitframe,Power", nil, {GW.MoverOption.Scale}, true)
+    GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "powerBar", "Unitframe,Power", nil, {GW.MoverOption.Scale}, true)
 
     playerPowerBar:ClearAllPoints()
     local point = GW.ClassPowers and GW.ClassPowers.GetAnchorPoint("TOPLEFT") or "TOPLEFT"
     playerPowerBar:SetPoint(point, playerPowerBar.gwMover, point)
 
     -- position mover, shift values are central in mainBarLayout.lua
-    if (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not playerPowerBar.isMoved  then
-        local framePoint = GW.settings.PowerBar_pos
+    if (not GW.settings.hud.xpBar or GW.settings.unitframes.player.enabled) and not playerPowerBar.isMoved  then
+        local framePoint = GW.settings.powerBar.pos
         local xOff, yOff = GW.GetHudClusterShift(GW.Enum.HudShiftDirection.Left)
         playerPowerBar.gwMover:ClearAllPoints()
         playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
@@ -504,7 +504,7 @@ local function LoadPowerBar()
     playerPowerBar:ToggleSettings()
     playerPowerBar:ToggleBar()
 
-    if (GW.Classic or GW.TBC or GW.Wrath) and GW.settings.PLAYER_ENERGY_MANA_TICK then
+    if (GW.Classic or GW.TBC or GW.Wrath) and GW.settings.unitframes.player.energyManaTick then
         GW.Load5SR()
     end
 end

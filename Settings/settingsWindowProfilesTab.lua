@@ -292,6 +292,7 @@ local function AddProfile(name, addNewProfile, importProfileString)
 
     if importProfileString then
         GW.globalSettings.profiles[name] = ConvertImportedValuesToNumbers(importProfileString)
+        GW.MigrateProfileSettings(GW.globalSettings.profiles[name])
     elseif addNewProfile then
         local currentProfile = GW.globalSettings:GetCurrentProfile()
         GW.globalSettings:SetProfile(name)

@@ -15,7 +15,7 @@ local animations = GW.animations
 
 local l = CreateFrame("Frame") -- Main event frame
 
-if GW.CheckForPasteAddon() and GW.settings.ACTIONBARS_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
+if GW.CheckForPasteAddon() and GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
     GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
 end
 
@@ -46,7 +46,7 @@ if GW.Retail then
 end
 
 local function disableMABags()
-    local bags = GW.settings.BAGS_ENABLED and not GW.ShouldBlockIncompatibleAddon("Inventory")
+    local bags = GW.settings.bags.enabled and not GW.ShouldBlockIncompatibleAddon("Inventory")
     if not bags or not MovAny or not MADB then
         return
     end
@@ -56,7 +56,7 @@ local function disableMABags()
 end
 
 local function disableTitanPanelBarAdjusting()
-    local ourBars = GW.settings.ACTIONBARS_ENABLED
+    local ourBars = GW.settings.actionbars.enabled
     if ourBars and C_AddOns.IsAddOnLoaded("TitanClassic") and TitanUtils_AddonAdjust then
         TitanUtils_AddonAdjust("MultiBarRight", true)
         TitanUtils_AddonAdjust("ExtraActionBarFrame", true)
@@ -256,7 +256,7 @@ end
 GW.getBestPixelScale = getBestPixelScale
 
 local function PixelPerfection()
-    if GW.settings.PIXEL_PERFECTION and not GetCVarBool("useUiScale") then
+    if GW.settings.general.pixelPerfection and not GetCVarBool("useUiScale") then
         GW.scale = getBestPixelScale()
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
         UIParent:SetScale(GW.scale)
@@ -266,7 +266,7 @@ GW.PixelPerfection = PixelPerfection
 
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
-    local hudScale = tonumber(GW.settings.HUD_SCALE) or 1
+    local hudScale = tonumber(GW.settings.hud.scale) or 1
     for _, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover
@@ -285,7 +285,7 @@ local function UpdateHudScale()
         if not mf.parent.isMoved and mf:GetScale() ~= hudScale then
             mf.parent:SetScale(hudScale)
             mf:SetScale(hudScale)
-            GW.settings[mf.setting .. "_scale"] = hudScale
+            GW.GetSetting(mf.setting).scale = hudScale
         end
     end
 end
@@ -362,7 +362,7 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.UpdateGw2ClassColors()
 
         -- setup default values on load, which are required for same skins
-        if GW.settings.PIXEL_PERFECTION and not GetCVarBool("useUiScale") then
+        if GW.settings.general.pixelPerfection and not GetCVarBool("useUiScale") then
             PixelPerfection()
             GW.Notice("Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
         else
@@ -402,7 +402,7 @@ local function evUiScaleChanged()
     if not GetCVarBool("useUiScale") then
         return
     end
-    GW.settings.PIXEL_PERFECTION = false
+    GW.settings.general.pixelPerfection = false
     GW.scale = UIParent:GetScale()
     GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()
     GW.resolution = format("%dx%d", GW.screenwidth, GW.screenheight)
@@ -424,7 +424,7 @@ end
 local function commonEntering()
     GW.inWorld = true
     GW.CheckRole()
-    if GW.settings.PIXEL_PERFECTION and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
+    if GW.settings.general.pixelPerfection and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
         PixelPerfection()
     end
     C_Timer.After(0.5, function()
@@ -512,14 +512,14 @@ local function evPlayerLogin(self)
 
     -- Misc
     GW.InitializeMiscFunctions()
-    GW.SetupVendorJunk(GW.settings.BAG_VENDOR_GRAYS)
+    GW.SetupVendorJunk(GW.settings.bags.vendorGrays)
     GW.LoadRaidMarkerCircle()
 
     --Create general skins
     if GW.Retail then
         GW.StoreGameMenuButton()
     end
-    if GW.settings.MAINMENU_SKIN_ENABLED then
+    if GW.settings.skins.mainMenu.enabled then
         GW.SkinMainMenu()
     else
         -- do not add our button via AddButton/AddSection: acquiring a pool button from addon code taints
@@ -553,7 +553,7 @@ local function evPlayerLogin(self)
     end
 
     -- make sure to load the objetives tracker before we load the altert system prevent some errors with other addons
-    if GW.settings.QUESTTRACKER_ENABLED and not GW.ShouldBlockIncompatibleAddon("Objectives") then
+    if GW.settings.objectives.enabled and not GW.ShouldBlockIncompatibleAddon("Objectives") then
         GW.LoadObjectivesTracker()
     end
 
@@ -568,7 +568,7 @@ local function evPlayerLogin(self)
     hudArtFrame = GW.LoadHudArt()
 
     --Create experiencebar
-    if GW.settings.XPBAR_ENABLED then
+    if GW.settings.hud.xpBar then
         GW.LoadXPBar()
     else
         hudArtFrame.actionBarHud:ClearAllPoints()
@@ -582,15 +582,15 @@ local function evPlayerLogin(self)
 
     if not GW.Retail then
         if not GW.ShouldBlockIncompatibleAddon("FloatingCombatText") then -- Only touch this setting if no other addon for this is loaded
-            if GW.settings.GW_COMBAT_TEXT_MODE == "GW2" then
+            if GW.settings.combatText.mode == "GW2" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-                if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
+                if GW.settings.combatText.showHealing then
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
                 else
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
                 end
                 GW.LoadDamageText(true)
-            elseif GW.settings.GW_COMBAT_TEXT_MODE == "BLIZZARD" then
+            elseif GW.settings.combatText.mode == "BLIZZARD" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
                 C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
                 GW.LoadDamageText(false)
@@ -604,25 +604,25 @@ local function evPlayerLogin(self)
         end
     end
 
-    if GW.settings.CASTINGBAR_ENABLED then
+    if GW.settings.castingbar.enabled then
         GW.LoadCastingBar("GwCastingBarPlayer", "player", true)
         GW.LoadCastingBar("GwCastingBarPet", "pet", false)
     end
 
-    if GW.settings.TOOLTIPS_ENABLED then
+    if GW.settings.tooltip.enabled then
         GW.LoadTooltips()
     end
 
     GW.LoadImmersiveQuesting()
 
     --Create player hud
-    if GW.settings.HEALTHGLOBE_ENABLED and not GW.settings.PLAYER_AS_TARGET_FRAME then
+    if GW.settings.unitframes.healthGlobe.enabled and not GW.settings.unitframes.player.enabled then
         local hg = GW.LoadHealthGlobe()
         GW.LoadDodgeBar(hg, false)
-    elseif GW.settings.HEALTHGLOBE_ENABLED and GW.settings.PLAYER_AS_TARGET_FRAME then
+    elseif GW.settings.unitframes.healthGlobe.enabled and GW.settings.unitframes.player.enabled then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
-        if (GW.Classic or GW.TBC or GW.Wrath) and GW.settings.PLAYER_ENERGY_MANA_TICK then
+        if (GW.Classic or GW.TBC or GW.Wrath) and GW.settings.unitframes.player.energyManaTick then
             GW.Load5SR(hg)
         end
     end
@@ -630,7 +630,7 @@ local function evPlayerLogin(self)
     GW.LoadPowerBar()
 
     if not GW.ShouldBlockIncompatibleAddon("Inventory") then -- Only touch this setting if no other addon for this is loaded
-        if GW.settings.BAGS_ENABLED then
+        if GW.settings.bags.enabled then
             GW.LoadInventory()
         end
     elseif not GW.Retail and not C_AddOns.IsAddOnLoaded("Bartender4") then
@@ -647,7 +647,7 @@ local function evPlayerLogin(self)
         CharacterBag3Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
     end
 
-    if GW.Retail and GW.settings.USE_BATTLEGROUND_HUD then
+    if GW.Retail and GW.settings.general.battlegroundHud then
         GW.LoadBattlegrounds()
     end
 
@@ -669,13 +669,13 @@ local function evPlayerLogin(self)
     end
 
     --Create unitframes
-    if not GW.Classic and GW.settings.FOCUS_ENABLED then
-        local unitFrame = GW.LoadUnitFrame("Focus", GW.settings.focus_FRAME_INVERT)
+    if not GW.Classic and GW.settings.unitframes.focus.enabled then
+        local unitFrame = GW.LoadUnitFrame("Focus", GW.settings.unitframes.focus.invert)
         GW.LoadTargetOfUnit("Focus", unitFrame)
     end
 
-    if GW.settings.TARGET_ENABLED then
-        local unitFrame = GW.LoadUnitFrame("Target", GW.settings.target_FRAME_INVERT)
+    if GW.settings.unitframes.target.enabled then
+        local unitFrame = GW.LoadUnitFrame("Target", GW.settings.unitframes.target.invert)
         GW.LoadTargetOfUnit("Target", unitFrame)
 
         -- move zone text frame
@@ -694,24 +694,24 @@ local function evPlayerLogin(self)
 
     GW.LoadMarkers()
 
-    if GW.settings.CLASS_POWER then
+    if GW.settings.classpower.enabled then
         GW.LoadClassPowers()
     end
 
     -- create pet frame
-    if GW.settings.PETBAR_ENABLED and not GW.ShouldBlockIncompatibleAddon("PetFrame") then
+    if GW.settings.unitframes.pet.enabled and not GW.ShouldBlockIncompatibleAddon("PetFrame") then
         GW.LoadPetFrame(lm)
     end
 
     -- create buff frame
-    if GW.settings.PLAYER_BUFFS_ENABLED then
+    if GW.settings.playerAuras.enabled then
         GW.LoadPlayerAuras(lm)
     end
 
     GW.LoadAFKAnimation()
 
     if not GW.ShouldBlockIncompatibleAddon("DynamicCam") then -- Only touch this setting if no other addon for this is loaded
-        if GW.settings.DYNAMIC_CAM then
+        if GW.settings.general.dynamicCam then
             C_CVar.SetCVar("test_cameraDynamicPitch", "1")
             C_CVar.SetCVar("cameraKeepCharacterCentered", "0")
             C_CVar.SetCVar("cameraReduceUnexpectedMovement", "0")
@@ -723,15 +723,15 @@ local function evPlayerLogin(self)
         end)
     end
 
-    if GW.settings.CHATBUBBLES_ENABLED then
+    if GW.settings.chat.bubbles.enabled then
         GW.LoadChatBubbles()
     end
 
-    if GW.settings.PARTY_FRAMES then
+    if GW.settings.unitframes.party.enabled then
         GW.LoadPartyFrames()
     end
 
-    if GW.settings.RAID_FRAMES then
+    if GW.settings.groupFrames.enabled then
         GW.InitializeRaidFrames() --TODO
     end
 
@@ -765,7 +765,7 @@ local function evPlayerLoginLate()
     end
     lateLoaded = true
 
-    if GW.settings.MINIMAP_ENABLED and not GW.ShouldBlockIncompatibleAddon("Minimap") then
+    if GW.settings.minimap.enabled and not GW.ShouldBlockIncompatibleAddon("Minimap") then
         GW.LoadMinimap()
     elseif QueueStatusButton then
         QueueStatusButton:ClearAllPoints()
@@ -780,9 +780,9 @@ local function evPlayerLoginLate()
     GW.LoadMicroMenu()
 
     -- create action bars
-    if GW.settings.ACTIONBARS_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
+    if GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
         if GW.Retail then
-            if GW.settings.BAR_LAYOUT_ENABLED then
+            if GW.settings.actionbars.barLayout then
                 GW.LoadActionBars(mainbarLM, false)
                 --GW.ExtraAB_BossAB_Setup() -- Test
             else

@@ -20,7 +20,7 @@ local function SetupMajorFaction(frame)
 end
 
 local function ApplyMajorFactionsFrameSkin()
-    if not GW.settings.MajorFactionSkinEnabled then return end
+    if not GW.settings.skins.majorFaction.enabled then return end
 
     MajorFactionRenownFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(MajorFactionRenownFrame, MajorFactionRenownFrame.TrackFrame.Title, "")

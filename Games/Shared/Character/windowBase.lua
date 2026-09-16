@@ -13,7 +13,7 @@ local L = GW.L
 --    Expected fields per entry:
 --    - `OnLoad`: global loader function name called with the created container
 --    - `FrameName`: global frame name for the created tab container
---    - `SettingName`: setting flag that controls whether the tab is enabled
+--    - `window`: key in GW.settings.windows whose `enabled` controls whether the tab is loaded
 --    - `RefName`: frame ref name registered on the character window
 --    - `TabIcon`: icon texture key used for the side tab
 --    - `HeaderIcon`: texture shown in the character window header
@@ -154,18 +154,13 @@ local function mover_SavePosition(self, x, y)
         return
     end
 
-    local pos = GW.settings[setting]
-    if pos then
-        wipe(pos)
-    else
-        pos = {}
-    end
+    local pos = GW.settings.windows[setting].pos
+    wipe(pos)
 
     pos.point = "BOTTOMLEFT"
     pos.relativePoint = "BOTTOMLEFT"
     pos.xOfs = x
     pos.yOfs = y
-    GW.settings[setting] = pos
 end
 
 local function click_OnEvent(self, event, windowsList)
@@ -237,12 +232,12 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
     frame:WrapScript(frame, "OnHide", charSecure_OnHide)
     frame.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 
-    local pos = GW.settings.HERO_POSITION
-    local scale = GW.settings.HERO_POSITION_SCALE
+    local pos = GW.settings.windows.character.pos
+    local scale = GW.settings.windows.character.scale
     frame:SetScale(scale)
     frame:ClearAllPoints()
     frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-    frame.mover.onMoveSetting = "HERO_POSITION"
+    frame.mover.onMoveSetting = "character"
     frame.mover.savePosition = mover_SavePosition
     frame.mover:SetAttribute("_onmousedown", mover_OnDragStart)
     frame.mover:SetAttribute("_onmouseup", mover_OnDragStop)
@@ -299,16 +294,16 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
     end)
     frame.sizer:SetScript("OnMouseUp", function(self)
         self:SetScript("OnUpdate", nil)
-        GW.settings.HERO_POSITION_SCALE = frame:GetScale()
+        GW.settings.windows.character.scale = frame:GetScale()
 
-        local savedPos = GW.settings.HERO_POSITION
+        local savedPos = GW.settings.windows.character.pos
         if savedPos then
             wipe(savedPos)
         else
             savedPos = {}
         end
         savedPos.point, _, savedPos.relativePoint, savedPos.xOfs, savedPos.yOfs = frame:GetPoint()
-        GW.settings.HERO_POSITION = savedPos
+        GW.settings.windows.character.pos = savedPos
 
         if frame.dressingRoom and frame.dressingRoom.model then
             frame.dressingRoom.model:RefreshCamera()
@@ -506,7 +501,7 @@ function GW.LoadCharacter()
 
     local anyThingToLoad = false
     for _, v in pairs(config.windowsList) do
-        if GW.settings[v.SettingName] then
+        if GW.settings.windows[v.window].enabled then
             anyThingToLoad = true
         end
     end
@@ -517,7 +512,7 @@ function GW.LoadCharacter()
     local baseFrame = LoadCharacterWindowBase(config.charSecure_OnClick, config.charSecure_OnAttributeChanged, config.windowsList)
     local tabIndex = 1
     for _, v in pairs(config.windowsList) do
-        if GW.settings[v.SettingName] then
+        if GW.settings.windows[v.window].enabled then
             local container = CreateFrame("Frame", v.FrameName, baseFrame, "GwCharacterTabContainerTemplate")
             local tab = GW.CreateCharacterWindowTabIcon(v.TabIcon, tabIndex)
 

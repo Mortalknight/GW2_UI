@@ -66,7 +66,7 @@ function GwWorldQuestTrackerContainerMixin:UpdateLayout()
 end
 
 function GwWorldQuestTrackerContainerMixin:InitModule()
-    if not GW.settings.SKIN_WQT_ENABLED or not WorldQuestTrackerAddon then return end
+    if not GW.settings.skins.wqt.enabled or not WorldQuestTrackerAddon then return end
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)

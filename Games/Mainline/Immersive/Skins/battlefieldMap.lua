@@ -33,7 +33,7 @@ local function OnEnter()
 end
 
 local function ApplyBattlefieldMapFrameSkin()
-	if not GW.settings.BattlefieldMapSkinEnabled then return end
+	if not GW.settings.skins.battlefieldMap.enabled then return end
 
 	BattlefieldMapFrame:GwStripTextures()
 	BattlefieldMapFrame:GwCreateBackdrop()

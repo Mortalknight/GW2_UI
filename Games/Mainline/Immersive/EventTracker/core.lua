@@ -386,7 +386,7 @@ function ET.OnEnterAll(self)
         local data = ET.events[event]
         local frame = data.frame
 
-        if GW.settings[data.dbKey].enabled and frame then
+        if GW.settings.weeklyEvents[data.dbKey].enabled and frame then
             GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, GW.Colors.TextColors.LightHeader:GetRGB())
             GameTooltip:AddDoubleLine(LOCATION_COLON, data.args.location, 1, 1, 1, 1, 1, 1)
 
@@ -562,7 +562,7 @@ local function UpdateTrackers()
 
     for _, event in ipairs(ET.eventList) do
         local data = ET.events[event]
-        local settings = GW.settings[data.dbKey]
+        local settings = GW.settings.weeklyEvents[data.dbKey]
         local tracker = settings.enabled and ET:GetTracker(event) or ET:DisableTracker(event)
         if tracker then
             anyEnabled = true

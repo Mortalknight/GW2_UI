@@ -12,7 +12,8 @@
     <Script file ="debug.lua"/>
     <Script file ="migration.lua"/>
     <Script file ="backdropTemplates.lua"/>
-    <Script file ="..\Settings\defaults2.lua"/>
+    <Script file ="..\Settings\defaults.lua"/>
+    <Script file ="..\Settings\settingsMigration.lua"/>
     <Include file ="..\Settings\Load.xml"/>
     <Script file ="raid_debuffs.lua"/>
     <Script file ="fonts.lua"/>

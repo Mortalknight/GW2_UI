@@ -27,7 +27,7 @@ local function UpdateBubbleBorder(self)
     self.background:SetPoint("TOPLEFT", messageText, "TOPLEFT",-8,8)
     self.background:SetPoint("BOTTOMRIGHT", messageText, "BOTTOMRIGHT",8,-8)
     messageText:SetWidth(math.min(200,messageText:GetWidth()))
-    self:SetScale(GW.settings.ChatBubbleScale)
+    self:SetScale(GW.settings.chat.bubbles.scale)
 
     if self.Name and self.Name:GetText() then
         self.Name:SetText("")

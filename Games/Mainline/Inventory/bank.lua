@@ -9,19 +9,19 @@ local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutAccountBankItems(cf)
-    if not GW.settings.BANK_ITEM_SIZE or not GW.settings.BANK_ITEM_SPACING_X or not GW.settings.BANK_ITEM_SPACING_Y then
+    if not GW.settings.bags.bank.itemSize or not GW.settings.bags.bank.itemSpacingX or not GW.settings.bags.bank.itemSpacingY then
         -- acedb can have the profile defaults detached (logout, profile operations)
         return
     end
-    local item_off_x = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_X
-    local item_off_y = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_Y
+    local item_off_x = GW.settings.bags.bank.itemSize + GW.settings.bags.bank.itemSpacingX
+    local item_off_y = GW.settings.bags.bank.itemSize + GW.settings.bags.bank.itemSpacingY
     inv.layoutContainerFrame(cf, GwBankFrame.gw_bank_cols, 0, 0, true, item_off_x, item_off_y)
 end
 
 
 -- adjusts the bank frame size to snap to the exact row/col sizing of contents
 local function snapFrameSize(f)
-    inv.snapFrameSize(f, f.BankPanel.gw_container, GW.settings.BANK_ITEM_SIZE, GW.settings.BANK_ITEM_SPACING_X, GW.settings.BANK_ITEM_SPACING_Y, 370)
+    inv.snapFrameSize(f, f.BankPanel.gw_container, GW.settings.bags.bank.itemSize, GW.settings.bags.bank.itemSpacingX, GW.settings.bags.bank.itemSpacingY, 370)
 end
 
 
@@ -53,7 +53,7 @@ local function UpdateBankItemButtons(self)
 
     if hasTab then
         cf:SetID(tabID)
-        GW.SetupOwnContainerItemButtons(cf, tabID, GW.settings.BANK_ITEM_SIZE, true, BANK_BUTTON_OPTS)
+        GW.SetupOwnContainerItemButtons(cf, tabID, GW.settings.bags.bank.itemSize, true, BANK_BUTTON_OPTS)
     else
         cf.gw_num_slots = 0
         for i = 1, #(cf.gw_items or {}) do
@@ -193,14 +193,14 @@ local function RefreshBankTabs(f)
 end
 
 local function onBankResizeStop(self)
-    GW.settings.BANK_WIDTH = self:GetWidth()
-    inv.onMoved(self, "BANK_POSITION", snapFrameSize)
+    GW.settings.bags.bank.width = self:GetWidth()
+    inv.onMoved(self, "bank", snapFrameSize)
 end
 
 
 local function onBankFrameChangeSize(self)
-    local size = GW.settings.BANK_ITEM_SIZE
-    local spacing = GW.settings.BANK_ITEM_SPACING_X
+    local size = GW.settings.bags.bank.itemSize
+    local spacing = GW.settings.bags.bank.itemSpacingX
     if not size or not spacing then
         -- acedb can have the profile defaults detached (logout, profile operations)
         return
@@ -303,7 +303,7 @@ local function LoadBank(helpers)
     local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplateMainline")
     tinsert(UISpecialFrames, "GwBankFrame")
     f:ClearAllPoints()
-    f:SetWidth(GW.settings.BANK_WIDTH)
+    f:SetWidth(GW.settings.bags.bank.width)
     onBankFrameChangeSize(f)
     f:SetClampedToScreen(true)
     f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
@@ -321,10 +321,10 @@ local function LoadBank(helpers)
     end)
 
     -- setup movable stuff
-    local pos = GW.settings.BANK_POSITION
+    local pos = GW.settings.bags.bank.pos
     f:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     f.mover:RegisterForDrag("LeftButton")
-    f.mover.onMoveSetting = "BANK_POSITION"
+    f.mover.onMoveSetting = "bank"
     f.mover:SetScript("OnDragStart", inv.onMoverDragStart)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
@@ -494,7 +494,7 @@ local function LoadBank(helpers)
             rootDescription:SetMinimumWidth(1)
             inv.addItemSizeMenuEntries(rootDescription, "BANK")
 
-            local check = rootDescription:CreateCheckbox(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; f.BankPanel:Reset() end)
+            local check = rootDescription:CreateCheckbox(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end, function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; f.BankPanel:Reset() end)
             check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
         end)
     end)

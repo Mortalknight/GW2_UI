@@ -281,7 +281,7 @@ local function UpdateOwnContainerLockedState(cf, slotID)
         if button and (not slotID or button:GetID() == slotID) then
             local info = C_Container.GetContainerItemInfo(bagID, button:GetID())
             -- an unlock must not clear the junk grey out (the quality skin combined both)
-            SetItemButtonDesaturated(button, (info and info.isLocked) or (button.isJunk and GW.settings.BAG_ITEM_JUNK_DESATURATE) or false)
+            SetItemButtonDesaturated(button, (info and info.isLocked) or (button.isJunk and GW.settings.bags.items.junkDesaturate) or false)
             -- the remembered slot state has to follow, or the next content update would skip
             -- a slot whose lock state it thinks it never wrote
             button.gw_slotLocked = info and info.isLocked

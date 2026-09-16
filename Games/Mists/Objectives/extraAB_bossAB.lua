@@ -13,7 +13,7 @@ local function ExtraButtons_ZoneScale()
         GW.CombatQueue:Queue("SetSizeForZoneAbilityFrame", GW.ExtraButtons_ZoneScale)
         return
     end
-    local scale = GW.settings.ZoneAbilityFramePos_scale
+    local scale = GW.settings.actionbars.zoneAbility.scale
     ZoneAbilityFrame.Style:SetScale(scale)
     ZoneAbilityFrame.SpellButtonContainer:SetScale(scale)
 
@@ -26,7 +26,7 @@ GW.ExtraButtons_ZoneScale = ExtraButtons_ZoneScale
 local function ExtraButtons_UpdateScale()
     --ExtraButtons_ZoneScale()
 
-    local scale = GW.settings.ExtraActionBarFramePos_scale
+    local scale = GW.settings.actionbars.extraActionButton.scale
     ExtraActionBarFrame:SetScale(scale)
 
     local width, height = ExtraActionBarFrame.button:GetSize()
@@ -103,8 +103,8 @@ local function ExtraAB_BossAB_Setup()
 
     Reparent()
 
-    RegisterMovableFrame(ExtraActionBarHolder, L["Boss Button"], "ExtraActionBarFramePos", BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale})
-    --RegisterMovableFrame(ZoneAbilityHolder, L["Zone Ability"], "ZoneAbilityFramePos", BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale})
+    RegisterMovableFrame(ExtraActionBarHolder, L["Boss Button"], "actionbars.extraActionButton", BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale})
+    --RegisterMovableFrame(ZoneAbilityHolder, L["Zone Ability"], "actionbars.zoneAbility", BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale})
 
     --ZoneAbilityFrame:ClearAllPoints()
     --ZoneAbilityFrame:SetAllPoints(ZoneAbilityHolder.gwMover)
@@ -193,7 +193,7 @@ local function ExtraAB_BossAB_Setup()
     ExtraButtons_UpdateScale()
 
     -- Spawn the mover before its available.
-    --local size = 52 * GW.settings.ZoneAbilityFramePos_scale
+    --local size = 52 * GW.settings.actionbars.zoneAbility.scale
     --ZoneAbilityHolder:SetSize(size, size)
     --ZoneAbilityHolder.gwMover:SetSize(size, size)
 end

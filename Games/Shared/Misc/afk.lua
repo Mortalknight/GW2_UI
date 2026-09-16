@@ -187,7 +187,7 @@ local function AFKMode_OnEvent(self, event, arg1)
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
         return
-    elseif not GW.settings.AFK_MODE or (event == "PLAYER_FLAGS_CHANGED" and arg1 ~= "player") or (InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown()) then
+    elseif not GW.settings.general.afkMode or (event == "PLAYER_FLAGS_CHANGED" and arg1 ~= "player") or (InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown()) then
         return
     elseif UnitCastingInfo("player") then
         --Don't activate afk if player is crafting stuff, check back in 30 seconds
@@ -266,7 +266,7 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     local success, msg = pcall(format, _G["CHAT_" .. infoType .. "_GET"] .. "%s", senderLink, message)
     if not success then return end
 
-    if not isProtected and GW.settings.CHAT_SHORT_CHANNEL_NAMES then
+    if not isProtected and GW.settings.chat.shortChannelNames then
         msg = msg:gsub("|Hchannel:(.-)|h%[(.-)%]|h", GW.ShortChannel)
         msg = msg:gsub("^(.-|h) " .. CHAT_WHISPER_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
         msg = msg:gsub("<" .. AFK .. ">", "[|cffFF0000" .. AFK .. "|r] ")
@@ -282,7 +282,7 @@ end
 
 local function ToggelAfkMode()
     if not AFKMode then return end
-    if GW.settings.AFK_MODE then
+    if GW.settings.general.afkMode then
         AFKMode:RegisterEvent("PLAYER_FLAGS_CHANGED")
         AFKMode:RegisterEvent("PLAYER_REGEN_DISABLED")
         AFKMode:RegisterEvent("LFG_PROPOSAL_SHOW")

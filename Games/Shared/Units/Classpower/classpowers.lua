@@ -34,7 +34,7 @@ local function selectType(f)
     f.evoker:Hide()
     f.eclips:Hide()
 
-    if GW.settings.POWERBAR_ENABLED then
+    if GW.settings.powerBar.enabled then
         f.lmb:Hide()
         f.lmb.decay:Hide()
         f.lmbSecret:Hide()
@@ -86,28 +86,28 @@ local function barChange_OnEvent(self, event)
 end
 
 local function UpdateSettings(self, skipEvent)
-    self.exbarSecret.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
-    self.exbar.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
-    self.lmb.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
-    self.lmbSecret.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
+    self.exbarSecret.showBarValues = GW.settings.classpower.showValue
+    self.exbar.showBarValues = GW.settings.classpower.showValue
+    self.lmb.showBarValues = GW.settings.classpower.showValue
+    self.lmbSecret.showBarValues = GW.settings.classpower.showValue
     if skipEvent then return end
     barChange_OnEvent(self.decay, "FORCE_UPDATE")
 end
 CP.UpdateSettings = UpdateSettings
 
 local function UpdateExtraManabar()
-    if not GW.settings.CLASS_POWER then return end
+    if not GW.settings.classpower.enabled then return end
 
     UpdateSettings(GwPlayerClassPower, true)
-    if GW.settings.POWERBAR_ENABLED then
-        local anchorFrame = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame or
+    if GW.settings.powerBar.enabled then
+        local anchorFrame = GW.settings.unitframes.player.enabled and GwPlayerUnitFrame and GwPlayerUnitFrame or
             GwPlayerPowerBar
-        local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and
+        local barWidth = GW.settings.unitframes.player.enabled and GwPlayerUnitFrame and
             GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
 
         GwPlayerAltClassLmbSecret:ClearAllPoints()
         GwPlayerAltClassLmb:ClearAllPoints()
-        if GW.settings.PLAYER_AS_TARGET_FRAME then
+        if GW.settings.unitframes.player.enabled then
             GwPlayerAltClassLmb:SetPoint("TOPLEFT", anchorFrame.powerbar, "BOTTOMLEFT", 0, -3)
             GwPlayerAltClassLmb:SetPoint("TOPRIGHT", anchorFrame.powerbar, "BOTTOMRIGHT", 0, -3)
             GwPlayerAltClassLmb:SetSize(barWidth + 2, 3)
@@ -176,12 +176,12 @@ local function LoadClassPowers()
 
     cpf.customResourceBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
 
-    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", "Unitframe,Power", { 312, 32 },
+    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "classpower", "Unitframe,Power", { 312, 32 },
         {GW.MoverOption.Scale}, true)
 
     -- position mover, shift values are central in mainBarLayout.lua
-    if (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not cpf.isMoved then
-        local framePoint = GW.settings.ClasspowerBar_pos
+    if (not GW.settings.hud.xpBar or GW.settings.unitframes.player.enabled) and not cpf.isMoved then
+        local framePoint = GW.settings.classpower.pos
         local xOff, yOff = GW.GetHudClusterShift(GW.Enum.HudShiftDirection.Right)
         cpf.gwMover:ClearAllPoints()
         cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff,

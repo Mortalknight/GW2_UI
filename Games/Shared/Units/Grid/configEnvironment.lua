@@ -175,7 +175,7 @@ local forcedVisibilityAttributes = {
 }
 
 local canHidePlayer = {
-    PARTY = true
+    party = true
 }
 
 local function HasActiveConfigHeader()
@@ -270,7 +270,7 @@ local function ShowChildUnits(header)
     header.isForced = true
 
     local length -- Limit number of players shown, if Display Player option is disabled
-    if canHidePlayer[header.groupName] and GW.GridSettings.partyGridShowPlayer == false then
+    if canHidePlayer[header.groupName] and GW.settings.groupFrames.party.showPlayer == false then
         length = MAX_PARTY_MEMBERS + 1
     end
 
@@ -327,8 +327,8 @@ end
 local function OnAttributeChanged(self, attr)
     if not self:IsShown() or (not self:GetParent().forceShow and not self.forceShow) then return end
 
-    local isTank = self.groupName == "TANK"
-    local index = isTank and -1 or not GW.GridSettings.raidWideSorting[self.groupName] and -4 or -(min((self.numGroups or 1) * ((GW.GridSettings.groupsPerColumnRow[self.groupName] or 1) * 5), MAX_RAID_MEMBERS) + 1)
+    local isTank = self.groupName == "maintank"
+    local index = isTank and -1 or not GW.settings.groupFrames[self.groupName].wideSorting and -4 or -(min((self.numGroups or 1) * ((GW.settings.groupFrames[self.groupName].groupsPerColumn or 1) * 5), MAX_RAID_MEMBERS) + 1)
     if self:GetAttribute("startingIndex") ~= index then
         self:SetAttribute("startingIndex", index)
         ShowChildUnits(self)
@@ -386,7 +386,7 @@ local function UpdateConfigGroupVisibility(header)
     for i = 1, header.numGroups do
         local group = header.groups[i]
         if group then
-            local visibility = header.numGroups > 1 and i > 1 and GW.GridSettings.raidWideSorting[header.groupName] and "hide" or "show"
+            local visibility = header.numGroups > 1 and i > 1 and GW.settings.groupFrames[header.groupName].wideSorting and "hide" or "show"
             if group.configModeVisibility ~= visibility then
                 RegisterStateDriver(group, "visibility", visibility)
                 group.configModeVisibility = visibility
@@ -396,8 +396,8 @@ local function UpdateConfigGroupVisibility(header)
 end
 
 local function UpdateConfigFrameSizes(header)
-    local width = tonumber(GW.GridSettings.raidWidth[header.groupName])
-    local height = tonumber(GW.GridSettings.raidHeight[header.groupName])
+    local width = tonumber(GW.settings.groupFrames[header.groupName].width)
+    local height = tonumber(GW.settings.groupFrames[header.groupName].height)
     if not width or not height then return end
 
     for i = 1, header.numGroups do
@@ -435,7 +435,7 @@ local function ToggleGridConfigurationMode(header, enabled)
         for i = 1, header.numGroups do
             local group = header.groups[i]
             if group then
-                local visibility = header.numGroups > 1 and i > 1 and GW.GridSettings.raidWideSorting[header.groupName] and "hide" or "show"
+                local visibility = header.numGroups > 1 and i > 1 and GW.settings.groupFrames[header.groupName].wideSorting and "hide" or "show"
                 RegisterStateDriver(group, "visibility", visibility)
                 group.configModeVisibility = visibility
 
@@ -455,7 +455,7 @@ local function ToggleGridConfigurationMode(header, enabled)
             end
         end
 
-        GW.UpdateGroupVisibility(header, header.groupName, GW.GridSettings.enabled[header.groupName])
+        GW.UpdateGroupVisibility(header, header.groupName, GW.settings.groupFrames[header.groupName].enabled)
 
         -- reset the stored dummy values
         GW.UpdateGridSettings(header.groupName, nil, true)

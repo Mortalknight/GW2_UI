@@ -1514,15 +1514,15 @@ local function skinAchevement()
         updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement3, select(3, ...))
     end)
     -- make the frame movable
-    GW.MakeFrameMovable(AchievementFrame, nil, "AchievementWindow", true)
-    GW.MakeFrameMovable(AchievementFrame.Header, AchievementFrame, "AchievementWindow")
+    GW.MakeFrameMovable(AchievementFrame, nil, "achievement", true)
+    GW.MakeFrameMovable(AchievementFrame.Header, AchievementFrame, "achievement")
 
     AchievementFrame:SetClampedToScreen(true)
     AchievementFrame:SetClampRectInsets(-40, 0, AchievementFrame.Header:GetHeight() - 40, 0)
 end
 
 local function LoadAchivementSkin()
-    if not GW.settings.ACHIEVEMENT_SKIN_ENABLED then return end
+    if not GW.settings.skins.achievement.enabled then return end
 
     GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI", AchievementFrame)
 end

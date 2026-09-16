@@ -182,7 +182,7 @@ local function PurchaseButton_OnLeave(button)
 end
 
 local function SkinPerksProgram()
-    if not GW.settings.PERK_PROGRAM_SKIN_ENABLED then return end
+    if not GW.settings.skins.perkProgram.enabled then return end
 
     PerksProgramFrame.ThemeContainer:SetAlpha(0)
 

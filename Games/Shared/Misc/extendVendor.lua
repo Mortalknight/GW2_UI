@@ -50,18 +50,18 @@ end
 
 
 function GW.SetUpExtendedVendor()
-    if C_AddOns.IsAddOnLoaded("ExtVendor") or C_AddOns.IsAddOnLoaded("Krowi_MerchantFrameExtended") or C_AddOns.IsAddOnLoaded("Krowi_ExtendedVendorUI") or GW.settings.EXTENDED_VENDOR_NUM_PAGES == 1 then
+    if C_AddOns.IsAddOnLoaded("ExtVendor") or C_AddOns.IsAddOnLoaded("Krowi_MerchantFrameExtended") or C_AddOns.IsAddOnLoaded("Krowi_ExtendedVendorUI") or GW.settings.bags.extendedVendorPages == 1 then
         return
     end
 
-    MERCHANT_ITEMS_PER_PAGE = GW.settings.EXTENDED_VENDOR_NUM_PAGES * 10
-    MerchantFrame:SetWidth(30 + GW.settings.EXTENDED_VENDOR_NUM_PAGES * 330)
+    MERCHANT_ITEMS_PER_PAGE = GW.settings.bags.extendedVendorPages * 10
+    MerchantFrame:SetWidth(30 + GW.settings.bags.extendedVendorPages * 330)
 
     for i = 1, MERCHANT_ITEMS_PER_PAGE do
         if not _G["MerchantItem" .. i] then
             CreateFrame("Frame", "MerchantItem" .. i, MerchantFrame, "MerchantItemTemplate")
         end
-        if GW.settings.MERCHANT_SKIN_ENABLED and not _G["MerchantItem" .. i].isGw2Skinned then
+        if GW.settings.skins.merchant.enabled and not _G["MerchantItem" .. i].isGw2Skinned then
             GW.SkinMerchantFrameItemButton(i)
         end
     end

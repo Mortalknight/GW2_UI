@@ -33,11 +33,11 @@ end
 local function getNormalFontFamily()
     local locale = GW.mylocal
     -- get our saved font
-    local activeFont = GW.settings.FONT_NORMAL
+    local activeFont = GW.settings.fonts.normal
     -- if we use a custom font, fetch it from shared media
-    if GW.settings.CUSTOM_FONT_NORMAL ~= "NONE" then
-        activeFont = GW.Libs.LSM:Fetch("font", GW.settings.CUSTOM_FONT_NORMAL)
-    elseif GW.settings.FONT_STYLE_TEMPLATE ~= "BLIZZARD" then
+    if GW.settings.fonts.customNormal ~= "NONE" then
+        activeFont = GW.Libs.LSM:Fetch("font", GW.settings.fonts.customNormal)
+    elseif GW.settings.fonts.styleTemplate ~= "BLIZZARD" then
         if locale == "koKR" then
             activeFont = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
         elseif locale == "zhCN" or locale == "zhTW" then
@@ -45,7 +45,7 @@ local function getNormalFontFamily()
         elseif locale == "ruRU" then
             activeFont = "Interface/AddOns/GW2_UI/fonts/menomonia_old.ttf"
         end
-    elseif GW.settings.FONT_STYLE_TEMPLATE == "BLIZZARD" then
+    elseif GW.settings.fonts.styleTemplate == "BLIZZARD" then
         activeFont = ""
     end
     return activeFont
@@ -53,11 +53,11 @@ end
 local function getHeaderFontFamily()
     local locale = GW.mylocal
     -- get our saved font
-    local activeFont = GW.settings.FONT_HEADERS
+    local activeFont = GW.settings.fonts.headers
     -- if we use a custom font, fetch it from shared media
-    if GW.settings.CUSTOM_FONT_HEADER ~= "NONE" then
-        activeFont = GW.Libs.LSM:Fetch("font", GW.settings.CUSTOM_FONT_HEADER)
-    elseif GW.settings.FONT_STYLE_TEMPLATE ~= "BLIZZARD" then
+    if GW.settings.fonts.customHeader ~= "NONE" then
+        activeFont = GW.Libs.LSM:Fetch("font", GW.settings.fonts.customHeader)
+    elseif GW.settings.fonts.styleTemplate ~= "BLIZZARD" then
         if locale == "koKR" then
             activeFont = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
         elseif locale == "zhCN" or locale == "zhTW" then
@@ -65,7 +65,7 @@ local function getHeaderFontFamily()
         elseif locale == "ruRU" then
             activeFont = "Interface/AddOns/GW2_UI/fonts/headlines_old.ttf"
         end
-    elseif GW.settings.FONT_STYLE_TEMPLATE == "BLIZZARD" then
+    elseif GW.settings.fonts.styleTemplate == "BLIZZARD" then
         activeFont = ""
     end
     return activeFont

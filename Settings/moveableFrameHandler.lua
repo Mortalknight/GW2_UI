@@ -106,7 +106,6 @@ local function AddTagsCSV(tags)
         if v ~= "" and not allTagsSet[v] then
             allTagsSet[v] = true
             tinsert(allTags, v)
-            -- the filter dropdown has to pick the new tag up
             if GwSmallSettingsContainer and GwSmallSettingsContainer.moverSettingsFrame then
                 local dd = GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown
                 if dd then dd.needsRebuild = true end
@@ -134,24 +133,19 @@ local function ClampEditBoxNumber(editBox, min, max, decimals)
     return value
 end
 
--- Mover options ------------------------------------------------------------------------------------------------
--- A mover registers the options it wants in the "Move HUD" panel, like the blizzard edit mode: a list of tables,
--- each one a widget (GW.Enum.MoverOptionType) bound to a flat settings key with a label. `apply(mover, value,
--- userInput)` is called after the setting was written; `userInput` is false for the initial value and for a reset.
--- Presets in GW.MoverOption cover the common cases and take their key from the movers own setting name.
 local MoverOptionType = GW.Enum.MoverOptionType
 local GRID_MIN, GRID_MAX = 20, 300
 
 local MoverOption = {
     Scale = {
         type = MoverOptionType.Slider,
-        settingSuffix = "_scale",
+        settingSuffix = ".scale",
         label = L["Scale"],
         min = 0.1, max = 2, decimals = 2,
         isScale = true,
         applyOnLoad = true,
         apply = function(mover, value, userInput)
-            mover.parent:SetScale(value, true) -- the hook on SetScale takes the mover along
+            mover.parent:SetScale(value, true)
             if userInput then
                 mover.parent.isMoved = true
                 mover.parent:SetAttribute("isMoved", true)
@@ -160,7 +154,7 @@ local MoverOption = {
     },
     Height = {
         type = MoverOptionType.Slider,
-        settingSuffix = "_height",
+        settingSuffix = ".height",
         label = COMPACT_UNIT_FRAME_PROFILE_FRAMEHEIGHT,
         min = 1, max = 1500, decimals = 0,
         applyOnLoad = true,
@@ -179,11 +173,9 @@ local OPTION_TEMPLATES = {
     [MoverOptionType.Checkbox] = "GwSmallSettingsCheckboxOption",
     [MoverOptionType.Dropdown] = "GwSmallSettingsDropdownOption",
 }
-local MIN_OPTIONS_HEIGHT = 90 -- room for two sliders, the panel does not shrink and grow with every mover
-local DEFAULT_BUTTONS_HEIGHT = 110 -- filter, placeholder, grid and lock rows below the mover options
+local MIN_OPTIONS_HEIGHT = 90
+local DEFAULT_BUTTONS_HEIGHT = 110
 
--- checks a registered option and fills in the settings key of a preset; the errors are meant for the developer
--- and point at the RegisterMovableFrame call of the module (level 4: Resolve -> Create -> Register -> module)
 local function ResolveMoverOption(settingsName, option)
     local where = ("mover %s"):format(settingsName)
     if type(option) ~= "table" then
@@ -202,7 +194,7 @@ local function ResolveMoverOption(settingsName, option)
     if type(resolved.setting) ~= "string" then
         error(where .. ": option without a settings key", 4)
     end
-    if GW.globalDefault.profile[resolved.setting] == nil then
+    if GW.GetSettingDefault(resolved.setting) == nil then
         error(("%s: option %q has no default"):format(where, resolved.setting), 4)
     end
     if not resolved.label then
@@ -219,13 +211,12 @@ local function ResolveMoverOption(settingsName, option)
 end
 
 local function ApplyMoverOption(mover, option, value, userInput)
-    GW.settings[option.setting] = value
+    GW.SetSetting(option.setting, value)
     if option.apply then
         option.apply(mover, value, userInput)
     end
 end
 
--- the widgets, one pool per type, created from the templates in smallSettingFrame.xml
 local WIDGET_INIT, WIDGET_SETUP = {}, {}
 
 WIDGET_INIT[MoverOptionType.Slider] = function(widget)
@@ -253,9 +244,9 @@ end
 WIDGET_SETUP[MoverOptionType.Slider] = function(widget, option)
     widget.title:SetText(option.label)
     widget.slider:SetMinMaxValues(option.min, option.max)
-    widget.slider:SetValueStep(option.step or 0) -- a pooled slider must not keep the step of its last option
+    widget.slider:SetValueStep(option.step or 0)
     widget.slider:SetObeyStepOnDrag(option.step ~= nil)
-    local value = GW.settings[option.setting]
+    local value = GW.GetSetting(option.setting)
     widget.slider:SetValue(value)
     widget.input:SetText(GW.RoundDec(value, option.decimals or 0))
 end
@@ -269,7 +260,7 @@ WIDGET_INIT[MoverOptionType.Checkbox] = function(widget)
 end
 WIDGET_SETUP[MoverOptionType.Checkbox] = function(widget, option)
     widget.title:SetText(option.label)
-    widget.checkbox:SetChecked(GW.settings[option.setting] and true or false)
+    widget.checkbox:SetChecked(GW.GetSetting(option.setting) and true or false)
 end
 
 WIDGET_INIT[MoverOptionType.Dropdown] = function(widget)
@@ -280,7 +271,7 @@ WIDGET_INIT[MoverOptionType.Dropdown] = function(widget)
         if not option then return end
 
         for index, value in ipairs(option.optionsList) do
-            local function IsSelected(entry) return GW.settings[option.setting] == entry end
+            local function IsSelected(entry) return GW.GetSetting(option.setting) == entry end
             local function SetSelected(entry) ApplyMoverOption(mover, option, entry, true) end
 
             local name = option.optionNames and option.optionNames[index] or tostring(value)
@@ -293,7 +284,7 @@ WIDGET_INIT[MoverOptionType.Dropdown] = function(widget)
 end
 WIDGET_SETUP[MoverOptionType.Dropdown] = function(widget, option)
     widget.title:SetText(option.label)
-    widget.dropdown:GenerateMenu() -- refreshes the shown selection
+    widget.dropdown:GenerateMenu()
 end
 
 local widgetPools = {}
@@ -309,7 +300,7 @@ local function AcquireOptionWidget(parent, optionType)
     if not widget then
         widget = CreateFrame("Frame", nil, parent, OPTION_TEMPLATES[optionType])
         WIDGET_INIT[optionType](widget)
-        HookSmallSettingsMouseFade(widget, GW.MoveHudScaleableFrame) -- keeps the panel awake while its controls are hovered
+        HookSmallSettingsMouseFade(widget, GW.MoveHudScaleableFrame)
     end
     pool.active[#pool.active + 1] = widget
     widget:Show()
@@ -330,7 +321,6 @@ local function ReleaseOptionWidgets()
     end
 end
 
--- the fixed rows (nudge, center, reset) follow below the options; options frame and panel grow with them
 local function LayoutMoverOptions(optionsHeight)
     local frame = GW.MoveHudScaleableFrame
     local options = frame.moverSettingsFrame.options
@@ -380,7 +370,7 @@ local function CreateGrid()
 
     local width, height = UIParent:GetSize()
     local size = math.max(GW.mult * 0.5, 0.5)  -- Min 0.5 pixel
-    local gSize = GW.settings.gridSpacing
+    local gSize = GW.settings.hud.gridSpacing
     local step = math.max(2, math.min(width, height) / gSize)
     local halfW, halfH = width * 0.5, height * 0.5
 
@@ -428,7 +418,7 @@ end
 local function ShowGrid()
     if not grid then
         CreateGrid()
-    elseif grid.boxSize ~= GW.settings.gridSpacing then
+    elseif grid.boxSize ~= GW.settings.hud.gridSpacing then
         grid:Hide()
         CreateGrid()
     else
@@ -442,7 +432,6 @@ local function HideGrid()
     end
 end
 
--- the grid is a plain frame of ours, it can be hidden in combat as well
 local function SetGridShown(show)
     local buttons = GwSmallSettingsContainer.moverSettingsFrame.defaultButtons
     if show then
@@ -558,7 +547,6 @@ local function HandleMoveHudEvents(self, event)
     end
 end
 
--- mirrors the selected movers anchor offsets into the X/Y inputs
 local function UpdateMoverPositionInputs(mover)
     local options = GW.MoveHudScaleableFrame.moverSettingsFrame.options
     if not options.position or options.position.gwUpdating then return end
@@ -582,20 +570,19 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
         mf.defaultPoint.yOfs
     )
 
-    local new_point = GW.settings[mf.setting]
+    local new_point = GW.GetSetting(mf.setting).pos
     new_point.point = mf.defaultPoint.point
     new_point.relativePoint = mf.defaultPoint.relativePoint
     new_point.xOfs = mf.defaultPoint.xOfs
     new_point.yOfs = mf.defaultPoint.yOfs
     new_point.hasMoved = false
-    GW.settings[mf.setting] = new_point
+    GW.GetSetting(mf.setting).pos = new_point
 
     mf.savedPoint = GW.CopyTable(new_point)
     mf.parent.isMoved = false
     mf.parent:SetAttribute("isMoved", new_point.hasMoved)
 
-    --if "PlayerBuffFrame" or "PlayerDebuffFrame", set also the grow direction, h,v spacing, auras per row and max wraps to default
-    if mf.setting == "PlayerBuffFrame" or mf.setting == "PlayerDebuffFrame" then
+    if mf.setting == "playerAuras.buffs" or mf.setting == "playerAuras.debuffs" then
         -- reset also the settings frame values
         GW.updateSettingsFrameSettingsValue(mf.setting .. ".Seperate", nil, nil, true)
         GW.updateSettingsFrameSettingsValue(mf.setting .. ".SortDir", nil, nil, true)
@@ -610,7 +597,7 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
         GW.updateSettingsFrameSettingsValue(mf.setting .. ".WrapAfter", nil, nil, true)
         GW.updateSettingsFrameSettingsValue(mf.setting .. ".NewAuraAnimation", nil, nil, true)
         GW.UpdateAuraHeader(mf.parent)
-    elseif mf.setting == "MicromenuPos" then
+    elseif mf.setting == "micromenu" then
         -- bar art and button offset follow the (default) position
         if GW.UpdateMicroBarOrientation then
             GW.UpdateMicroBarOrientation()
@@ -618,11 +605,10 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
         end
     end
 
-    -- every option back to its default; main hud frames scale with the hud instead of their own default
     for _, option in ipairs(mf.options) do
-        local default = GW.globalDefault.profile[option.setting]
+        local default = GW.GetSettingDefault(option.setting)
         if option.isScale and mf.mainHudFrame then
-            default = GW.settings.HUD_SCALE
+            default = GW.settings.hud.scale
         end
         ApplyMoverOption(mf, option, default, false)
     end
@@ -663,7 +649,7 @@ local function CheckForDefaultPosition(frame, point, relativePoint, xOfs, yOfs, 
     frame.parent.isMoved = newPoint.hasMoved
     frame.parent:SetAttribute("isMoved", newPoint.hasMoved)
 
-    GW.settings[frame.setting] = newPoint
+    GW.GetSetting(frame.setting).pos = newPoint
 end
 
 -- Snaps the mover EDGES onto the grid: per axis the edge that is already closest
@@ -673,7 +659,7 @@ end
 local function SnapToGrid(self, xOfs, yOfs)
     local toMoverSpace = UIParent:GetEffectiveScale() / self:GetEffectiveScale()
     local width, height = UIParent:GetSize()
-    local step = math.max(2, math.min(width, height) / GW.settings.gridSpacing) * toMoverSpace
+    local step = math.max(2, math.min(width, height) / GW.settings.hud.gridSpacing) * toMoverSpace
     local screenX, screenY = UIParent:GetCenter()
     screenX, screenY = screenX * toMoverSpace, screenY * toMoverSpace
 
@@ -709,7 +695,7 @@ local function mover_OnDragStop(self)
 
     -- for layouts: if newPoint is old point, do not update the setting
     if self.savedPoint.point ~= point or self.savedPoint.relativePoint ~= relativePoint or self.savedPoint.xOfs ~= xOfs or self.savedPoint.yOfs ~= yOfs then
-        local new_point = GW.settings[settingsName]
+        local new_point = GW.GetSetting(settingsName).pos
         new_point.point = point
         new_point.relativePoint = relativePoint
         new_point.xOfs = xOfs
@@ -824,7 +810,7 @@ local function ParentOnScaleChanged(self, scale, override)
 end
 
 local function CreateMoverFrame(parent, displayName, settingsName, size, options, mhf, postdrag, tags, ignoreParentSize)
-    local mf = CreateFrame("Button", "Gw_" .. settingsName, UIParent, "SecureHandlerStateTemplate")
+    local mf = CreateFrame("Button", "Gw_" .. (settingsName:gsub("%.", "_")), UIParent, "SecureHandlerStateTemplate")
     mf:SetClampedToScreen(true)
     mf:SetMovable(true)
     mf:EnableMouseWheel(true)
@@ -863,8 +849,8 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, options
     mf.textString = displayName
     mf.setting = settingsName
     mf.mainHudFrame = mhf
-    mf.savedPoint = GW.settings[settingsName]
-    mf.defaultPoint = GW.globalDefault.profile[settingsName]
+    mf.savedPoint = GW.GetSetting(settingsName).pos
+    mf.defaultPoint = GW.GetSettingDefault(settingsName).pos
     mf.tags = tags or ""
     mf.tagsSet = {}
     for _, v in pairs({strsplit(",", mf.tags)}) do
@@ -883,7 +869,7 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, options
             GW.scaleableFrames[#GW.scaleableFrames + 1] = mf
         end
         if resolved.applyOnLoad then
-            resolved.apply(mf, GW.settings[resolved.setting], false)
+            resolved.apply(mf, GW.GetSetting(resolved.setting), false)
         end
     end
 
@@ -947,15 +933,13 @@ local function ApplyMoverPositionsFromSettings()
     GW.IsApplyingMoverPositions = true
 
     for _, mf in ipairs(GW.MOVABLE_FRAMES) do
-        local saved = GW.settings[mf.setting]
-        -- a setting without a usable position says nothing about where the frame belongs, so it stays put
+        local saved = GW.GetSetting(mf.setting).pos
         if saved and saved.point and saved.relativePoint and saved.xOfs and saved.yOfs then
             mf.savedPoint = GW.CopyTable(saved)
 
             mf:ClearAllPoints()
             mf:SetPoint(mf.savedPoint.point, UIParent, mf.savedPoint.relativePoint, mf.savedPoint.xOfs, mf.savedPoint.yOfs)
 
-            -- sets hasMoved on the frame and hands the point table back to the settings
             CheckForDefaultPosition(mf, mf.savedPoint.point, mf.savedPoint.relativePoint, mf.savedPoint.xOfs, mf.savedPoint.yOfs, mf.savedPoint)
 
             mover_OnDragStop(mf)
@@ -1118,7 +1102,7 @@ local function LoadMovers(layoutManager)
         local point, _, anchorPoint = mover:GetPoint()
         mover:ClearAllPoints()
         mover:SetPoint(point, UIParent, anchorPoint, x, y)
-        mover_OnDragStop(mover) -- rounds the offsets and writes them back into the inputs
+        mover_OnDragStop(mover)
 
         position.inputX:ClearFocus()
         position.inputY:ClearFocus()
@@ -1126,8 +1110,6 @@ local function LoadMovers(layoutManager)
     position.inputX:SetScript("OnEnterPressed", ApplyPositionInputs)
     position.inputY:SetScript("OnEnterPressed", ApplyPositionInputs)
 
-    -- centering shortcuts: nudge by the distance between the mover and screen center. GetCenter answers in
-    -- the movers own coordinate space, so the screen center is scaled into it as well
     local function ScreenCenterInMoverSpace(mover)
         local toMoverSpace = UIParent:GetEffectiveScale() / mover:GetEffectiveScale()
         local centerX, centerY = UIParent:GetCenter()
@@ -1196,23 +1178,22 @@ local function LoadMovers(layoutManager)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetText(L["Show grid"])
 
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetMinMaxValues(GRID_MIN, GRID_MAX)
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetValue(GW.RoundDec(GW.settings.gridSpacing, 0))
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetValue(GW.RoundDec(GW.settings.hud.gridSpacing, 0))
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetObeyStepOnDrag(true)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetValueStep(2)
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.inputFrame.input:SetText(GW.RoundDec(GW.settings.gridSpacing, 0))
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.inputFrame.input:SetText(GW.RoundDec(GW.settings.hud.gridSpacing, 0))
 
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetScript("OnValueChanged", function(self)
         local roundValue = GW.RoundDec(self:GetValue(), 0)
-        GW.settings.gridSpacing = tonumber(roundValue)
+        GW.settings.hud.gridSpacing = tonumber(roundValue)
         self:GetParent().inputFrame.input:SetText(roundValue)
         ShowGrid()
     end)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.inputFrame.input:SetScript("OnEnterPressed", function(self)
         local value = ClampEditBoxNumber(self, GRID_MIN, GRID_MAX, 0)
-        value = floor((value - GRID_MIN) / 2 + 0.5) * 2 + GRID_MIN -- the slider walks in steps of two
+        value = floor((value - GRID_MIN) / 2 + 0.5) * 2 + GRID_MIN
         self:SetText(value)
 
-        -- the slider applies the value, its handler sets the setting and redraws the grid
         self:GetParent():GetParent().slider:SetValue(value)
     end)
 

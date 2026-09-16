@@ -191,7 +191,7 @@ local function HandleSellList(frame, hasHeader, fitScrollBar)
 end
 
 local function ApplyAuctionHouseSkin()
-	if not GW.settings.AuctionHouseSkinEnabled then return end
+	if not GW.settings.skins.auctionHouse.enabled then return end
 
 	GW.HandlePortraitFrame(AuctionHouseFrame)
 	AuctionHouseFrame.CloseButton:SetPoint("TOPRIGHT", -5, -2)
@@ -563,7 +563,7 @@ local function ApplyAuctionHouseSkin()
 	GW.HandleIcon(progressBar.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
 
 	-- make the frame movable
-    GW.MakeFrameMovable(AuctionHouseFrame, nil, "AuctionHouseWindow", true)
+    GW.MakeFrameMovable(AuctionHouseFrame, nil, "auctionHouse", true)
 end
 
 local function LoadAuctionHouseSkin()

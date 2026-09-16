@@ -6,7 +6,7 @@ local CP = GW.ClassPowers
 if GW.myClassID ~= GW.Enum.ClassIndex.Rogue then return end
 
 local function setRogue(f)
-    if GW.settings.target_HOOK_COMBOPOINTS then return false end
+    if GW.settings.unitframes.target.hookComboPoints then return false end
 
     CP.setComboBar(f)
     return true

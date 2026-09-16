@@ -271,9 +271,9 @@ local function updateAura(element, unit, data, position)
         if GW.ImportantRaidDebuff[data.spellId] and data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
             size = size * GW.GetDebuffScaleBasedOnPrio()
         elseif GW.ImportantRaidDebuff[data.spellId] then
-            size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
+            size = size * tonumber(GW.settings.groupFrames.raidDebuffsScale)
         elseif data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
-            size = size * tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
+            size = size * tonumber(GW.settings.groupFrames.dispelDebuffsScale)
         end
     end
 

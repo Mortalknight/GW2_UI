@@ -114,7 +114,7 @@ end
 
 
 local function SkinCharacterCustomizeSkin()
-    if not GW.settings.BARBERSHOP_SKIN_ENABLED then return end
+    if not GW.settings.skins.barberShop.enabled then return end
 
     CharCustomizeFrame.SmallButtons.ResetCameraButton:GwSkinButton(nil, nil, nil, true, nil, true, true)
     CharCustomizeFrame.SmallButtons.ZoomOutButton:GwSkinButton(false, false, false, true, false, true, true)
@@ -128,7 +128,7 @@ end
 
 
 local function SkinBarShop()
-    if not GW.settings.BARBERSHOP_SKIN_ENABLED then return end
+    if not GW.settings.skins.barberShop.enabled then return end
     BarberShopFrame.ResetButton:GwSkinButton(false, true)
     BarberShopFrame.CancelButton:GwSkinButton(false, true)
     BarberShopFrame.AcceptButton:GwSkinButton(false, true)

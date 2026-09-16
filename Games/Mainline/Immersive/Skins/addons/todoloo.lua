@@ -229,7 +229,7 @@ function GwTodolooContainerMixin:UpdateLayout()
 end
 
 function GwTodolooContainerMixin:InitModule()
-    if not GW.settings.SKIN_TODOLOO_ENABLED or not Todoloo then return end
+    if not GW.settings.skins.todoloo.enabled or not Todoloo then return end
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)

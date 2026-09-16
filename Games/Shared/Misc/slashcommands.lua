@@ -22,10 +22,10 @@ local function LoadSlashCommands()
             ShowUIPanel(GwSettingsWindow)
             --UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
         elseif msg == "reset windows" then
-            GW.settings.BAG_POSITION = nil
-            GW.settings.BANK_POSITION = nil
-            GW.settings.HERO_POSITION = nil
-            GW.settings.MAILBOX_POSITION = nil
+            GW.settings.bags.bag.pos = nil
+            GW.settings.bags.bank.pos = nil
+            GW.settings.windows.character.pos = nil
+            GW.settings.skins.mail.pos = nil
             C_UI.Reload()
         elseif msg == "status" then
             GW.ShowStatusReport()

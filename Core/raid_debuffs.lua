@@ -3,7 +3,7 @@ local GW = select(2, ...)
 GW.ImportantRaidDebuff = GW.ImportantRaidDebuff or {}
 
 local function SetDefaults(list)
-    local dst = GW.globalDefault.profile.RAIDDEBUFFS
+    local dst = GW.globalDefault.profile.groupFrames.raidDebuffs
     local mark = GW.ImportantRaidDebuff
     for i = 1, #list do
         local id = list[i]
@@ -16,10 +16,10 @@ end
 
 local function RemoveOldRaidDebuffsFormProfiles()
     local profiles = GW.globalSettings.profiles or {}
-    local defaults = GW.globalDefault.profile.RAIDDEBUFFS
+    local defaults = GW.globalDefault.profile.groupFrames.raidDebuffs
 
     for _, profile in pairs(profiles) do
-        local list = profile and profile.RAIDDEBUFFS
+        local list = profile and profile.groupFrames and profile.groupFrames.raidDebuffs
         if type(list) == "table" then
             for id in pairs(list) do
                 if defaults[id] == nil then

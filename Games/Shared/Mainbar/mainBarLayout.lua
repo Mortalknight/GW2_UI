@@ -30,8 +30,8 @@ local HUD_X_PLAYER_AS_TARGET_SHIFT = 52  -- power/class power shift sideways whe
 -- returns the x/y login shift for the insecure HUD frames; direction is a
 -- GW.Enum.HudShiftDirection value (Left = power bar, Right = class power)
 local function GetHudClusterShift(direction)
-    local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and (HUD_X_PLAYER_AS_TARGET_SHIFT * direction) or 0
-    local yOff = not GW.settings.XPBAR_ENABLED and HUD_Y_NO_XPBAR_SHIFT or 0
+    local xOff = GW.settings.unitframes.player.enabled and (HUD_X_PLAYER_AS_TARGET_SHIFT * direction) or 0
+    local yOff = not GW.settings.hud.xpBar and HUD_Y_NO_XPBAR_SHIFT or 0
     return xOff, yOff
 end
 GW.GetHudClusterShift = GetHudClusterShift
@@ -206,11 +206,11 @@ local function LoadMainbarLayout()
     -- force a reload popup - if that reload requirement is ever lifted, these attributes
     -- have to be recomputed from the setting callbacks.
     local defaults = GW.globalDefault.profile
-    local pfat = GW.settings.PLAYER_AS_TARGET_FRAME
-    l:SetAttribute("mbXOfs", pfat and MULTIBAR_X_PLAYER_AS_TARGET or defaults.MultiBarBottomRight.xOfs)
-    l:SetAttribute("mbYOfs", GW.settings.XPBAR_ENABLED and defaults.MultiBarBottomRight.yOfs or MULTIBAR_Y_NO_XPBAR)
-    l:SetAttribute("petXOfs", defaults.pet_pos.xOfs + (pfat and PET_X_PLAYER_AS_TARGET_SHIFT or 0))
-    l:SetAttribute("petYOfs", defaults.pet_pos.yOfs)
+    local pfat = GW.settings.unitframes.player.enabled
+    l:SetAttribute("mbXOfs", pfat and MULTIBAR_X_PLAYER_AS_TARGET or defaults.actionbars.bars.MultiBarBottomRight.pos.xOfs)
+    l:SetAttribute("mbYOfs", GW.settings.hud.xpBar and defaults.actionbars.bars.MultiBarBottomRight.pos.yOfs or MULTIBAR_Y_NO_XPBAR)
+    l:SetAttribute("petXOfs", defaults.unitframes.pet.pos.xOfs + (pfat and PET_X_PLAYER_AS_TARGET_SHIFT or 0))
+    l:SetAttribute("petYOfs", defaults.unitframes.pet.pos.yOfs)
     l:SetAttribute("petYRaisedOfs", PET_Y_RAISED)
     l:SetAttribute("_onstate-barlayout", onstate_Barlayout)
     l.oocHandler = function()

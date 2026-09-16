@@ -125,7 +125,7 @@ local function OpenMenu(manager, region, menuDescription)
 end
 
 local function LoadDropDownSkin()
-    if not GW.settings.DROPDOWN_SKIN_ENABLED then return end
+    if not GW.settings.skins.dropdown.enabled then return end
 
     SkinDropDownList()
     SkinUIDropDownMenu()

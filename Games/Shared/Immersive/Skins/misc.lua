@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function LoadMiscBlizzardFrameSkins()
-    if not GW.settings.MISC_SKIN_ENABLED then return end
+    if not GW.settings.skins.misc.enabled then return end
 
     GW.LoadTimerTrackerSkin()
     GW.LoadGhostFrameSkin()

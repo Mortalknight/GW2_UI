@@ -26,10 +26,10 @@ local TEXTURE_PATH = "Interface/AddOns/GW2_UI/Textures/units/castingbars/"
 
 -- which texture set and which color setting belong to a cast kind
 local CASTINGBAR_KINDS = {
-    cast = {textures = CASTINGBAR_TEXTURES.YELLOW, color = "CASTINGBAR_COLOR_CAST"},
-    channel = {textures = CASTINGBAR_TEXTURES.GREEN, color = "CASTINGBAR_COLOR_CHANNEL"},
-    empower = {textures = CASTINGBAR_TEXTURES.GREEN, color = "CASTINGBAR_COLOR_EMPOWER"},
-    interrupted = {textures = CASTINGBAR_TEXTURES.RED, color = "CASTINGBAR_COLOR_INTERRUPTED"},
+    cast = {textures = CASTINGBAR_TEXTURES.YELLOW, color = "cast"},
+    channel = {textures = CASTINGBAR_TEXTURES.GREEN, color = "channel"},
+    empower = {textures = CASTINGBAR_TEXTURES.GREEN, color = "empower"},
+    interrupted = {textures = CASTINGBAR_TEXTURES.RED, color = "interrupted"},
 }
 
 -- the color the last empower stage fades towards, the earlier stages sit between it
@@ -41,17 +41,17 @@ local settings = {}
 GwCastingBarMixin = {}
 
 local function UpdateSettings()
-    settings.showSpellQueueWindow = GW.settings.PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW
-    settings.width = tonumber(GW.settings.CASTINGBAR_WIDTH) or 176
-    settings.height = tonumber(GW.settings.CASTINGBAR_HEIGHT) or 15
-    settings.iconPosition = GW.settings.CASTINGBAR_ICON_POSITION or "HIDE"
-    settings.showName = GW.settings.CASTINGBAR_SHOW_NAME
-    settings.showTimer = GW.settings.CASTINGBAR_SHOW_TIMER
-    settings.showLatency = GW.settings.CASTINGBAR_SHOW_LATENCY
-    settings.customColors = GW.settings.CASTINGBAR_CUSTOM_COLORS
-    settings.empowerStageColors = GW.settings.CASTINGBAR_EMPOWER_STAGE_COLORS
-    settings.interruptShake = GW.settings.CASTINGBAR_INTERRUPT_SHAKE
-    settings.interruptSound = GW.settings.CASTINGBAR_INTERRUPT_SOUND
+    settings.showSpellQueueWindow = GW.settings.castingbar.spellQueueWindow
+    settings.width = tonumber(GW.settings.castingbar.width) or 176
+    settings.height = tonumber(GW.settings.castingbar.height) or 15
+    settings.iconPosition = GW.settings.castingbar.iconPosition or "HIDE"
+    settings.showName = GW.settings.castingbar.showName
+    settings.showTimer = GW.settings.castingbar.showTimer
+    settings.showLatency = GW.settings.castingbar.showLatency
+    settings.customColors = GW.settings.castingbar.customColors
+    settings.empowerStageColors = GW.settings.castingbar.colors.empowerStages
+    settings.interruptShake = GW.settings.castingbar.interruptShake
+    settings.interruptSound = GW.settings.castingbar.interruptSound
 end
 GW.UpdateCastingBarSettings = UpdateSettings
 
@@ -225,7 +225,7 @@ end
 -- texture is desaturated first so the brush structure survives while the hue comes from the tint
 local function resolveKind(kind)
     local kindInfo = CASTINGBAR_KINDS[kind] or CASTINGBAR_KINDS.cast
-    return kindInfo, settings.customColors and GW.settings[kindInfo.color] or nil
+    return kindInfo, settings.customColors and GW.settings.castingbar.colors[kindInfo.color] or nil
 end
 
 -- the flash drawn over a finished or failed cast, set apart from the bar itself because a
@@ -303,7 +303,7 @@ function GwCastingBarMixin:SetEmpowerStage(stage)
     -- the held stage brightens the bar towards EMPOWER_STAGE_TINT, so the stage is readable
     -- from the color alone. numStages counts the hold-at-max section as well, the highest stage
     -- one can actually hold is numStages - 1 and that one gets the full tint
-    local base = (settings.customColors and GW.settings[CASTINGBAR_KINDS.empower.color]) or {r = 1, g = 0.72, b = 0.2}
+    local base = (settings.customColors and GW.settings.castingbar.colors.empower) or {r = 1, g = 0.72, b = 0.2}
     local p = (stage - 1) / math.max(1, (self.numStages or 0) - 2)
     self:SetBarColor({
         r = lerp(base.r, EMPOWER_STAGE_TINT.r, p),
@@ -646,7 +646,7 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
             self:ClearStages()
         end
 
-        if self.unit == "player" and GW.settings.showPlayerCastBarTicks and self.isChanneling then
+        if self.unit == "player" and GW.settings.castingbar.ticks and self.isChanneling then
             self:CheckForTicks()
         end
 
@@ -790,7 +790,7 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     GwCastingBar:SetCastKind("cast")
 
     if name == "GwCastingBarPlayer" then
-        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "Blizzard", nil, {GW.MoverOption.Scale})
+        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar", "Blizzard", nil, {GW.MoverOption.Scale})
         GwCastingBar:SetBasePoint("CENTER", GwCastingBar.gwMover, "CENTER", 0, 0)
     else
         GwCastingBar:SetBasePoint("TOPLEFT", GwCastingBarPlayer.gwMover, "TOPLEFT", 0, GwCastingBarPlayer:GetHeight() + 20)

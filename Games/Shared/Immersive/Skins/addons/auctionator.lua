@@ -481,7 +481,7 @@ local function SkinAuctionator()
 end
 
 local function LoadAuctionatorAddonSkin()
-    if not GW.settings.AuctionHouseSkinEnabled or not GW.settings.AUCTIONATOR_SKIN_ENABLED or not Auctionator then return end
+    if not GW.settings.skins.auctionHouse.enabled or not GW.settings.skins.auctionator.enabled or not Auctionator then return end
     hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", SkinAuctionator)
 end
 GW.LoadAuctionatorAddonSkin = LoadAuctionatorAddonSkin

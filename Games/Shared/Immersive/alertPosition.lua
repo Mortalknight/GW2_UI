@@ -92,7 +92,7 @@ local function resetAlertSubSystemAdjustPositions(subSystem)
 end
 
 local function SetupAlertFramePosition()
-    if not GW.settings.ALERTFRAME_ENABLED then return end
+    if not GW.settings.notifications.enabled then return end
 
     GwAlertFrameOffsetter:SetHeight(205)
     hooksecurefunc("GroupLootContainer_Update", UpdateGroupLootContainer)

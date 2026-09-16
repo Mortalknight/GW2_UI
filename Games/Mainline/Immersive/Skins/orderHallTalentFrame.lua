@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function ApplyOrderHallTalentFrameSkin()
-    if not GW.settings.ORDERRHALL_TALENT_FRAME_SKIN_ENABLED then return end
+    if not GW.settings.skins.orderHallTalents.enabled then return end
 
     GW.HandlePortraitFrame(OrderHallTalentFrame, true)
     OrderHallTalentFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE")

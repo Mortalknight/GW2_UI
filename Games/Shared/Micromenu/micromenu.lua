@@ -984,7 +984,7 @@ local function UpdateMicroBarOrientation()
     bg:ClearAllPoints()
     bg:SetPoint(corner, mbf.cf, corner)
     bg:SetTexCoord(GetBarArtTexCoords(vertical, mirrorAlong, mirrorAcross))
-    bg:SetShown(GW.settings.micromenu.showBackground and GW.settings.BORDER_ENABLED)
+    bg:SetShown(GW.settings.micromenu.showBackground and GW.settings.hud.screenBorder)
 end
 GW.UpdateMicroBarOrientation = UpdateMicroBarOrientation
 
@@ -1072,7 +1072,7 @@ local function setupMicroButtons(mbf)
     -- determine if we are using the default char button (for default charwin)
     -- or if we need to create our own char button for the custom hero panel
     local cref
-    if GW.settings.USE_CHARACTER_WINDOW then
+    if GW.settings.windows.character.enabled then
         --IsProtected()
         cref = CreateFrame("Button", "GwCharacterMicroButton", mbf,  "SecureHandlerClickTemplate")
         if GW.Retail then
@@ -1135,7 +1135,7 @@ local function setupMicroButtons(mbf)
     -- SpellbookMicroButton
     if GW.Retail then
         SetSlotButton("spellbook", PlayerSpellsMicroButton)
-    elseif GW.settings.USE_SPELLBOOK_WINDOW then
+    elseif GW.settings.windows.spellbook.enabled then
         local sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, "SecureHandlerClickTemplate")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
@@ -1161,7 +1161,7 @@ local function setupMicroButtons(mbf)
 
     -- TalentMicroButton (none retail)
     if not GW.Retail then
-        if GW.settings.USE_TALENT_WINDOW then
+        if GW.settings.windows.talent.enabled then
             local tref = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate")
             tref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
             tref.newbieText = NEWBIE_TOOLTIP_TALENTS
@@ -1269,7 +1269,7 @@ local function setupMicroButtons(mbf)
         end)
 
         --ProfessionMicroButton
-        if GW.settings.USE_PROFESSION_WINDOW then
+        if GW.settings.windows.profession.enabled then
             local pref = CreateFrame("Button", "GwProfessionMicroButton", mbf, "SecureHandlerClickTemplate")
             Mixin(pref, MainMenuBarMicroButtonMixin)
             pref.tooltipText = MicroButtonTooltipText(PROFESSIONS_BUTTON, "TOGGLEPROFESSIONBOOK")
@@ -1301,7 +1301,7 @@ local function setupMicroButtons(mbf)
         CollectionsMicroButton:HookScript("OnEnter", GW.Collections_OnEnter)
 
         -- PVPMicroButton
-        if GW.Wrath and GW.settings.USE_CHARACTER_WINDOW then
+        if GW.Wrath and GW.settings.windows.character.enabled then
             local pvpref = CreateFrame("Button", "GwPvpMicroButton", mbf, "SecureHandlerClickTemplate")
             pvpref.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4")
             pvpref.newbieText = NEWBIE_TOOLTIP_PVP
@@ -1639,7 +1639,7 @@ local function LoadMicroMenu()
         UpdateMicroBarOrientation()
         LayoutMicroButtons()
     end
-    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "Blizzard,Widgets", nil, {GW.MoverOption.Scale}, nil, postDragFunction)
+    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "micromenu", "Blizzard,Widgets", nil, {GW.MoverOption.Scale}, nil, postDragFunction)
     mbf:SetPoint("TOPLEFT", mbf.gwMover)
     UpdateMicroBarOrientation() -- now with the position: the art corner follows the screen half
 

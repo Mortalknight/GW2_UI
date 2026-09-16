@@ -21,7 +21,7 @@ local function DeathRecapScrollUpdateChild(child)
 end
 
 local function SkinDeathRecapFrame_Loaded()
-    if not GW.settings.DEATHRECAPFRAME_SKIN_ENABLED then return end
+    if not GW.settings.skins.deathRecap.enabled then return end
 
     DeathRecapFrame.CloseButton:GwSkinButton(false, true)
     DeathRecapFrame.CloseXButton:GwSkinButton(true)

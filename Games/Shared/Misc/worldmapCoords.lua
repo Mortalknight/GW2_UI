@@ -5,13 +5,13 @@ local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")
 
 local function UpdateSettings()
     -- set the position and toggle the frame
-    local pos = GW.settings.WORLDMAP_COORDS_POSITION
-    local xOff = GW.settings.WORLDMAP_COORDS_X_OFFSET
-    local yOff = GW.settings.WORLDMAP_COORDS_Y_OFFSET
+    local pos = GW.settings.worldmap.coords.position
+    local xOff = GW.settings.worldmap.coords.offsetX
+    local yOff = GW.settings.worldmap.coords.offsetY
     CoordsFrame.Coords:ClearAllPoints()
     CoordsFrame.Coords:SetPoint(pos, WorldMapFrame.ScrollContainer, pos, xOff, yOff)
 
-    if GW.settings.WORLDMAP_COORDS_TOGGLE then
+    if GW.settings.worldmap.coords.enabled then
         CoordsFrame:Show()
     else
         CoordsFrame:Hide()
@@ -50,7 +50,7 @@ local function AddCoordsToWorldMap()
     CoordsFrame.Coords:SetFontObject(Number12Font)
 
     WorldMapFrame:HookScript("OnShow", function()
-        if GW.settings.WORLDMAP_COORDS_TOGGLE and not ticker then
+        if GW.settings.worldmap.coords.enabled and not ticker then
             UpdateCoords()
             ticker = C_Timer.NewTicker(0.2, UpdateCoords)
         end

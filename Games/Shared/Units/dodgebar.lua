@@ -72,7 +72,7 @@ end
 -- Countdown on the classic clients, where the cooldown values are plain numbers
 local function ClassicCountdown_OnUpdate(self)
     local remaining = (self.gwNextChargeAt or 0) - GetTime()
-    if remaining <= 0 or not GW.settings.DODGEBAR_COOLDOWN_TEXT then
+    if remaining <= 0 or not GW.settings.hud.dodgeBar.cooldownText then
         self:SetScript("OnUpdate", nil)
         self.cooldownText:SetText("")
         return
@@ -114,7 +114,7 @@ end
 
 -- Retail: hands the cooldown to the engine binding that writes the countdown text
 function GwDodgeBarMixin:SetCountdownBinding(durationObject)
-    local show = durationObject ~= nil and GW.settings.DODGEBAR_COOLDOWN_TEXT and true or false
+    local show = durationObject ~= nil and GW.settings.hud.dodgeBar.cooldownText and true or false
 
     if show then
         self.chargeCountdown:SetDuration(durationObject)
@@ -194,8 +194,8 @@ function GwDodgeBarMixin:UpdateAnim(start, duration, charges, maxCharges)
 
     if self.cooldownText then
         self.gwNextChargeAt = start + duration
-        self:UpdateBarText(maxCharges > 1, charges, GW.settings.DODGEBAR_COOLDOWN_TEXT)
-        if GW.settings.DODGEBAR_COOLDOWN_TEXT then
+        self:UpdateBarText(maxCharges > 1, charges, GW.settings.hud.dodgeBar.cooldownText)
+        if GW.settings.hud.dodgeBar.cooldownText then
             self:SetScript("OnUpdate", ClassicCountdown_OnUpdate)
         end
     end
@@ -518,7 +518,7 @@ end
 
 function GwDodgeBarMixin:ToggleSkyridingBar()
     if not self.skyridingBar then return end
-    if GW.settings.showSkyridingbar then
+    if GW.settings.hud.skyridingBar then
         self.skyridingBar:RegisterEvent("SPELL_UPDATE_CHARGES")
         self.skyridingBar:SetScript("OnEvent", self.skyridingBar.OnEvent)
 
@@ -526,7 +526,7 @@ function GwDodgeBarMixin:ToggleSkyridingBar()
             self.skyridingBar:UpdateSkyridingBarState(...)
         end, self.skyridingBar)
 
-        if GW.settings.showDodgebar then
+        if GW.settings.hud.dodgeBar.enabled then
             self.skyridingBar.arcfill.maskr_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
             self.skyridingBar.arcfill.maskr_fraction:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
             self.skyridingBar.arcfill.mask_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
@@ -583,8 +583,8 @@ function GwDodgeBarMixin:LoadSkyridingBar(parent)
         fmdb.border:SetSize(80, 72)
         fmdb:SetPoint("TOP", parent.portraitAnchor, "TOP", 0.7, 12)
         fmdb:SetFrameStrata("BACKGROUND")
-        fmdb:SetScale(GW.settings.player_pos_scale)
-        parent:HookScript("OnSizeChanged", function() fmdb:SetScale(GW.settings.player_pos_scale) end)
+        fmdb:SetScale(GW.settings.unitframes.player.scale)
+        parent:HookScript("OnSizeChanged", function() fmdb:SetScale(GW.settings.unitframes.player.scale) end)
         hooksecurefunc(parent, "SetAlpha", function(_, value) fmdb:SetAlpha(value) end)
     else
         fmdb:SetPoint("CENTER", parent, "CENTER", 0, 41)
@@ -626,7 +626,7 @@ function GwDodgeBarMixin:LoadSkyridingBar(parent)
 end
 
 function GwDodgeBarMixin:ToggleDodgeBar()
-    if GW.settings.showDodgebar then
+    if GW.settings.hud.dodgeBar.enabled then
         self:SetScript("OnEnter", self.OnEnter)
         self:SetScript("OnLeave", self.OnLeave)
         self:SetScript("OnEvent", self.OnEvent)
@@ -670,8 +670,8 @@ local function LoadDodgeBar(parent, asTargetFrame)
         fmdb.border:SetSize(80, 72)
         fmdb:SetPoint("TOP", parent.portraitAnchor, "TOP", 0.7, 12)
         fmdb:SetFrameStrata("BACKGROUND")
-        fmdb:SetScale(GW.settings.player_pos_scale)
-        parent:HookScript("OnSizeChanged", function() fmdb:SetScale(GW.settings.player_pos_scale) end)
+        fmdb:SetScale(GW.settings.unitframes.player.scale)
+        parent:HookScript("OnSizeChanged", function() fmdb:SetScale(GW.settings.unitframes.player.scale) end)
         hooksecurefunc(parent, "SetAlpha", function(_, value) fmdb:SetAlpha(value) end)
     else
         fmdb:SetPoint("CENTER", parent, "CENTER", 0, 41)

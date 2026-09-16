@@ -19,11 +19,11 @@ end
 function GW.UpdateHotkey(self)
     local hotkey = self.HotKey
     local text = hotkey:GetText()
-    local shouldShow = GW.settings.BUTTON_ASSIGNMENTS
+    local shouldShow = GW.settings.actionbars.buttonAssignments
     local hasText = text and text ~= RANGE_INDICATOR
 
     if shouldShow then
-        if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY then
+        if GW.settings.actionbars.buttonAssignmentsUsedOnly then
             shouldShow = self.gw_HasAction and hasText
         end
     end

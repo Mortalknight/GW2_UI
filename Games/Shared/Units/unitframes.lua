@@ -517,7 +517,7 @@ end
 
 function GwUnitFrameMixin:SelectPvp()
     local prevFlag = self.pvp.pvpFlag
-    if GW.settings.PLAYER_SHOW_PVP_INDICATOR and ((GW.Retail and C_PvP.IsWarModeDesired()) or GetPVPDesired() or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
+    if GW.settings.unitframes.player.pvpIndicator and ((GW.Retail and C_PvP.IsWarModeDesired()) or GetPVPDesired() or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
         self.pvp.pvpFlag = true
         if prevFlag ~= true then
             if GW.myfaction == "Horde" then
@@ -881,7 +881,7 @@ function GwUnitFrameMixin:ApplyAuraSettings(unit)
     unit = unit or self.gwUnit:lower()
     local cfg = self.aurasContainer.gwConfig
     local debuffCfg = self.debuffsContainer.gwConfig
-    local buffFilter = GW.settings[unit .. "_Buff_Filter"]
+    local buffFilter = GW.settings.unitframes[unit].buffFilter
 
     -- growth direction: inverted frames grow to the left, "auras on top" grows upward
     -- (the auras frame extends DOWNWARD from its anchor, so when growing up the
@@ -916,14 +916,14 @@ function GwUnitFrameMixin:ApplyAuraSettings(unit)
     -- filters/sizes/sort/ignore list (triggers the layout — growth fields above
     -- have to be in place already)
     GW.ApplyAuraContainerSettings(self.aurasContainer, self.debuffsContainer, {
-        smallSize = GW.settings[unit .. "AuraSmallSize"],
-        bigSize = GW.settings[unit .. "AuraBigSize"],
+        smallSize = GW.settings.unitframes[unit].auraSmallSize,
+        bigSize = GW.settings.unitframes[unit].auraBigSize,
         buffFilter = buffFilter,
-        debuffFilter = GW.settings[unit .. "_Debuff_Filter"],
-        buffAdvanced = GW.settings[unit .. "_Buff_Filter_advanced"],
-        debuffAdvanced = GW.settings[unit .. "_Debuff_Filter_advanced"],
-        sort = GW.settings[unit .. "_AURA_SORT"],
-        excludeSpellIDs = GW.settings[unit .. "_IGNORED_AURAS"],
+        debuffFilter = GW.settings.unitframes[unit].debuffFilter,
+        buffAdvanced = GW.settings.unitframes[unit].buffFilterAdvanced,
+        debuffAdvanced = GW.settings.unitframes[unit].debuffFilterAdvanced,
+        sort = GW.settings.unitframes[unit].auraSort,
+        excludeSpellIDs = GW.settings.unitframes[unit].ignoredAuras,
     })
 end
 
@@ -931,7 +931,7 @@ function GwUnitFrameMixin:ToggleSettings()
     local unit = self.gwUnit:lower()
 
     -- statusbar texture
-    local textureKey =  GW.settings[unit .. "FrameHealthBarTexture"]
+    local textureKey =  GW.settings.unitframes[unit].healthBarTexture
     if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
         self.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
         self.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
@@ -949,39 +949,39 @@ function GwUnitFrameMixin:ToggleSettings()
         self.absorbbg:SetStatusBarColor(248/255, 232/255, 159/255, 0.66)
     end
 
-    self.classColor = GW.settings[unit .. "_CLASS_COLOR"]
-    self.showHealthValue = GW.settings[unit .. "_HEALTH_VALUE_ENABLED"]
-    self.showHealthPrecentage = GW.settings[unit .. "_HEALTH_VALUE_TYPE"]
-    self.showCastbar = GW.settings[unit .. "_SHOW_CASTBAR"]
-    self.showAbsorbBar = GW.settings[unit .. "_SHOW_ABSORB_BAR"]
+    self.classColor = GW.settings.unitframes[unit].classColor
+    self.showHealthValue = GW.settings.unitframes[unit].healthValue
+    self.showHealthPrecentage = GW.settings.unitframes[unit].healthValueType
+    self.showCastbar = GW.settings.unitframes[unit].showCastbar
+    self.showAbsorbBar = GW.settings.unitframes[unit].showAbsorbBar
 
-    self.showCastingbarName = GW.settings[unit .. "_CASTINGBAR_SHOW_NAME"]
-    self.showCastingbarTimer = GW.settings[unit .. "_CASTINGBAR_SHOW_TIMER"]
+    self.showCastingbarName = GW.settings.unitframes[unit].castingbarShowName
+    self.showCastingbarTimer = GW.settings.unitframes[unit].castingbarShowTimer
 
-    self.displayBuffs = GW.settings[unit .. "_Buff_Filter"] == "none" and 0 or 32
-    self.auras.buffFilter = GW.settings[unit .. "_Buff_Filter"]
-    self.auras.buffAdvancedFilters = GW.settings[unit .. "_Buff_Filter_advanced"]
+    self.displayBuffs = GW.settings.unitframes[unit].buffFilter == "none" and 0 or 32
+    self.auras.buffFilter = GW.settings.unitframes[unit].buffFilter
+    self.auras.buffAdvancedFilters = GW.settings.unitframes[unit].buffFilterAdvanced
 
-    self.displayDebuffs = GW.settings[unit .. "_Debuff_Filter"] == "none" and 0 or 40
-    self.auras.debuffFilter = GW.settings[unit .. "_Debuff_Filter"]
-    self.auras.debuffAdvancedFilters = GW.settings[unit .. "_Debuff_Filter_advanced"]
+    self.displayDebuffs = GW.settings.unitframes[unit].debuffFilter == "none" and 0 or 40
+    self.auras.debuffFilter = GW.settings.unitframes[unit].debuffFilter
+    self.auras.debuffAdvancedFilters = GW.settings.unitframes[unit].debuffFilterAdvanced
     GW.UpdateFilters(self.auras)
 
-    self.auras.smallSize = GW.settings[unit .. "AuraSmallSize"]
-    self.auras.bigSize = GW.settings[unit .. "AuraBigSize"]
-    self.auras.ignoredAuraSpellIDs = GW.settings[unit .. "_IGNORED_AURAS"] -- Classic engine; Retail runs via container excludeSpellIDs
+    self.auras.smallSize = GW.settings.unitframes[unit].auraSmallSize
+    self.auras.bigSize = GW.settings.unitframes[unit].auraBigSize
+    self.auras.ignoredAuraSpellIDs = GW.settings.unitframes[unit].ignoredAuras -- Classic engine; Retail runs via container excludeSpellIDs
 
-    self.shortendHealthValues = GW.settings[unit .. "_SHORT_VALUES"]
+    self.shortendHealthValues = GW.settings.unitframes[unit].shortValues
 
-    self.showItemLevel = GW.settings[unit .. "_ILVL"]
+    self.showItemLevel = GW.settings.unitframes[unit].itemLevel
 
-    if GW.settings[unit .. "_THREAT_VALUE_ENABLED"] ~= nil then
-        self.showThreat = GW.settings[unit .. "_THREAT_VALUE_ENABLED"]
+    if GW.settings.unitframes[unit].threatValue ~= nil then
+        self.showThreat = GW.settings.unitframes[unit].threatValue
     end
 
-    self.auraPositionTop = GW.settings[unit .. "_AURAS_ON_TOP"]
+    self.auraPositionTop = GW.settings.unitframes[unit].aurasOnTop
 
-    self.backgroundOverlay:SetShown(GW.settings[unit .. "_FRAME_ALT_BACKGROUND"])
+    self.backgroundOverlay:SetShown(GW.settings.unitframes[unit].altBackground)
 
     self.auras:ClearAllPoints()
     if self.auraPositionTop then
@@ -991,7 +991,7 @@ function GwUnitFrameMixin:ToggleSettings()
             self.auras:SetPoint("TOPLEFT", self.nameString, "TOPLEFT", 2, 17)
         end
     else
-        local comboOffset = (GW.settings[unit .. "_HOOK_COMBOPOINTS"] and (GW.myClassID == 4 or GW.myClassID == 11) and -23) or -15
+        local comboOffset = (GW.settings.unitframes[unit].hookComboPoints and (GW.myClassID == 4 or GW.myClassID == 11) and -23) or -15
         if self.frameInvert then
             self.auras:SetPoint("TOPRIGHT", self.castingbarBackground, "BOTTOMRIGHT", 2, comboOffset)
         else
@@ -999,14 +999,14 @@ function GwUnitFrameMixin:ToggleSettings()
         end
     end
 
-    self:SetScale(GW.settings[self.gwUnit .. "_pos_scale"])
-    self.castingbarBackground:SetWidth(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width)
-    self.castingbarNormal:SetWidth(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width)
+    self:SetScale(GW.settings.unitframes[self.gwUnit].scale)
+    self.castingbarBackground:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
+    self.castingbarNormal:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
     if self.castingbar then
-        self.castingbar:SetWidth(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width)
+        self.castingbar:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
     end
-    self.healthContainer:SetSize(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width, GW.settings[self.gwUnit .. "FrameHealthBarSize"].height)
-    self.powerbarContainer:SetSize(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width, GW.settings[self.gwUnit .. "FramePowerBarSize"].height) --width is shared
+    self.healthContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].healthBarSize.height)
+    self.powerbarContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].powerBarSize.height) --width is shared
 
     local powerHeight = self.powerbarContainer:GetHeight()
     local yOffset = (powerHeight + 1) / 2
@@ -1035,11 +1035,11 @@ function GwUnitFrameMixin:ToggleSettings()
 
     self.healthString:ClearAllPoints()
     if self.frameInvert then
-        self.healthString:SetPoint("RIGHT", self.health, "RIGHT", GW.settings[self.gwUnit .. "FrameHealthBarTextOffset"].x, GW.settings[self.gwUnit .. "FrameHealthBarTextOffset"].y)
+        self.healthString:SetPoint("RIGHT", self.health, "RIGHT", GW.settings.unitframes[self.gwUnit].healthBarTextOffset.x, GW.settings.unitframes[self.gwUnit].healthBarTextOffset.y)
     else
-        self.healthString:SetPoint("LEFT", self.health, "LEFT", GW.settings[self.gwUnit .. "FrameHealthBarTextOffset"].x, GW.settings[self.gwUnit .. "FrameHealthBarTextOffset"].y)
+        self.healthString:SetPoint("LEFT", self.health, "LEFT", GW.settings.unitframes[self.gwUnit].healthBarTextOffset.x, GW.settings.unitframes[self.gwUnit].healthBarTextOffset.y)
     end
-    self.nameString:SetWidth(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width - 15)
+    self.nameString:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width - 15)
 
     self:SetHeight(40 + self.healthContainer:GetHeight() + self.powerbarContainer:GetHeight())
     self:SetWidth(90 + self.healthContainer:GetWidth())
@@ -1054,7 +1054,7 @@ function GwUnitFrameMixin:ToggleSettings()
     self:OnEvent("FORCE_UPDATE")
 
     --frame fader
-    local frameFaderSettings = GW.settings[unit .. "FrameFader"]
+    local frameFaderSettings = GW.settings.unitframes[unit].fader
     if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget or frameFaderSettings.unittarget then
         GW.FrameFadeEnable(self)
         self.Fader:SetOption("Hover", frameFaderSettings.hover)
@@ -1085,7 +1085,7 @@ function GwUnitFrameMixin:ToggleSettings()
 end
 
 function GwUnitFrameMixin:ToggleTargetFrameCombatFeedback()
-    if GW.settings.target_FLOATING_COMBAT_TEXT then
+    if GW.settings.unitframes.target.floatingCombatText then
         self:RegisterEvent("UNIT_COMBAT")
         self:SetScript("OnUpdate", CombatFeedback_OnUpdate)
     else
@@ -1110,8 +1110,8 @@ local function LoadUnitFrame(unit, frameInvert)
         unitframe.aurasContainer = GW.CreateUnitAuraContainer({
             name = "Gw" .. unit .. "AuraContainer",
             unit = unit,
-            pandemicEnabled = function() return GW.settings[unit .. "_PANDEMIC_HIGHLIGHT"] end,
-            dispelIconEnabled = function() return GW.settings[unit .. "_DISPEL_ICON"] end,
+            pandemicEnabled = function() return GW.settings.unitframes[unit].pandemicHighlight end,
+            dispelIconEnabled = function() return GW.settings.unitframes[unit].dispelIcon end,
             parent = unitframe,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             refreshEvents = refreshEvents,
@@ -1132,8 +1132,8 @@ local function LoadUnitFrame(unit, frameInvert)
         unitframe.debuffsContainer = GW.CreateUnitAuraContainer({
             name = "Gw" .. unit .. "DebuffContainer",
             unit = unit,
-            pandemicEnabled = function() return GW.settings[unit .. "_PANDEMIC_HIGHLIGHT"] end,
-            dispelIconEnabled = function() return GW.settings[unit .. "_DISPEL_ICON"] end,
+            pandemicEnabled = function() return GW.settings.unitframes[unit].pandemicHighlight end,
+            dispelIconEnabled = function() return GW.settings.unitframes[unit].dispelIcon end,
             parent = unitframe,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             refreshEvents = refreshEvents,
@@ -1147,7 +1147,7 @@ local function LoadUnitFrame(unit, frameInvert)
         LoadAuras(unitframe)
     end
 
-    RegisterMovableFrame(unitframe, unit == "target" and TARGET or FOCUS, unit .. "_pos", "Unitframe")
+    RegisterMovableFrame(unitframe, unit == "target" and TARGET or FOCUS, "unitframes." .. unit, "Unitframe")
 
     unitframe:ClearAllPoints()
     unitframe:SetPoint("CENTER", unitframe.gwMover, "CENTER")
@@ -1255,12 +1255,12 @@ function GwTargetUnitFrameMixin:OnUpdate(elapsed)
 end
 
 function GwTargetUnitFrameMixin:ToggleSettings()
-    self.classColor = GW.settings[self.parentUnitId .. "_CLASS_COLOR"]
-    self.showCastbar = GW.settings[self.parentUnitId .. "_TARGET_SHOW_CASTBAR"]
-    self.showAbsorbBar = GW.settings[self.parentUnitId .. "_TARGET_SHOW_ABSORB_BAR"]
+    self.classColor = GW.settings.unitframes[self.parentUnitId].classColor
+    self.showCastbar = GW.settings.unitframes[self.gwUnit].showCastbar
+    self.showAbsorbBar = GW.settings.unitframes[self.gwUnit].showAbsorbBar
 
     -- statusbar texture
-    local textureKey =  GW.settings[self.gwUnit .. "FrameHealthBarTexture"]
+    local textureKey =  GW.settings.unitframes[self.gwUnit].healthBarTexture
     if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
         self.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
         self.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
@@ -1278,9 +1278,9 @@ function GwTargetUnitFrameMixin:ToggleSettings()
         self.absorbbg:SetStatusBarColor(248/255, 232/255, 159/255, 0.66)
     end
 
-    self.backgroundOverlay:SetShown(GW.settings[self.parentUnitId .. "_FRAME_ALT_BACKGROUND"])
+    self.backgroundOverlay:SetShown(GW.settings.unitframes[self.parentUnitId].altBackground)
 
-    local frameFaderSettings = GW.settings[self.gwUnit .. "FrameFader"]
+    local frameFaderSettings = GW.settings.unitframes[self.gwUnit].fader
     if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget or frameFaderSettings.unittarget then
         GW.FrameFadeEnable(self)
         self.Fader:SetOption("Hover", frameFaderSettings.hover)
@@ -1301,13 +1301,13 @@ function GwTargetUnitFrameMixin:ToggleSettings()
         GW.FrameFadeDisable(self)
     end
 
-    self:SetScale(GW.settings[self.gwUnit .. "_pos_scale"])
-    self.healthContainer:SetSize(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width, GW.settings[self.gwUnit .. "FrameHealthBarSize"].height)
-    self.powerbarContainer:SetSize(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width, GW.settings[self.gwUnit .. "FramePowerBarSize"].height) -- width is shared
-    self.castingbarBackground:SetWidth(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width)
-    self.castingbarNormal:SetWidth(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width)
+    self:SetScale(GW.settings.unitframes[self.gwUnit].scale)
+    self.healthContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].healthBarSize.height)
+    self.powerbarContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].powerBarSize.height) -- width is shared
+    self.castingbarBackground:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
+    self.castingbarNormal:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
     if self.castingbar then
-        self.castingbar:SetWidth(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width)
+        self.castingbar:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
     end
 
     local powerHeight = self.powerbarContainer:GetHeight()
@@ -1334,13 +1334,13 @@ function GwTargetUnitFrameMixin:ToggleSettings()
     self:SetHeight(40 + self.healthContainer:GetHeight() + self.powerbarContainer:GetHeight())
     self:SetWidth(self.healthContainer:GetWidth() + 2)
 
-    self.nameString:SetWidth(GW.settings[self.gwUnit .. "FrameHealthBarSize"].width - 15)
+    self.nameString:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width - 15)
 
     self.parentUnitFrame:OnEvent("FORCE_UPDATE")
 end
 
 function GwTargetUnitFrameMixin:ToggleUnitFrame()
-    if GW.settings[self.parentUnitId .. "_TARGET_ENABLED"] then
+    if GW.settings.unitframes[self.gwUnit].enabled then
         self:SetScript("OnUpdate", self.OnUpdate)
         RegisterUnitWatch(self)
     else
@@ -1361,7 +1361,7 @@ local function LoadTargetOfUnit(unit, parentUnitFrame)
 
     f.castingbarNormal.Pips = {}
 
-    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "Unitframe")
+    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, "unitframes." .. unitID, "Unitframe")
 
     f:ClearAllPoints()
     f:SetPoint("LEFT", f.gwMover)

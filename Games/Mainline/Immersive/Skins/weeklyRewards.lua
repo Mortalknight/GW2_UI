@@ -177,7 +177,7 @@ local function ReplaceIconString(self, text)
 end
 
 local function ApplyWeeklyRewardsSkin()
-    if not GW.settings.WEEKLY_REWARDS_SKIN_ENABLED then return end
+    if not GW.settings.skins.weeklyRewards.enabled then return end
 
     WeeklyRewardsFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(WeeklyRewardsFrame, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {WeeklyRewardsFrame}, nil, false, true)

@@ -167,7 +167,7 @@ function GwObjectivesArenaContainerMixin:UpdateArenaFrameHeight()
 end
 
 function GwObjectivesArenaContainerMixin:SetUpFramePosition()
-    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
+    local yOffset = GW.settings.objectives.compass and 70 or 0
 
     for idx, frame in pairs(arenaFrames) do
         local p = yOffset + ((48 * idx) - 48)

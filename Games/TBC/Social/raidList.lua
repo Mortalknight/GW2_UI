@@ -116,7 +116,7 @@ function GW.SkinRaidList()
     RaidFrameConvertToRaidButton:GwSkinButton(false, true)
     RaidFrameRaidInfoButton:GwSkinButton(false, true)
     RaidFrameRaidInfoButton:SetPoint("TOPRIGHT", -7, -33)
-    if GW.settings.USE_CHARACTER_WINDOW and (GW.Retail or GW.Mists) then
+    if GW.settings.windows.character.enabled and (GW.Retail or GW.Mists) then
         RaidFrameRaidInfoButton:SetScript("OnClick", function()
             if InCombatLockdown() then return end
             if GwCharacterCurrencyRaidInfoFrame.RaidLocks:IsVisible() then

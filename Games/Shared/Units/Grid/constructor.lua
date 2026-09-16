@@ -6,28 +6,28 @@ local headers = {}
 GW.GridGroupHeaders = headers
 
 local profiles = {
-    PARTY = {
+    party = {
         name = "Party",
         visibility = "[@raid1,exists][@party1,noexists] hide;show",
         numGroups = 1,
         styleFunc = GW.GridPartyStyleRegister,
         updateFunc = GW.UpdateGridPartyFrame
     },
-    PARTY_PET = {
+    partyPet = {
         name = "PartyPet",
         visibility = "[@raid1,exists][@party1,noexists] hide;show",
         numGroups = 1,
         styleFunc = GW.GridPartyPetStyleRegister,
         updateFunc = GW.UpdateGridPartyPetFrame
     },
-    RAID_PET = {
+    raidPet = {
         name = "RaidPet",
         visibility = "[@raid1,exists] show; hide",
         numGroups = 8,
         styleFunc = GW.GridRaidPetStyleRegister,
         updateFunc = GW.UpdateGridRaidPetFrame
     },
-    RAID40 = {
+    raid40 = {
         name = "Raid40",
         size = 40,
         visibility = "[@raid26,noexists] hide; show", -- fallback only, see BuildRaidGridVisibility
@@ -35,7 +35,7 @@ local profiles = {
         styleFunc = GW.GridRaid40StyleRegister,
         updateFunc = GW.UpdateGridRaid40Frame
     },
-    RAID25 = {
+    raid25 = {
         name = "Raid25",
         size = 25,
         visibility = "[@raid11,noexists][@raid26,exists] hide;show", -- fallback only, see BuildRaidGridVisibility
@@ -43,7 +43,7 @@ local profiles = {
         styleFunc = GW.GridRaid25StyleRegister,
         updateFunc = GW.UpdateGridRaid25Frame
     },
-    RAID10 = {
+    raid10 = {
         name = "Raid10",
         size = 10,
         visibility = "[@raid1,noexists][@raid11,exists] hide;show",
@@ -51,7 +51,7 @@ local profiles = {
         styleFunc = GW.GridRaid10StyleRegister,
         updateFunc = GW.UpdateGridRaid10Frame
     },
-    TANK = {
+    maintank = {
         name = "Maintank",
         visibility = "[group:raid] show; hide",
         numGroups = 1,
@@ -127,194 +127,21 @@ local DIRECTION_TO_GROUP_ANCHOR_POINT = {
 	["OUT+DOWN+LEFT"] = "RIGHT",
 }
 
-local settings = {
-    enabled = {},
-    groupSpacing = {},
-    horizontalSpacing = {},
-    verticalSpacing = {},
-    raidWidth = {},
-    raidHeight = {},
-    startFromCenter = {},
-    raidGrow = {},
-    groupsPerColumnRow = {},
-    raidWideSorting = {},
-    groupBy = {},
-    sortDirection = {},
-    sortMethod = {},
-    classSortOrder = {}
-}
-GW.GridSettings = settings
-
 local settingsEventFrame = CreateFrame("Frame")
 local pendingProfiles = {}
 
--- Maps the grid profile keys to their GW.settings keys. ApplySettings pushes the
--- values into GW.GridSettings; "enabled" additionally gates header/child creation.
-local SETTINGS_HELPER_MAP = {
-    enabled = {
-        PARTY = "RAID_STYLE_PARTY",
-        PARTY_PET = "PARTY_PET_FRAMES_ENABLED",
-        RAID_PET = "RAID_PET_FRAMES",
-        RAID40 = "RAID40_ENABLED",
-        RAID25 = "RAID25_ENABLED",
-        RAID10 = "RAID10_ENABLED",
-        TANK = "RAID_MAINTANK_FRAMES_ENABLED",
-    },
-    horizontalSpacing = {
-        PARTY = "RAID_UNITS_HORIZONTAL_SPACING_PARTY",
-        PARTY_PET = "PARTY_UNITS_HORIZONTAL_SPACING_PET",
-        RAID_PET = "RAID_UNITS_HORIZONTAL_SPACING_PET",
-        RAID40 = "RAID_UNITS_HORIZONTAL_SPACING",
-        RAID25 = "RAID_UNITS_HORIZONTAL_SPACING_RAID25",
-        RAID10 = "RAID_UNITS_HORIZONTAL_SPACING_RAID10",
-        TANK = "RAID_UNITS_HORIZONTAL_SPACING_TANK",
-    },
-    verticalSpacing = {
-        PARTY = "RAID_UNITS_VERTICAL_SPACING_PARTY",
-        PARTY_PET = "PARTY_UNITS_VERTICAL_SPACING_PET",
-        RAID_PET = "RAID_UNITS_VERTICAL_SPACING_PET",
-        RAID40 = "RAID_UNITS_VERTICAL_SPACING",
-        RAID25 = "RAID_UNITS_VERTICAL_SPACING_RAID25",
-        RAID10 = "RAID_UNITS_VERTICAL_SPACING_RAID10",
-        TANK = "RAID_UNITS_VERTICAL_SPACING_TANK",
-    },
-    groupSpacing = {
-        PARTY = "RAID_UNITS_GROUP_SPACING_PARTY",
-        PARTY_PET = "PARTY_UNITS_GROUP_SPACING_PET",
-        RAID_PET = "RAID_UNITS_GROUP_SPACING_PET",
-        RAID40 = "RAID_UNITS_GROUP_SPACING",
-        RAID25 = "RAID_UNITS_GROUP_SPACING_RAID25",
-        RAID10 = "RAID_UNITS_GROUP_SPACING_RAID10",
-        TANK = "RAID_UNITS_GROUP_SPACING_TANK",
-    },
-    raidWidth = {
-        PARTY = "RAID_WIDTH_PARTY",
-        PARTY_PET = "PARTY_WIDTH_PET",
-        RAID_PET = "RAID_WIDTH_PET",
-        RAID40 = "RAID_WIDTH",
-        RAID25 = "RAID_WIDTH_RAID25",
-        RAID10 = "RAID_WIDTH_RAID10",
-        TANK = "RAID_WIDTH_TANK",
-    },
-    raidHeight = {
-        PARTY = "RAID_HEIGHT_PARTY",
-        PARTY_PET = "PARTY_HEIGHT_PET",
-        RAID_PET = "RAID_HEIGHT_PET",
-        RAID40 = "RAID_HEIGHT",
-        RAID25 = "RAID_HEIGHT_RAID25",
-        RAID10 = "RAID_HEIGHT_RAID10",
-        TANK = "RAID_HEIGHT_TANK",
-    },
-    startFromCenter = {
-        PARTY = "UNITFRAME_ANCHOR_FROM_CENTER_PARTY",
-        PARTY_PET = "PARTY_PET_UNITFRAME_ANCHOR_FROM_CENTER",
-        RAID_PET = "UNITFRAME_ANCHOR_FROM_CENTER_PET",
-        RAID40 = "UNITFRAME_ANCHOR_FROM_CENTER",
-        RAID25 = "UNITFRAME_ANCHOR_FROM_CENTER_RAID25",
-        RAID10 = "UNITFRAME_ANCHOR_FROM_CENTER_RAID10",
-        TANK = "UNITFRAME_ANCHOR_FROM_CENTER_TANK",
-    },
-    raidGrow = {
-        PARTY = "RAID_GROW_PARTY",
-        PARTY_PET = "PARTY_GROW_PET",
-        RAID_PET = "RAID_GROW_PET",
-        RAID40 = "RAID_GROW",
-        RAID25 = "RAID_GROW_RAID25",
-        RAID10 = "RAID_GROW_RAID10",
-        TANK = "RAID_GROW_TANK",
-    },
-    groupsPerColumnRow = {
-        PARTY = "RAID_GROUPS_PER_COLUMN_PARTY",
-        PARTY_PET = "PARTY_GROUPS_PER_COLUMN_PET",
-        RAID_PET = "RAID_GROUPS_PER_COLUMN_PET",
-        RAID40 = "RAID_GROUPS_PER_COLUMN",
-        RAID25 = "RAID_GROUPS_PER_COLUMN_RAID25",
-        RAID10 = "RAID_GROUPS_PER_COLUMN_RAID10",
-        TANK = "RAID_GROUPS_PER_COLUMN_TANK",
-    },
-    raidWideSorting = {
-        PARTY = "RAID_WIDE_SORTING_PARTY",
-        PARTY_PET = "PARTY_WIDE_SORTING_PET",
-        RAID_PET = "RAID_WIDE_SORTING_PET",
-        RAID40 = "RAID_WIDE_SORTING",
-        RAID25 = "RAID_WIDE_SORTING_RAID25",
-        RAID10 = "RAID_WIDE_SORTING_RAID10",
-        TANK = "RAID_WIDE_SORTING_TANK",
-    },
-    groupBy = {
-        PARTY = "RAID_GROUP_BY_PARTY",
-        PARTY_PET = "PARTY_GROUP_BY_PET",
-        RAID_PET = "RAID_GROUP_BY_PET",
-        RAID40 = "RAID_GROUP_BY",
-        RAID25 = "RAID_GROUP_BY_RAID25",
-        RAID10 = "RAID_GROUP_BY_RAID10",
-        TANK = "RAID_GROUP_BY_TANK",
-    },
-    sortDirection = {
-        PARTY = "RAID_SORT_DIRECTION_PARTY",
-        PARTY_PET = "PARTY_SORT_DIRECTION_PET",
-        RAID_PET = "RAID_SORT_DIRECTION_PET",
-        RAID40 = "RAID_SORT_DIRECTION",
-        RAID25 = "RAID_SORT_DIRECTION_RAID25",
-        RAID10 = "RAID_SORT_DIRECTION_RAID10",
-        TANK = "RAID_SORT_DIRECTION_TANK",
-    },
-    sortMethod = {
-        PARTY = "RAID_RAID_SORT_METHOD_PARTY",
-        PARTY_PET = "PARTY_RAID_SORT_METHOD_PET",
-        RAID_PET = "RAID_RAID_SORT_METHOD_PET",
-        RAID40 = "RAID_RAID_SORT_METHOD",
-        RAID25 = "RAID_RAID_SORT_METHOD_RAID25",
-        RAID10 = "RAID_RAID_SORT_METHOD_RAID10",
-        TANK = "RAID_RAID_SORT_METHOD_TANK",
-    },
-    classSortOrder  = {
-        PARTY = "PartyGroupByClassOrder",
-        PARTY_PET = "PartyPetGroupByClassOrder",
-        RAID_PET = "PetGroupByClassOrder",
-        RAID40 = "Raid40GroupByClassOrder",
-        RAID25 = "Raid25GroupByClassOrder",
-        RAID10 = "Raid10GroupByClassOrder",
-        TANK = "MaintankGroupByClassOrder",
-    },
-}
-
-local SETTINGS_HELPER_TONUMBER = {
-    raidWidth = true,
-    raidHeight = true,
-    groupsPerColumnRow = true,
-}
-
-local function ApplySettings()
-    for settingName, mapping in pairs(SETTINGS_HELPER_MAP) do
-        local target = settings[settingName]
-        if target then
-            local needsNumber = SETTINGS_HELPER_TONUMBER[settingName]
-            for profile, gwKey in pairs(mapping) do
-                local value = GW.settings[gwKey]
-                if needsNumber then
-                    value = tonumber(value)
-                end
-                target[profile] = value
-            end
-        end
-    end
-
-    settings.partyGridShowPlayer = GW.settings.RAID_SHOW_PLAYER_PARTY
-end
 
 local function IsProfileEnabled(profile)
-    if profile == "PARTY" then
+    if profile == "party" then
         -- mirrors the group visibility check in UpdateGridHeader
-        return GW.settings.RAID_STYLE_PARTY or GW.settings.RAID_STYLE_PARTY_AND_FRAMES
+        return GW.settings.groupFrames.party.enabled or GW.settings.groupFrames.party.withPartyFrames
     end
-    if profile == "RAID40" then
+    if profile == "raid40" then
         -- own toggle, additionally gated by the module master
-        return GW.settings.RAID_FRAMES and GW.settings.RAID40_ENABLED
+        return GW.settings.groupFrames.enabled and GW.settings.groupFrames.raid40.enabled
     end
 
-    local settingName = SETTINGS_HELPER_MAP.enabled[profile]
-    return not settingName or not not GW.settings[settingName]
+    return not not GW.settings.groupFrames[profile].enabled
 end
 
 -- defined after CreateHeader; called from UpdateFramesAndHeader at runtime only
@@ -356,14 +183,14 @@ end
 
 local headerGroupBy = {
 	CLASS = function(header, profile)
-		local sortMethod = settings.sortMethod[profile]
-        local classSortOrder = settings.classSortOrder[profile]
+		local sortMethod = GW.settings.groupFrames[profile].sortMethod
+        local classSortOrder = GW.settings.groupFrames[profile].groupByClassOrder
 		SetAttributeIfChanged(header, "groupingOrder", table.concat(classSortOrder, ", "))
 		SetAttributeIfChanged(header, "sortMethod", sortMethod or "NAME")
 		SetAttributeIfChanged(header, "groupBy", "CLASS")
 	end,
 	ROLE = function(header, profile)
-		local sortMethod = settings.sortMethod[profile]
+		local sortMethod = GW.settings.groupFrames[profile].sortMethod
 		SetAttributeIfChanged(header, "groupingOrder", "TANK,HEALER,DAMAGER,NONE")
 		SetAttributeIfChanged(header, "sortMethod", sortMethod or "NAME")
 		SetAttributeIfChanged(header, "groupBy", "ASSIGNEDROLE")
@@ -374,7 +201,7 @@ local headerGroupBy = {
 		SetAttributeIfChanged(header, "groupBy", nil)
 	end,
 	GROUP = function(header, profile)
-		local sortMethod = settings.sortMethod[profile]
+		local sortMethod = GW.settings.groupFrames[profile].sortMethod
 		SetAttributeIfChanged(header, "groupingOrder", "1,2,3,4,5,6,7,8")
 		SetAttributeIfChanged(header, "sortMethod", sortMethod or "INDEX")
 		SetAttributeIfChanged(header, "groupBy", "GROUP")
@@ -398,12 +225,8 @@ local headerGroupBy = {
     end,
 }
 
-local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndFrames, skipSettings)
+local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     if GW.disableGridUpdate then return end
-
-    if not skipSettings then
-        ApplySettings()
-    end
 
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
@@ -526,9 +349,9 @@ GW.CreateRaisedElement = CreateRaisedElement
 -- the raid grids in ascending size; every grid has its own enable, RAID_FRAMES is
 -- only the module master on top
 local RAID_GRID_ORDER = {
-    { profile = "RAID10", size = 10, enabled = function() return GW.settings.RAID10_ENABLED end },
-    { profile = "RAID25", size = 25, enabled = function() return GW.settings.RAID25_ENABLED end },
-    { profile = "RAID40", size = 40, enabled = function() return GW.settings.RAID_FRAMES and GW.settings.RAID40_ENABLED end },
+    { profile = "raid10", size = 10, enabled = function() return GW.settings.groupFrames.raid10.enabled end },
+    { profile = "raid25", size = 25, enabled = function() return GW.settings.groupFrames.raid25.enabled end },
+    { profile = "raid40", size = 40, enabled = function() return GW.settings.groupFrames.enabled and GW.settings.groupFrames.raid40.enabled end },
 }
 
 -- ONE source of truth for the raid grid visibility drivers. Macro conditionals cannot
@@ -566,12 +389,12 @@ local function BuildRaidGridVisibility(profile)
 end
 
 local function GetHeaderVisibility(profile)
-    if profile == "RAID40" or profile == "RAID25" or profile == "RAID10" then
+    if profile == "raid40" or profile == "raid25" or profile == "raid10" then
         return BuildRaidGridVisibility(profile)
-    elseif profile == "RAID_PET" then
-        return GW.settings.RAID_PET_FRAMES and profiles.RAID_PET.visibility or "hide"
-    elseif profile == "TANK" then
-        return GW.settings.RAID_MAINTANK_FRAMES_ENABLED and profiles.TANK.visibility or "hide"
+    elseif profile == "raidPet" then
+        return GW.settings.groupFrames.raidPet.enabled and profiles.raidPet.visibility or "hide"
+    elseif profile == "maintank" then
+        return GW.settings.groupFrames.maintank.enabled and profiles.maintank.visibility or "hide"
     end
 
     return nil
@@ -580,7 +403,7 @@ end
 local function UpdateGroupVisibility(header, profile, enabled)
     if not header.isForced then
         local numGroups = header.numGroups
-        local raidWideSorting = settings.raidWideSorting[profile]
+        local raidWideSorting = GW.settings.groupFrames[profile].wideSorting
         local visibilityToUseForGroups
         local headerVisibility = GetHeaderVisibility(profile)
 
@@ -613,27 +436,27 @@ end
 GW.UpdateGroupVisibility = UpdateGroupVisibility
 
 local function UpdateGridHeaderLayout(header, profile)
-    local direction = settings.raidGrow[profile] or "DOWN+RIGHT"
+    local direction = GW.settings.groupFrames[profile].grow or "DOWN+RIGHT"
     local point = DIRECTION_TO_POINT[direction]
     local x, y = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[direction], DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[direction]
     local numGroups = header.numGroups
-    local isParty = profile == "PARTY"
-    local groupsPerRowCol = isParty and 1 or tonumber(settings.groupsPerColumnRow[profile])
+    local isParty = profile == "party"
+    local groupsPerRowCol = isParty and 1 or tonumber(GW.settings.groupFrames[profile].groupsPerColumn)
     local width, height, newCols, newRows = 0, 0, 0, 0
-    local groupSpacing = tonumber(settings.groupSpacing[profile])
-    local horizontalSpacing = tonumber(settings.horizontalSpacing[profile])
-    local verticalSpacing = tonumber(settings.verticalSpacing[profile])
-    local WIDTH = GW.Scale(settings.raidWidth[profile]) + horizontalSpacing
-    local HEIGHT = GW.Scale(settings.raidHeight[profile]) + verticalSpacing
+    local groupSpacing = tonumber(GW.settings.groupFrames[profile].groupSpacing)
+    local horizontalSpacing = tonumber(GW.settings.groupFrames[profile].horizontalSpacing)
+    local verticalSpacing = tonumber(GW.settings.groupFrames[profile].verticalSpacing)
+    local WIDTH = GW.Scale(tonumber(GW.settings.groupFrames[profile].width)) + horizontalSpacing
+    local HEIGHT = GW.Scale(tonumber(GW.settings.groupFrames[profile].height)) + verticalSpacing
     local HEIGHT_FIVE = HEIGHT * 5
     local WIDTH_FIVE = WIDTH * 5
-    local groupBy = settings.groupBy[profile]
-    local sortDirection = settings.sortDirection[profile]
-    local raidWideSorting = settings.raidWideSorting[profile]
+    local groupBy = GW.settings.groupFrames[profile].groupBy
+    local sortDirection = GW.settings.groupFrames[profile].sortDirection
+    local raidWideSorting = GW.settings.groupFrames[profile].wideSorting
     local showPlayer = true
 
     if isParty then
-        showPlayer = settings.partyGridShowPlayer
+        showPlayer = GW.settings.groupFrames.party.showPlayer
     end
 
     for i = 1, numGroups do
@@ -683,9 +506,9 @@ local function UpdateGridHeaderLayout(header, profile)
                 SetAttributeIfChanged(group, "showPlayer", showPlayer)
                 SetAttributeIfChanged(group, "sortDir", sortDirection)
                 -- sorting
-                if profile == "RAID_PET" then
+                if profile == "raidPet" then
                     headerGroupBy.PETNAME(group)
-                elseif profile == "TANK" then
+                elseif profile == "maintank" then
                     headerGroupBy.TANK(group)
                 else
                     local func = headerGroupBy[groupBy] or headerGroupBy.INDEX
@@ -693,23 +516,23 @@ local function UpdateGridHeaderLayout(header, profile)
                 end
             end
 
-            if profile ~= "TANK" then
+            if profile ~= "maintank" then
                 local groupWide = i == 1 and raidWideSorting and strsub("1,2,3,4,5,6,7,8", 1, numGroups + numGroups-1)
                 SetAttributeIfChanged(group, "groupFilter", groupWide or tostring(i))
             end
 
             -- register the correct visibility state driver
-            if profile == "PARTY" and not isConfigForced then
-                if not GW.settings.RAID_STYLE_PARTY and not GW.settings.RAID_STYLE_PARTY_AND_FRAMES then
+            if profile == "party" and not isConfigForced then
+                if not GW.settings.groupFrames.party.enabled and not GW.settings.groupFrames.party.withPartyFrames then
                     RegisterStateDriver(group, "visibility", "hide")
                 else
-                    RegisterStateDriver(group, "visibility", profiles.PARTY.visibility)
+                    RegisterStateDriver(group, "visibility", profiles.party.visibility)
                 end
             end
         end
 
         local pointInner = DIRECTION_TO_GROUP_ANCHOR_POINT[direction]
-        if (isParty or raidWideSorting) and settings.startFromCenter[profile] then
+        if (isParty or raidWideSorting) and GW.settings.groupFrames[profile].anchorFromCenter then
 			pointInner = DIRECTION_TO_GROUP_ANCHOR_POINT["OUT+" .. direction]
 		end
 
@@ -756,21 +579,21 @@ local function UpdateGridHeaderVisibility(header, profile)
     -- UpdateGroupVisibility from GetHeaderVisibility - registering it here as well (as the
     -- code used to) is the kind of duplication that caused overlapping grids
     if not header.isForced then
-        if profile == "RAID40" then
-            GW.ToggleMover(header.gwMover, GW.settings.RAID40_ENABLED)
-            UpdateGroupVisibility(header, profile, GW.settings.RAID40_ENABLED)
-        elseif profile == "RAID25" then
-            GW.ToggleMover(header.gwMover, GW.settings.RAID25_ENABLED)
-            UpdateGroupVisibility(header, profile, GW.settings.RAID25_ENABLED)
-        elseif profile == "RAID10" then
-            GW.ToggleMover(header.gwMover, GW.settings.RAID10_ENABLED)
-            UpdateGroupVisibility(header, profile, GW.settings.RAID10_ENABLED)
-        elseif profile == "RAID_PET" then
-            GW.ToggleMover(header.gwMover, GW.settings.RAID_PET_FRAMES)
-            UpdateGroupVisibility(header, profile, GW.settings.RAID_PET_FRAMES)
-        elseif profile == "TANK" then
-            GW.ToggleMover(header.gwMover, GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
-            UpdateGroupVisibility(header, profile, GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
+        if profile == "raid40" then
+            GW.ToggleMover(header.gwMover, GW.settings.groupFrames.raid40.enabled)
+            UpdateGroupVisibility(header, profile, GW.settings.groupFrames.raid40.enabled)
+        elseif profile == "raid25" then
+            GW.ToggleMover(header.gwMover, GW.settings.groupFrames.raid25.enabled)
+            UpdateGroupVisibility(header, profile, GW.settings.groupFrames.raid25.enabled)
+        elseif profile == "raid10" then
+            GW.ToggleMover(header.gwMover, GW.settings.groupFrames.raid10.enabled)
+            UpdateGroupVisibility(header, profile, GW.settings.groupFrames.raid10.enabled)
+        elseif profile == "raidPet" then
+            GW.ToggleMover(header.gwMover, GW.settings.groupFrames.raidPet.enabled)
+            UpdateGroupVisibility(header, profile, GW.settings.groupFrames.raidPet.enabled)
+        elseif profile == "maintank" then
+            GW.ToggleMover(header.gwMover, GW.settings.groupFrames.maintank.enabled)
+            UpdateGroupVisibility(header, profile, GW.settings.groupFrames.maintank.enabled)
         end
     end
 end
@@ -796,7 +619,7 @@ local function CreateHeader(parent, profile, options, overrideName, groupFilter)
         "showPlayer", true,
         "groupFilter", groupFilter,
         "groupingOrder", "1,2,3,4,5,6,7,8",
-        "oUF-initialConfigFunction", format("self:SetWidth(%d); self:SetHeight(%d);", settings.raidWidth[profile], settings.raidHeight[profile])
+        "oUF-initialConfigFunction", format("self:SetWidth(%d); self:SetHeight(%d);", tonumber(GW.settings.groupFrames[profile].width), tonumber(GW.settings.groupFrames[profile].height))
     )
 
     header.groupName = profile
@@ -843,7 +666,6 @@ end
 local function Initialize()
     GW.CreateRaidControlFrame()
     GW.Create_Tags()
-    ApplySettings()
 
     -- create headers (and groups for the enabled profiles)
     for profile, options in pairs(profiles) do
@@ -864,20 +686,20 @@ local function Initialize()
         RegisterStateDriver(Header, "visibility", GetHeaderVisibility(profile) or options.visibility)
 
         -- movable frame for the container
-        if profile == "PARTY" then
-            GW.RegisterMovableFrame(Header, GW.L["Group Frames"], "raid_party_pos",  "Unitframe,Group")
-        elseif profile == "PARTY_PET" then
-            GW.RegisterMovableFrame(Header, GW.L["Party pet's Grid"], "party_pet_pos",  "Unitframe,Group")
-        elseif profile == "RAID_PET" then
-            GW.RegisterMovableFrame(Header, GW.L["Raid pet's Grid"], "raid_pet_pos",  "Unitframe,Raid")
-        elseif profile == "RAID40" then
-            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid_pos",  "Unitframe,Raid")
-        elseif profile == "RAID25" then
-            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid25_pos",  "Unitframe,Raid")
-        elseif profile == "RAID10" then
-            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid10_pos",  "Unitframe,Raid")
-        elseif profile == "TANK" then
-            GW.RegisterMovableFrame(Header, MAINTANK, "raidMaintank_pos",  "Unitframe,Raid")
+        if profile == "party" then
+            GW.RegisterMovableFrame(Header, GW.L["Group Frames"], "groupFrames.party",  "Unitframe,Group")
+        elseif profile == "partyPet" then
+            GW.RegisterMovableFrame(Header, GW.L["Party pet's Grid"], "groupFrames.partyPet",  "Unitframe,Group")
+        elseif profile == "raidPet" then
+            GW.RegisterMovableFrame(Header, GW.L["Raid pet's Grid"], "groupFrames.raidPet",  "Unitframe,Raid")
+        elseif profile == "raid40" then
+            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "groupFrames.raid40",  "Unitframe,Raid")
+        elseif profile == "raid25" then
+            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "groupFrames.raid25",  "Unitframe,Raid")
+        elseif profile == "raid10" then
+            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "groupFrames.raid10",  "Unitframe,Raid")
+        elseif profile == "maintank" then
+            GW.RegisterMovableFrame(Header, MAINTANK, "groupFrames.maintank",  "Unitframe,Raid")
         end
 
         Header:ClearAllPoints()
@@ -886,6 +708,6 @@ local function Initialize()
         UpdateGridHeader(profile)
     end
 
-    UpdateFramesAndHeader("ALL", false, true, true)
+    UpdateFramesAndHeader("ALL", false, true)
 end
 GW.InitializeRaidFrames = Initialize

@@ -606,9 +606,9 @@ end
 
 ---------- our own alert system ----------
 local function IgnoreVignette(vignetteID, name)
-    GW.settings.ALERTFRAME_NOTIFICATION_RARE_IGNORED[vignetteID] = name
+    GW.settings.notifications.rare.ignored[vignetteID] = name
     GW.Notice(format(L["%s is now ignored, the list is in the notification settings."], name))
-    local widget = GW.FindSettingsWidgetByOption("ALERTFRAME_NOTIFICATION_RARE_IGNORED")
+    local widget = GW.FindSettingsWidgetByOption("notifications.rare.ignored")
     if widget and widget.RefreshSpellList then
         widget:RefreshSpellList()
     end
@@ -804,8 +804,8 @@ local VignetteExclusionMapIDs = {
     [1912] = true, -- Thorgast
 }
 
-local function PlayAlertSound(setting)
-    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings[setting]), "Master")
+local function PlayAlertSound(notification)
+    PlaySoundFile(GW.Libs.LSM:Fetch("sound", notification.sound), "Master")
 end
 
 local function isUsefulAtlas(info)
@@ -894,7 +894,7 @@ local function ShowLevelUpAlert(level, talentPoints, numNewPvpTalentSlots)
     if GW.Retail and C_SpecializationInfo.CanPlayerUsePVPTalentUI() and numNewPvpTalentSlots and numNewPvpTalentSlots > 0 then
         GW.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, ICONS .. "talent-icon.png", false)
     end
-    PlayAlertSound("ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND")
+    PlayAlertSound(GW.settings.notifications.levelUp)
 end
 
 local function ShowSpellAlert(name, icon, spellID)
@@ -903,18 +903,18 @@ end
 
 local function ShowMailAlert()
     GW.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, ICONS .. "mail-window-icon.png", false)
-    PlayAlertSound("ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND")
+    PlayAlertSound(GW.settings.notifications.newMail)
 end
 
 local function ShowRepairAlert(slotName, value)
     GW.AlertSystem:AddAlert(format(L["%s slot needs to repair, current durability is %d."], slotName, value), nil, MINIMAP_TRACKING_REPAIR, false, ICONS .. "repair.png", false)
-    PlayAlertSound("ALERTFRAME_NOTIFICATION_REPAIR_SOUND")
+    PlayAlertSound(GW.settings.notifications.repair)
 end
 
 local function ShowParagonAlert(factionName, questText)
     local text = GW.RGBToHex(0.22, 0.37, 0.98) .. factionName .. "|r"
     GW.AlertSystem:AddAlert(questText or "", nil, text, false, "Interface/Icons/Achievement_Quests_Completed_08", false)
-    PlayAlertSound("ALERTFRAME_NOTIFICATION_PARAGON_SOUND")
+    PlayAlertSound(GW.settings.notifications.paragon)
 end
 
 local function ShowRareAlert(name, atlas, vignetteID)
@@ -924,24 +924,24 @@ end
 
 local function ShowCallToArmsAlert(roles)
     GW.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, roles), nil, BATTLEGROUND_HOLIDAY, false, ICONS .. "garrison-up.png", false)
-    PlayAlertSound("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND")
+    PlayAlertSound(GW.settings.notifications.callToArms)
 end
 
 local function ShowBagsFullAlert()
     GW.AlertSystem:AddAlert(ERR_INV_FULL, nil, INVTYPE_BAG, false, "Interface/Icons/INV_Misc_Bag_08", false)
-    PlayAlertSound("ALERTFRAME_NOTIFICATION_BAGS_FULL_SOUND")
+    PlayAlertSound(GW.settings.notifications.bagsFull)
 end
 
 local function ShowVaultAlert()
     GW.AlertSystem:AddAlert(MYTHIC_PLUS_COLLECT_GREAT_VAULT, nil, RATED_PVP_WEEKLY_VAULT, WeeklyRewards_ShowUI, "greatVault-whole-normal", false)
-    PlayAlertSound("ALERTFRAME_NOTIFICATION_GREAT_VAULT_SOUND")
+    PlayAlertSound(GW.settings.notifications.greatVault)
 end
 
 -- group member spells worth a toast; classic clients only, retail hides the caster behind secret values
-local function ShowGroupSpellAlert(spellID, text, setting)
+local function ShowGroupSpellAlert(spellID, text, notification)
     local spellInfo = C_Spell.GetSpellInfo(spellID)
     GW.AlertSystem:AddAlert(text, nil, spellInfo.name, false, spellInfo.iconID, false)
-    PlayAlertSound(setting)
+    PlayAlertSound(notification)
 end
 
 local ROLE_COLORS = {TANK = "|cff00B2EE", HEALER = "|cff00EE00", DAMAGER = "|cffd62c35"}
@@ -958,7 +958,7 @@ GW.AlertPreviews = {
     NEW_SPELL = function()
         local spellInfo = C_Spell.GetSpellInfo(8690) -- Hearthstone
         ShowSpellAlert(spellInfo.name, spellInfo.iconID, 8690)
-        PlayAlertSound("ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND")
+        PlayAlertSound(GW.settings.notifications.newSpell)
     end,
     NEW_MAIL = ShowMailAlert,
     REPAIR = function() ShowRepairAlert(INVTYPE_HEAD, 15) end,
@@ -968,19 +968,19 @@ GW.AlertPreviews = {
     end,
     RARE = function()
         ShowRareAlert(PlayerName(), "VignetteKillElite")
-        PlayAlertSound("ALERTFRAME_NOTIFICATION_RARE_SOUND")
+        PlayAlertSound(GW.settings.notifications.rare)
     end,
     CALENDAR_INVITE = function()
         ShowCalendarAlert(L["You have %s pending calendar invite(s)."]:format(1))
-        PlayAlertSound("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND")
+        PlayAlertSound(GW.settings.notifications.calendarInvite)
     end,
     CALL_TO_ARMS = function() ShowCallToArmsAlert(ColorRole("TANK", true) .. " " .. ColorRole("HEALER", true) .. " " .. ColorRole("DAMAGER", true)) end,
     BAGS_FULL = ShowBagsFullAlert,
     GREAT_VAULT = ShowVaultAlert,
-    MAGE_TABLE = function() ShowGroupSpellAlert(190336, format(L["%s created a table of Conjured Refreshments."], PlayerName()), "ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND") end,
-    RITUAL_OF_SUMMONING = function() ShowGroupSpellAlert(698, format(L["%s is performing a Ritual of Summoning."], PlayerName()), "ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND") end,
-    SPOULWELL = function() ShowGroupSpellAlert(29893, format(L["%s created a Soulwell."], PlayerName()), "ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND") end,
-    MAGE_PORTAL = function() ShowGroupSpellAlert(10059, format(L["%s placed a portal to %s."], PlayerName(), C_Spell.GetSpellInfo(10059).name:gsub("^.+:%s+", "")), "ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND") end,
+    MAGE_TABLE = function() ShowGroupSpellAlert(190336, format(L["%s created a table of Conjured Refreshments."], PlayerName()), GW.settings.notifications.mageTable) end,
+    RITUAL_OF_SUMMONING = function() ShowGroupSpellAlert(698, format(L["%s is performing a Ritual of Summoning."], PlayerName()), GW.settings.notifications.ritualOfSummoning) end,
+    SPOULWELL = function() ShowGroupSpellAlert(29893, format(L["%s created a Soulwell."], PlayerName()), GW.settings.notifications.soulwell) end,
+    MAGE_PORTAL = function() ShowGroupSpellAlert(10059, format(L["%s placed a portal to %s."], PlayerName(), C_Spell.GetSpellInfo(10059).name:gsub("^.+:%s+", "")), GW.settings.notifications.magePortal) end,
 }
 
 for key, preview in pairs(GW.AlertPreviews) do
@@ -1085,17 +1085,17 @@ local function CLEUHandling(_, _, subEvent, _, _, srcName, _, _, _, _, _, _, spe
     if not groupStatus or groupStatus == 3 then return end
 
     if subEvent == "SPELL_CAST_SUCCESS" then
-        if GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE and spellID == 190336 then -- Refreshment Table
-            ShowGroupSpellAlert(spellID, format(L["%s created a table of Conjured Refreshments."], srcName), "ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND")
+        if GW.settings.notifications.mageTable.enabled and spellID == 190336 then -- Refreshment Table
+            ShowGroupSpellAlert(spellID, format(L["%s created a table of Conjured Refreshments."], srcName), GW.settings.notifications.mageTable)
         end
     elseif subEvent == "SPELL_CREATE" then
-        if GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING and spellID == 698 then -- Ritual of Summoning
-            ShowGroupSpellAlert(spellID, format(L["%s is performing a Ritual of Summoning."], srcName), "ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND")
-        elseif GW.settings.ALERTFRAME_NOTIFICATION_SPOULWELL and spellID == 29893 then -- Soul Well
-            ShowGroupSpellAlert(spellID, format(L["%s created a Soulwell."], srcName), "ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND")
-        elseif GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL and GW.MagePortals[spellID] then
+        if GW.settings.notifications.ritualOfSummoning.enabled and spellID == 698 then -- Ritual of Summoning
+            ShowGroupSpellAlert(spellID, format(L["%s is performing a Ritual of Summoning."], srcName), GW.settings.notifications.ritualOfSummoning)
+        elseif GW.settings.notifications.soulwell.enabled and spellID == 29893 then -- Soul Well
+            ShowGroupSpellAlert(spellID, format(L["%s created a Soulwell."], srcName), GW.settings.notifications.soulwell)
+        elseif GW.settings.notifications.magePortal.enabled and GW.MagePortals[spellID] then
             local destination = C_Spell.GetSpellInfo(spellID).name:gsub("^.+:%s+", "")
-            ShowGroupSpellAlert(spellID, format(L["%s placed a portal to %s."], srcName, destination), "ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND")
+            ShowGroupSpellAlert(spellID, format(L["%s placed a portal to %s."], srcName, destination), GW.settings.notifications.magePortal)
         end
     end
 end
@@ -1118,7 +1118,7 @@ local function OnSpellLearned(spellID)
             ShowSpellAlert(v.name, v.icon, v.spellID)
         end
         wipe(toastQueue)
-        PlayAlertSound("ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND")
+        PlayAlertSound(GW.settings.notifications.newSpell)
     end)
 end
 
@@ -1165,7 +1165,7 @@ local function OnVignetteUpdated(self, vignetteGUID, onMinimap)
     local vignetteInfo = C_VignetteInfo.GetVignetteInfo(vignetteGUID)
     if not vignetteInfo or not C_Texture.GetAtlasInfo(vignetteInfo.atlasName) then return end
     if not isUsefulAtlas(vignetteInfo) then return end
-    local ignored = GW.settings.ALERTFRAME_NOTIFICATION_RARE_IGNORED
+    local ignored = GW.settings.notifications.rare.ignored
     if ignored[vignetteInfo.vignetteID] then
         if ignored[vignetteInfo.vignetteID] == true then
             ignored[vignetteInfo.vignetteID] = vignetteInfo.name
@@ -1176,14 +1176,14 @@ local function OnVignetteUpdated(self, vignetteGUID, onMinimap)
 
     GW.Debug("Minimap vignette with id", vignetteInfo.vignetteID, "and name", vignetteInfo.name, "appeared on the minimap.")
     ShowRareAlert(vignetteInfo.name, vignetteInfo.atlasName, vignetteInfo.vignetteID)
-    if GW.settings.ALERTFRAME_NOTIFICATION_RARE_CHAT then
+    if GW.settings.notifications.rare.chat then
         PrintVignetteToChat(vignetteGUID, vignetteInfo, mapID)
     end
     self.lastMinimapRare.id = vignetteGUID
 
     local now = GetTime()
     if now > self.lastMinimapRare.time + 20 then
-        PlayAlertSound("ALERTFRAME_NOTIFICATION_RARE_SOUND")
+        PlayAlertSound(GW.settings.notifications.rare)
         self.lastMinimapRare.time = now
     end
 end
@@ -1230,12 +1230,12 @@ end
 
 local function AlertContainerFrameOnEvent(self, event, ...)
     local settings = GW.settings
-    if event == "PLAYER_LEVEL_UP" and settings.ALERTFRAME_NOTIFICATION_LEVEL_UP then
+    if event == "PLAYER_LEVEL_UP" and settings.notifications.levelUp.enabled then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
         OnLevelUp(level, talentPoints, numNewPvpTalentSlots)
-    elseif event == "LEARNED_SPELL_IN_SKILL_LINE" and settings.ALERTFRAME_NOTIFICATION_NEW_SPELL and not self.ignoreNewSpells then
+    elseif event == "LEARNED_SPELL_IN_SKILL_LINE" and settings.notifications.newSpell.enabled and not self.ignoreNewSpells then
         OnSpellLearned(...)
-    elseif event == "PLAYER_SPECIALIZATION_CHANGED" and settings.ALERTFRAME_NOTIFICATION_NEW_SPELL then
+    elseif event == "PLAYER_SPECIALIZATION_CHANGED" and settings.notifications.newSpell.enabled then
         C_Timer.After(0.5, function()
             for k, v in pairs(toastQueue) do
                 if v.event == "LEARNED_SPELL_IN_SKILL_LINE" then
@@ -1243,32 +1243,32 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 end
             end
         end)
-    elseif event == "BAG_UPDATE_DELAYED" and settings.ALERTFRAME_NOTIFICATION_BAGS_FULL then
+    elseif event == "BAG_UPDATE_DELAYED" and settings.notifications.bagsFull.enabled then
         OnBagUpdate()
-    elseif event == "WEEKLY_REWARDS_UPDATE" and settings.ALERTFRAME_NOTIFICATION_GREAT_VAULT then
+    elseif event == "WEEKLY_REWARDS_UPDATE" and settings.notifications.greatVault.enabled then
         OnWeeklyRewardsUpdate()
-    elseif event == "UPDATE_PENDING_MAIL" and settings.ALERTFRAME_NOTIFICATION_NEW_MAIL then
+    elseif event == "UPDATE_PENDING_MAIL" and settings.notifications.newMail.enabled then
         OnMailUpdate()
-    elseif event == "UPDATE_INVENTORY_DURABILITY" and settings.ALERTFRAME_NOTIFICATION_REPAIR then
+    elseif event == "UPDATE_INVENTORY_DURABILITY" and settings.notifications.repair.enabled then
         OnDurabilityUpdate()
-    elseif event == "QUEST_ACCEPTED" and settings.ALERTFRAME_NOTIFICATION_PARAGON then
+    elseif event == "QUEST_ACCEPTED" and settings.notifications.paragon.enabled then
         OnQuestAccepted(...)
-    elseif event == "VIGNETTE_MINIMAP_UPDATED" and settings.ALERTFRAME_NOTIFICATION_RARE then
+    elseif event == "VIGNETTE_MINIMAP_UPDATED" and settings.notifications.rare.enabled then
         OnVignetteUpdated(self, ...)
-    elseif event == "CALENDAR_UPDATE_PENDING_INVITES" and settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE then
+    elseif event == "CALENDAR_UPDATE_PENDING_INVITES" and settings.notifications.calendarInvite.enabled then
         if alertEvents() or alertGuildEvents() then
-            PlayAlertSound("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND")
+            PlayAlertSound(GW.settings.notifications.calendarInvite)
         end
-    elseif event == "CALENDAR_UPDATE_GUILD_EVENTS" and settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE then
+    elseif event == "CALENDAR_UPDATE_GUILD_EVENTS" and settings.notifications.calendarInvite.enabled then
         if alertGuildEvents() then
-            PlayAlertSound("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND")
+            PlayAlertSound(GW.settings.notifications.calendarInvite)
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
         C_Timer.After(7, function() AlertContainerFrameOnEvent(self, "CALENDAR_UPDATE_PENDING_INVITES") end)
         -- the login fires LEARNED_SPELL_IN_SKILL_LINE for spells the character already knows
         self.ignoreNewSpells = true
         C_Timer.After(3, function() self.ignoreNewSpells = false end)
-    elseif event == "LFG_UPDATE_RANDOM_INFO" and settings.ALERTFRAME_NOTIFICATION_CALL_TO_ARMS then
+    elseif event == "LFG_UPDATE_RANDOM_INFO" and settings.notifications.callToArms.enabled then
         OnRandomDungeonInfo()
     end
 end
@@ -1279,7 +1279,7 @@ function GW.LoadAlertSystem()
         AchievementFrame_LoadUI()
     end
 
-    if GW.settings.ALERTFRAME_SKIN_ENABLED then
+    if GW.settings.skins.alertFrame.enabled then
         local systems = {
             {AchievementAlertSystem, skinAchievementAlert},
             {CriteriaAlertSystem, skinCriteriaAlert},
@@ -1340,12 +1340,12 @@ function GW.LoadAlertSystem()
         end
     end)
 
-    if not GW.settings.ALERTFRAME_ENABLED then return end
+    if not GW.settings.notifications.enabled then return end
 
     local container = CreateFrame("Frame", nil, UIParent)
     GW.AlertContainerFrame = container
     container:SetSize(300, 5)
-    local point = GW.settings.AlertPos
+    local point = GW.settings.notifications.pos
     container:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
 
     local function postDragFunction(self)
@@ -1353,7 +1353,7 @@ function GW.LoadAlertSystem()
         local direction = y > UIParent:GetTop() / 2 and COMBAT_TEXT_SCROLL_DOWN or COMBAT_TEXT_SCROLL_UP
         self.gwMover.text:SetText(L["Alert Frames"] .. " (" .. direction .. ")")
     end
-    GW.RegisterMovableFrame(container, L["Alert Frames"], "AlertPos", "Blizzard,Widgets", {300, 5}, nil, nil, postDragFunction)
+    GW.RegisterMovableFrame(container, L["Alert Frames"], "notifications", "Blizzard,Widgets", {300, 5}, nil, nil, postDragFunction)
 
     container:RegisterEvent("PLAYER_LEVEL_UP")
     container:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")

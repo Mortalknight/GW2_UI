@@ -43,7 +43,7 @@ end
 
 local function setBagHeaders(frame)
     for i = 1, NUM_BAG_SLOTS do
-        local customBagHeaderName = GW.settings["BAG_HEADER_NAME" .. i]
+        local customBagHeaderName = GW.settings.bags.bag.headerNames[i]
         local header = frame["bagHeader" .. i]
         local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
         local itemID = GetInventoryItemID("player", slotID)
@@ -60,11 +60,11 @@ local function setBagHeaders(frame)
         end
     end
     if HAS_KEYRING then
-        local customBagHeaderName = GW.settings.BAG_HEADER_NAME5
+        local customBagHeaderName = GW.settings.bags.bag.headerNames[5]
         frame.bagHeader5.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or KEYRING)
         frame.bagHeader5.nameString:SetTextColor(1, 1, 1, 1)
     elseif HAS_REAGENT_BAG then
-        local customBagHeaderName = GW.settings.BAG_HEADER_NAME5
+        local customBagHeaderName = GW.settings.bags.bag.headerNames[5]
         local itemID = GetInventoryItemID("player", (GetInventorySlotInfo("ReagentBag0Slot")))
         if itemID then
             local r, g, b = 1, 1, 1
@@ -76,7 +76,7 @@ local function setBagHeaders(frame)
             frame.bagHeader5:Hide()
         end
     end
-    local customBagHeaderName = GW.settings.BAG_HEADER_NAME0
+    local customBagHeaderName = GW.settings.bags.bag.headerNames[0]
     frame.bagHeader0.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BACKPACK_TOOLTIP)
 end
 
@@ -165,7 +165,7 @@ local function placeEmptySlot(f, key, fromBag, toBag, col, row, max_col, item_of
     end
 
     slot.gwFromBag, slot.gwToBag = fromBag, toBag
-    slot:SetSize(GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SIZE)
+    slot:SetSize(GW.settings.bags.bag.itemSize, GW.settings.bags.bag.itemSize)
     slot:ClearAllPoints()
     slot:SetPoint("TOPLEFT", f, "TOPLEFT", col * item_off_x + gapX, -row * item_off_y)
     slot.count:SetText(countFreeSlots(fromBag, toBag))
@@ -184,25 +184,25 @@ local function layoutBagItems(f)
     local parent = f:GetParent()
     local max_col = parent.gw_bag_cols
     local col = 0
-    local rev = GW.settings.BAG_REVERSE_SORT
-    local sep = GW.settings.BAG_SEPARATE_BAGS
+    local rev = GW.settings.bags.bag.reverseSort
+    local sep = GW.settings.bags.bag.separateBags
     -- in combined mode the keyring (classic) or the reagent bag (retail) can be set
     -- off to its own rows with a gap as separation
     local extraBagGap = not sep and (
-        (HAS_KEYRING and GW.settings.BAG_SEPARATE_KEYRING and IsBagOpen(KEYRING_CONTAINER))
-        or (HAS_REAGENT_BAG and GW.settings.BAG_SEPARATE_REAGENT_BAG and f.Containers[5] and f.Containers[5].gw_num_slots > 0)
+        (HAS_KEYRING and GW.settings.bags.bag.separateKeyring and IsBagOpen(KEYRING_CONTAINER))
+        or (HAS_REAGENT_BAG and GW.settings.bags.bag.separateReagentBag and f.Containers[5] and f.Containers[5].gw_num_slots > 0)
     )
     -- an empty bag would collapse to nothing in the separate view and leave a header
     -- with no slots under it, so the compact flow only applies to the combined one
-    local compact = GW.settings.BAG_COMPACT_EMPTY_SLOTS == true and not sep
+    local compact = GW.settings.bags.bag.compactEmptySlots == true and not sep
     local bagSlotPlaced = false
     local row = sep and 1 or 0
-    if not GW.settings.BAG_ITEM_SIZE or not GW.settings.BAG_ITEM_SPACING_X or not GW.settings.BAG_ITEM_SPACING_Y then
+    if not GW.settings.bags.bag.itemSize or not GW.settings.bags.bag.itemSpacingX or not GW.settings.bags.bag.itemSpacingY then
         -- acedb can have the profile defaults detached (logout, profile operations)
         return
     end
-    local item_off_x = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_X
-    local item_off_y = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_Y
+    local item_off_x = GW.settings.bags.bag.itemSize + GW.settings.bags.bag.itemSpacingX
+    local item_off_y = GW.settings.bags.bag.itemSize + GW.settings.bags.bag.itemSpacingY
     local unfinishedRow = false
     local finishedRows = 0
 
@@ -313,7 +313,7 @@ local function layoutBagItems(f)
     -- no longer matches - store the rows the layout actually used
     parent.gw_combined_rows = (extraBagGap or compact) and (row + (col > 0 and 1 or 0)) or nil
 
-    if GW.settings.BAG_SEPARATE_BAGS then
+    if GW.settings.bags.bag.separateBags then
         setBagHeaders(parent)
     end
 end
@@ -333,7 +333,7 @@ local function snapFrameSize(f)
     if f.ItemFrame:IsShown() then
         cfs = f.ItemFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SPACING_X, GW.settings.BAG_ITEM_SPACING_Y, 350)
+    inv.snapFrameSize(f, cfs, GW.settings.bags.bag.itemSize, GW.settings.bags.bag.itemSpacingX, GW.settings.bags.bag.itemSpacingY, 350)
 end
 
 
@@ -367,8 +367,8 @@ end
 -- so one module wide state array is enough.
 local lastLayoutState = {}
 local function layoutStateChanged(f)
-    local sep = GW.settings.BAG_SEPARATE_BAGS
-    local compact = GW.settings.BAG_COMPACT_EMPTY_SLOTS == true and not sep
+    local sep = GW.settings.bags.bag.separateBags
+    local compact = GW.settings.bags.bag.compactEmptySlots == true and not sep
     local changed = false
     local idx = 1
 
@@ -525,7 +525,7 @@ local function setBagBarOrder(f)
     local x = -40
     local bag_size = 28
     local bag_padding = 4
-    local rev = GW.settings.BAG_REVERSE_SORT
+    local rev = GW.settings.bags.bag.reverseSort
     local last = LAST_BAG_SLOT
     local y = rev and (5 - ((bag_size + bag_padding) * last)) or 5
 
@@ -733,7 +733,7 @@ local function bag_OnShow(self)
     updateBagBar(self.ItemFrame)
     rescanBagContainers(self)
 
-    if GW.settings.BAG_AUTO_SORT_ON_OPEN then
+    if GW.settings.bags.autoSortOnOpen then
         -- the sort button's path, minus its click sound
         if GW_SortBags then GW_SortBags() else C_Container.SortBags() end
     end
@@ -868,15 +868,15 @@ local function bagHeader_OnClick(self, btn)
     elseif btn == "RightButton" then
         GW.ShowPopup({text = L["New Bag Name"],
             OnAccept = function(promptFrame)
-                GW.settings["BAG_HEADER_NAME" .. bag_id] = promptFrame.input:GetText()
-                self.nameString:SetText(GW.settings["BAG_HEADER_NAME" .. bag_id])
+                GW.settings.bags.bag.headerNames[bag_id] = promptFrame.input:GetText()
+                self.nameString:SetText(GW.settings.bags.bag.headerNames[bag_id])
             end,
             hasEditBox = true,
             button1 = SAVE,
             button2 = RESET,
             EditBoxOnEscapePressed = function(popup) popup:Hide() end,
             OnCancel = function()
-                GW.settings["BAG_HEADER_NAME" .. bag_id] = ""
+                GW.settings.bags.bag.headerNames[bag_id] = ""
                 if bag_id > 0 then
                     local slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
                     local itemID = GetInventoryItemID("player", slotID)
@@ -896,7 +896,7 @@ local function bagHeader_OnClick(self, btn)
                 end
             end,
         inputText = (function()
-            local customName = GW.settings["BAG_HEADER_NAME" .. bag_id]
+            local customName = GW.settings.bags.bag.headerNames[bag_id]
                 if string.len(customName) == 0 then
                     customName = nil
                 end
@@ -924,17 +924,17 @@ local function bagHeader_OnEnter(self)
 end
 
 local function onBagResizeStop(self)
-    GW.settings.BAG_WIDTH = self:GetWidth()
-    GwBagFrame.Header:SetWidth(GW.settings.BAG_WIDTH)
-    inv.onMoved(self, "BAG_POSITION", snapFrameSize)
+    GW.settings.bags.bag.width = self:GetWidth()
+    GwBagFrame.Header:SetWidth(GW.settings.bags.bag.width)
+    inv.onMoved(self, "bag", snapFrameSize)
 end
 
 
 local function onBagFrameChangeSize(self, _, _, skip)
     self.Header:SetWidth(self:GetWidth())
 
-    local size = GW.settings.BAG_ITEM_SIZE
-    local spacing = GW.settings.BAG_ITEM_SPACING_X
+    local size = GW.settings.bags.bag.itemSize
+    local spacing = GW.settings.bags.bag.itemSpacingX
     if not size or not spacing then
         -- OnSizeChanged can fire while acedb has the profile defaults detached
         -- (logout, profile operations) - values equal to a default read as nil then
@@ -1008,7 +1008,7 @@ local function setupAutoOpenClose(f)
 
         if isOpen then
             -- an already visible bag was opened by someone else, leave it theirs
-            if GW.settings.BAG_AUTO_OPEN_CONTEXTS[context] and not f:IsShown() then
+            if GW.settings.bags.autoOpenContexts[context] and not f:IsShown() then
                 f.gwAutoOpenedContext = context
                 OpenAllBags()
             end
@@ -1030,8 +1030,8 @@ local function LoadBag(helpers)
     -- the bag ids a BAG_UPDATE named since the last BAG_UPDATE_DELAYED
     f.gw_dirtyBags = {}
     f:ClearAllPoints()
-    f:SetWidth(GW.settings.BAG_WIDTH)
-    f.Header:SetWidth(GW.settings.BAG_WIDTH)
+    f:SetWidth(GW.settings.bags.bag.width)
+    f.Header:SetWidth(GW.settings.bags.bag.width)
     onBagFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
     f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
@@ -1043,10 +1043,10 @@ local function LoadBag(helpers)
     f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
 
     -- setup movable stuff
-    local pos = GW.settings.BAG_POSITION
+    local pos = GW.settings.bags.bag.pos
     f:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     f.mover:RegisterForDrag("LeftButton")
-    f.mover.onMoveSetting = "BAG_POSITION"
+    f.mover.onMoveSetting = "bag"
     f.mover:SetScript("OnDragStart", inv.onMoverDragStart)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
@@ -1192,47 +1192,47 @@ local function LoadBag(helpers)
 
             rootDescription:CreateTitle(L["Layout"])
             inv.addItemSizeMenuEntries(rootDescription, "BAG")
-            addCheck(L["Reverse Bag Order"], function() return GW.settings.BAG_REVERSE_SORT end,
-                     function() GW.settings.BAG_REVERSE_SORT = not GW.settings.BAG_REVERSE_SORT; layoutItems(f); snapFrameSize(f) end)
+            addCheck(L["Reverse Bag Order"], function() return GW.settings.bags.bag.reverseSort end,
+                     function() GW.settings.bags.bag.reverseSort = not GW.settings.bags.bag.reverseSort; layoutItems(f); snapFrameSize(f) end)
 
             rootDescription:CreateTitle(L["Item Display"])
-            addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end,
-                     function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; GW.UpdateAllOwnBagItemButtons() end)
-            local compactCheck = addCheck(L["Hide Empty Slots"], function() return GW.settings.BAG_COMPACT_EMPTY_SLOTS end,
-                     function() GW.settings.BAG_COMPACT_EMPTY_SLOTS = not GW.settings.BAG_COMPACT_EMPTY_SLOTS; layoutItems(f); snapFrameSize(f) end)
-            compactCheck:SetEnabled(function() return not GW.settings.BAG_SEPARATE_BAGS end)
+            addCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end,
+                     function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; GW.UpdateAllOwnBagItemButtons() end)
+            local compactCheck = addCheck(L["Hide Empty Slots"], function() return GW.settings.bags.bag.compactEmptySlots end,
+                     function() GW.settings.bags.bag.compactEmptySlots = not GW.settings.bags.bag.compactEmptySlots; layoutItems(f); snapFrameSize(f) end)
+            compactCheck:SetEnabled(function() return not GW.settings.bags.bag.separateBags end)
             compactCheck:SetTooltip(function(tooltip, elementDescription)
                 tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
                 tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
             end)
             if C_NewItems and C_NewItems.IsNewItem then
-                addCheck(L["Mark New Items"], function() return GW.settings.BAG_ITEM_NEW_ITEM_SHOW end,
-                         function() GW.settings.BAG_ITEM_NEW_ITEM_SHOW = not GW.settings.BAG_ITEM_NEW_ITEM_SHOW; GW.UpdateAllOwnBagItemButtons() end)
+                addCheck(L["Mark New Items"], function() return GW.settings.bags.items.newItemGlow end,
+                         function() GW.settings.bags.items.newItemGlow = not GW.settings.bags.items.newItemGlow; GW.UpdateAllOwnBagItemButtons() end)
             end
-            addCheck(L["Mark Unusable Items"], function() return GW.settings.BAG_ITEM_MARK_UNUSABLE end,
-                     function() GW.settings.BAG_ITEM_MARK_UNUSABLE = not GW.settings.BAG_ITEM_MARK_UNUSABLE; GW.UpdateAllOwnBagItemButtons() end)
-            addCheck(L["Grey out Junk"], function() return GW.settings.BAG_ITEM_JUNK_DESATURATE end,
-                     function() GW.settings.BAG_ITEM_JUNK_DESATURATE = not GW.settings.BAG_ITEM_JUNK_DESATURATE; GW.UpdateAllOwnBagItemButtons() end)
-            addCheck(L["Show Junk Icon"], function() return GW.settings.BAG_ITEM_JUNK_ICON_SHOW end,
-                     function() GW.settings.BAG_ITEM_JUNK_ICON_SHOW = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW; GW.UpdateAllOwnBagItemButtons() end)
-            addCheck(L["Show Upgrade Icon"], function() return GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW end,
-                     function() GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW; GW.UpdateAllOwnBagItemButtons() end)
-            addCheck(L["Show Profession Bag Coloring"], function() return GW.settings.BAG_PROFESSION_BAG_COLOR end,
-                     function() GW.settings.BAG_PROFESSION_BAG_COLOR = not GW.settings.BAG_PROFESSION_BAG_COLOR; GW.UpdateAllOwnBagItemButtons() end)
-            addCheck(L["Show Quality Color for Profession Bags"], function() return GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR end,
-                     function() GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR = not GW.settings.BAG_PROFESSION_BAG_QUALITY_COLOR; GW.UpdateAllOwnBagItemButtons() end)
-            addCheck(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.BAG_SHOW_ILVL end,
-                     function() GW.settings.BAG_SHOW_ILVL = not GW.settings.BAG_SHOW_ILVL; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Mark Unusable Items"], function() return GW.settings.bags.items.markUnusable end,
+                     function() GW.settings.bags.items.markUnusable = not GW.settings.bags.items.markUnusable; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Grey out Junk"], function() return GW.settings.bags.items.junkDesaturate end,
+                     function() GW.settings.bags.items.junkDesaturate = not GW.settings.bags.items.junkDesaturate; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Show Junk Icon"], function() return GW.settings.bags.items.junkIcon end,
+                     function() GW.settings.bags.items.junkIcon = not GW.settings.bags.items.junkIcon; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Show Upgrade Icon"], function() return GW.settings.bags.items.upgradeIcon end,
+                     function() GW.settings.bags.items.upgradeIcon = not GW.settings.bags.items.upgradeIcon; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Show Profession Bag Coloring"], function() return GW.settings.bags.professionBagColor end,
+                     function() GW.settings.bags.professionBagColor = not GW.settings.bags.professionBagColor; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Show Quality Color for Profession Bags"], function() return GW.settings.bags.professionBagQualityColor end,
+                     function() GW.settings.bags.professionBagQualityColor = not GW.settings.bags.professionBagQualityColor; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.bags.items.showItemLevel end,
+                     function() GW.settings.bags.items.showItemLevel = not GW.settings.bags.items.showItemLevel; GW.UpdateAllOwnBagItemButtons() end)
             GW.AddMenuSliderDescription(rootDescription, {
                 title = L["Item Level Threshold"],
                 minValue = 0,
                 maxValue = 1000,
                 step = 10,
-                getValue = function() return GW.settings.BAG_ITEM_LEVEL_THRESHOLD end,
+                getValue = function() return GW.settings.bags.items.levelThreshold end,
                 setValue = function(value)
                     value = math.floor(value + 0.5)
-                    if GW.settings.BAG_ITEM_LEVEL_THRESHOLD ~= value then
-                        GW.settings.BAG_ITEM_LEVEL_THRESHOLD = value
+                    if GW.settings.bags.items.levelThreshold ~= value then
+                        GW.settings.bags.items.levelThreshold = value
                         GW.UpdateAllOwnBagItemButtons()
                     end
                     return value
@@ -1244,13 +1244,13 @@ local function LoadBag(helpers)
             callBagModules("onMenu", f, rootDescription, addCheck)
 
             rootDescription:CreateTitle(L["Loot & Sorting"])
-            addCheck(L["Loot to leftmost Bag"], function() return GW.settings.BAG_REVERSE_NEW_LOOT end,
-                     function() local ns = not GW.settings.BAG_REVERSE_NEW_LOOT; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.BAG_REVERSE_NEW_LOOT = ns end)
-            addCheck(L["Sort to Last Bag"], function() return GW.settings.BAG_ITEMS_REVERSE_SORT end,
-                     function() local ns = not GW.settings.BAG_ITEMS_REVERSE_SORT; if GW.Retail then C_Container.SetSortBagsRightToLeft(ns) end; GW.settings.BAG_ITEMS_REVERSE_SORT = ns end)
+            addCheck(L["Loot to leftmost Bag"], function() return GW.settings.bags.bag.reverseNewLoot end,
+                     function() local ns = not GW.settings.bags.bag.reverseNewLoot; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.bags.bag.reverseNewLoot = ns end)
+            addCheck(L["Sort to Last Bag"], function() return GW.settings.bags.bag.reverseItemSort end,
+                     function() local ns = not GW.settings.bags.bag.reverseItemSort; if GW.Retail then C_Container.SetSortBagsRightToLeft(ns) end; GW.settings.bags.bag.reverseItemSort = ns end)
 
-            addCheck(L["Sort when opening"], function() return GW.settings.BAG_AUTO_SORT_ON_OPEN end,
-                     function() GW.settings.BAG_AUTO_SORT_ON_OPEN = not GW.settings.BAG_AUTO_SORT_ON_OPEN end)
+            addCheck(L["Sort when opening"], function() return GW.settings.bags.autoSortOnOpen end,
+                     function() GW.settings.bags.autoSortOnOpen = not GW.settings.bags.autoSortOnOpen end)
 
 
 
@@ -1264,29 +1264,29 @@ local function LoadBag(helpers)
                 {key = "trade", label = TRADE},
             }) do
                 local check = autoOpenMenu:CreateCheckbox(context.label,
-                    function() return GW.settings.BAG_AUTO_OPEN_CONTEXTS[context.key] end,
-                    function() GW.settings.BAG_AUTO_OPEN_CONTEXTS[context.key] = not GW.settings.BAG_AUTO_OPEN_CONTEXTS[context.key] end)
+                    function() return GW.settings.bags.autoOpenContexts[context.key] end,
+                    function() GW.settings.bags.autoOpenContexts[context.key] = not GW.settings.bags.autoOpenContexts[context.key] end)
                 check:AddInitializer(function(button, description, menu)
                     GW.BlizzardDropdownCheckButtonInitializer(button, description, menu,
-                        function() return GW.settings.BAG_AUTO_OPEN_CONTEXTS[context.key] end)
+                        function() return GW.settings.bags.autoOpenContexts[context.key] end)
                 end)
             end
 
             rootDescription:CreateTitle(L["Bag Sections"])
-            addCheck(L["Separate bags"], function() return GW.settings.BAG_SEPARATE_BAGS end,
-                     function() local ns = not GW.settings.BAG_SEPARATE_BAGS; GW.settings.BAG_SEPARATE_BAGS = ns; layoutItems(f); snapFrameSize(f) end)
+            addCheck(L["Separate bags"], function() return GW.settings.bags.bag.separateBags end,
+                     function() local ns = not GW.settings.bags.bag.separateBags; GW.settings.bags.bag.separateBags = ns; layoutItems(f); snapFrameSize(f) end)
             if HAS_KEYRING then
-                local keyringCheck = addCheck(L["Separate keyring"], function() return GW.settings.BAG_SEPARATE_KEYRING end,
-                         function() local ns = not GW.settings.BAG_SEPARATE_KEYRING; GW.settings.BAG_SEPARATE_KEYRING = ns; layoutItems(f); snapFrameSize(f) end)
-                keyringCheck:SetEnabled(function() return not GW.settings.BAG_SEPARATE_BAGS end)
+                local keyringCheck = addCheck(L["Separate keyring"], function() return GW.settings.bags.bag.separateKeyring end,
+                         function() local ns = not GW.settings.bags.bag.separateKeyring; GW.settings.bags.bag.separateKeyring = ns; layoutItems(f); snapFrameSize(f) end)
+                keyringCheck:SetEnabled(function() return not GW.settings.bags.bag.separateBags end)
                 keyringCheck:SetTooltip(function(tooltip, elementDescription)
                     tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
                     tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
                 end)
             elseif HAS_REAGENT_BAG then
-                local reagentCheck = addCheck(L["Separate reagent bag"], function() return GW.settings.BAG_SEPARATE_REAGENT_BAG end,
-                         function() local ns = not GW.settings.BAG_SEPARATE_REAGENT_BAG; GW.settings.BAG_SEPARATE_REAGENT_BAG = ns; layoutItems(f); snapFrameSize(f) end)
-                reagentCheck:SetEnabled(function() return not GW.settings.BAG_SEPARATE_BAGS end)
+                local reagentCheck = addCheck(L["Separate reagent bag"], function() return GW.settings.bags.bag.separateReagentBag end,
+                         function() local ns = not GW.settings.bags.bag.separateReagentBag; GW.settings.bags.bag.separateReagentBag = ns; layoutItems(f); snapFrameSize(f) end)
+                reagentCheck:SetEnabled(function() return not GW.settings.bags.bag.separateBags end)
                 reagentCheck:SetTooltip(function(tooltip, elementDescription)
                     tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
                     tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)

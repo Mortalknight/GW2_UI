@@ -63,7 +63,7 @@ local function HandleTabs(self)
 end
 
 function GW.LoadSocialFrame()
-    if not GW.settings.USE_SOCIAL_WINDOW then return end
+    if not GW.settings.windows.social.enabled then return end
 
     GW.HandlePortraitFrame(SocialUIFrame)
     SocialUIFrameCloseButton:SetPoint("TOPRIGHT", -5, -2)
@@ -90,7 +90,7 @@ function GW.LoadSocialFrame()
     SocialUIFrame:SetClampRectInsets(-40, 0, SocialUIFrame.gwHeader:GetHeight() - 30, 0)
     SocialUIFrame:SetSize(500, 627)
 
-    SocialUIFrame:SetScale(GW.settings.SOCIAL_POSITION_SCALE)
+    SocialUIFrame:SetScale(GW.settings.windows.social.scale)
     SocialUIFrame:SetMovable(true)
     SocialUIFrame:RegisterForDrag("LeftButton")
     SocialUIFrame:SetScript("OnDragStart", function()
@@ -100,17 +100,17 @@ function GW.LoadSocialFrame()
         SocialUIFrame:StopMovingOrSizing()
         SocialUIFrame:SetUserPlaced(false)
         -- Save map frame position
-        local pos = GW.settings.SOCIAL_POSITION
+        local pos = GW.settings.windows.social.pos
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = SocialUIFrame:GetPoint()
-        GW.settings.SOCIAL_POSITION = pos
+        GW.settings.windows.social.pos = pos
     end)
     SocialUIFrame:HookScript("OnShow", function()
-        local pos = GW.settings.SOCIAL_POSITION
+        local pos = GW.settings.windows.social.pos
         SocialUIFrame:ClearAllPoints()
         SocialUIFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     end)
@@ -159,16 +159,16 @@ function GW.LoadSocialFrame()
     end)
     SocialUIFrame.sizer:SetScript("OnMouseUp", function(self)
         self:SetScript("OnUpdate", nil)
-        GW.settings.SOCIAL_POSITION_SCALE = SocialUIFrame:GetScale()
+        GW.settings.windows.social.scale = SocialUIFrame:GetScale()
         -- Save hero frame position
-        local pos = GW.settings.SOCIAL_POSITION
+        local pos = GW.settings.windows.social.pos
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = SocialUIFrame:GetPoint()
-        GW.settings.SOCIAL_POSITION = pos
+        GW.settings.windows.social.pos = pos
     end)
 
     GW.SkinFriendList()

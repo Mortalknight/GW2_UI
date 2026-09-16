@@ -8,7 +8,7 @@ if GW.myClassID ~= GW.Enum.ClassIndex.Demonhunter or not GW.Retail then return e
 local function voidMetamorphosisUpdatePower(self)
     self.defaultResourceBar:SetMinMaxValues(0, self.maxPoints)
     self.defaultResourceBar:SetValue(self.currentPoints, Enum.StatusBarInterpolation.ExponentialEaseOut)
-    if GW.settings.CLASSPOWER_SHOW_VALUE then
+    if GW.settings.classpower.showValue then
         self.defaultResourceBar.label:SetText(self.currentPoints)
     else
         self.defaultResourceBar.label:SetText("")

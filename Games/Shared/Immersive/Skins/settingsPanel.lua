@@ -348,7 +348,7 @@ end
 
 ---------- frame ----------
 local function LoadSettingsPanelSkin()
-    if not GW.settings.BLIZZARD_OPTIONS_SKIN_ENABLED then return end
+    if not GW.settings.skins.blizzardOptions.enabled then return end
 
     local panel = SettingsPanel
     panel:GwStripTextures()

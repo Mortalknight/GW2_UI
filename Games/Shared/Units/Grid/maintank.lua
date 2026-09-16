@@ -36,44 +36,44 @@ GW.GridMaintankStyleRegister = GridMaintankStyleRegister
 
 local function UpdateGridMaintankFrame(frame)
     -- set frame settings
-    frame.useClassColor = GW.settings.RAID_CLASS_COLOR_TANK
-    frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_TANK
-    frame.showResscoureBar = GW.settings.maintank_show_powerbar
-    frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_TANK
-    frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_TANK
-    frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS_TANK
-    frame.unitWidth = tonumber(GW.settings.RAID_WIDTH_TANK)
-    frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT_TANK)
-    frame.raidShowImportantInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_TANK
-    frame.showDebuffs = GW.settings.RAID_SHOW_DEBUFFS_TANK
-    frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_TANK
-    frame.showBuffs = GW.settings.RAID_SHOW_BUFFS_TANK
-    frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_TANK
-    --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
-    frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_TANK
-    frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_TANK
+    frame.useClassColor = GW.settings.groupFrames.maintank.classColor
+    frame.hideClassIcon = GW.settings.groupFrames.maintank.hideClassIcon
+    frame.showResscoureBar = GW.settings.groupFrames.maintank.showPowerBar
+    frame.showRealmFlags = GW.settings.groupFrames.maintank.unitFlags
+    frame.healthStringFormat = GW.settings.groupFrames.maintank.unitHealth
+    frame.showTargetmarker = GW.settings.groupFrames.maintank.unitMarkers
+    frame.unitWidth = tonumber(GW.settings.groupFrames.maintank.width)
+    frame.unitHeight = tonumber(GW.settings.groupFrames.maintank.height)
+    frame.raidShowImportantInstanceDebuffs = GW.settings.groupFrames.maintank.showRaidInstanceDebuffs
+    frame.showDebuffs = GW.settings.groupFrames.maintank.showDebuffs
+    frame.showOnlyDispelDebuffs = GW.settings.groupFrames.maintank.onlyDispellableDebuffs
+    frame.showBuffs = GW.settings.groupFrames.maintank.showBuffs
+    frame.showAuraTooltipInCombat = GW.settings.groupFrames.maintank.auraTooltipInCombat
+    --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.playerAuras.missingAuras:trim():gsub("%s*,%s*", ","))))
+    frame.shortendHealthValue = GW.settings.groupFrames.maintank.shortHealthValues
+    frame.showAbsorbBar = GW.settings.groupFrames.maintank.showAbsorbBar
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do
-        frame.raidIndicators[pos] = GW.settings["INDICATOR_" .. pos]
+        frame.raidIndicators[pos] = GW.settings.groupFrames.indicators.positions[pos]
     end
-    frame.showRaidIndicatorIcon = GW.settings.INDICATORS_ICON
-    frame.showRaidIndicatorTimer = GW.settings.INDICATORS_TIME
-    frame.showRaidIndicatorStacks = GW.settings.INDICATORS_STACKS
-    frame.raidIndicatorSize = GW.settings.INDICATORS_SIZE
-    frame.raidIndicatorBarWidth = GW.settings.INDICATORS_BAR_WIDTH
-    frame.raidDebuffScale = GW.settings.RAIDDEBUFFS_Scale
-    frame.raidDispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
-    frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_TANK
-    frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_TANK
-    frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_TANK
-    frame.healthBarTexture = GW.settings.maintank_FrameHealthBarTexture
+    frame.showRaidIndicatorIcon = GW.settings.groupFrames.indicators.icon
+    frame.showRaidIndicatorTimer = GW.settings.groupFrames.indicators.time
+    frame.showRaidIndicatorStacks = GW.settings.groupFrames.indicators.stacks
+    frame.raidIndicatorSize = GW.settings.groupFrames.indicators.size
+    frame.raidIndicatorBarWidth = GW.settings.groupFrames.indicators.barWidth
+    frame.raidDebuffScale = GW.settings.groupFrames.raidDebuffsScale
+    frame.raidDispelDebuffScale = GW.settings.groupFrames.dispelDebuffsScale
+    frame.showRoleIcon = GW.settings.groupFrames.maintank.showRoleIcon
+    frame.showTankIcon = GW.settings.groupFrames.maintank.showTankIcon
+    frame.showLeaderAssistIcon = GW.settings.groupFrames.maintank.showLeaderIcon
+    frame.healthBarTexture = GW.settings.groupFrames.maintank.healthBarTexture
 
-    frame.debuffFilters = GW.settings.RAID_MAINTANK_DEBUFF_FILTER
-    frame.buffFilters = GW.settings.RAID_MAINTANK_BUFF_FILTER
-    frame.ignoredAuraSpellIDs = GW.settings.RAID_MAINTANK_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
-    frame.pandemicHighlight = GW.settings.RAID_MAINTANK_PANDEMIC_HIGHLIGHT
-    frame.showDispelIcon = GW.settings.RAID_MAINTANK_DISPEL_ICON
+    frame.debuffFilters = GW.settings.groupFrames.maintank.debuffFilter
+    frame.buffFilters = GW.settings.groupFrames.maintank.buffFilter
+    frame.ignoredAuraSpellIDs = GW.settings.groupFrames.maintank.ignoredAuras -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.groupFrames.maintank.pandemicHighlight
+    frame.showDispelIcon = GW.settings.groupFrames.maintank.dispelIcon
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
@@ -81,9 +81,9 @@ local function UpdateGridMaintankFrame(frame)
             frame:ClearAllPoints()
         end
 
-        if GW.settings.RAID_MAINTANK_FRAMES_ENABLED and not frame:IsEnabled() then
+        if GW.settings.groupFrames.maintank.enabled and not frame:IsEnabled() then
             frame:Enable()
-        elseif not GW.settings.RAID_MAINTANK_FRAMES_ENABLED and frame:IsEnabled() then
+        elseif not GW.settings.groupFrames.maintank.enabled and frame:IsEnabled() then
             frame:Disable()
         end
     end
@@ -100,7 +100,7 @@ local function UpdateGridMaintankFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    GW.Update_Faderframe(frame, "gridTank")
+    GW.Update_Faderframe(frame, "maintank")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")
 end

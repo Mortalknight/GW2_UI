@@ -90,7 +90,7 @@ local function setStaggerBar()
     local staggerText = GW.GetLocalizedNumber(format("%.2f%%", staggerPrec * 100))
     if bar.label._lastText ~= staggerText then
         bar.label:SetText(staggerText)
-        if GW.settings.CLASSPOWER_SHOW_VALUE then
+        if GW.settings.classpower.showValue then
             bar.label:SetText(staggerText)
         else
             bar.label:SetText("")

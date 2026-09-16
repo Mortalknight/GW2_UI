@@ -49,7 +49,7 @@ local function GetQuestColorKey(questID, isCampaignContainer, isFrequency)
 end
 
 local function ShouldSortSuperTrackedQuestToTop()
-    return GW.settings.OBJECTIVES_SUPERTRACKED_QUEST_TOP
+    return GW.settings.objectives.superTrackedOnTop
 end
 
 -- AddObjective keeps no reference to its options table (field reads only), so one
@@ -104,8 +104,8 @@ local function BuildQuestBlockSignature(quest, questID, questLogIndex, colorKey)
     AddSignaturePart(quest.title)
     AddSignaturePart(colorKey)
     AddSignaturePart(GW.ObjectivesTrackerState.layoutGeneration)
-    AddSignaturePart(GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES)
-    AddSignaturePart(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
+    AddSignaturePart(GW.settings.objectives.showCompleted)
+    AddSignaturePart(GW.settings.objectives.statusBars)
     AddSignaturePart(isComplete)
     AddSignaturePart(C_QuestLog.IsFailed(questID))
     AddSignaturePart(isSuperTracked)
@@ -235,7 +235,7 @@ end
 GwQuestLogBlockMixin = {}
 
 function GwQuestLogBlockMixin:UpdateBlockObjectives(numObjectives)
-    local showCompletedObjectives = GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES
+    local showCompletedObjectives = GW.settings.objectives.showCompleted
     for objectiveIndex = 1, numObjectives do
         local text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, objectiveIndex, false)
         if text and (showCompletedObjectives or not finished) then

@@ -17,7 +17,7 @@ end
 -- sets the bank header names in separate bags mode: custom name, bag item name or the bank default
 local function setBankHeaders(frame)
     for i = 1, NUM_BANKBAGSLOTS do
-        local customBagHeaderName = GW.settings["BANK_HEADER_NAME" .. i]
+        local customBagHeaderName = GW.settings.bags.bank.headerNames[i]
         local header = frame["bagHeader" .. i]
         local itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(NUM_BAG_SLOTS + i))
 
@@ -32,7 +32,7 @@ local function setBankHeaders(frame)
             header:Hide()
         end
     end
-    local customBagHeaderName = GW.settings.BANK_HEADER_NAME0
+    local customBagHeaderName = GW.settings.bags.bank.headerNames[0]
     frame.bagHeader0.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BANK)
     frame.bagHeader0.nameString:SetTextColor(1, 1, 1, 1)
 end
@@ -42,16 +42,16 @@ local function layoutBankItems(f)
     local parent = f:GetParent()
     local max_col = parent.gw_bank_cols
     local col = 0
-    local rev = GW.settings.BANK_REVERSE_SORT
-    local sep = GW.settings.BANK_SEPARATE_BAGS
+    local rev = GW.settings.bags.bank.reverseSort
+    local sep = GW.settings.bags.bank.separateBags
     local row = sep and 1 or 0
 
-    if not GW.settings.BANK_ITEM_SIZE or not GW.settings.BANK_ITEM_SPACING_X or not GW.settings.BANK_ITEM_SPACING_Y then
+    if not GW.settings.bags.bank.itemSize or not GW.settings.bags.bank.itemSpacingX or not GW.settings.bags.bank.itemSpacingY then
         -- acedb can have the profile defaults detached (logout, profile operations)
         return
     end
-    local item_off_x = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_X
-    local item_off_y = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_Y
+    local item_off_x = GW.settings.bags.bank.itemSize + GW.settings.bags.bank.itemSpacingX
+    local item_off_y = GW.settings.bags.bank.itemSize + GW.settings.bags.bank.itemSpacingY
 
     local iS = NUM_BAG_SLOTS
     local iE = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
@@ -129,7 +129,7 @@ local function snapFrameSize(f)
     if f.ItemFrame:IsShown() then
         cfs = f.ItemFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, GW.settings.BANK_ITEM_SIZE, GW.settings.BANK_ITEM_SPACING_X, GW.settings.BANK_ITEM_SPACING_Y, 370)
+    inv.snapFrameSize(f, cfs, GW.settings.bags.bank.itemSize, GW.settings.bags.bank.itemSpacingX, GW.settings.bags.bank.itemSpacingY, 370)
 end
 
 
@@ -170,7 +170,7 @@ local bankSlotButtonOpts = {
 
 -- update all bank items and bank bags
 local function updateBankContainers(f)
-    GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[BANK_CONTAINER], BANK_CONTAINER, GW.settings.BANK_ITEM_SIZE, true, bankSlotButtonOpts)
+    GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[BANK_CONTAINER], BANK_CONTAINER, GW.settings.bags.bank.itemSize, true, bankSlotButtonOpts)
     if f:IsShown() then
         if f.ItemFrame:IsShown() then
             updateFreeBankSlots(f.ItemFrame)
@@ -184,7 +184,7 @@ end
 -- rescan ALL bank ItemButtons
 local function rescanBankContainers(f)
     for bag_id = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-        GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id, GW.settings.BANK_ITEM_SIZE)
+        GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id, GW.settings.bags.bank.itemSize)
     end
     updateBankContainers(f)
 end
@@ -196,7 +196,7 @@ local function setBagBarOrder(f)
     local y = 5
     local bag_size = 28
     local bag_padding = 4
-    local rev = GW.settings.BANK_REVERSE_SORT
+    local rev = GW.settings.bags.bank.reverseSort
     if rev then
         y = 5 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
     end
@@ -341,14 +341,14 @@ end
 
 
 local function onBankResizeStop(self)
-    GW.settings.BANK_WIDTH = self:GetWidth()
-    inv.onMoved(self, "BANK_POSITION", snapFrameSize)
+    GW.settings.bags.bank.width = self:GetWidth()
+    inv.onMoved(self, "bank", snapFrameSize)
 end
 
 
 local function onBankFrameChangeSize(self, _, _, skip)
-    local size = GW.settings.BANK_ITEM_SIZE
-    local spacing = GW.settings.BANK_ITEM_SPACING_X
+    local size = GW.settings.bags.bank.itemSize
+    local spacing = GW.settings.bags.bank.itemSpacingX
     if not size or not spacing then
         -- OnSizeChanged can fire while acedb has the profile defaults detached
         -- (logout, profile operations) - values equal to a default read as nil then
@@ -471,15 +471,15 @@ local function bankHeader_OnClick(self, btn)
     elseif btn == "RightButton" then
         GW.ShowPopup({text = L["New Bag Name"],
             OnAccept = function(promptFrame)
-                GW.settings["BANK_HEADER_NAME" .. idx] = promptFrame.input:GetText()
-                self.nameString:SetText(GW.settings["BANK_HEADER_NAME" .. idx])
+                GW.settings.bags.bank.headerNames[idx] = promptFrame.input:GetText()
+                self.nameString:SetText(GW.settings.bags.bank.headerNames[idx])
             end,
             hasEditBox = true,
             button1 = SAVE,
             button2 = RESET,
             EditBoxOnEscapePressed = function(popup) popup:Hide() end,
             OnCancel = function()
-                GW.settings["BANK_HEADER_NAME" .. idx] = ""
+                GW.settings.bags.bank.headerNames[idx] = ""
                 if idx > 0 then
                     local itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(NUM_BAG_SLOTS + idx))
 
@@ -498,7 +498,7 @@ local function bankHeader_OnClick(self, btn)
                 end
             end,
         inputText = (function()
-            local customName = GW.settings["BANK_HEADER_NAME" .. idx]
+            local customName = GW.settings.bags.bank.headerNames[idx]
                 if string.len(customName) == 0 then
                     customName = nil
                 end
@@ -531,7 +531,7 @@ local function LoadBank(helpers)
     local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplate")
     tinsert(UISpecialFrames, "GwBankFrame")
     f:ClearAllPoints()
-    f:SetWidth(GW.settings.BANK_WIDTH)
+    f:SetWidth(GW.settings.bags.bank.width)
     onBankFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
     f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
@@ -550,10 +550,10 @@ local function LoadBank(helpers)
     end
 
     -- setup movable stuff
-    local pos = GW.settings.BANK_POSITION
+    local pos = GW.settings.bags.bank.pos
     f:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     f.mover:RegisterForDrag("LeftButton")
-    f.mover.onMoveSetting = "BANK_POSITION"
+    f.mover.onMoveSetting = "bank"
     f.mover:SetScript("OnDragStart", inv.onMoverDragStart)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
@@ -661,11 +661,11 @@ local function LoadBank(helpers)
             end
 
             inv.addItemSizeMenuEntries(rootDescription, "BANK")
-            addCheck(L["Reverse Bag Order"], function() return GW.settings.BANK_REVERSE_SORT end,
-                     function() GW.settings.BANK_REVERSE_SORT = not GW.settings.BANK_REVERSE_SORT; setBagBarOrder(f.ItemFrame); layoutItems(f); snapFrameSize(f) end)
-            addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; GW.UpdateAllOwnBagItemButtons() end)
-            addCheck(L["Separate bags"], function() return GW.settings.BANK_SEPARATE_BAGS end,
-                     function() local ns = not GW.settings.BANK_SEPARATE_BAGS; GW.settings.BANK_SEPARATE_BAGS = ns; layoutItems(f); snapFrameSize(f) end)
+            addCheck(L["Reverse Bag Order"], function() return GW.settings.bags.bank.reverseSort end,
+                     function() GW.settings.bags.bank.reverseSort = not GW.settings.bags.bank.reverseSort; setBagBarOrder(f.ItemFrame); layoutItems(f); snapFrameSize(f) end)
+            addCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end, function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; GW.UpdateAllOwnBagItemButtons() end)
+            addCheck(L["Separate bags"], function() return GW.settings.bags.bank.separateBags end,
+                     function() local ns = not GW.settings.bags.bank.separateBags; GW.settings.bags.bank.separateBags = ns; layoutItems(f); snapFrameSize(f) end)
         end)
     end)
 

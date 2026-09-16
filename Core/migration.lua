@@ -1,103 +1,207 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function DatabaseValueMigration()
-    -- marker flags of migrations that have been removed again (everything before 11.0.0), cleaned out of the profiles
-    GW.settings.updateFramePositionMigrationDone = nil
-    GW.settings.chatTimeStampMigrationDone = nil
-    GW.settings.profileMetaDataFixed = nil
-    GW.settings.BANK_ITEM_SETTINGS_SPLIT = nil
+local POS_FIELDS = {point = true, relativePoint = true, xOfs = true, yOfs = true, hasMoved = true}
 
-    -- migration of the player cast bar details: the single "Advanced Casting Bar" toggle was
-    -- split into one setting per element. Only profiles that had it enabled carry the key
-    -- (it is gone from the defaults), so everyone else keeps the plain bar
-    if GW.settings.CASTINGBAR_DATA ~= nil then
-        if GW.settings.CASTINGBAR_DATA then
-            GW.settings.CASTINGBAR_SHOW_NAME = true
-            GW.settings.CASTINGBAR_SHOW_TIMER = true
-            GW.settings.CASTINGBAR_SHOW_LATENCY = true
-            GW.settings.CASTINGBAR_ICON_POSITION = "LEFT"
+-- Structure version of a profile. It has no default on purpose: AceDB strips values equal to their default on
+-- logout, a marker in the defaults would be gone every time. Bump it when a later migration has to run once more.
+local SETTINGS_VERSION = 4
+
+local TOP_LEVEL_WITHOUT_DEFAULT = {profileIcon = true, profileChangedDate = true, settingsVersion = true}
+
+local function IsArray(tbl)
+    return type(tbl) == "table" and #tbl > 0
+end
+
+local function MergeInto(dst, src)
+    for key, value in pairs(src) do
+        if type(value) == "table" and type(dst[key]) == "table" and not IsArray(value) then
+            MergeInto(dst[key], value)
+        else
+            dst[key] = type(value) == "table" and CopyTable(value) or value
         end
+    end
+end
 
-        GW.settings.CASTINGBAR_DATA = nil
+local function ConvertLegacyValues(profile)
+    profile.updateFramePositionMigrationDone = nil
+    profile.chatTimeStampMigrationDone = nil
+    profile.profileMetaDataFixed = nil
+    profile.playerAuraSortMigrationDone = nil
+    profile.BANK_ITEM_SETTINGS_SPLIT = nil
+    if type(profile.INDICATOR_BAR) == "table" then
+        profile.INDICATOR_BAR = nil
     end
 
-    -- same split for the target/focus cast bars: their toggle only ever drove the cast
-    -- timer text, the spell name was always shown (and stays on by default)
-    for _, unit in next, { "target", "focus" } do
+    if profile.CASTINGBAR_DATA ~= nil then
+        if profile.CASTINGBAR_DATA then
+            profile.CASTINGBAR_SHOW_NAME = true
+            profile.CASTINGBAR_SHOW_TIMER = true
+            profile.CASTINGBAR_SHOW_LATENCY = true
+            profile.CASTINGBAR_ICON_POSITION = "LEFT"
+        end
+        profile.CASTINGBAR_DATA = nil
+    end
+
+    for _, unit in next, {"target", "focus"} do
         local key = unit .. "_CASTINGBAR_DATA"
-        if GW.settings[key] ~= nil then
-            if GW.settings[key] then
-                GW.settings[unit .. "_CASTINGBAR_SHOW_TIMER"] = true
+        if profile[key] ~= nil then
+            if profile[key] then
+                profile[unit .. "_CASTINGBAR_SHOW_TIMER"] = true
             end
-            GW.settings[key] = nil
+            profile[key] = nil
         end
     end
 
-    -- migration of the dispel type icon settings: the per-frame checkbox became a three
-    -- state dropdown (OFF/ALL/DISPELLABLE); enabled maps to the new default behavior
     for _, key in next, {
         "PLAYER_DISPEL_ICON", "target_DISPEL_ICON", "focus_DISPEL_ICON", "PET_DISPEL_ICON",
         "PARTY_DISPEL_ICON", "PARTY_PET_DISPEL_ICON", "RAID_DISPEL_ICON", "RAID_25_DISPEL_ICON",
         "RAID_10_DISPEL_ICON", "RAID_PARTY_DISPEL_ICON", "RAID_PET_DISPEL_ICON", "RAID_MAINTANK_DISPEL_ICON",
     } do
-        if type(GW.settings[key]) == "boolean" then
-            GW.settings[key] = GW.settings[key] and "DISPELLABLE" or "OFF"
+        if type(profile[key]) == "boolean" then
+            profile[key] = profile[key] and "DISPELLABLE" or "OFF"
         end
     end
 
-    -- migration of the player aura sorting: SortMethod + SortDir were combined into
-    -- a single Sort preset (shared values with the unit frame aura sorting)
-    if not GW.settings.playerAuraSortMigrationDone then
-        for _, barKey in next, { "PlayerBuffs", "PlayerDebuffs" } do
-            local db = GW.settings[barKey]
-            if db then
-                if db.SortMethod == "TIME" then
-                    db.Sort = db.SortDir == "-" and "EXPIRATION_DESC" or "EXPIRATION_ASC"
-                elseif db.SortMethod == "NAME" then
-                    db.Sort = db.SortDir == "-" and "NAME_DESC" or "NAME_ASC"
+    for _, barKey in next, {"PlayerBuffs", "PlayerDebuffs"} do
+        local db = profile[barKey]
+        if type(db) == "table" and (db.SortMethod or db.SortDir) then
+            if db.SortMethod == "TIME" then
+                db.Sort = db.SortDir == "-" and "EXPIRATION_DESC" or "EXPIRATION_ASC"
+            elseif db.SortMethod == "NAME" then
+                db.Sort = db.SortDir == "-" and "NAME_DESC" or "NAME_ASC"
+            end
+            db.SortMethod = nil
+            db.SortDir = nil
+        end
+    end
+
+    for old, new in next, {
+        MICROMENU_NOTIFICATION_ICON_ANIMATION = "notificationIconAnimation",
+        FADE_MICROMENU = "fade",
+        MICROMENU_EVENT_TIMER_ICON = "eventTimerIcon",
+    } do
+        if profile[old] ~= nil then
+            profile.micromenu = profile.micromenu or {}
+            profile.micromenu[new] = profile[old]
+            profile[old] = nil
+        end
+    end
+
+    if profile.CHARACTER_STAT_ORDER ~= nil or profile.CHARACTER_STAT_VISIBILITY ~= nil or profile.CHARACTER_SHOW_SET_BONUS ~= nil then
+        if profile == GW.settings then
+            local stats = GW.private.heroPanel.stats
+            if #stats.order == 0 and next(stats.visibility) == nil then
+                for _, key in ipairs(profile.CHARACTER_STAT_ORDER or {}) do
+                    tinsert(stats.order, key)
                 end
-                db.SortMethod = nil
-                db.SortDir = nil
+                for key, visible in pairs(profile.CHARACTER_STAT_VISIBILITY or {}) do
+                    stats.visibility[key] = visible
+                end
+                if profile.CHARACTER_SHOW_SET_BONUS == false then
+                    stats.visibility.SETBONUS = false
+                end
             end
         end
+        profile.CHARACTER_STAT_ORDER = nil
+        profile.CHARACTER_STAT_VISIBILITY = nil
+        profile.CHARACTER_SHOW_SET_BONUS = nil
+    end
+end
 
-        GW.settings.playerAuraSortMigrationDone = true
+local function MoveValue(profile, newPath, value)
+    if type(value) ~= "table" then
+        GW.SetSettingInTable(profile, newPath, value)
+        return
     end
 
+    -- the active profile already carries the default filled tables; a stored table holds only the values that
+    -- differ from the defaults, so it is laid over the existing one instead of replacing it
+    local existing = GW.GetSettingFromTable(profile, newPath)
+    if type(existing) == "table" and not IsArray(value) then
+        MergeInto(existing, value)
+    else
+        GW.SetSettingInTable(profile, newPath, CopyTable(value))
+    end
+end
 
-    -- micro menu settings moved into the micromenu table
-    if GW.settings.MICROMENU_NOTIFICATION_ICON_ANIMATION ~= nil then
-        GW.settings.micromenu.notificationIconAnimation = GW.settings.MICROMENU_NOTIFICATION_ICON_ANIMATION
-        GW.settings.MICROMENU_NOTIFICATION_ICON_ANIMATION = nil
-    end
-    if GW.settings.FADE_MICROMENU ~= nil then
-        GW.settings.micromenu.fade = GW.settings.FADE_MICROMENU
-        GW.settings.FADE_MICROMENU = nil
-    end
-    if GW.settings.MICROMENU_EVENT_TIMER_ICON ~= nil then
-        GW.settings.micromenu.eventTimerIcon = GW.settings.MICROMENU_EVENT_TIMER_ICON
-        GW.settings.MICROMENU_EVENT_TIMER_ICON = nil
-    end
+local function MigrateProfileSettings(profile)
+    if type(profile) ~= "table" or profile.settingsVersion == SETTINGS_VERSION then return end
 
-    -- hero panel stats moved from the profile into the character settings (11.2.0)
-    if GW.settings.CHARACTER_STAT_ORDER ~= nil or GW.settings.CHARACTER_STAT_VISIBILITY ~= nil or GW.settings.CHARACTER_SHOW_SET_BONUS ~= nil then
-        local stats = GW.private.heroPanel.stats
-        if #stats.order == 0 and next(stats.visibility) == nil then
-            for _, key in ipairs(GW.settings.CHARACTER_STAT_ORDER or {}) do
-                tinsert(stats.order, key)
+    ConvertLegacyValues(profile)
+
+    for _, bar in ipairs(GW.MultiBarMigrationKeys) do
+        local old = profile[bar]
+        if type(old) == "table" then
+            local target = GW.MoverKeyMigrationMap[bar]
+            for key, value in pairs(old) do
+                MoveValue(profile, target .. (POS_FIELDS[key] and ".pos." or ".") .. key, value)
             end
-            for key, visible in pairs(GW.settings.CHARACTER_STAT_VISIBILITY or {}) do
-                stats.visibility[key] = visible
-            end
-            if GW.settings.CHARACTER_SHOW_SET_BONUS == false then
-                stats.visibility.SETBONUS = false
+            profile[bar] = nil
+        end
+    end
+    -- the bar tables have a fixed set of keys; older builds left cols and margin behind
+    local barDefaults = GW.globalDefault.profile.actionbars.bars
+    for bar, db in pairs(profile.actionbars and profile.actionbars.bars or {}) do
+        if type(db) == "table" and barDefaults[bar] then
+            for key in pairs(db) do
+                if barDefaults[bar][key] == nil then
+                    db[key] = nil
+                end
             end
         end
-        GW.settings.CHARACTER_STAT_ORDER = nil
-        GW.settings.CHARACTER_STAT_VISIBILITY = nil
-        GW.settings.CHARACTER_SHOW_SET_BONUS = nil
     end
+
+    for oldKey, newPath in pairs(GW.SettingsMigrationMap) do
+        local root, sub = strsplit(".", oldKey)
+        local value
+        if sub then
+            value = type(profile[root]) == "table" and profile[root][sub] or nil
+        else
+            value = profile[oldKey]
+        end
+
+        if value ~= nil then
+            MoveValue(profile, newPath, value)
+            if sub then
+                profile[root][sub] = nil
+            else
+                profile[oldKey] = nil
+            end
+        end
+    end
+    if type(profile.Minimap) == "table" and next(profile.Minimap) == nil then
+        profile.Minimap = nil
+    end
+
+    for key in pairs(profile) do
+        if GW.globalDefault.profile[key] == nil and not TOP_LEVEL_WITHOUT_DEFAULT[key] then
+            profile[key] = nil
+        end
+    end
+
+    profile.settingsVersion = SETTINGS_VERSION
+end
+GW.MigrateProfileSettings = MigrateProfileSettings
+
+local function MigrateLayoutFrames()
+    for _, layout in pairs(GW.global.layouts or {}) do
+        local kept = {}
+        for _, frame in pairs(layout.frames or {}) do
+            frame.settingName = GW.MoverKeyMigrationMap[frame.settingName] or frame.settingName
+            if frame.settingName and GW.GetSettingDefault(frame.settingName .. ".pos") ~= nil then
+                kept[#kept + 1] = frame
+            end
+        end
+        layout.frames = kept
+    end
+end
+
+local function DatabaseValueMigration()
+    for _, profile in pairs(GW.globalSettings.profiles) do
+        MigrateProfileSettings(profile)
+    end
+    MigrateLayoutFrames()
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
 

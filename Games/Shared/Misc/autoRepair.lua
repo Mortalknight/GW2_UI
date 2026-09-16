@@ -10,7 +10,7 @@ if GUILDBANK_REPAIR_INSUFFICIENT_FUNDS == nil then
 end
 
 local function autoRepair(overrideSettings)
-    STATUS, TYPE, COST, canRepair = "", GW.settings.AUTO_REPAIR, GetRepairAllCost()
+    STATUS, TYPE, COST, canRepair = "", GW.settings.general.autoRepair, GetRepairAllCost()
 
     if canRepair and COST > 0 then
         local tryGuild = not overrideSettings and TYPE == "GUILD" and IsInGuild()
@@ -43,7 +43,7 @@ GW.autoRepairOutput = autoRepairOutput
 
 local function ar_frame_OnEvent(self, event, ...)
     if event == "MERCHANT_SHOW" then
-        if GW.settings.AUTO_REPAIR == "NONE" or IsShiftKeyDown() or not CanMerchantRepair() then
+        if GW.settings.general.autoRepair == "NONE" or IsShiftKeyDown() or not CanMerchantRepair() then
             return
         end
 

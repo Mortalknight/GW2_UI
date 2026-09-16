@@ -23,7 +23,7 @@ end
 
 -- show the equipment set name on the item buttons of set items
 GW.RegisterItemButtonDecorator(function(button, _, itemIDOrLink)
-    if not GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME then
+    if not GW.settings.bags.items.equipmentSetName then
         return
     end
     local equipmentSetName = GetItemEquipmentSetName(itemIDOrLink)
@@ -72,7 +72,7 @@ GW.RegisterBagModule({
         })
     end,
     onMenu = function(f, rootDescription, addCheck)
-        addCheck(L["Show Equipment Set Name"], function() return GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME end,
-                 function() GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME = not GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME; GW.UpdateAllOwnBagItemButtons() end)
+        addCheck(L["Show Equipment Set Name"], function() return GW.settings.bags.items.equipmentSetName end,
+                 function() GW.settings.bags.items.equipmentSetName = not GW.settings.bags.items.equipmentSetName; GW.UpdateAllOwnBagItemButtons() end)
     end,
 })

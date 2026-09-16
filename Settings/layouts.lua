@@ -2,9 +2,6 @@
 local GW = select(2, ...)
 local L = GW.L
 
--- the private layouts are a mixed table: numbered entries next to the currentSelected key, and deleting an
--- entry leaves a hole, so they are always walked with pairs instead of a numeric loop. The callback stops the
--- walk as soon as it returns something, that value is handed back.
 local function ForEachPrivateLayout(callback)
     for key, entry in pairs(GW.GetAllPrivateLayouts()) do
         if type(key) == "number" and type(entry) == "table" then
@@ -35,11 +32,11 @@ local function RefreshSpecsDropdown()
     local view = GwSmallSettingsContainer and GwSmallSettingsContainer.layoutView
     if not view then return end
 
-    view.specsDropDown:GenerateMenu() -- rebuilds the entries and the button text
+    view.specsDropDown:GenerateMenu()
 end
 
 local function UpdateMatchingLayout(self, new_point)
-    if GW.IsApplyingMoverPositions then return end -- a profile switch is moving the frames, not the user
+    if GW.IsApplyingMoverPositions then return end
 
     local selectedLayoutName = GW.private.Layouts.currentSelected
     local layout = selectedLayoutName and GW.GetLayoutByName(selectedLayoutName)
@@ -52,7 +49,6 @@ local function UpdateMatchingLayout(self, new_point)
         end
     end
 
-    -- a mover that did not exist yet when the layout was saved
     layout.frames[#layout.frames + 1] = {settingName = self.setting, point = GW.CopyTable(new_point)}
 end
 GW.UpdateMatchingLayout = UpdateMatchingLayout
@@ -63,7 +59,6 @@ local function GetUsablePoint(point)
     end
 end
 
--- Puts a position into the layout, into the entry of that frame or as a new one.
 local function StoreLayoutPoint(layout, settingName, point)
     for _, frame in pairs(layout.frames) do
         if frame.settingName == settingName then
@@ -103,7 +98,7 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
         -- positions of the profile. The layout adopts the current position instead, so nothing jumps and the
         -- next switch has a value to restore.
         if not point then
-            point = GetUsablePoint(GW.settings[mover.setting])
+            point = GetUsablePoint(GW.GetSetting(mover.setting).pos)
             if point then
                 StoreLayoutPoint(layout, mover.setting, point)
             end
@@ -124,7 +119,6 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
 end
 
 local function AssignLayoutToSpec(specId, layoutName, toSet)
-    -- a spec can only belong to one layout
     if toSet then
         local takenBy = ForEachPrivateLayout(function(entry)
             if entry.layoutName ~= layoutName and entry.assignedSpecs and entry.assignedSpecs[specId] then
@@ -162,12 +156,10 @@ local function BuildLayout(name, profileName, settings)
         profileName = profileName,
     }
 
-    local index = 0
     for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
-        local point = GetUsablePoint(settings[moveableFrame.setting])
+        local point = GetUsablePoint(GW.GetSettingFromTable(settings, moveableFrame.setting .. ".pos"))
         if point then
-            layout.frames[index] = {settingName = moveableFrame.setting, point = GW.CopyTable(point)}
-            index = index + 1
+            layout.frames[#layout.frames + 1] = {settingName = moveableFrame.setting, point = GW.CopyTable(point)}
         end
     end
 
@@ -197,7 +189,6 @@ local function CreateProfileLayouts()
 end
 GW.CreateProfileLayouts = CreateProfileLayouts
 
--- returns the trimmed name, or nothing when it is empty or already taken
 local function GetNewLayoutName(popup)
     local name = strtrim(popup.input:GetText() or "")
     if name == "" then
@@ -237,7 +228,6 @@ local function DeleteSelectedLayout(self)
             --also delete the assing settings
             GW.DeletePrivateLayoutByLayoutName(layoutName)
 
-            -- nothing is selected any more, the buttons would work on a layout that is gone
             local view = self:GetParent()
             GW.private.Layouts.currentSelected = nil
             view.savedLayoutDropDown:GenerateMenu()
@@ -262,7 +252,6 @@ local function RenameSelectedLayout(self)
             GW.global.layouts[newName] = layout
             GW.global.layouts[oldName] = nil
 
-            -- the spec assignment points at the layout by name and would be orphaned otherwise
             local privateLayoutSettings = GW.GetPrivateLayoutByLayoutName(oldName)
             if privateLayoutSettings then
                 privateLayoutSettings.layoutName = newName
@@ -290,7 +279,6 @@ local function specSwitchHandlerOnEvent(self, event)
 
     self.currentSpecIdx = currentSpecIdx
 
-    -- retries come back through the timer below and keep counting, a real event starts over
     if not self.profileLayoutRetryPending then
         self.profileLayoutRetries = 0
     end
@@ -315,7 +303,6 @@ local function specSwitchHandlerOnEvent(self, event)
                 layoutToUse = allLayouts[name]
             end
 
-            -- the profile layout is created a few seconds after the login, wait for it but not forever
             if not layoutToUse then
                 self.profileLayoutRetries = self.profileLayoutRetries + 1
                 if self.profileLayoutRetries <= PROFILE_LAYOUT_RETRIES then

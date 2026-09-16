@@ -343,7 +343,7 @@ local function BuildRetailShortValueOptions()
         return
     end
 
-    local decimal = GW.settings.ShortHealthValuesDecimalLength
+    local decimal = GW.settings.unitframes.shortValueDecimals
     decimal = min(decimal, RETAIL_SHORT_DECIMAL_MAX)
 
     local fractionDivisor = 10 ^ decimal
@@ -367,9 +367,9 @@ end
 local function BuildPrefixValues()
     if next(GW.ShortPrefixValues) then wipe(GW.ShortPrefixValues) end
 
-    local prefixStyle = GW.ShortPrefixStyles[GW.settings.ShortHealthValuePrefixStyle] or GW.ShortPrefixStyles.ENGLISH
+    local prefixStyle = GW.ShortPrefixStyles[GW.settings.unitframes.shortValuePrefixStyle] or GW.ShortPrefixStyles.ENGLISH
     GW.ShortPrefixValues = GW.CopyTable(prefixStyle)
-    local shortValueDec = format("%%.%df", GW.settings.ShortHealthValuesDecimalLength or 1)
+    local shortValueDec = format("%%.%df", GW.settings.unitframes.shortValueDecimals or 1)
 
     for _, style in ipairs(GW.ShortPrefixValues) do
         style[3] = shortValueDec
@@ -429,7 +429,7 @@ GW.FormatMoneyForChat = FormatMoneyForChat
 
 local function GetDefaultClassColor(class)
     local color
-    if GW.settings.BLIZZARDCLASSCOLOR_ENABLED then
+    if GW.settings.general.blizzardClassColors then
         color = RAID_CLASS_COLORS[class]
     else
         color = GW.privateDefaults.profile.Gw2ClassColor[class]
@@ -452,7 +452,7 @@ function GW.GWGetClassColor(class, useClassColor, alwaysUseBlizzardColors)
 
     local color
     if class and useClassColor then
-        if alwaysUseBlizzardColors or GW.settings.BLIZZARDCLASSCOLOR_ENABLED then
+        if alwaysUseBlizzardColors or GW.settings.general.blizzardClassColors then
             color = RAID_CLASS_COLORS[class]
         else
             color = GW.Colors.ClassColors[class]
@@ -593,8 +593,8 @@ end
 GW.RoundDec = RoundDec
 
 local function GetLocalizedNumber(number, numberDecimal)
-    local DECIMAL_DELIMITER = GW.settings.NumberFormat == "POINT" and "." or ","
-    local LARGE_NUMBER_DELIMITER = GW.settings.NumberFormat == "POINT" and "," or "."
+    local DECIMAL_DELIMITER = GW.settings.general.numberFormat == "POINT" and "." or ","
+    local LARGE_NUMBER_DELIMITER = GW.settings.general.numberFormat == "POINT" and "," or "."
     local formattedNumber, integerPart, decimalPart
 
     -- Wandelt die Zahl in einen String um
@@ -1424,7 +1424,7 @@ end
 GW.IsSpellTalented = IsSpellTalented
 
 local function moveFrameToPosition(frame, x, y)
-    local pos = GW.settings[frame.gwSetting]
+    local pos = GW.settings.skins[frame.gwSkin].pos
 
     if x and y then
         if pos then
@@ -1437,23 +1437,23 @@ local function moveFrameToPosition(frame, x, y)
         pos.xOfs = x
         pos.yOfs = y
 
-        GW.settings[frame.gwSetting] = pos
+        GW.settings.skins[frame.gwSkin].pos = pos
     end
 
     frame:ClearAllPoints()
     frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 end
 
-local function MakeFrameMovable(frame, target, setting, moveFrameOnShow)
+local function MakeFrameMovable(frame, target, skin, moveFrameOnShow)
     if not target then
-        local point = GW.settings[setting]
+        local point = GW.settings.skins[skin].pos
         frame:ClearAllPoints()
         frame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point. yOfs)
     end
 
     target = target or frame
 
-    target.gwSetting = setting
+    target.gwSkin = skin
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:SetUserPlaced(false)
@@ -1718,7 +1718,7 @@ local function AddGw2Layout(init)
         GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumRows, 1)
         GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumIcons, 12)
         GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.HideBarScrolling, 1)
-        GW.Libs.LEMO:ReanchorFrame(MainActionBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
+        GW.Libs.LEMO:ReanchorFrame(MainActionBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.hud.scale) or 1)))
 
         -- PossessActionBar
         GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainActionBar, "TOP", -110, 40)
@@ -1762,10 +1762,10 @@ GW.MakeActionbuttonsVisible = MakeActionbuttonsVisible
 local function GetDebuffScaleBasedOnPrio()
     local scale = 1
 
-    if GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "DISPELL" then
-        return tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
-    elseif GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "IMPORTANT" then
-        return tonumber(GW.settings.RAIDDEBUFFS_Scale)
+    if GW.settings.groupFrames.debuffScalePriority == "DISPELL" then
+        return tonumber(GW.settings.groupFrames.dispelDebuffsScale)
+    elseif GW.settings.groupFrames.debuffScalePriority == "IMPORTANT" then
+        return tonumber(GW.settings.groupFrames.raidDebuffsScale)
     end
 
     return scale

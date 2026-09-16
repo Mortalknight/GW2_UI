@@ -5,45 +5,45 @@ local L = GW.L
 -- Applies the derived font settings of the chosen FONT_STYLE_TEMPLATE; shared by the
 -- settings dropdown and the installer font step
 local function ApplyFontStyleTemplate()
-    if GW.settings.FONT_STYLE_TEMPLATE == "GW2_LEGACY" then
-        GW.settings["FONTS_BIG_HEADER_SIZE"] = 16
-        GW.settings["FONTS_HEADER_SIZE"] = 14
-        GW.settings["FONTS_NORMAL_SIZE"] = 12
-        GW.settings["FONTS_SMALL_SIZE"] = 11
-        GW.settings["FONTS_OUTLINE"] = ""
-        GW.settings["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia_old.ttf"
-        GW.settings["FONT_HEADERS"] = "Interface/AddOns/GW2_UI/fonts/headlines_old.ttf"
-    elseif GW.settings.FONT_STYLE_TEMPLATE == "BLIZZARD" then
-        GW.settings["FONTS_BIG_HEADER_SIZE"] = 16
-        GW.settings["FONTS_HEADER_SIZE"] = 14
-        GW.settings["FONTS_NORMAL_SIZE"] = 12
-        GW.settings["FONTS_SMALL_SIZE"] = 11
-        GW.settings["FONTS_OUTLINE"] = ""
-        GW.settings["FONT_NORMAL"] = ""
-        GW.settings["FONT_HEADERS"] = ""
-    elseif GW.settings.FONT_STYLE_TEMPLATE == "HIGH_CONTRAST" then
-        GW.settings["FONTS_BIG_HEADER_SIZE"] = 18
-        GW.settings["FONTS_HEADER_SIZE"] = 16
-        GW.settings["FONTS_NORMAL_SIZE"] = 14
-        GW.settings["FONTS_SMALL_SIZE"] = 12
-        GW.settings["FONTS_OUTLINE"] = "OUTLINE"
-        GW.settings["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-        GW.settings["FONT_HEADERS"] = ""
+    if GW.settings.fonts.styleTemplate == "GW2_LEGACY" then
+        GW.settings.fonts.size.bigHeader = 16
+        GW.settings.fonts.size.header = 14
+        GW.settings.fonts.size.normal = 12
+        GW.settings.fonts.size.small = 11
+        GW.settings.fonts.outline = ""
+        GW.settings.fonts.normal = "Interface/AddOns/GW2_UI/fonts/menomonia_old.ttf"
+        GW.settings.fonts.headers = "Interface/AddOns/GW2_UI/fonts/headlines_old.ttf"
+    elseif GW.settings.fonts.styleTemplate == "BLIZZARD" then
+        GW.settings.fonts.size.bigHeader = 16
+        GW.settings.fonts.size.header = 14
+        GW.settings.fonts.size.normal = 12
+        GW.settings.fonts.size.small = 11
+        GW.settings.fonts.outline = ""
+        GW.settings.fonts.normal = ""
+        GW.settings.fonts.headers = ""
+    elseif GW.settings.fonts.styleTemplate == "HIGH_CONTRAST" then
+        GW.settings.fonts.size.bigHeader = 18
+        GW.settings.fonts.size.header = 16
+        GW.settings.fonts.size.normal = 14
+        GW.settings.fonts.size.small = 12
+        GW.settings.fonts.outline = "OUTLINE"
+        GW.settings.fonts.normal = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+        GW.settings.fonts.headers = ""
     else -- "GW2" standard
-        GW.settings["FONTS_BIG_HEADER_SIZE"] = 18
-        GW.settings["FONTS_HEADER_SIZE"] = 16
-        GW.settings["FONTS_NORMAL_SIZE"] = 14
-        GW.settings["FONTS_SMALL_SIZE"] = 12
-        GW.settings["FONTS_OUTLINE"] = ""
-        GW.settings["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
-        GW.settings["FONT_HEADERS"] = ""
+        GW.settings.fonts.size.bigHeader = 18
+        GW.settings.fonts.size.header = 16
+        GW.settings.fonts.size.normal = 14
+        GW.settings.fonts.size.small = 12
+        GW.settings.fonts.outline = ""
+        GW.settings.fonts.normal = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+        GW.settings.fonts.headers = ""
     end
-    GW.settings.CUSTOM_FONT_NORMAL = "NONE"
-    GW.settings.CUSTOM_FONT_HEADER = "NONE"
-    GW.updateSettingsFrameSettingsValue("FONTS_BIG_HEADER_SIZE", GW.settings["FONTS_BIG_HEADER_SIZE"], false)
-    GW.updateSettingsFrameSettingsValue("FONTS_HEADER_SIZE", GW.settings["FONTS_HEADER_SIZE"], false)
-    GW.updateSettingsFrameSettingsValue("FONTS_NORMAL_SIZE", GW.settings["FONTS_NORMAL_SIZE"], false)
-    GW.updateSettingsFrameSettingsValue("FONTS_SMALL_SIZE", GW.settings["FONTS_SMALL_SIZE"], false)
+    GW.settings.fonts.customNormal = "NONE"
+    GW.settings.fonts.customHeader = "NONE"
+    GW.updateSettingsFrameSettingsValue("fonts.size.bigHeader", GW.settings.fonts.size.bigHeader, false)
+    GW.updateSettingsFrameSettingsValue("fonts.size.header", GW.settings.fonts.size.header, false)
+    GW.updateSettingsFrameSettingsValue("fonts.size.normal", GW.settings.fonts.size.normal, false)
+    GW.updateSettingsFrameSettingsValue("fonts.size.small", GW.settings.fonts.size.small, false)
 end
 GW.ApplyFontStyleTemplate = ApplyFontStyleTemplate
 GW.FONT_STYLE_TEMPLATES = { "GW2", "GW2_LEGACY", "BLIZZARD", "HIGH_CONTRAST" }
@@ -68,19 +68,19 @@ local function LoadFontsPanel(sWindow)
         tinsert(fontsValues, font)
     end
 
-    p:AddOptionDropdown(L["Text Style Templates"], L["Choose from predefined options to customize fonts and text styles, adjusting the appearance of your text."], { getterSetter = "FONT_STYLE_TEMPLATE", callback = function()
+    p:AddOptionDropdown(L["Text Style Templates"], L["Choose from predefined options to customize fonts and text styles, adjusting the appearance of your text."], { getterSetter = "fonts.styleTemplate", callback = function()
             ApplyFontStyleTemplate()
             GW.ShowRlPopup = true -- triggers reload window
-        end, optionsList = GW.FONT_STYLE_TEMPLATES, optionNames = GW.FONT_STYLE_TEMPLATE_NAMES, dependence = {["CUSTOM_FONT_NORMAL"] = {"NONE"},["CUSTOM_FONT_HEADER"] = {"NONE"}}})
+        end, optionsList = GW.FONT_STYLE_TEMPLATES, optionNames = GW.FONT_STYLE_TEMPLATE_NAMES, dependence = {["fonts.customNormal"] = {"NONE"},["fonts.customHeader"] = {"NONE"}}})
 
     p:AddGroupHeader(L["Custom Font Settings"])
 
-    p:AddOptionDropdown(L["Header Font"], nil, { getterSetter = "CUSTOM_FONT_HEADER", callback = function() GW.ShowRlPopup = true end, optionsList = fontsKeys, optionNames = fontsValues})
-    p:AddOptionDropdown(L["Fonts"], nil, { getterSetter = "CUSTOM_FONT_NORMAL", callback = function() GW.ShowRlPopup = true end, optionsList = fontsKeys, optionNames = fontsValues})
-    p:AddOptionSlider(L["Big Headers"], nil, { getterSetter = "FONTS_BIG_HEADER_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
-    p:AddOptionSlider(L["Headers"], nil, { getterSetter = "FONTS_HEADER_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
-    p:AddOptionSlider(L["Normal text"], nil, { getterSetter = "FONTS_NORMAL_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
-    p:AddOptionSlider(L["Small text"], nil, { getterSetter = "FONTS_SMALL_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
+    p:AddOptionDropdown(L["Header Font"], nil, { getterSetter = "fonts.customHeader", callback = function() GW.ShowRlPopup = true end, optionsList = fontsKeys, optionNames = fontsValues})
+    p:AddOptionDropdown(L["Fonts"], nil, { getterSetter = "fonts.customNormal", callback = function() GW.ShowRlPopup = true end, optionsList = fontsKeys, optionNames = fontsValues})
+    p:AddOptionSlider(L["Big Headers"], nil, { getterSetter = "fonts.size.bigHeader", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
+    p:AddOptionSlider(L["Headers"], nil, { getterSetter = "fonts.size.header", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
+    p:AddOptionSlider(L["Normal text"], nil, { getterSetter = "fonts.size.normal", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
+    p:AddOptionSlider(L["Small text"], nil, { getterSetter = "fonts.size.small", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
 
     sWindow:AddSettingsPanel(p, L["Fonts"], L["Edit font settings."])
 end

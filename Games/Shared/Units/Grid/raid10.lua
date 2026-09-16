@@ -36,45 +36,45 @@ GW.GridRaid10StyleRegister = GridRaid10StyleRegister
 
 local function UpdateGridRaid10Frame(frame)
     -- set frame settings
-    frame.useClassColor = GW.settings.RAID_CLASS_COLOR_RAID10
-    frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_RAID10
-    frame.showResscoureBar = GW.settings.raid10_show_powerbar
-    frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_RAID10
-    frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_RAID10
-    frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS_RAID10
-    frame.unitWidth = tonumber(GW.settings.RAID_WIDTH_RAID10)
-    frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT_RAID10)
-    frame.raidShowImportantInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID10
-    frame.showDebuffs = GW.settings.RAID_SHOW_DEBUFFS_RAID10
-    frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_RAID10
-    frame.showBuffs = GW.settings.RAID_10_SHOW_BUFFS
-    frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_RAID10
-    frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
-    frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_RAID10
-    frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_RAID10
+    frame.useClassColor = GW.settings.groupFrames.raid10.classColor
+    frame.hideClassIcon = GW.settings.groupFrames.raid10.hideClassIcon
+    frame.showResscoureBar = GW.settings.groupFrames.raid10.showPowerBar
+    frame.showRealmFlags = GW.settings.groupFrames.raid10.unitFlags
+    frame.healthStringFormat = GW.settings.groupFrames.raid10.unitHealth
+    frame.showTargetmarker = GW.settings.groupFrames.raid10.unitMarkers
+    frame.unitWidth = tonumber(GW.settings.groupFrames.raid10.width)
+    frame.unitHeight = tonumber(GW.settings.groupFrames.raid10.height)
+    frame.raidShowImportantInstanceDebuffs = GW.settings.groupFrames.raid10.showRaidInstanceDebuffs
+    frame.showDebuffs = GW.settings.groupFrames.raid10.showDebuffs
+    frame.showOnlyDispelDebuffs = GW.settings.groupFrames.raid10.onlyDispellableDebuffs
+    frame.showBuffs = GW.settings.groupFrames.raid10.showBuffs
+    frame.showAuraTooltipInCombat = GW.settings.groupFrames.raid10.auraTooltipInCombat
+    frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.playerAuras.missingAuras:trim():gsub("%s*,%s*", ","))))
+    frame.shortendHealthValue = GW.settings.groupFrames.raid10.shortHealthValues
+    frame.showAbsorbBar = GW.settings.groupFrames.raid10.showAbsorbBar
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do
-        frame.raidIndicators[pos] = GW.settings["INDICATOR_" .. pos]
+        frame.raidIndicators[pos] = GW.settings.groupFrames.indicators.positions[pos]
     end
-    frame.showRaidIndicatorIcon = GW.settings.INDICATORS_ICON
-    frame.showRaidIndicatorTimer = GW.settings.INDICATORS_TIME
-    frame.showRaidIndicatorStacks = GW.settings.INDICATORS_STACKS
-    frame.raidIndicatorSize = GW.settings.INDICATORS_SIZE
-    frame.raidIndicatorBarWidth = GW.settings.INDICATORS_BAR_WIDTH
-    frame.raidDebuffScale = GW.settings.RAIDDEBUFFS_Scale
-    frame.raidDispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
-    frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_RAID10
-    frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_RAID10
-    frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_RAID10
-    frame.healthBarTexture = GW.settings.raid10_FrameHealthBarTexture
+    frame.showRaidIndicatorIcon = GW.settings.groupFrames.indicators.icon
+    frame.showRaidIndicatorTimer = GW.settings.groupFrames.indicators.time
+    frame.showRaidIndicatorStacks = GW.settings.groupFrames.indicators.stacks
+    frame.raidIndicatorSize = GW.settings.groupFrames.indicators.size
+    frame.raidIndicatorBarWidth = GW.settings.groupFrames.indicators.barWidth
+    frame.raidDebuffScale = GW.settings.groupFrames.raidDebuffsScale
+    frame.raidDispelDebuffScale = GW.settings.groupFrames.dispelDebuffsScale
+    frame.showRoleIcon = GW.settings.groupFrames.raid10.showRoleIcon
+    frame.showTankIcon = GW.settings.groupFrames.raid10.showTankIcon
+    frame.showLeaderAssistIcon = GW.settings.groupFrames.raid10.showLeaderIcon
+    frame.healthBarTexture = GW.settings.groupFrames.raid10.healthBarTexture
 
     -- retail filtering
-    frame.debuffFilters = GW.settings.RAID_10_DEBUFF_FILTER
-    frame.buffFilters = GW.settings.RAID_10_BUFF_FILTER
-    frame.ignoredAuraSpellIDs = GW.settings.RAID_10_IGNORED_AURAS -- consumed by the retail containers AND the classic aura filter
-    frame.pandemicHighlight = GW.settings.RAID_10_PANDEMIC_HIGHLIGHT
-    frame.showDispelIcon = GW.settings.RAID_10_DISPEL_ICON
+    frame.debuffFilters = GW.settings.groupFrames.raid10.debuffFilter
+    frame.buffFilters = GW.settings.groupFrames.raid10.buffFilter
+    frame.ignoredAuraSpellIDs = GW.settings.groupFrames.raid10.ignoredAuras -- consumed by the retail containers AND the classic aura filter
+    frame.pandemicHighlight = GW.settings.groupFrames.raid10.pandemicHighlight
+    frame.showDispelIcon = GW.settings.groupFrames.raid10.dispelIcon
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
@@ -82,9 +82,9 @@ local function UpdateGridRaid10Frame(frame)
             frame:ClearAllPoints()
         end
 
-        if GW.settings.RAID10_ENABLED and not frame:IsEnabled() then
+        if GW.settings.groupFrames.raid10.enabled and not frame:IsEnabled() then
             frame:Enable()
-        elseif not GW.settings.RAID10_ENABLED and frame:IsEnabled() then
+        elseif not GW.settings.groupFrames.raid10.enabled and frame:IsEnabled() then
             frame:Disable()
         end
     end
@@ -101,7 +101,7 @@ local function UpdateGridRaid10Frame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    GW.Update_Faderframe(frame, "grid10")
+    GW.Update_Faderframe(frame, "raid10")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")
 end

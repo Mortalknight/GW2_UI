@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("11.2.0", {
+    {GW.Enum.ChangelogType.change, [=[Settings are stored in a new structure, grouped by module. Every profile is converted once on the first login, positions and values stay as they are; the old format cannot be read by earlier versions anymore, so a downgrade below 11.2.0 starts with default settings]=]},
     {GW.Enum.ChangelogType.bug, [=[Layouts: a layout that says nothing about a frame leaves it alone instead of pulling it to its default position, which moved frames around on every profile; it adopts the current position of that frame once instead]=]},
     {GW.Enum.ChangelogType.change, [=[Adventure guide, journeys tab: the renown and journey cards, their progress bars and the reward cards of a journey follow the skin instead of showing blizzards golden plates]=]},
     {GW.Enum.ChangelogType.bug, [=[Profile switch by specialization: the frames now move to the positions of the incoming profile instead of staying where the old profile had them]=]},

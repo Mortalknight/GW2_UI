@@ -5,7 +5,7 @@ local windowsList = {
     {
         OnLoad = "LoadPaperDoll",
         FrameName = "GwPaperDollDetailsFrame",
-        SettingName = "USE_CHARACTER_WINDOW",
+        window = "character",
         RefName = "GwPaperDoll",
         TabIcon = "tabicon_character",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/character-window-icon.png",
@@ -21,7 +21,7 @@ local windowsList = {
     {
         OnLoad = "LoadProfessions",
         FrameName = "GwProfessionsDetailsFrame",
-        SettingName = "USE_PROFESSION_WINDOW",
+        window = "profession",
         RefName = "GwProfessionsFrame",
         TabIcon = "tabicon_professions",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon.png",
@@ -37,7 +37,7 @@ local windowsList = {
     {
         OnLoad = "LoadCurrency",
         FrameName = "GwCurrencyDetailsFrame",
-        SettingName = "USE_CHARACTER_WINDOW",
+        window = "character",
         RefName = "GwCurrencyFrame",
         TabIcon = "tabicon_currency",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon.png",
@@ -53,7 +53,7 @@ local windowsList = {
     {
         OnLoad = "LoadReputation",
         FrameName = "GwReputationDetailsFrame",
-        SettingName = "USE_CHARACTER_WINDOW",
+        window = "character",
         RefName = "GwReputationFrame",
         TabIcon = "tabicon_reputation",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/reputation-window-icon.png",

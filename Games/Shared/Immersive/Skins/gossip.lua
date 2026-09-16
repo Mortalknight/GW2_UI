@@ -532,7 +532,7 @@ local function loadPortraitDebugMode()
 end
 
 local function LoadGossipSkin()
-    if not GW.settings.GOSSIP_SKIN_ENABLED then return end
+    if not GW.settings.skins.gossip.enabled then return end
 
     local GossipFrame = GossipFrame
 

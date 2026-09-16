@@ -83,7 +83,7 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
             end)
         end
 
-        button.gw_ShowMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+        button.gw_ShowMacroName = GW.settings.actionbars.showMacroNames
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
         if not GW.Retail then
@@ -95,7 +95,7 @@ end
 function GwPlayerPetFrameMixin:UpdatePetBarButtons()
     for _, button in ipairs(self.buttons) do
         if button then
-            button.gw_ShowMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+            button.gw_ShowMacroName = GW.settings.actionbars.showMacroNames
             GW.UpdateMacroName(button)
         end
     end
@@ -196,7 +196,7 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
 end
 
 function GwPlayerPetFrameMixin:ToggleAuraPosition()
-    self.auraPositionUnder = GW.settings.PET_AURAS_UNDER
+    self.auraPositionUnder = GW.settings.unitframes.pet.aurasUnder
 
     self.auras:ClearAllPoints()
     if self.auraPositionUnder then
@@ -223,7 +223,7 @@ function GwPlayerPetFrameMixin:ToggleAuraPosition()
         -- the debuff block stacks onto the buff container (below when growing down,
         -- above when growing up); with buffs disabled it takes their place
         self.debuffsContainer:ClearAllPoints()
-        if GW.settings.PET_Buff_Filter == "none" then
+        if GW.settings.unitframes.pet.buffFilter == "none" then
             self.debuffsContainer:SetPoint(anchorPoint, self.auras, "TOPRIGHT")
         elseif growUp then
             self.debuffsContainer:SetPoint("BOTTOMRIGHT", self.aurasContainer, "TOPRIGHT", 0, 4)
@@ -239,7 +239,7 @@ function GwPlayerPetFrameMixin:ToggleAuraPosition()
 end
 
 function GwPlayerPetFrameMixin:ToggleFaderOptions()
-    local frameFaderSettings = GW.settings.petFrameFader
+    local frameFaderSettings = GW.settings.unitframes.pet.fader
     if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget or frameFaderSettings.unittarget then
         GW.FrameFadeEnable(self)
         self.Fader:SetOption("Hover", frameFaderSettings.hover)
@@ -262,7 +262,7 @@ function GwPlayerPetFrameMixin:ToggleFaderOptions()
 end
 
 function GwPlayerPetFrameMixin:ToggleCombatFeedback()
-    if GW.settings.PET_FLOATING_COMBAT_TEXT then
+    if GW.settings.unitframes.pet.floatingCombatText then
         self:RegisterEvent("UNIT_COMBAT")
         self:SetScript("OnUpdate", CombatFeedback_OnUpdate)
     else
@@ -279,45 +279,45 @@ function GwPlayerPetFrameMixin:ApplyAuraSettings()
     GW.ApplyAuraContainerSettings(self.aurasContainer, self.debuffsContainer, {
         smallSize = 20,
         bigSize = 24,
-        buffFilter = GW.settings.PET_Buff_Filter,
-        debuffFilter = GW.settings.PET_Debuff_Filter,
-        buffAdvanced = GW.settings.PET_Buff_Filter_advanced,
-        debuffAdvanced = GW.settings.PET_Debuff_Filter_advanced,
-        sort = GW.settings.PET_AURA_SORT,
-        excludeSpellIDs = GW.settings.PET_IGNORED_AURAS,
+        buffFilter = GW.settings.unitframes.pet.buffFilter,
+        debuffFilter = GW.settings.unitframes.pet.debuffFilter,
+        buffAdvanced = GW.settings.unitframes.pet.buffFilterAdvanced,
+        debuffAdvanced = GW.settings.unitframes.pet.debuffFilterAdvanced,
+        sort = GW.settings.unitframes.pet.auraSort,
+        excludeSpellIDs = GW.settings.unitframes.pet.ignoredAuras,
     })
     -- re-anchor the debuff container: with buffs disabled it takes the buffs' place
     self:ToggleAuraPosition()
 end
 
 function GwPlayerPetFrameMixin:UpdateSettings()
-    self.showAbsorbBar = GW.settings.PET_SHOW_ABSORB_BAR
-    self.shortendHealthValues = GW.settings.PET_UNIT_HEALTH_SHORT_VALUES
-    self.showHealthValue = GW.settings.PET_HEALTH_VALUE_RAW
-    self.showHealthPrecentage = GW.settings.PET_HEALTH_VALUE_PERCENT
+    self.showAbsorbBar = GW.settings.unitframes.pet.showAbsorbBar
+    self.shortendHealthValues = GW.settings.unitframes.pet.shortHealthValues
+    self.showHealthValue = GW.settings.unitframes.pet.healthValueRaw
+    self.showHealthPrecentage = GW.settings.unitframes.pet.healthValuePercent
 
     if GW.Retail and self.aurasContainer then
         self:ApplyAuraSettings()
     else
-        self.displayBuffs = GW.settings.PET_Buff_Filter == "none" and 0 or 32
-        self.auras.buffFilter = GW.settings.PET_Buff_Filter
-        self.auras.buffAdvancedFilters = GW.settings.PET_Buff_Filter_advanced
+        self.displayBuffs = GW.settings.unitframes.pet.buffFilter == "none" and 0 or 32
+        self.auras.buffFilter = GW.settings.unitframes.pet.buffFilter
+        self.auras.buffAdvancedFilters = GW.settings.unitframes.pet.buffFilterAdvanced
 
-        self.displayDebuffs = GW.settings.PET_Debuff_Filter == "none" and 0 or 40
-        self.auras.debuffFilter = GW.settings.PET_Debuff_Filter
-        self.auras.debuffAdvancedFilters = GW.settings.PET_Debuff_Filter_advanced
+        self.displayDebuffs = GW.settings.unitframes.pet.debuffFilter == "none" and 0 or 40
+        self.auras.debuffFilter = GW.settings.unitframes.pet.debuffFilter
+        self.auras.debuffAdvancedFilters = GW.settings.unitframes.pet.debuffFilterAdvanced
         GW.UpdateFilters(self.auras)
 
         self.auras.smallSize = 20
         self.auras.bigSize = 24
-        self.auras.ignoredAuraSpellIDs = GW.settings.PET_IGNORED_AURAS
+        self.auras.ignoredAuraSpellIDs = GW.settings.unitframes.pet.ignoredAuras
     end
 
     -- statusbar texture
-    local texture = GW.Libs.LSM:Fetch("statusbar", GW.settings.playerPetFrameHealthBarTexture)
+    local texture = GW.Libs.LSM:Fetch("statusbar", GW.settings.unitframes.pet.healthBarTexture)
     self.health:SetStatusBarTexture(texture)
 
-    self:SetScale(GW.settings.pet_pos_scale)
+    self:SetScale(GW.settings.unitframes.pet.scale)
     self:OnEvent("UNIT_PET", "player")
 end
 
@@ -354,7 +354,7 @@ local function LoadPetFrame(lm)
     RegisterStateDriver(playerPetFrame, "visibility",
         "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
 
-    playerPetFrame.health:SetStatusBarColor(GW.globalDefault.profile.UnitFrameReactionColors.Hostile.r, GW.globalDefault.profile.UnitFrameReactionColors.Hostile.g, GW.globalDefault.profile.UnitFrameReactionColors.Hostile.b)
+    playerPetFrame.health:SetStatusBarColor(GW.globalDefault.profile.unitframes.reactionColors.Hostile.r, GW.globalDefault.profile.unitframes.reactionColors.Hostile.g, GW.globalDefault.profile.unitframes.reactionColors.Hostile.b)
     playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
 
     playerPetFrame:SetScript("OnEnter", function(self)
@@ -386,8 +386,8 @@ local function LoadPetFrame(lm)
         playerPetFrame.aurasContainer = GW.CreateUnitAuraContainer({
             name = "GwPetAuraContainer",
             unit = "pet",
-            pandemicEnabled = function() return GW.settings.PET_PANDEMIC_HIGHLIGHT end,
-            dispelIconEnabled = function() return GW.settings.PET_DISPEL_ICON end,
+            pandemicEnabled = function() return GW.settings.unitframes.pet.pandemicHighlight end,
+            dispelIconEnabled = function() return GW.settings.unitframes.pet.dispelIcon end,
             parent = playerPetFrame,
             cancelButtons = "RightButtonDown",
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
@@ -415,8 +415,8 @@ local function LoadPetFrame(lm)
         playerPetFrame.debuffsContainer = GW.CreateUnitAuraContainer({
             name = "GwPetDebuffContainer",
             unit = "pet",
-            pandemicEnabled = function() return GW.settings.PET_PANDEMIC_HIGHLIGHT end,
-            dispelIconEnabled = function() return GW.settings.PET_DISPEL_ICON end,
+            pandemicEnabled = function() return GW.settings.unitframes.pet.pandemicHighlight end,
+            dispelIconEnabled = function() return GW.settings.unitframes.pet.dispelIcon end,
             parent = playerPetFrame,
             tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
             refreshEvents = { "UNIT_PET" },
@@ -469,7 +469,7 @@ local function LoadPetFrame(lm)
         playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     end
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "Unitframe", nil, nil, true)
+    RegisterMovableFrame(playerPetFrame, PET, "unitframes.pet", "Unitframe", nil, nil, true)
     lm:RegisterPetFrame(playerPetFrame)
 
     playerPetFrame:ClearAllPoints()

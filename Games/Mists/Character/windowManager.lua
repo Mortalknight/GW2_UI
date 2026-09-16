@@ -5,7 +5,7 @@ local windowsList = {
     {
         OnLoad = "LoadPaperDoll",
         FrameName = "GwPaperDollDetailsFrame",
-        SettingName = "USE_CHARACTER_WINDOW",
+        window = "character",
         RefName = "GwPaperDoll",
         TabIcon = "tabicon_character",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/character-window-icon.png",
@@ -21,7 +21,7 @@ local windowsList = {
     {
         OnLoad = "LoadReputation",
         FrameName = "GwReputationDetailsFrame",
-        SettingName = "USE_CHARACTER_WINDOW",
+        window = "character",
         RefName = "GwReputationFrame",
         TabIcon = "tabicon_reputation",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/reputation-window-icon.png",
@@ -36,7 +36,7 @@ local windowsList = {
     {
         OnLoad = "LoadTalents",
         FrameName = "GwTalentsFrame",
-        SettingName = "USE_TALENT_WINDOW",
+        window = "talent",
         RefName = "GwTalentsFrame",
         TabIcon = "tabicon-talents",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/talents-window-icon.png",
@@ -51,7 +51,7 @@ local windowsList = {
     {
         OnLoad = "LoadSpellBook",
         FrameName = "GwSpellbookFrame",
-        SettingName = "USE_SPELLBOOK_WINDOW",
+        window = "spellbook",
         RefName = "GwSpellbookFrame",
         TabIcon = "tabicon_spellbook",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon.png",
@@ -67,7 +67,7 @@ local windowsList = {
     {
         OnLoad = "LoadGlyphes",
         FrameName = "GwGlyphsFrame",
-        SettingName = "USE_TALENT_WINDOW",
+        window = "talent",
         RefName = "GwGlyphsFrame",
         TabIcon = "tabicon-glyph",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/glyph-window-icon.png",
@@ -82,7 +82,7 @@ local windowsList = {
     {
         OnLoad = "LoadCurrency",
         FrameName = "GwCurrencyFrame",
-        SettingName = "USE_CHARACTER_WINDOW",
+        window = "character",
         RefName = "GwCurrencyFrame",
         TabIcon = "tabicon_currency",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon.png",
@@ -98,7 +98,7 @@ local windowsList = {
     {
         OnLoad = "LoadProfessions",
         FrameName = "GwProfessionsFrame",
-        SettingName = "USE_CHARACTER_WINDOW",
+        window = "character",
         RefName = "GwProfessionsFrame",
         TabIcon = "tabicon_professions",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon.png",

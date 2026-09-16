@@ -60,7 +60,7 @@ local function HandleTabs()
 end
 
 function GW.LoadSocialFrame()
-    if not GW.settings.USE_SOCIAL_WINDOW then return end
+    if not GW.settings.windows.social.enabled then return end
 
     GW.HandlePortraitFrame(FriendsFrame)
     if FriendsFrameIcon then
@@ -90,7 +90,7 @@ function GW.LoadSocialFrame()
     FriendsFrame:SetClampRectInsets(-40, 0, FriendsFrame.gwHeader:GetHeight() - 30, 0)
     FriendsFrame:SetSize(500, 627)
 
-    FriendsFrame:SetScale(GW.settings.SOCIAL_POSITION_SCALE)
+    FriendsFrame:SetScale(GW.settings.windows.social.scale)
     FriendsFrame:SetMovable(true)
     FriendsFrame:RegisterForDrag("LeftButton")
     FriendsFrame:SetScript("OnDragStart", function()
@@ -100,17 +100,17 @@ function GW.LoadSocialFrame()
         FriendsFrame:StopMovingOrSizing()
         FriendsFrame:SetUserPlaced(false)
         -- Save map frame position
-        local pos = GW.settings.SOCIAL_POSITION
+        local pos = GW.settings.windows.social.pos
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = FriendsFrame:GetPoint()
-        GW.settings.SOCIAL_POSITION = pos
+        GW.settings.windows.social.pos = pos
     end)
     FriendsFrame:HookScript("OnShow", function()
-        local pos = GW.settings.SOCIAL_POSITION
+        local pos = GW.settings.windows.social.pos
         FriendsFrame:ClearAllPoints()
         FriendsFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     end)
@@ -159,16 +159,16 @@ function GW.LoadSocialFrame()
     end)
     FriendsFrame.sizer:SetScript("OnMouseUp", function(self)
         self:SetScript("OnUpdate", nil)
-        GW.settings.SOCIAL_POSITION_SCALE = FriendsFrame:GetScale()
+        GW.settings.windows.social.scale = FriendsFrame:GetScale()
         -- Save hero frame position
-        local pos = GW.settings.SOCIAL_POSITION
+        local pos = GW.settings.windows.social.pos
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = FriendsFrame:GetPoint()
-        GW.settings.SOCIAL_POSITION = pos
+        GW.settings.windows.social.pos = pos
     end)
 
     GW.SkinFriendList()

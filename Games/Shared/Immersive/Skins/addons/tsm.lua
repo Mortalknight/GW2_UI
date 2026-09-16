@@ -26,7 +26,7 @@ local function AddTsmTab()
 end
 
 local function LoadTSMAddonSkin()
-    if not GW.settings.AuctionHouseSkinEnabled or not TSM_API or not AuctionatorAHFrameMixin then return end
+    if not GW.settings.skins.auctionHouse.enabled or not TSM_API or not AuctionatorAHFrameMixin then return end
     hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", AddTsmTab)
 end
 GW.LoadTSMAddonSkin = LoadTSMAddonSkin

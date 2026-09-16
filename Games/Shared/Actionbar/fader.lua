@@ -15,6 +15,8 @@ local function fadeIn_OnFinished(self)
     bar:SetAlpha(1.0)
 end
 
+local MULTIBAR_FADE_ORDER = {"MultiBarBottomLeft", "MultiBarBottomRight", "MultiBarRight", "MultiBarLeft", "MultiBar5", "MultiBar6", "MultiBar7"}
+
 local function actionBarFrameShow(f, instant)
     f.gw_FadeOut:Stop()
     f.gw_FadeIn:Stop()
@@ -85,7 +87,7 @@ function GW.ActionBarFadeCheck(self, forceCombat)
 
     for i = 1, 8 do
         local f = i == 8 and self or self["gw_Bar" .. i]
-        local fadeOption = GW.settings["FADE_MULTIACTIONBAR_" .. i]
+        local fadeOption = i == 8 and GW.settings.actionbars.mainBar.fade or GW.settings.actionbars.bars[MULTIBAR_FADE_ORDER[i]].fade
         if f then
             if isDirty and not inLockdown and f ~= self then
                 -- this should only be set after a bar setting change (including initial load)

@@ -106,21 +106,21 @@ local function LoadPaperDoll(tabContainer)
 
     fmMenu.Outfitter = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Outfitter",
-        setting = GW.settings.USE_CHARACTER_WINDOW,
+        setting = GW.settings.windows.character.enabled,
         showFunction = function() hideCharframe = false Outfitter:OpenUI() end,
         hideOurFrame = true,
     })
 
     fmMenu.MyRolePlay = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "MyRolePlay",
-        setting = GW.settings.USE_CHARACTER_WINDOW,
+        setting = GW.settings.windows.character.enabled,
         showFunction = function() hideCharframe = false ToggleCharacter("MyRolePlayCharacterFrame") end,
         hideOurFrame = true,
     })
 
     fmMenu.TalentSetManager = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "TalentSetManager",
-        setting = GW.settings.USE_TALENT_WINDOW,
+        setting = GW.settings.windows.talent.enabled,
         showFunction = function() PlayerSpellsUtil.OpenToClassTalentsTab() end,
         hideOurFrame = true,
     })

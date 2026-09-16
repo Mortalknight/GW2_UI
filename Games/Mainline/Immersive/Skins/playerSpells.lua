@@ -276,7 +276,7 @@ local function skinPlayerSpells()
 end
 
 local function LoadPlayerSpellsSkin()
-    if not GW.settings.PLAYER_SPELLS_SKIN_ENABLED then return end
+    if not GW.settings.skins.playerSpells.enabled then return end
 
     GW.RegisterLoadHook(skinPlayerSpells, "Blizzard_PlayerSpells", PlayerSpellsFrame)
 end
