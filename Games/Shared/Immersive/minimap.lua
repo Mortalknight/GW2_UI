@@ -620,7 +620,7 @@ function GW.LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = GetMinimapShape
 
-    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "Blizzard,Map", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "Blizzard,Map", {Minimap:GetSize()}, nil, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("CENTER", Minimap.gwMover)
 

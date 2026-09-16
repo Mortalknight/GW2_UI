@@ -740,21 +740,21 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     multibar.ignoreFramePositionManager = true
 
     if barName == "MultiBarLeft" then
-        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(5), barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, GW.FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(5), barName, BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale}, nil, GW.FlyoutDirection)
     elseif barName == "MultiBarRight" then
-        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(4), barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, GW.FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(4), barName, BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale}, nil, GW.FlyoutDirection)
     elseif barName == "MultiBarBottomLeft" then
-        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(2), barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, true, GW.FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(2), barName, BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale}, true, GW.FlyoutDirection)
         lm:RegisterMultiBarLeft(fmMultibar)
     elseif barName == "MultiBarBottomRight" then
-        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(3), barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, true, GW.FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(3), barName, BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale}, true, GW.FlyoutDirection)
         lm:RegisterMultiBarRight(fmMultibar)
     elseif barName == "MultiBar5" then
-        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(6), barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, GW.FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(6), barName, BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale}, nil, GW.FlyoutDirection)
     elseif barName == "MultiBar6" then
-        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(7), barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, GW.FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(7), barName, BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale}, nil, GW.FlyoutDirection)
     elseif barName == "MultiBar7" then
-        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(8), barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, GW.FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(8), barName, BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale}, nil, GW.FlyoutDirection)
     end
 
     fmMultibar:ClearAllPoints()

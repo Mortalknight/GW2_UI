@@ -36,6 +36,7 @@ end
 
 local function SkinHeader()
     InspectFrame:GwStripTextures()
+    GW.HandlePortraitFrameArt(InspectFrame)
     GW.CreateFrameHeaderWithBody(InspectFrame, InspectNameText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {}, 20)
     InspectFrame.gwHeader.windowIcon:SetSize(48, 48)
     InspectFrame.gwHeader.windowIcon:ClearAllPoints()
@@ -76,7 +77,7 @@ local function SkinTabs()
         tab:SetSize(80, 24)
         tab:ClearAllPoints()
         if previous then
-            tab:SetPoint("RIGHT", previous, "RIGHT", 75, 0)
+            tab:SetPoint("LEFT", previous, "RIGHT", 0, 0)
         else
             tab:SetPoint("BOTTOMLEFT", InspectFrame, "BOTTOMLEFT", 0, -24)
         end

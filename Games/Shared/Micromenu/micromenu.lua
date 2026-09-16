@@ -1639,7 +1639,7 @@ local function LoadMicroMenu()
         UpdateMicroBarOrientation()
         LayoutMicroButtons()
     end
-    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "Blizzard,Widgets", nil, {"default", "scaleable"}, nil, postDragFunction)
+    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "Blizzard,Widgets", nil, {GW.MoverOption.Scale}, nil, postDragFunction)
     mbf:SetPoint("TOPLEFT", mbf.gwMover)
     UpdateMicroBarOrientation() -- now with the position: the art corner follows the screen half
 

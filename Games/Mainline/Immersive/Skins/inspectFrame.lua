@@ -174,15 +174,18 @@ local function SkinInspectFrameOnLoad()
         self:StopMovingOrSizing()
     end)
 
+    local previous = nil
     for i = 1, 3 do
-        GW.HandleTabs(_G["InspectFrameTab" .. i])
-        _G["InspectFrameTab" .. i]:SetSize(80, 24)
-        _G["InspectFrameTab" .. i]:ClearAllPoints()
-        if i == 1 then
-            _G["InspectFrameTab" .. i]:SetPoint("TOPLEFT", InspectFrame, "BOTTOMLEFT", 0, 2)
+        local tab = _G["InspectFrameTab" .. i]
+        GW.HandleTabs(tab)
+        tab:SetSize(80, 24)
+        tab:ClearAllPoints()
+        if not previous then
+            tab:SetPoint("TOPLEFT", InspectFrame, "BOTTOMLEFT", 0, 2)
         else
-            _G["InspectFrameTab" .. i]:SetPoint("LEFT", _G["InspectFrameTab" .. i - 1], "RIGHT", 0, 0)
+            tab:SetPoint("LEFT", previous, "RIGHT", 0, 0)
         end
+        previous = tab
     end
 
     hooksecurefunc("PanelTemplates_SelectTab", function(tab)

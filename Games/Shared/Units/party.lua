@@ -680,7 +680,7 @@ local function CreatePartyFrame(i, isPlayer)
     GW.SetFrameRoleset(frame, "unitFrames")
 
     if i == 1 then
-        RegisterMovableFrame(frame, PARTY, "party_pos", "Unitframe,Group", nil, {"default"})
+        RegisterMovableFrame(frame, PARTY, "party_pos", "Unitframe,Group")
     end
 
     local hg = frame.healthContainer

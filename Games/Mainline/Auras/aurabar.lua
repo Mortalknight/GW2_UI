@@ -352,9 +352,9 @@ local function newContainer(filter)
         end
         h:SetItemEnchantmentLayout({ placement = CustomAuraContainerItemEnchantmentPlacement.BeforeAuraGroups })
 
-        RegisterMovableFrame(h, SHOW_BUFFS, "PlayerBuffFrame", "Blizzard,Aura", {316, 100}, {"default", "scaleable"}, true)
+        RegisterMovableFrame(h, SHOW_BUFFS, "PlayerBuffFrame", "Blizzard,Aura", {316, 100}, {GW.MoverOption.Scale}, true)
     else
-        RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", "Blizzard,Aura", {316, 60}, {"default", "scaleable"}, true)
+        RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", "Blizzard,Aura", {316, 60}, {GW.MoverOption.Scale}, true)
     end
 
     -- The AuraContainer is a "forbidden frame": SecureHandler frame refs (layout manager)

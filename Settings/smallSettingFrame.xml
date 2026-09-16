@@ -51,7 +51,7 @@
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-7" y="10" />
                     </Anchors>
                 </Texture>
-                <FontString parentKey="headerString" text="Special frame options and Layouts" inherits="GameFontNormalSmall" justifyH="LEFT">
+                <FontString parentKey="headerString" text="" inherits="GameFontNormalSmall" justifyH="LEFT">
                     <Size x="95" y="12"/>
                     <Color r="1" b="0.73" g="0.93"/>
                     <Anchors>
@@ -110,14 +110,118 @@
         </Frames>
     </Frame>
 
+    <!-- Option widgets of a mover, one per GW.Enum.MoverOptionType. They are pooled and laid out by moveableFrameHandler.lua -->
+    <Frame name="GwSmallSettingsSliderOption" virtual="true">
+        <Size x="170" y="40"/>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="150" y="12"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="8" y="5"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
+                <Size x="120" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
+                </Anchors>
+                <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
+                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle.png">
+                    <Size x="12" y="12"/>
+                </ThumbTexture>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg.png">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Slider>
+            <EditBox parentKey="input" autoFocus="false">
+                <Size x="25" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="-5" y="3"/>
+                                <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
+                            </Anchors>
+                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <FontString inherits="GameFontNormalSmall">
+                    <Color r="1" b="1" g="1"/>
+                </FontString>
+            </EditBox>
+        </Frames>
+    </Frame>
+
+    <Frame name="GwSmallSettingsCheckboxOption" virtual="true">
+        <Size x="170" y="24"/>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="135" y="12"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="30" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <CheckButton parentKey="checkbox">
+                <Size x="15" y="15"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="9" y="0"/>
+                </Anchors>
+            </CheckButton>
+        </Frames>
+    </Frame>
+
+    <Frame name="GwSmallSettingsDropdownOption" virtual="true">
+        <Size x="170" y="44"/>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="150" y="12"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="8" y="-2"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <DropdownButton parentKey="dropdown" inherits="WowStyle1DropdownTemplate">
+                <Size x="150" y="25"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" x="8" y="0"/>
+                </Anchors>
+            </DropdownButton>
+        </Frames>
+    </Frame>
+
     <Frame name="GwSmallSettings" virtual="true" hidden="false">
         <Size x="180" y="285"/>
         <Anchors>
-            <Anchor point="TOPLEFT" relativeTo="GwSmallSettingsContainer" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+            <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
             <Layer textureSubLevel="3">
-                <FontString parentKey="desc" text="Some text" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString parentKey="desc" text="" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="148" y="160"/>
                     <Color r="0.6" g="0.6" b="0.6"/>
                     <Anchors>
@@ -133,132 +237,12 @@
                     <Anchor point="TOPLEFT" x="5" y="0"/>
                 </Anchors>
                 <Frames>
-                    <Button parentKey="scaleSlider">
-                        <Size x="170" y="40"></Size>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" x="0" y="-5"/>
-                        </Anchors>
-                        <Layers>
-                            <Layer level="OVERLAY" textureSubLevel="2">
-                                <FontString parentKey="title" text="Scale" inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="150" y="12"/>
-                                    <Color r="1" b="1" g="1"/>
-                                    <Anchors>
-                                        <Anchor point="LEFT" x="8" y="5"/>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
-                        <Frames>
-                            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
-                                <Size x="120" y="16"/>
-                                <Anchors>
-                                    <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
-                                </Anchors>
-                                <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle.png">
-                                    <Size x="12" y="12"/>
-                                </ThumbTexture>
-                                <Layers>
-                                    <Layer>
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg.png">
-                                            <Anchors>
-                                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
-                                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
-                                            </Anchors>
-                                        </Texture>
-                                    </Layer>
-                                </Layers>
-                            </Slider>
-                            <EditBox parentKey="input" autoFocus="false">
-                                <Size x="25" y="16"/>
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
-                                </Anchors>
-                                <Layers>
-                                    <Layer level="BACKGROUND">
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
-                                            <Anchors>
-                                                <Anchor point="TOPLEFT" x="-5" y="3"/>
-                                                <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
-                                            </Anchors>
-                                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
-                                        </Texture>
-                                    </Layer>
-                                </Layers>
-                                <FontString inherits="GameFontNormalSmall">
-                                    <Color r="1" b="1" g="1"/>
-                                </FontString>
-                            </EditBox>
-                        </Frames>
-                    </Button>
-                    <Button parentKey="heightSlider">
-                        <Size x="170" y="40"></Size>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parentKey.scaleSlider" relativePoint="BOTTOMLEFT" x="0" y="-5"/>
-                        </Anchors>
-                        <Layers>
-                            <Layer level="OVERLAY" textureSubLevel="2">
-                                <FontString parentKey="title" text="HEIGHT" inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="150" y="12"/>
-                                    <Color r="1" b="1" g="1"/>
-                                    <Anchors>
-                                        <Anchor point="LEFT" x="8" y="5"/>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
-                        <Frames>
-                            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
-                                <Size x="120" y="16"/>
-                                <Anchors>
-                                    <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
-                                </Anchors>
-                                <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle.png">
-                                    <Size x="12" y="12"/>
-                                </ThumbTexture>
-                                <Layers>
-                                    <Layer>
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg.png">
-                                            <Anchors>
-                                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
-                                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
-                                            </Anchors>
-                                        </Texture>
-                                    </Layer>
-                                </Layers>
-                            </Slider>
-                            <EditBox parentKey="input" autoFocus="false">
-                                <Size x="25" y="16"/>
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
-                                </Anchors>
-                                <Layers>
-                                    <Layer level="BACKGROUND">
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
-                                            <Anchors>
-                                                <Anchor point="TOPLEFT" x="-5" y="3"/>
-                                                <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
-                                            </Anchors>
-                                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
-                                        </Texture>
-                                    </Layer>
-                                </Layers>
-                                <FontString inherits="GameFontNormalSmall">
-                                    <Color r="1" b="1" g="1"/>
-                                </FontString>
-                            </EditBox>
-                        </Frames>
-                    </Button>
+                    <!-- the options of the selected mover are laid out above this row from lua, it is anchored there -->
                     <Frame parentKey="movers">
                         <Size x="170" y="40"/>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.heightSlider" relativePoint="BOTTOMLEFT" x="0" y="-20" />
-                        </Anchors>
                         <Layers>
                             <Layer level="OVERLAY" textureSubLevel="2">
-                                <FontString parentKey="title" text="Bewegen" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                <FontString parentKey="title" text="" inherits="GameFontNormalSmall" justifyH="LEFT">
                                     <Size x="150" y="12"/>
                                     <Color r="1" b="1" g="1"/>
                                     <Anchors>
@@ -357,7 +341,7 @@
                             <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
                                 <Size x="140" y="20"/>
                                 <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.showGrid" relativePoint="TOPLEFT" x="0" y="0" />
+                                    <Anchor point="TOPLEFT" x="0" y="0" />
                                 </Anchors>
                                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
                                 <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle.png">

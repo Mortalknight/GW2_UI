@@ -790,7 +790,7 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     GwCastingBar:SetCastKind("cast")
 
     if name == "GwCastingBarPlayer" then
-        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "Blizzard", nil, {"default", "scaleable"})
+        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "Blizzard", nil, {GW.MoverOption.Scale})
         GwCastingBar:SetBasePoint("CENTER", GwCastingBar.gwMover, "CENTER", 0, 0)
     else
         GwCastingBar:SetBasePoint("TOPLEFT", GwCastingBarPlayer.gwMover, "TOPLEFT", 0, GwCastingBarPlayer:GetHeight() + 20)

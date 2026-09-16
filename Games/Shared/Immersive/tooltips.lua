@@ -1254,7 +1254,7 @@ local function LoadTooltips()
         end
     end
 
-    RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "Blizzard", {230, 80}, {"default"})
+    RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "Blizzard", {230, 80}, nil)
 
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 

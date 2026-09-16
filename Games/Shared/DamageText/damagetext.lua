@@ -679,7 +679,7 @@ local function LoadDamageText(activate)
     stackingContainer = CreateFrame("Frame", nil, UIParent)
     stackingContainer:SetSize(200, 400)
     stackingContainer:EnableMouse(false)
-    RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", "FCT", nil, {"default", "scaleable"})
+    RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", "FCT", nil, {GW.MoverOption.Scale})
     stackingContainer:ClearAllPoints()
     stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
     stackingContainer.activeFrames = {}

@@ -177,7 +177,7 @@ local function LoadClassPowers()
     cpf.customResourceBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
 
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", "Unitframe,Power", { 312, 32 },
-        { "default", "scaleable" }, true)
+        {GW.MoverOption.Scale}, true)
 
     -- position mover, shift values are central in mainBarLayout.lua
     if (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not cpf.isMoved then

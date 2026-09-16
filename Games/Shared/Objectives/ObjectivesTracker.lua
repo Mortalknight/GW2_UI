@@ -640,7 +640,7 @@ local function LoadObjectivesTracker()
     GW.ObjectiveTrackerContainer.Notification:HookScript("OnShow", function() QueueItemButtonPositionUpdate(0.25) end)
     GW.ObjectiveTrackerContainer.Notification:HookScript("OnHide", function() QueueItemButtonPositionUpdate(0.25) end)
 
-    GW.RegisterMovableFrame(objectivesTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", ALL, nil, {"scaleable", "height"})
+    GW.RegisterMovableFrame(objectivesTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", ALL, nil, {GW.MoverOption.Scale, GW.MoverOption.Height})
     objectivesTracker:ClearAllPoints()
     objectivesTracker:SetPoint("TOPLEFT", objectivesTracker.gwMover)
     objectivesTracker:SetHeight(GW.settings.QuestTracker_pos_height)

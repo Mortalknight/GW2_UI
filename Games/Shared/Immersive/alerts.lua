@@ -1353,7 +1353,7 @@ function GW.LoadAlertSystem()
         local direction = y > UIParent:GetTop() / 2 and COMBAT_TEXT_SCROLL_DOWN or COMBAT_TEXT_SCROLL_UP
         self.gwMover.text:SetText(L["Alert Frames"] .. " (" .. direction .. ")")
     end
-    GW.RegisterMovableFrame(container, L["Alert Frames"], "AlertPos", "Blizzard,Widgets", {300, 5}, {"default"}, nil, postDragFunction)
+    GW.RegisterMovableFrame(container, L["Alert Frames"], "AlertPos", "Blizzard,Widgets", {300, 5}, nil, nil, postDragFunction)
 
     container:RegisterEvent("PLAYER_LEVEL_UP")
     container:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")

@@ -4,7 +4,7 @@
     <Frame name="GwLayoutView" virtual="true" hidden="true">
         <Size x="180" y="285"/>
         <Anchors>
-            <Anchor point="TOPLEFT" relativeTo="GwSmallSettingsContainer" relativePoint="TOPLEFT" x="180" y="0"></Anchor>
+            <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="180" y="0"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">

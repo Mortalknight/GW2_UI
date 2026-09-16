@@ -166,7 +166,7 @@ function GW.CreateTotemBar()
     end
     totemBar:SetScript("OnEvent", totemBar.Update)
 
-    GW.RegisterMovableFrame(totemBar, GW.L["Class Totems"], "TotemBar_pos", "Blizzard,Widgets", nil, {"default", "scaleable"})
+    GW.RegisterMovableFrame(totemBar, GW.L["Class Totems"], "TotemBar_pos", "Blizzard,Widgets", nil, {GW.MoverOption.Scale})
     totemBar:UpdateVisibility()
     totemBar:ClearAllPoints()
     totemBar:SetPoint("TOPLEFT", totemBar.gwMover)
