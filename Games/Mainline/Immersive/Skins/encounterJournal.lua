@@ -228,6 +228,248 @@ local function HandleItemSetsElements(scrollBox)
     end
 end
 
+local ICON_BORDER = {0.45, 0.45, 0.45}
+local STATUSBAR = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png"
+local STATUSBAR_BG = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png"
+
+local function SkinJourneyIcon(icon)
+    GW.HandleIcon(icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
+    icon.backdrop:SetBackdropBorderColor(ICON_BORDER[1], ICON_BORDER[2], ICON_BORDER[3], 1)
+end
+
+local ART_TRIM = {0.08, 0.94, 0.15, 0.85}
+
+local function TrimArt(texture)
+    if texture and not texture.gwTrimming then
+        texture.gwTrimming = true -- setting the coordinates must not run us in circles
+        texture:SetTexCoord(unpack(ART_TRIM))
+        texture.gwTrimming = nil
+    end
+end
+
+local function TrimJourneyCardArt(card)
+    for _, texture in next, {normal = card.NormalTexture, pushed = card.PushedTexture, hover = card:GetHighlightTexture()} do
+        TrimArt(texture)
+        if not texture.gwTrimHooked then
+            texture.gwTrimHooked = true
+            hooksecurefunc(texture, "SetTexCoord", TrimArt)
+            hooksecurefunc(texture, "SetAtlas", TrimArt)
+        end
+    end
+end
+
+local function SkinJourneyCard(card)
+    local name = card.RenownCardFactionName or card.JourneyCardName
+    if not name or card.gwSkinned then return end -- the list also holds category headers and dividers
+    card.gwSkinned = true
+
+    local hasArtwork = card.JourneyCardName ~= nil
+    if hasArtwork then
+        -- the atlas is set again on every refresh and takes its own coordinates along
+        TrimJourneyCardArt(card)
+        hooksecurefunc(card, "UpdateHighlightForState", TrimJourneyCardArt)
+    else
+        card.NormalTexture:SetAlpha(0)
+        card.PushedTexture:SetAlpha(0)
+        GW.AddDetailsBackground(card)
+
+        local function SetHoverTexture()
+            local highlight = card:GetHighlightTexture()
+            highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
+            highlight:SetVertexColor(0.8, 0.8, 0.8, 0.35)
+            highlight:SetAllPoints(card.tex)
+        end
+        SetHoverTexture()
+        hooksecurefunc(card, "UpdateHighlightForState", SetHoverTexture)
+    end
+
+    local watchCheckbox = card.WatchedFactionToggleFrame and card.WatchedFactionToggleFrame.WatchFactionCheckbox
+    if watchCheckbox then
+        watchCheckbox:GwSkinCheckButton(false, 15)
+        watchCheckbox.Label:SetTextColor(1, 1, 1) -- the label hangs on the checkbox, not on its frame
+    end
+
+    name:SetTextColor(1, 1, 1)
+    local level = card.RenownCardFactionLevel or card.JourneyCardLevel
+    if level then
+        level:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    end
+
+    local bar = card.JourneyCardProgressBar
+    if bar then
+        bar:SetStatusBarTexture(STATUSBAR)
+        bar:GetStatusBarTexture():SetVertexColor(GW.Colors.FactionBarColors[5]:GetRGB())
+        bar.JourneyCardProgressBarFrame:SetAlpha(0)
+        bar.JourneyCardProgressBarBG:SetAlpha(0)
+        GW.AddStatusBarFrame(bar)
+    end
+end
+
+local function SkinJourneyRewardCard(card)
+    if card.gwSkinned then return end
+    card.gwSkinned = true
+
+    card.RewardCardBG:SetAlpha(0)
+    card.RewardCardBGGlow:SetAlpha(0)
+    card.RewardCardIconBorderDefault:SetAlpha(0)
+    GW.AddDetailsBackground(card)
+    card.RewardCardName:SetTextColor(1, 1, 1)
+
+    local icon = card.RewardCardIcon
+    if card.TextureMask then
+        icon:RemoveMaskTexture(card.TextureMask) -- blizzard rounds the corners, ours are square
+    end
+    SkinJourneyIcon(icon)
+end
+
+local function SkinProgressDetails(details)
+    if not details then return end
+
+    if details.JourneyLevelBar then
+        details.JourneyLevelBar:SetTexture(STATUSBAR_BG)
+        details.JourneyLevelBar:SetVertexColor(0, 0, 0, 0.6)
+    end
+    if details.JourneyLevelBg then
+        details.JourneyLevelBg:SetTexture(STATUSBAR_BG)
+        details.JourneyLevelBg:SetVertexColor(0, 0, 0, 0.8)
+    end
+    if details.JourneyLevel then
+        details.JourneyLevel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    end
+    if details.JourneyLevelProgress then
+        details.JourneyLevelProgress:SetTextColor(1, 1, 1)
+    end
+end
+
+local function SkinParagonLevel(paragon)
+    if not paragon then return end
+
+    for _, key in ipairs({"Divider", "LabelBackground", "LevelFrame", "IconBorder"}) do
+        if paragon[key] then
+            paragon[key]:SetAlpha(0)
+        end
+    end
+    GW.AddDetailsBackground(paragon)
+
+    if paragon.Label then
+        paragon.Label:SetTextColor(1, 1, 1)
+    end
+    if paragon.Level then
+        paragon.Level:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    end
+    if paragon.Icon then
+        SkinJourneyIcon(paragon.Icon)
+    end
+end
+
+local function SkinRewardTrackCard(card)
+    if card.gwSkinned or not card.RewardCardBG then return end
+    card.gwSkinned = true
+
+    card.RewardCardBG:SetAlpha(0)
+    if card.IconBorder then
+        card.IconBorder:SetAlpha(0)
+    end
+    GW.AddDetailsBackground(card)
+
+    if card.Icon then
+        if card.Mask then
+            card.Icon:RemoveMaskTexture(card.Mask) -- blizzard rounds the icon, ours are square
+        end
+        SkinJourneyIcon(card.Icon)
+    end
+    if card.RewardName then
+        card.RewardName:SetTextColor(1, 1, 1)
+    end
+    if card.Level then
+        card.Level:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    end
+end
+
+local function HookCardPool(pool, skin)
+    if not pool then return end
+
+    hooksecurefunc(pool, "Acquire", function(self)
+        for card in self:EnumerateActive() do
+            skin(card)
+        end
+    end)
+end
+
+local function HookRewardTrack(track)
+    HookCardPool(track.elementPool, SkinRewardTrackCard)
+end
+
+local function SkinCompanionButton(button)
+    if not button then return end
+
+    button.NormalTexture:SetAlpha(0)
+    button.PushedTexture:SetAlpha(0)
+    if button.IconBorder then
+        button.IconBorder:SetAlpha(0)
+    end
+    GW.AddDetailsBackground(button)
+
+    if button.Icon then
+        SkinJourneyIcon(button.Icon)
+    end
+    if button.CompanionName then
+        button.CompanionName:SetTextColor(1, 1, 1)
+    end
+
+    local function SetHoverTexture()
+        local highlight = button:GetHighlightTexture()
+        highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
+        highlight:SetVertexColor(0.8, 0.8, 0.8, 0.35)
+        highlight:SetAllPoints(button.tex)
+    end
+    SetHoverTexture()
+    hooksecurefunc(button, "UpdateHighlightForState", SetHoverTexture)
+end
+
+local function SkinJourneysTab()
+    local journeys = EncounterJournalJourneysFrame
+
+    GW.HandleTrimScrollBar(journeys.ScrollBar)
+    GW.HandleScrollControls(journeys)
+    journeys.BorderFrame:Hide()
+
+    journeys.JourneyProgress.LevelSkipButton:GwSkinButton(false, true)
+    journeys.JourneyProgress.OverviewBtn:GwSkinButton(false, true)
+    journeys.JourneyOverview.OverviewBtn:GwSkinButton(false, true)
+
+    hooksecurefunc(journeys.JourneysList, "Update", function(scrollBox)
+        scrollBox:ForEachFrame(SkinJourneyCard)
+    end)
+
+    local vaultButton = EncounterJournal.instanceSelect and EncounterJournal.instanceSelect.GreatVaultButton
+    if vaultButton then
+        vaultButton:GwStripTextures()
+        vaultButton:GwStyleButton()
+        vaultButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/greatvaultmicrobutton-up.png")
+        vaultButton:GetNormalTexture():GwSetInside()
+        vaultButton:SetSize(26, 26)
+    end
+
+    local progress = journeys.JourneyProgress
+    SkinProgressDetails(progress.ProgressDetailsFrame)
+
+    for _, track in ipairs({progress.RenownTrackFrame, progress.EncounterRewardProgressFrame}) do
+        if track then
+            if track.ClipFrame then
+                SkinParagonLevel(track.ClipFrame.ParagonLevelFrame)
+            end
+            HookRewardTrack(track)
+        end
+    end
+
+    if progress.DelvesCompanionConfigurationFrame then
+        SkinCompanionButton(progress.DelvesCompanionConfigurationFrame.CompanionConfigBtn)
+    end
+
+    HookCardPool(progress.rewardPool, SkinJourneyRewardCard)
+end
+
 local function encounterJournalSkin()
     local EJ = EncounterJournal
     GW.HandlePortraitFrame(EJ)
@@ -332,14 +574,7 @@ local function encounterJournalSkin()
         end
     end)
 
-    -- Journays Tab
-    GW.HandleTrimScrollBar(EncounterJournalJourneysFrame.ScrollBar)
-    GW.HandleScrollControls(EncounterJournalJourneysFrame)
-    EncounterJournalJourneysFrame.BorderFrame:Hide()
-
-    EncounterJournalJourneysFrame.JourneyProgress.LevelSkipButton:GwSkinButton(false, true)
-    EncounterJournalJourneysFrame.JourneyProgress.OverviewBtn:GwSkinButton(false, true)
-    EncounterJournalJourneysFrame.JourneyOverview.OverviewBtn:GwSkinButton(false, true)
+    SkinJourneysTab()
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
     GW.HandleScrollControls(InstanceSelect)
