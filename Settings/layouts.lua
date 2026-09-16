@@ -63,6 +63,18 @@ local function GetUsablePoint(point)
     end
 end
 
+-- Puts a position into the layout, into the entry of that frame or as a new one.
+local function StoreLayoutPoint(layout, settingName, point)
+    for _, frame in pairs(layout.frames) do
+        if frame.settingName == settingName then
+            frame.point = GW.CopyTable(point)
+            return
+        end
+    end
+
+    layout.frames[#layout.frames + 1] = {settingName = settingName, point = GW.CopyTable(point)}
+end
+
 local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown, startUp)
     if not layout then return end
     if updateDropdown then
@@ -84,7 +96,19 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
     end
 
     for _, mover in ipairs(GW.MOVABLE_FRAMES) do
-        local point = points[mover.setting] or GetUsablePoint(mover.defaultPoint)
+        local point = points[mover.setting]
+
+        -- A layout that says nothing about a frame must never move it: older layouts lost the entries of every
+        -- frame that sat at its default position, and moving those back to the default would throw away the
+        -- positions of the profile. The layout adopts the current position instead, so nothing jumps and the
+        -- next switch has a value to restore.
+        if not point then
+            point = GetUsablePoint(GW.settings[mover.setting])
+            if point then
+                StoreLayoutPoint(layout, mover.setting, point)
+            end
+        end
+
         if point then
             mover:ClearAllPoints()
             mover:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)

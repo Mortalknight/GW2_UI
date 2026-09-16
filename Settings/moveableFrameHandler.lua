@@ -793,18 +793,18 @@ local function ApplyMoverPositionsFromSettings()
 
     for _, mf in ipairs(GW.MOVABLE_FRAMES) do
         local saved = GW.settings[mf.setting]
-        if not (saved and saved.point and saved.relativePoint and saved.xOfs and saved.yOfs) then
-            saved = mf.defaultPoint
+        -- a setting without a usable position says nothing about where the frame belongs, so it stays put
+        if saved and saved.point and saved.relativePoint and saved.xOfs and saved.yOfs then
+            mf.savedPoint = GW.CopyTable(saved)
+
+            mf:ClearAllPoints()
+            mf:SetPoint(mf.savedPoint.point, UIParent, mf.savedPoint.relativePoint, mf.savedPoint.xOfs, mf.savedPoint.yOfs)
+
+            -- sets hasMoved on the frame and hands the point table back to the settings
+            CheckForDefaultPosition(mf, mf.savedPoint.point, mf.savedPoint.relativePoint, mf.savedPoint.xOfs, mf.savedPoint.yOfs, mf.savedPoint)
+
+            mover_OnDragStop(mf)
         end
-        mf.savedPoint = GW.CopyTable(saved)
-
-        mf:ClearAllPoints()
-        mf:SetPoint(mf.savedPoint.point, UIParent, mf.savedPoint.relativePoint, mf.savedPoint.xOfs, mf.savedPoint.yOfs)
-
-        -- sets hasMoved on the frame and hands the point table back to the settings
-        CheckForDefaultPosition(mf, mf.savedPoint.point, mf.savedPoint.relativePoint, mf.savedPoint.xOfs, mf.savedPoint.yOfs, mf.savedPoint)
-
-        mover_OnDragStop(mf)
     end
 
     GW.IsApplyingMoverPositions = nil
