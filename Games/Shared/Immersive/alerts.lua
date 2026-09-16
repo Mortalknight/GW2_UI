@@ -1205,9 +1205,9 @@ end
 
 local function OnBagUpdate()
     local free = 0
-    for bag = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-        local freeSlots, bagFamily = C_Container.GetContainerNumFreeSlots(bag)
-        if bagFamily == 0 then
+    for i = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS do
+        local freeSlots, bagFamily = C_Container.GetContainerNumFreeSlots(i)
+        if bagFamily == 0 and freeSlots ~= nil then
             free = free + freeSlots
         end
     end
