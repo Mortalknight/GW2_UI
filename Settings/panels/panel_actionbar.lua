@@ -175,7 +175,7 @@ local function LoadActionbarPanel(sWindow)
     extraBars:AddOption(L["Invert"], nil, { getterSetter = "actionbars.bars.MultiBar7.invert", callback = GW.UpdateMultibarButtons, dependence = (function() local t = {["actionbars.enabled"] = true} if GW.Retail then t["actionbars.barLayout"] = true end return t end)(), groupHeaderName = OPTION_SHOW_ACTION_BAR:format(8), incompatibleAddons = "Actionbars"})
 
     -- STANCEBAR
-    local stanceBarDependence = (function() local t = {["actionbars.enabled"] = true, ["StanceBar.enabled"] = true} if GW.Retail then t["actionbars.barLayout"] = true end return t end)()
+    local stanceBarDependence = (function() local t = {["actionbars.enabled"] = true, ["stanceBar.enabled"] = true} if GW.Retail then t["actionbars.barLayout"] = true end return t end)()
     stanceBar:AddOptionNote(format(L["The action bars are disabled entirely: enable them under %s."], BINDING_HEADER_ACTIONBAR .. " - " .. GENERAL), {
         isVisible = function() return GW.settings.actionbars.enabled ~= true end,
         group = "actionbarPageNote",

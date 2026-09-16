@@ -181,8 +181,8 @@ local function LoadPlayerPanel(sWindow)
     p_player_aura:AddOptionSlider(L["Vertical Spacing"], nil, { getterSetter = "playerAuras.buffs.VerticalSpacing", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = -20, max = 50, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"]})
     p_player_aura:AddOptionSlider(L["Max Wraps"], nil, { getterSetter = "playerAuras.buffs.MaxWraps", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 1, max = 32, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"]})
     p_player_aura:AddOptionSlider(L["Size"], nil, { getterSetter = "playerAuras.buffs.IconSize", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"]})
-    p_player_aura:AddOptionSlider(L["Height"], nil, { getterSetter = "playerAuras.buffs.IconHeight", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true, ["PlayerBuffs.KeepSizeRatio"] = false}, groupHeaderName = L["Buffs"]})
-    p_player_aura:AddOption(L["Keep Size Ratio"], nil, {getterSetter = "playerAuras.buffs.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("PlayerBuffs.IconSize"); widget.title:SetText(value == true and L["Size"] or L["Width"]); GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"]})
+    p_player_aura:AddOptionSlider(L["Height"], nil, { getterSetter = "playerAuras.buffs.IconHeight", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true, ["playerAuras.buffs.KeepSizeRatio"] = false}, groupHeaderName = L["Buffs"]})
+    p_player_aura:AddOption(L["Keep Size Ratio"], nil, {getterSetter = "playerAuras.buffs.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("playerAuras.buffs.IconSize"); widget.title:SetText(value == true and L["Size"] or L["Width"]); GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"]})
     -- No longer feasible on Retail: the AuraContainer system blocks OnShow handlers on aura buttons (secret aspects)
     p_player_aura:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "playerAuras.buffs.NewAuraAnimation", dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"], hidden = GW.Retail})
 
@@ -197,8 +197,8 @@ local function LoadPlayerPanel(sWindow)
     p_player_aura:AddOptionSlider(L["Vertical Spacing"], nil, { getterSetter = "playerAuras.debuffs.VerticalSpacing", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = -20, max = 50, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"]})
     p_player_aura:AddOptionSlider(L["Max Wraps"], nil, { getterSetter = "playerAuras.debuffs.MaxWraps", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = 1, max = 32, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"]})
     p_player_aura:AddOptionSlider(L["Size"], nil, { getterSetter = "playerAuras.debuffs.IconSize", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"]})
-    p_player_aura:AddOptionSlider(L["Height"], nil, { getterSetter = "playerAuras.debuffs.IconHeight", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true, ["PlayerDebuffs.KeepSizeRatio"] = false}, groupHeaderName = L["Debuffs"]})
-    p_player_aura:AddOption(L["Keep Size Ratio"], nil, {getterSetter = "playerAuras.debuffs.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("PlayerDebuffs.IconSize"); widget.title:SetText(value == true and L["Size"] or L["Width"]); GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"]})
+    p_player_aura:AddOptionSlider(L["Height"], nil, { getterSetter = "playerAuras.debuffs.IconHeight", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true, ["playerAuras.debuffs.KeepSizeRatio"] = false}, groupHeaderName = L["Debuffs"]})
+    p_player_aura:AddOption(L["Keep Size Ratio"], nil, {getterSetter = "playerAuras.debuffs.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("playerAuras.debuffs.IconSize"); widget.title:SetText(value == true and L["Size"] or L["Width"]); GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"]})
     p_player_aura:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "playerAuras.debuffs.NewAuraAnimation", dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
 
 
@@ -285,8 +285,8 @@ local function LoadPlayerPanel(sWindow)
 
     --TOTEMBAR
     totemBar:AddOption(ENABLE, nil, { getterSetter = "totemBar.enabled", isMasterToggle = true, callback = function() if GwTotemBar then GwTotemBar:UpdateVisibility() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}, incompatibleAddons = "Actionbars"})
-    totemBar:AddOptionDropdown(L["Sorting"], nil, { getterSetter = "totemBar.sortDirection", callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end, optionsList = {"ASC", "DSC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["unitframes.healthGlobe.enabled"] = true, ["TotemBar.enabled"] = true}, incompatibleAddons = "Actionbars"})
-    totemBar:AddOptionDropdown(L["Growth Direction"], nil, { getterSetter = "totemBar.growDirection", callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end, optionsList = {"HORIZONTAL", "VERTICAL"}, optionNames = {L["Horizontal"], L["Vertical"]}, dependence = {["unitframes.healthGlobe.enabled"] = true, ["TotemBar.enabled"] = true}, incompatibleAddons = "Actionbars"})
+    totemBar:AddOptionDropdown(L["Sorting"], nil, { getterSetter = "totemBar.sortDirection", callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end, optionsList = {"ASC", "DSC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true}, incompatibleAddons = "Actionbars"})
+    totemBar:AddOptionDropdown(L["Growth Direction"], nil, { getterSetter = "totemBar.growDirection", callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end, optionsList = {"HORIZONTAL", "VERTICAL"}, optionNames = {L["Horizontal"], L["Vertical"]}, dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true}, incompatibleAddons = "Actionbars"})
     totemBar:AddOptionSlider(L["Button Spacing"], nil, {
         getterSetter = "totemBar.spacing",
         callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end,
@@ -294,7 +294,7 @@ local function LoadPlayerPanel(sWindow)
         max = 10,
         decimalNumbers = 0,
         step = 1,
-        dependence = {["unitframes.healthGlobe.enabled"] = true, ["TotemBar.enabled"] = true},
+        dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true},
         incompatibleAddons = "Actionbars"
     })
     totemBar:AddOptionSlider(L["Button Size"], nil, {
@@ -304,7 +304,7 @@ local function LoadPlayerPanel(sWindow)
         max = 60,
         decimalNumbers = 0,
         step = 1,
-        dependence = {["unitframes.healthGlobe.enabled"] = true, ["TotemBar.enabled"] = true},
+        dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true},
         incompatibleAddons = "Actionbars"
     })
 
