@@ -1,0 +1,436 @@
+---@class GW2
+local GW = select(2, ...)
+local RegisterMovableFrame = GW.RegisterMovableFrame
+local GetDebuffColorCurve = GW.GetDebuffColorCurve
+
+local DIRECTION_TO_POINT = {
+    DOWNR = "TOPLEFT",
+    DOWN = "TOPRIGHT",
+    UPR = "BOTTOMLEFT",
+    UP = "BOTTOMRIGHT",
+    UPL_COLUMN = "BOTTOMRIGHT",
+    UPR_COLUMN = "BOTTOMLEFT",
+    DOWNL_COLUMN = "TOPRIGHT",
+    DOWNR_COLUMN = "TOPLEFT",
+}
+
+local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
+    UPR = 1,
+    DOWNR = 1,
+    DOWN = -1,
+    UP = -1,
+    UPL_COLUMN = -1,
+    UPR_COLUMN = 1,
+    DOWNL_COLUMN = -1,
+    DOWNR_COLUMN = 1,
+}
+
+local DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER = {
+    UPR = 1,
+    DOWNR = -1,
+    DOWN = -1,
+    UP = 1,
+    UPL_COLUMN = 1,
+    UPR_COLUMN = 1,
+    DOWNL_COLUMN = -1,
+    DOWNR_COLUMN = -1,
+}
+
+local DIRECTION_IS_COLUMN_LAYOUT = {
+    UPL_COLUMN = true,
+    UPR_COLUMN = true,
+    DOWNL_COLUMN = true,
+    DOWNR_COLUMN = true,
+}
+
+local DIRECTION_TO_DEBUFF_ANCHOR = {
+    DOWNR = "BOTTOMLEFT",
+    DOWN = "BOTTOMRIGHT",
+    UPR = "TOPLEFT",
+    UP = "TOPRIGHT",
+    UPL_COLUMN = "TOPRIGHT",
+    UPR_COLUMN = "TOPLEFT",
+    DOWNL_COLUMN = "BOTTOMRIGHT",
+    DOWNR_COLUMN = "BOTTOMLEFT",
+}
+
+local GROUP_OWN = "GwAurasOwn"
+local GROUP_OTHERS = "GwAurasOthers"
+local GROUP_OWN_DISPELLABLE = "GwAurasOwnDispellable"
+local GROUP_OTHERS_DISPELLABLE = "GwAurasOthersDispellable"
+
+local function GetButtonMainAxisSize(db)
+    local width = db.IconSize
+    local height = db.KeepSizeRatio and width or db.IconHeight
+    return DIRECTION_IS_COLUMN_LAYOUT[db.GrowDirection] and height or width, width, height
+end
+
+local function ApplyButtonSizeAndCrop(button, width, height, keepSizeRatio)
+    button.gwVisual:SetSize(width, height)
+    button:SetSize(width, height)
+
+    if not button.status or not button.status.icon then return end
+
+    if keepSizeRatio then
+        button.status.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
+    else
+        local left, right, top, bottom = GW.CropRatio(width, height)
+        button.status.icon:SetTexCoord(left, right, top, bottom)
+    end
+end
+
+local function UpdateButtonSizeAndCrop(button, db)
+    local width = db.IconSize
+    local height = db.KeepSizeRatio and width or db.IconHeight
+    pcall(ApplyButtonSizeAndCrop, button, width, height, db.KeepSizeRatio)
+end
+
+local function InitializeAuraButton(button, header, isDebuff, isEnchant, withDispelIcon)
+    local visual = CreateFrame("Frame", nil, button)
+    visual:SetPoint("CENTER", button, "CENTER")
+    visual:SetFrameLevel(button:GetFrameLevel() + 1)
+    button.gwVisual = visual
+
+    -- border
+    local border = CreateFrame("Frame", nil, visual)
+    border:SetFrameLevel(visual:GetFrameLevel())
+    border:SetPoint("TOPLEFT", visual, "TOPLEFT", 2, -2)
+    border:SetPoint("BOTTOMRIGHT", visual, "BOTTOMRIGHT", -2, 2)
+
+    local borderBackground = border:CreateTexture(nil, "BACKGROUND")
+    borderBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    borderBackground:SetVertexColor(0, 0, 0)
+    borderBackground:SetAllPoints(border)
+
+    border.inner = border:CreateTexture(nil, "BORDER")
+    border.inner:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    border.inner:SetAlpha(0.75)
+    border.inner:SetPoint("TOPLEFT", border, "TOPLEFT", 1, -1)
+    border.inner:SetPoint("BOTTOMRIGHT", border, "BOTTOMRIGHT", -1, 1)
+    button.border = border
+
+    local cooldown = CreateFrame("Cooldown", nil, visual, "CooldownFrameTemplate")
+    cooldown:SetFrameLevel(visual:GetFrameLevel() + 1)
+    cooldown:SetPoint("TOPLEFT", visual, "TOPLEFT", 2, -2)
+    cooldown:SetPoint("BOTTOMRIGHT", visual, "BOTTOMRIGHT", -2, 2)
+    cooldown:SetDrawBling(false)
+    cooldown:SetDrawEdge(false)
+    cooldown:SetDrawSwipe(true)
+    cooldown:SetReverse(false)
+    cooldown:SetHideCountdownNumbers(true)
+    cooldown:SetSwipeTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png", 1, 1, 1, 1)
+    button.cooldown = cooldown
+
+    -- icon + overlay + texts
+    local status = CreateFrame("Frame", nil, visual)
+    status:SetFrameLevel(visual:GetFrameLevel() + 2)
+    status:SetPoint("TOPLEFT", visual, "TOPLEFT", 4, -4)
+    status:SetPoint("BOTTOMRIGHT", visual, "BOTTOMRIGHT", -4, 4)
+    button.status = status
+
+    status.icon = status:CreateTexture(nil, "ARTWORK")
+    status.icon:SetAllPoints(status)
+
+    local overlay = status:CreateTexture(nil, "OVERLAY")
+    overlay:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-overlay.png")
+    overlay:SetAllPoints(status)
+
+    status.stacks = status:CreateFontString(nil, "OVERLAY")
+    status.stacks:SetJustifyH("CENTER")
+    status.stacks:SetJustifyV("BOTTOM")
+    status.stacks:SetPoint("TOPLEFT", status, "BOTTOMLEFT", 1, 15)
+    status.stacks:SetPoint("BOTTOMRIGHT", status, "BOTTOMRIGHT", -1, 0)
+    status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOWOUTLINE")
+
+    status.duration = status:CreateFontString(nil, "OVERLAY")
+    status.duration:SetJustifyH("CENTER")
+    status.duration:SetSize(36, 13)
+    status.duration:SetPoint("TOP", status, "BOTTOM", 0, -6)
+    status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW", -1)
+
+    button:SetIcon(status.icon)
+    button:SetDurationCooldown(cooldown)
+    button:SetDurationText(status.duration, { textFormatter = GW.GetAuraDurationTextFormatter() })
+    button:SetApplicationCount(status.stacks)
+
+    button:SetCancelAuraButtons("RightButtonUp, RightButtonDown")
+    button:SetTooltipAnchorPoint("ANCHOR_BOTTOMLEFT", -5, -5)
+
+    if isEnchant then
+        border.inner:SetVertexColor(GW.Colors.DebuffColors.Curse:GetRGB())
+    elseif isDebuff then
+        button:AddDispelTypeTexture(border.inner, {
+            style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+            showWhenHarmful = true,
+            showWithoutDispelType = true,
+            customDispelColorCurve = GetDebuffColorCurve(),
+        })
+    else
+        border.inner:SetVertexColor(GW.Colors.Fallback:GetRGB())
+    end
+
+    if not isEnchant then
+        GW.AddPandemicHighlight(button, visual, function() return GW.settings.playerAuras.pandemicHighlight end)
+    end
+    if isDebuff then
+        GW.AddDispelTypeIcon(button, visual, { isDebuff = true }, function()
+            local mode = GW.settings.playerAuras.dispelIcon
+            if mode == "ALL" then return true end
+            return mode == "DISPELLABLE" and withDispelIcon or false
+        end)
+    end
+
+    button.header = header
+    button.gwInit = true
+
+    UpdateButtonSizeAndCrop(button, GW.settings.playerAuras[header.auraKey])
+end
+
+local function UpdateAuraHeader(header)
+    if not header or not header.gwIsAuraContainer then return end
+
+    local db = GW.settings.playerAuras[header.auraKey]
+    local mainAxisSize, width, height = GetButtonMainAxisSize(db)
+    local grow_dir = db.GrowDirection
+    local isColumnLayout = DIRECTION_IS_COLUMN_LAYOUT[grow_dir]
+    local horizontalSpacing = db.HorizontalSpacing
+    local verticalSpacing = db.VerticalSpacing
+    local maxWraps = db.MaxWraps
+    local wrapAfter = db.WrapAfter
+    if not wrapAfter or wrapAfter < 1 or wrapAfter > 20 then
+        wrapAfter = 7
+    end
+
+    local mainAxisSpacing = isColumnLayout and verticalSpacing or horizontalSpacing
+    local crossAxisSpacing = isColumnLayout and horizontalSpacing or verticalSpacing
+
+    -- flow layout of the container
+    header:SetFlowLayoutAxis(isColumnLayout and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal)
+    header:SetFlowLayoutAnchorPoint(DIRECTION_TO_POINT[grow_dir])
+    header:SetFlowLayoutGrowthDirection(
+        DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] > 0 and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left,
+        DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] > 0 and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
+    )
+    -- wrapAfter (count) -> maximum line length in pixels
+    header:SetFlowLayoutMaximumLineSize(wrapAfter * (mainAxisSize + mainAxisSpacing))
+
+    -- sorting & groups (shared sort presets, see GW.GetAuraSortPreset)
+    local sort = GW.GetAuraSortPreset(db.Sort)
+    local sortMethod, sortDirection = sort.method, sort.direction
+    local separate = db.Seperate or 0
+    local maxFrames = wrapAfter * maxWraps
+
+    local groupLayout = {
+        elementSpacing = mainAxisSpacing,
+        lineSpacing = crossAxisSpacing,
+        groupSpacing = mainAxisSpacing,
+        groupLineSpacing = crossAxisSpacing,
+        elementWidth = width,
+        elementHeight = height,
+    }
+
+    -- shared ignore list for both player bars (PLAYER_IGNORED_AURAS)
+    local candidateFilters = {}
+    if GW.settings.playerAuras.ignoredAuras and next(GW.settings.playerAuras.ignoredAuras) then
+        candidateFilters.excludeSpellIDs = GW.settings.playerAuras.ignoredAuras
+    end
+
+    -- own/others split via the PLAYER filter token (cast by the player/their pet) —
+    -- the isFromPlayerOrPlayerPet aura data field is unreliable for this. The debuff
+    -- bar splits each side once more along DISPELLABLE (see gwGroupInfo); within a
+    -- side the dispellable group renders first (RAID_PLAYER_DISPELLABLE boundary)
+    local baseIndexOwn = separate == -1 and 2 or 1
+    local baseIndexOthers = separate == -1 and 1 or 2
+    for _, info in ipairs(header.gwGroupInfo) do
+        header:SetAuraGroupCandidateFilters(info.key, candidateFilters)
+        header:SetAuraGroupSortMethod(info.key, sortMethod, sortDirection)
+
+        local filter = header.filter
+        local muted = false
+        if separate == 0 then
+            -- no separation: "others" shows everything, "own" is muted
+            muted = info.own
+        else
+            filter = filter .. (info.own and "|PLAYER" or "|!PLAYER")
+        end
+        if info.dispel ~= nil then
+            filter = filter .. (info.dispel and "|RAID_PLAYER_DISPELLABLE" or "|!RAID_PLAYER_DISPELLABLE")
+        end
+        header:SetAuraGroupFilterString(info.key, filter)
+        header:SetAuraGroupMaxFrameCount(info.key, muted and 0 or maxFrames)
+
+        local layout = CopyTable(groupLayout)
+        layout.layoutIndex = (info.own and baseIndexOwn or baseIndexOthers) + (info.dispel == false and 0.5 or 0)
+        header:SetAuraGroupLayout(info.key, layout)
+    end
+
+    if header.filter == "HELPFUL" then
+        local enchantLayout = CopyTable(groupLayout)
+        enchantLayout.placement = CustomAuraContainerItemEnchantmentPlacement.BeforeAuraGroups
+        header:SetItemEnchantmentLayout(enchantLayout)
+    end
+
+    for _, key in ipairs(header.gwGroupKeys) do
+        for i = 1, header:GetAuraGroupFrameCount(key) do
+            UpdateButtonSizeAndCrop(header:GetAuraGroupFrame(key, i), db)
+        end
+    end
+    for _, enchantFrame in next, header.gwEnchantButtons do
+        UpdateButtonSizeAndCrop(enchantFrame, db)
+    end
+
+    -- mirror isMoved onto the layout proxy (the secure layout manager reads it there)
+    if header.gwLayoutProxy then
+        header.gwLayoutProxy:SetAttribute("isMoved", header.isMoved and true or false)
+    end
+
+    -- container size (for the mover frame), analogous to minWidth/minHeight of the old headers
+    local minWidth = ((wrapAfter == 1 and 0 or horizontalSpacing) + width) * (isColumnLayout and maxWraps or wrapAfter)
+    local minHeight = ((maxWraps == 1 and 0 or verticalSpacing) + height) * (isColumnLayout and wrapAfter or maxWraps)
+    header:SetSize(math.max(minWidth, width + 1), math.max(minHeight, height + 1))
+
+    -- anchoring: buffs to the mover, debuffs relative to the buffs (as long as not moved separately)
+    if header.filter == "HELPFUL" then
+        header:ClearAllPoints()
+        header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
+    else
+        header:ClearAllPoints()
+        if not header.isMoved then
+            local anchor = DIRECTION_TO_DEBUFF_ANCHOR[grow_dir]
+            header:SetPoint(anchor, GW2UIPlayerBuffs, anchor, 0, DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height))
+        else
+            header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
+        end
+    end
+end
+GW.UpdateAuraHeader = UpdateAuraHeader
+
+local function newContainer(filter)
+    local name = filter == "HELPFUL" and "GW2UIPlayerBuffs" or "GW2UIPlayerDebuffs"
+    local isDebuff = filter == "HARMFUL"
+
+    local h = CreateFrame("AuraContainer", name, UIParent, "CustomAuraContainerTemplate")
+    h:SetClampedToScreen(true)
+    h.gwIsAuraContainer = true
+    if isDebuff then
+        h.gwGroupInfo = {
+            { key = GROUP_OWN_DISPELLABLE, own = true, dispel = true },
+            { key = GROUP_OWN, own = true, dispel = false },
+            { key = GROUP_OTHERS_DISPELLABLE, own = false, dispel = true },
+            { key = GROUP_OTHERS, own = false, dispel = false },
+        }
+    else
+        h.gwGroupInfo = {
+            { key = GROUP_OWN, own = true },
+            { key = GROUP_OTHERS, own = false },
+        }
+    end
+    h.gwGroupKeys = {}
+    for _, info in ipairs(h.gwGroupInfo) do
+        tinsert(h.gwGroupKeys, info.key)
+    end
+    h.gwEnchantButtons = {}
+    h.filter = filter
+    h.auraKey = filter == "HELPFUL" and "buffs" or "debuffs"
+    h.name = name
+
+    for _, info in ipairs(h.gwGroupInfo) do
+        h:AddAuraGroup(info.key, filter, {
+            initializeFrame = function(button) InitializeAuraButton(button, h, isDebuff, false, info.dispel) end,
+        })
+    end
+
+    if filter == "HELPFUL" then
+        -- weapon enchants (replaces includeWeapons + GetWeaponEnchantInfo polling)
+        for _, slot in next, { AuraContainerItemEnchantmentSlot.MainHand, AuraContainerItemEnchantmentSlot.OffHand } do
+            h:AddItemEnchantment(slot, {
+                initializeFrame = function(button)
+                    InitializeAuraButton(button, h, false, true)
+                    tinsert(h.gwEnchantButtons, button)
+                end,
+            })
+        end
+        h:SetItemEnchantmentLayout({ placement = CustomAuraContainerItemEnchantmentPlacement.BeforeAuraGroups })
+
+        RegisterMovableFrame(h, SHOW_BUFFS, "playerAuras.buffs", "Blizzard,Aura", {316, 100}, {GW.MoverOption.Scale}, true)
+    else
+        RegisterMovableFrame(h, SHOW_DEBUFFS, "playerAuras.debuffs", "Blizzard,Aura", {316, 60}, {GW.MoverOption.Scale}, true)
+    end
+
+    -- The AuraContainer is a "forbidden frame": SecureHandler frame refs (layout manager)
+    -- are not allowed on it. A protected proxy stands in for it in the secure layout —
+    -- the snippet only toggles Show/Hide and reads the isMoved attribute on the registered frame,
+    -- only the mover the container is attached to gets moved anyway.
+    local proxy = CreateFrame("Frame", nil, UIParent, "SecureFrameTemplate")
+    proxy:SetSize(1, 1)
+    proxy:SetPoint("BOTTOM")
+    proxy.gwMover = h.gwMover
+    proxy:SetAttribute("isMoved", h.isMoved and true or false)
+    proxy:HookScript("OnShow", function() h:Show() end)
+    proxy:HookScript("OnHide", function() h:Hide() end)
+    h.gwLayoutProxy = proxy
+
+    h:SetUnit("player")
+    h:SetEnabled(true)
+    local unitWatcher = CreateFrame("Frame")
+    unitWatcher:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
+    unitWatcher:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
+    unitWatcher:RegisterEvent("PLAYER_ENTERING_WORLD")
+    unitWatcher:SetScript("OnEvent", function()
+        h:SetUnit(UnitHasVehicleUI("player") and "vehicle" or "player")
+    end)
+
+    GW.MixinHideDuringPet(h)
+
+    UpdateAuraHeader(h)
+    GW.RegisterAuraContainer(h, UpdateAuraHeader)
+
+    return h
+end
+
+local function loadAuras(lm)
+    local hb = newContainer("HELPFUL")
+    hb:Show()
+    lm:RegisterBuffFrame(hb.gwLayoutProxy)
+    hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function()
+        local grow_dir = GW.settings.playerAuras[hb.auraKey].GrowDirection
+        local anchor_hb = DIRECTION_TO_POINT[grow_dir]
+
+        hb:ClearAllPoints()
+        hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
+    end)
+
+    local hd = newContainer("HARMFUL")
+    hd:Show()
+    lm:RegisterDebuffFrame(hd.gwLayoutProxy)
+    hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function()
+        local grow_dir = GW.settings.playerAuras[hd.auraKey].GrowDirection
+        local anchor_hd = DIRECTION_TO_POINT[grow_dir]
+
+        hd:ClearAllPoints()
+        hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
+    end)
+
+    -- Raise PetBattleFrame
+    if PetBattleFrame then
+        PetBattleFrame:SetFrameLevel(hb:GetFrameLevel() + 5)
+    end
+
+    -- Private auras no longer exist as a separate system in 12.1 —
+    -- they now run through the container as normal debuffs
+end
+
+local function LoadPlayerAuras(lm)
+    -- hide the Blizzard bars
+    BuffFrame:GwKill()
+    if DebuffFrame then
+        DebuffFrame:GwKill()
+    end
+
+    -- The container uses its own (secure) tooltip — switch the look to GW style
+    -- (once, gated on TOOLTIPS_ENABLED — same place as the factory containers)
+    GW.EnsureAuraTooltipStyle()
+
+    loadAuras(lm)
+end
+GW.LoadPlayerAuras = LoadPlayerAuras

@@ -663,7 +663,7 @@ do
 			header:SetRolesets('unitFrames')
 		end
 
-		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate' .. (ns.Retail and ', PingableUnitFrameTemplate' or ''))
+		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate' .. (ns.Modern and ', PingableUnitFrameTemplate' or ''))
 
 		if(...) then
 			if(type(...) == 'table') then

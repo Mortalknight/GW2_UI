@@ -8,27 +8,6 @@ GW2_ADDON = GW
 
 assert(GW.oUF, "GW2_UI was unable to locate oUF.")
 
-do -- Expansions
-    GW.Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-    GW.TBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
-    GW.Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
-    GW.Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
-    GW.Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
-    GW.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-
-    local season = C_Seasons and C_Seasons.GetActiveSeason()
-    GW.ClassicHC = season == 3 -- Hardcore
-    GW.ClassicSOD = season == 2 -- Season of Discovery
-    GW.ClassicAnniv = season == 11 -- Anniversary
-    GW.ClassicAnnivHC = season == 12 -- Anniversary Hardcore
-
-    local IsHardcoreActive = C_GameRules and C_GameRules.IsHardcoreActive
-    GW.IsHardcoreActive = IsHardcoreActive and IsHardcoreActive()
-
-    local IsEngravingEnabled = C_Engraving and C_Engraving.IsEngravingEnabled
-    GW.IsEngravingEnabled = IsEngravingEnabled and IsEngravingEnabled()
-end
-
 local function GetVersionString()
     local version = C_AddOns.GetAddOnMetadata(addonName, "Version")
     if version:find("@project%-version@") then
@@ -118,7 +97,30 @@ GW.spentMoney = 0
 
 GW.AlertContainerFrame = nil
 
-if not GW.Retail then
+do -- Expansions
+    GW.Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+    GW.TBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+    GW.Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+    GW.Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+    GW.Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
+    GW.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+    GW.Forever = GW.wowToc == 16001
+    GW.isModern = GW.Retail or GW.Forever
+
+    local season = C_Seasons and C_Seasons.GetActiveSeason()
+    GW.ClassicHC = season == 3 -- Hardcore
+    GW.ClassicSOD = season == 2 -- Season of Discovery
+    GW.ClassicAnniv = season == 11 -- Anniversary
+    GW.ClassicAnnivHC = season == 12 -- Anniversary Hardcore
+
+    local IsHardcoreActive = C_GameRules and C_GameRules.IsHardcoreActive
+    GW.IsHardcoreActive = IsHardcoreActive and IsHardcoreActive()
+
+    local IsEngravingEnabled = C_Engraving and C_Engraving.IsEngravingEnabled
+    GW.IsEngravingEnabled = IsEngravingEnabled and IsEngravingEnabled()
+end
+
+if not GW.Modern then
     Enum.ItemQuality.Common = Enum.ItemQuality.Standard
 end
 

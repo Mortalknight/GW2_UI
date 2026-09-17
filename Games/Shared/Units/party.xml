@@ -91,7 +91,7 @@
         </Frames>
     </Button>
 
-    <Button name="GwPartyFrameRetailTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitHealthbarMixin,GwPartyFrameMixin,GwUnitPowerbarMixin">
+    <Button name="GwPartyFrameModernTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitHealthbarMixin,GwPartyFrameMixin,GwUnitPowerbarMixin">
         <Size x="82" y="80"></Size>
         <Anchors>
             <Anchor point="TOPLEFT"></Anchor>
@@ -234,7 +234,7 @@
         </Frames>
     </Button>
 
-     <Button name="GwPartyPetFrameRetailTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitHealthbarMixin,GwPartyFrameMixin,GwUnitPowerbarMixin">
+     <Button name="GwPartyPetFrameModernTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitHealthbarMixin,GwPartyFrameMixin,GwUnitPowerbarMixin">
         <Size x="65" y="15"></Size>
         <Anchors>
             <Anchor point="TOPLEFT"></Anchor>

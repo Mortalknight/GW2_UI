@@ -546,7 +546,7 @@ local function AddTargetInfo(self, unit)
         if GW.IsSecretUnit(unitTarget) then
             local _, class = UnitClass(unitTarget)
             targetColor = C_ClassColor.GetClassColor(class) or RAID_CLASS_COLORS.PRIEST
-        elseif UnitIsPlayer(unitTarget) and (not GW.Retail or not UnitHasVehicleUI(unitTarget)) then
+        elseif UnitIsPlayer(unitTarget) and (not (GW.Retail or GW.Wrath or GW.Mists) or not UnitHasVehicleUI(unitTarget)) then
             local _, class = UnitClass(unitTarget)
             targetColor = GWGetClassColor(class, GW.settings.tooltip.unit.classColor)
         else
@@ -1258,7 +1258,7 @@ local function LoadTooltips()
 
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 
-    if GW.Retail then
+    if GW.Modern then
         GameTooltipDefaultContainer:GwKillEditMode()
 
         if not GW.ShouldBlockIncompatibleAddon("LfgInfo") then
@@ -1301,7 +1301,7 @@ local function LoadTooltips()
 
     local eventFrame = CreateFrame("Frame")
 
-    if GW.Retail then
+    if GW.Modern then
         hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
         hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
         hooksecurefunc(GameTooltipStatusBar, "UpdateUnitHealth", GameTooltipStatusBar_UpdateUnitHealth)

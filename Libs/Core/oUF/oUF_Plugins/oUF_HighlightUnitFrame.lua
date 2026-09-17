@@ -15,7 +15,7 @@ local function Update(self, event)
         return
     end
 
-    if ns.Retail then
+    if ns.Modern then
         element:SetAlphaFromBoolean(isSameUnit, 1, 0)
     else
         if isSameUnit then

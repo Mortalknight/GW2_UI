@@ -23,11 +23,11 @@ end
 
 local function CreateUnitFrame(name, revert, animatedPowerbar)
     local template
-    if GW.Retail then
+    if GW.Modern then
         if revert then
-            template = "GwNormalUnitFrameInvertPingableRetailTemplate"
+            template = "GwNormalUnitFrameInvertPingableModernTemplate"
         else
-            template = "GwNormalUnitFramePingableRetailTemplate"
+            template = "GwNormalUnitFramePingableModernTemplate"
         end
     else
         if revert then
@@ -200,7 +200,7 @@ end
 GW.CreateUnitFrame = CreateUnitFrame
 
 local function CreateSmallUnitFrame(name)
-    local f = CreateFrame("Button", name, UIParent, GW.Retail and "GwNormalUnitFramePingableSmallRetailTemplate" or "GwNormalUnitFrameSmall")
+    local f = CreateFrame("Button", name, UIParent, GW.Modern and "GwNormalUnitFramePingableSmallModernTemplate" or "GwNormalUnitFrameSmall")
     GW.SetFrameRoleset(f, "unitFrames")
 
     local hg = f.healthContainer
@@ -1100,7 +1100,7 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe.gwUnit = unit
     unitframe.type = "NormalTarget"
 
-    if GW.Retail then
+    if GW.Modern then
         -- 12.1: unit frame auras run through the AuraContainer factory; sizes, filters,
         -- direction and anchoring are applied in ToggleSettings right below.
         -- The container only refreshes on UNIT_AURA — a target/focus switch changes

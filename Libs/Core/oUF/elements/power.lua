@@ -154,7 +154,7 @@ local function UpdateColor(self, event, unit)
 			atlas = color:GetAtlas()
 		end
 
-		if(oUF.isRetail and element.colorPowerSmooth and color and color:GetCurve()) then
+		if(oUF.isModern and element.colorPowerSmooth and color and color:GetCurve()) then
 			color = UnitPowerPercent(unit, nil, true, color:GetCurve())
 		end
 	elseif(element.colorClass and isPlayer)
@@ -227,7 +227,7 @@ local function Update(self, event, unit)
 	end
 
 	local displayType, min
-	if(oUF.isRetail and element.displayAltPower) then
+	if(oUF.isModern and element.displayAltPower) then
 		displayType, min = element:GetDisplayPower(unit)
 	end
 
@@ -431,7 +431,7 @@ local function Enable(self, unit)
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
-		if(oUF.isRetail and not element.GetDisplayPower) then
+		if(oUF.isModern and not element.GetDisplayPower) then
 			element.GetDisplayPower = GetDisplayPower
 		end
 

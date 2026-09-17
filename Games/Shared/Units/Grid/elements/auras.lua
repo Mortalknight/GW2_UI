@@ -860,7 +860,7 @@ local function CreateAuraIndicator(frame, pos)
 end
 
 local function Construct_Auras(frame)
-    if GW.Retail then
+    if GW.Modern then
         -- no oUF Auras element on retail (reading aura data from insecure code is
         -- blocked while values are secret) — frame.Auras stays nil, the display
         -- runs through the AuraContainer, which is built lazily on the first unit

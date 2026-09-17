@@ -268,7 +268,7 @@
         </Frames>
     </Button>
 
-    <Button name="GwHealthGlobeRetailTmpl" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate,PingableUnitFrameTemplate" virtual="true" frameStrata="MEDIUM" frameLevel="2" mixin="GwUnitFrameMixin,GwHealthglobeMixin">
+    <Button name="GwHealthGlobeModernTmpl" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate,PingableUnitFrameTemplate" virtual="true" frameStrata="MEDIUM" frameLevel="2" mixin="GwUnitFrameMixin,GwHealthglobeMixin">
         <Size x="88" y="88"></Size>
         <Frames>
             <StatusBar parentKey="health" >

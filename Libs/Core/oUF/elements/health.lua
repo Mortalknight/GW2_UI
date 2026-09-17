@@ -126,9 +126,9 @@ local function UpdateColor(self, event, unit)
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
 		color = self.colors.reaction[UnitReaction(unit, 'player')]
 	elseif(element.colorSmooth) then
-		if oUF.isRetail and self.colors.health:GetCurve() then
+		if oUF.isModern and self.colors.health:GetCurve() then
 			color = UnitHealthPercent(unit, true, self.colors.health:GetCurve())
-		elseif not oUF.isRetail then
+		elseif not oUF.isModern then
 			r, g, b = self:ColorGradient(element.cur or 1, element.max or 1, unpack(element.smoothGradient or self.colors.smooth))
 		end
 	elseif(element.colorHealth) then
@@ -336,7 +336,7 @@ local function Enable(self)
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
-		if(not element.smoothing and ns.Retail) then
+		if(not element.smoothing and ns.Modern) then
 			element.smoothing = Enum.StatusBarInterpolation.Immediate
 		end
 

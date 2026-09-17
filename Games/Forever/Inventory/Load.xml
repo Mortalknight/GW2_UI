@@ -1,0 +1,5 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="lootframe.xml"/>
+    <Script file ="lootframe.lua"/>
+    <Script file ="sort.lua"/>
+</Ui>

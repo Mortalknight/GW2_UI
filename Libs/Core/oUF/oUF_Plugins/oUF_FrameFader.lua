@@ -19,10 +19,10 @@ local function UpdateRange(self, unit)
     local element = self.Fader
     local inRange
     local isEligible = UnitIsConnected(unit) and UnitInParty(unit)
-    if ns.Retail then element.RangeAlpha = nil end
+    if ns.Modern then element.RangeAlpha = nil end
     if(isEligible) then
         inRange = UnitInRange(unit)
-        if ns.Retail then
+        if ns.Modern then
             self:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
         else
             if not inRange then
@@ -32,7 +32,7 @@ local function UpdateRange(self, unit)
             end
         end
     else
-        if ns.Retail then
+        if ns.Modern then
             self:SetAlphaFromBoolean(isEligible, element.MaxAlpha, element.MaxAlpha)
         else
             element.RangeAlpha = element.MaxAlpha

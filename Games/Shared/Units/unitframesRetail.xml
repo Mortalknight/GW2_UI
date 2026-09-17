@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 
-    <Button name="GwNormalUnitFramePingableRetailTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
+    <Button name="GwNormalUnitFramePingableModernTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
         <Size x="300" y="64"></Size>
         <Layers>
             <Layer level="BACKGROUND">
@@ -148,7 +148,7 @@
         </Frames>
     </Button>
 
-    <Button name="GwNormalUnitFramePingableSmallRetailTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwTargetUnitFrameMixin,GwUnitPowerbarMixin,GwUnitHealthbarMixin">
+    <Button name="GwNormalUnitFramePingableSmallModernTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwTargetUnitFrameMixin,GwUnitPowerbarMixin,GwUnitHealthbarMixin">
         <Size x="148" y="64"></Size>
         <Layers>
             <Layer level="BACKGROUND">
@@ -237,7 +237,7 @@
         </Frames>
     </Button>
 
-    <Button name="GwNormalUnitFrameInvertPingableRetailTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
+    <Button name="GwNormalUnitFrameInvertPingableModernTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
         <Size x="300" y="64"></Size>
         <Layers>
             <Layer level="BACKGROUND">

@@ -676,7 +676,7 @@ GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
 
 local function CreatePartyFrame(i, isPlayer)
     local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
-    local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, GW.Retail and "GwPartyFrameRetailTemplate" or "GwPartyFrameTemplate")
+    local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, GW.Modern and "GwPartyFrameModernTemplate" or "GwPartyFrameTemplate")
     GW.SetFrameRoleset(frame, "unitFrames")
 
     if i == 1 then
@@ -761,7 +761,7 @@ local function CreatePartyFrame(i, isPlayer)
 
     --Create party pet frame
     local petUnit = (registerUnit == "player") and "pet" or "partypet" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
-    local petFrame = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, GW.Retail and "GwPartyPetFrameRetailTemplate" or "GwPartyPetFrameTemplate")
+    local petFrame = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, GW.Modern and "GwPartyPetFrameModernTemplate" or "GwPartyPetFrameTemplate")
     GW.SetFrameRoleset(petFrame, "unitFrames")
     petFrame.gwUnit = petUnit
     petFrame:SetAttribute("unit", petUnit)
@@ -858,7 +858,7 @@ local function CreatePartyFrame(i, isPlayer)
     petFrame.displayBuffs = GW.settings.unitframes.party.showBuffs and 32 or 0
     petFrame.displayDebuffs = (GW.settings.unitframes.party.showDebuffs or GW.settings.unitframes.party.showRaidInstanceDebuffs) and 40 or 0
     petFrame.auras.hideDuration = true
-    if GW.Retail then
+    if GW.Modern then
         -- 12.1: party auras run through the AuraContainer factory; layout/filters
         -- are applied in UpdatePartyAuraContainer (buffs and debuffs share one flow,
         -- so no forceNewLine here)
@@ -934,7 +934,7 @@ local function CreatePartyFrame(i, isPlayer)
     frame.displayBuffs = GW.settings.unitframes.party.showBuffs and 32 or 0
     frame.displayDebuffs = (GW.settings.unitframes.party.showDebuffs or GW.settings.unitframes.party.showRaidInstanceDebuffs) and 40 or 0
     frame.auras.debuffFilter = GW.settings.unitframes.party.onlyDispellableDebuffs and "RAID|HARMFUL" or "HARMFUL" --TESTING
-    if GW.Retail then
+    if GW.Modern then
         frame.aurasContainer = GW.CreateUnitAuraContainer({
             unit = registerUnit,
             pandemicEnabled = function() return GW.settings.unitframes.party.pandemicHighlight end,
