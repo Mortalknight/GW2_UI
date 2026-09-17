@@ -15,6 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("11.2.1", {
     {GW.Enum.ChangelogType.bug, [=[Fix actionbars not shown]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fix Micromenu hover lua error]=]},
 })
 
 addChange("11.2.0", {
