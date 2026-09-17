@@ -72,6 +72,9 @@ end
 
 local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown, startUp)
     if not layout then return end
+    -- the layout that was already active at logout is in sync with the profile positions the movers just
+    -- loaded; it follows them instead of pushing possibly stale entries over the profile
+    local followProfile = startUp and layout.name == GW.private.Layouts.currentSelected
     if updateDropdown then
         GW.private.Layouts.currentSelected = layout.name
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown:GenerateMenu()
@@ -92,6 +95,9 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
 
     for _, mover in ipairs(GW.MOVABLE_FRAMES) do
         local point = points[mover.setting]
+        if followProfile then
+            point = nil
+        end
 
         -- A layout that says nothing about a frame must never move it: older layouts lost the entries of every
         -- frame that sat at its default position, and moving those back to the default would throw away the

@@ -3,9 +3,11 @@ local GW = select(2, ...)
 
 local POS_FIELDS = {point = true, relativePoint = true, xOfs = true, yOfs = true, hasMoved = true}
 
--- Structure version of a profile. It has no default on purpose: AceDB strips values equal to their default on
--- logout, a marker in the defaults would be gone every time. Bump it when a later migration has to run once more.
-local SETTINGS_VERSION = 4
+-- Structure version of a profile, for later migrations to key off. It has no default on purpose: AceDB strips
+-- values equal to their default on logout. The flat key move itself runs on every login: a session with an older
+-- version writes flat keys again, and those have to be carried over instead of lingering.
+local SETTINGS_VERSION = 5
+GW.SETTINGS_VERSION = SETTINGS_VERSION
 
 local TOP_LEVEL_WITHOUT_DEFAULT = {profileIcon = true, profileChangedDate = true, settingsVersion = true}
 
@@ -126,7 +128,7 @@ local function MoveValue(profile, newPath, value)
 end
 
 local function MigrateProfileSettings(profile)
-    if type(profile) ~= "table" or profile.settingsVersion == SETTINGS_VERSION then return end
+    if type(profile) ~= "table" then return end
 
     ConvertLegacyValues(profile)
 
@@ -184,13 +186,37 @@ local function MigrateProfileSettings(profile)
 end
 GW.MigrateProfileSettings = MigrateProfileSettings
 
+local function IsUsablePoint(point)
+    return type(point) == "table" and point.point ~= nil and point.relativePoint ~= nil and point.xOfs ~= nil and point.yOfs ~= nil
+end
+
+local function IsDefaultPoint(settingName, point)
+    local default = GW.GetSettingDefault(settingName .. ".pos")
+    return IsUsablePoint(point) and point.point == default.point and point.relativePoint == default.relativePoint
+        and point.xOfs == default.xOfs and point.yOfs == default.yOfs
+end
+
+-- one entry per frame: an incomplete point loses to anything, a default position to a moved one, otherwise the
+-- later entry wins
+local function PointWins(settingName, candidate, current)
+    if not IsUsablePoint(candidate) then return false end
+    if not IsUsablePoint(current) then return true end
+    return not IsDefaultPoint(settingName, candidate) or IsDefaultPoint(settingName, current)
+end
+
 local function MigrateLayoutFrames()
     for _, layout in pairs(GW.global.layouts or {}) do
-        local kept = {}
+        local kept, byName = {}, {}
         for _, frame in pairs(layout.frames or {}) do
             frame.settingName = GW.MoverKeyMigrationMap[frame.settingName] or frame.settingName
             if frame.settingName and GW.GetSettingDefault(frame.settingName .. ".pos") ~= nil then
-                kept[#kept + 1] = frame
+                local index = byName[frame.settingName]
+                if not index then
+                    kept[#kept + 1] = frame
+                    byName[frame.settingName] = #kept
+                elseif PointWins(frame.settingName, frame.point, kept[index].point) then
+                    kept[index] = frame
+                end
             end
         end
         layout.frames = kept
@@ -199,9 +225,9 @@ end
 
 local function DatabaseValueMigration()
     for _, profile in pairs(GW.globalSettings.profiles) do
-        MigrateProfileSettings(profile)
+        xpcall(MigrateProfileSettings, geterrorhandler(), profile)
     end
-    MigrateLayoutFrames()
+    xpcall(MigrateLayoutFrames, geterrorhandler())
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
 

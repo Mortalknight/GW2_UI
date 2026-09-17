@@ -1703,7 +1703,10 @@ local function LoadMicroMenu()
 
     mbf:SetFrameRef("cf", mbf.cf)
     for i, icon in ipairs(mbf.notificationIcons or {}) do
-        mbf:SetFrameRef("notificationIcon" .. i, icon)
+        -- AddToAutoHide takes protected frames only; a protected child stands in for the icon and follows its visibility
+        local proxy = CreateFrame("Frame", nil, icon, "SecureFrameTemplate")
+        proxy:SetAllPoints()
+        mbf:SetFrameRef("notificationIcon" .. i, proxy)
     end
 
     mbf:SetAttribute("_onenter", [=[

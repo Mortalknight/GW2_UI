@@ -91,10 +91,11 @@ function GW.ActionBarFadeCheck(self, forceCombat)
         if f then
             if isDirty and not inLockdown and f ~= self then
                 -- this should only be set after a bar setting change (including initial load)
-                -- only the alpha: Show/Hide on the bars runs blizzards edit mode overrides and taints them
                 if f.gw_IsEnabled then
+                    GW.SetSecureShown(f, true)
                     actionBarFrameShow(f, true)
                 else
+                    GW.SetSecureShown(f, false)
                     actionBarFrameHide(f, true)
                 end
 
