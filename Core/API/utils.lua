@@ -44,6 +44,23 @@ local function SetSecureAttribute(frame, name, value)
 end
 GW.SetSecureAttribute = SetSecureAttribute
 
+-- Show/Hide of a frame that holds blizzard action buttons: their OnShow runs Update(), which must not run tainted
+local function SetSecureShown(frame, shown)
+    if InCombatLockdown() then
+        frame:SetShown(shown) -- the restricted environment is closed in combat, the plain call keeps the old behavior
+        return false
+    end
+
+    if not secureAttributeHandler then
+        secureAttributeHandler = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
+    end
+
+    secureAttributeHandler:SetFrameRef("gwTarget", frame)
+    SecureHandlerExecute(secureAttributeHandler, format([[self:GetFrameRef("gwTarget"):%s()]], shown and "Show" or "Hide"))
+    return true
+end
+GW.SetSecureShown = SetSecureShown
+
 -- 12.1: declares the frame's roleset so the UI mode system gates its visibility
 -- like Blizzard's own frames ("unitFrames", "arenaFrames", ...). No-op on clients
 -- without the API.

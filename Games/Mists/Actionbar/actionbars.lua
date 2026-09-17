@@ -684,7 +684,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     -- flyout direction
     GW.FlyoutDirection(fmMultibar)
 
-    fmMultibar:Show()
+    GW.SetSecureShown(fmMultibar, true)
 
     return fmMultibar
 end
