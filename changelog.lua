@@ -16,6 +16,7 @@ AddChange(string addonVersion, table changeList)
 addChange("11.2.1", {
     {GW.Enum.ChangelogType.bug, [=[Fix actionbars not shown]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix Micromenu hover lua error]=]},
+    {GW.Enum.ChangelogType.bug, [=[Layouts: frame positions no longer jump to default at login after an older version was run in between]=]},
 })
 
 addChange("11.2.0", {

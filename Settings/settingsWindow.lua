@@ -60,7 +60,7 @@ local function BuildSettingsWindow()
     settingsContainer.brandTextLeft:ClearAllPoints()
     settingsContainer.brandTextLeft:SetPoint("LEFT", brand, "RIGHT", 8, 3)
     settingsContainer.versionString:SetFont(UNIT_NAME_FONT, 12)
-    settingsContainer.versionString:SetText(GW.GetVersionString())
+    settingsContainer.versionString:SetText(GW.GetVersionString() .. " (DB " .. (GW.settings.settingsVersion or 0) .. ")")
     settingsContainer.headerString:SetText(CHAT_CONFIGURATION)
 
     settingsContainer.close:SetScript("OnClick", function() settingsContainer:Hide() end)
