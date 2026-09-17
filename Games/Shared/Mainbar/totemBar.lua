@@ -13,7 +13,7 @@ end
 local function UpdateButton(button, totem)
     if not (button and totem) then return end
 
-    local slot = (GW.Classic or GW.TBC or GW.Wrath or GW.Mists) and totem or totem.slot
+    local slot = (GW.Retail or GW.Mists) and totem.slot or totem
     local _, _, startTime, duration, icon = GetTotemInfo(slot)
 
     if startTime then
