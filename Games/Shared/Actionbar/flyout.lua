@@ -41,13 +41,8 @@ function GW.FlyoutDirection(actionbar)
                     direction = "UP"
                 end
                 if direction then
-                    -- through the restricted environment: an insecurely written attribute taints
-                    -- Blizzards Update chain as soon as UpdateFlyout reads it back, which then
-                    -- blocks UpdatePressAndHoldAction:SetAttribute in combat
+                    -- the attribute write runs OnAttributeChanged, blizzard updates the flyout arrow itself
                     GW.SetSecureAttribute(button, "flyoutDirection", direction)
-                end
-                if button.UpdateFlyout then
-                    button:UpdateFlyout()
                 end
             end
         end
