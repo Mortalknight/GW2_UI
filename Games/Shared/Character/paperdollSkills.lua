@@ -1,6 +1,31 @@
 ---@class GW2
 local GW = select(2, ...)
 
+local GetNumSkillLines = C_SkillInfo and C_SkillInfo.GetNumSkillLines or GetNumSkillLines
+
+
+function GW.GetSkillLineInfo(index)
+    if C_SkillInfo then
+        return C_SkillInfo.GetSkillLineInfo(index)
+    else
+        local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier,
+        skillMaxRank, isAbandonable, _, _, _, _,
+        skillDescription = GetSkillLineInfo(skillIndex)
+        return {
+            skillID = index,
+            name = skillName,
+            isHeader = isHeader,
+            isCollapsed = not isExpanded,
+            rank = skillRank,
+            tempPoints = numTempPoints,
+            modifier = skillModifier,
+            maxRank = skillMaxRank,
+            isAbandonable = isAbandonable,
+            description = skillDescription
+        }
+    end
+end
+
 local function getSkillElement(self, index)
     if _G["GwPaperSkillsItem" .. index] then return _G["GwPaperSkillsItem" .. index] end
     local f = CreateFrame("Button", "GwPaperSkillsItem" .. index, self.scroll.scrollchild, "GwPaperSkillsItem")
@@ -81,24 +106,22 @@ function GW.UpdateSkills(self)
     self.scroll.scrollchild:SetWidth(self.scroll:GetWidth() - 20)
 
     for skillIndex = 1, GetNumSkillLines() do
-        local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier,
-        skillMaxRank, isAbandonable, _, _, _, _,
-        skillDescription = GetSkillLineInfo(skillIndex)
+        local skillInfo = GW.GetSkillLineInfo(skillIndex)
 
-        skillRank = skillRank + numTempPoints
+        skillInfo.rank = skillInfo.rank + skillInfo.tempPoints
 
         local f = getSkillElement(self, skillIndex)
         local zebra = skillIndex % 2
 
         f.skillIndex = skillIndex
-        f.skillName = skillName
+        f.skillName = skillInfo.name
         if LastElement==nil then
             f:SetPoint("TOPLEFT", 0, -y)
         else
             f:SetPoint("TOPLEFT", LastElement, "BOTTOMLEFT", 0, 0)
         end
 
-        if isAbandonable then
+        if skillInfo.isAbandonable then
             f.abandon:Show()
             f.abandon:SetScript("OnClick", abandonProffesionOnClick)
             f.abandon:SetScript("OnEnter", abandonProffesionOnEnter)
@@ -110,27 +133,27 @@ function GW.UpdateSkills(self)
             f.abandon:SetScript("OnLeave", nil)
         end
 
-        if skillMaxRank == 0 then skillMaxRank = 1 end
+        if skillInfo.maxRank == 0 then skillInfo.maxRank = 1 end
 
         LastElement = f
 
-        if skillModifier == 0 then
-			f.val:SetText(skillRank .. " / " .. skillMaxRank)
+        if skillInfo.modifier == 0 then
+			f.val:SetText(skillInfo.rank .. " / " .. skillInfo.maxRank)
 		else
 			local color = RED_FONT_COLOR_CODE
-			if skillModifier > 0 then
+			if skillInfo.modifier > 0 then
 				color = GREEN_FONT_COLOR_CODE .. "+"
 			end
-            f.val:SetText(skillRank .." (" .. color .. skillModifier .. FONT_COLOR_CODE_CLOSE .. ") /" .. skillMaxRank)
+            f.val:SetText(skillInfo.rank .." (" .. color .. skillInfo.modifier .. FONT_COLOR_CODE_CLOSE .. ") /" .. skillInfo.maxRank)
 		end
 
         y = y + height
-        f.name:SetText(skillName)
-        f.tooltip = skillName
-        f.tooltip2 = skillDescription
-        f.StatusBar:SetValue(skillRank / skillMaxRank)
-        f.isHeader = isHeader
-        f.isExpanded = isExpanded
+        f.name:SetText(skillInfo.name)
+        f.tooltip = skillInfo.name
+        f.tooltip2 = skillInfo.description
+        f.StatusBar:SetValue(skillInfo.rank / skillInfo.maxRank)
+        f.isHeader = skillInfo.isHeader
+        f.isExpanded = not skillInfo.isCollapsed
         f:SetID(skillIndex)
         f.bg:SetVertexColor(1, 1, 1, zebra)
         updateSkillItem(f)
@@ -156,9 +179,11 @@ function GW.LoadPDSkills(parent, fmMenu)
     skillsFrame.scroll.slider:SetValue(1)
 
     skillsFrame:RegisterEvent("CHAT_MSG_SKILL")
-    skillsFrame:RegisterEvent("TRADE_SKILL_UPDATE")
+   skillsFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
     skillsFrame:RegisterEvent("SKILL_LINES_CHANGED")
-    skillsFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    if not GW.Forever then
+        skillsFrame:RegisterEvent("TRADE_SKILL_UPDATE")
+    end
     skillsFrame:SetScript("OnEvent", GW.UpdateSkills)
 
     fmMenu:SetupBackButton(skillsFrame.backButton, CHARACTER .. ": " .. SKILLS)

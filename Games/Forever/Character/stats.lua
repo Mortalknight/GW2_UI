@@ -121,9 +121,9 @@ local function getArmor(unit, prefix)
     local stat
     local tooltip
     local tooltip2
-    local base, effectiveArmor, _, posBuff, negBuff = UnitArmor(unit)
+    local base, effectiveArmor, real, bonus = UnitArmor(unit)
 
-    stat, tooltip = formateStat(ARMOR, base, posBuff, negBuff)
+    stat, tooltip = formateStat(ARMOR, base, bonus > 0 and bonus or 0, bonus < 0 and bonus or 0)
     local playerLevel = UnitLevel(unit)
     local armorReduction = effectiveArmor / ((85 * playerLevel) + 400)
     armorReduction = 100 * (armorReduction / (armorReduction + 1))
@@ -187,7 +187,7 @@ local function getAttackBothHands(unit, prefix)
     end
 
     local stat
-    local mainHandAttackBase, mainHandAttackMod = UnitAttackBothHands(unit)
+    local mainHandAttackBase, mainHandAttackMod = PlayerEffectiveAttackPower()
 
     if mainHandAttackMod == 0 then
         stat = mainHandAttackBase
@@ -296,6 +296,8 @@ local function getDamage(unit, prefix)
 
     local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. INVTYPE_WEAPONMAINHAND .. FONT_COLOR_CODE_CLOSE
 
+    ATTACK_SPEED_COLON = ""
+    DAMAGE_COLON = ""
     local tooltip2 = ATTACK_SPEED_COLON .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", speed) .. FONT_COLOR_CODE_CLOSE .. "\n"
     tooltip2 = tooltip2 .. DAMAGE_COLON .. HIGHLIGHT_FONT_COLOR_CODE .. damageTooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
     tooltip2 = tooltip2 .. DAMAGE_PER_SECOND .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.1F", damagePerSecond) .. FONT_COLOR_CODE_CLOSE .. "\n"
@@ -340,7 +342,7 @@ local function getRangedAttack(unit, prefix)
     end
 
     local hasRelic = UnitHasRelicSlot(unit)
-    local rangedAttackBase, rangedAttackMod = UnitRangedAttack(unit)
+    local _, _, rangedAttackMod, _, rangedAttackBase = PlayerEffectiveAttackPower()
 
     if rangedAttackBase == 0 then
         return nil

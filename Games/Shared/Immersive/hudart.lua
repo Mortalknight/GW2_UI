@@ -185,7 +185,7 @@ local function combatHealthState(self)
     end
 end
 
-local function combatHealthStateRetail(self)
+local function combatHealthStateModern(self)
     if not GW.settings.hud.background then
         return
     end
@@ -463,8 +463,8 @@ local function hud_OnEvent(self, event, ...)
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         selectBg(self)
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
-        if GW.Retail then
-            combatHealthStateRetail(self)
+        if GW.isModern then
+            combatHealthStateModern(self)
         else
             combatHealthState(self)
         end
@@ -503,7 +503,7 @@ local function LoadHudArt()
         GW.MixinHideDuringPetAndOverride(hudArtFrame)
     end
 
-    if GW.Retail then
+    if GW.isModern then
         curveOne = C_CurveUtil.CreateColorCurve()
         curveOne:SetType(Enum.LuaCurveType.Linear)
         curveOne:AddPoint(0.0, CreateColor(1, 0, 0, 1))
@@ -542,8 +542,8 @@ local function LoadHudArt()
     end
 
     selectBg(hudArtFrame)
-    if GW.Retail then
-        combatHealthStateRetail(hudArtFrame)
+    if GW.isModern then
+        combatHealthStateModern(hudArtFrame)
     else
         combatHealthState(hudArtFrame)
     end

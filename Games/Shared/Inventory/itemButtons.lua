@@ -19,6 +19,9 @@ local GW = select(2, ...)
 
 local allItemButtons = {}
 
+-- the modern clients only carry the keyring id in the enum, the classic ones also as global
+local KEYRING_CONTAINER = (Enum.BagIndex and Enum.BagIndex.Keyring) or KEYRING_CONTAINER or -2
+
 -- the skin repurposes the templates quest texture as our own quest icon on every
 -- flavor (the retail default), the content update here only toggles it
 
@@ -165,7 +168,7 @@ local function EnsureItemButton(cf, index, iconSize, opts)
     local name = "GwContainerItem" .. (bagID >= 0 and bagID or ("N" .. -bagID)) .. "_" .. index
     -- on retail the container item button template is based on the ItemButton
     -- intrinsic, creating it as a plain Button would lose icon/count/border
-    button = CreateFrame(opts and opts.frameType or (GW.Retail and "ItemButton" or "Button"), name, cf, opts and opts.template or "ContainerFrameItemButtonTemplate")
+    button = CreateFrame(opts and opts.frameType or (GW.isModern and "ItemButton" or "Button"), name, cf, opts and opts.template or "ContainerFrameItemButtonTemplate")
     button.gwOwnItemButton = true
 
     -- the templates children are created by name on the classic flavors and by

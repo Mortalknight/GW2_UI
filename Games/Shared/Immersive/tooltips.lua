@@ -125,7 +125,7 @@ local function GameTooltip_OnTooltipSetSpell(self, data)
     if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
 
     local spellID
-    if GW.Retail then
+    if GW.isModern then
         if data and data.type then
             if data.type == Enum.TooltipDataType.Spell then
                 spellID = data.id
@@ -324,7 +324,7 @@ local function GameTooltip_OnTooltipSetItem(self, data)
     if GetItem then
         local name, link = GetItem(self)
 
-        if not GW.Retail and name == "" and _G.CraftFrame and _G.CraftFrame:IsShown() then
+        if not GW.isModern and name == "" and _G.CraftFrame and _G.CraftFrame:IsShown() then
             local reagentIndex = ownerName and tonumber(strmatch(ownerName, "Reagent(%d+)"))
             if reagentIndex then link = GetCraftReagentItemLink(GetCraftSelectionIndex(), reagentIndex) end
         end
@@ -468,7 +468,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
                 levelText = format("%s%s|r %s%s", hexColor, level > 0 and level or "??", unitGender or "", race or "")
             end
 
-            if GW.Retail then
+            if GW.isModern then
                 local specText = specLine and specLine:GetText()
                 if specText then
                     specLine:SetText(nameColor:WrapTextInColorCode(specText))
@@ -894,7 +894,7 @@ local function SetItemRef(link)
 end
 
 function SetCompareItems(tt, value)
-    if GW.Retail or tt ~= GameTooltip then
+    if GW.isModern or tt ~= GameTooltip then
         tt.supportsItemComparison = value
     end
 end
@@ -903,7 +903,7 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
     if self:IsForbidden() or self:GetAnchorType() ~= "ANCHOR_NONE" then return end
 
     -- Remove when blizzard applyed the fix
-    if not GW.Retail then
+    if not GW.isModern then
         SetCompareItems(self, true)
     end
 
@@ -1124,8 +1124,8 @@ local function StyleTooltips()
         ItemRefShoppingTooltip1,
         ItemRefShoppingTooltip2,
         FriendsTooltip,
-        (GW.Retail and QuestScrollFrame.CampaignTooltip or nil),
-        (GW.Retail and QuestScrollFrame.StoryTooltip or nil),
+        (GW.isModern and QuestScrollFrame.CampaignTooltip or nil),
+        (GW.isModern and QuestScrollFrame.StoryTooltip or nil),
         WarCampaignTooltip,
         EmbeddedItemTooltip,
         ReputationParagonTooltip,
@@ -1206,7 +1206,7 @@ local function LoadTooltips()
 
     SetTooltipFonts()
 
-    if GW.Retail then
+    if GW.isModern then
         QuestScrollFrame.StoryTooltip:SetFrameLevel(4)
     end
 
@@ -1258,12 +1258,12 @@ local function LoadTooltips()
 
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 
-    if GW.Modern then
+    if GW.isModern then
         GameTooltipDefaultContainer:GwKillEditMode()
+    end
 
-        if not GW.ShouldBlockIncompatibleAddon("LfgInfo") then
-            hooksecurefunc("LFGListUtil_SetSearchEntryTooltip", AddPremadeGroupInfo)
-        end
+    if LFGListUtil_SetSearchEntryTooltip and not GW.ShouldBlockIncompatibleAddon("LfgInfo") then
+        hooksecurefunc("LFGListUtil_SetSearchEntryTooltip", AddPremadeGroupInfo)
     end
 
     hooksecurefunc("SetItemRef", SetItemRef)
@@ -1301,7 +1301,7 @@ local function LoadTooltips()
 
     local eventFrame = CreateFrame("Frame")
 
-    if GW.Modern then
+    if GW.isModern then
         hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
         hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
         hooksecurefunc(GameTooltipStatusBar, "UpdateUnitHealth", GameTooltipStatusBar_UpdateUnitHealth)
@@ -1337,7 +1337,7 @@ local function LoadTooltips()
             local owner = GameTooltip:GetOwner()
             if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame) or (GwPlayerUnitFrame and owner == GwPlayerUnitFrame)) and UnitExists("mouseover") then
                 if GW.UnitExists("mouseover") then
-                    if GW.Retail then
+                    if GW.isModern then
                         local _, unit = GameTooltip:GetUnit()
                         if GW.NotSecretValue(unit) then
                             GameTooltip:RefreshData()
@@ -1370,7 +1370,7 @@ local function LoadTooltips()
     -- addons — Blizzard provides the tooltipShowAuraSpellIDs CVar instead (applies live,
     -- no reload). Updated from the MODIFIER_STATE_CHANGED handler above, the settings
     -- dropdown callback and once here on load.
-    if GW.Retail then
+    if GW.isModern then
         GW.UpdateAuraTooltipIDCVar = function()
             C_CVar.SetCVar("tooltipShowAuraSpellIDs", IsModKeyDown() and "1" or "0")
         end

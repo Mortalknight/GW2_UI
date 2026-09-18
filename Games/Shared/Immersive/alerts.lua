@@ -1365,12 +1365,12 @@ function GW.LoadAlertSystem()
     container:RegisterEvent("CALENDAR_UPDATE_GUILD_EVENTS")
     container:RegisterEvent("PLAYER_ENTERING_WORLD")
     container:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-    if GW.Retail then
+    if GW.isModern then
         container:RegisterEvent("VIGNETTE_MINIMAP_UPDATED")
         container:RegisterEvent("WEEKLY_REWARDS_UPDATE")
     end
 
-    if not GW.Retail and not GW.Wrath then
+    if not GW.isModern and not GW.Wrath then
         container:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
         GW.Libs.GW2Lib:RegisterCombatEvent(container, "SPELL_CAST_SUCCESS", CLEUHandling)
         GW.Libs.GW2Lib:RegisterCombatEvent(container, "SPELL_CREATE", CLEUHandling)

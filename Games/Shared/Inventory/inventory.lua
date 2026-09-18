@@ -4,11 +4,11 @@ local L = GW.L
 
 local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
 
-local GetInventorySlotInfo = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlotInfo or GetInventorySlotInfo
-
--- the keyring only exists up to wrath, the reagent bag only on retail
-local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath
-local HAS_REAGENT_BAG = GW.Retail
+-- the keyring exists on the classic flavors and on forever, the reagent bag on retail and forever
+local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath or GW.Forever
+local HAS_REAGENT_BAG = GW.isModern
+local KEYRING_CONTAINER = (Enum.BagIndex and Enum.BagIndex.Keyring) or KEYRING_CONTAINER or -2
+local REAGENT_CONTAINER = (Enum.BagIndex and Enum.BagIndex.ReagentBag) or (NUM_BAG_SLOTS + 1)
 
 local BAG_ITEM_SIZE_CONFIG = {
     defaultValue = GW.globalDefault.profile.bags.bag.itemSize,
@@ -75,7 +75,7 @@ local function reskinItemButton(b, overrideIconSize)
         b.NormalTexture:SetTexture()
     end
 
-    if GW.Retail then
+    if GW.isModern then
         -- kill the retail slot background
         if not b.ItemSlotBackground then
             b.ItemSlotBackground = b:CreateTexture(nil, "BACKGROUND", "ItemSlotBackgroundCombinedBagsTemplate", -6)
@@ -455,7 +455,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
     local container = button:GetParent()
     local bag_id = container:GetID()
     local keyring = HAS_KEYRING and bag_id == KEYRING_CONTAINER
-    local isReagentBag = HAS_REAGENT_BAG and bag_id == 5
+    local isReagentBag = HAS_REAGENT_BAG and bag_id == REAGENT_CONTAINER
     local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN]
         or isReagentBag and GW.GetBagItemQualityColor(Enum.ItemQuality.Artifact)
         or GW.Colors.ProfessionBagColors[container.gw_bag_family or select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
@@ -675,7 +675,7 @@ local function reskinBagBar(b, ha)
     if b.CircleMask then
         b.CircleMask:Hide()
     end
-    if GW.Retail and b.icon then
+    if GW.isModern and b.icon then
         b.icon.Show = nil
         local tex = b.icon:GetTexture()
         if not tex or tex == 1721259 then
@@ -963,37 +963,22 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
     local rows
     local isizeX = size + paddingX
     local isizeY = size + paddingY
-    if sep then
-        -- one row per visible section header: backpack + equipped bags (+ keyring/reagent bag)
-        -- on the bag frame, main bank + equipped bank bags on the bank frame
+    if isBag and f.gw_layout_rows then
+        -- the bag layout stores the rows it actually used, headers, gaps and placeholders included
+        rows = f.gw_layout_rows
+    elseif sep and not isBag then
+        -- one row per visible section header: main bank + equipped bank bags
         local headers = 1
-        if isBag then
-            for i = 1, 4 do
-                local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
-                if GetInventoryItemID("player", slotID) then
-                    headers = headers + 1
-                end
-            end
-            if HAS_KEYRING then
-                headers = headers + 1 --Keyring
-            elseif HAS_REAGENT_BAG then
-                if GetInventoryItemID("player", (GetInventorySlotInfo("ReagentBag0Slot"))) then
-                    headers = headers + 1
-                end
-            end
-        else
-            for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-                if GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(i)) then
-                    headers = headers + 1
-                end
+        for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+            if GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(i)) then
+                headers = headers + 1
             end
         end
         f.finishedRow = f.finishedRow or 0
         f.unfinishedRow = f.unfinishedRow or 0
         rows = f.finishedRow + headers + f.unfinishedRow
     else
-        -- the layout stores its actual row usage when it deviates from the plain flow (keyring gap)
-        rows = f.gw_combined_rows or math.ceil(slots / cols)
+        rows = math.ceil(slots / cols)
     end
     f:SetHeight(max((isizeY * rows) + 75, min_height))
     local contentWidth = (isizeX * cols) - paddingX

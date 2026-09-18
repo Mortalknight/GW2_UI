@@ -81,7 +81,7 @@ end
 
 local function SellJunkFrame_OnEvent(self, event, arg1)
     if event == "MERCHANT_SHOW" then
-        if GW.Retail then
+        if GW.isModern then
             if IsShiftKeyDown() then return end
             C_MerchantFrame.SellAllJunkItems()
         else
@@ -115,13 +115,13 @@ end
 function GW.SetupVendorJunk(active)
     if active then
         SellJunkFrame:RegisterEvent("MERCHANT_SHOW")
-        if not GW.Retail then
+        if not GW.isModern then
             SellJunkFrame:RegisterEvent("MERCHANT_CLOSED")
         end
         SellJunkFrame:SetScript("OnEvent", SellJunkFrame_OnEvent)
     else
         SellJunkFrame:UnregisterEvent("MERCHANT_SHOW")
-        if not GW.Retail then
+        if not GW.isModern then
             SellJunkFrame:UnregisterEvent("MERCHANT_CLOSED")
         end
         SellJunkFrame:SetScript("OnEvent", nil)

@@ -7,11 +7,36 @@ local inv
 
 local GetInventorySlotInfo = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlotInfo or GetInventorySlotInfo
 
--- the keyring only exists up to wrath, the reagent bag only on retail; both occupy
--- the extra fifth bag bar slot and the extra layout section
-local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath
-local HAS_REAGENT_BAG = GW.Retail
-local LAST_BAG_SLOT = (HAS_KEYRING or HAS_REAGENT_BAG) and (NUM_BAG_SLOTS + 1) or NUM_BAG_SLOTS
+-- the keyring exists on the classic flavors and on forever, the reagent bag on retail and
+-- forever - forever is the one flavor that has both. The reagent bag is a real container
+-- right behind the bags, the keyring has its own (negative) container id
+local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath or GW.Forever
+local HAS_REAGENT_BAG = GW.isModern
+local KEYRING_CONTAINER = (Enum.BagIndex and Enum.BagIndex.Keyring) or KEYRING_CONTAINER or -2
+local REAGENT_CONTAINER = (Enum.BagIndex and Enum.BagIndex.ReagentBag) or (NUM_BAG_SLOTS + 1)
+-- the last container id of the contiguous held bag range (backpack, bags, reagent bag)
+local LAST_HELD_BAG = HAS_REAGENT_BAG and REAGENT_CONTAINER or NUM_BAG_SLOTS
+-- the section headers of the separate view: the held bags use their container id as
+-- header index, the extras follow behind them
+local REAGENT_HEADER = NUM_BAG_SLOTS + 1
+local KEYRING_HEADER = HAS_REAGENT_BAG and (NUM_BAG_SLOTS + 2) or (NUM_BAG_SLOTS + 1)
+
+-- the sections of the bag frame in display order, one per container
+local BAG_SECTIONS = {}
+for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+    BAG_SECTIONS[#BAG_SECTIONS + 1] = {id = bag_id, header = bag_id}
+end
+if HAS_REAGENT_BAG then
+    BAG_SECTIONS[#BAG_SECTIONS + 1] = {id = REAGENT_CONTAINER, header = REAGENT_HEADER, isReagentBag = true}
+end
+if HAS_KEYRING then
+    BAG_SECTIONS[#BAG_SECTIONS + 1] = {id = KEYRING_CONTAINER, header = KEYRING_HEADER, isKeyring = true}
+end
+
+-- whether a container id belongs to this bag frame
+local function isOwnBagID(id)
+    return (id >= BACKPACK_CONTAINER and id <= LAST_HELD_BAG) or (HAS_KEYRING and id == KEYRING_CONTAINER)
+end
 
 --[[
     Flavor modules.
@@ -41,43 +66,54 @@ local function callBagModules(hook, ...)
     end
 end
 
+-- the equipped bag behind a header index: the bag slots for the bags, the reagent bag
+-- slot for the reagent bag, nothing for the backpack and the keyring
+local function getHeaderBagItemID(headerIndex)
+    if headerIndex >= 1 and headerIndex <= NUM_BAG_SLOTS then
+        return GetInventoryItemID("player", (GetInventorySlotInfo("Bag" .. headerIndex - 1 .. "Slot")))
+    elseif HAS_REAGENT_BAG and headerIndex == REAGENT_HEADER then
+        return GetInventoryItemID("player", (GetInventorySlotInfo("ReagentBag0Slot")))
+    end
+end
+
+-- whether a section has anything to show a header for: the backpack and the keyring
+-- always, the bags only while one is equipped in their slot
+local function isSectionPresent(section)
+    if section.id == BACKPACK_CONTAINER or section.isKeyring then
+        return true
+    end
+    return getHeaderBagItemID(section.header) ~= nil
+end
+
+-- sets a headers text: the custom name if one is set, else the bag name in its quality color
+local function setHeaderName(header, headerIndex)
+    local customName = GW.settings.bags.bag.headerNames[headerIndex]
+    if customName and strlen(customName) > 0 then
+        header.nameString:SetText(customName)
+        header.nameString:SetTextColor(1, 1, 1, 1)
+    elseif headerIndex == BACKPACK_CONTAINER then
+        header.nameString:SetText(BACKPACK_TOOLTIP)
+        header.nameString:SetTextColor(1, 1, 1, 1)
+    elseif HAS_KEYRING and headerIndex == KEYRING_HEADER then
+        header.nameString:SetText(KEYRING)
+        header.nameString:SetTextColor(1, 1, 1, 1)
+    else
+        local itemID = getHeaderBagItemID(headerIndex)
+        local itemName, _, itemRarity
+        if itemID then
+            itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
+        end
+        local r, g, b = 1, 1, 1
+        if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
+        header.nameString:SetText(itemName or UNKNOWN)
+        header.nameString:SetTextColor(r, g, b, 1)
+    end
+end
+
 local function setBagHeaders(frame)
-    for i = 1, NUM_BAG_SLOTS do
-        local customBagHeaderName = GW.settings.bags.bag.headerNames[i]
-        local header = frame["bagHeader" .. i]
-        local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
-        local itemID = GetInventoryItemID("player", slotID)
-
-        if itemID then
-            local r, g, b = 1, 1, 1
-            local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
-            if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
-
-            header.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName or UNKNOWN)
-            header.nameString:SetTextColor(r, g, b, 1)
-        else
-            header:Hide()
-        end
+    for _, section in ipairs(BAG_SECTIONS) do
+        setHeaderName(frame["bagHeader" .. section.header], section.header)
     end
-    if HAS_KEYRING then
-        local customBagHeaderName = GW.settings.bags.bag.headerNames[5]
-        frame.bagHeader5.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or KEYRING)
-        frame.bagHeader5.nameString:SetTextColor(1, 1, 1, 1)
-    elseif HAS_REAGENT_BAG then
-        local customBagHeaderName = GW.settings.bags.bag.headerNames[5]
-        local itemID = GetInventoryItemID("player", (GetInventorySlotInfo("ReagentBag0Slot")))
-        if itemID then
-            local r, g, b = 1, 1, 1
-            local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
-            if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
-            frame.bagHeader5.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName or UNKNOWN)
-            frame.bagHeader5.nameString:SetTextColor(r, g, b, 1)
-        else
-            frame.bagHeader5:Hide()
-        end
-    end
-    local customBagHeaderName = GW.settings.bags.bag.headerNames[0]
-    frame.bagHeader0.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BACKPACK_TOOLTIP)
 end
 
 -- the placeholders are always given an explicit bag range: the keyring is not a bag and
@@ -179,122 +215,88 @@ local function placeEmptySlot(f, key, fromBag, toBag, col, row, max_col, item_of
     return col, row
 end
 
+-- finishes a started row and adds `gap` rows of air, returns the new flow position
+local function closeRow(col, row, gap)
+    if col > 0 then
+        col = 0
+        row = row + 1
+    end
+    return col, row + (gap or 0)
+end
+
 -- adjusts the ItemButton layout flow when the bag window size changes (or on open)
 local function layoutBagItems(f)
     local parent = f:GetParent()
+    local settings = GW.settings.bags.bag
     local max_col = parent.gw_bag_cols
-    local col = 0
-    local rev = GW.settings.bags.bag.reverseSort
-    local sep = GW.settings.bags.bag.separateBags
-    -- in combined mode the keyring (classic) or the reagent bag (retail) can be set
-    -- off to its own rows with a gap as separation
-    local extraBagGap = not sep and (
-        (HAS_KEYRING and GW.settings.bags.bag.separateKeyring and IsBagOpen(KEYRING_CONTAINER))
-        or (HAS_REAGENT_BAG and GW.settings.bags.bag.separateReagentBag and f.Containers[5] and f.Containers[5].gw_num_slots > 0)
-    )
-    -- an empty bag would collapse to nothing in the separate view and leave a header
-    -- with no slots under it, so the compact flow only applies to the combined one
-    local compact = GW.settings.bags.bag.compactEmptySlots == true and not sep
-    local bagSlotPlaced = false
-    local row = sep and 1 or 0
-    if not GW.settings.bags.bag.itemSize or not GW.settings.bags.bag.itemSpacingX or not GW.settings.bags.bag.itemSpacingY then
+    if not max_col or not settings.itemSize or not settings.itemSpacingX or not settings.itemSpacingY then
         -- acedb can have the profile defaults detached (logout, profile operations)
         return
     end
-    local item_off_x = GW.settings.bags.bag.itemSize + GW.settings.bags.bag.itemSpacingX
-    local item_off_y = GW.settings.bags.bag.itemSize + GW.settings.bags.bag.itemSpacingY
-    local unfinishedRow = false
-    local finishedRows = 0
-
-    local iS = BACKPACK_CONTAINER
-    local iE = LAST_BAG_SLOT
-    local iD = 1
-    if rev then
-        iE = iS
-        iS = LAST_BAG_SLOT
-        iD = -1
-    end
-    parent.unfinishedRow = 0
-    parent.finishedRow = 0
+    local rev = settings.reverseSort
+    local sep = settings.separateBags
+    -- an empty bag would collapse to nothing in the separate view and leave a header
+    -- with no slots under it, so the compact flow only applies to the combined one
+    local compact = settings.compactEmptySlots == true and not sep
+    local item_off_x = settings.itemSize + settings.itemSpacingX
+    local item_off_y = settings.itemSize + settings.itemSpacingY
     local lcf = inv.layoutContainerFrame
-    for i = iS, iE, iD do
-        local bag_id = i
-        local itemID
-        local cf = (HAS_KEYRING and bag_id == 5 and IsBagOpen(KEYRING_CONTAINER)) and f.Containers[KEYRING_CONTAINER] or f.Containers[bag_id]
-        local header = parent["bagHeader" .. i]
+
+    local col, row = 0, 0
+    local bagSlotPlaced = false
+    local reagentSlotPlaced = false
+
+    local numSections = #BAG_SECTIONS
+    for n = 1, numSections do
+        local section = BAG_SECTIONS[rev and (numSections - n + 1) or n]
+        local cf = f.Containers[section.id]
+        local header = parent["bagHeader" .. section.header]
+        local hasSlots = cf.gw_num_slots > 0
+        cf.gw_compact = compact
+
         if sep then
-            if bag_id == 5 and not rev then
-                if col ~= 0 then
-                    row = row + 2
+            -- one header row per present section, its items below while it is expanded
+            local present = isSectionPresent(section)
+            header:SetShown(present)
+            if present then
+                header:ClearAllPoints()
+                header:SetPoint("TOPLEFT", f, "TOPLEFT", 0, -row * item_off_y)
+                header:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, -row * item_off_y)
+                row = row + 1
+                if cf.shouldShow and hasSlots then
+                    col, row = lcf(cf, max_col, row, 0, false, item_off_x, item_off_y)
+                    col, row = closeRow(col, row)
+                    cf:Show()
                 else
-                    row = row + 1
+                    cf:Hide()
                 end
+            else
+                cf:Hide()
             end
-            header:Show()
-            header:ClearAllPoints()
-            header:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off_y)
-            header:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, (-row + 1) * item_off_y)
         else
             header:Hide()
-        end
-        if sep and rev and bag_id == 5 and not cf then
-            row = 2
-        end
-        if cf then
-            cf.gw_compact = compact
-            if sep and cf.shouldShow then
-                if bag_id == 5 and IsBagOpen(KEYRING_CONTAINER) then
-                    if col ~= 0 then col = 0 end
+            -- combined flow; the extra sections (reagent bag, keyring) can be set off from
+            -- the bags with half a row of air: above them in normal order, below reversed
+            local setOff = hasSlots and (
+                (section.isReagentBag and settings.separateReagentBag)
+                or (section.isKeyring and settings.separateKeyring)
+            )
+            if setOff and not rev then
+                -- close the bag rows with their own placeholder before the gap
+                if compact and not bagSlotPlaced then
+                    col, row = placeEmptySlot(f, "gwEmptySlot", BACKPACK_CONTAINER, NUM_BAG_SLOTS, col, row, max_col, item_off_x, item_off_y)
+                    bagSlotPlaced = true
                 end
-                col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off_x, item_off_y)
-                cf:Show()
-            elseif sep and not cf.shouldShow then
-                cf:Hide()
-            elseif not sep then
-                if extraBagGap and bag_id == 5 and not rev then
-                    -- the extra bag comes last: close the bag rows with their own
-                    -- placeholder first, then leave a gap above the extra section
-                    if compact then
-                        col, row = placeEmptySlot(f, "gwEmptySlot", BACKPACK_CONTAINER, NUM_BAG_SLOTS, col, row, max_col, item_off_x, item_off_y)
-                        bagSlotPlaced = true
-                    end
-                    if col ~= 0 then
-                        col = 0
-                        row = row + 1
-                    end
-                    row = row + 0.5
-                end
-                col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off_x, item_off_y)
-                cf:Show()
-                if compact and HAS_REAGENT_BAG and bag_id == 5 and cf.gw_num_slots > 0 then
-                    col, row = placeEmptySlot(f, "gwEmptyReagentSlot", NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + 1, col, row, max_col, item_off_x, item_off_y)
-                end
-                if extraBagGap and bag_id == 5 and rev then
-                    -- the extra bag comes first: finish its rows and leave a gap below it
-                    if col ~= 0 then
-                        col = 0
-                        row = row + 1
-                    end
-                    row = row + 0.5
-                end
+                col, row = closeRow(col, row, 0.5)
             end
-
-            if unfinishedRow then parent.unfinishedRow = parent.unfinishedRow  + 1 end
-            parent.finishedRow = parent.finishedRow + finishedRows
-
-            if not rev and bag_id < 4 then
-                itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(bag_id))
-            elseif rev and bag_id < 5 and bag_id > 0 then
-                itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(bag_id - 1))
+            col, row = lcf(cf, max_col, row, col, false, item_off_x, item_off_y)
+            cf:Show()
+            if compact and section.isReagentBag and hasSlots then
+                col, row = placeEmptySlot(f, "gwEmptyReagentSlot", REAGENT_CONTAINER, REAGENT_CONTAINER, col, row, max_col, item_off_x, item_off_y)
+                reagentSlotPlaced = true
             end
-
-            if sep and (bag_id == 0 or itemID or (rev and bag_id == 5)) then
-                if col ~= 0 then
-                    row = row + 2
-                    col = 0
-                else
-                    row = row + 1
-                end
+            if setOff and rev then
+                col, row = closeRow(col, row, 0.5)
             end
         end
     end
@@ -302,18 +304,18 @@ local function layoutBagItems(f)
     if compact and not bagSlotPlaced then
         col, row = placeEmptySlot(f, "gwEmptySlot", BACKPACK_CONTAINER, NUM_BAG_SLOTS, col, row, max_col, item_off_x, item_off_y)
     end
-    if not compact then
-        if f.gwEmptySlot then f.gwEmptySlot:Hide() end
-        if f.gwEmptyReagentSlot then f.gwEmptyReagentSlot:Hide() end
-    elseif f.gwEmptyReagentSlot and not (HAS_REAGENT_BAG and f.Containers[5] and f.Containers[5].gw_num_slots > 0) then
+    if f.gwEmptySlot and not compact then
+        f.gwEmptySlot:Hide()
+    end
+    if f.gwEmptyReagentSlot and not reagentSlotPlaced then
         f.gwEmptyReagentSlot:Hide()
     end
 
-    -- with the extra bag set off, the plain slots/columns row count of snapFrameSize
-    -- no longer matches - store the rows the layout actually used
-    parent.gw_combined_rows = (extraBagGap or compact) and (row + (col > 0 and 1 or 0)) or nil
+    -- the rows the layout actually used (headers, gaps and placeholders included),
+    -- snapFrameSize sizes the frame by them
+    parent.gw_layout_rows = row + (col > 0 and 1 or 0)
 
-    if GW.settings.bags.bag.separateBags then
+    if sep then
         setBagHeaders(parent)
     end
 end
@@ -356,7 +358,7 @@ end
 
 -- update the number of free bag slots available and set the display for it
 local function updateFreeBagSlots()
-    inv.updateFreeSlots(GwBagFrame.spaceString, 1, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS, BACKPACK_CONTAINER)
+    inv.updateFreeSlots(GwBagFrame.spaceString, 1, LAST_HELD_BAG, BACKPACK_CONTAINER)
 end
 
 
@@ -383,11 +385,8 @@ local function layoutStateChanged(f)
         changed, lastLayoutState[idx] = true, f.gw_bag_cols
     end
 
-    local lastTracked = HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS
-    for i = BACKPACK_CONTAINER, lastTracked + (HAS_KEYRING and 1 or 0) do
-        -- the keyring takes the slot right after the bags, it has its own container id
-        local bag_id = i > lastTracked and KEYRING_CONTAINER or i
-        local cf = f.ItemFrame.Containers[bag_id]
+    for _, section in ipairs(BAG_SECTIONS) do
+        local cf = f.ItemFrame.Containers[section.id]
         local numSlots = cf and cf.gw_num_slots or 0
 
         idx = idx + 1
@@ -447,13 +446,10 @@ local function rescanBagContainers(f, dirtyBags)
         -- the header name of a swapped bag, so they always lay out
         invalidateLayoutState()
     end
-    for bag_id = BACKPACK_CONTAINER, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
-        if not dirtyBags or dirtyBags[bag_id] then
-            GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id)
+    for _, section in ipairs(BAG_SECTIONS) do
+        if not dirtyBags or dirtyBags[section.id] then
+            GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[section.id], section.id)
         end
-    end
-    if HAS_KEYRING and (not dirtyBags or dirtyBags[KEYRING_CONTAINER]) then
-        GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[KEYRING_CONTAINER], KEYRING_CONTAINER)
     end
     updateBagContainers(f)
 end
@@ -463,7 +459,7 @@ local function bag_OnClick(self, button)
     -- on left click, ensure that the bag stays open despite default toggle behavior;
     -- on retail a held item is put into the bag first
     if button == "LeftButton" then
-        if GW.Retail then
+        if GW.isModern then
             local hadItem = PutItemInBag(self:GetID())
             if not hadItem and self.gwHasBag and not IsBagOpen(self:GetBagID()) then
                 OpenBag(self:GetBagID())
@@ -484,7 +480,7 @@ local function updateKeyringButtonState()
     GWkeyringbutton.border:SetShown(open)
     GWkeyringbutton.IconBorder:SetShown(not open)
 
-    local header = GwBagFrame and GwBagFrame.bagHeader5
+    local header = GwBagFrame and GwBagFrame["bagHeader" .. KEYRING_HEADER]
     if header then
         header.icon:SetShown(open)
         header.icon2:SetShown(not open)
@@ -526,7 +522,8 @@ local function setBagBarOrder(f)
     local bag_size = 28
     local bag_padding = 4
     local rev = GW.settings.bags.bag.reverseSort
-    local last = LAST_BAG_SLOT
+    -- f.bags runs from the backpack at 0 through the bag slots to the extras, # gives the last
+    local last = #f.bags
     local y = rev and (5 - ((bag_size + bag_padding) * last)) or 5
 
     for bag_idx = BACKPACK_CONTAINER, last do
@@ -595,10 +592,8 @@ local function createBagBar(f)
         f.bags[bag_idx] = b
     end
 
-    if HAS_KEYRING then
-        f.bags[NUM_BAG_SLOTS + 1] = createKeyringButton(f)
-    elseif HAS_REAGENT_BAG then
-        -- steal the reagent bag slot button
+    if HAS_REAGENT_BAG then
+        -- steal the reagent bag slot button; like the bags it sits at its container id
         local b = CharacterReagentBag0Slot
         b:SetParent(f)
         if b.SetChecked then
@@ -608,7 +603,11 @@ local function createBagBar(f)
         b:SetScript("OnClick", bag_OnClick)
         b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
         inv.reskinBagBar(b)
-        f.bags[NUM_BAG_SLOTS + 1] = b
+        f.bags[REAGENT_CONTAINER] = b
+    end
+    if HAS_KEYRING then
+        -- the keyring is not a bag, its toggle goes behind the bag slots
+        f.bags[#f.bags + 1] = createKeyringButton(f)
     end
 
     setBagBarOrder(f)
@@ -617,7 +616,7 @@ end
 
 -- updates the contents of the backpack bag slots
 local function updateBagBar(f)
-    for bag_idx = 1, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
+    for bag_idx = 1, LAST_HELD_BAG do
         local b = f.bags[bag_idx]
         local inv_id = C_Container.ContainerIDToInventoryID(bag_idx)
         local bag_tex = GetInventoryItemTexture("player", inv_id)
@@ -626,7 +625,9 @@ local function updateBagBar(f)
         b.icon:Show()
         b.gwHasBag = false -- flag used by OnClick hook to pop up context menu when valid
         local norm = b:GetNormalTexture()
-        norm:SetVertexColor(1, 1, 1, 0.75)
+        if norm then
+            norm:SetVertexColor(1, 1, 1, 0.75)
+        end
         if bag_tex ~= nil then
             b.gwHasBag = true
             b.icon:SetTexture(bag_tex)
@@ -722,7 +723,7 @@ local function bag_OnShow(self)
     if not IsBagOpen(BACKPACK_CONTAINER) then
         OpenBackpack()
     end
-    for i = 1, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
+    for i = 1, LAST_HELD_BAG do
         if not IsBagOpen(i) then
             OpenBag(i)
         end
@@ -765,7 +766,7 @@ local function bag_OnHide(self)
     wipe(self.gw_dirtyBags)
     self.gw_need_bag_update = false
     self.gw_need_bag_rescan = false
-    for i = 1, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
+    for i = 1, LAST_HELD_BAG do
         if IsBagOpen(i) then
             CloseBag(i)
         end
@@ -791,7 +792,7 @@ local function bag_OnEvent(self, event, ...)
         local slot = select(2, ...)
         local cb0_id = CharacterBag0Slot:GetID()
 
-        if slot == nil and bag >= cb0_id and bag <= cb0_id + (HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS) then
+        if slot == nil and bag >= cb0_id and bag <= cb0_id + LAST_HELD_BAG then
             local bag_id = bag - cb0_id + 1
             local b = self.ItemFrame.bags[bag_id]
             if b and b.icon and b.icon.SetDesaturated then
@@ -808,7 +809,7 @@ local function bag_OnEvent(self, event, ...)
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
-        if (bag_id <= (HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS) and bag_id >= BACKPACK_CONTAINER) or (HAS_KEYRING and bag_id == KEYRING_CONTAINER) then
+        if bag_id and isOwnBagID(bag_id) then
             self.gw_dirtyBags[bag_id] = true
             self.gw_need_bag_update = true
         end
@@ -819,7 +820,7 @@ local function bag_OnEvent(self, event, ...)
     elseif event == "BAG_UPDATE_DELAYED" then
         if self.gw_need_bag_rescan then
             self.gw_suppressRescan = true
-            for bag_id = 1, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
+            for bag_id = 1, LAST_HELD_BAG do
                 if not IsBagOpen(bag_id) then
                     OpenBag(bag_id)
                 end
@@ -853,12 +854,13 @@ end
 
 
 local function bagHeader_OnClick(self, btn)
-    local bag_id = self:GetID()
+    -- the header id is the section header index; the keyring aside, that is the container id
+    local headerIndex = self:GetID()
     if btn == "LeftButton" then
-        if HAS_KEYRING and bag_id == 5 then
+        if HAS_KEYRING and headerIndex == KEYRING_HEADER then
             setKeyringOpen(self:GetParent(), not IsBagOpen(KEYRING_CONTAINER))
         else
-            self:GetParent().ItemFrame.Containers[bag_id].shouldShow = not self.icon:IsShown()
+            self:GetParent().ItemFrame.Containers[headerIndex].shouldShow = not self.icon:IsShown()
             self.icon:SetShown(not self.icon:IsShown())
             self.icon2:SetShown(not self.icon:IsShown())
         end
@@ -868,51 +870,20 @@ local function bagHeader_OnClick(self, btn)
     elseif btn == "RightButton" then
         GW.ShowPopup({text = L["New Bag Name"],
             OnAccept = function(promptFrame)
-                GW.settings.bags.bag.headerNames[bag_id] = promptFrame.input:GetText()
-                self.nameString:SetText(GW.settings.bags.bag.headerNames[bag_id])
+                GW.settings.bags.bag.headerNames[headerIndex] = promptFrame.input:GetText()
+                setHeaderName(self, headerIndex)
             end,
             hasEditBox = true,
             button1 = SAVE,
             button2 = RESET,
             EditBoxOnEscapePressed = function(popup) popup:Hide() end,
             OnCancel = function()
-                GW.settings.bags.bag.headerNames[bag_id] = ""
-                if bag_id > 0 then
-                    local slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
-                    local itemID = GetInventoryItemID("player", slotID)
-
-                    if itemID then
-                        local color = {r = 1, g = 1, b = 1}
-                        local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
-                        if itemRarity then
-                            color = GW.GetQualityColor(itemRarity)
-                        end
-
-                        self.nameString:SetText(itemName or UNKNOWN)
-                        self.nameString:SetTextColor(color.r, color.g, color.b, 1)
-                    end
-                else
-                    self.nameString:SetText(BACKPACK_TOOLTIP)
-                end
+                GW.settings.bags.bag.headerNames[headerIndex] = ""
+                setHeaderName(self, headerIndex)
             end,
-        inputText = (function()
-            local customName = GW.settings.bags.bag.headerNames[bag_id]
-                if string.len(customName) == 0 then
-                    customName = nil
-                end
-                if bag_id > 0 then
-                    local slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
-                    local itemID = GetInventoryItemID("player", slotID)
-
-                    if itemID then
-                        local itemName = C_Item.GetItemInfo(itemID)
-                        return customName or itemName or UNKNOWN
-                    end
-                else
-                    return customName or BACKPACK_TOOLTIP
-                end
-        end)()}
-        )
+            -- the header already shows the effective name (custom or the bags own)
+            inputText = self.nameString:GetText()
+        })
     end
 end
 
@@ -1057,15 +1028,15 @@ local function LoadBag(helpers)
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
 
-    -- setup bagheader stuff; the template ships a keyring header, flavors
-    -- without a keyring simply never show it
+    -- setup bagheader stuff; the template ships headers for every section any flavor
+    -- has (bags, reagent bag, keyring), the ones a flavor does not use never show
     local headerIndex = 0
     while f["bagHeader" .. headerIndex] do
         local header = f["bagHeader" .. headerIndex]
         header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         header.nameString:SetTextColor(1, 1, 1)
         header.nameString:SetShadowColor(0, 0, 0, 0)
-        if HAS_KEYRING and headerIndex == 5 then
+        if HAS_KEYRING and headerIndex == KEYRING_HEADER then
             header.icon:Hide()
             header.icon2:Show()
         else
@@ -1098,33 +1069,23 @@ local function LoadBag(helpers)
     -- our own item buttons need parent containers with IDs set to the bagId, in order
     -- for all of the inherited ItemButton functionality to work normally
     f.ItemFrame.Containers = {}
-    for bag_id = BACKPACK_CONTAINER, HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS do
+    for _, section in ipairs(BAG_SECTIONS) do
         local cf = CreateFrame("Frame", nil, f.ItemFrame)
         cf.gw_items = {}
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
-        cf:SetID(bag_id)
-        cf.shouldShow = true
+        cf:SetID(section.id)
+        -- the keyring starts collapsed, it only shows while its bag is open
+        cf.shouldShow = not section.isKeyring
         -- the retail item button mixin asks its parent for these
         cf.GetBagID = cf.GetID
         cf.IsCombinedBagContainer = function() return true end
-        f.ItemFrame.Containers[bag_id] = cf
+        f.ItemFrame.Containers[section.id] = cf
     end
 
-    if HAS_KEYRING then
-        local cf = CreateFrame("Frame", nil, f.ItemFrame)
-        cf.gw_items = {}
-        cf.gw_num_slots = 0
-        cf:SetAllPoints(f.ItemFrame)
-        cf:SetID(KEYRING_CONTAINER)
-        cf.GetBagID = cf.GetID
-        cf.IsCombinedBagContainer = function() return true end
-        f.ItemFrame.Containers[KEYRING_CONTAINER] = cf
-    end
-
-    -- anytime a ContainerFrame is populated with a backpack bagId, we rescan our buttons
+    -- anytime a ContainerFrame is populated with one of our bagIds, we rescan our buttons
     hooksecurefunc("ContainerFrame_GenerateFrame", function(_, _, id)
-        if (id >= BACKPACK_CONTAINER and id <= (HAS_REAGENT_BAG and LAST_BAG_SLOT or NUM_BAG_SLOTS)) or (HAS_KEYRING and id == KEYRING_CONTAINER) then
+        if id and isOwnBagID(id) then
             rescanBagContainers(f)
         end
     end)
@@ -1157,11 +1118,11 @@ local function LoadBag(helpers)
     hooksecurefunc("OpenBackpack", hookOpenBackpack)
     hooksecurefunc("CloseBackpack", hookCloseBackpack)
     hooksecurefunc("ToggleBackpack", hookToggleBackpack)
-    local bindings = GW.Retail and {"TOGGLEBACKPACK", "TOGGLEREAGENTBAG1", "TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"} or {"TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"}
+    local bindings = GW.isModern and {"TOGGLEBACKPACK", "TOGGLEREAGENTBAG1", "TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"} or {"TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"}
     for _, b in pairs(bindings) do
         local key = GetBindingKey(b)
         if key then
-            SetOverrideBinding(f, false, key, GW.Retail and "OPENALLBAGS" or "TOGGLEBACKPACK")
+            SetOverrideBinding(f, false, key, GW.isModern and "OPENALLBAGS" or "TOGGLEBACKPACK")
         end
     end
 
@@ -1247,7 +1208,7 @@ local function LoadBag(helpers)
             addCheck(L["Loot to leftmost Bag"], function() return GW.settings.bags.bag.reverseNewLoot end,
                      function() local ns = not GW.settings.bags.bag.reverseNewLoot; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.bags.bag.reverseNewLoot = ns end)
             addCheck(L["Sort to Last Bag"], function() return GW.settings.bags.bag.reverseItemSort end,
-                     function() local ns = not GW.settings.bags.bag.reverseItemSort; if GW.Retail then C_Container.SetSortBagsRightToLeft(ns) end; GW.settings.bags.bag.reverseItemSort = ns end)
+                     function() local ns = not GW.settings.bags.bag.reverseItemSort; if GW.isModern then C_Container.SetSortBagsRightToLeft(ns) end; GW.settings.bags.bag.reverseItemSort = ns end)
 
             addCheck(L["Sort when opening"], function() return GW.settings.bags.autoSortOnOpen end,
                      function() GW.settings.bags.autoSortOnOpen = not GW.settings.bags.autoSortOnOpen end)
@@ -1283,7 +1244,8 @@ local function LoadBag(helpers)
                     tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
                     tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
                 end)
-            elseif HAS_REAGENT_BAG then
+            end
+            if HAS_REAGENT_BAG then
                 local reagentCheck = addCheck(L["Separate reagent bag"], function() return GW.settings.bags.bag.separateReagentBag end,
                          function() local ns = not GW.settings.bags.bag.separateReagentBag; GW.settings.bags.bag.separateReagentBag = ns; layoutItems(f); snapFrameSize(f) end)
                 reagentCheck:SetEnabled(function() return not GW.settings.bags.bag.separateBags end)
@@ -1319,7 +1281,7 @@ local function LoadBag(helpers)
     end)
     f.moneyFrame:RegisterEvent("PLAYER_MONEY")
     f.moneyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    if GW.Retail then
+    if GW.isModern then
         f.moneyFrame:RegisterEvent("ACCOUNT_MONEY")
     end
     updateMoney(f)

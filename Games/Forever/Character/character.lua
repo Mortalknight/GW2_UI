@@ -911,8 +911,7 @@ local function LoadPaperDoll(tabContainer)
     PaperDollUpdatePetStats()
 
     local skillsFrame = GW.LoadPDSkills(tabContainer, heroPanelMenu)
-    local engravingFrame = GW.LoadEngravingFrame(tabContainer, heroPanelMenu)
-    LoadHonorTab(honorFrame)
+    --LoadHonorTab(honorFrame)
     heroPanelMenu:SetupBackButton(honorFrame.backButton, CHARACTER .. ": " .. HONOR)
     heroPanelMenu:SetupBackButton(dressingRoomPet.backButton, CHARACTER .. ": " .. PET)
 
@@ -946,9 +945,6 @@ local function LoadPaperDoll(tabContainer)
     GwCharacterWindow:SetFrameRef("GwHeroPanelMenu", heroPanelMenu)
     GwCharacterWindow:SetFrameRef("GwPaperHonor", honorFrame)
     GwCharacterWindow:SetFrameRef("GwPaperSkills", skillsFrame)
-    if GW.ClassicSOD then
-        GwCharacterWindow:SetFrameRef("GwEngravingFrame", engravingFrame)
-    end
     GwCharacterWindow:SetFrameRef("GwDressingRoom", dressingRoom)
     GwCharacterWindow:SetFrameRef("GwPetContainer", petContainer)
 
