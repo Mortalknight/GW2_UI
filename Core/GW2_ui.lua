@@ -726,6 +726,9 @@ local function evPlayerLogin(self)
 
     loadStep(GW.Create_Raid_Counter)
     loadStep(GW.LoadMirrorTimers)
+    if GW.Forever then
+        loadStep(GW.LoadSwingTimerSkin)
+    end
     loadStep(GW.LoadAutoRepair)
     if not GW.isModern then
         loadStep(GW.ToggleInterruptAnncouncement)

@@ -1,3 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file ="..\..\Modern\Mainbar\mirrortimer.lua"/>
+    <Script file ="swingTimer.lua"/>
 </Ui>
