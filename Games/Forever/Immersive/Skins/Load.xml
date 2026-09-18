@@ -2,7 +2,10 @@
 ..\FrameXML\UI.xsd">
 
     <Script file="..\..\..\Modern\Immersive\Skins\worldmap.lua"/>
-    <Script file="inspectFrame.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\inspectFrame.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\colorPicker.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\flightmap.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\barber.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\damageMeter.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\calendar.lua"/>
 </Ui>

@@ -456,7 +456,7 @@ local function LoadHudPanel(sWindow)
         tinsert(panels, {name = L["World Events"], frame = worldEvents})
     end
     tinsert(panels, {name = L["Immersive Questing"], frame = questing})
-    if not GW.Retail then
+    if not GW.isModern then
         tinsert(panels, {name = COMBAT_TEXT_LABEL, frame = fct})
     end
 

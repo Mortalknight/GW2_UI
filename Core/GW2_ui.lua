@@ -921,7 +921,6 @@ local function evLoadSkins()
         loadStep(GW.LoadCollectionsSkin)
         loadStep(GW.LoadAchivementSkin)
         loadStep(GW.LoadAlliedRacesUISkin)
-        loadStep(GW.LoadBarShopUISkin)
         loadStep(GW.LoadChromieTimerSkin)
         loadStep(GW.LoadCovenantSanctumSkin)
         loadStep(GW.LoadDeathRecapSkin)
@@ -936,10 +935,15 @@ local function evLoadSkins()
         loadStep(GW.LoadAuctionHouseSkin)
         loadStep(GW.LoadBattlefieldMapSkin)
         loadStep(GW.LoadMajorFactionsFrameSkin)
-        loadStep(GW.LoadDamageMeterSkin)
-        loadStep(GW.LoadCalendarSkin)
     elseif not GW.Forever then
         loadStep(GW.LoadQuestLogFrameSkin)
+    end
+
+    -- skins of the systems both modern clients share (Games/Modern)
+    if GW.isModern then
+        loadStep(GW.LoadBarShopUISkin)
+        loadStep(GW.LoadDamageMeterSkin)
+        loadStep(GW.LoadCalendarSkin)
     end
 
     if not (GW.Classic or GW.TBC) then
