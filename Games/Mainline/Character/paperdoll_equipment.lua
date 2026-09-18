@@ -1,14 +1,10 @@
 ---@class GW2
 local GW = select(2, ...)
-GW.char_equipset_SavedItems = {}
-local GWGetClassColor = GW.GWGetClassColor
+local PDE = GW.PaperDollEquipment
 local SetClassIcon = GW.SetClassIcon
-
 local IsIn = GW.IsIn
 
-local bagItemListWaitScheduled = false
-local bagItemListQueued = false
-
+local SLOT_BACKGROUND = "Interface/AddOns/GW2_UI/textures/character/slot-bg.png"
 local PlayerSlots = {
     ["CharacterHeadSlot"] = {0, 0.25, 0, 0.25},
     ["CharacterNeckSlot"] = {0.25, 0.5, 0, 0.25},
@@ -29,7 +25,6 @@ local PlayerSlots = {
     ["CharacterMainHandSlot"] = {0.25, 0.5, 0.25, 0.5},
     ["CharacterSecondaryHandSlot"] = {0, 0.25, 0.25, 0.5},
 }
-local slotButtons = {}
 
 local STATS_ICONS = {
     STRENGTH = {l = 0.75, r = 1, t = 0.75, b = 1},
@@ -52,8 +47,6 @@ local STATS_ICONS = {
     PARRY = {l = 0, r = 0.25, t = 0, b = 0.25},
     MOVESPEED = {l = 0.5, r = 0.75, t = 0.75, b = 1},
 }
--- forward function defs
-local getBagSlotFrame
 
 local PAPERDOLL_STATCATEGORIES = {
     [1] = {
@@ -84,10 +77,7 @@ local PAPERDOLL_STATCATEGORIES = {
     }
 }
 
-local EquipSlotList = {}
-local bagItemList = {}
-local selectedInventorySlot = nil
-local bagSlotFramePool
+---------- azerite and corruption ----------
 
 local function UpdateAzeriteItem(self)
     if not self.styled then
@@ -113,471 +103,32 @@ local function CorruptionIcon(self)
     self.IconOverlay:SetShown(itemLink and C_Item.IsCorruptedItem(itemLink))
 end
 
-local function setItemButtonQuality(button, quality)
-    if quality then
-        local color = GW.GetQualityColor(quality)
-        if quality >= Enum.ItemQuality.Common and color then
-            button.IconBorder:Show()
-            button.IconBorder:SetVertexColor(color.r, color.g, color.b)
-            if button.itemSetBorderIndicator then
-                button.itemSetBorderIndicator.Glow:SetVertexColor(color.r, color.g, color.b)
-                button.itemSetBorderShimmer.Lightning:SetVertexColor(color.r, color.g, color.b)
-            end
-        else
-            button.IconBorder:Hide()
-        end
-    else
-        button.IconBorder:Hide()
-    end
+local function SetupCorruptionOverlay(button)
+    button.IconOverlay:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    button.IconOverlay:SetAllPoints(button)
+    button.IconOverlay:SetAtlas("Nzoth-inventory-icon")
+    button.IconOverlay:ClearAllPoints()
+    button.IconOverlay:SetPoint("TOPLEFT", button.IconOverlay:GetParent(), "TOPLEFT", 1, -1)
+    button.IconOverlay:SetPoint("BOTTOMRIGHT", button.IconOverlay:GetParent(), "BOTTOMRIGHT", -1, 1)
 end
 
+local function StyleBagItem(button)
+    SetupCorruptionOverlay(button)
+    UpdateAzeriteEmpoweredItem(button)
+    UpdateAzeriteItem(button)
+end
 
-local function updateBagItemButton(button)
-    local location = button.location
-    if not location then
-        return
-    end
-    local id, _, textureName, count, durability, maxDurability, _, _, _, _, _, setTooltip, quality = EquipmentManager_GetItemInfoByLocation(location)
-    local broken = (maxDurability and durability == 0)
-
-    button.itemId = id
-    button.quality = quality
+local function OnBagItemUpdated(button)
     button:ResetAzeriteItem()
-
-    if textureName then
-        SetItemButtonTexture(button, textureName)
-        SetItemButtonCount(button, count)
-
-        if broken then
-            SetItemButtonTextureVertexColor(button, 0.9, 0, 0)
-        else
-            SetItemButtonTextureVertexColor(button, 1, 1, 1)
-        end
-
-        if durability and (durability / maxDurability) < 0.5 then
-            button.repairIcon:Show()
-            if (durability / maxDurability) == 0 then
-                button.repairIcon:SetTexCoord(0, 1, 0.5, 1)
-            else
-                button.repairIcon:SetTexCoord(0, 1, 0, 0.5)
-            end
-        else
-            button.repairIcon:Hide()
-        end
-
-        button.UpdateTooltip = function()
-            GameTooltip:SetOwner(button, "ANCHOR_RIGHT", 6, -EquipmentFlyoutFrame.buttonFrame:GetHeight() - 6)
-            setTooltip()
-        end
-
-        setItemButtonQuality(button, quality)
-
-        button.IconOverlay:SetShown(button.itemId and C_Item.IsCorruptedItem(button.itemId))
-    end
+    button.IconOverlay:SetShown(button.itemId and C_Item.IsCorruptedItem(button.itemId))
 end
 
-
-local function updateBagItemList(itemButton)
-    local id = itemButton.id or itemButton:GetID()
-    if selectedInventorySlot ~= id or InCombatLockdown() then
-        return
-    end
-
-    bagSlotFramePool:ReleaseAll()
-
-    wipe(bagItemList)
-    GetInventoryItemsForSlot(id, bagItemList)
-
-    local gridIndex, itemIndex = 1, 1
-    local x, y = 10, 15
-
-    for location, itemLink in pairs(bagItemList) do
-        if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
-            local itemFrame = getBagSlotFrame()
-            itemFrame.location = location
-            itemFrame.itemLink = itemLink
-            itemFrame.itemSlot = id
-
-            updateBagItemButton(itemFrame)
-
-            itemFrame:ClearAllPoints()
-            itemFrame:SetPoint("TOPLEFT", x, -y)
-            itemFrame:Show()
-
-            itemFrame.fadeInAnim:Stop()
-            local row = math.floor((itemIndex - 1) / 4)
-            local delay = row * 0.05 + ((itemIndex - 1) % 4) * 0.015
-            itemFrame.fadeIn:SetStartDelay(delay)
-            itemFrame.fadeInAnim:Play()
-
-            gridIndex = gridIndex + 1
-            x = x + 52
-
-            if gridIndex > 4 then
-                gridIndex = 1
-                x = 10
-                y = y + 52
-            end
-
-            itemIndex = itemIndex + 1
-            if itemIndex > 36 then
-                break
-            end
-        end
-    end
-end
-
-
-local function actionButtonGlobalStyle(self)
-    self.IconBorder:SetSize(self:GetSize())
-    self.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    self:GetNormalTexture():SetSize(self:GetSize())
-    self:GetNormalTexture():Hide()
-    self:GetNormalTexture():SetTexture(nil)
-    self.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-
-    self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
-    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    self:GetHighlightTexture():SetBlendMode("ADD")
-    self:GetHighlightTexture():SetAlpha(0.33)
-
-    self.IconOverlay:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    self.IconOverlay:SetAllPoints(self)
-    self.IconOverlay:SetAtlas("Nzoth-inventory-icon")
-    self.IconOverlay:ClearAllPoints()
-    self.IconOverlay:SetPoint("TOPLEFT", self.IconOverlay:GetParent(), "TOPLEFT", 1, -1)
-    self.IconOverlay:SetPoint("BOTTOMRIGHT", self.IconOverlay:GetParent(), "BOTTOMRIGHT", -1, 1)
-
-    self.AzeriteTexture:SetAtlas("AzeriteIconFrame")
-    self.AzeriteTexture:ClearAllPoints()
-    self.AzeriteTexture:SetPoint("TOPLEFT", self.AzeriteTexture:GetParent(), "TOPLEFT", 2, -2)
-    self.AzeriteTexture:SetPoint("BOTTOMRIGHT", self.AzeriteTexture:GetParent(), "BOTTOMRIGHT", -2, 2)
-    self.AzeriteTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    self.AzeriteTexture:SetDrawLayer("BORDER", 1)
-
-    self.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
-    self.itemlevel:SetTextColor(1, 1, 1)
-    self.itemlevel:SetJustifyH("LEFT")
-    self.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
-
-    UpdateAzeriteItem(self)
-end
-
-
-local function bagSlot_OnEnter(self)
-    self:SetScript("OnUpdate", self.UpdateTooltip)
-    GameTooltip:Show()
-end
-
-
-local function bagSlot_OnLeave(self)
-    self:SetScript("OnUpdate", nil)
-    GameTooltip_Hide()
-end
-
-
-local function bagSlot_OnClick(self)
-    if (self.location) then
-        if (UnitAffectingCombat("player") and not INVSLOTS_EQUIPABLE_IN_COMBAT[self.itemSlot]) then
-            UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
-            return
-        end
-        local action = EquipmentManager_EquipItemByLocation(self.location, self.itemSlot)
-        EquipmentManager_RunAction(action)
-    end
-end
-
-
-local function updateItemSlot(self)
-    local slot = self:GetID()
-    if GW.char_equipset_SavedItems[slot] == nil then
-        GW.char_equipset_SavedItems[slot] = self
-        self.ignoreSlotCheck:SetScript(
-            "OnClick",
-            function()
-                if not self.ignoreSlotCheck:GetChecked() then
-                    C_EquipmentSet.IgnoreSlotForSave(self:GetID())
-                else
-                    C_EquipmentSet.UnignoreSlotForSave(self:GetID())
-                end
-            end
-        )
-    end
-
-    local textureName = GetInventoryItemTexture("player", slot)
-    if (textureName) then
-        if (GetInventoryItemBroken("player", slot) or GetInventoryItemEquippedUnusable("player", slot)) then
-            SetItemButtonTextureVertexColor(self, 0.9, 0, 0)
-        else
-            SetItemButtonTextureVertexColor(self, 1.0, 1.0, 1.0)
-        end
-
-        local current, maximum = GetInventoryItemDurability(slot)
-        if current ~= nil and (current / maximum) < 0.5 then
-            self.repairIcon:Show()
-            if (current / maximum) == 0 then
-                self.repairIcon:SetTexCoord(0, 1, 0.5, 1)
-            else
-                self.repairIcon:SetTexCoord(0, 1, 0, 0.5)
-            end
-        else
-            self.repairIcon:Hide()
-        end
-
-        self.hasItem = 1
-    else
-        self.repairIcon:Hide()
-        self.hasItem = false
-    end
-
-    local quality = GetInventoryItemQuality("player", slot)
-    setItemButtonQuality(self, quality)
-
-    if self.isSetItem then
-        self:StartSetIndicatorAnimation()
-    else
-        self:StopSetIndicatorAnimation()
-    end
-end
-GW.UpdateCharacterPanelItemSlot = updateItemSlot
-
-
-local function itemSlot_OnEvent(self, event, ...)
-    local arg1, _ = ...
-    if event == "PLAYER_EQUIPMENT_CHANGED" then
-        if self:GetID() == arg1 then
-            updateItemSlot(self)
-            updateBagItemList(self)
-        end
-    elseif event == "BAG_UPDATE_COOLDOWN" then
-        updateItemSlot(self)
-    end
-end
-
-
-local function stat_OnEnter(self)
-    if (not self.tooltip) then
-        if self.onEnterFunc and not InCombatLockdown() then
-            pcall(self.onEnterFunc, self)
-        end
-        return
-    end
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(self.tooltip, 1, 1, 1, 1, true)
-    if (self.tooltip2) then
-        GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
-    end
-    GameTooltip:Show()
-end
-
-
-getBagSlotFrame = function()
-    local f = bagSlotFramePool:Acquire()
-
-    if not f.initialized then
-        f:SetScript("OnEvent", itemSlot_OnEvent)
-        f:SetScript("OnClick", bagSlot_OnClick)
-        f:SetScript("OnEnter", bagSlot_OnEnter)
-        f:SetScript("OnLeave", bagSlot_OnLeave)
-        actionButtonGlobalStyle(f)
-
-        local fadeInAnim = f:CreateAnimationGroup("fadeOut")
-        local fadeIn = fadeInAnim:CreateAnimation("Alpha")
-        fadeIn:SetFromAlpha(0)
-        fadeIn:SetToAlpha(1)
-        fadeIn:SetDuration(0.1)
-        fadeIn:SetSmoothing("OUT")
-        fadeIn:SetOrder(1)
-
-        f.fadeInAnim = fadeInAnim
-        f.fadeIn = fadeIn
-        f:SetAlpha(0)
-        f.BACKGROUND:SetAlpha(0)
-        f.itemlevel:SetAlpha(0)
-        f.repairIcon:SetAlpha(0)
-
-        f.fadeInAnim:HookScript("OnFinished", function()
-            f:SetAlpha(1)
-            f.BACKGROUND:SetAlpha(1)
-            f.itemlevel:SetAlpha(1)
-            f.repairIcon:SetAlpha(1)
-            GW.SetItemLevel(f, f.quality, f.itemLink)
-        end)
-
-        f.initialized = true
-    end
-
-    return f
-end
-
-
-local function updateBagItemListAll()
-    if selectedInventorySlot ~= nil or InCombatLockdown() then
-        return
-    end
-
-    bagSlotFramePool:ReleaseAll()
-
-    local gridIndex, itemIndex = 1, 1
-    local x, y = 10, 15
-
-    for _, id in ipairs(EquipSlotList) do
-        bagItemList = wipe(bagItemList or {})
-        GetInventoryItemsForSlot(id, bagItemList)
-        for location, itemLink in pairs(bagItemList) do
-            if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
-                local itemFrame = getBagSlotFrame()
-                itemFrame.location = location
-                itemFrame.itemSlot = id
-                itemFrame.itemLink = itemLink
-
-                updateBagItemButton(itemFrame)
-
-                itemFrame:ClearAllPoints()
-                itemFrame:SetPoint("TOPLEFT", x, -y)
-                itemFrame:Show()
-
-                itemFrame.fadeInAnim:Stop()
-                local row = math.floor((itemIndex - 1) / 4)
-                local delay = row * 0.05 + ((itemIndex - 1) % 4) * 0.015
-                itemFrame.fadeIn:SetStartDelay(delay)
-                itemFrame.fadeInAnim:Play()
-
-                gridIndex = gridIndex + 1
-                x = x + 52
-
-                if gridIndex > 4 then
-                    gridIndex = 1
-                    x = 10
-                    y = y + 52
-                end
-
-                itemIndex = itemIndex + 1
-                if itemIndex > 36 then
-                    break
-                end
-            end
-        end
-    end
-end
-
-local function bagItemListRun()
-    bagItemListWaitScheduled = false
-    if bagItemListQueued then
-        bagItemListQueued = false
-        updateBagItemListAll()
-    end
-end
-
-local function bagItemListOnEvent(self)
-    bagItemListQueued = true
-    if not bagItemListWaitScheduled then
-        bagItemListWaitScheduled = true
-        GW.Wait(1, bagItemListRun)
-    end
-end
-
-local function setStatIcon(self, stat)
-    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon.png"
-    if STATS_ICONS[stat] then
-        -- If mastery we use need to use class icon
-        if stat == "MASTERY" then
-            SetClassIcon(self.icon, GW.myClassID)
-            newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons.png"
-        else
-            self.icon:SetTexCoord(STATS_ICONS[stat].l, STATS_ICONS[stat].r, STATS_ICONS[stat].t, STATS_ICONS[stat].b)
-        end
-    end
-
-    if newTexture ~= self.icon:GetTexture() then
-        self.icon:SetTexture(newTexture)
-    end
-end
-
-
----------- set bonus ----------
-
--- "%s (%d/%d)" -> name, worn, total; "(%d) Set: %s" -> inactive bonus; "Set: %s" -> active bonus.
--- Some locales use positional placeholders like "%1$s (%2$d/%3$d)".
-local function FormatToPattern(fmt)
-    return (fmt:gsub("%(", "%%("):gsub("%)", "%%)"):gsub("%%%d*%$?s", "(.+)"):gsub("%%%d*%$?d", "(%%d+)"))
-end
-local MATCH_SET_NAME = FormatToPattern(ITEM_SET_NAME)
-local MATCH_SET_BONUS_GRAY = FormatToPattern(ITEM_SET_BONUS_GRAY)
-local MATCH_SET_BONUS = FormatToPattern(ITEM_SET_BONUS)
-local SET_BONUS_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}
-local equippedSets = {}
-
-local function CollectEquippedSets()
-    wipe(equippedSets)
-    for _, slot in ipairs(SET_BONUS_SLOTS) do
-        local data = C_TooltipInfo.GetInventoryItem("player", slot)
-        local set, collectBonuses
-        for _, line in ipairs(data and data.lines or {}) do
-            local text = line.leftText
-            if text and not set then
-                local name, worn, total = strmatch(text, MATCH_SET_NAME)
-                if name then
-                    set = equippedSets[name]
-                    if not set then
-                        set = {name = name, worn = tonumber(worn), total = tonumber(total), bonuses = {}, maxItemLevel = 0, maxItemID = 0}
-                        equippedSets[name] = set
-                        collectBonuses = true
-                    end
-                    -- newest set = highest item level, ties by item id
-                    local itemLevel = C_Item.GetCurrentItemLevel(ItemLocation:CreateFromEquipmentSlot(slot)) or 0
-                    set.maxItemLevel = max(set.maxItemLevel, itemLevel)
-                    set.maxItemID = max(set.maxItemID, data.id or 0)
-                end
-            elseif text and collectBonuses and strmatch(text, MATCH_SET_BONUS) then
-                tinsert(set.bonuses, {text = text, color = line.leftColor, active = not strmatch(text, MATCH_SET_BONUS_GRAY)})
-            end
-        end
-    end
-end
-
-local function setBonus_OnEnter(self)
-    local set = self.set
-    if not set then return end
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(format("%s (%d/%d)", set.name, set.worn, set.total), 1, 1, 1)
-    for _, bonus in ipairs(set.bonuses) do
-        local color = bonus.color
-        GameTooltip:AddLine(bonus.text, color and color.r or 1, color and color.g or 1, color and color.b or 1, true)
-    end
-    GameTooltip:Show()
-end
-
--- with several sets worn the newest one wins: highest item level, then item id, then worn pieces
-local function IsNewerSet(set, other)
-    if set.maxItemLevel ~= other.maxItemLevel then
-        return set.maxItemLevel > other.maxItemLevel
-    end
-    if set.maxItemID ~= other.maxItemID then
-        return set.maxItemID > other.maxItemID
-    end
-    return set.worn > other.worn
-end
-
-local function GetBestEquippedSet()
-    CollectEquippedSets()
-    local best
-    for _, set in pairs(equippedSets) do
-        if not best or IsNewerSet(set, best) then
-            best = set
-        end
-    end
-    if not best then return end
-
-    local activeBonuses = 0
-    for _, bonus in ipairs(best.bonuses) do
-        if bonus.active then
-            activeBonuses = activeBonuses + 1
-        end
-    end
-    best.allBonusesActive = activeBonuses == #best.bonuses
-    best.anyBonusActive = activeBonuses > 0
-    return best
+local function OnGrabSlot(slot)
+    SetupCorruptionOverlay(slot)
+    hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
+    hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
+    slot:HookScript("OnShow", CorruptionIcon)
+    slot:HookScript("OnEvent", CorruptionIcon)
 end
 
 ---------- mythic+ rating ----------
@@ -633,41 +184,25 @@ end
 
 ---------- stats ----------
 
-local function getStatListFrame(self)
-    local frame = self.statsFramePool:Acquire()
-
-    if not frame.initialized then
-        frame.Value:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-        frame.Value:SetText(ERRORS)
-        frame.Label:SetFont(UNIT_NAME_FONT, 1)
-        frame.Label:SetTextColor(0, 0, 0, 0)
-        frame.icon:SetSize(30, 30)
-        frame.icon:SetPoint("TOPLEFT")
-
-        frame:SetScript("OnEnter", stat_OnEnter)
-        frame:SetScript("OnLeave", GameTooltip_Hide)
-        GW.StatsPicker.RegisterTile(frame:GetParent(), frame)
-
-        -- text glyph used instead of the icon by the set and mythic+ tiles
-        frame.glyph = frame:CreateFontString(nil, "OVERLAY")
-        frame.glyph:SetPoint("CENTER", frame.icon, "CENTER")
-        frame.glyph:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-        frame.glyph:Hide()
-        frame.initialized = true
+local function setStatIcon(self, stat)
+    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon.png"
+    if STATS_ICONS[stat] then
+        -- If mastery we use need to use class icon
+        if stat == "MASTERY" then
+            SetClassIcon(self.icon, GW.myClassID)
+            newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons.png"
+        else
+            self.icon:SetTexCoord(STATS_ICONS[stat].l, STATS_ICONS[stat].r, STATS_ICONS[stat].t, STATS_ICONS[stat].b)
+        end
     end
 
-    return frame
+    if newTexture ~= self.icon:GetTexture() then
+        self.icon:SetTexture(newTexture)
+    end
 end
 
-
 local function updateStats(self)
-    local average, equipped = GW.GetPlayerItemLevel()
-    local itemLevelText = math.floor(equipped)
-    if equipped < average then
-        itemLevelText = itemLevelText .. "(" .. math.floor(average) .. ")"
-    end
-    self.itemLevel:SetText(itemLevelText)
-    self.itemLevel:SetTextColor(GetItemLevelColor())
+    PDE.UpdateItemLevel(self)
 
     local primaryStat = select(6, C_SpecializationInfo.GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
 
@@ -681,40 +216,14 @@ local function updateStats(self)
     local editMode = GW.StatsPicker.IsEditMode(self.stats)
     local entries = {}
 
-    -- a tile that is not a character stat (set bonus, mythic+ rating): text glyph instead of an icon
-    local function AddSpecialTile(key, glyphText, valueText, color, onEnter, data)
-        local visible = GW.StatsPicker.IsVisible(key, true)
-        if not (visible or editMode) then return end
-
-        local frame = getStatListFrame(self)
-        frame.stat = key
-        frame.gwStatVisible = visible
-        frame:SetAlpha(visible and 1 or 0.35)
-        frame.icon:Hide()
-        frame.glyph:SetText(glyphText)
-        frame.glyph:Show()
-        frame.Value:SetText(valueText)
-        frame.Value:SetTextColor(color.r, color.g, color.b)
-        frame.tooltip = nil
-        frame.onEnterFunc = onEnter
-        frame.set = data
-        tinsert(entries, frame)
-    end
-
-    local set = GetBestEquippedSet()
-    if set then
-        local color = set.allBonusesActive and GREEN_FONT_COLOR or set.anyBonusActive and YELLOW_FONT_COLOR or GRAY_FONT_COLOR
-        AddSpecialTile("SETBONUS", "Set", set.worn .. "/" .. set.total, color, setBonus_OnEnter, set)
-    elseif editMode then
-        AddSpecialTile("SETBONUS", "Set", "-", GRAY_FONT_COLOR, setBonus_OnEnter)
-    end
+    PDE.AddSetBonusTile(self, entries, editMode)
 
     local dungeonScore = C_ChallengeMode.GetOverallDungeonScore() or 0
     if dungeonScore > 0 then
         local color = C_ChallengeMode.GetDungeonScoreRarityColor(dungeonScore) or HIGHLIGHT_FONT_COLOR
-        AddSpecialTile("DUNGEONSCORE", "M+", dungeonScore, color, dungeonScore_OnEnter)
+        PDE.AddSpecialTile(self, entries, editMode, "DUNGEONSCORE", "M+", dungeonScore, color, dungeonScore_OnEnter)
     elseif editMode then
-        AddSpecialTile("DUNGEONSCORE", "M+", "-", GRAY_FONT_COLOR, dungeonScore_OnEnter)
+        PDE.AddSpecialTile(self, entries, editMode, "DUNGEONSCORE", "M+", "-", GRAY_FONT_COLOR, dungeonScore_OnEnter)
     end
 
     for _, category in ipairs(PAPERDOLL_STATCATEGORIES) do
@@ -727,7 +236,7 @@ local function updateStats(self)
                 showStat = tContains(stat.roles, GW.myrole)
             end
 
-            local frame = getStatListFrame(self)
+            local frame = PDE.GetStatListFrame(self)
             PAPERDOLL_STATINFO[stat.stat].updateFunc(frame, "player")
 
             -- edit mode shows every stat of the spec, hidden ones dimmed by the layout
@@ -743,20 +252,7 @@ local function updateStats(self)
         end
     end
 
-    -- Add Durability Icon
-    local durabilityFrame = getStatListFrame(self)
-    durabilityFrame.stat = "DURABILITY"
-    durabilityFrame.gwStatVisible = true
-    tinsert(entries, durabilityFrame)
-    durabilityFrame.onEnterFunc = nil
-    durabilityFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair.png")
-    durabilityFrame.icon:SetTexCoord(0, 1, 0, 0.5)
-    durabilityFrame.icon:SetDesaturated(true)
-    durabilityFrame:SetScript("OnEnter", GW.DurabilityTooltip)
-    durabilityFrame:SetScript("OnEvent", GW.DurabilityOnEvent)
-    durabilityFrame:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
-    durabilityFrame:RegisterEvent("MERCHANT_SHOW")
-    GW.DurabilityOnEvent(durabilityFrame, "ForceUpdate")
+    PDE.AddDurabilityTile(self, entries)
 
     -- 301 is the box size from the xml, it grows when the edit mode shows every stat
     GW.StatsPicker.Layout(self.stats, entries, 35, 301)
@@ -766,7 +262,6 @@ GW.UpdateCharacterStats = function()
         updateStats(GwDressingRoom)
     end
 end
-
 
 local function stats_QueuedUpdate(self)
     self:SetScript("OnUpdate", nil)
@@ -783,7 +278,6 @@ local function updateUnitData(self)
         self.characterData:SetText(data)
     end
 end
-
 
 local function stats_OnEvent(self, event, ...)
     local unit = ...
@@ -817,330 +311,6 @@ local function stats_OnEvent(self, event, ...)
     elseif (event == "SPELL_POWER_CHANGED") then
         self:SetScript("OnUpdate", stats_QueuedUpdate)
     end
-end
-
-
-local function resetBagInventory()
-    GwPaperDollSelectedIndicator:Hide()
-    selectedInventorySlot = nil
-    updateBagItemListAll()
-    for _, slot in pairs(slotButtons) do
-        slot.overlayButton:Hide()
-    end
-end
-
-
-local function indicatorAnimation(self)
-    local _, _, _, startX, _ = self:GetPoint()
-
-    GW.AddToAnimation(
-        self:GetDebugName(),
-        0,
-        1,
-        GetTime(),
-        1,
-        function(step)
-            local point, relat, relPoint, _, yof = self:GetPoint()
-            if step < 0.5 then
-                step = step / 0.5
-                self:SetPoint(point, relat, relPoint, startX + (-8 * step), yof)
-            else
-                step = (step - 0.5) / 0.5
-                self:SetPoint(point, relat, relPoint, (startX - 8) + (8 * step), yof)
-            end
-        end,
-        nil,
-        function()
-            if self:IsShown() then
-                indicatorAnimation(self)
-            end
-        end
-    )
-end
-
-
-local function setupTexture(tex, parent, point, file, coord, size)
-    tex:SetTexture(file)
-    if coord ~= nil then
-        tex:SetTexCoord(unpack(coord))
-    end
-
-    if size then tex:SetSize(unpack(size)) end
-    if point ~= nil then
-        tex:SetPoint(unpack(point))
-    else
-        tex:SetAllPoints(parent)
-    end
-end
-
-local function CreateItemSetGlow(slot, size, parent)
-    if not slot then return end
-
-    slot.itemSetBorderIndicator = CreateFrame("Frame", nil, slot)
-    slot.itemSetBorderIndicator:SetSize(size * 1.5, size * 1.5)
-    slot.itemSetBorderIndicator:SetPoint("TOPLEFT", slot, "TOPLEFT", -size * .25, size * .25)
-    slot.itemSetBorderIndicator:SetPoint("BOTTOMRIGHT", slot, "BOTTOMRIGHT", size * .25, -size * .25)
-    slot.itemSetBorderIndicator:SetFrameLevel(slot:GetFrameLevel() - 1)
-
-    slot.itemSetBorderIndicator.Glow = slot.itemSetBorderIndicator:CreateTexture(nil, "OVERLAY")
-    setupTexture(slot.itemSetBorderIndicator.Glow, slot.itemSetBorderIndicator, nil, "Interface/SpellActivationOverlay/IconAlert", {0.00781250, 0.50781250, 0.53515625, 0.78515625})
-    slot.itemSetBorderIndicator.Glow:SetBlendMode("ADD")
-
-    slot.itemSetBorderShimmer = CreateFrame("Frame", nil, slot)
-    slot.itemSetBorderShimmer:SetSize(size * 1.5, size * 1.5)
-    slot.itemSetBorderShimmer:SetAllPoints(slot)
-    slot.itemSetBorderShimmer:SetFrameLevel(slot:GetFrameLevel() + 2)
-    slot.itemSetBorderShimmer:SetClipsChildren(true)
-
-    local shimmerTexPath = "Interface/AddOns/GW2_UI/textures/uistuff/glow.png"
-    local shimmerA = slot.itemSetBorderShimmer:CreateTexture(nil, "OVERLAY")
-    shimmerA:SetTexture(shimmerTexPath)
-    shimmerA:SetSize(size, size)
-    shimmerA:SetPoint("LEFT", slot.itemSetBorderShimmer, "LEFT", 0, 0)
-    shimmerA:SetBlendMode("ADD")
-    shimmerA:SetAlpha(0.05)
-    shimmerA:SetScale(4)
-
-    -- Zweite Texture (rechts neben der ersten)
-    local shimmerB = slot.itemSetBorderShimmer:CreateTexture(nil, "OVERLAY")
-    shimmerB:SetTexture(shimmerTexPath)
-    shimmerB:SetSize(size, size)
-    shimmerB:SetPoint("LEFT", shimmerA, "RIGHT", 0, 0)
-    shimmerB:SetBlendMode("ADD")
-    shimmerB:SetAlpha(0.05)
-    shimmerB:SetScale(4)
-
-    slot.itemSetBorderShimmer.Lightning = slot.itemSetBorderShimmer:CreateTexture(nil, "OVERLAY")
-    slot.itemSetBorderShimmer.Lightning:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sparks.png")
-    slot.itemSetBorderShimmer.Lightning:SetPoint("TOPLEFT", slot.itemSetBorderShimmer, "TOPLEFT", -size, size)
-    slot.itemSetBorderShimmer.Lightning:SetPoint("BOTTOMRIGHT", slot.itemSetBorderShimmer, "BOTTOMRIGHT", size, -size)
-    slot.itemSetBorderShimmer.Lightning:SetBlendMode("ADD")
-    slot.itemSetBorderShimmer.Lightning:SetAlpha(0)
-    slot.itemSetBorderShimmer.Lightning:SetScale(1)
-
-    local ag = slot:CreateAnimationGroup()
-
-    local pulseOut = ag:CreateAnimation("Alpha")
-    pulseOut:SetTarget(slot.itemSetBorderIndicator.Glow)
-    pulseOut:SetFromAlpha(1)
-    pulseOut:SetToAlpha(0.7)
-    pulseOut:SetDuration(1.0)
-    pulseOut:SetOrder(1)
-
-    local pulseIn = ag:CreateAnimation("Alpha")
-    pulseIn:SetTarget(slot.itemSetBorderIndicator.Glow)
-    pulseIn:SetFromAlpha(0.7)
-    pulseIn:SetToAlpha(1)
-    pulseIn:SetDuration(1.0)
-    pulseIn:SetOrder(2)
-
-    local trans = ag:CreateAnimation("Translation")
-    trans:SetTarget(shimmerA)
-    trans:SetOffset(-size, 0)
-    trans:SetDuration(10.0)
-    trans:SetSmoothing("NONE")
-    trans:SetOrder(1)
-
-    local transB = ag:CreateAnimation("Translation")
-    transB:SetTarget(shimmerB)
-    transB:SetOffset(-size, 0)
-    transB:SetDuration(10.0)
-    transB:SetSmoothing("NONE")
-    transB:SetOrder(1)
-
-    -- 5. Animation einstellen
-    ag:SetLooping("REPEAT")
-
-    local ag2 = slot:CreateAnimationGroup()
-    local inA  = ag2:CreateAnimation("Alpha")
-    inA:SetTarget(slot.itemSetBorderShimmer.Lightning)
-    inA:SetFromAlpha(0)
-    inA:SetToAlpha(0.8)
-    inA:SetDuration(0.1)
-    inA:SetOrder(1)
-    local outA = ag2:CreateAnimation("Alpha")
-    outA:SetTarget(slot.itemSetBorderShimmer.Lightning)
-    outA:SetFromAlpha(0.8)
-    outA:SetToAlpha(0)
-    outA:SetDuration(0.2)
-    outA:SetOrder(2)
-
-    slot.itemSetAnimationRunning = false
-    slot.itemSetTimer = nil
-
-    function slot:StartSetIndicatorAnimation()
-        if self.itemSetAnimationRunning then return end
-        self.itemSetAnimationRunning = true
-
-        self.itemSetBorderShimmer:Show()
-        self.itemSetBorderIndicator:Show()
-
-        ag:Play()
-        ag2:Play()
-
-        -- Starte mit zufälliger Verzögerung
-        local function StartBlitzLoop()
-            if not self.itemSetAnimationRunning then return end
-            local nextDelay = math.random(8, 15)
-            self.itemSetTimer = C_Timer.NewTimer(nextDelay, function()
-                if not self.itemSetAnimationRunning then return end
-                ag2:Play()
-                StartBlitzLoop()
-            end)
-        end
-
-        -- Initial leicht zufällig verzögert starten
-        C_Timer.After(math.random(0, 2), StartBlitzLoop)
-    end
-
-    function slot:StopSetIndicatorAnimation()
-        self.itemSetBorderShimmer:Hide()
-        self.itemSetBorderIndicator:Hide()
-
-        if not self.itemSetAnimationRunning then return end
-        self.itemSetAnimationRunning = false
-
-        ag:Stop()
-        ag2:Stop()
-
-        if self.itemSetTimer then
-            self.itemSetTimer:Cancel()
-            self.itemSetTimer = nil
-        end
-    end
-
-    parent:HookScript("OnHide", function()
-        slot:StopSetIndicatorAnimation()
-    end)
-end
-
-
-local function grabDefaultSlots(slot, anchor, parent, size)
-    slot:ClearAllPoints()
-    slot:SetPoint(unpack(anchor))
-    slot:SetParent(parent)
-    slot:SetSize(size, size)
-    slot:GwStripTextures()
-
-    setupTexture(slot.icon, slot, nil, {0.07, 0.93, 0.07, 0.93})
-    slot.icon:SetAlpha(0.9)
-
-    setupTexture(slot.IconBorder, slot, nil, "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    slot.IconBorder:SetParent(slot)
-
-    -- Remove normal texture
-    local normalTexture = slot:GetNormalTexture()
-    if normalTexture then
-        normalTexture:SetTexture(nil)
-    end
-
-    GW.RegisterCooldown(_G[slot:GetName()..'Cooldown'])
-
-    local high = slot:GetHighlightTexture()
-    setupTexture(high, slot, nil, "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    high:SetBlendMode("ADD")
-    high:SetAlpha(0.33)
-
-    slot.repairIcon = slot:CreateTexture(nil, "OVERLAY")
-    setupTexture(slot.repairIcon, slot, {"BOTTOMRIGHT", slot, "BOTTOMRIGHT"}, "Interface/AddOns/GW2_UI/textures/globe/repair.png", {0, 1, 0.5, 1}, {20, 20})
-
-    CreateItemSetGlow(slot, size, parent)
-
-    slot.itemlevel = slot:CreateFontString(nil, "OVERLAY")
-    slot.itemlevel:SetSize(size, 10)
-    slot.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
-    slot.itemlevel:SetTextColor(1, 1, 1)
-    slot.itemlevel:SetJustifyH("LEFT")
-    slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
-
-    slot.ignoreSlotCheck = CreateFrame("CheckButton", nil, slot, "GWIgnoreSlotCheck")
-
-    local overlay = slot.IconOverlay
-    setupTexture(overlay, slot, nil, nil, {0.07, 0.93, 0.07, 0.93})
-    overlay:SetAtlas("Nzoth-inventory-icon")
-    overlay:ClearAllPoints()
-    overlay:SetPoint("TOPLEFT", overlay:GetParent(), "TOPLEFT", 1, -1)
-    overlay:SetPoint("BOTTOMRIGHT", overlay:GetParent(), "BOTTOMRIGHT", -1, 1)
-
-    slot.overlayButton = CreateFrame("Button", nil, slot)
-    slot.overlayButton:SetAllPoints()
-    slot.overlayButton:Hide()
-    slot.overlayButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    slot.overlayButton:GetHighlightTexture():SetBlendMode("ADD")
-    slot.overlayButton:GetHighlightTexture():SetAlpha(0.33)
-    slot.overlayButton.isEquipmentSelected = false
-
-    slot.overlayButton:SetScript("OnClick", function(self)
-        if self.isEquipmentSelected and selectedInventorySlot == self:GetParent():GetID() then
-            GwPaperDollSelectedIndicator:Hide()
-            selectedInventorySlot = nil
-            updateBagItemListAll()
-            self.isEquipmentSelected = false
-        else
-            GwPaperDollSelectedIndicator:ClearAllPoints()
-            GwPaperDollSelectedIndicator:SetPoint("LEFT", self:GetParent(), "LEFT", -16, 0)
-            GwPaperDollSelectedIndicator:Show()
-            selectedInventorySlot = self:GetParent():GetID()
-            updateBagItemList(self:GetParent())
-            self.isEquipmentSelected = true
-        end
-    end)
-
-    slot.overlayButton:SetScript("OnEnter", function() slot:GetScript("OnEnter")(slot) end)
-    slot.overlayButton:SetScript("OnLeave", function() slot:GetScript("OnLeave")(slot) end)
-
-    hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
-    hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
-    hooksecurefunc(slot.IconBorder, "SetVertexColor", function(self)
-        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    end)
-
-    slot:HookScript("OnShow", CorruptionIcon)
-    slot:HookScript("OnEvent", CorruptionIcon)
-
-    EquipSlotList[#EquipSlotList + 1] = slot:GetID()
-    slotButtons[#slotButtons + 1] = slot
-
-    updateItemSlot(slot)
-
-    slot.IsGW2Hooked = true
-end
-
-local function SetupCharacterSlots(slots, parent)
-    for _, v in ipairs(slots) do
-        local slot, anchorParent, point, relativePoint, xOffset, yOffset, size = unpack(v)
-        grabDefaultSlots(slot, {point, anchorParent, relativePoint, xOffset, yOffset}, parent, size)
-    end
-end
-
-local function GwPaperDollBagItemList_OnShow()
-    updateBagItemListAll()
-    for _, slot in pairs(slotButtons) do
-        slot.overlayButton:Show()
-    end
-end
-
-local function ItemLevelTooltip(self)
-    local average, equipped, _, averageLocal, equippedLocal, pvpItemLevelLocal = GW.GetPlayerItemLevel()
-    local minItemLevel = C_PaperDollInfo.GetMinItemLevel()
-    local displayItemLevel = math.max(minItemLevel or 0, equipped)
-
-    self.tooltip = HIGHLIGHT_FONT_COLOR_CODE .. format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_AVERAGE_ITEM_LEVEL) .. " " .. averageLocal
-    if displayItemLevel ~= average then
-        self.tooltip = self.tooltip .. "  " .. format(STAT_AVERAGE_ITEM_LEVEL_EQUIPPED:gsub("%%d", "%%s"), equippedLocal)
-    end
-    self.tooltip = self.tooltip .. FONT_COLOR_CODE_CLOSE
-    self.tooltip2 = STAT_AVERAGE_ITEM_LEVEL_TOOLTIP
-    self.tooltip2 = self.tooltip2 .. "\n\n" .. STAT_AVERAGE_PVP_ITEM_LEVEL:gsub("%%d", "%%s"):format(pvpItemLevelLocal)
-    if not self.tooltip then
-        return
-    end
-    GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText(self.tooltip, 1, 1, 1, 1, true)
-    if self.tooltip2 then
-        GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
-    end
-    GameTooltip:Show()
 end
 
 local function RegisterStatsEvents(frame)
@@ -1188,91 +358,10 @@ local function RegisterStatsEvents(frame)
     frame:RegisterUnitEvent("UNIT_AURA", "player")
 end
 
-local function ResetBagSlotFrame(_, f)
-    f.location = nil
-    f.itemSlot = nil
-    f.itemLink = nil
-    f.itemId = nil
-    f.quality = nil
-    f.__gwLastItemLink = nil
-    if f.ResetAzeriteItem then
-        f:ResetAzeriteItem()
-    end
-
-    if f.repairIcon then
-        f.repairIcon:Hide()
-        f.repairIcon:SetTexCoord(0, 1, 0, 0.5)
-    end
-
-    if f.IconOverlay then
-        f.IconOverlay:Hide()
-    end
-
-    f.UpdateTooltip = nil
-
-    f:SetAlpha(0)
-    f.BACKGROUND:SetAlpha(0)
-    f.itemlevel:SetAlpha(0)
-    f.repairIcon:SetAlpha(0)
-
-    if f.fadeInAnim then
-        f.fadeInAnim:Stop()
-    end
-
-    f:ClearAllPoints()
-    f:Hide()
-end
-
-local function ResetStatsFrame(_, f)
-    f:SetScript("OnUpdate", nil)
-    f:SetAlpha(1)
-    f.icon:Show()
-    if f.glyph then -- the pool resets new frames before they are initialized
-        f.glyph:Hide()
-    end
-    f.gwStatVisible = nil
-    f.set = nil
-    f.Value:SetTextColor(1, 1, 1)
-    f:SetScript("OnEvent", nil)
-    f:UnregisterAllEvents()
-    f:ClearAllPoints()
-    f:Hide()
-    f.UpdateTooltip = nil
-    f.onEnterFunc = nil
-    f.stat = nil
-    f.tooltip = nil
-    f.tooltip2 = nil
-end
-
-local function LoadPDBagList(fmMenu, parent)
-    local fmGDR = CreateFrame("Button", "GwDressingRoom", parent, "GwDressingRoom")
-    local fmPD3M = fmGDR.model
-    GW.HandleModelControlFrame(fmPD3M.controlFrame)
-    local fmGPDS = fmGDR.stats
-    local fmGPDBIL = CreateFrame("Frame", "GwPaperDollBagItemList", parent, "GwPaperDollBagItemList")
-
-    --frame pools
-    fmGDR.statsFramePool = CreateFramePool("Frame", fmGPDS, "GwPaperDollStat", ResetStatsFrame)
-    bagSlotFramePool = CreateFramePool("ItemButton", fmGPDBIL, "GwPaperDollBagItem", ResetBagSlotFrame)
-
-    parent.CharWindow.dressingRoom = fmGDR
-
-    -- to prevent ALT click lua error
-    fmGDR.flyoutSettings = {
-        onClickFunc = PaperDollFrameItemFlyoutButton_OnClick,
-        getItemsFunc = PaperDollFrameItemFlyout_GetItems,
-        postGetItemsFunc = PaperDollFrameItemFlyout_PostGetItems,
-        hasPopouts = true,
-        parent = PaperDollFrame,
-        anchorX = 0,
-        anchorY = -3,
-        verticalAnchorX = 0,
-        verticalAnchorY = 0,
-    }
-
-    local characterSlots = {
+local function CharacterSlots(dressingRoom)
+    return {
         -- Format: {SlotFrame, AnchorParent, AnchorPoint, RelativePoint, XOffset, YOffset, Size}
-        {CharacterHeadSlot,      fmGDR.gear,                "TOPLEFT", "TOPLEFT",    0,  0, 50},
+        {CharacterHeadSlot,      dressingRoom.gear,         "TOPLEFT", "TOPLEFT",    0,  0, 50},
         {CharacterShoulderSlot,  CharacterHeadSlot,         "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
         {CharacterChestSlot,     CharacterShoulderSlot,     "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
         {CharacterWristSlot,     CharacterChestSlot,        "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
@@ -1283,7 +372,7 @@ local function LoadPDBagList(fmMenu, parent)
         {CharacterMainHandSlot,  CharacterFeetSlot,         "TOPLEFT", "BOTTOMLEFT", 0, -20, 50},
         {CharacterSecondaryHandSlot, CharacterMainHandSlot, "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
 
-        {CharacterTabardSlot,    fmGDR.stats,           "TOPRIGHT", "BOTTOMRIGHT", -5, -20, 40},
+        {CharacterTabardSlot,    dressingRoom.stats,    "TOPRIGHT", "BOTTOMRIGHT", -5, -20, 40},
         {CharacterShirtSlot,     CharacterTabardSlot,   "TOPRIGHT", "BOTTOMRIGHT",  0, -5, 40},
         {CharacterTrinket0Slot,  CharacterTabardSlot,   "TOPRIGHT", "TOPLEFT",     -5, 0, 40},
         {CharacterTrinket1Slot,  CharacterTrinket0Slot, "TOPRIGHT", "BOTTOMRIGHT",  0, -5, 40},
@@ -1292,61 +381,25 @@ local function LoadPDBagList(fmMenu, parent)
         {CharacterNeckSlot,      CharacterFinger0Slot,  "TOPRIGHT", "TOPLEFT",     -5, 0, 40},
         {CharacterBackSlot,      CharacterNeckSlot,     "TOPRIGHT", "BOTTOMRIGHT",  0, -5, 40},
     }
+end
 
-    SetupCharacterSlots(characterSlots, fmGDR)
+local function LoadPDBagList(fmMenu, parent)
+    local fmGDR, fmGPDBIL = PDE.CreateBagList(fmMenu, parent, {
+        characterSlots = CharacterSlots,
+        slotBackground = SLOT_BACKGROUND,
+        playerSlots = PlayerSlots,
+        updateStats = updateStats,
+        updateUnitData = updateUnitData,
+        onGrabSlot = OnGrabSlot,
+        styleBagItem = StyleBagItem,
+        onBagItemUpdated = OnBagItemUpdated,
+    })
 
-    hooksecurefunc("PaperDollItemSlotButton_Update", function(button)
-        if not button.IsGW2Hooked then return end
-        local textureName = GetInventoryItemTexture("player", button:GetID())
-        if not textureName then
-            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg.png")
-            button.icon:SetTexCoord(unpack(PlayerSlots[button:GetName()]))
-        else
-            button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        end
-        updateItemSlot(button)
-    end)
-
-    EquipmentFlyoutFrame:GwKill()
-    EquipmentFlyoutFrame:SetScript("OnUpdate", nil)
-    EquipmentFlyoutFrame:SetScript("OnShow", nil)
-    EquipmentFlyoutFrame:SetScript("OnLoad", nil)
-
-    GW.SetPaperDollModelPosition(fmPD3M)
-
-    fmGPDS.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    fmGPDS.header:SetText(STAT_CATEGORY_ATTRIBUTES)
-    fmGPDS:SetScript("OnEvent", stats_OnEvent)
-    RegisterStatsEvents(fmGPDS)
-
-    fmGDR.characterName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
-    fmGDR.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    fmGDR.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
-
-    local color = GWGetClassColor(GW.myclass, true)
-    SetClassIcon(fmGDR.classIcon, GW.myClassID)
-    fmGDR.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
-    fmGDR:SetScript("OnClick", resetBagInventory)
-
-    fmGDR.itemLevelFrame:SetScript("OnEnter", ItemLevelTooltip)
-    fmGDR.itemLevelFrame:SetScript("OnLeave", GameTooltip_Hide)
+    fmGDR.stats:SetScript("OnEvent", stats_OnEvent)
+    RegisterStatsEvents(fmGDR.stats)
 
     -- the mythic+ rating tile needs the season map data, it arrives via CHALLENGE_MODE_MAPS_UPDATE
     fmGDR:HookScript("OnShow", function() C_MythicPlus.RequestMapInfo() end)
-
-    GW.StatsPicker.Setup(fmGPDS, fmGDR, function() updateStats(fmGDR) end)
-
-    fmGPDBIL:SetScript("OnEvent", bagItemListOnEvent)
-    fmGPDBIL:SetScript("OnHide", resetBagInventory)
-    fmGPDBIL:SetScript("OnShow", GwPaperDollBagItemList_OnShow)
-    fmGPDBIL:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-    fmMenu:SetupBackButton(fmGPDBIL.backButton, CHARACTER .. ": " .. BAG_FILTER_EQUIPMENT)
-
-    local fmGPDSI = CreateFrame("Frame", "GwPaperDollSelectedIndicator", fmGDR, "GwPaperDollSelectedIndicator")
-    fmGPDSI:SetScript("OnShow", indicatorAnimation)
-
-    updateBagItemListAll()
-    updateStats(fmGDR)
 
     return fmGDR, fmGPDBIL
 end

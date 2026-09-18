@@ -1,0 +1,208 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwPaperDollSelectedIndicator" frameStrata="DIALOG" toplevel="true" hidden="true" virtual="true">
+        <size x="16" y="32"></size>
+        <Anchors>
+            <Anchor point="LEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow.png">
+                    <Size x="16" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <CheckButton hidden="true" name="GWIgnoreSlotCheck" parentKey="ignoreSlotCheck" checked="false" virtual="true">
+        <Size x="16" y="16"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+        </Anchors>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png"></NormalTexture>
+        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png"></CheckedTexture>
+    </CheckButton>
+
+    <ItemButton name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" mixin="ContainerFrameItemButtonMixin" inherits="SecureHandlerClickTemplate,PaperDollAzeriteItemOverlayTemplate" virtual="true">
+        <Size x="49" y="49"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg.png">
+                    <Size x="49" y="49"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="0.25" top="0" bottom="0.25"/>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="100" y="10"/>
+                    <Color r="1" g="1" b="1"></Color>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture hidden="true" parentKey="repairIcon" file="Interface/AddOns/GW2_UI/textures/globe/repair.png">
+                    <Size x="20" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="0.5" bottom="1"/>
+                </Texture>
+            </Layer>
+        </Layers>
+    </ItemButton>
+
+    <ItemButton name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true"/>
+
+    <EventButton name="GwPaperDollOutfitsButtonTemplate" text="Not yet loaded" virtual="true">
+        <Size x="220" y="49"/>
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\slot-bg.png">
+                    <Size x="49" y="49"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/character/menu-bg.png">
+                    <Size x="32" y="32"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <Texture parentKey="SpecRing" atlas="equipmentmanager-spec-border" useAtlasSize="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="35" y="-25"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="3">
+                <Texture parentKey="SpecIcon">
+                    <Size x="18" y="18"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.SpecRing" relativePoint="CENTER" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="2">
+                <FontString parentKey="name" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="CENTER">
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="-20"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentEquipOutfit" hidden="true" parentKey="equipOutfit" inherits="GwStandardButton" text="EQUIPSET_EQUIP">
+                <Size x="60" y="20"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="5"></Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentSaveOutfit" hidden="true" parentKey="saveOutfit" inherits="GwStandardButton">
+                <Size x="25" y="20"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.deleteOutfit" relativePoint="BOTTOMRIGHT" x="-65" y="5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="icon" file="Interface\BUTTONS\UI-CheckBox-Check">
+                            <Size x="20" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button name="$parentEditOutfit" hidden="true" parentKey="editOutfit" inherits="GwStandardButton">
+                <Size x="25" y="20"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.deleteOutfit" relativePoint="BOTTOMRIGHT" x="-35" y="5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-up.png">
+                            <Size x="20" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button name="$parentDelete" parentKey="deleteOutfit" hidden="true" inherits="GwStandardButton">
+                <Size x="25" y="20"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="icon" file="Interface\BUTTONS\UI-StopButton">
+                            <Size x="20" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+    </EventButton>
+
+    <Frame name="GwPaperDollOutfits" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
+        <Size x="220" y="478"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg.png">
+                    <Size x="256" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-8" y="7"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterPanelMenuButtonBackSecureTemplate" text="Character: Outfits">
+                <Size x="231" y="50"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentNewOutfit" parentKey="newOutfit" inherits="GwStandardButton" text="New outfit">
+                <Size x="100" y="20"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="7"></Anchor>
+                </Anchors>
+            </Button>
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Size x="210" y="480"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-5"></Anchor>
+                </Anchors>
+            </Frame>
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="-8" y="0"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-8" y="0"/>
+                </Anchors>
+            </EventFrame>
+        </Frames>
+    </Frame>
+</Ui>

@@ -10,12 +10,10 @@ local windowsList = {
         TabIcon = "tabicon_character",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/character-window-icon.png",
         HeaderText = CHARACTER,
+        TooltipText = CHARACTER_BUTTON,
         Bindings = {
             TOGGLECHARACTER0 = "PaperDoll",
-            TOGGLECHARACTER2 = "Reputation",
-            TOGGLECHARACTER1 = "Skills",
-            TOGGLECHARACTER3 = "PetPaperDollFrame",
-            TOGGLECHARACTER4 = "Honor"
+            TOGGLECHARACTER4 = "Honor",
         },
         OnClick = [=[
             self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "paperdoll")
@@ -29,6 +27,7 @@ local windowsList = {
         TabIcon = "tabicon_reputation",
         HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/reputation-window-icon.png",
         HeaderText = REPUTATION,
+        TooltipText = REPUTATION,
         Bindings = {
             TOGGLECHARACTER2 = "Reputation"
         },
@@ -37,95 +36,87 @@ local windowsList = {
         ]=]
     },
     {
-        OnLoad = "LoadTalents",
-        FrameName = "GwTalentsFrame",
-        window = "talent",
-        RefName = "GwTalentsFrame",
-        TabIcon = "tabicon-talents",
-        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/talents-window-icon.png",
-        HeaderText = TALENTS,
+        OnLoad = "LoadCurrency",
+        FrameName = "GwCurrencyDetailsFrame",
+        window = "character",
+        RefName = "GwCurrencyFrame",
+        TabIcon = "tabicon_currency",
+        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon.png",
+        HeaderText = CURRENCY,
+        TooltipText = CURRENCY,
         Bindings = {
-            TOGGLETALENTS = "Talents"
+            TOGGLECURRENCY = "Currency"
         },
         OnClick = [=[
-            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "currency")
         ]=]
     },
     {
-        OnLoad = "LoadSpellBook",
-        FrameName = "GwSpellbookFrame",
-        window = "spellbook",
-        RefName = "GwSpellbookFrame",
-        TabIcon = "tabicon_spellbook",
-        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon.png",
-        HeaderText = SPELLS,
-        Bindings = {
-            TOGGLESPELLBOOK = "SpellBook",
-            TOGGLEPETBOOK = "PetBook"
-        },
+        OnLoad = "LoadStatistics",
+        FrameName = "GwStatisticsDetailsFrame",
+        window = "character",
+        RefName = "GwStatisticsFrame",
+        TabIcon = "tabicon_statistics",
+        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/achievements-window-icon.png",
+        HeaderText = STATISTICS,
+        TooltipText = STATISTICS,
         OnClick = [=[
-            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "spellbook")
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "statistics")
         ]=]
-    }
+    },
 }
 
--- turn click events (generated from key bind overrides) into the correct tab show/hide calls
 local charSecure_OnClick = GW.BuildCharacterWindowClickHandler({
+    Currency = "currency",
     Honor = "paperdollhonor",
     PaperDoll = "paperdoll",
-    PetBook = "petbook",
     PetPaperDollFrame = "paperdollpet",
     Reputation = "reputation",
-    Runes = "paperdollengravings",
     Skills = "paperdollskills",
-    SpellBook = "spellbook",
-    Talents = "talents",
+    Statistics = "statistics",
 })
 
 local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHandler({
     managedRefs = {
         "GwPaperDoll",
-        "GwHeroPanelMenu",
-        "GwDressingRoom",
-        "GwReputationFrame",
+        "GwPaperDollMenu",
+        "GwPaperDollDressingRoom",
+        "GwPaperDollEquipment",
+        "GwPaperDollOutfits",
+        "GwPaperDollTitles",
         "GwPaperSkills",
-        "GwEngravingFrame",
         "GwPaperHonor",
         "GwPetContainer",
-        "GwSpellbookFrame",
-        "GwTalentsFrame",
+        "GwReputationFrame",
+        "GwCurrencyFrame",
+        "GwStatisticsFrame",
     },
     states = {
         {
-            value = "talents",
-            toggleRef = "GwTalentsFrame",
-            showRefs = {"GwTalentsFrame"},
-        },
-        {
-            values = {"spellbook", "petbook"},
-            toggleRef = "GwSpellbookFrame",
-            showRefs = {"GwSpellbookFrame"},
-        },
-        {
-            value = "paperdoll",
+            values = {"paperdoll", "character"},
             toggleRef = "GwPaperDoll",
-            toggleHiddenRefs = {"GwPaperSkills", "GwPetContainer", "GwPaperHonor", "GwEngravingFrame"},
-            showRefs = {"GwPaperDoll", "GwHeroPanelMenu", "GwDressingRoom"},
+            toggleHiddenRefs = {"GwPaperDollEquipment", "GwPaperDollOutfits", "GwPaperDollTitles", "GwPaperSkills", "GwPaperHonor", "GwPetContainer"},
+            showRefs = {"GwPaperDoll", "GwPaperDollMenu", "GwPaperDollDressingRoom"},
         },
         {
-            value = "reputation",
-            toggleRef = "GwReputationFrame",
-            showRefs = {"GwReputationFrame"},
+            value = "paperdollequipment",
+            toggleRef = "GwPaperDollEquipment",
+            showRefs = {"GwPaperDoll", "GwPaperDollDressingRoom", "GwPaperDollEquipment"},
+        },
+        {
+            value = "paperdolloutfits",
+            toggleRef = "GwPaperDollOutfits",
+            showRefs = {"GwPaperDoll", "GwPaperDollDressingRoom", "GwPaperDollOutfits"},
+        },
+        {
+            value = "paperdolltitles",
+            toggleRef = "GwPaperDollTitles",
+            showRefs = {"GwPaperDoll", "GwPaperDollDressingRoom", "GwPaperDollTitles"},
         },
         {
             value = "paperdollskills",
             toggleRef = "GwPaperSkills",
-            showRefs = {"GwPaperDoll", "GwPaperSkills", "GwDressingRoom"},
-        },
-        {
-            value = "paperdollengravings",
-            toggleRef = "GwEngravingFrame",
-            showRefs = {"GwPaperDoll", "GwEngravingFrame", "GwDressingRoom"},
+            showRefs = {"GwPaperDoll", "GwPaperSkills"},
         },
         {
             value = "paperdollhonor",
@@ -137,6 +128,21 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
             toggleRef = "GwPetContainer",
             requiresAttribute = "HasPetUI",
             showRefs = {"GwPaperDoll", "GwPetContainer"},
+        },
+        {
+            value = "reputation",
+            toggleRef = "GwReputationFrame",
+            showRefs = {"GwReputationFrame"},
+        },
+        {
+            value = "currency",
+            toggleRef = "GwCurrencyFrame",
+            showRefs = {"GwCurrencyFrame"},
+        },
+        {
+            value = "statistics",
+            toggleRef = "GwStatisticsFrame",
+            showRefs = {"GwStatisticsFrame"},
         },
     },
 })

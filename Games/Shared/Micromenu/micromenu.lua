@@ -1150,6 +1150,7 @@ local function setupMicroButtons(mbf)
                 f:SetAttribute("windowpanelopen", "paperdoll")
             ]=]
         )
+        GW.InstallCharacterWindowFallbackClick(cref, "paperdoll", true) -- TEMP-FOREVER-SNIPPETS
         disableMicroButton(CharacterMicroButton, GW.isModern)
         if GW.isModern then
             cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)

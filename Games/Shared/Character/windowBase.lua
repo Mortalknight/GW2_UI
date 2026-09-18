@@ -85,6 +85,148 @@ local nextAddonMenuButtonShadowOdd = true
 local nextAddonMenuButtonAnchor
 local characterWindowConfig
 
+-- TEMP-FOREVER-SNIPPETS: plain Lua handlers for the window while Blizzard's secure snippets are broken (see
+-- GW.SecureSnippetsWork); working clients never install them
+local SecureSnippetsWork = GW.SecureSnippetsWork
+
+local fallbackAttributeConfig
+local fallbackClickTargets
+
+local function FallbackGetRef(frame, label)
+    return frame.gwFrameRefs and frame.gwFrameRefs[label]
+end
+
+local function FallbackOnAttributeChanged(self, name, value)
+    if name ~= "windowpanelopen" or not fallbackAttributeConfig then
+        return
+    end
+    local keytoggle = self:GetAttribute("keytoggle")
+    local close = true
+
+    for _, state in ipairs(fallbackAttributeConfig.states) do
+        local matches = state.value == value or (state.values ~= nil and tContains(state.values, value))
+        if matches and state.toggleRef then
+            matches = FallbackGetRef(self, state.toggleRef) ~= nil
+        end
+        if matches and state.requiresAttribute then
+            local expected = state.requiresAttributeValue
+            if expected == nil then expected = true end
+            matches = self:GetAttribute(state.requiresAttribute) == expected
+        end
+        if matches then
+            if keytoggle and state.toggleRef then
+                local toggleClose = FallbackGetRef(self, state.toggleRef):IsVisible()
+                for _, hiddenRef in ipairs(state.toggleHiddenRefs or {}) do
+                    local hidden = FallbackGetRef(self, hiddenRef)
+                    if hidden and hidden:IsVisible() then
+                        toggleClose = false
+                    end
+                end
+                if toggleClose then
+                    self:SetAttribute("keytoggle", nil)
+                    self:SetAttribute("windowpanelopen", nil)
+                    return
+                end
+            end
+            close = false
+            local shown = {}
+            for _, refName in ipairs(state.showRefs or {}) do
+                shown[refName] = true
+                local ref = FallbackGetRef(self, refName)
+                if ref then ref:Show() end
+            end
+            for _, refName in ipairs(fallbackAttributeConfig.managedRefs or {}) do
+                local ref = FallbackGetRef(self, refName)
+                if ref and not shown[refName] then ref:Hide() end
+            end
+            break
+        end
+    end
+
+    if keytoggle then
+        self:SetAttribute("keytoggle", nil)
+    end
+    if close then
+        self:Hide()
+        self:SoundExit()
+    elseif not self:IsVisible() then
+        self:Show()
+        self:SoundOpen()
+    else
+        self:SoundSwap()
+        self:AnimatePanelSwitch(value)
+    end
+end
+
+local function FallbackOpenPanel(target, keytoggle)
+    if InCombatLockdown() or not GwCharacterWindow then
+        return
+    end
+    if keytoggle then
+        GwCharacterWindow:SetAttribute("keytoggle", true)
+    end
+    GwCharacterWindow:SetAttribute("windowpanelopen", target)
+end
+
+local function FallbackButton_OnClick(self, mouseButton)
+    if mouseButton ~= "LeftButton" then
+        return
+    end
+    FallbackOpenPanel(self.gwFallbackTarget, self.gwFallbackKeytoggle)
+end
+
+-- target nil closes the window; on working clients this is a no-op, the snippet does the work
+function GW.InstallCharacterWindowFallbackClick(button, target, keytoggle)
+    if SecureSnippetsWork() or not button then
+        return
+    end
+    button.gwFallbackTarget = target
+    button.gwFallbackKeytoggle = keytoggle == true
+    button:SetScript("OnClick", FallbackButton_OnClick)
+end
+
+local function FallbackBindingClick_OnClick(_, clickName)
+    if clickName == "Close" then
+        FallbackOpenPanel(nil, false)
+    elseif fallbackClickTargets and fallbackClickTargets[clickName] then
+        FallbackOpenPanel(fallbackClickTargets[clickName], true)
+    end
+end
+
+local function InstallWindowFallback(frame)
+    frame:SetScript("OnAttributeChanged", FallbackOnAttributeChanged)
+    frame.secure:SetScript("OnClick", FallbackBindingClick_OnClick)
+    GW.InstallCharacterWindowFallbackClick(frame.close, nil, false)
+
+    frame.mover:SetScript("OnMouseDown", function(self, button)
+        if button == "LeftButton" and not InCombatLockdown() then
+            frame:StartMoving()
+            self.gwMoving = true
+        end
+    end)
+    frame.mover:SetScript("OnMouseUp", function(self, button)
+        if button ~= "LeftButton" or not self.gwMoving then return end
+        self.gwMoving = nil
+        frame:StopMovingOrSizing()
+        local x, y = frame:GetRect()
+        frame:ClearAllPoints()
+        frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y)
+        self:savePosition(x, y)
+    end)
+
+    frame:HookScript("OnShow", function(self)
+        local keyEsc = GetBindingKey("TOGGLEGAMEMENU")
+        if keyEsc and not InCombatLockdown() then
+            SetOverrideBinding(self, false, keyEsc, "CLICK " .. self.secure:GetName() .. ":Close")
+        end
+    end)
+    frame:HookScript("OnHide", function(self)
+        if not InCombatLockdown() then
+            ClearOverrideBindings(self)
+        end
+    end)
+end
+
 local mover_OnDragStart = [=[
     if button ~= "LeftButton" or self:GetAttribute("isMoving") then
         return
@@ -197,6 +339,13 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
     frame:SetClampedToScreen(true)
     frame:SetClampRectInsets(-GwCharacterWindowLeft:GetWidth(), 0, GwCharacterWindowHeader:GetHeight(), 0)
 
+    frame.gwFrameRefs = {}
+    local secureSetFrameRef = frame.SetFrameRef
+    frame.SetFrameRef = function(self, label, ref)
+        self.gwFrameRefs[label] = ref
+        secureSetFrameRef(self, label, ref)
+    end
+
     frame:SetAttribute("windowpanelopen", nil)
     frame.secure:SetAttribute("_onclick", secureOnClick)
     frame.secure:SetFrameRef("GwCharacterWindow", frame)
@@ -228,8 +377,10 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
     GW.SetupCharacterPanelSwitchAnimation(frame)
     GW.SetupCharacterWindowRevealAnimation(frame)
 
-    frame:WrapScript(frame, "OnShow", charSecure_OnShow)
-    frame:WrapScript(frame, "OnHide", charSecure_OnHide)
+    if SecureSnippetsWork() then -- TEMP-FOREVER-SNIPPETS
+        frame:WrapScript(frame, "OnShow", charSecure_OnShow)
+        frame:WrapScript(frame, "OnHide", charSecure_OnHide)
+    end
     frame.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 
     local pos = GW.settings.windows.character.pos
@@ -241,7 +392,11 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
     frame.mover.savePosition = mover_SavePosition
     frame.mover:SetAttribute("_onmousedown", mover_OnDragStart)
     frame.mover:SetAttribute("_onmouseup", mover_OnDragStop)
-    RegisterStateDriver(frame.mover, "combat", "[combat] combat; nocombat")
+    if SecureSnippetsWork() then -- TEMP-FOREVER-SNIPPETS
+        RegisterStateDriver(frame.mover, "combat", "[combat] combat; nocombat")
+    else
+        InstallWindowFallback(frame)
+    end
 
     frame.sizer.texture:SetDesaturated(true)
     frame.sizer:SetScript("OnEnter", function(self)
@@ -336,6 +491,7 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
 end
 
 function GW.BuildCharacterWindowClickHandler(buttonTargets)
+    fallbackClickTargets = buttonTargets
     local sortedButtons = {}
     for buttonName in pairs(buttonTargets) do
         sortedButtons[#sortedButtons + 1] = buttonName
@@ -374,6 +530,7 @@ local function QuoteSecureValue(value)
 end
 
 function GW.BuildCharacterWindowAttributeChangedHandler(config)
+    fallbackAttributeConfig = config
     local managedRefs = config.managedRefs or {}
     local attributeNames = {}
 
@@ -529,6 +686,7 @@ function GW.LoadCharacter()
             v.TabFrame = tab
             tab:SetFrameRef("GwCharacterWindow", baseFrame)
             tab:SetAttribute("_onclick", v.OnClick)
+            GW.InstallCharacterWindowFallbackClick(tab, v.OnClick:match('"windowpanelopen",%s*"([^"]+)"'), false) -- TEMP-FOREVER-SNIPPETS
             container:SetScript("OnShow", GW.CharacterWindowContainer_OnShow)
             container:SetScript("OnHide", GW.CharacterWindowContainer_OnHide)
 
@@ -650,6 +808,7 @@ function GW.SetCharacterWindowOpenAttribute(button, target, keytoggle)
         end
         f:SetAttribute("windowpanelopen", "%s")
     ]=]):format(keytoggle == false and "false" or "true", target))
+    GW.InstallCharacterWindowFallbackClick(button, target, keytoggle ~= false) -- TEMP-FOREVER-SNIPPETS
 end
 
 function GW.SetCharacterWindowBackAttribute(button, target, keytoggle)
@@ -684,6 +843,14 @@ local function CreateAddonMenuButton(options)
         end
         self:CallMethod("ui_show")
     ]=])
+    if not SecureSnippetsWork() then -- TEMP-FOREVER-SNIPPETS
+        button:SetScript("OnClick", function(self)
+            if options.hideOurFrame and not InCombatLockdown() then
+                GwCharacterWindow:SetAttribute("windowpanelopen", nil)
+            end
+            self:ui_show()
+        end)
+    end
 
     if options.onCreated then
         options.onCreated(button)

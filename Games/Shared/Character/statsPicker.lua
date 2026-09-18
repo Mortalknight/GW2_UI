@@ -127,7 +127,7 @@ local function tile_DragOnUpdate(self)
 end
 
 local function tile_OnMouseDown(self, button)
-    if button ~= "LeftButton" or not IsEditMode(self:GetParent()) or not self.stat then
+    if button ~= "LeftButton" or not IsEditMode(self.gwPickerBox) or not self.stat then
         return
     end
     dragState.source = self
@@ -150,7 +150,7 @@ local function tile_OnMouseUp(self, button)
     end
     dragState.source = nil
 
-    local stats = self:GetParent()
+    local stats = self.gwPickerBox
     if dragState.dragging then
         dragState.dragging = false
         dragGhost:Hide()
@@ -172,7 +172,7 @@ end
 
 -- appended to the tooltip the tile itself has opened
 local function tile_OnEnterHint(self)
-    if IsEditMode(self:GetParent()) and self.stat ~= "DURABILITY" and GameTooltip:IsShown() and GameTooltip:GetOwner() == self then
+    if IsEditMode(self.gwPickerBox) and self.stat ~= "DURABILITY" and GameTooltip:IsShown() and GameTooltip:GetOwner() == self then
         GameTooltip:AddLine(L["Click a stat to hide or show it"], 0.7, 0.7, 0.7, true)
         GameTooltip:Show()
     end
@@ -185,6 +185,7 @@ end
 local function RegisterTile(stats, frame)
     if frame.gwPickerTile then return end
     frame.gwPickerTile = true
+    frame.gwPickerBox = stats
     stats.gwTiles = stats.gwTiles or {}
     tinsert(stats.gwTiles, frame)
     frame:SetScript("OnMouseDown", tile_OnMouseDown)
@@ -229,11 +230,15 @@ local function Layout(stats, entries, rowHeight, minHeight)
     end
     shown = ordered
 
+    -- a scrolling box keeps its size and places the tiles on its scroll child instead
+    local tileParent = stats.gwTileParent or stats
+    local topOffset = stats.gwTileParent and 4 or HEADER_HEIGHT
+
     local placed = {}
     for i, frame in ipairs(shown) do
         local column, row = (i - 1) % 2, math.floor((i - 1) / 2)
         frame:ClearAllPoints()
-        frame:SetPoint("TOPLEFT", stats, "TOPLEFT", 5 + column * TILE_WIDTH, -HEADER_HEIGHT - row * rowHeight)
+        frame:SetPoint("TOPLEFT", tileParent, "TOPLEFT", 5 + column * TILE_WIDTH, -topOffset - row * rowHeight)
         frame:SetAlpha(frame.gwStatVisible and 1 or 0.35)
         frame:Show()
         placed[frame] = true
@@ -245,7 +250,9 @@ local function Layout(stats, entries, rowHeight, minHeight)
     end
     stats.gwSequence = shown
 
-    if minHeight then
+    if stats.gwTileParent then
+        tileParent:SetHeight(math.max(1, topOffset + math.ceil(#shown / 2) * rowHeight + 6))
+    elseif minHeight then
         stats:SetHeight(math.max(minHeight, HEADER_HEIGHT + math.ceil(#shown / 2) * rowHeight + 6))
     end
 end

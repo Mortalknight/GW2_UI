@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.0.0", {
+    {GW.Enum.ChangelogType.feature, [=[World of Warcraft: Forever]=]},
+})
+
 addChange("11.2.1", {
     {GW.Enum.ChangelogType.bug, [=[Fix actionbars not shown]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix Micromenu hover lua error]=]},

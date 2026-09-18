@@ -120,6 +120,21 @@ do -- Expansions
     GW.IsEngravingEnabled = IsEngravingEnabled and IsEngravingEnabled()
 end
 
+function GW.GetClientFlavorName()
+    if GW.ClassicSOD then return "Season of Discovery" end
+    if GW.ClassicAnnivHC then return "Anniversary Hardcore" end
+    if GW.ClassicAnniv then return "Anniversary" end
+    if GW.ClassicHC then return "Hardcore" end
+
+    local title = C_AddOns.GetAddOnMetadata(addonName, "Title") or ""
+    title = title:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    local flavor = title:match("GW2 UI%s+(.+)$")
+    if flavor and flavor ~= "" then
+        return strtrim(flavor)
+    end
+    return GW.Forever and "Forever" or GW.Retail and "Retail" or GW.Mists and "Mists" or GW.Cata and "Cataclysm" or GW.Wrath and "Wrath" or GW.TBC and "TBC" or "Era"
+end
+
 if not GW.isModern then
     Enum.ItemQuality.Common = Enum.ItemQuality.Standard
 end

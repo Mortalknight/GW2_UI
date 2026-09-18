@@ -53,7 +53,7 @@
                 </Anchors>
             </Frame>
             <Frame parentKey="stats">
-                <Size x="184" y="301"></Size>
+                <Size x="184" y="360"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-105"></Anchor>
                 </Anchors>
@@ -75,6 +75,25 @@
                         </FontString>
                     </Layer>
                 </Layers>
+                <Frames>
+                    <ScrollFrame parentKey="scroll">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="0" y="-35"/>
+                            <Anchor point="BOTTOMRIGHT" x="0" y="4"/>
+                        </Anchors>
+                        <ScrollChild>
+                            <Frame parentKey="tiles">
+                                <Size x="184" y="1"/>
+                            </Frame>
+                        </ScrollChild>
+                    </ScrollFrame>
+                    <EventFrame parentKey="scrollBar" inherits="MinimalScrollBar">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.scroll" relativePoint="TOPRIGHT" x="-4" y="0"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.scroll" relativePoint="BOTTOMRIGHT" x="-4" y="0"/>
+                        </Anchors>
+                    </EventFrame>
+                </Frames>
             </Frame>
             <Frame name="$parentGear" parentKey="gear">
                 <Size x="184" y="301"></Size>

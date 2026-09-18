@@ -714,7 +714,7 @@ local function evPlayerLogin(self)
         loadStep(GW.LoadBattlegrounds)
     end
 
-    --GW.LoadCharacter()
+    GW.LoadCharacter()
 
     if GW.isModern or GW.TBC then
         loadStep(GW.LoadSocialFrame)

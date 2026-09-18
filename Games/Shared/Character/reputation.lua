@@ -89,7 +89,7 @@ local ReputationFrameEvents = {
 	"QUEST_LOG_UPDATE",
 	"UPDATE_FACTION",
 }
-if GW.Retail then
+if GW.isModern then
     tinsert(ReputationFrameEvents, "MAJOR_FACTION_RENOWN_LEVEL_CHANGED")
     tinsert(ReputationFrameEvents, "MAJOR_FACTION_UNLOCKED")
 end
@@ -850,7 +850,7 @@ local function InitDetailsButton(button, elementData)
         button.controles.showAsBar.checkbutton:SetScript("OnClick", function() detailsShowAsBar_OnClick(button.controles.showAsBar) end)
         button.controles.showAsBar.checkbutton:SetScript("OnEnter", detailsShowAsBar_OnEnter)
         button.controles.showAsBar.checkbutton:SetScript("OnLeave", GameTooltip_Hide)
-        if GW.Retail then
+        if GW.isModern then
             button.accountWide.Icon:SetAtlas("warbands-icon", true)
         end
         button.accountWide:SetScript("OnEnter", function(self)

@@ -118,7 +118,7 @@ function GwAchievementTrackerContainerMixin:BlockOnClick(mouseButton)
             AchievementFrame_LoadUI()
         end
         if (IsModifiedClick("QUESTWATCHTOGGLE")) then
-            if GW.Retail then
+            if GW.isModern then
                 C_ContentTracking.StopTracking(Enum.ContentTrackingType.Achievement, self.id, Enum.ContentTrackingStopType.Manual)
             else
                 WatchFrame_StopTrackingAchievement(_, self.id)
@@ -161,7 +161,7 @@ function GwAchievementTrackerContainerMixin:BlockOnClick(mouseButton)
                 end
             end)
             rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()
-                if GW.Retail then
+                if GW.isModern then
                     C_ContentTracking.StopTracking(Enum.ContentTrackingType.Achievement, self.id, Enum.ContentTrackingStopType.Manual)
                 else
                     WatchFrame_StopTrackingAchievement(_, self.id)
@@ -221,7 +221,7 @@ end
 
 function GwAchievementTrackerContainerMixin:UpdateLayout()
     local shownIndex = 1
-    local trackedAchievements = GW.Retail and C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement) or {GetTrackedAchievements()}
+    local trackedAchievements = GW.isModern and C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement) or {GetTrackedAchievements()}
 
     self.header:Hide()
 
@@ -267,7 +267,7 @@ function GwAchievementTrackerContainerMixin:InitModule()
     self:RegisterEvent("TRACKED_ACHIEVEMENT_LIST_CHANGED")
     self:RegisterEvent("TRACKED_ACHIEVEMENT_UPDATE")
     self:RegisterEvent("ACHIEVEMENT_EARNED")
-    if GW.Retail then
+    if GW.isModern then
         self:RegisterEvent("CONTENT_TRACKING_UPDATE")
     end
     self:SetScript("OnEvent", OnEvent)

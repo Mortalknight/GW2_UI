@@ -58,7 +58,7 @@ function GwArenaFrameMixin:UpdateName()
         self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
     end
 
-    if GW.Retail then return end
+    if GW.isModern then return end
     self.guid = UnitGUID(self.gwUnit)
     if self.guid == UnitGUID("target") then
         self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
@@ -299,7 +299,7 @@ function GwObjectivesArenaContainerMixin:InitModule()
 
     for i = 1, MAX_ARENA_ENEMIES do
         arenaFrames[i] = self:RegisterFrame(i)
-        if GW.Retail then
+        if GW.isModern then
             arenaPrepFrames[i] = self:RegisterPrepFrame()
         end
     end
@@ -314,7 +314,7 @@ function GwObjectivesArenaContainerMixin:InitModule()
     self:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
     self:SetScript("OnEvent", self.OnEvent)
 
-    if GW.Retail then
+    if GW.isModern then
         self:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
         local numOpps = GetNumArenaOpponentSpecs()
         if numOpps and numOpps > 0 then

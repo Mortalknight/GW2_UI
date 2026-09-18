@@ -18,9 +18,28 @@ end
 GW.SetDeadIcon = SetDeadIcon
 
 
+-- TEMP-FOREVER-SNIPPETS: Blizzard's Forever beta ships without a working restricted environment, so every secure snippet
+-- fails. The probe runs one snippet and checks its effect (the error itself stays inside Blizzard's
+-- attribute handler); while it fails the secure helpers below fall back to plain calls, taint does
+-- not matter when the snippets cannot run anyway
+local secureSnippetsWork
+local function SecureSnippetsWork()
+    if secureSnippetsWork == nil then
+        local probe = CreateFrame("Frame", nil, UIParent, "SecureHandlerBaseTemplate")
+        pcall(SecureHandlerExecute, probe, 'self:SetAttribute("gwprobe", true)')
+        secureSnippetsWork = probe:GetAttribute("gwprobe") == true
+    end
+    return secureSnippetsWork
+end
+GW.SecureSnippetsWork = SecureSnippetsWork
+
 local secureAttributeHandler
 local function SetSecureAttribute(frame, name, value)
     if InCombatLockdown() then return false end -- SetFrameRef is an attribute write itself
+    if not SecureSnippetsWork() then -- TEMP-FOREVER-SNIPPETS
+        frame:SetAttribute(name, value)
+        return false
+    end
 
     local valueType = type(value)
     local literal
@@ -46,6 +65,10 @@ GW.SetSecureAttribute = SetSecureAttribute
 
 -- Show/Hide of a frame that holds blizzard action buttons: their OnShow runs Update(), which must not run tainted
 local function SetSecureShown(frame, shown)
+    if not SecureSnippetsWork() then -- TEMP-FOREVER-SNIPPETS
+        frame:SetShown(shown)
+        return false
+    end
     if InCombatLockdown() then
         frame:SetShown(shown) -- the restricted environment is closed in combat, the plain call keeps the old behavior
         return false
@@ -905,7 +928,7 @@ end
 local function MixinHideDuringPet(f)
     if not f then return end
     -- TODO: figure out how to do real mixins
-    if f:IsProtected() then
+    if f:IsProtected() and SecureSnippetsWork() then -- TEMP-FOREVER-SNIPPETS
         return securePetAndOverride(f, "petbattle")
     else
         return normPetAndOverride(f, "petbattle")
@@ -915,7 +938,7 @@ GW.MixinHideDuringPet = MixinHideDuringPet
 
 local function MixinHideDuringOverride(f)
     if not f then return end
-    if f:IsProtected() then
+    if f:IsProtected() and SecureSnippetsWork() then -- TEMP-FOREVER-SNIPPETS
         return securePetAndOverride(f, "override")
     else
         return normPetAndOverride(f, "override")
@@ -925,7 +948,7 @@ GW.MixinHideDuringOverride = MixinHideDuringOverride
 
 local function MixinHideDuringPetAndOverride(f)
     if not f then return end
-    if f:IsProtected() then
+    if f:IsProtected() and SecureSnippetsWork() then -- TEMP-FOREVER-SNIPPETS
         return securePetAndOverride(f)
     else
         return normPetAndOverride(f)

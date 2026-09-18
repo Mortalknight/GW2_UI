@@ -61,6 +61,12 @@ local function BuildSettingsWindow()
     settingsContainer.brandTextLeft:SetPoint("LEFT", brand, "RIGHT", 8, 3)
     settingsContainer.versionString:SetFont(UNIT_NAME_FONT, 12)
     settingsContainer.versionString:SetText(GW.GetVersionString() .. " (DB " .. (GW.settings.settingsVersion or 0) .. ")")
+
+    settingsContainer.flavorString = settingsContainer:CreateFontString(nil, "OVERLAY")
+    settingsContainer.flavorString:SetFont(UNIT_NAME_FONT, 11)
+    settingsContainer.flavorString:SetPoint("BOTTOM", settingsContainer.brandSeparator, "TOP", 0, 3)
+    settingsContainer.flavorString:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    settingsContainer.flavorString:SetText(GW.GetClientFlavorName())
     settingsContainer.headerString:SetText(CHAT_CONFIGURATION)
 
     settingsContainer.close:SetScript("OnClick", function() settingsContainer:Hide() end)

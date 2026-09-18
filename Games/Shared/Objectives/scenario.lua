@@ -80,7 +80,7 @@ GwQuesttrackerScenarioBlockMixin = {}
 -- comparisons at all, so the mixin method is replaced before any button copies
 -- it — this covers Blizzards pool buttons and our own action button (which mixes
 -- this in on InitModule). Blizzard stores the id as self.spellID (capital D)
-if GW.Retail and ScenarioSpellButtonMixin then
+if GW.isModern and ScenarioSpellButtonMixin then
     function ScenarioSpellButtonMixin:UpdateCooldown()
         local durationObject = self.spellID and C_Spell.GetSpellCooldownDuration(self.spellID)
         if durationObject then
@@ -690,7 +690,7 @@ local function UpdateStatusBarPartitions(statusBar, widgetInfo)
 end
 
 local function AddScenarioTieredEntranceTraitsObjective(block)
-    if not (GW.Retail and C_ScenarioInfo.IsTieredEntranceScenario()) then
+    if not (GW.isModern and C_ScenarioInfo.IsTieredEntranceScenario()) then
         return false
     end
 
@@ -978,7 +978,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     end
 
     --check for groupfinder button and add spells
-    if GW.Retail then
+    if GW.isModern then
         block:UpdateFindGroupButton(scenarioID, true)
         GW.CombatQueue:Queue(nil, block.UpdateScenarioSpell, {block, allSpellInfo})
     end
@@ -1395,7 +1395,7 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.layoutUpdateFrame = CreateFrame("Frame", nil, self)
     self.layoutUpdateFrame.container = self
 
-    if GW.Retail then
+    if GW.isModern then
         self.gwSpellRows = CreateFrame("Frame", nil, self)
         self.gwSpellRows.labels = {}
         self.gwSpellRows.iconPool = CreateFramePool("Frame", self.gwSpellRows, "GwTieredEntranceTraitSpellTemplate")
@@ -1404,7 +1404,7 @@ function GwObjectivesScenarioContainerMixin:InitModule()
 
     -- JailersTower hook
     -- do it only here so we are sure we do not hook more than one time
-    if GW.Retail then
+    if GW.isModern then
         hooksecurefunc(ScenarioObjectiveTracker, "SlideInContents", function(container)
             if container:ShouldShowCriteria() and IsInJailersTower() then
                 self:QueueUpdateLayout()
@@ -1503,13 +1503,13 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.timerBlock:RegisterEvent("ZONE_CHANGED")
     self.timerBlock:RegisterEvent("CHALLENGE_MODE_DEATH_COUNT_UPDATED")
 
-    if GW.Retail then
+    if GW.isModern then
         self.timerBlock:RegisterEvent("PROVING_GROUNDS_SCORE_UPDATE")
     end
     self.timerBlock:SetScript("OnEvent", self.timerBlock.TimerBlockOnEvent)
 
-    self.block = self:GetBlock(1, GW.Enum.ObjectivesNotificationType.Scenario, GW.Retail) -- only create an actionbutton for retail here
-    if GW.Retail then
+    self.block = self:GetBlock(1, GW.Enum.ObjectivesNotificationType.Scenario, GW.isModern) -- only create an actionbutton for retail here
+    if GW.isModern then
         -- the mixin carries our secret safe UpdateCooldown (replaced at the top of
         -- this file), so the button inherits it here
         Mixin(self.block.actionButton, ScenarioSpellButtonMixin)

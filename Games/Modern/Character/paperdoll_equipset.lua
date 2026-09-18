@@ -84,7 +84,7 @@ local function UpdateScrollBox(self)
 end
 
 local function outfitSaveButton_OnClick(self)
-    GW.ShowPopup({text = TRANSMOG_OUTFIT_CONFIRM_SAVE:format(self:GetParent().setName),
+    GW.ShowPopup({text = CONFIRM_SAVE_EQUIPMENT_SET:format(self:GetParent().setName),
         OnAccept = function()
             C_EquipmentSet.SaveEquipmentSet(self:GetParent().setID)
             UpdateScrollBox(GwPaperDollOutfits)
@@ -113,7 +113,9 @@ local function outfitEditButton_OnClick(self)
 			C_EquipmentSet.UnassignEquipmentSetSpec(GetSetID())
 		end
 
-		GearSetButton_UpdateSpecInfo(parentButton)
+		if GearSetButton_UpdateSpecInfo then
+			GearSetButton_UpdateSpecInfo(parentButton)
+		end
 		PaperDollEquipmentManagerPane_Update(true)
 	end
 
@@ -124,19 +126,21 @@ local function outfitEditButton_OnClick(self)
             GearSetButton_Edit(parentButton)
         end)
 
-        rootDescription:CreateTitle(EQUIPMENT_SET_ASSIGN_TO_SPEC)
-
-        for i = 1, GetNumSpecializations() do
-            local specID = C_SpecializationInfo.GetSpecializationInfo(i)
-            local text = select(2, GetSpecializationInfoByID(specID))
-            local radio = rootDescription:CreateRadio(text, IsSelected, SetSelected, i)
-            radio:AddInitializer(GW.BlizzardDropdownRadioButtonInitializer)
+        local numSpecs = GetNumSpecializations and GetNumSpecializations() or 0
+        if numSpecs > 0 then
+            rootDescription:CreateTitle(EQUIPMENT_SET_ASSIGN_TO_SPEC)
+            for i = 1, numSpecs do
+                local specID = C_SpecializationInfo.GetSpecializationInfo(i)
+                local text = select(2, GetSpecializationInfoByID(specID))
+                local radio = rootDescription:CreateRadio(text, IsSelected, SetSelected, i)
+                radio:AddInitializer(GW.BlizzardDropdownRadioButtonInitializer)
+            end
         end
     end)
 end
 
 local function outfitDeleteButton_OnClick(self)
-    GW.ShowPopup({text = TRANSMOG_OUTFIT_CONFIRM_DELETE:format(self:GetParent().setName),
+    GW.ShowPopup({text = CONFIRM_DELETE_EQUIPMENT_SET:format(self:GetParent().setName),
         OnAccept = function()
             C_EquipmentSet.DeleteEquipmentSet(self:GetParent().setID)
 
@@ -206,7 +210,12 @@ local function EquipmentSet_InitButton(button, elementData)
     button.name:SetText(name)
     button.setName = name
     button.setID = setID
-    GearSetButton_UpdateSpecInfo(button)
+    if GearSetButton_UpdateSpecInfo then
+        GearSetButton_UpdateSpecInfo(button)
+    else
+        button.SpecRing:Hide()
+        button.SpecIcon:Hide()
+    end
     if texture then
         button.icon:SetTexture(texture)
     else
@@ -253,7 +262,7 @@ local function LoadPDEquipset(fmMenu, parent)
             PaperDollFrame_IgnoreSlot(19)
         end
     end
-    fmGPDO.newOutfit:SetText(TRANSMOG_OUTFIT_NEW)
+    fmGPDO.newOutfit:SetText(PAPERDOLL_NEWEQUIPMENTSET)
     fmGPDO.newOutfit:SetScript("OnClick", fnGPDO_newOutfit_OnClick)
     fmMenu:SetupBackButton(fmGPDO.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
 
