@@ -223,7 +223,7 @@ local function LoadMainbarLayout()
     -- secure snippet compiler is gone before it is captured and every state driver
     -- registration errors inside blizzards code. The layout manager has to come up
     -- regardless - the out of combat handler and the bar callbacks still drive it
-    xpcall(RegisterStateDriver, geterrorhandler(), l, "barlayout", "[overridebar] obar; [vehicleui] vbar; [petbattle] petb; [combat] incombat; none")
+    xpcall(RegisterStateDriver, GW.ErrorHandler, l, "barlayout", "[overridebar] obar; [vehicleui] vbar; [petbattle] petb; [combat] incombat; none")
 
     l:RegisterEvent("PLAYER_REGEN_ENABLED")
     l:SetScript("OnEvent", function(self)

@@ -260,7 +260,13 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
                     local group = header.groups[i]
                     if group then
                         for _, child in ipairs({ group:GetChildren() }) do
-                            header.updateFunc(child)
+                            -- oUF styles a header child from the secure initialConfigFunction
+                            -- and marks it with its style; a child that never got there
+                            -- (the forever beta cannot run secure snippets) has none of
+                            -- our elements and must be skipped
+                            if child.style then
+                                header.updateFunc(child)
+                            end
                         end
                     end
                 end
@@ -278,7 +284,13 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
                     local group = header.groups[i]
                     if group then
                         for _, child in ipairs({ group:GetChildren() }) do
-                            header.updateFunc(child)
+                            -- oUF styles a header child from the secure initialConfigFunction
+                            -- and marks it with its style; a child that never got there
+                            -- (the forever beta cannot run secure snippets) has none of
+                            -- our elements and must be skipped
+                            if child.style then
+                                header.updateFunc(child)
+                            end
                         end
                     end
                 end
@@ -302,7 +314,7 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
 
     -- the setting gated aura regions (pandemic, dispel icon) read the frame fields
     -- pushed above — re-evaluate them here so this also covers the post combat catch up
-    if GW.Retail then
+    if GW.isModern then
         GW.UpdateAuraOptionRegions()
     end
 end

@@ -363,7 +363,10 @@ local function HeaderForceShow(header, group, configMode)
         end
 
         for _, child in ipairs({ group:GetChildren() }) do
-            GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
+            -- only children oUF has styled carry our elements (see constructor.lua)
+            if child.style then
+                GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
+            end
         end
     else
         RestoreForcedAttributes(group)
@@ -372,7 +375,10 @@ local function HeaderForceShow(header, group, configMode)
         group:SetAttribute("startingIndex", 1)
 
         for _, child in ipairs({ group:GetChildren() }) do
-            GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
+            -- only children oUF has styled carry our elements (see constructor.lua)
+            if child.style then
+                GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
+            end
         end
     end
 end

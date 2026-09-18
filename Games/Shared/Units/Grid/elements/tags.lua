@@ -82,7 +82,7 @@ local function Create_Tags()
 
         shortendHealthValue = stringtoboolean[shortendHealthValue]
 
-        if GW.Retail then
+        if GW.isModern then
             formatFunc = shortendHealthValue and GW.ShortValue or BreakUpLargeNumbers
         else
             formatFunc = shortendHealthValue and GW.ShortValue or GW.GetLocalizedNumber
@@ -92,7 +92,7 @@ local function Create_Tags()
             return ""
         end
         if healthDisplaySetting == "PREC" then
-            if GW.Retail then
+            if GW.isModern then
                 return string.format("%.0f%%", UnitHealthPercent(unit, true, CurveConstants.ScaleTo100))
             else
                 local healthMax = UnitHealthMax(unit)
@@ -102,7 +102,7 @@ local function Create_Tags()
         elseif healthDisplaySetting == "HEALTH" then
             return formatFunc(UnitHealth(unit))
         elseif healthDisplaySetting == "LOSTHEALTH" then
-            if GW.Retail then
+            if GW.isModern then
                 return formatFunc(UnitHealthMissing(unit))
             else
                 local healthMax = UnitHealthMax(unit)

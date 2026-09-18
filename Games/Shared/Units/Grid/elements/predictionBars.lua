@@ -40,7 +40,7 @@ local function Construct_PredictionBar(frame)
         maxOverflow = 1,
         incomingHealOverflow = 1,
     }
-    if GW.Retail then
+    if GW.isModern then
         frame.HealthPrediction.damageAbsorbClampMode = Enum.UnitDamageAbsorbClampMode.MissingHealth
         frame.HealthPrediction.healAbsorbClampMode = Enum.UnitHealAbsorbClampMode.CurrentHealth
         frame.HealthPrediction.healAbsorbMode = Enum.UnitHealAbsorbMode.ReducedByIncomingHeals

@@ -1002,7 +1002,7 @@ local function UpdateIndicatorSettings(frame)
 end
 
 local function UpdateAurasSettings(frame)
-    if GW.Retail then
+    if GW.isModern then
         UpdateGridAuraContainers(frame)
         return
     end

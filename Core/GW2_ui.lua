@@ -307,9 +307,55 @@ GW.RegisterScaleFrame = RegisterScaleFrame
 -- keeps all callbacks registered for the same addon name.
 -- Primarily for on-demand addons; if the addon has already loaded
 -- (based on the cond arg), the hook will run immediately.
-local function errorhandler(err)
-    return geterrorhandler()(err)
+-- !BugGrabber keeps ten errors per second and drops everything past that without a word (the
+-- chat warning only exists in its standalone mode). Its budget refills with GetTime, which
+-- stands still on the loading screen, so a login with many errors keeps exactly ten and loses
+-- the rest - the very errors a client port needs to see. BugGrabber flags itself paused when
+-- it drops one, then the error is stored through its public api ourselves, with the stack and
+-- locals it would have taken, and BugSack is told about it like for any other error
+local function storeDroppedError(err)
+    if not (BugGrabber and BugGrabber.IsPaused and BugGrabber:IsPaused() and BugGrabber.StoreError) then
+        return
+    end
+    local message = tostring(err)
+    local db = BugGrabber:GetDB()
+    local errorObject
+    for i = #db, 1, -1 do
+        if db[i].message == message then
+            errorObject = db[i]
+            break
+        end
+    end
+    if errorObject then
+        errorObject.counter = (errorObject.counter or 0) + 1
+        errorObject.time = time()
+    else
+        errorObject = {
+            message = message,
+            session = BugGrabber:GetSessionId(),
+            time = time(),
+            counter = 1,
+        }
+        BugGrabber:StoreError(errorObject)
+        -- the handlers run before the stack unwinds: level 1 is this function, 2 the error
+        -- handler, 3 the function that raised the error
+        errorObject.stack = debugstack(3, 20, 5)
+        if debuglocals then
+            local ok, locals = pcall(debuglocals, 3)
+            errorObject.locals = ok and locals or nil
+        end
+    end
+    if EventRegistry then
+        EventRegistry:TriggerEvent("BugGrabber.BugGrabbed", tostring(errorObject))
+    end
 end
+
+local function errorhandler(err)
+    local result = geterrorhandler()(err)
+    storeDroppedError(err)
+    return result
+end
+GW.ErrorHandler = errorhandler
 
 -- runs one login step in its own protected call: an error still goes to the error handler
 -- (bugsack, the blizzard error frame) exactly like before, but it no longer aborts the rest of

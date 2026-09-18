@@ -82,6 +82,7 @@ local MICRO_BUTTONS_LOCAL = {
     "AchievementMicroButton",
     "TalentMicroButton",
     "QuestLogMicroButton",
+    "LegacyMicroButton", -- forever
     "HousingMicroButton",
     "GuildMicroButton",
     "SocialsMicroButton", -- none Retail
@@ -324,7 +325,7 @@ local function updateQuestLogButton(_, event)
     end
 
     local numQuests
-    if GW.Retail then
+    if GW.isModern then
         -- GetNumQuestLogEntries counts hidden quests (world quests, callings, ...) as well; count the
         -- way Blizzards quest log filters its entries so the badge matches the visible quest log
         local numEntries = C_QuestLog.GetNumQuestLogEntries()
@@ -394,6 +395,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
     end
     if name == "SpellbookMicroButton" then name = "PlayerSpellsMicroButton" end
     if name == "SocialsMicroButton" then name = "GuildMicroButton" end
+    if name == "LegacyMicroButton" then name = "AchievementMicroButton" end -- temp till we have a own texture (TODO)
     local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-up.png"
 
     btn:SetSize(24, 24)
@@ -770,6 +772,18 @@ local function TalentsRule(frame)
     return frame ~= TalentMicroButton or frame:IsShown()
 end
 
+-- blizzards micro menu only adds the buttons its game rules allow (forever: no encounter
+-- journal, no housing dashboard, ...) and marks every added one with a layout index. A
+-- blizzard button outside that selection has no anchor and would stay invisible anyway, so
+-- it takes no slot. Our own buttons (the unnamed bag button, the Gw* replacements) always count
+local function BlizzardMenuRule(frame)
+    if frame.layoutIndex ~= nil then
+        return true
+    end
+    local name = frame:GetName()
+    return not name or name:find("^Gw") ~= nil
+end
+
 -- display names, resolved late because the global strings differ between the clients
 local SLOT_NAMES = {
     character = function() return CHARACTER_BUTTON end,
@@ -779,6 +793,7 @@ local SLOT_NAMES = {
     achievements = function() return ACHIEVEMENT_BUTTON end,
     questlog = function() return QUESTLOG_BUTTON end,
     housing = function() return HOUSING_MICRO_BUTTON or HOUSING or HousingMicroButton and HousingMicroButton.tooltipText end,
+    legacy = function() return LEGACY_BUTTON end,
     guild = function() return GUILD end,
     lfd = function() return DUNGEONS_BUTTON end,
     encounterjournal = function() return ADVENTURE_JOURNAL end,
@@ -818,6 +833,25 @@ local MICRO_BAR_LAYOUTS = {
         {key = "update", notification = true},
         {key = "mail", notification = true},
         {key = "workorders", notification = true},
+    },
+    Forever = { -- blizzards camelot menu: the buttons behind game rules only while blizzard shows them
+        {key = "character", available = BlizzardMenuRule},
+        {key = "bags"},
+        {key = "spellbook", available = BlizzardMenuRule},
+        {key = "talents", available = TalentsRule},
+        {key = "legacy", available = BlizzardMenuRule},
+        {key = "questlog", available = BlizzardMenuRule},
+        {key = "housing", available = BlizzardMenuRule},
+        {key = "guild", available = BlizzardMenuRule},
+        {key = "lfd", available = BlizzardMenuRule},
+        {key = "encounterjournal", available = BlizzardMenuRule},
+        {key = "collections", available = BlizzardMenuRule},
+        {key = "professions", available = BlizzardMenuRule},
+        {key = "mainmenu"},
+        {key = "help", available = BlizzardMenuRule},
+        {key = "store", available = function(frame) return BlizzardMenuRule(frame) and not C_AddOns.IsAddOnLoaded("Dominos") end},
+        {key = "update", notification = true},
+        {key = "mail", notification = true},
     },
     Mists = {
         {key = "character"},
@@ -867,7 +901,7 @@ local MICRO_BAR_LAYOUTS = {
         {key = "mail", notification = true},
     },
 }
-local MICRO_BAR_LAYOUT = GW.Retail and MICRO_BAR_LAYOUTS.Retail or GW.Mists and MICRO_BAR_LAYOUTS.Mists or GW.Wrath and MICRO_BAR_LAYOUTS.Wrath or MICRO_BAR_LAYOUTS.Classic
+local MICRO_BAR_LAYOUT = GW.Retail and MICRO_BAR_LAYOUTS.Retail or GW.Mists and MICRO_BAR_LAYOUTS.Mists or GW.Wrath and MICRO_BAR_LAYOUTS.Wrath or GW.Forever and MICRO_BAR_LAYOUTS.Forever or MICRO_BAR_LAYOUTS.Classic
 GW.MicroBarLayout = MICRO_BAR_LAYOUT
 
 local function GetMicroBarSlotName(key)
@@ -910,7 +944,7 @@ local layoutContainer
 local slotButtons = {}
 local slotCompanions = {}
 
-local MICRO_BAR_LENGTH = GW.Retail and 500 or (GW.Mists or GW.Wrath) and 370 or 280
+local MICRO_BAR_LENGTH = GW.isModern and 500 or (GW.Mists or GW.Wrath) and 370 or 280
 local MICRO_BAR_THICKNESS = 41
 local MICRO_BAR_BUTTON_INSET_ALONG = 5
 local MICRO_BAR_BUTTON_INSET_ACROSS = 3
@@ -1070,12 +1104,15 @@ local function setupMicroButtons(mbf)
 
     -- CharacterMicroButton
     -- determine if we are using the default char button (for default charwin)
-    -- or if we need to create our own char button for the custom hero panel
+    -- or if we need to create our own char button for the custom hero panel.
+    -- The own buttons open panels of our character window; without that window (module
+    -- off or not loaded on this client) blizzards buttons stay in charge
+    local hasCharacterWindow = GwCharacterWindow ~= nil
     local cref
-    if GW.settings.windows.character.enabled then
+    if GW.settings.windows.character.enabled and hasCharacterWindow then
         --IsProtected()
         cref = CreateFrame("Button", "GwCharacterMicroButton", mbf,  "SecureHandlerClickTemplate")
-        if GW.Retail then
+        if GW.isModern then
             Mixin(cref, MainMenuBarMicroButtonMixin)
         end
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
@@ -1093,8 +1130,8 @@ local function setupMicroButtons(mbf)
                 f:SetAttribute("windowpanelopen", "paperdoll")
             ]=]
         )
-        disableMicroButton(CharacterMicroButton, GW.Retail)
-        if GW.Retail then
+        disableMicroButton(CharacterMicroButton, GW.isModern)
+        if GW.isModern then
             cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
             cref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(cref); GameTooltip:Hide() end)
         end
@@ -1133,9 +1170,9 @@ local function setupMicroButtons(mbf)
     SetSlotButton("bags", bref)
 
     -- SpellbookMicroButton
-    if GW.Retail then
+    if GW.isModern then
         SetSlotButton("spellbook", PlayerSpellsMicroButton)
-    elseif GW.settings.windows.spellbook.enabled then
+    elseif GW.settings.windows.spellbook.enabled and hasCharacterWindow then
         local sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, "SecureHandlerClickTemplate")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
@@ -1160,8 +1197,8 @@ local function setupMicroButtons(mbf)
     end
 
     -- TalentMicroButton (none retail)
-    if not GW.Retail then
-        if GW.settings.windows.talent.enabled then
+    if not GW.isModern then
+        if GW.settings.windows.talent.enabled and hasCharacterWindow then
             local tref = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate")
             tref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
             tref.newbieText = NEWBIE_TOOLTIP_TALENTS
@@ -1189,6 +1226,9 @@ local function setupMicroButtons(mbf)
         else
             SetSlotButton("talents", TalentMicroButton)
         end
+    elseif GW.Forever and TalentMicroButton then
+        -- forever keeps a talent button next to the spellbook one, blizzards button fills the slot
+        SetSlotButton("talents", TalentMicroButton)
     end
 
     -- AchievementMicroButton
@@ -1241,13 +1281,13 @@ local function setupMicroButtons(mbf)
         requestGuildRosterUpdate(gref, true)
         updateGuildButton(gref, "GUILD_ROSTER_UPDATE")
     end
-    if GW.Retail then
+    if GW.isModern then
         SetSlotButton("guild", GuildMicroButton)
     else
         SetSlotButton("guild", GuildMicroButton, SocialsMicroButton)
     end
 
-    if GW.Retail then
+    if GW.isModern then
         SetSlotButton("lfd", LFDMicroButton)
         SetSlotButton("encounterjournal", EJMicroButton)
         SetSlotButton("collections", CollectionsMicroButton)
@@ -1268,8 +1308,8 @@ local function setupMicroButtons(mbf)
             end
         end)
 
-        --ProfessionMicroButton
-        if GW.settings.windows.profession.enabled then
+        --ProfessionMicroButton (our profession panel is a retail window)
+        if GW.isModern and GW.settings.windows.profession.enabled and hasCharacterWindow then
             local pref = CreateFrame("Button", "GwProfessionMicroButton", mbf, "SecureHandlerClickTemplate")
             Mixin(pref, MainMenuBarMicroButtonMixin)
             pref.tooltipText = MicroButtonTooltipText(PROFESSIONS_BUTTON, "TOGGLEPROFESSIONBOOK")
@@ -1301,7 +1341,7 @@ local function setupMicroButtons(mbf)
         CollectionsMicroButton:HookScript("OnEnter", GW.Collections_OnEnter)
 
         -- PVPMicroButton
-        if GW.Wrath and GW.settings.windows.character.enabled then
+        if GW.Wrath and GW.settings.windows.character.enabled and hasCharacterWindow then
             local pvpref = CreateFrame("Button", "GwPvpMicroButton", mbf, "SecureHandlerClickTemplate")
             pvpref.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4")
             pvpref.newbieText = NEWBIE_TOOLTIP_PVP
@@ -1361,9 +1401,15 @@ local function setupMicroButtons(mbf)
     -- HelpMicroButton
     SetSlotButton("help", HelpMicroButton)
 
-    if GW.Retail then
+    if GW.isModern then
         SetSlotButton("store", StoreMicroButton)
+    end
+    -- forever: the legacy system button
+    if LegacyMicroButton then
+        SetSlotButton("legacy", LegacyMicroButton)
+    end
 
+    if GW.Retail then
         -- great vault icon
         local greatVaultIcon = CreateFrame("Button", "Gw2GreateVaultMicroMenuButton", mbf, "MainMenuBarMicroButton")
         greatVaultIcon.newbieText = nil
@@ -1588,7 +1634,7 @@ local function queueMicroMenuUpdate()
 end
 
 hook_UpdateMicroButtons = function(fromDeferredUpdate)
-    if GW.Retail and not fromDeferredUpdate then
+    if GW.isModern and not fromDeferredUpdate then
         queueMicroMenuUpdate()
         return
     end
@@ -1660,7 +1706,6 @@ local function LoadMicroMenu()
 
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
 
-
     -- if set to fade micro menu, add fader
     mbf.cf:SetAttribute("shouldFade", GW.settings.micromenu.fade)
     mbf.cf:SetAttribute("fadeTime", 0.15)
@@ -1730,7 +1775,7 @@ local function LoadMicroMenu()
     mbf.cf:HookScript("OnLeave", mbf_OnLeave)
     mbf.cf:SetShown(not GW.settings.micromenu.fade)
 
-    if GW.Retail then
+    if GW.isModern then
         -- fix alert positions and hide the micromenu bar
         MicroButtonAndBagsBar:SetAlpha(0)
         MicroButtonAndBagsBar:EnableMouse(false)
