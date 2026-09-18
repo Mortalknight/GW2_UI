@@ -1,3 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file ="objectives.lua"/>
+    <Script file ="..\..\Modern\Objectives\ObjectivesItemButtonMixin.lua"/>
+    <Script file ="..\..\Modern\Objectives\objectives.lua"/>
 </Ui>
