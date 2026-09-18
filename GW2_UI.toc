@@ -1,17 +1,31 @@
-## Interface: 120100
-## Title: |cffffedbaGW2 UI|r
-## Notes: HUD Replacement addon
-## Notes-deDE: Ersetzt die Benutzeroberfläche
-## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU, Masque
+## Interface: 11509, 16001, 20506, 38002, 50504, 120100
 ## Version: @project-version@
-## X-Website: https://www.curseforge.com/wow/addons/gw2-ui
+## Author: deadend06, Winglord89(Nils89), nezroy
+
+## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU, Masque [AllowLoadGameType mainline]
+## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU, Masque, HonorSpy, TitanClassic, Clique, TotemTimers [AllowLoadGameType tbc, wrath]
+## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU, Masque, HonorSpy, TitanClassic, LibClassicDurations, Clique, TotemTimers [AllowLoadGameType mists, vanilla]
+
+## SavedVariables: GW2UI_STORAGE2, GW2UI_DATABASE, GW2UI_PRIVATE_DB
+
+## Notes: User Interface Replacement
+## Title: |cffffedbaGW2 UI|r |cFF888888Midnight|r [AllowLoadGameType standard]
+## Title: |cffffedbaGW2 UI|r |cFF888888Wrath|r [AllowLoadGameType wrath]
+## Title: |cffffedbaGW2 UI|r |cFF888888Era|r [AllowLoadGameType vanilla]
+## Title: |cffffedbaGW2 UI|r |cFF888888TBC|r [AllowLoadGameType tbc]
+## Title: |cffffedbaGW2 UI|r |cFF888888Mists|r [AllowLoadGameType mists]
+## Title: |cffffedbaGW2 UI|r |cFF888888Forever|r [AllowLoadGameType camelot][ExcludeLoadGameType standard, classic]
+
 ## X-Curse-Project-ID: 94310
 ## X-Wago-ID: Mj6jXpGR
+## X-Website: https://www.curseforge.com/wow/addons/gw2-ui
 ## DefaultState: Enabled
+
+## IconTexture: Interface\AddOns\GW2_UI\Textures\gwlogo.png
 ## AddonCompartmentFuncOnEnter: GW2_ADDON_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: GW2_ADDON_OnAddonCompartmentLeave
 ## AddonCompartmentFunc: GW2_ADDON_AddonCompartmentOnClickFunc
-## IconTexture: Interface\AddOns\GW2_UI\Textures\gwlogo.png
+
 ## Category-enUS: UI Overhaul
 ## Category-deDE: UI-Überholung
 ## Category-esES: Renovación de la Interfaz de Usuario
@@ -24,12 +38,22 @@
 ## Category-zhCN: UI整合
 ## Category-zhTW: UI大改
 
-## Author: deadend06, Winglord89(Nils89), nezroy
+## AddonCompartmentFuncOnEnter: GW2_ADDON_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: GW2_ADDON_OnAddonCompartmentLeave
+## AddonCompartmentFunc: GW2_ADDON_AddonCompartmentOnClickFunc
 
-## SavedVariables: GW2UI_STORAGE2, GW2UI_DATABASE, GW2UI_PRIVATE_DB
-
-Libs\Mainline\Load.xml
+Libs\Mainline\Load.xml [AllowLoadGameType standard]
+Libs\Wrath\Load.xml [AllowLoadGameType wrath]
+Libs\Classic\Load.xml [AllowLoadGameType vanilla]
+Libs\TBC\Load.xml [AllowLoadGameType tbc]
+Libs\Mists\Load.xml [AllowLoadGameType mists]
+Libs\Forever\Load.xml [AllowLoadGameType camelot][ExcludeLoadGameType standard, classic]
 
 Core\Load.xml
 
-Games\Mainline\Load.xml
+Games\Mainline\Load.xml [AllowLoadGameType standard]
+Games\Wrath\Load.xml [AllowLoadGameType wrath]
+Games\Classic\Load.xml [AllowLoadGameType vanilla]
+Games\TBC\Load.xml [AllowLoadGameType tbc]
+Games\Mists\Load.xml [AllowLoadGameType mists]
+Games\Forever\Load.xml [AllowLoadGameType camelot][ExcludeLoadGameType standard, classic]
