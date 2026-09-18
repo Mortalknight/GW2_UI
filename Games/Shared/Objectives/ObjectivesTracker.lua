@@ -364,7 +364,7 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
 end
 
 local function DisableBlizzardsObjevtiveTracker()
-    if GW.Retail then
+    if GW.isModern then
         ObjectiveTrackerFrame:Hide()
         ObjectiveTrackerFrame:UnregisterAllEvents()
         ObjectiveTrackerFrame:SetScript("OnUpdate", nil)

@@ -4,7 +4,7 @@ local GW = select(2, ...)
 GwUnitPowerbarMixin = {}
 
 function GwUnitPowerbarMixin:UpdatePowerBar(forceUpdate)
-    if GW.Retail then
+    if GW.isModern then
         local statusBarAnimation = forceUpdate and Enum.StatusBarInterpolation.Immediate or Enum.StatusBarInterpolation.ExponentialEaseOut
         local powerType, powerToken = UnitPowerType(self.gwUnit)
         local power = UnitPower(self.gwUnit, powerType)

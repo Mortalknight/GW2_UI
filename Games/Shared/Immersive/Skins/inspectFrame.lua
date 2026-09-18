@@ -224,7 +224,7 @@ end
 GW.SkinInspectFrameBase = SkinInspectFrameBase
 
 -- the classic clients have no talent or glyph panel of their own to skin, the base is their whole skin
-if not (GW.Classic or GW.TBC or GW.Wrath) then return end
+if not (GW.Classic or GW.TBC or GW.Wrath or GW.Forever) then return end
 
 local function LoadInspectFrameSkin()
     GW.RegisterLoadHook(SkinInspectFrameBase, "Blizzard_InspectUI", InspectFrame)

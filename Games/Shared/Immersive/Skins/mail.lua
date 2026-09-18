@@ -7,6 +7,9 @@ local InboxFrame = _G.InboxFrame
 local SendMailFrame = _G.SendMailFrame
 local OpenMailFrame = _G.OpenMailFrame
 
+local InboxPrevPageButton = InboxFrame.PrevPageButton or _G.InboxPrevPageButton
+local InboxNextPageButton = InboxFrame.NextPageButton or _G.InboxNextPageButton
+
 local function ClearSendMailAttachments()
     for i = 1, ATTACHMENTS_MAX_SEND do
         ClickSendMailItemButton(i, true)
@@ -152,7 +155,7 @@ local function SkinOpenMailFrame()
     OpenAllMail:GwSkinButton(false, true)
     OpenAllMail:ClearAllPoints()
     OpenAllMail:SetPoint("CENTER",InboxFrame,"BOTTOM",0,114)
-    if GW.Retail then
+    if GW.isModern then
         GW.HandleTrimScrollBar(OpenMailScrollFrame.ScrollBar)
         GW.HandleScrollControls(OpenMailScrollFrame)
     else
@@ -228,7 +231,7 @@ local function SkinSendMailFrame()
     GW.MutateInaccessableObject(SendMailNameEditBox, "FontString", setFontColorToWhite)
     GW.MutateInaccessableObject(SendMailSubjectEditBox, "FontString", setFontColorToWhite)
 
-    if not GW.Retail then
+    if not GW.isModern then
         MailEditBox.ScrollBox.EditBox:SetTextColor(1, 1, 1)
         MailEditBox.ScrollBox:GwStripTextures()
         MailEditBox.ScrollBox:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 10, 10)
@@ -252,7 +255,7 @@ local function SkinSendMailFrame()
     SendMailCancelButton:GwSkinButton(false, true)
     SendMailMailButton:GwSkinButton(false, true)
 
-    if GW.Retail then
+    if GW.isModern then
         SendMailScrollFrame:GwStripTextures(true)
         GW.HandleTrimScrollBar(SendMailScrollFrame.ScrollBar)
         GW.HandleScrollControls(SendMailScrollFrame)
@@ -317,14 +320,14 @@ local function ClearMailTextures()
     MailFrame:GwStripTextures()
     InboxFrame:GwStripTextures()
     SendMailFrame:GwStripTextures()
-    if GW.Retail then
+    if GW.isModern then
         SendMailScrollFrame:GwStripTextures(true)
     end
     OpenMailFrame:GwStripTextures()
     OpenMailScrollFrame:GwStripTextures()
     OpenMailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
-    if GW.Retail then
+    if GW.isModern then
         SendMailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
     end
     GW.HandlePortraitFrameArt(MailFrame)

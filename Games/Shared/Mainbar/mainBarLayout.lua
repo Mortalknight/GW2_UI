@@ -218,7 +218,12 @@ local function LoadMainbarLayout()
     end
     l:SetFrameRef("UIP", UIParent)
 
-    RegisterStateDriver(l, "barlayout", "[overridebar] obar; [vehicleui] vbar; [petbattle] petb; [combat] incombat; none")
+    -- protected: the forever beta ships Blizzard_EnvironmentCleanup without the
+    -- Blizzard_RestrictedAddOnEnvironment dependency for its game type (camelot), so the
+    -- secure snippet compiler is gone before it is captured and every state driver
+    -- registration errors inside blizzards code. The layout manager has to come up
+    -- regardless - the out of combat handler and the bar callbacks still drive it
+    xpcall(RegisterStateDriver, geterrorhandler(), l, "barlayout", "[overridebar] obar; [vehicleui] vbar; [petbattle] petb; [combat] incombat; none")
 
     l:RegisterEvent("PLAYER_REGEN_ENABLED")
     l:SetScript("OnEvent", function(self)

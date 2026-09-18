@@ -3,6 +3,7 @@ local GW = select(2, ...)
 
 -------------------------------------------------------LFGDungeonReadyStatus-------------------------------------------------------
 local function SkinLFGDungeonReadyStatus()
+    if not LFGDungeonReadyPopup_Update then return end
     local SkinLFGDungeonReadyStatus_OnUpdate = function()
         LFGDungeonReadyStatus.Border:Hide()
         LFGDungeonReadyStatusCloseButton:GwSkinButton(true)
@@ -18,6 +19,7 @@ end
 
 -------------------------------------------------------LFGDungeonReadyDialog-------------------------------------------------------
 local function SkinLFGDungeonReadyDialog()
+    if not LFGDungeonReadyPopup_Update then return end
     local SkinLFGDungeonReadyDialog_OnUpdate = function()
         LFGDungeonReadyDialog:GwStripTextures()
 
@@ -39,6 +41,7 @@ end
 
 -------------------------------------------------------LFDRoleCheckPopup-------------------------------------------------------
 local function SkinLFDRoleCheckPopup()
+    if not LFDRoleCheckPopup_Update then return end
     local SkinLFDRoleCheckPopup_OnUpdate = function()
         LFDRoleCheckPopup:GwCreateBackdrop(GW.BackdropTemplates.Default)
         LFDRoleCheckPopup.Border:Hide()

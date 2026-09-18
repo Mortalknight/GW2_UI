@@ -94,7 +94,7 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
     end
     if self.event then
         self:TryShowRewardsTooltip()
-    elseif GW.Retail and IsInGroup() and self.questID then
+    elseif GW.isModern and IsInGroup() and self.questID then
         GameTooltip:ClearAllPoints()
         GameTooltip:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, 0)
         GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
@@ -146,7 +146,7 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     self.turnin:SetScript("OnShow", self.turnin.WiggleAnimation)
     self.turnin:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetDebugName()) end)
     self.turnin:SetScript("OnClick",function(btn)
-        if GW.Retail then
+        if GW.isModern then
             ShowQuestComplete(self.questID)
         else
             ShowQuestComplete(self.questLogIndex)
@@ -157,7 +157,7 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     self.popupQuestAccept:SetScript("OnShow", self.popupQuestAccept.WiggleAnimation)
     self.popupQuestAccept:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetDebugName()) end)
     self.popupQuestAccept:SetScript("OnClick", function(btn)
-         if GW.Retail then
+         if GW.isModern then
             ShowQuestOffer(self.questID)
         else
             ShowQuestOffer(self.questLogIndex)
@@ -169,7 +169,7 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     self.groupButton:SetScript("OnEnter", self.groupButton.OnEnter)
     self.groupButton:SetScript("OnLeave", self.groupButton.OnLeave)
 
-    if GW.Retail and QuestObjectiveFindGroupButtonMixin then
+    if GW.isModern and QuestObjectiveFindGroupButtonMixin then
         local secureButton = CreateFrame("Button", nil, self, "QuestObjectiveFindGroupButtonTemplate")
         secureButton:SetSize(25, 25)
         secureButton:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, -25)
@@ -506,10 +506,10 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
         return
     end
 
-    if GW.Retail or GW.Mists or GW.TBC or GW.Wrath then
+    if GW.isModern or GW.Mists or GW.TBC or GW.Wrath then
         if self.questLogIndex then
             local link, item, charges, showWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
-            local isComplete = GW.Retail and (self.questID and QuestCache:Get(self.questID):IsComplete()) or self.isComplete
+            local isComplete = GW.isModern and (self.questID and QuestCache:Get(self.questID):IsComplete()) or self.isComplete
             if item and (not isComplete or showWhenComplete) then
                 self.hasItem = true
                 btn.questLogIndex = self.questLogIndex

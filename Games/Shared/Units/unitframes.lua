@@ -1200,7 +1200,7 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
     unitframe:RegisterUnitEvent("UNIT_DISPLAYPOWER", unit)
 
-    if GW.Retail or GW.Mists then
+    if GW.isModern or GW.Mists then
         unitframe:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", unit)
     end
 

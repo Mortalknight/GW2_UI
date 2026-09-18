@@ -276,13 +276,13 @@ local function LoadHealthGlobe()
     hg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     hg:RegisterUnitEvent("UNIT_FACTION", "player")
 
-    if GW.Retail or GW.Mists then
+    if GW.isModern or GW.Mists then
         hg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     elseif GW.Classic then
        hg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     end
 
-    if GW.Retail then
+    if GW.isModern then
         hg:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     end
 

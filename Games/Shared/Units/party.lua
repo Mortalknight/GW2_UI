@@ -17,7 +17,7 @@ local GW_PORTRAIT_BACKGROUND = {
 local partyFrames = {}
 local healtTextColorCurve
 local previewMode = false
-local SUMMON_ICON_PREFIX = GW.Retail and "RaidFrame-Icon-" or "Raid-Icon-"
+local SUMMON_ICON_PREFIX = GW.isModern and "RaidFrame-Icon-" or "Raid-Icon-"
 local PARTY_HORIZONTAL_AURA_SIZE = 16
 local PARTY_HORIZONTAL_AURAS_PER_ROW = 4
 local PARTY_HORIZONTAL_PET_AURA_SIZE = 12
@@ -110,7 +110,7 @@ end
 
 local function ForceUpdateAuras(frame)
     if not frame then return end
-    if GW.Retail and frame.aurasContainer then
+    if GW.isModern and frame.aurasContainer then
         UpdatePartyAuraContainer(frame)
     elseif frame.auras and frame.auras.ForceUpdate then
         frame.auras:ForceUpdate()
@@ -137,7 +137,7 @@ local function SyncAuraContainerHeight(frame)
     if not frame or not frame.auras then return 0 end
 
     local auraHeight
-    if GW.Retail and frame.aurasContainer then
+    if GW.isModern and frame.aurasContainer then
         -- the container sizes itself via its flow layout; the height can be a secret
         -- value in combat — fall back to a single row then
         local height = frame.aurasContainer:GetHeight()
@@ -286,7 +286,7 @@ local function FilterAura(element, unit, data)
     if data.isHelpfulAura then
         return data and data.name
     else
-        if GW.Retail then
+        if GW.isModern then
             if not GW.settings.unitframes.party.showDebuffs then
                 return false
             end
@@ -371,13 +371,13 @@ function GwPartyFrameMixin:UpdateAwayData()
     local phaseReason
     local portraitIndex = 1
 
-    if GW.Retail then
+    if GW.isModern then
         phaseReason = UnitPhaseReason(self.gwUnit)
     else
         phaseReason = not UnitInPhase(self.gwUnit)
     end
 
-    if not readyCheckStatus and not UnitHasIncomingResurrection(self.gwUnit) and not (GW.Retail and C_IncomingSummon.HasIncomingSummon(self.gwUnit)) then
+    if not readyCheckStatus and not UnitHasIncomingResurrection(self.gwUnit) and not (GW.isModern and C_IncomingSummon.HasIncomingSummon(self.gwUnit)) then
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
         SetClassIcon(self.classicon, select(3, UnitClass(self.gwUnit)))
     end
@@ -392,14 +392,14 @@ function GwPartyFrameMixin:UpdateAwayData()
 
     if UnitHasIncomingResurrection(self.gwUnit) then
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
-        if GW.Retail then
+        if GW.isModern then
             self.classicon:SetAtlas("RaidFrame-Icon-Rez")
         else
             self.classicon:SetTexture("Interface/RaidFrame/Raid-Icon-Rez")
         end
     end
 
-    local status = (GW.Retail or GW.TBC or GW.Wrath) and C_IncomingSummon.IncomingSummonStatus(self.gwUnit) or 0
+    local status = (GW.isModern or GW.TBC or GW.Wrath) and C_IncomingSummon.IncomingSummonStatus(self.gwUnit) or 0
     if status ~= 0 then --Enum.SummonStatus.None
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
         if status == Enum.SummonStatus.Pending then
@@ -446,7 +446,7 @@ function GwPartyFrameMixin:UpdatePortrait()
 
     SetPortraitTexture(self.portrait, self.gwUnit)
     local phaseReason
-    if GW.Retail then
+    if GW.isModern then
         phaseReason = UnitPhaseReason(self.gwUnit)
     else
         phaseReason = not UnitInPhase(self.gwUnit)
@@ -478,7 +478,7 @@ function GwPartyFrameMixin:UpdateHealthTextString(healthCur, healthPrec, healthM
         return
     end
 
-    if GW.Retail then
+    if GW.isModern then
         local formatFunc = GW.settings.unitframes.party.shortHealthValues and GW.ShortValue or BreakUpLargeNumbers
 
         if GW.settings.unitframes.party.healthValue == "PREC" then
@@ -684,7 +684,7 @@ local function CreatePartyFrame(i, isPlayer)
     end
 
     local hg = frame.healthContainer
-    if GW.Retail then
+    if GW.isModern then
         frame.absorbOverlay = hg.health.overDamageAbsorbIndicator
         frame.antiHeal      = hg.healAbsorb
         frame.health        = hg.health
@@ -768,7 +768,7 @@ local function CreatePartyFrame(i, isPlayer)
     petFrame.isPet = true
 
     local phg = petFrame.healthContainer
-    if GW.Retail then
+    if GW.isModern then
         petFrame.absorbOverlay = phg.health.overDamageAbsorbIndicator
         petFrame.antiHeal      = phg.healAbsorb
         petFrame.health        = phg.health
@@ -903,13 +903,13 @@ local function CreatePartyFrame(i, isPlayer)
     end
     petFrame:RegisterUnitEvent("UNIT_PET", registerUnit)
     for _, ev in ipairs({ "UNIT_AURA", "UNIT_LEVEL", "UNIT_PHASE", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_POWER_UPDATE", "UNIT_MAXPOWER", "UNIT_NAME_UPDATE", "UNIT_HEAL_PREDICTION" }) do
-        if ev ~= "UNIT_AURA" or not GW.Retail then -- on Retail the AuraContainer handles aura updates itself
+        if ev ~= "UNIT_AURA" or not GW.isModern then -- on Retail the AuraContainer handles aura updates itself
             petFrame:RegisterUnitEvent(ev, petUnit)
         end
     end
     petFrame:OnEvent("load")
 
-    if GW.Retail or GW.Mists then
+    if GW.isModern or GW.Mists then
         petFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", petUnit)
         petFrame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", petUnit)
     elseif GW.Classic then
@@ -974,17 +974,17 @@ local function CreatePartyFrame(i, isPlayer)
         frame:RegisterEvent(ev)
     end
     for _, ev in ipairs({ "UNIT_AURA", "UNIT_LEVEL", "UNIT_PHASE", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_POWER_FREQUENT", "UNIT_MAXPOWER", "UNIT_NAME_UPDATE", "UNIT_MODEL_CHANGED", "UNIT_HEAL_PREDICTION", "UNIT_THREAT_SITUATION_UPDATE", "UNIT_PORTRAIT_UPDATE", "UNIT_CONNECTION" }) do
-        if ev ~= "UNIT_AURA" or not GW.Retail then -- on Retail the AuraContainer handles aura updates itself
+        if ev ~= "UNIT_AURA" or not GW.isModern then -- on Retail the AuraContainer handles aura updates itself
             frame:RegisterUnitEvent(ev, registerUnit)
         end
     end
     frame:SetScript("OnEvent", frame.OnEvent)
 
-    if GW.Retail then
+    if GW.isModern then
         frame:RegisterEvent("INCOMING_SUMMON_CHANGED")
     end
 
-    if GW.Retail or GW.Mists then
+    if GW.isModern or GW.Mists then
         frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
         frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", registerUnit)
     elseif GW.Classic then

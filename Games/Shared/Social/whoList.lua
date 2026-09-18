@@ -13,6 +13,7 @@ local function ReskinWhoFrameButton(button)
 end
 
 function GW.SkinWhoList()
+    if GW.Forever then return end
     WhoFrameTotals:SetTextColor(1, 1, 1)
     WhoFrameListInset:SetAlpha(0)
 

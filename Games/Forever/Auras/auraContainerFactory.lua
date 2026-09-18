@@ -278,10 +278,17 @@ GW.ForEachAuraContainerButton = ForEachContainerButton
 
 local PANDEMIC_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/pandemic-glow.png"
 
--- Remove* takes a raw list index and table.removes it — stored indices go stale as
--- soon as the list changes. The registered texture keeps its identity (the inbound
--- wrapper returns the same object), so the index is looked up at removal time instead
-local function RemoveDispelTypeTextureByIdentity(button, texture)
+-- The Add*/Remove* API changed with 12.1.5: up to 12.1.0 Add* returns a list index and
+-- Remove* takes one (stored indices go stale as soon as the list changes), from 12.1.5 on
+-- Add* returns nothing and Remove* takes the region itself. Whether the client hands back
+-- an index on Add decides the removal path. The registered texture keeps its identity
+-- (the inbound wrapper returns the same object), so on the index clients the index is
+-- looked up at removal time instead of being stored
+local function RemoveDispelTypeTextureByIdentity(button, texture, indexed)
+    if not indexed then
+        button:RemoveDispelTypeTexture(texture)
+        return
+    end
     for i = button:GetDispelTypeTextureCount(), 1, -1 do
         if button:GetDispelTypeTexture(i) == texture then
             button:RemoveDispelTypeTexture(i)
@@ -291,21 +298,25 @@ local function RemoveDispelTypeTextureByIdentity(button, texture)
 end
 
 -- Both regions are engine driven and their Shown state becomes a secret aspect on
--- registration — the opt out therefore DE-REGISTERS the region (Remove*) instead of
--- hiding it. A removed region keeps its last engine state, so its texture content is
--- cleared to render nothing; re-enabling restores it and registers again.
+-- registration — the opt out therefore DE-REGISTERS the region (Remove*/Clear*) instead
+-- of hiding it. A removed region keeps its last engine state, so its texture content is
+-- cleared to render nothing; re-enabling restores it and registers again. Registering
+-- the same region twice raises an error since 12.1.5, so the registration is tracked
+-- by an own flag, never by what Add* returns
 local function ApplyAuraOptionRegions(button)
     local pandemic = button.gwPandemicRegion
     if pandemic then
         if button.gwPandemicEnabled() then
-            if not button.gwPandemicIndex then
+            if not button.gwPandemicRegistered then
                 pandemic:SetTexture(PANDEMIC_TEXTURE)
-                button.gwPandemicIndex = button:AddPandemicRegion(pandemic)
+                button:AddPandemicRegion(pandemic)
+                button.gwPandemicRegistered = true
             end
-        elseif button.gwPandemicIndex then
-            -- the buttons only pandemic region is ours, the stored index stays valid
-            button:RemovePandemicRegion(button.gwPandemicIndex)
-            button.gwPandemicIndex = nil
+        elseif button.gwPandemicRegistered then
+            -- the buttons only pandemic region is ours: Clear* exists on every version
+            -- and needs neither an index nor a region
+            button:ClearPandemicRegions()
+            button.gwPandemicRegistered = nil
             pandemic:SetTexture()
         end
     end
@@ -314,11 +325,12 @@ local function ApplyAuraOptionRegions(button)
     if dispelIcon then
         if button.gwDispelIconEnabled() then
             if not button.gwDispelIconRegistered then
-                button:AddDispelTypeTexture(dispelIcon, button.gwDispelIconOptions)
+                local index = button:AddDispelTypeTexture(dispelIcon, button.gwDispelIconOptions)
                 button.gwDispelIconRegistered = true
+                button.gwDispelIconIndexed = index ~= nil
             end
         elseif button.gwDispelIconRegistered then
-            RemoveDispelTypeTextureByIdentity(button, dispelIcon)
+            RemoveDispelTypeTextureByIdentity(button, dispelIcon, button.gwDispelIconIndexed)
             button.gwDispelIconRegistered = nil
             dispelIcon:SetTexture()
         end

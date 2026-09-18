@@ -1,240 +1,506 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local moveDistance, mapX, mapY, mapLeft, mapTop, mapNormalScale, mapEffectiveScale = 0, 0, 0, 0, 0, 1, 0
+local function SkinHeaders(header)
+    if header.gwSkinned then
+        return
+    end
 
-local function HandleDropdownHeaderText(dropdown)
-    for idx, c in pairs({dropdown:GetRegions()}) do
-        if idx > 3 and c:GetObjectType() == "FontString" then
-            c:SetPoint("TOPLEFT", 5, 9)
-            c:SetTextColor(1, 1, 1)
-            break
+    if header.TopFiligree then
+        header.TopFiligree:Hide()
+    end
+
+    header:SetAlpha(0.8)
+
+    header.HighlightTexture:SetAllPoints(header.Background)
+    header.HighlightTexture:SetAlpha(0)
+
+    header.gwSkinned = true
+end
+
+
+local sessionCommandToButtonAtlas = {
+    [_G.Enum.QuestSessionCommand.Start] = "QuestSharing-DialogIcon",
+    [_G.Enum.QuestSessionCommand.Stop] = "QuestSharing-Stop-DialogIcon"
+}
+local function UpdateExecuteCommandAtlases(frame, command)
+    frame.ExecuteSessionCommand:SetNormalTexture("")
+    frame.ExecuteSessionCommand:SetPushedTexture("")
+    frame.ExecuteSessionCommand:SetDisabledTexture("")
+    local atlas = sessionCommandToButtonAtlas[command]
+    if atlas then
+        frame.ExecuteSessionCommand.normalIcon:SetAtlas(atlas)
+    end
+end
+
+
+local function hook_NotifyDialogShow(_, dialog)
+    if not dialog.gwSkinned then
+        dialog:GwStripTextures()
+        dialog:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+        dialog.ButtonContainer.Confirm:GwSkinButton(false, true)
+        dialog.ButtonContainer.Decline:GwSkinButton(false, true)
+        if dialog.MinimizeButton then
+            dialog.MinimizeButton:GwStripTextures()
+            dialog.MinimizeButton:SetSize(16, 16)
+
+            dialog.MinimizeButton.tex = dialog.MinimizeButton:CreateTexture(nil, "OVERLAY")
+            dialog.MinimizeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png")
+            dialog.MinimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png", "ADD")
+        end
+        dialog.gwSkinned = true
+    end
+end
+
+
+local function updateCollapse(self, collapsed)
+    if collapsed then
+        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        self.Icon:SetRotation(1.570796325)
+        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        self:GetHighlightTexture():SetRotation(1.570796325)
+    else
+        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        self.Icon:SetRotation(0)
+        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        self:GetHighlightTexture():SetRotation(0)
+    end
+end
+
+local function hook_QuestLogQuests_Update()
+    for button in QuestScrollFrame.headerFramePool:EnumerateActive() do
+        if button.ButtonText then
+            if not button.gwSkinned then
+                button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+                button.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+                button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+                button:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+
+                if button.CollapseButton then
+                    hooksecurefunc(button.CollapseButton, "UpdateCollapsedState", updateCollapse)
+                end
+
+                button.gwSkinned = true
+            end
+        end
+    end
+
+    for button in QuestScrollFrame.titleFramePool:EnumerateActive() do
+        if not button.gwSkinned then
+            if button.Checkbox then
+                if button.Checkbox then
+                    button.Checkbox:GwStripTextures(true)
+                    button.Checkbox:GwCreateBackdrop("Transparent")
+                end
+            end
+
+            button.gwSkinned = true
+        end
+    end
+
+    for header in QuestScrollFrame.campaignHeaderMinimalFramePool:EnumerateActive() do
+        if header.CollapseButton and not header.gwSkinned then
+            header.minimumCollapsedHeight = 25
+            header.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+            header.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            header.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+            header.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+            header.Highlight:SetColorTexture(1, 0.93, 0.73, 0.25)
+            hooksecurefunc(header.CollapseButton, "UpdateCollapsedState", updateCollapse)
+            header.gwSkinned = true
         end
     end
 end
 
+
+local function mover_OnDragStart(self)
+    self:GetParent():StartMoving()
+end
+
+
+local function mover_OnDragStop(self)
+    self:GetParent():StopMovingOrSizing()
+end
+
+
+local EventsFrameHookedElements = {}
+local function EventsFrameHighlightTexture(element)
+    element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
+    element:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+end
+
+local function EventsFrameBackgroundNormal(element, texture)
+    if texture ~= "Interface/AddOns/GW2_UI/textures/character/menu-hover.png" then
+        element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
+        element:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+
+        local parent = element:GetParent()
+        if parent and parent.Highlight then
+            EventsFrameHighlightTexture(parent.Highlight)
+        end
+    end
+end
+
+local EventsFrameFunctions = {
+    function(element) -- 1: OngoingHeader
+        if not element.Background.backdrop then
+            element.Background:GwStripTextures()
+            element.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+            element.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+        end
+
+        element.Label:SetTextColor(1, 1, 1)
+    end,
+    function(element) -- 2: OngoingEvent
+        if not EventsFrameHookedElements[element] then
+            hooksecurefunc(element.Background, "SetAtlas", EventsFrameBackgroundNormal)
+            EventsFrameHookedElements[element] = element.Background
+        end
+    end,
+    function(element) -- 3: ScheduledHeader
+        if not element.Background.backdrop then
+            element.Background:GwStripTextures()
+            element.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+            element.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+        end
+
+        element.Label:SetTextColor(1, 1, 1)
+    end,
+    function(element) -- 4: ScheduledEvent
+        if element.Highlight then
+            if not element.gwSkinned then
+                GW.AddListItemChildHoverTexture(element)
+
+                element.gwSkinned = true
+            end
+            EventsFrameHighlightTexture(element.Highlight)
+        end
+    end
+}
+
+local function EventsFrameCallback(_, frame, elementData)
+    if not elementData.data then return end
+
+    local func = EventsFrameFunctions[elementData.data.entryType]
+    if func then
+        func(frame)
+    end
+end
+
+local function WorldMap_QuestMapHide(self)
+	if self:GetParent() == QuestModelScene:GetParent() then -- variant of QuestFrame_HideQuestPortrait
+		QuestModelScene:SetParent(nil)
+		QuestModelScene:Hide()
+	end
+end
+
+local function worldMapSkin()
+    WorldMapFrame:GwStripTextures()
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {QuestMapFrame}, nil, false, true)
+
+    WorldMapFrame.gwBodyEdge = WorldMapFrame:CreateTexture(nil, "BACKGROUND", nil, 1)
+    WorldMapFrame.gwBodyEdge:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background.png")
+    WorldMapFrame.gwBodyEdge:SetTexCoord(0.6, 0.65, 0, 1)
+    WorldMapFrame.gwBodyEdge:SetWidth(12)
+    WorldMapFrame.gwBodyEdge:Hide()
+    if WorldMapFrame.backgroundMask then
+        WorldMapFrame.gwBodyEdge:AddMaskTexture(WorldMapFrame.backgroundMask)
+    end
+    WorldMapFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+
+    WorldMapFrame.BorderFrame:GwStripTextures()
+    WorldMapFrame.BorderFrame:SetFrameStrata(WorldMapFrame:GetFrameStrata())
+    WorldMapFrame.BorderFrame.NineSlice:Hide()
+
+    WorldMapFrame.NavBar:GwStripTextures()
+    WorldMapFrame.NavBar.overlay:GwStripTextures()
+    WorldMapFrame.NavBar:SetPoint("TOPLEFT", 1, -47)
+
+    GW.HandleNavBarButtons(WorldMapFrame.NavBar, nil, true)
+
+    WorldMapFrame.NavBar.tex = WorldMapFrame.NavBar:CreateTexture(nil, "BACKGROUND", nil, 0)
+    WorldMapFrame.NavBar.tex:SetPoint("TOPLEFT", WorldMapFrame.NavBar, "TOPLEFT", 0,20)
+    WorldMapFrame.NavBar.tex:SetPoint("BOTTOMRIGHT", WorldMapFrame.NavBar, "BOTTOMRIGHT", 0, -10)
+    WorldMapFrame.NavBar.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header.png")
+
+    WorldMapFrame.NavBar.homeButton:GwStripTextures()
+    local r = {WorldMapFrame.NavBar.homeButton:GetRegions()}
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "FontString" then
+            c:SetTextColor(1, 1, 1, 1)
+            c:SetShadowOffset(0, 0)
+        end
+    end
+
+    WorldMapFrame.NavBar.homeButton.tex = WorldMapFrame.NavBar.homeButton:CreateTexture(nil, "BACKGROUND")
+    WorldMapFrame.NavBar.homeButton.tex :SetPoint("LEFT", WorldMapFrame.NavBar.homeButton, "LEFT")
+    WorldMapFrame.NavBar.homeButton.tex :SetPoint("TOP", WorldMapFrame.NavBar.homeButton, "TOP")
+    WorldMapFrame.NavBar.homeButton.tex :SetPoint("BOTTOM", WorldMapFrame.NavBar.homeButton, "BOTTOM")
+    WorldMapFrame.NavBar.homeButton.tex :SetPoint("RIGHT", WorldMapFrame.NavBar.homeButton, "RIGHT")
+    WorldMapFrame.NavBar.homeButton.tex :SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
+    WorldMapFrame.NavBar.homeButton.tex:SetAlpha(1)
+    WorldMapFrame.NavBar.homeButton.borderFrame = CreateFrame("Frame", nil, WorldMapFrame.NavBar.homeButton, "GwLightButtonBorder")
+
+    WorldMapFrame.ScrollContainer:GwCreateBackdrop()
+    QuestMapFrame:SetPoint("TOPRIGHT",WorldMapFrame,"TOPRIGHT",-3,-32)
+
+    WorldMapFrame.BorderFrame.CloseButton:GwSkinButton(true)
+    WorldMapFrame.BorderFrame.CloseButton:SetSize(20, 20)
+    WorldMapFrame.BorderFrame.CloseButton:SetPoint("TOPRIGHT",-10,-2)
+
+    WorldMapFrame.BorderFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
+
+    local QuestMapFrame = _G.QuestMapFrame
+    QuestMapFrame.VerticalSeparator:Hide()
+    QuestMapFrame:SetScript("OnHide", WorldMap_QuestMapHide)
+
+    QuestMapFrame.DetailsFrame:GwStripTextures(true)
+
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame:GwStripTextures()
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame:GwCreateBackdrop(GW.BackdropTemplates.DopwDown)
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint("TOPLEFT", -3, -14)
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint("BOTTOMRIGHT", -1, 1)
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetBackdropColor(0, 0, 0, 1)
+
+    QuestMapFrame.DetailsFrame.BackFrame:GwStripTextures()
+    QuestMapFrame.DetailsFrame.BackFrame.BackButton:GwSkinButton(false, true)
+    QuestMapFrame.DetailsFrame.BackFrame.BackButton:SetFrameLevel(5)
+    QuestMapFrame.DetailsFrame.AbandonButton:GwStripTextures()
+    QuestMapFrame.DetailsFrame.AbandonButton:GwSkinButton(false, true)
+    QuestMapFrame.DetailsFrame.AbandonButton:GwSkinNegativeButton()
+    QuestMapFrame.DetailsFrame.AbandonButton:SetFrameLevel(5)
+    QuestMapFrame.DetailsFrame.ShareButton:GwStripTextures()
+    QuestMapFrame.DetailsFrame.ShareButton:GwSkinButton(false, true)
+    QuestMapFrame.DetailsFrame.ShareButton:SetFrameLevel(5)
+    QuestMapFrame.DetailsFrame.TrackButton:GwStripTextures()
+    QuestMapFrame.DetailsFrame.TrackButton:GwSkinButton(false, true)
+    QuestMapFrame.DetailsFrame.TrackButton:SetFrameLevel(5)
+    QuestMapFrame.DetailsFrame.TrackButton:SetWidth(95)
+
+    if QuestMapFrame.DetailsFrame.SealMaterialBG then
+        QuestMapFrame.DetailsFrame.SealMaterialBG:SetAlpha(0)
+    end
+
+    if QuestMapFrame.Background then
+        QuestMapFrame.Background:SetAlpha(0)
+    end
+
+    for _, frame in pairs({"HonorFrame", "XPFrame", "SpellFrame", "SkillPointFrame", "ArtifactXPFrame", "TitleFrame", "WarModeBonusFrame"}) do
+        GW.HandleItemReward(_G.MapQuestInfoRewardsFrame[frame], true)
+    end
+    GW.HandleItemReward(_G.MapQuestInfoRewardsFrame.MoneyFrame, true)
+
+    if not GW.QuestInfo_Display_hooked then
+        hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
+        GW.QuestInfo_Display_hooked = true
+    end
+
+    QuestScrollFrame.Contents.Separator.Divider:Hide()
+    QuestScrollFrame.Edge:SetAlpha(0)
+    QuestScrollFrame.BorderFrame:SetAlpha(0)
+    QuestScrollFrame.Background:SetAlpha(0)
+    GW.SkinTextBox(QuestScrollFrame.SearchBox.Middle, QuestScrollFrame.SearchBox.Left, QuestScrollFrame.SearchBox.Right)
+    -- the quest count pill next to the search box: same input box art, forever shows it
+    -- (QuestLogQuests_ShowQuestCount), retail keeps it hidden
+    if QuestLogCount and QuestLogCount.Middle then
+        GW.SkinTextBox(QuestLogCount.Middle, QuestLogCount.Left, QuestLogCount.Right)
+        if QuestLogQuestCount then
+            -- blizzard only colors the numbers, the label keeps the font objects yellow
+            QuestLogQuestCount:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+            QuestLogQuestCount:SetTextColor(1, 1, 1)
+        end
+    end
+
+    SkinHeaders(QuestScrollFrame.Contents.StoryHeader)
+    QuestScrollFrame.ScrollBar:GwSkinScrollBar()
+    QuestScrollFrame:GwSkinScrollFrame()
+
+    GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar)
+    GW.HandleScrollControls(QuestScrollFrame)
+
+    GW.HandleTrimScrollBar(QuestMapDetailsScrollFrame.ScrollBar)
+    GW.HandleScrollControls(QuestMapDetailsScrollFrame)
+
+    GW.HandleNextPrevButton(WorldMapFrame.SidePanelToggle.CloseButton, "left")
+    GW.HandleNextPrevButton(WorldMapFrame.SidePanelToggle.OpenButton, "right")
+
+    WorldMapFrame.BorderFrame.Tutorial:GwKill()
+
+    do
+        -- the overlay frames are positional on retail; forever stores the two tracking
+        -- buttons as fields and may leave either out by game rule
+        local overlays = WorldMapFrame.overlayFrames
+        local dropdown = overlays[1]
+        local Tracking = WorldMapFrame.WorldMapTrackingOptionsButton or overlays[2]
+        local Pin = WorldMapFrame.WorldMapTrackingPinButton or overlays[3]
+        dropdown:GwHandleDropDownBox()
+
+        if Tracking and Tracking.Icon then
+            local function SetTrackingIcon()
+                Tracking.Icon:SetTexture(136460) -- Interface\Minimap\Tracking/None
+            end
+            SetTrackingIcon()
+            Tracking:SetHighlightTexture(136460, "ADD")
+
+            local TrackingHighlight = Tracking:GetHighlightTexture()
+            TrackingHighlight:SetAllPoints(Tracking.Icon)
+
+            if not Tracking.Background then
+                -- forever: a bare dropdown atlas button without the round minimap art of
+                -- retail, and it swaps its icon atlas on every click - keep our icon on it,
+                -- centered and plain like the pin button next to it
+                hooksecurefunc(Tracking.Icon, "SetAtlas", SetTrackingIcon)
+                Tracking.Icon:ClearAllPoints()
+                Tracking.Icon:SetPoint("CENTER", Tracking, "CENTER", 0, 0)
+                Tracking.Icon:SetSize(20, 20)
+            end
+        end
+
+        if Pin and Pin.Icon then
+            Pin.Icon:SetAtlas("Waypoint-MapPin-Untracked")
+            Pin.ActiveTexture:SetAtlas("Waypoint-MapPin-Tracked")
+            Pin.ActiveTexture:SetAllPoints(Pin.Icon)
+            Pin:SetHighlightTexture(3500068, "ADD") -- Interface\Waypoint\WaypoinMapPinUI
+
+            local PinHighlight = Pin:GetHighlightTexture()
+            PinHighlight:SetAllPoints(Pin.Icon)
+            PinHighlight:SetTexCoord(0.3203125, 0.5546875, 0.015625, 0.484375)
+        end
+    end
+
+    QuestMapFrame.QuestSessionManagement:GwStripTextures()
+
+    local ExecuteSessionCommand = QuestMapFrame.QuestSessionManagement.ExecuteSessionCommand
+    ExecuteSessionCommand:GwStripTextures()
+    ExecuteSessionCommand:GwStyleButton()
+
+    local icon = ExecuteSessionCommand:CreateTexture(nil, "ARTWORK")
+    icon:SetPoint("TOPLEFT", 0, 0)
+    icon:SetPoint("BOTTOMRIGHT", 0, 0)
+    ExecuteSessionCommand.normalIcon = icon
+
+    hooksecurefunc(QuestMapFrame.QuestSessionManagement, "UpdateExecuteCommandAtlases", UpdateExecuteCommandAtlases)
+    hooksecurefunc(QuestSessionManager, "NotifyDialogShow", hook_NotifyDialogShow)
+    hooksecurefunc("QuestLogQuests_Update", hook_QuestLogQuests_Update)
+
+    -- Addons
+    if _G["AtlasLootToggleFromWorldMap2"] then
+        local button = _G["AtlasLootToggleFromWorldMap2"]
+        button:SetNormalTexture("Interface/Icons/INV_Box_01")
+        button:SetWidth(16)
+        button:SetHeight(16)
+        button:SetHighlightTexture("Interface/Buttons/ButtonHilight-Square", "ADD")
+    end
+
+    -- player pin
+    for pin in WorldMapFrame:EnumeratePinsByTemplate("GroupMembersPinTemplate") do
+        pin:SetPinTexture("player", "Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
+        pin.dataProvider:GetUnitPinSizesTable().player = 34
+        pin:SynchronizePinSizes()
+        break
+    end
+
+    -- Mover
+    if not GW.HasDeModal then
+        WorldMapFrame.mover = CreateFrame("Frame", nil, WorldMapFrame)
+        WorldMapFrame.mover:EnableMouse(true)
+        WorldMapFrame:SetMovable(true)
+        WorldMapFrame.mover:SetSize(WorldMapFrame:GetWidth(), 30)
+        WorldMapFrame.mover:SetPoint("BOTTOMLEFT", WorldMapFrame, "TOPLEFT", 0, -20)
+        WorldMapFrame.mover:SetPoint("BOTTOMRIGHT", WorldMapFrame, "TOPRIGHT", 0, 20)
+        WorldMapFrame.mover:RegisterForDrag("LeftButton")
+        WorldMapFrame.mover:SetScript("OnDragStart", mover_OnDragStart)
+        WorldMapFrame.mover:SetScript("OnDragStop", mover_OnDragStop)
+    end
+
+    WorldMapFrame:SetClampedToScreen(true)
+    WorldMapFrame:SetClampRectInsets(0, 0, WorldMapFrameHeader:GetHeight() - 30, 0)
+
+    -- 11.0 Map Legend
+    QuestMapFrame.MapLegend.TitleText:SetFont(STANDARD_TEXT_FONT, 16)
+    QuestMapFrame.MapLegend.BorderFrame:SetAlpha(0)
+    MapLegendScrollFrame:GwStripTextures()
+    MapLegendScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    GW.HandleTrimScrollBar(MapLegendScrollFrame.ScrollBar)
+    -- 11.1 Side Tabs
+    local function SkinQuestMapTab(tab, lastTab)
+        GW.HandleTabs(tab, "right", {tab.Icon}, true)
+        tab:ClearAllPoints()
+        if lastTab then
+            tab:SetPoint("TOP", lastTab, "BOTTOM", 0, 1)
+        else
+            tab:SetPoint("TOPLEFT", QuestMapFrame, "TOPRIGHT", 0, -28)
+        end
+
+        -- straight body edge behind the tab column, see gwBodyEdge above
+        local edge = WorldMapFrame.gwBodyEdge
+        if edge then
+            if not lastTab then
+                edge:ClearAllPoints()
+                edge:SetPoint("RIGHT", WorldMapFrame.tex, "RIGHT", 0, 0)
+                edge:SetPoint("TOP", tab, "TOP", 0, 2)
+            end
+            edge:SetPoint("BOTTOM", tab, "BOTTOM", 0, -2)
+            edge:Show()
+        end
+    end
+
+    local lastTab = nil
+    for _, tab in ipairs(QuestMapFrame.TabButtons) do
+        SkinQuestMapTab(tab, lastTab)
+        lastTab = tab
+    end
+    -- add a delay here so that other addons can add there tabs to that array
+    C_Timer.After(2, function()
+        lastTab = nil
+        for _, tab in ipairs(QuestMapFrame.TabButtons) do
+            SkinQuestMapTab(tab, lastTab)
+            lastTab = tab
+        end
+
+        if C_AddOns.IsAddOnLoaded("WorldQuestTab") then
+            SkinQuestMapTab(WQT_QuestMapTab, lastTab)
+
+            FML:GwHandleDropDownBox()
+            WQT_ListContainer.TopBar.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+            WQT_ListContainer.TopBar.FilterDropdown:SetWidth(125)
+            GW.HandleTrimScrollBar(WQT_ListContainer.ScrollBar)
+            GW.HandleScrollControls(WQT_ListContainer)
+            WQTBorder:GwStripTextures()
+            WQT_ListContainer.Background:GwKill()
+            WQT_ListContainer:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+        end
+    end)
+
+    -- 11.1 Event Tab
+    QuestMapFrame.EventsFrame.TitleText:SetFont(STANDARD_TEXT_FONT, 16)
+    QuestMapFrame.EventsFrame.BorderFrame:SetAlpha(0)
+    QuestMapFrame.EventsFrame:GwStripTextures()
+    QuestMapFrame.EventsFrame.ScrollBox.Background:SetDrawLayer("BACKGROUND", -1)
+    QuestMapFrame.EventsFrame.ScrollBox.Background:SetVertexColor(1, 0, 1)
+    QuestMapFrame.EventsFrame.ScrollBox.Background:SetAlpha(0.9)
+    QuestMapFrame.EventsFrame.ScrollBox:GwStripTextures()
+    QuestMapFrame.EventsFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+
+    for _, region in next, { QuestMapFrame.EventsFrame:GetRegions() } do
+        if region:IsObjectType("Texture") then
+            region:Hide()
+
+            break
+        end
+    end
+
+    GW.HandleTrimScrollBar(QuestMapFrame.EventsFrame.ScrollBar)
+
+    ScrollUtil.AddAcquiredFrameCallback(QuestMapFrame.EventsFrame.ScrollBox, EventsFrameCallback, QuestMapFrame.EventsFrame, true)
+end
+
 local function LoadWorldMapSkin()
     if not GW.settings.skins.worldmap.enabled then return end
-    WorldMapFrame:GwStripTextures()
-    WorldMapFrame.BlackoutFrame:GwKill()
 
-    local headerText
-    local r = {WorldMapFrame.BorderFrame:GetRegions()}
-    for _,c in pairs(r) do
-        if c:GetObjectType() == "Texture" then
-            c:Hide()
-        elseif c:GetObjectType() == "FontString" then
-            headerText = c
-        end
-    end
-
-    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon.png", nil, 30, nil, true)
-    WorldMapFrame.gwHeader.BGLEFT:SetWidth(100)
-    WorldMapFrame.gwHeader.BGRIGHT:SetWidth(WorldMapFrame.BorderFrame:GetWidth())
-    WorldMapFrame.BorderFrame:GwStripTextures()
-    WorldMapFrame.MiniBorderFrame:GwStripTextures()
-
-    -- for questie
-    WorldMapFrame.BorderFrame.headerText = WorldMapFrame.BorderFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    WorldMapFrame.BorderFrame.headerText:SetAlpha(0)
-
-    WorldMapFrame.BorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-    WorldMapFrame.MiniBorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-
-    WorldMapContinentDropdown:GwHandleDropDownBox()
-    WorldMapZoneDropdown:GwHandleDropDownBox()
-    WorldMapZoneMinimapDropdown:GwHandleDropDownBox()
-    HandleDropdownHeaderText(WorldMapContinentDropdown)
-    HandleDropdownHeaderText(WorldMapZoneDropdown)
-    HandleDropdownHeaderText(WorldMapZoneMinimapDropdown)
-
-    WorldMapZoneMinimapDropdown:ClearAllPoints()
-    WorldMapZoneMinimapDropdown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 6, -45)
-    WorldMapZoneMinimapDropdown:SetHeight(25)
-    WorldMapContinentDropdown:ClearAllPoints()
-    WorldMapContinentDropdown:SetPoint("LEFT", WorldMapZoneMinimapDropdown, "RIGHT", 0, 0)
-    WorldMapContinentDropdown:SetWidth(205)
-    WorldMapContinentDropdown:SetHeight(25)
-    WorldMapZoneDropdown:SetPoint("LEFT", WorldMapContinentDropdown, "RIGHT", 0, 0)
-    WorldMapZoneDropdown:SetWidth(205)
-    WorldMapZoneDropdown:SetHeight(25)
-
-    WorldMapZoomOutButton:SetPoint("LEFT", WorldMapZoneDropdown, "RIGHT", 3, 1)
-    WorldMapZoomOutButton:SetHeight(21)
-    WorldMapZoomOutButton:GwSkinButton(false, true)
-
-    WorldMapFrameCloseButton:GwSkinButton(true)
-    WorldMapFrameCloseButton:SetSize(20, 20)
-    WorldMapFrameCloseButton:ClearAllPoints()
-    WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 0, 0)
-    hooksecurefunc(WorldMapFrameCloseButton, "SetPoint", function(self)
-        if not WorldMapFrameCloseButton.gwSkipSetPoint then
-            WorldMapFrameCloseButton.gwSkipSetPoint = true
-            WorldMapFrameCloseButton:ClearAllPoints()
-            WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 0, 0)
-            WorldMapFrameCloseButton.gwSkipSetPoint = false
-        end
-    end)
-
-    WorldMapFrameCloseButton:SetFrameLevel(WorldMapFrameCloseButton:GetFrameLevel() + 2)
-
-    WorldMapFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
-
-    --ShowUIPanel(WorldMapFrame)
-    WorldMapFrame:SetAttribute("UIPanelLayout-area", "center")
-    WorldMapFrame:SetAttribute("UIPanelLayout-enabled", false)
-    WorldMapFrame:SetAttribute("UIPanelLayout-allowOtherPanels", true)
-    WorldMapFrame:SetIgnoreParentScale(false)
-    WorldMapFrame.ScrollContainer:SetIgnoreParentScale(false)
-    WorldMapFrame.HandleUserActionToggleSelf = function()
-        if WorldMapFrame:IsShown() then WorldMapFrame:Hide() else WorldMapFrame:Show() end
-    end
-
-    --HideUIPanel(WorldMapFrame)
-
-    table.insert(UISpecialFrames, "WorldMapFrame")
-    WorldMapFrame:SetScale(GW.settings.skins.worldmap.scale)
-    WorldMapFrame:EnableKeyboard(false)
-    WorldMapFrame:EnableMouse(true)
-    WorldMapFrame:SetFrameStrata("HIGH")
-
-    WorldMapTooltip:SetFrameLevel(WorldMapFrame.ScrollContainer:GetFrameLevel() + 110)
-
-    -- Enable movement
-    WorldMapFrame:SetMovable(true)
-    WorldMapFrame:RegisterForDrag("LeftButton")
-
-    WorldMapFrame:SetScript("OnDragStart", function()
-        WorldMapFrame:StartMoving()
-    end)
-
-    WorldMapFrame:SetScript("OnDragStop", function()
-        WorldMapFrame:StopMovingOrSizing()
-        WorldMapFrame:SetUserPlaced(false)
-        -- Save map frame position
-        local pos = GW.settings.skins.worldmap.pos
-        if pos then
-            wipe(pos)
-        else
-            pos = {}
-        end
-        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-        GW.settings.skins.worldmap.pos = pos
-    end)
-
-    -- Set position on startup
-    WorldMapFrame:HookScript("OnShow", function()
-        local pos = GW.settings.skins.worldmap.pos
-        WorldMapFrame:ClearAllPoints()
-        WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-    end)
-
-   -- Create scale handle
-    -- Replace function to account for frame scale
-    WorldMapFrame.ScrollContainer.GetCursorPosition = function(f)
-        local x,y = MapCanvasScrollControllerMixin.GetCursorPosition(f)
-        local s = WorldMapFrame:GetScale() * UIParent:GetEffectiveScale()
-        return x/s, y/s
-    end
-
-    local scaleHandle = CreateFrame("Frame", nil, WorldMapFrame)
-    scaleHandle:SetWidth(50)
-    scaleHandle:SetHeight(50)
-    scaleHandle:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT", -10, 30)
-    scaleHandle:SetFrameStrata(WorldMapFrame:GetFrameStrata())
-    scaleHandle:SetFrameLevel(WorldMapFrame:GetFrameLevel() + 15)
-
-    scaleHandle.t = scaleHandle:CreateTexture(nil, "OVERLAY")
-    scaleHandle.t:SetAllPoints()
-    scaleHandle.t:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
-    scaleHandle.t:SetDesaturated(true)
-
-    -- Create scale frame
-    local scaleMouse = CreateFrame("Frame", nil, WorldMapFrame)
-    scaleMouse:SetFrameStrata(WorldMapFrame:GetFrameStrata())
-    scaleMouse:SetFrameLevel(WorldMapFrame:GetFrameLevel() + 20)
-    scaleMouse:SetAllPoints(scaleHandle)
-    scaleMouse:EnableMouse(true)
-    scaleMouse:SetScript("OnEnter", function() scaleHandle.t:SetDesaturated(false) end)
-    scaleMouse:SetScript("OnLeave", function() scaleHandle.t:SetDesaturated(true) end)
-
-    -- Click handlers
-    scaleMouse:SetScript("OnMouseDown",function(frame)
-        mapLeft, mapTop = WorldMapFrame:GetLeft(), WorldMapFrame:GetTop()
-        mapNormalScale = WorldMapFrame:GetScale()
-        mapX, mapY = mapLeft, mapTop - (UIParent:GetHeight() / mapNormalScale)
-        mapEffectiveScale = WorldMapFrame:GetEffectiveScale()
-        moveDistance = GW.GetScaledCursorDistance(mapLeft, mapTop, mapEffectiveScale)
-        frame:SetScript("OnUpdate", function()
-            local scale = GW.GetScaledCursorDistance(mapLeft, mapTop, mapEffectiveScale) / moveDistance * mapNormalScale
-            if scale < 0.2 then	scale = 0.2	elseif scale > 3.0 then	scale = 3.0	end
-            WorldMapFrame:SetScale(scale)
-            local s = mapNormalScale / WorldMapFrame:GetScale()
-            local x = mapX * s
-            local y = mapY * s
-            WorldMapFrame:ClearAllPoints()
-            WorldMapFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
-        end)
-        frame:SetAllPoints(UIParent)
-    end)
-
-    scaleMouse:SetScript("OnMouseUp", function(frame)
-        frame:SetScript("OnUpdate", nil)
-        frame:SetAllPoints(scaleHandle)
-        GW.settings.skins.worldmap.scale = WorldMapFrame:GetScale()
-        WorldMapFrame:SetScale(WorldMapFrame:GetScale())
-        -- Save map frame position
-        local pos = GW.settings.skins.worldmap.pos
-        if pos then
-            wipe(pos)
-        else
-            pos = {}
-        end
-        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-        GW.settings.skins.worldmap.pos = pos
-    end)
-
-    -- Function to set position after Leatrix_Maps has loaded
-    local function LeatrixMapsFix()
-        hooksecurefunc(WorldMapFrame, "Show", function()
-            local pos = GW.settings.skins.worldmap.pos
-            WorldMapFrame:ClearAllPoints()
-            WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-
-            WorldMapFrame:SetScript("OnDragStart", function()
-                WorldMapFrame:StartMoving()
-            end)
-
-            WorldMapFrame:SetScript("OnDragStop", function()
-                WorldMapFrame:StopMovingOrSizing()
-                WorldMapFrame:SetUserPlaced(false)
-                -- Save map frame position
-                local pos = GW.settings.skins.worldmap.pos
-                if pos then
-                    wipe(pos)
-                else
-                    pos = {}
-                end
-                pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-                GW.settings.skins.worldmap.pos = pos
-            end)
-        end)
-    end
-
-    -- Run function when Carbonite has loaded
-    if C_AddOns.IsAddOnLoaded("Leatrix_Maps") then
-        LeatrixMapsFix()
-    else
-        local waitFrame = CreateFrame("FRAME")
-        waitFrame:RegisterEvent("ADDON_LOADED")
-        waitFrame:SetScript("OnEvent", function(_, _, arg1)
-            if arg1 == "Leatrix_Maps" then
-                LeatrixMapsFix()
-                waitFrame:UnregisterAllEvents()
-            end
-        end)
-    end
-
-    if Questie_Toggle then Questie_Toggle:GwSkinButton(false, true) end
+    GW.RegisterLoadHook(worldMapSkin, "Blizzard_WorldMap", WorldMapFrame)
 end
 GW.LoadWorldMapSkin = LoadWorldMapSkin

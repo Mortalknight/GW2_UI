@@ -7,7 +7,8 @@ local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailIcon
 MAP_FRAMES_HIDE[2] = MiniMapTracking
 MAP_FRAMES_HIDE[3] = MinimapToggleButton
-MAP_FRAMES_HIDE[4] = not GW.Retail and GameTimeFrame
+MAP_FRAMES_HIDE[4] = not GW.isModern and GameTimeFrame
+MAP_FRAMES_HIDE[5] = MinimapCluster.DielFrame
 
 local M = CreateFrame("Frame")
 
@@ -222,7 +223,7 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
-        if GW.Retail then
+        if GW.isModern then
             GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
             GameTimeFrame:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
             GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
@@ -235,7 +236,7 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
-        if GW.Retail then
+        if GW.isModern then
             GameTimeFrame:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
             GameTimeFrame:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
             GameTimeFrame:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
@@ -309,7 +310,7 @@ end
 
 local function Minimap_OnMouseDown(self, btn)
     if btn == "RightButton" then
-        local button = (GW.Retail and MinimapCluster.Tracking.Button) or MiniMapTrackingButton
+        local button = (GW.isModern and MinimapCluster.Tracking.Button) or MiniMapTrackingButton
         if button then
             button:OpenMenu()
 
@@ -325,7 +326,7 @@ end
 
 local function MapCanvas_OnMouseDown(self, btn)
     if btn == "RightButton" then
-        local button = (GW.Retail and MinimapCluster.Tracking.Button) or MiniMapTrackingButton
+        local button = (GW.isModern and MinimapCluster.Tracking.Button) or MiniMapTrackingButton
         if button then
             button:OpenMenu()
         end
@@ -595,7 +596,7 @@ do
 
     local function ResetZoom()
         Minimap:SetZoom(0)
-        if GW.Retail then
+        if GW.isModern then
             Minimap.ZoomIn:Enable()
             Minimap.ZoomOut:Disable()
         else
@@ -639,7 +640,7 @@ function GW.LoadMinimap()
     clusterBackdrop:SetSize(width, height)
 
     --Hide the BlopRing on Minimap
-    if GW.Retail then
+    if GW.isModern then
         Minimap:SetArchBlobRingAlpha(0)
         Minimap:SetArchBlobRingScalar(0)
         Minimap:SetQuestBlobRingAlpha(0)
@@ -687,7 +688,7 @@ function GW.LoadMinimap()
 
 
     -- Minimap Tracking Button
-    if GW.Retail then
+    if GW.isModern then
         MinimapCluster.Tracking.Button:EnableMouse(false)
         MinimapCluster.Tracking.Button:SetAlpha(0)
     end
@@ -738,7 +739,7 @@ function GW.LoadMinimap()
         frame:GwKill()
     end
 
-    if GW.Retail then
+    if GW.isModern then
         hooksecurefunc(ExpansionLandingPageMinimapButton, "UpdateIcon", HandleExpansionButton)
         HandleExpansionButton()
     end
@@ -770,7 +771,7 @@ function GW.LoadMinimap()
                 end)
             end
         else
-            if not GW.Retail and event == "PLAYER_ENTERING_WORLD" then
+            if not GW.isModern and event == "PLAYER_ENTERING_WORLD" then
                 SetUpLfgFrame()
             end
             Update_ZoneText()
@@ -840,7 +841,7 @@ function GW.LoadMinimap()
     -- Addon Icons
     GW.CreateMinimapButtonsSack()
     GwAddonToggle:ClearAllPoints()
-    if GW.Retail then
+    if GW.isModern then
         local expButton = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
         QueueStatusButton:ClearAllPoints()
         GameTimeFrame:ClearAllPoints()
@@ -863,15 +864,17 @@ function GW.LoadMinimap()
                 QueueStatusButton:SetPoint("TOP", GwAddonToggle, "BOTTOM", 0, 0)
             end
         end)
-        hooksecurefunc(QueueStatusButton, "UpdatePosition", function()
-            local x = Minimap:GetCenter()
-            local screenWidth = UIParent:GetRight()
-            if x > (screenWidth / 2) then
-                setMinimapButtons("left")
-            else
-                setMinimapButtons("right")
-            end
-        end)
+        if QueueStatusButton.UpdatePosition then
+            hooksecurefunc(QueueStatusButton, "UpdatePosition", function()
+                local x = Minimap:GetCenter()
+                local screenWidth = UIParent:GetRight()
+                if x > (screenWidth / 2) then
+                    setMinimapButtons("left")
+                else
+                    setMinimapButtons("right")
+                end
+            end)
+        end
     elseif GW.TBC or GW.Wrath or GW.Mists or GW.Classic then
         MiniMapBattlefieldFrame:ClearAllPoints()
 

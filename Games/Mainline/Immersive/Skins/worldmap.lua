@@ -303,6 +303,16 @@ local function worldMapSkin()
     QuestScrollFrame.BorderFrame:SetAlpha(0)
     QuestScrollFrame.Background:SetAlpha(0)
     GW.SkinTextBox(QuestScrollFrame.SearchBox.Middle, QuestScrollFrame.SearchBox.Left, QuestScrollFrame.SearchBox.Right)
+    -- the quest count pill next to the search box: same input box art, forever shows it
+    -- (QuestLogQuests_ShowQuestCount), retail keeps it hidden
+    if QuestLogCount and QuestLogCount.Middle then
+        GW.SkinTextBox(QuestLogCount.Middle, QuestLogCount.Left, QuestLogCount.Right)
+        if QuestLogQuestCount then
+            -- blizzard only colors the numbers, the label keeps the font objects yellow
+            QuestLogQuestCount:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+            QuestLogQuestCount:SetTextColor(1, 1, 1)
+        end
+    end
 
     SkinHeaders(QuestScrollFrame.Contents.StoryHeader)
     QuestScrollFrame.ScrollBar:GwSkinScrollBar()
@@ -320,23 +330,45 @@ local function worldMapSkin()
     WorldMapFrame.BorderFrame.Tutorial:GwKill()
 
     do
-        local dropdown, Tracking, Pin = unpack(WorldMapFrame.overlayFrames)
+        -- the overlay frames are positional on retail; forever stores the two tracking
+        -- buttons as fields and may leave either out by game rule
+        local overlays = WorldMapFrame.overlayFrames
+        local dropdown = overlays[1]
+        local Tracking = WorldMapFrame.WorldMapTrackingOptionsButton or overlays[2]
+        local Pin = WorldMapFrame.WorldMapTrackingPinButton or overlays[3]
         dropdown:GwHandleDropDownBox()
 
-        Tracking.Icon:SetTexture(136460) -- Interface\Minimap\Tracking/None
-        Tracking:SetHighlightTexture(136460, "ADD")
+        if Tracking and Tracking.Icon then
+            local function SetTrackingIcon()
+                Tracking.Icon:SetTexture(136460) -- Interface\Minimap\Tracking/None
+            end
+            SetTrackingIcon()
+            Tracking:SetHighlightTexture(136460, "ADD")
 
-        local TrackingHighlight = Tracking:GetHighlightTexture()
-        TrackingHighlight:SetAllPoints(Tracking.Icon)
+            local TrackingHighlight = Tracking:GetHighlightTexture()
+            TrackingHighlight:SetAllPoints(Tracking.Icon)
 
-        Pin.Icon:SetAtlas("Waypoint-MapPin-Untracked")
-        Pin.ActiveTexture:SetAtlas("Waypoint-MapPin-Tracked")
-        Pin.ActiveTexture:SetAllPoints(Pin.Icon)
-        Pin:SetHighlightTexture(3500068, "ADD") -- Interface\Waypoint\WaypoinMapPinUI
+            if not Tracking.Background then
+                -- forever: a bare dropdown atlas button without the round minimap art of
+                -- retail, and it swaps its icon atlas on every click - keep our icon on it,
+                -- centered and plain like the pin button next to it
+                hooksecurefunc(Tracking.Icon, "SetAtlas", SetTrackingIcon)
+                Tracking.Icon:ClearAllPoints()
+                Tracking.Icon:SetPoint("CENTER", Tracking, "CENTER", 0, 0)
+                Tracking.Icon:SetSize(20, 20)
+            end
+        end
 
-        local PinHighlight = Pin:GetHighlightTexture()
-        PinHighlight:SetAllPoints(Pin.Icon)
-        PinHighlight:SetTexCoord(0.3203125, 0.5546875, 0.015625, 0.484375)
+        if Pin and Pin.Icon then
+            Pin.Icon:SetAtlas("Waypoint-MapPin-Untracked")
+            Pin.ActiveTexture:SetAtlas("Waypoint-MapPin-Tracked")
+            Pin.ActiveTexture:SetAllPoints(Pin.Icon)
+            Pin:SetHighlightTexture(3500068, "ADD") -- Interface\Waypoint\WaypoinMapPinUI
+
+            local PinHighlight = Pin:GetHighlightTexture()
+            PinHighlight:SetAllPoints(Pin.Icon)
+            PinHighlight:SetTexCoord(0.3203125, 0.5546875, 0.015625, 0.484375)
+        end
     end
 
     QuestMapFrame.QuestSessionManagement:GwStripTextures()

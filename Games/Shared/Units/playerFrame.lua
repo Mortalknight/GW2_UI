@@ -192,11 +192,11 @@ local function LoadPlayerFrame()
     frame:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
-    if GW.Retail then
+    if GW.isModern then
         frame:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     end
 
-    if GW.Retail or GW.Mists then
+    if GW.isModern or GW.Mists then
         frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     elseif GW.Classic then
         frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")

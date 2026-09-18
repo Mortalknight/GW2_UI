@@ -536,7 +536,7 @@ local function LoadGossipSkin()
 
     local GossipFrame = GossipFrame
 
-    if GW.Retail then
+    if GW.isModern then
         GW.HandleTrimScrollBar(ItemTextScrollFrame.ScrollBar)
         GW.HandleScrollControls(ItemTextScrollFrame)
     else
@@ -680,7 +680,7 @@ local function LoadGossipSkin()
     hooksecurefunc(GossipFrame, "Update", function()
         updateModelFrame(portraitFrame)
     end)
-    local titleText = (GW.Retail or GW.Wrath) and GossipFrame.TitleContainer.TitleText or GossipFrame.TitleText
+    local titleText = (GW.isModern or GW.Wrath) and GossipFrame.TitleContainer.TitleText or GossipFrame.TitleText
     hooksecurefunc(titleText, "SetText", function(_, txt)
         portraitFrame.npcNameText:SetText(txt)
     end)
@@ -846,7 +846,7 @@ local function LoadGossipSkin()
     NPCFriendshipStatusBar.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     --QuestFrame
-    if GW.Retail then
+    if GW.isModern then
         local QuestFrame = QuestFrame
         QuestFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE", 2)
         QuestFrame:GwStripTextures()

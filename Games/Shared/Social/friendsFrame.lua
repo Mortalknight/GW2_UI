@@ -2,44 +2,54 @@
 local GW = select(2, ...)
 
 
-
-
-
 local moveDistance, socialFrameX, socialFrameY, socialFrameLeft, socialFrameTop, socialFrameNormalScale, socialFrameEffectiveScale = 0, 0, 0, 0, 0, 1, 0
-local friendsFrameTabsAdded = 0
+-- icon per blizzard tab name; the set differs per client: classic has friends/who/guild/raid, retail
+-- friends/who/raid/quick join, forever ships without the who tab (FriendsFrameTab2) and numbers the
+-- remaining tabs by array position, so every tab is looked up by its global name and may be missing
+local TAB_ICONS = {
+    [1] = "tabicon_friends",
+    [2] = "tabicon_who",
+    [3] = GW.isModern and "tabicon_raid" or "tabicon_friends",
+    [4] = GW.isModern and "tabicon_quickjoin" or "tabicon_raid",
+}
+
+local function GetFriendsFrameTabs()
+    local tabs = {}
+    for i = 1, 4 do
+        local tab = _G["FriendsFrameTab" .. i]
+        if tab then
+            tabs[#tabs + 1] = {tab = tab, number = i}
+        end
+    end
+    return tabs
+end
+
+-- stacks the tabs on the left panel; blizzard hides tabs by game rule (forever: raid and quick join)
+-- or guild state (tbc/wrath), hidden ones do not take a slot. Hidden tabs still get the next slot
+-- so a tab shown later without a relayout never sits without an anchor
+local function LayoutTabs()
+    local added = 0
+    for _, entry in ipairs(GetFriendsFrameTabs()) do
+        local tab = entry.tab
+        tab:ClearAllPoints()
+        tab:SetPoint("TOPRIGHT", FriendsFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * added))
+        if tab:IsShown() then
+            added = added + 1
+        end
+    end
+end
 
 local function HandleTabs()
-    for idx, tab in ipairs({FriendsFrameTab1, FriendsFrameTab2, FriendsFrameTab3, FriendsFrameTab4}) do
+    for _, entry in ipairs(GetFriendsFrameTabs()) do
+        local tab, number = entry.tab, entry.number
         if not tab.gwSkinned then
-            local iconName
-            if GW.Retail then
-                iconName = idx == 1 and "tabicon_friends" or idx == 2 and "tabicon_who" or idx == 3 and "tabicon_raid" or "tabicon_quickjoin"
-            else
-                iconName = idx == 1 and "tabicon_friends" or idx == 2 and "tabicon_who" or idx == 3 and "tabicon_friends" or "tabicon_raid"
-            end
-
-            local iconTexture = "Interface/AddOns/GW2_UI/textures/social/" .. iconName .. ".png"
+            local iconTexture = "Interface/AddOns/GW2_UI/textures/social/" .. TAB_ICONS[number] .. ".png"
             GW.SkinSideTabButton(tab, iconTexture, tab:GetText())
         end
-
-        tab:ClearAllPoints()
-        tab:SetPoint("TOPRIGHT", FriendsFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * friendsFrameTabsAdded))
         tab:SetParent(FriendsFrame.LeftSidePanel)
         tab:SetSize(64, 40)
-        friendsFrameTabsAdded = friendsFrameTabsAdded + 1
 
-        if GW.TBC or GW.Wrath then
-            hooksecurefunc("FriendsFrame_UpdateGuildTabVisibility", function()
-                FriendsFrameTab4:ClearAllPoints()
-                if FriendsFrameTab3:IsShown() then
-                    FriendsFrameTab4:SetPoint("TOPRIGHT", FriendsFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * 3))
-                else
-                    FriendsFrameTab4:SetPoint("TOPRIGHT", FriendsFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * 2))
-                end
-            end)
-        end
-
-        if idx == 4 and GW.Retail then
+        if number == 4 and GW.isModern then
             tab.GwNotifyRed = tab:CreateTexture(nil, "ARTWORK", nil, 7)
             tab.GwNotifyText = tab:CreateFontString(nil, "OVERLAY")
 
@@ -55,6 +65,22 @@ local function HandleTabs()
             tab.GwNotifyText:SetTextColor(1, 1, 1, 1)
             tab.GwNotifyText:SetShadowColor(0, 0, 0, 0)
             tab.GwNotifyText:Hide()
+        end
+    end
+
+    LayoutTabs()
+
+    -- follow blizzards tab visibility changes
+    if FriendsFrame_UpdateGuildTabVisibility then
+        hooksecurefunc("FriendsFrame_UpdateGuildTabVisibility", LayoutTabs)
+    end
+    for _, name in ipairs({"PanelTemplates_SetTabShown", "PanelTemplates_ShowTab", "PanelTemplates_HideTab"}) do
+        if _G[name] then
+            hooksecurefunc(name, function(frame)
+                if frame == FriendsFrame then
+                    LayoutTabs()
+                end
+            end)
         end
     end
 end
@@ -74,7 +100,7 @@ function GW.LoadSocialFrame()
         FriendsFrameIgnoreScrollFrame,
         RecentAlliesFrame and RecentAlliesFrame.List,
         RecruitAFriendFrame and RecruitAFriendFrame.RecruitList.ScrollBox,
-        WhoFrame.ScrollBox,
+        WhoFrame and WhoFrame.ScrollBox or nil,
         WhoListScrollFrame,
         QuickJoinFrame and QuickJoinFrame.ScrollBox
         }

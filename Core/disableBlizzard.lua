@@ -286,10 +286,8 @@ local function DisableBlizzardFrames()
         HandleFrame(PetCastingBarFrame, 1)
 
         -- disbale blizzard castingbar mover
-        if GW.Retail or GW.TBC or GW.Mists or GW.Classic then
-            PlayerCastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
-            PlayerCastingBarFrame:GwKillEditMode()
-        end
+        PlayerCastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
+        PlayerCastingBarFrame:GwKillEditMode()
     end
 
     if ourInventory then

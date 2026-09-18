@@ -17,7 +17,7 @@ function GwObjectivesUnitFrameMixin:UpdateHealth()
     local maxHealth = UnitHealthMax(self.gwUnit)
     self.health:SetMinMaxValues(0, maxHealth)
 
-    if GW.Retail then
+    if GW.isModern then
         self.health:SetValue(health, Enum.StatusBarInterpolation.ExponentialEaseOut)
         self.health.value:SetText(string.format("%.0f%%", UnitHealthPercent(self.gwUnit, true, CurveConstants.ScaleTo100)))
     else
@@ -41,7 +41,7 @@ function GwObjectivesUnitFrameMixin:UpdatePower()
         self.power:SetStatusBarColor(altR or 0, altG or 0, altB or 0)
     end
 
-    if GW.Retail then
+    if GW.isModern then
         self.power:SetValue(power, Enum.StatusBarInterpolation.ExponentialEaseOut)
         self.power.value:SetText(string.format("%.0f%%", UnitPowerPercent(self.gwUnit, powerType, true, CurveConstants.ScaleTo100)))
     else
@@ -55,7 +55,7 @@ function GwObjectivesUnitFrameMixin:UpdateName()
     local name = UnitName(self.gwUnit)
     self.name:SetText(name)
 
-    if GW.Retail then return end -- guid is secret
+    if GW.isModern then return end -- guid is secret
     self.guid = UnitGUID(self.gwUnit)
     if self.guid == UnitGUID("target") then
         self.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)

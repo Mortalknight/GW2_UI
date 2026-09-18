@@ -210,7 +210,7 @@ local function UpdateFriendButton(button)
         highlight:SetPoint("CENTER")
         highlight:SetVertexColor(1, 1, 1, 1)
 
-        if GW.Retail then
+        if GW.isModern then
             hooksecurefunc(button.travelPassButton.NormalTexture, "SetAtlas", HandleInviteTexNormal)
             hooksecurefunc(button.travelPassButton.DisabledTexture, "SetAtlas", HandleInviteTexDisabled)
         end
@@ -373,7 +373,7 @@ end
 
 
 function GW.SkinFriendList()
-    if GW.Retail then
+    if GW.isModern then
         for i = 1, 3 do
             local tabId = i == 1 and FriendsTabHeader.friendsTabID or i == 2 and FriendsTabHeader.recentAlliesTabID or FriendsTabHeader.recruitAFriendTabID
             local tab = FriendsTabHeader.TabSystem:GetTabButton(tabId)
@@ -392,7 +392,7 @@ function GW.SkinFriendList()
     FriendsFrameStatusDropdown:ClearAllPoints()
     FriendsFrameStatusDropdown:SetPoint("TOPLEFT", FriendsFrame.gwHeader, "BOTTOMLEFT", 5, 0)
 
-    if GW.Retail then
+    if GW.isModern then
         GW.HandleTrimScrollBar(FriendsListFrame.ScrollBar)
         GW.HandleScrollControls(FriendsListFrame)
         hooksecurefunc(FriendsListFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
@@ -429,7 +429,7 @@ function GW.SkinFriendList()
     FriendsFriendsFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
     FriendsFriendsFrameDropdown:GwHandleDropDownBox()
 
-    if GW.Retail then
+    if GW.isModern then
         FriendsFriendsFrame.ScrollFrameBorder:Hide()
         FriendsFriendsFrame.SendRequestButton:GwSkinButton(false, true)
         FriendsFriendsFrame.CloseButton:GwSkinButton(false, true)
@@ -482,7 +482,7 @@ function GW.SkinFriendList()
     FriendsFrameBattlenetFrame.BroadcastFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
     FriendsFrameBattlenetFrame.BroadcastFrame:ClearAllPoints()
     FriendsFrameBattlenetFrame.BroadcastFrame:SetPoint("TOPLEFT", FriendsFrame.gwHeader, "BOTTOMRIGHT", 45, 1)
-    if GW.Retail then
+    if GW.isModern then
         FriendsFrameBattlenetFrame.BroadcastFrame.EditBox:GwStripTextures()
         GW.HandleBlizzardRegions(FriendsFrameBattlenetFrame.BroadcastFrame.EditBox)
         GW.SkinTextBox(FriendsFrameBattlenetFrame.BroadcastFrame.EditBox.MiddleBorder, FriendsFrameBattlenetFrame.BroadcastFrame.EditBox.LeftBorder, FriendsFrameBattlenetFrame.BroadcastFrame.EditBox.RightBorder, nil, nil, 5, 5)
