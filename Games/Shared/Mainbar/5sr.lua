@@ -233,6 +233,7 @@ local function Update5SrHot()
 end
 GW.Update5SrHot = Update5SrHot
 
+--TODO: Forever
 local function Load5SR(playerFrame)
     if loaded then return end
     loaded = true

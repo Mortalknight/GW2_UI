@@ -103,8 +103,8 @@ do -- Expansions
     GW.Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
     GW.Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
     GW.Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
-    GW.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-    GW.Forever = GW.wowToc == 16001
+    GW.Forever = GW.wowToc >= 16000 and GW.wowToc < 20000
+    GW.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and not GW.Forever
     GW.isModern = GW.Retail or GW.Forever
 
     local season = C_Seasons and C_Seasons.GetActiveSeason()
@@ -120,10 +120,13 @@ do -- Expansions
     GW.IsEngravingEnabled = IsEngravingEnabled and IsEngravingEnabled()
 end
 
-if not GW.Modern then
+if not GW.isModern then
     Enum.ItemQuality.Common = Enum.ItemQuality.Standard
 end
 
+if not LE_ITEM_QUALITY_WOW_TOKEN then
+    LE_ITEM_QUALITY_WOW_TOKEN = Enum.ItemQuality.WoWToken
+end
 -- Init Libs
 do
     GW.Libs = {}

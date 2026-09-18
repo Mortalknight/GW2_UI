@@ -140,7 +140,7 @@ local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     CP.frame = cpf
 
-    cpf.defaultResourceBar = CreateFrame("StatusBar", "GwCustomResourceBar", cpf, "GwStatusPowerBarRetailTemplate")
+    cpf.defaultResourceBar = CreateFrame("StatusBar", "GwCustomResourceBar", cpf, "GwStatusPowerBarModernTemplate")
     cpf.defaultResourceBar:SetSize(313, 14)
     cpf.defaultResourceBar:ClearAllPoints()
     cpf.defaultResourceBar:SetPoint("LEFT", cpf, "LEFT", 0, -11)
@@ -218,7 +218,7 @@ local function LoadClassPowers()
     lmb.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
 
     --create extra mana power for retail
-    cpf.lmbSecret = CreateFrame("StatusBar", "GwPlayerAltClassLmbSecret", cpf, "GwStatusPowerBarRetailTemplate")
+    cpf.lmbSecret = CreateFrame("StatusBar", "GwPlayerAltClassLmbSecret", cpf, "GwStatusPowerBarModernTemplate")
     cpf.lmbSecret.bar = cpf.lmbSecret
     cpf.lmbSecret:SetSize(313, 14)
     cpf.lmbSecret:ClearAllPoints()
@@ -249,7 +249,7 @@ local function LoadClassPowers()
     exbar.decay:SetPoint("BOTTOMRIGHT", exbar, "BOTTOMRIGHT", 0, 0)
 
     --create extra mana power for retail
-    cpf.exbarSecret = CreateFrame("StatusBar", "GwPlayerAltClassExBarSecret", cpf, "GwStatusPowerBarRetailTemplate")
+    cpf.exbarSecret = CreateFrame("StatusBar", "GwPlayerAltClassExBarSecret", cpf, "GwStatusPowerBarModernTemplate")
     cpf.exbarSecret.bar = cpf.exbarSecret
     cpf.exbarSecret:SetSize(313, 14)
     cpf.exbarSecret:ClearAllPoints()

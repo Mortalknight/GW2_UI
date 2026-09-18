@@ -373,7 +373,7 @@ local function collectAllIcons()
         if fileID then activeIcons[fileID] = true end
     end
 
-    if GW.Retail then
+    if GW.isModern then
         local lines = C_SpellBook.GetNumSpellBookSkillLines() or 0
         for i = 1, lines do
             local info = C_SpellBook.GetSpellBookSkillLineInfo(i)

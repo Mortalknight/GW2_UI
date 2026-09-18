@@ -1,240 +1,234 @@
 ---@class GW2
 local GW = select(2, ...)
-local questWatchDB -- GW.private.questWatch, set in InitModule
 
-local lastAQW = GetTime()
-local tomTomWaypoint = nil
-
-local function AddTomTomWaypoint(questId, objective)
-    if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
-        local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
-        local spawn, zone, name = QuestieLoader:ImportModule("DistanceUtils").GetNearestSpawnForQuest(QuestieQuest)
-        if (not spawn) and objective ~= nil then
-            spawn, zone, name = QuestieLoader:ImportModule("DistanceUtils").GetNearestSpawn(objective)
-        end
-        if spawn then
-            if tomTomWaypoint and TomTom.RemoveWaypoint then -- remove old waypoint
-                TomTom:RemoveWaypoint(tomTomWaypoint)
+local function IsQuestFrequency(q)
+    local isFreq = q.frequency and q.frequency > 0
+    if q.frequency == nil then
+        local questLogIndex = q:GetQuestLogIndex()
+        if questLogIndex and questLogIndex > 0 then
+            local questInfo = C_QuestLog.GetInfo(questLogIndex)
+            if questInfo then
+                isFreq = questInfo.frequency > 0
             end
-            local uiMapId = QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone)
-            tomTomWaypoint = TomTom:AddWaypoint(uiMapId, spawn[1] / 100, spawn[2] / 100,  {title = name, crazy = true})
         end
     end
+    return isFreq
 end
 
-local function LinkQuestIntoChat(title, questId)
-    if not ChatFrame1EditBox:IsVisible() then
-        if Questie and Questie.started then
-            ChatFrame_OpenChat("[" .. title .. " (" .. questId .. ")]")
-        else
-            ChatFrame_OpenChat(gsub(title, " *(.*)", "%1"))
-        end
-    else
-        if Questie and Questie.started then
-            ChatEdit_InsertLink("[" .. title .. " (" .. questId .. ")]")
-        else
-            ChatEdit_InsertLink(gsub(title, " *(.*)", "%1"))
-        end
-    end
+local function BrightenColor(r, g, b, factor)
+    factor = factor or 0.3
+    return
+        math.min(1, r + (1 - r) * factor),
+        math.min(1, g + (1 - g) * factor),
+        math.min(1, b + (1 - b) * factor)
 end
 
-local function UntrackQuest(questLogIndex)
-    local questID = GetQuestIDFromLogIndex(questLogIndex)
-    for index, value in ipairs(QUEST_WATCH_LIST) do
-        if value.id == questID then
-            tremove(QUEST_WATCH_LIST, index)
-        end
+local function GetQuestColorKey(questID, isCampaignContainer, isFrequency)
+    -- the campaign container is its own visual group and wins over the classification:
+    -- IsCampaign fills it, and that does not always match a Campaign classification
+    if isCampaignContainer then
+        return GW.Enum.ObjectivesNotificationType.Campaign
     end
-    if GetCVar("autoQuestWatch") == "0" then
-        questWatchDB.TrackedQuests[questID] = nil
-    else
-        questWatchDB.AutoUntrackedQuests[questID] = true
-    end
-    RemoveQuestWatch(questLogIndex)
-    QuestWatch_Update()
-    QuestLog_Update()
-end
 
-local function AddQuestInfos(questId, id)
-    local title, level, group, _, _, isComplete, _, _, startEvent = GetQuestLogTitle(id)
-    local sourceItemId = nil
-    local isFailed = false
+    local classification = C_QuestInfoSystem and C_QuestInfoSystem.GetQuestClassification and C_QuestInfoSystem.GetQuestClassification(questID)
+    local classifications = Enum.QuestClassification
 
-    if Questie and Questie.started then
-        local questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
-        if questieQuest and questieQuest.sourceItemId then
-            sourceItemId = questieQuest.sourceItemId
+    if classification and classifications then
+        if classification == classifications.Legendary then
+            return GW.Enum.ObjectivesNotificationType.LegendaryQuest
+        elseif classification == classifications.Important then
+            return GW.Enum.ObjectivesNotificationType.ImportantQuest
+        elseif classification == classifications.Campaign then
+            return GW.Enum.ObjectivesNotificationType.Campaign
+        elseif classification == classifications.Recurring or classification == classifications.Calling then
+            return GW.Enum.ObjectivesNotificationType.DailyQuest
         end
     end
 
-    if isComplete == nil then
-        isComplete = false
-    elseif isComplete == 1 then
-        isComplete = true
-    else
-        isComplete = false
-        isFailed = true
-    end
-
-    return {
-        questId = questId,
-        questWatchedId = id or 0,
-        questLogIndex = id,
-        questLevel = level,
-        questGroup = group,
-        title = title,
-        isComplete = isComplete,
-        startEvent = startEvent,
-        numObjectives = GetNumQuestLeaderBoards(id),
-        requiredMoney = GetQuestLogRequiredMoney(questId),
-        isAutoComplete = false,
-        sourceItemId = sourceItemId,
-        isFailed = isFailed
-    }
+    return isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
 end
 
-local function IsQuestFrequency(questId)
-    -- if questie is loaded check for daily quest
-    if Questie and Questie.started then
-        return QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(questId)
-    end
-    return false
+local function ShouldSortSuperTrackedQuestToTop()
+    return GW.settings.objectives.superTrackedOnTop
 end
 
 -- AddObjective keeps no reference to its options table (field reads only), so one
 -- scratch table serves every quest objective line — a full update otherwise allocated
--- a fresh table per line
+-- a fresh table per line, the bulk of the trackers garbage churn
 local objectiveOptions = {}
-local function QuestObjectiveOptions(finished, objectiveType, useCompletedLine)
+local function QuestObjectiveOptions(finished, objectiveType, useCompletedLine, timerShown, duration, startTime)
     wipe(objectiveOptions)
     objectiveOptions.isQuest = true
     objectiveOptions.finished = finished
     objectiveOptions.objectiveType = objectiveType
     objectiveOptions.useCompletedLine = useCompletedLine
+    objectiveOptions.timerShown = timerShown
+    objectiveOptions.duration = duration
+    objectiveOptions.startTime = startTime
     return objectiveOptions
+end
+
+local function HasAutoQuestPopUpOfType(questID, checkType)
+    for i = 1, GetNumAutoQuestPopUps() do
+        local id, popUpType = GetAutoQuestPopUp(i)
+        if id == questID and popUpType == checkType then
+            return true
+        end
+    end
+    return false
 end
 
 -- Everything UpdateBlockInternal renders derives from these inputs: when they are
 -- unchanged since the last pass over this quest, the block is pixel identical and the
 -- whole rebuild (row re-anchoring, SetText with its text layout flushes, height math)
--- is skipped — QUEST_LOG_UPDATE otherwise runs a full rebuild over every watched quest
+-- is skipped. QUEST_LOG_UPDATE fires for every log change and always runs a FULL
+-- layout over every watched quest — with the fingerprint that becomes one comparison
+-- per unchanged quest. Running quest timers stay skippable: the clock lives in the
+-- rows own OnUpdate, only presence and total duration are part of the fingerprint
 local signatureParts, signatureCount = {}, 0
 local function AddSignaturePart(value)
     signatureCount = signatureCount + 1
     signatureParts[signatureCount] = tostring(value)
 end
 
-local function BuildQuestBlockSignature(quest, colorKey)
-    -- mirrors the completion override at the top of UpdateBlockInternal
-    local isComplete = quest.isComplete or (quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent)
+local function BuildQuestBlockSignature(quest, questID, questLogIndex, colorKey)
+    local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
+    local isComplete = quest:IsComplete()
+    local isSuperTracked = questID == C_SuperTrack.GetSuperTrackedQuestID()
+    local shouldShowWaypoint = isSuperTracked or (questID == QuestMapFrame_GetFocusedQuestID())
+    local timeTotal, timeElapsed = C_QuestLog.GetTimeAllowed(questID)
+    local requiredMoney = quest.requiredMoney or 0
 
     signatureCount = 0
-    AddSignaturePart(quest.questId)
+    AddSignaturePart(questID)
     AddSignaturePart(quest.title)
-    AddSignaturePart(quest.questLevel)
-    AddSignaturePart(quest.questGroup)
     AddSignaturePart(colorKey)
     AddSignaturePart(GW.ObjectivesTrackerState.layoutGeneration)
     AddSignaturePart(GW.settings.objectives.showCompleted)
     AddSignaturePart(GW.settings.objectives.statusBars)
     AddSignaturePart(isComplete)
-    AddSignaturePart(quest.isFailed)
+    AddSignaturePart(C_QuestLog.IsFailed(questID))
+    AddSignaturePart(isSuperTracked)
+    AddSignaturePart(shouldShowWaypoint)
     AddSignaturePart(quest.isAutoComplete)
-    AddSignaturePart(quest.requiredMoney)
-    if quest.requiredMoney and quest.requiredMoney > 0 then
+    AddSignaturePart(quest.startEvent)
+    AddSignaturePart(HasAutoQuestPopUpOfType(questID, "COMPLETE"))
+    AddSignaturePart(HasAutoQuestPopUpOfType(questID, "OFFER"))
+    AddSignaturePart(QuestUtil.CanCreateQuestGroup(questID))
+    AddSignaturePart(requiredMoney)
+    if requiredMoney > 0 then
         AddSignaturePart(GetMoney())
     end
-    -- the Questie xp reward is part of the header text
-    if Questie and Questie.started and GW.settings.objectives.showXp and GW.mylevel < GetMaxPlayerLevel() then
-        AddSignaturePart(QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false))
+    if isComplete or shouldShowWaypoint then
+        AddSignaturePart(C_QuestLog.GetNextWaypointText(questID))
     end
     if isComplete then
-        AddSignaturePart(GetQuestLogCompletionText(quest.questLogIndex))
-    else
-        local infos = C_QuestLog.GetQuestObjectives(quest.questId)
-        AddSignaturePart(quest.numObjectives)
-        for objectiveIndex = 1, quest.numObjectives do
-            local info = infos and infos[objectiveIndex]
-            if info then
-                AddSignaturePart(info.text)
-                AddSignaturePart(info.type)
-                AddSignaturePart(info.finished)
-            end
+        AddSignaturePart(GetQuestLogCompletionText(questLogIndex))
+    end
+    AddSignaturePart(timeTotal and timeElapsed and timeElapsed < timeTotal and timeTotal or false)
+    AddSignaturePart(numObjectives)
+    for objectiveIndex = 1, numObjectives do
+        local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
+        AddSignaturePart(text)
+        AddSignaturePart(objectiveType)
+        AddSignaturePart(finished)
+        if objectiveType == "progressbar" then
+            AddSignaturePart(GetQuestProgressBarPercent(questID))
         end
     end
 
     return table.concat(signatureParts, "\1", 1, signatureCount)
 end
 
-local function UpdateBlockInternal(self, parent, quest, signature)
+local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, signature)
+    local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
+    local isComplete = quest:IsComplete()
+    local questFailed = C_QuestLog.IsFailed(questID)
+    local isSuperTracked = (questID == C_SuperTrack.GetSuperTrackedQuestID())
+    local shouldShowWaypoint = isSuperTracked or (questID == QuestMapFrame_GetFocusedQuestID())
+
     self.height = GW.GetObjectivesBlockBaseHeight()
     self.numObjectives = 0
-    self.turnin:Hide()
+    self.turnin:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
+    self.popupQuestAccept:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
+    self:UpdateFindGroupButton(questID, false)
 
-    if quest.requiredMoney then
+    if quest.requiredMoney > 0 then
         parent.watchMoneyReasons = parent.watchMoneyReasons + 1
     else
         parent.watchMoneyReasons = parent.watchMoneyReasons - 1
     end
 
+    self.questID = questID
+    self.questLogIndex = questLogIndex
+    self.gwSignature = signature or BuildQuestBlockSignature(quest, questID, questLogIndex, self.gwColorKey)
     self.title = quest.title
-    local text = ""
-    if quest.questGroup == "Elite" then
-        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t] "
-    elseif quest.questGroup == "Dungeon" then
-        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t] "
-    elseif quest.questGroup then
-        text = "[" .. quest.questLevel .. "+] "
+    self.isSuperTracked = isSuperTracked
+    self.Header:SetText(quest.title)
+
+    if isSuperTracked then
+        local r, g, b = BrightenColor(self.color.r, self.color.g, self.color.b, 0.3)
+        self.Header:SetTextColor(r, g, b)
+        self:GetScript("OnEnter")(self)
     else
-        text = "[" .. quest.questLevel .. "] "
+        self:GetScript("OnLeave")(self)
     end
 
-    self.questID = quest.questId
-    self.questLogIndex = quest.questLogIndex
-    self.gwSignature = signature or BuildQuestBlockSignature(quest, self.gwColorKey)
-    self.sourceItemId = quest.sourceItemId
-    self.title = quest.title
-    self.Header:SetText(text .. quest.title)
+    self:UpdateSuperTrackButton(isSuperTracked, self.gwColorKey)
 
+    -- keyed: a nil key never dedups, and the queue drains only a few entries per tick —
+    -- un-deduped bursts kept the item buttons stale for seconds
     GW.CombatQueue:Queue("update_tracker_actionbutton_" .. parent:GetName() .. (self.index or 0), self.UpdateObjectiveActionButton, {self})
 
-    if Questie and Questie.started and GW.settings.objectives.showXp and GW.mylevel < GetMaxPlayerLevel() then
-        local xpReward = QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false)
-
-        if xpReward then
-            self.Header:SetText(text .. quest.title .. " |cFF888888(" .. GW.CommaValue(xpReward) .. XP .. ")|r")
-        end
+    if numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
+        isComplete = true
     end
 
-    if quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
-        quest.isComplete = true
-    end
-    self.isComplete = quest.isComplete
+    self:UpdateBlockObjectives(numObjectives)
 
-    if not quest.isComplete then
-        self:UpdateBlockObjectives(quest.numObjectives)
-    end
-
-    if quest.requiredMoney and quest.requiredMoney > GetMoney() and not quest.isComplete then
-        self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), QuestObjectiveOptions(quest.isComplete, nil))
-    end
-
-    if quest.isComplete then
+    if isComplete then
         if quest.isAutoComplete then
             self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, QuestObjectiveOptions(false, nil))
         else
-            local completionText = GetQuestLogCompletionText(quest.questLogIndex)
+            local completionText = GetQuestLogCompletionText(questLogIndex)
             if completionText then
+                if shouldShowWaypoint then
+                    local waypointText = C_QuestLog.GetNextWaypointText(questID)
+                    if waypointText then
+                        self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), QuestObjectiveOptions(false, nil))
+                    end
+                end
                 self:AddObjective(completionText, QuestObjectiveOptions(false, nil))
             else
-                self:AddObjective(QUEST_WATCH_QUEST_READY, QuestObjectiveOptions(false, nil))
+                local waypointText = C_QuestLog.GetNextWaypointText(questID)
+                if waypointText then
+                    self:AddObjective(waypointText, QuestObjectiveOptions(false, nil))
+                else
+                    self:AddObjective(QUEST_WATCH_QUEST_READY, QuestObjectiveOptions(false, nil))
+                end
             end
         end
-    elseif quest.isFailed then
+    elseif questFailed then
         self:AddObjective(FAILED, QuestObjectiveOptions(false, nil))
+    else
+        if shouldShowWaypoint then
+			local waypointText = C_QuestLog.GetNextWaypointText(questID);
+			if waypointText  then
+                self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), QuestObjectiveOptions(isComplete, nil))
+			end
+		end
+
+        if quest.requiredMoney > GetMoney() then
+            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), QuestObjectiveOptions(isComplete, nil))
+        end
+
+        -- timer bar
+		local timeTotal, timeElapsed = C_QuestLog.GetTimeAllowed(questID)
+		if timeTotal and timeElapsed and timeElapsed < timeTotal then
+            self:AddObjective(TIME_REMAINING, QuestObjectiveOptions(nil, nil, nil, true, timeTotal, GetTime() - timeElapsed))
+		end
     end
 
-    self.height = self.height + 5
     self:SetHeight(self.height)
 end
 
@@ -242,57 +236,183 @@ GwQuestLogBlockMixin = {}
 
 function GwQuestLogBlockMixin:UpdateBlockObjectives(numObjectives)
     local showCompletedObjectives = GW.settings.objectives.showCompleted
-    local infos = C_QuestLog.GetQuestObjectives(self.questID)
     for objectiveIndex = 1, numObjectives do
-        local text = infos[objectiveIndex].text
-        local objectiveType = infos[objectiveIndex].type
-        local finished = infos[objectiveIndex].finished
+        local text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, objectiveIndex, false)
         if text and (showCompletedObjectives or not finished) then
             self:AddObjective(text, QuestObjectiveOptions(finished, objectiveType, showCompletedObjectives))
         end
     end
 end
 
-function GwQuestLogBlockMixin:UpdateBlock(parent, quest, signature)
-    if quest.questId then
-        UpdateBlockInternal(self, parent, quest, signature)
+function GwQuestLogBlockMixin:UpdateBlock(parent, quest, questID, questLogIndex, signature)
+    if quest and not questID then
+        questID = quest:GetID()
+        questLogIndex = quest:GetQuestLogIndex()
     end
+    UpdateBlockInternal(self, parent, quest, questID, questLogIndex, signature)
 end
 
 GwQuestLogMixin = {}
 
-local function QuestLogLayoutFlushOnUpdate(frame)
-    frame:SetScript("OnUpdate", nil)
-
-    local container = frame.container
-    container.layoutUpdateQueued = false
-    container:UpdateLayout()
-    GwQuestTracker:LayoutChanged()
-end
-
-function GwQuestLogMixin:QueueUpdateLayout()
-    if self.layoutUpdateQueued then
-        return
-    end
-
-    self.layoutUpdateQueued = true
-    self.layoutUpdateFrame:SetScript("OnUpdate", QuestLogLayoutFlushOnUpdate)
-end
-
 function GwQuestLogMixin:OnEvent(event, ...)
-    local arg1 = ...
-    local numWatchedQuests = GetNumQuestWatches()
+    local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
-    if (event == "QUEST_LOG_UPDATE" or event == "UPDATE_FACTION" or (event == "UNIT_QUEST_LOG_CHANGED" and arg1 == "player")) then
+    if event == "QUEST_LOG_UPDATE" then
         self:QueueUpdateLayout()
+    elseif event == "QUEST_ACCEPTED" then
+        local questID = ...
+        if not C_QuestLog.IsQuestBounty(questID) then
+            if C_QuestLog.IsQuestTask(questID) then
+                if not C_QuestLog.IsWorldQuest(questID) then
+                    self:QueuePartialUpdate(questID)
+                end
+            else
+                if GetCVarBool("autoQuestWatch") and numWatchedQuests < Constants.QuestWatchConsts.MAX_QUEST_WATCHES then
+                    C_QuestLog.AddQuestWatch(questID)
+                    self:QueuePartialUpdate(questID)
+                end
+            end
+        end
+    elseif event == "QUEST_WATCH_LIST_CHANGED" then
+        local questID, added = ...
+        if added then
+            if not C_QuestLog.IsQuestBounty(questID) or C_QuestLog.IsComplete(questID) then
+                self:QueuePartialUpdate(questID, added)
+            end
+        else
+            self:QueueUpdateLayout()
+        end
+    elseif event == "QUEST_AUTOCOMPLETE" then
+        local questID = ...
+        self:QueuePartialUpdate(questID)
     elseif event == "PLAYER_MONEY" and self.watchMoneyReasons > numWatchedQuests then
         self:QueueUpdateLayout()
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        self:RegisterEvent("QUEST_DATA_LOAD_RESULT")
+    elseif event == "QUEST_DATA_LOAD_RESULT" then
+        local questID, success = ...
+        local idx = C_QuestLog.GetLogIndexForQuestID(questID)
+        if success and questID and idx and idx > 0 then
+            C_Timer.After(1, function() self:QueuePartialUpdate(questID) end)
+        end
     else
         self:QueueUpdateLayout()
     end
 
     if self.watchMoneyReasons > numWatchedQuests then
         self.watchMoneyReasons = self.watchMoneyReasons - numWatchedQuests
+    end
+end
+
+local function QuestLogFlushQueuedUpdatesOnUpdate(frame)
+    frame:SetScript("OnUpdate", nil)
+
+    local container = frame.container
+    container.updateFlushQueued = false
+
+    local didUpdate = false
+    if container.fullUpdateQueued then
+        container.fullUpdateQueued = false
+        wipe(container.partialUpdatesByQuestID)
+        wipe(container.partialUpdateOrder)
+        container:UpdateLayout()
+        didUpdate = true
+    else
+        for _, questID in ipairs(container.partialUpdateOrder) do
+            local updateData = container.partialUpdatesByQuestID[questID]
+            if updateData then
+                container:PartialUpdate(questID, updateData.added)
+                didUpdate = true
+            end
+        end
+        wipe(container.partialUpdatesByQuestID)
+        wipe(container.partialUpdateOrder)
+    end
+
+    container:CheckForAutoQuests()
+    if didUpdate then
+        GwQuestTracker:LayoutChanged()
+    end
+end
+
+function GwQuestLogMixin:QueueUpdateLayout()
+    self.fullUpdateQueued = true
+    wipe(self.partialUpdatesByQuestID)
+    wipe(self.partialUpdateOrder)
+
+    if self.updateFlushQueued then
+        return
+    end
+
+    self.updateFlushQueued = true
+    self.updateQueueFrame:SetScript("OnUpdate", QuestLogFlushQueuedUpdatesOnUpdate)
+end
+
+function GwQuestLogMixin:QueuePartialUpdate(questID, added)
+    if not questID or self.fullUpdateQueued then
+        return
+    end
+
+    local updateData = self.partialUpdatesByQuestID[questID]
+    if updateData then
+        updateData.added = updateData.added or added
+    else
+        self.partialUpdatesByQuestID[questID] = {added = added}
+        tinsert(self.partialUpdateOrder, questID)
+    end
+
+    if self.updateFlushQueued then
+        return
+    end
+
+    self.updateFlushQueued = true
+    self.updateQueueFrame:SetScript("OnUpdate", QuestLogFlushQueuedUpdatesOnUpdate)
+end
+
+function GwQuestLogMixin:GetBlockByQuestId(questID)
+    for i = 1, #self.blocks do
+        local block = self.blocks[i]
+        if block.questID == questID then
+            return block
+        end
+    end
+    return nil
+end
+
+function GwQuestLogMixin:GetOrCreateBlockByQuestId(questID, colorKey)
+    for i = 1, #self.blocks do
+        local block = self.blocks[i]
+        if block.questID == questID then
+            return block
+        elseif block.questID == nil then
+            return self:GetBlock(i, colorKey, true)
+        end
+    end
+    return self:GetBlock(#self.blocks + 1, colorKey, true)
+end
+
+function GwQuestLogMixin:GetQuestWatchId(questID)
+    for i = 1, C_QuestLog.GetNumQuestWatches() do
+        if questID == C_QuestLog.GetQuestIDForQuestWatchIndex(i) then
+            return i
+        end
+    end
+    return nil
+end
+
+function GwQuestLogMixin:CheckForAutoQuests()
+    for i = 1, GetNumAutoQuestPopUps() do
+        local questID, popUpType = GetAutoQuestPopUp(i)
+        if questID and (popUpType == "OFFER" or popUpType == "COMPLETE") then
+            local questBlock = self:GetBlockByQuestId(questID)
+            if questBlock then
+                if popUpType == "OFFER" then
+                    questBlock.popupQuestAccept:Show()
+                elseif popUpType == "COMPLETE" then
+                    questBlock.turnin:Show()
+                end
+            end
+        end
     end
 end
 
@@ -305,124 +425,87 @@ function GwQuestLogMixin:UpdateLayout()
     local counterQuest = 0
     local shouldShowHeader = not self.collapsed
     local frameName = self:GetName()
+    local watchedQuestIDs = {}
+    local watchedQuestOrder = {}
 
     if self.collapsed then
         self.header:Show()
-    else
+    elseif not self.isCampaignContainer then
         self.header:Hide()
     end
 
-    -- collect quests here
-    local sorted = {}
-    GW.sorted = sorted
-    local numQuests = GetNumQuestLogEntries()
+    local numQuests = C_QuestLog.GetNumQuestWatches()
     for i = 1, numQuests do
-        local questId = select(8, GetQuestLogTitle(i))
-
-        if questId and questId > 0 then
-            local questInfo = AddQuestInfos(questId, i)
-            table.insert(sorted, questInfo)
+        local curQuestId = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
+        if curQuestId then
+            watchedQuestOrder[curQuestId] = i
+            watchedQuestIDs[#watchedQuestIDs + 1] = curQuestId
         end
     end
 
-    --sort based on setting
-    if GW.settings.objectives.sorting == "LEVEL" then
-        -- Sort by level
-        table.sort(sorted, function(a, b)
-            return a and b and a.questLevel < b.questLevel
+    if ShouldSortSuperTrackedQuestToTop() then
+        local superTrackedQuestID = C_SuperTrack.GetSuperTrackedQuestID()
+        table.sort(watchedQuestIDs, function(leftQuestID, rightQuestID)
+            local isLeftSuperTracked = leftQuestID == superTrackedQuestID
+            local isRightSuperTracked = rightQuestID == superTrackedQuestID
+
+            if isLeftSuperTracked ~= isRightSuperTracked then
+                return isLeftSuperTracked
+            end
+
+            return (watchedQuestOrder[leftQuestID] or 0) < (watchedQuestOrder[rightQuestID] or 0)
         end)
-    elseif GW.settings.objectives.sorting == "ZONE" then
-        -- Sort by Zone
-        if Questie and Questie.started and QuestieLoader then
-            local QuestieTrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
-            local QuestieDB = QuestieLoader:ImportModule("QuestieDB")
-            if QuestieTrackerUtils and QuestieDB then
-                table.sort(sorted, function(a, b)
-                    local qA = QuestieDB.GetQuest(a.questId)
-                    local qB = QuestieDB.GetQuest(b.questId)
-                    local qAZone, qBZone
-                    if qA and qA.zoneOrSort > 0 then
-                        qAZone = QuestieTrackerUtils:GetZoneNameByID(qA.zoneOrSort)
-                    elseif qA and qA.zoneOrSort < 0 then
-                        qAZone = QuestieTrackerUtils:GetCategoryNameByID(qA.zoneOrSort)
-                    else
-                        qAZone = tostring(qA and qA.zoneOrSort or "")
-                    end
+    end
 
-                    if qB and qB.zoneOrSort > 0 then
-                        qBZone = QuestieTrackerUtils:GetZoneNameByID(qB.zoneOrSort)
-                    elseif qB and qB.zoneOrSort < 0 then
-                        qBZone = QuestieTrackerUtils:GetCategoryNameByID(qB.zoneOrSort)
-                    else
-                        qBZone = tostring(qB and qB.zoneOrSort or "")
-                    end
+    for _, curQuestId in ipairs(watchedQuestIDs) do
+        if curQuestId then
+            local q = QuestCache:Get(curQuestId)
+            local isCampaign = q:IsCampaign()
+            if (isCampaign and self.isCampaignContainer) or (not isCampaign and not self.isCampaignContainer) then
+                if shouldShowHeader then
+                    self.header:Show()
+                    counterQuest = counterQuest + 1
 
-                    -- Sort by Zone then by Level to mimic QuestLog sorting
-                    if qAZone == qBZone then
-                        return qA.level < qB.level
-                    else
-                        if qAZone ~= nil and qBZone ~= nil then
-                            return qAZone < qBZone
+                    local isFrequency = IsQuestFrequency(q)
+                    local colorKey = GetQuestColorKey(curQuestId, self.isCampaignContainer, isFrequency)
+                    local questLogIndex = q:GetQuestLogIndex()
+                    local signature = BuildQuestBlockSignature(q, curQuestId, questLogIndex, colorKey)
+                    local block = self.blocks and self.blocks[counterQuest]
+
+                    if block and block:IsShown() and block.questID == curQuestId and block.gwSignature == signature then
+                        -- pixel identical since the last pass: keep the rendered rows and
+                        -- only refresh what the rebuild would have refreshed anyway
+                        block.isFrequency = isFrequency
+                        if q.requiredMoney > 0 then
+                            self.watchMoneyReasons = self.watchMoneyReasons + 1
                         else
-                            return qAZone and qBZone
+                            self.watchMoneyReasons = self.watchMoneyReasons - 1
                         end
-                    end
-                end)
-            end
-        end
-    end
-
-    wipe(self.trackedQuests)
-    for _, quest in pairs(sorted) do
-        if ((GetCVar("autoQuestWatch") == "1" and not questWatchDB.AutoUntrackedQuests[quest.questId]) or (GetCVar("autoQuestWatch") == "0" and questWatchDB.TrackedQuests[quest.questId])) then
-            if shouldShowHeader then
-                self.header:Show()
-                counterQuest = counterQuest + 1
-
-                local isFrequency = IsQuestFrequency(quest.questId)
-                local colorKey = isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
-                local signature = BuildQuestBlockSignature(quest, colorKey)
-                local block = self.blocks and self.blocks[counterQuest]
-
-                if block and block:IsShown() and block.questID == quest.questId and block.gwSignature == signature then
-                    -- pixel identical since the last pass: keep the rendered rows and only
-                    -- refresh what the rebuild would have refreshed anyway
-                    block.isFrequency = isFrequency
-                    if quest.requiredMoney then
-                        self.watchMoneyReasons = self.watchMoneyReasons + 1
+                        if block.questLogIndex ~= questLogIndex then
+                            -- the log index feeds the item button, it shifts when other
+                            -- quests come and go without our content changing
+                            block.questLogIndex = questLogIndex
+                            GW.CombatQueue:Queue("update_tracker_actionbutton_" .. frameName .. block.index, block.UpdateObjectiveActionButton, {block})
+                        end
                     else
-                        self.watchMoneyReasons = self.watchMoneyReasons - 1
+                        block = self:GetBlock(counterQuest, colorKey, true)
+                        block.isFrequency = isFrequency
+                        block:UpdateBlock(self, q, curQuestId, questLogIndex, signature)
+                        block:Show()
                     end
-                    if block.questLogIndex ~= quest.questLogIndex or block.sourceItemId ~= quest.sourceItemId then
-                        -- both feed the quest item button, they shift when other quests
-                        -- come and go without our content changing
-                        block.questLogIndex = quest.questLogIndex
-                        block.sourceItemId = quest.sourceItemId
-                        GW.CombatQueue:Queue("update_tracker_actionbutton_" .. frameName .. block.index, block.UpdateObjectiveActionButton, {block})
-                    end
+                    GW.CombatQueue:Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
                 else
-                    block = self:GetBlock(counterQuest, colorKey, true)
-                    block.isFrequency = isFrequency
-                    block:UpdateBlock(self, quest, signature)
-                    block:Show()
-                end
-
-                GW.CombatQueue:Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
-                tinsert(self.trackedQuests, quest)
-            else
-                counterQuest = counterQuest + 1
-                local block = self.blocks and self.blocks[counterQuest]
-                if block then
-                    block.questID = nil
-                    block.questLogIndex = 0
-                    block.sourceItemId = nil
-                    block:Hide()
-                    GW.CombatQueue:Queue("update_tracker_" .. counterQuest, block.UpdateObjectiveActionButton, {block})
+                    counterQuest = counterQuest + 1
+                    local block = self.blocks and self.blocks[counterQuest]
+                    if block then
+                        block:Hide()
+                        block.questLogIndex = 0
+                        GW.CombatQueue:Queue("update_tracker_" .. frameName .. counterQuest, block.UpdateObjectiveActionButton, {block})
+                    end
                 end
             end
         end
     end
-
     self.numQuests = counterQuest
 
     -- hide other quests
@@ -430,258 +513,191 @@ function GwQuestLogMixin:UpdateLayout()
         local block = self.blocks[i]
         block.questID = nil
         block.questLogIndex = 0
-        block.sourceItemId = nil
         block:Hide()
         GW.CombatQueue:Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
     end
 
+    if counterQuest == 0 and self.isCampaignContainer then
+        self.header:Hide()
+    end
+
+
     self:LayoutBlocks(counterQuest)
 
     local headerCounterText = " (" .. counterQuest .. ")"
-    self.header.title:SetText(TRACKER_HEADER_QUESTS .. headerCounterText)
+    self.header.title:SetText(self.isCampaignContainer and TRACKER_HEADER_CAMPAIGN_QUESTS .. headerCounterText or TRACKER_HEADER_QUESTS .. headerCounterText)
+
+    self.isUpdating = false
+end
+
+function GwQuestLogMixin:PartialUpdate(questID, added)
+    if self.isUpdating or not questID then
+        return
+    end
+
+    if ShouldSortSuperTrackedQuestToTop() then
+        self:UpdateLayout()
+        GwQuestTracker:LayoutChanged()
+        return
+    end
+
+    self.isUpdating = true
+
+    local questWatchId = self:GetQuestWatchId(questID)
+    local q = QuestCache:Get(questID)
+    local isCampaign = q:IsCampaign()
+    if self.collapsed or ((isCampaign and not self.isCampaignContainer) or (not isCampaign and self.isCampaignContainer)) or questWatchId == nil or not questWatchId then
+        self.isUpdating = false
+        return
+    end
+
+    local questLogIndex = q:GetQuestLogIndex()
+    local isFrequency = IsQuestFrequency(q)
+    local colorKey = GetQuestColorKey(questID, self.isCampaignContainer, isFrequency)
+    local signature = BuildQuestBlockSignature(q, questID, questLogIndex, colorKey)
+    local existingBlock = self:GetBlockByQuestId(questID)
+    if existingBlock and existingBlock:IsShown() and existingBlock.gwSignature == signature then
+        existingBlock.questLogIndex = questLogIndex
+        self.isUpdating = false
+        return
+    end
+
+    local block = self:GetOrCreateBlockByQuestId(questID, colorKey)
+
+    if block and questLogIndex and questLogIndex > 0 then
+        block.isFrequency = isFrequency
+        block:UpdateBlock(self, q, questID, questLogIndex, signature)
+        block:Show()
+        if added then
+            C_Timer.After(0.1, function()
+                local b = self:GetBlockByQuestId(questID)
+                if b then b:NewQuestAnimation() end
+            end)
+        end
+    end
+
+    local _, counterQuest = self:LayoutBlocks()
+    self.numQuests = counterQuest
+
+    local headerCounterText = " (" .. counterQuest .. ")"
+    self.header.title:SetText(self.isCampaignContainer and TRACKER_HEADER_CAMPAIGN_QUESTS .. headerCounterText or TRACKER_HEADER_QUESTS .. headerCounterText)
+
+    if block and block.hasItem then
+        GW.CombatQueue:Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
+    end
 
     self.isUpdating = false
 end
 
 function GwQuestLogMixin:BlockOnClick(button)
-    if button == "RightButton" then
-        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-            rootDescription:CreateTitle(self.title)
-
-            if Questie and Questie.started then
-                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID) or {}
-
-                if QuestieQuest:IsComplete() == 0 then
-                    local submenuObjectives = rootDescription:CreateButton(OBJECTIVES_TRACKER_LABEL)
-
-                    for _, objective in pairs(QuestieQuest.Objectives) do
-                        local submenuObjectives = submenuObjectives:CreateButton(objective.Description)
-
-                        if TomTom and TomTom.AddWaypoint then
-                            submenuObjectives:CreateButton(GW.L["Set TomTom Target"], function()
-                                AddTomTomWaypoint(self.questID, objective)
-                            end)
-                        end
-
-                        submenuObjectives:CreateButton(GW.L["Show on Map"], function()
-                            QuestieLoader:ImportModule("TrackerUtils"):ShowObjectiveOnMap(objective)
-                        end)
-                    end
-
-                    if next(QuestieQuest.SpecialObjectives) then
-                        for _, objective in pairs(QuestieQuest.SpecialObjectives) do
-                            local submenuObjectives = submenuObjectives:CreateButton(objective.Description)
-
-                            if TomTom and TomTom.AddWaypoint then
-                                submenuObjectives:CreateButton(GW.L["Set TomTom Target"], function()
-                                    AddTomTomWaypoint(self.questID, objective)
-                                end)
-                            end
-
-                            submenuObjectives:CreateButton(GW.L["Show on Map"], function()
-                                QuestieLoader:ImportModule("TrackerUtils"):ShowObjectiveOnMap(objective)
-                            end)
-                        end
-                    end
-                end
-            end
-
-            rootDescription:CreateButton(COMMUNITIES_INVITE_MANAGER_LINK_TO_CHAT, function() LinkQuestIntoChat(self.title, self.questID) end)
-            rootDescription:CreateButton(GW.L["Wowhead URL"], function() StaticPopup_Show("QUESTIE_WOWHEAD_URL", self.questID, self.title) end)
-            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() QuestLogFrame:Show()
-                QuestLog_SetSelection(self.questLogIndex)
-                QuestLog_Update()
-            end)
-
-            if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
-                rootDescription:CreateButton(GW.L["Set TomTom Target"], function() AddTomTomWaypoint(self.questID, nil) end)
-            end
-
-            if Questie and Questie.started and self.isComplete then
-                rootDescription:CreateButton(GW.L["Show on Map"], function()
-                    local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID)
-                    QuestieLoader:ImportModule("TrackerUtils"):ShowFinisherOnMap(QuestieQuest)
-                end)
-            end
-
-            rootDescription:CreateButton(UNTRACK_QUEST, function() UntrackQuest(self.questLogIndex)  end)
-
-        end)
-        return
-    end
-
-    if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
-        if button == "LeftButton" then
-            LinkQuestIntoChat(self.title, self.questID)
-        end
-        return
-    elseif IsControlKeyDown() then
-        if button == "LeftButton" then
-            AddTomTomWaypoint(self.questID, nil)
-        else
-            UntrackQuest(self.questLogIndex)
-        end
+    if ChatFrameUtil.TryInsertQuestLinkForQuestID(self.questID) then
         return
     end
 
     if button ~= "RightButton" then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        if QuestLogFrame:IsShown() and QuestLogFrame.selectedButtonID == self.questLogIndex then
-            QuestLogFrame:Hide()
+        local questID = self.questID
+        if IsModifiedClick("QUESTWATCHTOGGLE") then
+            C_QuestLog.RemoveQuestWatch(questID)
         else
-            QuestLogFrame:Show()
-            QuestLog_SetSelection(self.questLogIndex)
-            QuestLog_Update()
+            local quest = QuestCache:Get(questID)
+            if quest.isAutoComplete and quest:IsComplete() then
+                RemoveAutoQuestPopUp(questID)
+                ShowQuestComplete(questID)
+            else
+                QuestMapFrame_OpenToQuestDetails(questID)
+            end
         end
+    else
+        MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
+            rootDescription:SetMinimumWidth(1)
+            local questID = self.questID
+            rootDescription:CreateTitle(C_QuestLog.GetTitleForQuestID(questID))
+
+            if C_SuperTrack.GetSuperTrackedQuestID() ~= questID then
+                rootDescription:CreateButton(SUPER_TRACK_QUEST, function()
+                    C_SuperTrack.SetSuperTrackedQuestID(questID)
+                end)
+            else
+                rootDescription:CreateButton(STOP_SUPER_TRACK_QUEST, function()
+                    C_SuperTrack.SetSuperTrackedQuestID(0)
+                end)
+            end
+
+            local toggleDetailsText = QuestUtil.IsShowingQuestDetails(questID) and OBJECTIVES_HIDE_VIEW_IN_QUESTLOG or OBJECTIVES_VIEW_IN_QUESTLOG
+
+            rootDescription:CreateButton(toggleDetailsText, function()
+                QuestUtil.OpenQuestDetails(questID)
+            end)
+
+            rootDescription:CreateButton(OBJECTIVES_SHOW_QUEST_MAP, function()
+                QuestMapFrame_OpenToQuestDetails(questID)
+            end)
+
+            rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()
+                C_QuestLog.RemoveQuestWatch(questID)
+            end)
+
+            if C_QuestLog.IsPushableQuest(questID) and IsInGroup() then
+                rootDescription:CreateButton(SHARE_QUEST, function()
+                    QuestUtil.ShareQuest(questID)
+                end)
+            end
+            rootDescription:CreateButton(ABANDON_QUEST_ABBREV, function()
+                QuestMapQuestOptions_AbandonQuest(questID)
+            end)
+            rootDescription:CreateButton(GW.L["Wowhead URL"], function()
+                GW.ShowPopup({text = GW.L["Wowhead URL"],
+                    hasEditBox = true,
+                    hideOnEscape = true,
+                    EditBoxOnEnterPressed = function(popup) popup:Hide() end,
+                    EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+                    button2 = CLOSE,
+                    inputText = (function()
+                        return GW.GetWowheadLinkForLanguage() .. "quest=" .. questID
+
+                    end)(),
+                    })
+            end)
+        end)
     end
 end
 
 GwObjectivesQuestContainerMixin = CreateFromMixins(GwQuestLogMixin)
 
-
-function GwObjectivesQuestContainerMixin:_RemoveQuestWatch(index, isGW2)
-    if not isGW2 then
-        local questId = select(8, GetQuestLogTitle(index))
-        if questId == 0 then
-            questId = index
-        end
-
-        if questId then
-            if "0" == GetCVar("autoQuestWatch") then
-                questWatchDB.TrackedQuests[questId] = nil
-            else
-                questWatchDB.AutoUntrackedQuests[questId] = true
-            end
-            self:OnEvent()
-        end
-    end
-end
-
-function GwObjectivesQuestContainerMixin:_AQW_Insert(index)
-    if index == 0 then
-        return
-    end
-
-    local now = GetTime()
-    if index and index == self._last_aqw and (now - lastAQW) < 0.1 then
-        -- this fixes double calling due to AQW+AQW_Insert (QuestGuru fix)
-        return
-    end
-
-    lastAQW = now
-    self._last_aqw = index
-    RemoveQuestWatch(index, true) -- prevent hitting 5 quest watch limit
-
-    local questId = select(8, GetQuestLogTitle(index))
-    if questId == 0 then
-        questId = index
-    end
-
-    if questId > 0 then
-        if "0" == GetCVar("autoQuestWatch") then
-            if questWatchDB.TrackedQuests[questId] then
-                questWatchDB.TrackedQuests[questId] = nil
-            else
-                questWatchDB.TrackedQuests[questId] = true
-            end
-        else
-            if questWatchDB.AutoUntrackedQuests[questId] then
-                questWatchDB.AutoUntrackedQuests[questId] = nil
-            elseif IsShiftKeyDown() and (QuestLogFrame:IsShown() or (QuestLogExFrame and QuestLogExFrame:IsShown())) then--hack
-                questWatchDB.AutoUntrackedQuests[questId] = true
-            end
-        end
-
-        self:OnEvent()
-    end
-end
-
 function GwObjectivesQuestContainerMixin:InitModule()
     self.blockMixInTemplate = GwQuestLogBlockMixin
 
-    questWatchDB = GW.private.questWatch
-
-    -- migrate the former per character saved variable (temp function)
-    if type(GW2UI_QUEST_WATCH_DB) == "table" then
-        for _, listName in ipairs({ "TrackedQuests", "AutoUntrackedQuests" }) do
-            for questId, value in pairs(GW2UI_QUEST_WATCH_DB[listName] or {}) do
-                if questWatchDB[listName][questId] == nil then
-                    questWatchDB[listName][questId] = value
-                end
-            end
-        end
-        GW2UI_QUEST_WATCH_DB = nil
-    end
-
     self:SetScript("OnEvent", self.OnEvent)
     self:RegisterEvent("QUEST_LOG_UPDATE")
-	self:RegisterEvent("QUEST_WATCH_UPDATE")
-	self:RegisterEvent("UPDATE_FACTION")
-	self:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
-	self:RegisterEvent("PLAYER_LEVEL_UP")
+    self:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
+    self:RegisterEvent("QUEST_AUTOCOMPLETE")
+    self:RegisterEvent("QUEST_ACCEPTED")
     self:RegisterEvent("PLAYER_MONEY")
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self:RegisterEvent("SUPER_TRACKING_CHANGED")
+    self:RegisterEvent("QUEST_POI_UPDATE")
     self.watchMoneyReasons = 0
-    self.trackedQuests = {}
-    self.layoutUpdateFrame = CreateFrame("Frame", nil, self)
-    self.layoutUpdateFrame.container = self
-    self.layoutUpdateQueued = false
+    self.isCampaignContainer = self:GetName() == "GwQuesttrackerContainerCampaign"
+    self.updateQueueFrame = CreateFrame("Frame", nil, self)
+    self.updateQueueFrame.container = self
+    self.updateFlushQueued = false
+    self.fullUpdateQueued = false
+    self.partialUpdatesByQuestID = {}
+    self.partialUpdateOrder = {}
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "SHADOW")
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function
-    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:GetRGB())
-    self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
-    self.header.title:SetText(TRACKER_HEADER_QUESTS)
-
-    --hook functions
-    hooksecurefunc("AutoQuestWatch_Insert", function(questIndex) self:_AQW_Insert(questIndex) end)
-    hooksecurefunc("AddQuestWatch", function(questIndex) self:_AQW_Insert(questIndex) end)
-    hooksecurefunc("RemoveQuestWatch", function(questIndex) self:_RemoveQuestWatch(questIndex) end)
-
-    IsQuestWatched = function(index)
-        local _, _, _, isHeader, _, _, _, questId = GetQuestLogTitle(index)
-        if isHeader then return false end
-        if questId == 0 then
-            questId = index
-        end
-
-        if "0" == GetCVar("autoQuestWatch") then
-            return questWatchDB.TrackedQuests[questId or -1]
-        else
-            return questId and (not questWatchDB.AutoUntrackedQuests[questId])
-        end
-    end
-
-    GetNumQuestWatches = function()
-        return 0
-    end
-
-    local baseQLTB_OnClick = QuestLogTitleButton_OnClick
-    QuestLogTitleButton_OnClick = function(btn, button) -- I wanted to use hooksecurefunc but this needs to be a pre-hook to work properly unfortunately
-        if (not btn) or btn.isHeader or not IsShiftKeyDown() then baseQLTB_OnClick(btn, button) return end
-        local questLogLineIndex = self:GetID()
-
-        if ( IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() ) then
-            local questId = GetQuestIDFromLogIndex(questLogLineIndex)
-            ChatEdit_InsertLink("["..gsub(btn:GetText(), " *(.*)", "%1").." ("..questId..")]")
-        else
-            if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
-                self:_AQW_Insert(questLogLineIndex)
-                QuestWatch_Update()
-                QuestLog_SetSelection(questLogLineIndex)
-                QuestLog_Update()
-            else
-                baseQLTB_OnClick(btn, button)
-            end
-        end
-    end
-
-    if not self._IsQuestWatched then
-        self._IsQuestWatched = IsQuestWatched
-        self._GetNumQuestWatches = GetNumQuestWatches
+    if self.isCampaignContainer then
+        self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:GetRGB())
+        self.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
+        self.header.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
+    else
+        self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:GetRGB())
+        self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
+        self.header.title:SetText(TRACKER_HEADER_QUESTS)
     end
 
     self:OnEvent("LOAD")

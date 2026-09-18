@@ -336,7 +336,7 @@ local function Enable(self)
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
-		if(not element.smoothing and ns.Modern) then
+		if(not element.smoothing and ns.isModern) then
 			element.smoothing = Enum.StatusBarInterpolation.Immediate
 		end
 

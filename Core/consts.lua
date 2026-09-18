@@ -749,6 +749,8 @@ elseif GW.Wrath then
             -- TODO: Hysteria / Unholy Frenzy
         }
     }
+elseif GW.Forever then
+    GW.AURAS_INDICATORS = {}
 end
 
 -- Never show theses auras
@@ -1308,6 +1310,10 @@ elseif GW.Wrath then
         [3267]	= 7, -- Wool Bandage
         [1159]	= 6, -- Heavy Linen Bandage
         [746]	= 6, -- Linen Bandage
+    }
+elseif GW.Forever then
+    GW.ChannelTicks = {
+
     }
 end
 

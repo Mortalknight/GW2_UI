@@ -126,7 +126,7 @@ local function Update(self, event, unit)
 	local allHeal, playerHeal, otherHeal, healClamped
 	local damageAbsorbAmount, damageAbsorbClamped = 0, false
 	local healAbsorbAmount
-	if ns.Modern then
+	if ns.isModern then
 		UnitGetDetailedHealPrediction(unit, 'player', element.values)
 
 		allHeal, playerHeal, otherHeal, healClamped = element.values:GetIncomingHeals()
@@ -256,7 +256,7 @@ local function Enable(self)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		if ns.Modern then
+		if ns.isModern then
 			if(element.values) then
 				element.values:Reset()
 			else

@@ -336,7 +336,7 @@ end
 local function GetSpecializations()
     local specs = {}
     local endIdx
-    if GW.Retail or GW.Mists then
+    if GW.isModern or GW.Mists then
         endIdx = GetNumSpecializations()
     else
         endIdx = GetNumTalentGroups(false, false) > 1 and 2 or 1

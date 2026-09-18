@@ -181,7 +181,7 @@ function GwObjectivesArenaContainerMixin:SetUpFramePosition()
 end
 
 function GwObjectivesArenaContainerMixin:RegisterFrame(i)
-    local arenaFrame = CreateFrame("Button", "GwArenaFrame" .. i, GwQuestTracker, GW.Modern and "GwQuestTrackerArenaFramePingableTemplate" or "GwQuestTrackerArenaFrameTemplate")
+    local arenaFrame = CreateFrame("Button", "GwArenaFrame" .. i, GwQuestTracker, GW.isModern and "GwQuestTrackerArenaFramePingableTemplate" or "GwQuestTrackerArenaFrameTemplate")
     GW.SetFrameRoleset(arenaFrame, "arenaFrames")
     local unit = "arena" .. i
     Mixin(arenaFrame, GwArenaFrameMixin)

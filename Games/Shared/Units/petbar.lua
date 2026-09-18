@@ -379,7 +379,7 @@ local function LoadPetFrame(lm)
     end)
     playerPetFrame.happiness:SetScript("OnLeave", GameTooltip_Hide)
 
-    if GW.Modern then
+    if GW.isModern then
         -- 12.1: pet auras run through the AuraContainer system (factory) —
         -- the container is attached to the old auras frame so that ToggleAuraPosition
         -- (position below the power bar vs. to the right) keeps working unchanged

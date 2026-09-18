@@ -46,7 +46,7 @@ local function Update(self, event)
 	local isEligible = UnitIsConnected(unit) and UnitInParty(unit)
 	if(isEligible) then
 		inRange = UnitInRange(unit)
-        if ns.Modern then
+        if ns.isModern then
 			self:SetAlphaFromBoolean(inRange, element.insideAlpha, element.outsideAlpha)
         else
 			if inRange then

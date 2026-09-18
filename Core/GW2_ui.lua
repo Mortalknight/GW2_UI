@@ -28,7 +28,7 @@ local hudArtFrame
 local mainbarLM -- mainbar layout manager, created in the first login stage, consumed by the second
 
 
-if GW.Retail then
+if GW.isModern then
     function GW2_ADDON_AddonCompartmentOnClickFunc()
         GW.ToggleGw2Settings()
     end
@@ -494,7 +494,7 @@ local function evPlayerLogin(self)
     GW.BuildPrefixValues()
     GW.LoadMovers(lm.layoutFrame)
     GW.BuildSettingsWindow()
-    if not GW.Retail then
+    if not GW.isModern then
         GW.LoadHoverBinds()
     end
 
@@ -516,7 +516,7 @@ local function evPlayerLogin(self)
     GW.LoadRaidMarkerCircle()
 
     --Create general skins
-    if GW.Retail then
+    if GW.isModern then
         GW.StoreGameMenuButton()
     end
     if GW.settings.skins.mainMenu.enabled then
@@ -548,7 +548,7 @@ local function evPlayerLogin(self)
         end)
     end
 
-    if GW.Mists or GW.Retail or GW.TBC or GW.Wrath then
+    if GW.Mists or GW.isModern or GW.TBC or GW.Wrath then
         GW.WidgetUISetup()
     end
 
@@ -580,7 +580,7 @@ local function evPlayerLogin(self)
         hudArtFrame.edgeTintBottomCornerRight:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
     end
 
-    if not GW.Retail then
+    if not GW.isModern then
         if not GW.ShouldBlockIncompatibleAddon("FloatingCombatText") then -- Only touch this setting if no other addon for this is loaded
             if GW.settings.combatText.mode == "GW2" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
@@ -633,7 +633,7 @@ local function evPlayerLogin(self)
         if GW.settings.bags.enabled then
             GW.LoadInventory()
         end
-    elseif not GW.Retail and not C_AddOns.IsAddOnLoaded("Bartender4") then
+    elseif not GW.isModern and not C_AddOns.IsAddOnLoaded("Bartender4") then
         MainMenuBarBackpackButton:ClearAllPoints()
         CharacterBag0Slot:ClearAllPoints()
         CharacterBag1Slot:ClearAllPoints()
@@ -653,7 +653,7 @@ local function evPlayerLogin(self)
 
     GW.LoadCharacter()
 
-    if GW.Retail or GW.TBC then
+    if GW.isModern or GW.TBC then
         GW.LoadSocialFrame()
     end
 
@@ -664,7 +664,7 @@ local function evPlayerLogin(self)
     GW.Create_Raid_Counter()
     GW.LoadMirrorTimers()
     GW.LoadAutoRepair()
-    if not GW.Retail then
+    if not GW.isModern then
         GW.ToggleInterruptAnncouncement()
     end
 
@@ -781,7 +781,7 @@ local function evPlayerLoginLate()
 
     -- create action bars
     if GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
-        if GW.Retail then
+        if GW.isModern then
             if GW.settings.actionbars.barLayout then
                 GW.LoadActionBars(mainbarLM, false)
                 --GW.ExtraAB_BossAB_Setup() -- Test
@@ -799,7 +799,7 @@ local function evPlayerLoginLate()
         end
     end
 
-    if not GW.Retail then
+    if not GW.isModern then
         GW.SecureGameMenuLogoutButtons()
     end
     GW.HandleBlizzardEditMode()

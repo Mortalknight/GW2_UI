@@ -14,7 +14,7 @@ local CanPlayerUseTalentSpecUI = C_SpecializationInfo.CanPlayerUseTalentSpecUI o
 	return true, HELPFRAME_CHARACTER_BULLET5
 end
 
-if GW.Retail or GW.Mists then
+if GW.isModern or GW.Mists then
     local _, classId = UnitClassBase("player")
     numSpecs = C_SpecializationInfo.GetNumSpecializationsForClassID(classId)
     for i = 1, numSpecs do

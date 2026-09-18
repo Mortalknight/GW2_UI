@@ -179,7 +179,7 @@ function GwHealthglobeMixin:ToggleSettings()
 end
 
 local function LoadHealthGlobe()
-    local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, GW.Modern and "GwHealthGlobePingableTmpl" or "GwHealthGlobeTmpl")
+    local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, GW.isModern and "GwHealthGlobePingableTmpl" or "GwHealthGlobeTmpl")
     GW.SetFrameRoleset(hg, "unitFrames")
 
     hg.absorbOverlay = hg.healPrediction.absorbbg.candy.health.antiHeal.absorbOverlay

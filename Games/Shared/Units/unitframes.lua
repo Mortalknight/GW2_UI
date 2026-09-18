@@ -23,7 +23,7 @@ end
 
 local function CreateUnitFrame(name, revert, animatedPowerbar)
     local template
-    if GW.Modern then
+    if GW.isModern then
         if revert then
             template = "GwNormalUnitFrameInvertPingableModernTemplate"
         else
@@ -43,7 +43,7 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
     f.portrait:ClearAllPoints()
     f.portrait:SetPoint("CENTER", f.portraitAnchor)
 
-    if GW.Retail then
+    if GW.isModern then
         f.absorbOverlay = hg.health.overDamageAbsorbIndicator
         f.antiHeal      = hg.healAbsorb
         f.health        = hg.health
@@ -89,7 +89,7 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
         f.absorbOverlay:SetPoint(anchor1, f.health, anchor2, revert and 14 or -8, 0)
         f.absorbOverlay:SetWidth(16)
 
-        f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusPowerBarRetailTemplate")
+        f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusPowerBarModernTemplate")
         f.powerbar = f.powerbarContainer.powerbar
 
         if animatedPowerbar then
@@ -200,12 +200,12 @@ end
 GW.CreateUnitFrame = CreateUnitFrame
 
 local function CreateSmallUnitFrame(name)
-    local f = CreateFrame("Button", name, UIParent, GW.Modern and "GwNormalUnitFramePingableSmallModernTemplate" or "GwNormalUnitFrameSmall")
+    local f = CreateFrame("Button", name, UIParent, GW.isModern and "GwNormalUnitFramePingableSmallModernTemplate" or "GwNormalUnitFrameSmall")
     GW.SetFrameRoleset(f, "unitFrames")
 
     local hg = f.healthContainer
 
-    if GW.Retail then
+    if GW.isModern then
         f.absorbOverlay = hg.health.overDamageAbsorbIndicator
         f.antiHeal      = hg.healAbsorb
         f.health        = hg.health
@@ -215,7 +215,7 @@ local function CreateSmallUnitFrame(name)
         f.nameString    = hg.health.nameString
         f.levelString   = hg.health.levelString
 
-        f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusPowerBarRetailTemplate")
+        f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusPowerBarModernTemplate")
         f.powerbar = f.powerbarContainer.powerbar
         f.powerbar:SetAllPoints(f.powerbarContainer)
 
@@ -604,14 +604,14 @@ function GwUnitFrameMixin:StartCastbar(event)
     local barTexture = GW.CASTINGBAR_TEXTURES.YELLOW.NORMAL
     local direction, duration
 
-    if GW.Retail then
+    if GW.isModern then
         direction = Enum.StatusBarTimerDirection.ElapsedTime
     end
 
     local name, _, texture, startTime, endTime, _, _, notInterruptible, spellID, castID = UnitCastingInfo(self.gwUnit)
     if name then
         self.casting = true
-        if GW.Retail then
+        if GW.isModern then
             duration = UnitCastingDuration(self.gwUnit)
         end
     else
@@ -619,7 +619,7 @@ function GwUnitFrameMixin:StartCastbar(event)
         name, _, texture, startTime, endTime, _, notInterruptible, spellID, isEmpowered, _, castID = UnitChannelInfo(self.gwUnit)
         barTexture = GW.CASTINGBAR_TEXTURES.GREEN.NORMAL
 
-        if GW.Retail then
+        if GW.isModern then
             if isEmpowered then
                 self.empowering = true
                 duration = UnitEmpoweredChannelDuration(self.gwUnit)
@@ -645,7 +645,7 @@ function GwUnitFrameMixin:StartCastbar(event)
     self.spellID = spellID
     self.notInterruptible = notInterruptible
 
-    if not GW.Retail then
+    if not GW.isModern then
         self.maxValue = (endTime - startTime) / 1000
         startTime, endTime = startTime / 1000, endTime / 1000
 
@@ -670,7 +670,7 @@ function GwUnitFrameMixin:StartCastbar(event)
         self.castingTimeString:SetShown(self.showCastingbarTimer and true or false)
     end
 
-    if not GW.Retail and notInterruptible then
+    if not GW.isModern and notInterruptible then
         self.castingString:SetText(self.showCastingbarName and name or "")
         self.castingbarNormal:Hide()
         if self.castingbar then self.castingbar:Show() end
@@ -695,7 +695,7 @@ function GwUnitFrameMixin:StartCastbar(event)
         self.castingbarNormal:ClearStages()
     end
 
-    if GW.Retail then
+    if GW.isModern then
         self.castingbarNormal:SetTimerDuration(duration, Enum.StatusBarInterpolation.Immediate, direction)
         self.castingbarNormal:GetStatusBarTexture():SetDesaturated(notInterruptible)
     else
@@ -847,7 +847,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             self:UpdatePowerBar()
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             self:StartCastbar()
-        elseif GW.Retail and IsIn(event, "UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "UNIT_SPELLCAST_INTERRUPTIBLE") then
+        elseif GW.isModern and IsIn(event, "UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "UNIT_SPELLCAST_INTERRUPTIBLE") then
             self:CastInterruptible()
         elseif IsIn(event, "UNIT_SPELLCAST_DELAYED", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
             self:StartCastbar()
@@ -1047,7 +1047,7 @@ function GwUnitFrameMixin:ToggleSettings()
     self.auras:SetWidth(self.healthContainer:GetWidth() + 4)
     self.auras.maxWidth = self.healthContainer:GetWidth() + 4
 
-    if GW.Retail and self.aurasContainer then
+    if GW.isModern and self.aurasContainer then
         self:ApplyAuraSettings(unit)
     end
 
@@ -1100,7 +1100,7 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe.gwUnit = unit
     unitframe.type = "NormalTarget"
 
-    if GW.Modern then
+    if GW.isModern then
         -- 12.1: unit frame auras run through the AuraContainer factory; sizes, filters,
         -- direction and anchoring are applied in ToggleSettings right below.
         -- The container only refreshes on UNIT_AURA — a target/focus switch changes
@@ -1185,7 +1185,7 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:RegisterUnitEvent("UNIT_TARGET", unit)
     unitframe:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
     unitframe:RegisterUnitEvent("UNIT_MAXPOWER", unit)
-    if not GW.Retail then -- on Retail the AuraContainer handles aura updates itself
+    if not GW.isModern then -- on Modern the AuraContainer handles aura updates itself
         unitframe:RegisterUnitEvent("UNIT_AURA", unit)
     end
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_START", unit)

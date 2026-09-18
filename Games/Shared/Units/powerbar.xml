@@ -115,7 +115,7 @@
     </Frames>
   </StatusBar>
 
-  <StatusBar name="GwStatusPowerBarRetailTemplate" minValue="0" maxValue="1" virtual="true" mixin="GwPlayerPowerBarMixin" inherits="GwStatusBarBackground">
+  <StatusBar name="GwStatusPowerBarModernTemplate" minValue="0" maxValue="1" virtual="true" mixin="GwPlayerPowerBarMixin" inherits="GwStatusBarBackground">
       <Size x="313" y="14"></Size>
       <Anchors>
           <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
