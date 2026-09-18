@@ -4,7 +4,7 @@ local GW = select(2, ...)
 -- The dressing room of the classic clients. It is a plain window with a DressUpModel instead of the model scene,
 -- the set dropdown and the detail panels of the retail client, so it gets its own skin; retail keeps
 -- dressUpFrame.lua. Classic, TBC, Wrath and Mists all share the same frame.
-if GW.Retail then return end
+if GW.isModern then return end
 
 local WINDOW_ICON = "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png"
 

@@ -1,9 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file="deathrecapframe.lua"/>
-    <Script file="talkinghead.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\deathrecapframe.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\talkinghead.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\flightmap.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\barber.lua"/>
-    <Script file="dressUpFrame.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\dressUpFrame.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\inspectFrame.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\worldmap.lua"/>
     <Script file="itemUpgrade.lua"/>
@@ -23,7 +23,7 @@
     <Script file="expansionLandingPage.lua"/>
     <Script file="genericTraintUI.lua"/>
     <Script file="adventureMap.lua"/>
-    <Script file="playerSpells.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\playerSpells.lua"/>
     <Script file="auctionHouse.lua"/>
     <Script file="battlefieldMap.lua"/>
     <Script file="majorFaction.lua"/>

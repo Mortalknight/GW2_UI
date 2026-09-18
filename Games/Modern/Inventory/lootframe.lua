@@ -45,6 +45,9 @@ local function LoadLootFrameSkin()
     if not GW.settings.skins.lootFrame.enabled then return end
 
     LootFrame:GwStripTextures()
+    if LootFrame.NineSlice then
+        LootFrame.NineSlice:SetAlpha(0)
+    end
     LootFrameBg:Hide()
     LootFrameTitleText:Hide()
 

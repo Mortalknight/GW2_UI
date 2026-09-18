@@ -8,4 +8,8 @@
     <Script file="..\..\..\Modern\Immersive\Skins\barber.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\damageMeter.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\calendar.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\dressUpFrame.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\talkinghead.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\deathrecapframe.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\playerSpells.lua"/>
 </Ui>
