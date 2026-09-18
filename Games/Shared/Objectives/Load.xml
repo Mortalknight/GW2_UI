@@ -7,6 +7,9 @@
     <Script file ="scenarioWidgets\emberCourt.lua"/>
     <Script file ="scenarioWidgets\delveNemisisCounter.lua"/>
 
+    <Script file ="bonusObjective.lua"/>
+    <Script file ="recipeTracking.lua"/>
+    <Script file ="collectionTracking.lua"/>
     <Script file ="scenario.lua"/>
     <Script file ="minimapButtons.lua"/>
     <Script file ="notifications.lua"/>
