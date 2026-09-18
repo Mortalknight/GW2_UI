@@ -1068,6 +1068,7 @@ local function LoadInventory()
     _G["BINDING_NAME_BANK_SORT"] = BAG_CLEANUP_BANK
 
     BagsBar:GwKillEditMode()
+    BagsBar:Hide()
 
     -- make blizzards container frames inert once, we only use their open/close
     -- lifecycle as the bag state

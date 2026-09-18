@@ -1077,6 +1077,26 @@ local function LayoutMicroButtons()
             previous = frame
         end
     end
+
+    -- blizzard buttons we took over (reparented by the reskin) but gave no slot on this client
+    -- keep their old anchors and would sit somewhere on the screen alone - park them off screen
+    -- like hidden slots, their events and alerts keep working there
+    local placed = {}
+    for _, frame in pairs(slotButtons) do
+        placed[frame] = true
+    end
+    for _, companions in pairs(slotCompanions) do
+        for _, companion in ipairs(companions) do
+            placed[companion] = true
+        end
+    end
+    for _, name in ipairs(MICRO_BUTTONS_LOCAL) do
+        local btn = _G[name]
+        if btn and not placed[btn] and btn:GetParent() == layoutContainer then
+            btn:ClearAllPoints()
+            btn:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
+        end
+    end
 end
 GW.LayoutMicroButtons = LayoutMicroButtons
 
@@ -1171,7 +1191,8 @@ local function setupMicroButtons(mbf)
 
     -- SpellbookMicroButton
     if GW.isModern then
-        SetSlotButton("spellbook", PlayerSpellsMicroButton)
+        local spellButton = (PlayerSpellsMicroButton and PlayerSpellsMicroButton.layoutIndex) and PlayerSpellsMicroButton or SpellbookMicroButton or PlayerSpellsMicroButton
+        SetSlotButton("spellbook", spellButton)
     elseif GW.settings.windows.spellbook.enabled and hasCharacterWindow then
         local sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, "SecureHandlerClickTemplate")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
@@ -1676,6 +1697,12 @@ local function LoadMicroMenu()
     end
 
     MicroMenuContainer:GwKillEditMode()
+    if MicroMenu.BackgroundArt then
+        MicroMenu.BackgroundArt:Hide()
+    end
+    if MicroMenu.BorderArt then
+        MicroMenu.BorderArt:Hide()
+    end
 
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")
