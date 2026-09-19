@@ -20,6 +20,22 @@ local windowsList = {
         ]=]
     },
     {
+        OnLoad = "LoadProfessions",
+        FrameName = "GwProfessionsDetailsFrame",
+        window = "profession",
+        RefName = "GwProfessionsFrame",
+        TabIcon = "tabicon_professions",
+        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon.png",
+        HeaderText = TRADE_SKILLS,
+        TooltipText = TRADE_SKILLS,
+        Bindings = {
+            TOGGLEPROFESSIONBOOK = "Professions"
+        },
+        OnClick = [=[
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "professions")
+        ]=]
+    },
+    {
         OnLoad = "LoadReputation",
         FrameName = "GwReputationDetailsFrame",
         window = "character",
@@ -71,6 +87,7 @@ local charSecure_OnClick = GW.BuildCharacterWindowClickHandler({
     Honor = "paperdollhonor",
     PaperDoll = "paperdoll",
     PetPaperDollFrame = "paperdollpet",
+    Professions = "professions",
     Reputation = "reputation",
     Skills = "paperdollskills",
     Statistics = "statistics",
@@ -87,6 +104,7 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
         "GwPaperSkills",
         "GwPaperHonor",
         "GwPetContainer",
+        "GwProfessionsFrame",
         "GwReputationFrame",
         "GwCurrencyFrame",
         "GwStatisticsFrame",
@@ -128,6 +146,11 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
             toggleRef = "GwPetContainer",
             requiresAttribute = "HasPetUI",
             showRefs = {"GwPaperDoll", "GwPetContainer"},
+        },
+        {
+            value = "professions",
+            toggleRef = "GwProfessionsFrame",
+            showRefs = {"GwProfessionsFrame"},
         },
         {
             value = "reputation",

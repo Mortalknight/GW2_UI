@@ -163,7 +163,7 @@ local function ApplyExpressInstall()
     GW.settings.fonts.styleTemplate = "GW2"
     GW.ApplyFontStyleTemplate()
 
-    if not GW.Retail then
+    if not GW.isModern then
         GW.settings.combatText.mode = "GW2"
         GW.ApplyCombatTextMode("GW2")
     end

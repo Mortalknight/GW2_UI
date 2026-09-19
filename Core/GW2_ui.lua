@@ -932,7 +932,6 @@ local function evLoadSkins()
         loadStep(GW.LoadWeeklyRewardsSkin)
         loadStep(GW.LoadPerksProgramSkin)
         loadStep(GW.LoadAdventureMapSkin)
-        loadStep(GW.LoadAuctionHouseSkin)
         loadStep(GW.LoadBattlefieldMapSkin)
         loadStep(GW.LoadMajorFactionsFrameSkin)
     elseif not GW.Forever then
@@ -947,6 +946,7 @@ local function evLoadSkins()
         loadStep(GW.LoadBarShopUISkin)
         loadStep(GW.LoadDamageMeterSkin)
         loadStep(GW.LoadCalendarSkin)
+        loadStep(GW.LoadAuctionHouseSkin)
     end
 
     if not (GW.Classic or GW.TBC) then

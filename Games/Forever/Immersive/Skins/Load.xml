@@ -12,4 +12,5 @@
     <Script file="..\..\..\Modern\Immersive\Skins\talkinghead.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\deathrecapframe.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\playerSpells.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\auctionHouse.lua"/>
 </Ui>

@@ -14,5 +14,6 @@
     <Script file ="pet.lua"/>
     <Script file ="paperdoll.lua"/>
     <Script file ="currency.lua"/>
+    <Script file ="professions.lua"/>
     <Script file ="statistics.lua"/>
 </Ui>
