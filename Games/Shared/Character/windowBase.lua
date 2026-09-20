@@ -91,6 +91,7 @@ local SecureSnippetsWork = GW.SecureSnippetsWork
 
 local fallbackAttributeConfig
 local fallbackClickTargets
+local FallbackCloseWindow
 
 local function FallbackGetRef(frame, label)
     return frame.gwFrameRefs and frame.gwFrameRefs[label]
@@ -123,8 +124,7 @@ local function FallbackOnAttributeChanged(self, name, value)
                     end
                 end
                 if toggleClose then
-                    self:SetAttribute("keytoggle", nil)
-                    self:SetAttribute("windowpanelopen", nil)
+                    FallbackCloseWindow()
                     return
                 end
             end
@@ -158,8 +158,23 @@ local function FallbackOnAttributeChanged(self, name, value)
     end
 end
 
+-- the window is hidden here as well: with the snippets broken the attribute handler is the only
+-- thing that would do it, and every close path has to work even if it does not run
+function FallbackCloseWindow()
+    if InCombatLockdown() or not GwCharacterWindow then
+        return
+    end
+    GwCharacterWindow:SetAttribute("keytoggle", nil)
+    GwCharacterWindow:SetAttribute("windowpanelopen", nil)
+    GwCharacterWindow:Hide()
+end
+
 local function FallbackOpenPanel(target, keytoggle)
     if InCombatLockdown() or not GwCharacterWindow then
+        return
+    end
+    if not target then
+        FallbackCloseWindow()
         return
     end
     if keytoggle then
@@ -187,7 +202,7 @@ end
 
 local function FallbackBindingClick_OnClick(_, clickName)
     if clickName == "Close" then
-        FallbackOpenPanel(nil, false)
+        FallbackCloseWindow()
     elseif fallbackClickTargets and fallbackClickTargets[clickName] then
         FallbackOpenPanel(fallbackClickTargets[clickName], true)
     end
@@ -214,10 +229,17 @@ local function InstallWindowFallback(frame)
         self:savePosition(x, y)
     end)
 
+    -- blizzards own click target is hidden, a binding needs a button that is shown
+    local escape = CreateFrame("Button", "GwCharacterWindowFallbackEscape", frame)
+    escape:SetSize(1, 1)
+    escape:SetAlpha(0)
+    escape:RegisterForClicks("AnyUp")
+    escape:SetScript("OnClick", FallbackCloseWindow)
+
     frame:HookScript("OnShow", function(self)
         local keyEsc = GetBindingKey("TOGGLEGAMEMENU")
         if keyEsc and not InCombatLockdown() then
-            SetOverrideBinding(self, false, keyEsc, "CLICK " .. self.secure:GetName() .. ":Close")
+            SetOverrideBindingClick(self, false, keyEsc, escape:GetName())
         end
     end)
     frame:HookScript("OnHide", function(self)
@@ -763,6 +785,17 @@ function GW.CharacterMenuButton_OnLoad(self, odd, addGwHeroPanelFrameRef)
     else
         self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
     end
+
+    if self.ClearDisabledTexture then
+        self:ClearDisabledTexture()
+    end
+    local disabledTexture = self:GetDisabledTexture()
+    if disabledTexture then
+        disabledTexture:SetAlpha(0)
+    end
+    self:HookScript("OnDisable", function(button) button:SetAlpha(0.45) end)
+    self:HookScript("OnEnable", function(button) button:SetAlpha(1) end)
+    self:SetAlpha(self:IsEnabled() and 1 or 0.45)
 
     local fontString = self:GetFontString()
     if fontString then

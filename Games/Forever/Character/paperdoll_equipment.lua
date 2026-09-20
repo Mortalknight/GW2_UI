@@ -130,7 +130,14 @@ local function AddStatTile(self, entries, statKey, hideAt, editMode)
     if not PAPERDOLL_STATINFO[statKey] then return end
     local frame = PDE.GetStatListFrame(self)
     frame.unit = "player"
+    frame.Value:SetText("")
     PAPERDOLL_STATINFO[statKey].updateFunc(frame, "player")
+
+    local value = frame.Value:GetText()
+    if not value or strtrim(value) == "" then
+        self.statsFramePool:Release(frame)
+        return
+    end
 
     local visible = GW.StatsPicker.IsVisible(statKey, not hideAt or hideAt ~= frame.numericValue)
     if visible or editMode then
@@ -259,6 +266,10 @@ local function SetupStatsScroll(stats)
     ScrollUtil.InitScrollFrameWithScrollBar(stats.scroll, stats.scrollBar)
     GW.HandleTrimScrollBar(stats.scrollBar)
     stats.scrollBar:SetHideIfUnscrollable(true)
+    stats.scrollBar:SetWidth(6)
+    local thumb = stats.scrollBar:GetThumb()
+    thumb:SetWidth(4)
+    thumb.gwTex:SetVertexColor(1, 1, 1, 0.45)
     return stats.tiles
 end
 

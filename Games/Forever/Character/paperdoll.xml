@@ -89,8 +89,8 @@
                     </ScrollFrame>
                     <EventFrame parentKey="scrollBar" inherits="MinimalScrollBar">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.scroll" relativePoint="TOPRIGHT" x="-4" y="0"/>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.scroll" relativePoint="BOTTOMRIGHT" x="-4" y="0"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.scroll" relativePoint="TOPRIGHT" x="-12" y="0"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.scroll" relativePoint="BOTTOMRIGHT" x="-12" y="0"/>
                         </Anchors>
                     </EventFrame>
                 </Frames>

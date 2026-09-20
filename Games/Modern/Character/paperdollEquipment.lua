@@ -552,7 +552,7 @@ function PDE.GetStatListFrame(dressingRoom)
 
     if not frame.initialized then
         frame.Value:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-        frame.Value:SetText(ERRORS)
+        frame.Value:SetText("")
         frame.Label:SetFont(UNIT_NAME_FONT, 1)
         frame.Label:SetTextColor(0, 0, 0, 0)
         frame.icon:SetSize(30, 30)
