@@ -86,6 +86,7 @@ end
 
 local HELP_BUTTON_SIZE = 20
 local function SkinHelpButton(button)
+    if not button then return end
     if not button.gwSkinned then
         button.gwSkinned = true
         -- blanked, so blizzards ring pulse for new players stays invisible
@@ -114,7 +115,7 @@ end
 
 -- xp bars have no color of their own and would vanish white on the gray background
 local function SkinStatusBar(bar, color)
-    if bar.gwSkinned then return end
+    if not bar or bar.gwSkinned then return end
     bar.gwSkinned = true
     bar:GwStripTextures()
     GW.AddStatusBarFrame(bar)
@@ -127,7 +128,7 @@ end
 
 -- blizzards bars and our own ones (CreateCollectionBar), only blizzards have the border frame
 local function SkinProgressBar(bar)
-    if bar.gwSkinned then return end
+    if not bar or bar.gwSkinned then return end
     bar.gwSkinned = true
     if bar.border then
         bar.border:Hide()
@@ -216,7 +217,10 @@ end
 
 local function StripFrames(...)
     for i = 1, select("#", ...) do
-        select(i, ...):GwStripTextures()
+        local frame = select(i, ...)
+        if frame then
+            frame:GwStripTextures()
+        end
     end
 end
 
@@ -259,6 +263,7 @@ local HEAL_FRAME_WIDTH = 96
 local SPELL_FRAME_GAP = 6
 -- the frames share the control row with the progress bar, the label wraps into two small lines
 local function SkinSpellFrame(frame, width)
+    if not frame then return end
     GW.HandleItemButton(frame.Button, true)
     frame.Button:SetSize(SPELL_BUTTON_SIZE, SPELL_BUTTON_SIZE)
     frame:SetSize(width, SPELL_BUTTON_SIZE)
@@ -273,6 +278,7 @@ local function BackdropAroundIcon(icon, template)
 end
 
 local function SkinIconButton(button)
+    if not button then return end
     BackdropAroundIcon(button.icon)
     button:GwStyleButton()
 end
@@ -475,7 +481,7 @@ local function LayoutJournalTabs()
     local previous
     for i = 1, 6 do
         local tab = _G["CollectionsJournalTab" .. i]
-        if tab:IsShown() then
+        if tab and tab:IsShown() then
             tab:ClearAllPoints()
             if previous then
                 tab:SetPoint("LEFT", previous, "RIGHT", 0, 0)
@@ -489,11 +495,26 @@ end
 
 local function SkinJournalTabs()
     for i = 1, 6 do
-        GW.HandleTabs(_G["CollectionsJournalTab" .. i])
+        local tab = _G["CollectionsJournalTab" .. i]
+        if tab and BLIZZARD_COLLECTIONS_TAB_STYLE and BLIZZARD_COLLECTIONS_TAB_STYLE == BLIZZARD_COLLECTIONS_TAB_STYLE_SIDE then
+            tab:SetHeight(32)
+            tab.Text = tab:CreateFontString(nil, "OVERLAY")
+            tab.Text:SetPoint("CENTER", 0, 2)
+            tab.Text:SetFontObject(GameFontNormalSmall)
+            tab.Text:SetTextColor(1, 1, 1)
+            tab.Text:SetText(tab.tooltipText)
+            tab.Text:SetWidth(tab.Text:GetStringWidth())
+            tab:SetWidth(tab.Text:GetStringWidth() + 20)
+        end
+        GW.HandleTabs(tab)
     end
     LayoutJournalTabs()
     -- blizzard re-anchors the wardrobe tab whenever the heirlooms tab toggles
-    hooksecurefunc("CollectionsJournal_CheckAndDisplayHeirloomsTab", LayoutJournalTabs)
+    if CollectionsJournal_CheckAndDisplayHeirloomsTab then
+        hooksecurefunc("CollectionsJournal_CheckAndDisplayHeirloomsTab", LayoutJournalTabs)
+    elseif CollectionsJournal_CheckAndDisplayTabs then
+        hooksecurefunc("CollectionsJournal_CheckAndDisplayTabs", LayoutJournalTabs)
+    end
 end
 
 ---------- progress bar and achievement status above the mount and pet lists ----------
@@ -522,6 +543,7 @@ local ACHIEVEMENT_ICON = "Interface/AddOns/GW2_UI/textures/icons/microicons/achi
 local ACHIEVEMENT_ICON_SIZE = 18
 -- on every tab left of the progress bar
 local function SkinAchievementStatus(button, bar)
+    if not button or not bar then return end
     button:DisableDrawLayer("BACKGROUND")
     button:SetSize(60, 20)
     button:ClearAllPoints()
@@ -712,21 +734,27 @@ local function SkinPetCard(card)
     local info = card.PetInfo
     info:GwNudgePoint(10, 0)
     GW.AddDetailsBackground(card, 8, 2)
-    info.levelBG:SetAlpha(0)
-    info.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
-    info.name:SetTextColor(1, 1, 1)
-    BackdropAroundIcon(info.icon, GW.BackdropTemplates.DefaultWithColorableBorder)
-    GW.HandleIconBorder(info.qualityBorder, info.icon.backdrop)
-    local function ColorLevel(backdrop)
-        info.level:SetTextColor(backdrop:GetBackdropBorderColor())
+    if info.levelBG then
+        info.levelBG:SetAlpha(0)
+        info.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
     end
-    hooksecurefunc(info.icon.backdrop, "SetBackdropBorderColor", ColorLevel)
+    info.name:SetTextColor(1, 1, 1)
+    if info.icon and info.qualityBorder then
+        BackdropAroundIcon(info.icon, GW.BackdropTemplates.DefaultWithColorableBorder)
+        GW.HandleIconBorder(info.qualityBorder, info.icon.backdrop)
+        local function ColorLevel(backdrop)
+            info.level:SetTextColor(backdrop:GetBackdropBorderColor())
+        end
+        hooksecurefunc(info.icon.backdrop, "SetBackdropBorderColor", ColorLevel)
+        ColorLevel(info.icon.backdrop)
+    end
     for i = 1, 6 do
         SkinIconButton(card["spell" .. i])
     end
-    SkinStatusBar(card.HealthFrame.healthBar)
+    if card.HealthFrame then
+        SkinStatusBar(card.HealthFrame.healthBar)
+    end
     SkinStatusBar(card.xpBar, XP_COLOR)
-    ColorLevel(info.icon.backdrop)
 end
 
 local function SkinPetJournal()
@@ -735,11 +763,13 @@ local function SkinPetJournal()
     StripFrames(journal.LeftInset, journal.RightInset, journal.PetCardInset, journal.loadoutBorder, journal.SpellSelect)
     GW.AddDetailsBackground(journal.RightInset)
     SkinHelpButton(journal.MainHelpButton)
-    for _, region in next, {journal.loadoutBorder:GetRegions()} do
-        if region:IsObjectType("FontString") then
-            region:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-            region:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-            region:GwNudgePoint(0, 8)
+    if journal.loadoutBorder then
+        for _, region in next, {journal.loadoutBorder:GetRegions()} do
+            if region:IsObjectType("FontString") then
+                region:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+                region:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+                region:GwNudgePoint(0, 8)
+            end
         end
     end
     SkinCounter(journal.PetCount)
@@ -765,21 +795,29 @@ local function SkinPetJournal()
     SkinFilterDropdown(journal.FilterDropdown, journal.searchBox, journal.ScrollBox)
     SkinScrollList(journal)
     journal.SummonButton:GwSkinButton(false, true)
-    journal.FindBattleButton:GwSkinButton(false, true)
+    if journal.FindBattleButton then
+        journal.FindBattleButton:GwSkinButton(false, true)
+    end
 
     local heal, summon = journal.HealPetSpellFrame, journal.SummonRandomPetSpellFrame
     SkinSpellFrame(heal, HEAL_FRAME_WIDTH)
     SkinSpellFrame(summon, SUMMON_FRAME_WIDTH)
-    heal:ClearAllPoints()
-    heal:SetPoint("TOPRIGHT", journal, "TOPRIGHT", -8, CONTROL_ROW_Y + 2)
-    summon:ClearAllPoints()
-    summon:SetPoint("RIGHT", heal, "LEFT", -SPELL_FRAME_GAP, 0)
-
-    for i = 1, 3 do
-        SkinLoadoutPet(journal.Loadout["Pet" .. i])
+    if heal then
+        heal:ClearAllPoints()
+        heal:SetPoint("TOPRIGHT", journal, "TOPRIGHT", -8, CONTROL_ROW_Y + 2)
+        summon:ClearAllPoints()
+        summon:SetPoint("RIGHT", heal, "LEFT", -SPELL_FRAME_GAP, 0)
     end
-    SkinIconButton(journal.SpellSelect.Spell1)
-    SkinIconButton(journal.SpellSelect.Spell2)
+
+    if journal.Loadout then
+        for i = 1, 3 do
+            SkinLoadoutPet(journal.Loadout["Pet" .. i])
+        end
+    end
+    if journal.SpellSelect then
+        SkinIconButton(journal.SpellSelect.Spell1)
+        SkinIconButton(journal.SpellSelect.Spell2)
+    end
     SkinPetCard(journal.PetCard)
 end
 
@@ -844,15 +882,17 @@ local function SkinToyBox()
     end
     box:HookScript("OnShow", LayoutToyGrid)
     LayoutToyGrid()
-    SkinProgressBar(box.progressBar)
-    box.progressBar:ClearAllPoints()
-    box.progressBar:SetPoint("TOP", box, "TOP", 0, CONTROL_ROW_Y - 4)
-    AddProgressBarTooltip(box.progressBar, TOY_BOX, function(tooltip)
-        tooltip:AddLine(" ")
-        tooltip:AddDoubleLine(TOTAL, C_ToyBox.GetNumToys(), nil, nil, nil, 1, 1, 1)
-    end)
-    local achievements = CreateAchievementStatus(box, box.progressBar, TOYBOX_ACHIEVEMENT_CATEGORY, TOY_BOX)
-    box:HookScript("OnShow", function() achievements:Update() end)
+    if box.progressBar then
+        SkinProgressBar(box.progressBar)
+        box.progressBar:ClearAllPoints()
+        box.progressBar:SetPoint("TOP", box, "TOP", 0, CONTROL_ROW_Y - 4)
+        AddProgressBarTooltip(box.progressBar, TOY_BOX, function(tooltip)
+            tooltip:AddLine(" ")
+            tooltip:AddDoubleLine(TOTAL, C_ToyBox.GetNumToys(), nil, nil, nil, 1, 1, 1)
+        end)
+        local achievements = CreateAchievementStatus(box, box.progressBar, TOYBOX_ACHIEVEMENT_CATEGORY, TOY_BOX)
+        box:HookScript("OnShow", function() achievements:Update() end)
+    end
     SkinPagingFrame(box.PagingFrame)
     for i = 1, 18 do
         local button = box.iconsFrame["spellButton" .. i]

@@ -43,6 +43,7 @@ local function LoadSkinsPanel(sWindow)
 
     gameFrames:AddOption(QUEST_LOG, nil, {getterSetter = "skins.questLog.enabled", callback = function() GW.ShowRlPopup = true end, hidden = GW.Retail})
     gameFrames:AddOption(FLIGHT_MAP, nil, {getterSetter = "skins.flightMap.enabled", callback = function() GW.ShowRlPopup = true end})
+    gameFrames:AddOption(LEGACY_BUTTON or "Legacy", nil, {getterSetter = "skins.legacySystem.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Forever})
     gameFrames:AddOption(MACRO, nil, {getterSetter = "skins.macro.enabled", callback = function() GW.ShowRlPopup = true end})
     gameFrames:AddOption(BARBERSHOP, nil, {getterSetter = "skins.barberShop.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     gameFrames:AddOption(INSPECT, nil, {getterSetter = "skins.inspection.enabled", callback = function() GW.ShowRlPopup = true end})

@@ -1091,7 +1091,8 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
             end
         end)
 
-        if not self:IsEnabled() then -- selected tab
+        -- frame based side tabs (legacy system) have no enabled state
+        if self.IsEnabled and not self:IsEnabled() then -- selected tab
             self.icon:SetTexCoord(0, 0.5, 0, 0.625)
         end
     end

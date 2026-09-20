@@ -1714,6 +1714,9 @@ GW.globalDefault = {
             flightMap = {
                 enabled = true,
             },
+            legacySystem = {
+                enabled = true,
+            },
             addonList = {
                 enabled = true,
             },

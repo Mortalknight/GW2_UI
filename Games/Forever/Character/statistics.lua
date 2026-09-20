@@ -21,9 +21,16 @@ end
 
 local function SkinChild(child)
     if child.StateIcon then
+        -- same look as the quest log zone headers
         child:GwStripTextures()
-        child:GwCreateBackdrop()
-        child.backdrop:GwSetInside(child)
+        child:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+        child.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+        -- own background texture, a normal texture would cover the state icon
+        child.gwBackground = child:CreateTexture(nil, "BACKGROUND")
+        child.gwBackground:SetAllPoints(child)
+        child.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+        child:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+        child:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
         child.StateIcon:SetSize(20, 20)
         UpdateHeaderArrow(child)
         hooksecurefunc(child, "RefreshStateIcon", UpdateHeaderArrow)
@@ -82,6 +89,15 @@ end
 local function LoadStatistics(tabContainer)
     local window = CreateFrame("Frame", "GwCharacterStatisticsFrame", tabContainer, "GwStatisticsWindowTemplate")
     local content = window.Content
+
+    local fmMenu = CreateFrame("Frame", "GwStatisticsMenu", tabContainer, "GwCharacterPanelMenuTemplate")
+    local menuItem = CreateFrame("Button", nil, fmMenu, "GwCharacterPanelMenuButtonTemplate")
+    menuItem:SetText(STATISTICS)
+    menuItem:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
+    menuItem:ClearAllPoints()
+    menuItem:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
+    GW.CharacterMenuButton_OnLoad(menuItem, false)
+    menuItem.activeTexture:Show()
 
     StatisticsFrame:SetParent(content)
     StatisticsFrame:ClearAllPoints()

@@ -13,4 +13,6 @@
     <Script file="..\..\..\Modern\Immersive\Skins\deathrecapframe.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\playerSpells.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\auctionHouse.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\collections.lua"/>
+    <Script file="legacySystem.lua"/>
 </Ui>

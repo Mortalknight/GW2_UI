@@ -73,7 +73,7 @@ local windowsList = {
         window = "character",
         RefName = "GwStatisticsFrame",
         TabIcon = "tabicon_statistics",
-        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/achievements-window-icon.png",
+        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/statistics-window-icon.png",
         HeaderText = STATISTICS,
         TooltipText = STATISTICS,
         OnClick = [=[
