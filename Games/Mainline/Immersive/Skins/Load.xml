@@ -25,9 +25,9 @@
     <Script file="adventureMap.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\playerSpells.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\auctionHouse.lua"/>
-    <Script file="battlefieldMap.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\battlefieldMap.lua"/>
     <Script file="majorFaction.lua"/>
-    <Script file="cooldownManager.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\cooldownManager.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\damageMeter.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\calendar.lua"/>
     <Script file="addons\immersion.lua"/>

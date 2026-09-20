@@ -911,7 +911,6 @@ local function evLoadSkins()
     if GW.Retail then
         loadStep(GW.LoadExpansionLadningPageSkin)
         loadStep(GW.LoadGenericTraitFrameSkin)
-        loadStep(GW.LoadCooldownManagerSkin)
         loadStep(GW.LoadImmersionAddonSkin)
         loadStep(GW.LoadAuctionatorAddonSkin)
         loadStep(GW.LoadExtendedSetsAddonSkin)
@@ -929,7 +928,6 @@ local function evLoadSkins()
         loadStep(GW.LoadWeeklyRewardsSkin)
         loadStep(GW.LoadPerksProgramSkin)
         loadStep(GW.LoadAdventureMapSkin)
-        loadStep(GW.LoadBattlefieldMapSkin)
         loadStep(GW.LoadMajorFactionsFrameSkin)
     elseif not GW.Forever then
         loadStep(GW.LoadQuestLogFrameSkin)
@@ -950,6 +948,8 @@ local function evLoadSkins()
         loadStep(GW.LoadAuctionHouseSkin)
         loadStep(GW.LoadCollectionsSkin)
         loadStep(GW.LoadClassTrainerSkin)
+        loadStep(GW.LoadBattlefieldMapSkin)
+        loadStep(GW.LoadCooldownManagerSkin)
     end
 
     if not (GW.Classic or GW.TBC) then
