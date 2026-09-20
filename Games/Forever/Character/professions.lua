@@ -604,6 +604,11 @@ local function UpdateCastOverlays()
 end
 
 local function LayoutProfessionMenu()
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("LayoutProfessionMenu", LayoutProfessionMenu)
+        return
+    end
+
     local previous = fmMenu.overviewMenu
     local index = 0
     for _, tab in ipairs(ProfessionsFrame.rightProfessionTabs) do
