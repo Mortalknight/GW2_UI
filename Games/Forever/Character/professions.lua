@@ -737,7 +737,7 @@ local function EmbedProfessionsFrame()
     sync:SetScript("OnEvent", function(_, event)
         if event == "TRADE_SKILL_SHOW" and ProfessionsFrame:IsShown() then
             BringCraftingViewUp()
-        elseif (event == "SKILL_LINES_CHANGED" or event == "PLAYER_ENTERING_WORLD") and not ProfessionsFrame:IsShown() then
+        elseif (event == "SKILL_LINES_CHANGED" or event == "PLAYER_ENTERING_WORLD") and not ProfessionsFrame:IsShown() and not InCombatLockdown() then
             ProfessionsFrame:RefreshRightTabs()
         end
         UpdateCastOverlays()

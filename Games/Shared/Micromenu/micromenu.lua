@@ -691,6 +691,10 @@ local function updateMailIconNotificationAnimation(self, playEntrancePop)
 end
 
 local function mailIconOnEvent(self)
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("Micromenu Update Mail Icon", mailIconOnEvent, {self})
+        return
+    end
     if HasNewMail() then
         self:Show()
         updateMailIconNotificationAnimation(self, true)
