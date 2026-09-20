@@ -3,10 +3,36 @@ local GW = select(2, ...)
 local f = CreateFrame("Frame")
 
 -- slots that should carry an enchant, only known for Retail
-local MISSING_ENCHANT_SLOTS = GW.Retail and {
+local MISSING_ENCHANT_SLOTS = (GW.Retail and {
     [1] = true, [3] = true, [5] = true, [7] = true, [8] = true, [11] = true, [12] = true, [16] = true,
-} or {}
+}) or (GW.Forever and {
+    -- classic era enchants: no rings, head and shoulder come from reputation
+    [1] = true, [3] = true, [5] = true, [7] = true, [8] = true, [9] = true, [10] = true, [15] = true,
+    [16] = true, [17] = true, [18] = true,
+}) or {}
+-- an off hand only takes an enchant as a shield, a ranged slot only as a scoped weapon
+local SHIELD_SUBCLASS = 6
+local SCOPED_WEAPONS = {[2] = true, [3] = true, [18] = true}
 local MISSING_COLOR = {1, 0.3, 0.3}
+
+local function SlotTakesEnchant(slotId)
+    if not MISSING_ENCHANT_SLOTS[slotId] then
+        return false
+    end
+    if slotId ~= 17 and slotId ~= 18 then
+        return true
+    end
+
+    local itemID = GetInventoryItemID("player", slotId)
+    if not itemID then
+        return false
+    end
+    local _, _, _, _, _, classID, subClassID = C_Item.GetItemInfoInstant(itemID)
+    if slotId == 17 then
+        return classID == Enum.ItemClass.Armor and subClassID == SHIELD_SUBCLASS
+    end
+    return classID == Enum.ItemClass.Weapon and SCOPED_WEAPONS[subClassID] == true
+end
 -- equipped average, refreshed per page update for the relative item level color
 local equippedItemLevel
 
@@ -123,7 +149,7 @@ end
 local function UpdatePageStrings(inspectItem, slotInfo, slotId)
     local showMissing = GW.settings.windows.character.itemInfoMissing
     local width = GW.RoundInt(inspectItem.enchantText:GetWidth())
-    if showMissing and slotInfo.iLvl and MISSING_ENCHANT_SLOTS[slotId] and not slotInfo.enchantText then
+    if showMissing and slotInfo.iLvl and not slotInfo.enchantText and SlotTakesEnchant(slotId) then
         -- item without enchant on an enchantable slot
         inspectItem.enchantText:SetText(ADDON_MISSING)
         inspectItem.enchantText:SetTextColor(unpack(MISSING_COLOR))

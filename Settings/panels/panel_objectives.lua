@@ -2,47 +2,31 @@
 local GW = select(2, ...)
 local L = GW.L
 
+-- the entries mirror the container list in ObjectivesTracker.lua: every container that loads on
+-- this client can be ordered, and an entry without a label on this client is skipped
 local function GetObjectiveTrackerModuleOrderOptions()
+    local types = GW.Enum.ObjectivesNotificationType
+    local modules = {
+        {key = "Achievement", label = ACHIEVEMENTS, color = types.Achievement, load = not (GW.Classic or GW.TBC)},
+        {key = "Campaign", label = TRACKER_HEADER_CAMPAIGN_QUESTS, color = types.Campaign, load = GW.Retail},
+        {key = "Quests", label = TRACKER_HEADER_QUESTS or QUESTS_LABEL, color = types.Quest, load = true},
+        {key = "Bonus", label = EVENTS_LABEL, color = types.Event, load = GW.isModern},
+        {key = "Recipe", label = PROFESSIONS_TRACKER_HEADER_PROFESSION, color = types.Recipe, load = GW.isModern},
+        {key = "MonthlyActivity", label = TRACKER_HEADER_MONTHLY_ACTIVITIES, color = types.MonthlyActivity, load = GW.isModern},
+        {key = "Collection", label = ADVENTURE_TRACKING_MODULE_HEADER_TEXT, color = types.Recipe, load = GW.isModern},
+        {key = "HousingInitiative", label = HOUSING_DASHBOARD_ENDEAVOR, color = types.HousingInitiative, load = GW.Retail},
+        {key = "WQT", label = "|cffaaaaaa[AddOn]|r World Quest Tracker", color = types.Event, load = GW.Retail},
+        {key = "PetTracker", label = "|cffaaaaaa[AddOn]|r Pet Tracker", color = types.Event, load = GW.Retail},
+        {key = "Todoloo", label = "|cffaaaaaa[AddOn]|r Todoloo's", color = types.Event, load = GW.Retail},
+    }
+
     local optionsList = {}
     local optionNames = {}
-
-    if not (GW.Classic or GW.TBC) then
-        optionsList[#optionsList + 1] = "Achievement"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Achievement]:WrapTextInColorCode(ACHIEVEMENTS)
-    end
-
-    if GW.Retail then
-        optionsList[#optionsList + 1] = "Campaign"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:WrapTextInColorCode(TRACKER_HEADER_CAMPAIGN_QUESTS)
-    end
-
-    optionsList[#optionsList + 1] = "Quests"
-    optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:WrapTextInColorCode(TRACKER_HEADER_QUESTS or QUESTS_LABEL)
-
-    if GW.Retail then
-        optionsList[#optionsList + 1] = "Bonus"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:WrapTextInColorCode(EVENTS_LABEL)
-
-        optionsList[#optionsList + 1] = "Recipe"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Recipe]:WrapTextInColorCode(PROFESSIONS_TRACKER_HEADER_PROFESSION)
-
-        optionsList[#optionsList + 1] = "MonthlyActivity"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.MonthlyActivity]:WrapTextInColorCode(TRACKER_HEADER_MONTHLY_ACTIVITIES)
-
-        optionsList[#optionsList + 1] = "Collection"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Recipe]:WrapTextInColorCode(ADVENTURE_TRACKING_MODULE_HEADER_TEXT)
-
-        optionsList[#optionsList + 1] = "HousingInitiative"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.HousingInitiative]:WrapTextInColorCode(HOUSING_DASHBOARD_ENDEAVOR)
-
-        optionsList[#optionsList + 1] = "WQT"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:WrapTextInColorCode("|cffaaaaaa[AddOn]|r World Quest Tracker")
-
-        optionsList[#optionsList + 1] = "PetTracker"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:WrapTextInColorCode("|cffaaaaaa[AddOn]|r Pet Tracker")
-
-        optionsList[#optionsList + 1] = "Todoloo"
-        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:WrapTextInColorCode("|cffaaaaaa[AddOn]|r Todoloo's")
+    for _, module in ipairs(modules) do
+        if module.load and module.label then
+            optionsList[#optionsList + 1] = module.key
+            optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[module.color]:WrapTextInColorCode(module.label)
+        end
     end
 
     return optionsList, optionNames

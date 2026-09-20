@@ -520,7 +520,7 @@ local function LoadObjectivesTracker()
         { name = "GwQuesttrackerContainerArenaBGFrames", scrollable = false, mixin = GwObjectivesArenaContainerMixin, enum = GW.Enum.ObjectivesBlockType.ArenaFrames, load = not GW.Classic },
         { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enum = GW.Enum.ObjectivesBlockType.Scenario, load = not (GW.Classic or GW.TBC) },
         { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enum = GW.Enum.ObjectivesBlockType.Achievement, load = not (GW.Classic or GW.TBC) },
-        { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enum = GW.Enum.ObjectivesBlockType.Campaign, load = GW.isModern },
+        { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enum = GW.Enum.ObjectivesBlockType.Campaign, load = GW.Retail },
         { name = "GwQuesttrackerContainerQuests", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enum = GW.Enum.ObjectivesBlockType.Quests, load = true },
         { name = "GwQuesttrackerContainerBonus", scrollable = true, mixin = GwBonusObjectivesTrackerContainerMixin, enum = GW.Enum.ObjectivesBlockType.Bonus, load = GW.isModern },
         { name = "GwQuesttrackerContainerRecipe", scrollable = true, mixin = GwObjectivesRecipeContainerMixin, enum = GW.Enum.ObjectivesBlockType.Recipe, load = GW.isModern },
