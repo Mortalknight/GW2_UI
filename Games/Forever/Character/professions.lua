@@ -314,18 +314,6 @@ end
 local ARROW = "Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png"
 local CONTROL_HEIGHT = 24
 
-local function SkinArrowButton(button, rotation)
-    button:GwStripTextures()
-    button:SetNormalTexture(ARROW)
-    button:GetNormalTexture():SetRotation(rotation)
-    button:SetPushedTexture(ARROW)
-    button:GetPushedTexture():SetRotation(rotation)
-    button:SetHighlightTexture(ARROW, "ADD")
-    button:GetHighlightTexture():SetRotation(rotation)
-    button:GetHighlightTexture():SetAlpha(0.3)
-    button:SetSize(20, 20)
-end
-
 local function SkinRankBar(rankBar)
     rankBar.Background:Hide()
     rankBar.Border:Hide()
@@ -346,6 +334,9 @@ local function AnchorRankBar(page)
     page.LinkButton:ClearAllPoints()
     page.LinkButton:SetPoint("LEFT", page.RankBar, "RIGHT", 10, 0)
 end
+
+local craftButtonFont = CreateFont("GwProfessionsCraftButtonFont")
+local craftButtonDisabledFont = CreateFont("GwProfessionsCraftButtonDisabledFont")
 
 local recipeHeaderFont = CreateFont("GwProfessionsRecipeHeaderFont")
 recipeHeaderFont:SetTextColor(1, 1, 1)
@@ -551,14 +542,23 @@ local function SkinCraftingPage(page)
     dropdown:SetPoint("TOPLEFT", search, "TOPRIGHT", 6, 1)
     dropdown:SetPoint("BOTTOMLEFT", search, "BOTTOMRIGHT", 6, 0)
 
-    page.CreateButton:GwSkinButton(false, true)
-    page.CreateAllButton:GwSkinButton(false, true)
-    page.ViewGuildCraftersButton:GwSkinButton(false, true)
+    local buttonFontSize = GW.settings.fonts.size.normal or 12
+    craftButtonFont:SetFont(UNIT_NAME_FONT, buttonFontSize, "")
+    craftButtonFont:SetTextColor(0, 0, 0)
+    craftButtonDisabledFont:SetFont(UNIT_NAME_FONT, buttonFontSize, "")
+    craftButtonDisabledFont:SetTextColor(0.35, 0.35, 0.35)
+
+    for _, button in ipairs({page.CreateButton, page.CreateAllButton, page.ViewGuildCraftersButton}) do
+        button:GwSkinButton(false, true)
+        button:SetNormalFontObject(craftButtonFont)
+        button:SetHighlightFontObject(craftButtonFont)
+        button:SetDisabledFontObject(craftButtonDisabledFont)
+    end
     local spinner = page.CreateMultipleInputBox
     spinner:GwStripTextures()
     GW.SkinTextBox(spinner.Middle, spinner.Left, spinner.Right, nil, nil, 10)
-    SkinArrowButton(spinner.DecrementButton, math.pi / 2)
-    SkinArrowButton(spinner.IncrementButton, -math.pi / 2)
+    GW.HandleNextPrevButton(spinner.DecrementButton, "left")
+    GW.HandleNextPrevButton(spinner.IncrementButton, "right")
 
     SkinSchematicForm(page.SchematicForm)
 
