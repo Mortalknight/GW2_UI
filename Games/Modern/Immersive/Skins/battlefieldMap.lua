@@ -18,10 +18,12 @@ local function GetCloseButton(frame)
 	return border and border.CloseButton
 end
 
+local IDLE_CLOSE_ALPHA = 0.25
+
 local function OnLeave()
 	local close = GetCloseButton()
 	if close then
-		close:SetAlpha(0.1)
+		close:SetAlpha(IDLE_CLOSE_ALPHA)
 	end
 end
 
@@ -51,9 +53,9 @@ local function ApplyBattlefieldMapFrameSkin()
 	end
 
 	if BattlefieldMapTab then
-		BattlefieldMapTab:SetHeight(24)
 		GW.HandleTabs(BattlefieldMapTab, "top")
-		BattlefieldMapFrame:SetPoint("TOPLEFT", BattlefieldMapTab, "BOTTOMLEFT", 0, 0)
+		BattlefieldMapFrame:ClearAllPoints()
+		BattlefieldMapFrame:SetPoint("TOPLEFT", BattlefieldMapTab, "BOTTOMLEFT", 0, -5)
 
 		if BattlefieldMapTab.Text then
 			BattlefieldMapTab.Text:GwSetInside(BattlefieldMapTab)
@@ -64,7 +66,7 @@ local function ApplyBattlefieldMapFrameSkin()
 	if close then
 		close:GwSkinButton(true)
 
-		close:SetAlpha(0.25)
+		close:SetAlpha(IDLE_CLOSE_ALPHA)
 		close:SetIgnoreParentAlpha(1)
 		close:SetFrameLevel(close:GetFrameLevel() + 1)
 		close:ClearAllPoints()
