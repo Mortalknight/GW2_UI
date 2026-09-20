@@ -474,6 +474,7 @@ L["With Contributions by"] = true
 L["Localised by"] = true
 L["QA Testing by"] = true
 L["Credits"] = true
+L["Class Trainer"] = true
 L["Socket Frame"] = true
 L["Grays"] = true
 L["Reset Character Data: Hold Shift + Right Click"] = true

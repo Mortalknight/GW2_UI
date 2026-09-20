@@ -949,6 +949,7 @@ local function evLoadSkins()
         loadStep(GW.LoadCalendarSkin)
         loadStep(GW.LoadAuctionHouseSkin)
         loadStep(GW.LoadCollectionsSkin)
+        loadStep(GW.LoadClassTrainerSkin)
     end
 
     if not (GW.Classic or GW.TBC) then

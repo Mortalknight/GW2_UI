@@ -1717,6 +1717,9 @@ GW.globalDefault = {
             legacySystem = {
                 enabled = true,
             },
+            classTrainer = {
+                enabled = true,
+            },
             addonList = {
                 enabled = true,
             },
