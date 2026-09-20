@@ -194,6 +194,14 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bagnormal.png")
     end
 
+    if btn.Flash then
+        btn.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+        btn.Flash:SetVertexColor(0.9, 0.2, 0.2, 1)
+        btn.Flash:ClearAllPoints()
+        btn.Flash:SetPoint("CENTER", btn, "CENTER", 0, 0)
+        btn.Flash:SetSize(btnWidth, btnWidth)
+    end
+
     if _G[buttonName .. "FloatingBG"] then
         _G[buttonName .. "FloatingBG"]:SetTexture(nil)
     end
