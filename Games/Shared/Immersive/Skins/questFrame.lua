@@ -75,7 +75,9 @@ local function LoadQuestFrameSkin()
     GW.HandlePortraitFrameArt(QuestFrame)
     QuestFramePortrait:Hide()
 
-    GW.CreateFrameHeaderWithBody(QuestFrame, QuestFrameNpcNameText or QuestFrame.TitleContainer.TitleText, nil, nil, nil, nil, true)
+    -- no open animation here: it fades the frame in on every show and would undo the alpha 0
+    -- with which the immersive questing keeps the blizzard frame technically shown but invisible
+    GW.CreateFrameHeaderWithBody(QuestFrame, QuestFrameNpcNameText or QuestFrame.TitleContainer.TitleText)
 
     QuestFrame.gwHeader.windowIcon:SetSize(48, 48)
     QuestFrame.gwHeader.windowIcon:ClearAllPoints()
