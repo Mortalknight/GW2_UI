@@ -1036,6 +1036,17 @@ local function HandleItemListScrollBoxHover(self)
 end
 GW.HandleItemListScrollBoxHover = HandleItemListScrollBoxHover
 
+function GW.SkinTalentButton(button)
+    if button.gwSkinned then return end
+    button.gwSkinned = true
+
+    if button.Shadow then button.Shadow:SetAlpha(0) end
+    if button.StateBorder then button.StateBorder:SetAlpha(0) end
+    if button.DisabledOverlay then button.DisabledOverlay:SetVertexColor(0, 0, 0, 0.6) end
+    GW.HandleIcon(button.Icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
+    button.Icon.backdrop:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
+end
+
 local function SkinSideTabButton(self, iconTexture, tooltipText)
     self.gwSkinned = true
     self:GwStripTextures()

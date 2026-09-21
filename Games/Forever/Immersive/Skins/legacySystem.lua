@@ -319,16 +319,6 @@ local function SquareTreeIcon(button)
     SkinIconTexture(icon)
 end
 
-local function SkinTalentButton(button)
-    if button.gwSkinned then return end
-    button.gwSkinned = true
-
-    if button.Shadow then button.Shadow:SetAlpha(0) end
-    if button.StateBorder then button.StateBorder:SetAlpha(0) end
-    if button.DisabledOverlay then button.DisabledOverlay:SetVertexColor(0, 0, 0, 0.6) end
-    SkinIconTexture(button.Icon)
-end
-
 local function SkinTreeSelection(button)
     button.Background:SetAlpha(0)
     button.SelectedGlow:SetTexture(MENU_HOVER)
@@ -374,11 +364,11 @@ local function SkinTreePage(page)
 
     local function SkinTalentButtons()
         for button in panel:EnumerateAllTalentButtons() do
-            SkinTalentButton(button)
+            GW.SkinTalentButton(button)
         end
     end
     panel:RegisterCallback("TalentButtonAcquired", function(_, button)
-        SkinTalentButton(button)
+        GW.SkinTalentButton(button)
     end, "GwLegacySystemSkin")
     SkinTalentButtons()
 

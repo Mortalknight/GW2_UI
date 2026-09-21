@@ -282,6 +282,53 @@ local function SkinLegacyTalentTree(TalentsFrame)
     local art = TalentsFrame.ClassBackground
     if not art then return end
 
+    local function SkinNodes()
+        for button in TalentsFrame:EnumerateAllTalentButtons() do
+            GW.SkinTalentButton(button)
+        end
+    end
+
+    local function SkinTreeHeader(header)
+        if header.gwSkinned then return end
+        header.gwSkinned = true
+
+        header.MainRing:SetAlpha(0)
+        for _, region in ipairs({header:GetRegions()}) do
+            if region:GetObjectType() == "MaskTexture" then
+                header.Icon:RemoveMaskTexture(region)
+            end
+        end
+        GW.HandleIcon(header.Icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
+        header.Icon.backdrop:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
+
+        header.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+        header.Name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+
+        header.TextBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
+        header.TextBackground:SetVertexColor(0, 0, 0, 0.8)
+        header.TextBackground:SetSize(26, 18)
+        header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
+
+        header.Divider:ClearAllPoints()
+        header.Divider:SetPoint("BOTTOM", header, "BOTTOM", 60, -8)
+    end
+
+    local function SkinTreeHeaders()
+        for _, header in ipairs(TalentsFrame.treeHeaders or {}) do
+            SkinTreeHeader(header)
+        end
+    end
+    hooksecurefunc(TalentsFrame, "RefreshTreeHeaders", SkinTreeHeaders)
+    SkinTreeHeaders()
+    TalentsFrame:RegisterCallback("TalentButtonAcquired", function(_, button)
+        GW.SkinTalentButton(button)
+    end, "GwPlayerSpellsSkin")
+    TalentsFrame:HookScript("OnShow", function()
+        SkinNodes()
+        SkinTreeHeaders()
+    end)
+    SkinNodes()
+
     local panel = CreateFrame("Frame", nil, TalentsFrame)
     panel:SetFrameLevel(math.max(0, TalentsFrame:GetFrameLevel() - 1))
     panel:SetPoint("TOPLEFT", art, "TOPLEFT", 0, 0)
