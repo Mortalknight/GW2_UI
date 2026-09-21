@@ -104,9 +104,16 @@ local function LoadQuestFrameSkin()
         scrollFrame:GwSkinScrollFrame()
         GW.AddDetailsBackground(scrollFrame)
 
-        local scrollBar = _G[name .. "ScrollBar"]
-        if scrollBar then
+        -- the modern clients build an unnamed ScrollBar object, the classic ones a named UIPanelScrollBar
+        local scrollBar = scrollFrame.ScrollBar or _G[name .. "ScrollBar"]
+        if scrollBar.SetHideIfUnscrollable then
+            GW.HandleTrimScrollBar(scrollBar)
+            GW.HandleScrollControls(scrollFrame)
+            scrollBar:SetHideIfUnscrollable(true)
+            scrollBar:Update()
+        else
             scrollBar:GwSkinScrollBar()
+            scrollFrame.scrollBarHideable = 1
         end
     end
 
