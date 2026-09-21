@@ -293,24 +293,47 @@ local function SkinLegacyTalentTree(TalentsFrame)
         header.gwSkinned = true
 
         header.MainRing:SetAlpha(0)
+
+        local pointsBox, pointsText = header.TextBackground, header.Text
         for _, region in ipairs({header:GetRegions()}) do
-            if region:GetObjectType() == "MaskTexture" then
+            local objectType = region:GetObjectType()
+            if objectType == "MaskTexture" then
                 header.Icon:RemoveMaskTexture(region)
+            elseif objectType == "Texture" and region:GetAtlas() == "talents-main-ring-box-c60" then
+                pointsBox = pointsBox or region
+            elseif objectType == "FontString" and region ~= header.Name then
+                pointsText = pointsText or region
             end
         end
+
         GW.HandleIcon(header.Icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
         header.Icon.backdrop:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
 
         header.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         header.Name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
-        header.TextBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
-        header.TextBackground:SetVertexColor(0, 0, 0, 0.8)
-        header.TextBackground:SetSize(26, 18)
-        header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
-
         header.Divider:ClearAllPoints()
         header.Divider:SetPoint("BOTTOM", header, "BOTTOM", 60, -8)
+
+        if pointsBox then
+            pointsBox:SetAlpha(0)
+        end
+
+        -- blizzards box washes over the icon art, so the counter gets its own plate on top of it
+        local badge = CreateFrame("Frame", nil, header)
+        badge:SetFrameLevel(header:GetFrameLevel() + 2)
+        badge:SetSize(24, 16)
+        badge:SetPoint("CENTER", header.Icon, "BOTTOMRIGHT", -2, 1)
+        badge.background = badge:CreateTexture(nil, "BACKGROUND")
+        badge.background:SetAllPoints()
+        badge.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
+        badge.background:SetVertexColor(0, 0, 0, 0.8)
+        header.gwPointsBadge = badge
+
+        pointsText:SetParent(badge)
+        pointsText:ClearAllPoints()
+        pointsText:SetPoint("CENTER", badge, "CENTER", 0, 0)
+        pointsText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
     end
 
     local function SkinTreeHeaders()
