@@ -808,7 +808,7 @@ GW.globalDefault = {
                 floatingCombatText = true,
                 invert = false,
                 altBackground = false,
-                itemLevel = "PVP_LEVEL",
+                itemLevel = GW.Retail and "PVP_LEVEL" or "ITEM_LEVEL",
                 shortValues = false,
                 healthBarTexture = "GW2_UI_2_DEFAULT",
                 auraSmallSize = 20,
@@ -848,7 +848,7 @@ GW.globalDefault = {
                 buffFilterAdvanced = CopyTable(GridAuraFilter),
                 debuffFilter = "player",
                 debuffFilterAdvanced = CopyTable(GridAuraFilter),
-                itemLevel = "PVP_LEVEL",
+                itemLevel = GW.Retail and "PVP_LEVEL" or "ITEM_LEVEL",
                 healthValue = false,
                 healthValueType = false,
                 classColor = true,
@@ -1757,6 +1757,9 @@ GW.globalDefault = {
                 enabled = true,
             },
             questLog = {
+                enabled = true,
+            },
+            communities = {
                 enabled = true,
             },
             itemUpgrade = {

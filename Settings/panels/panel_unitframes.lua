@@ -2,6 +2,9 @@
 local GW = select(2, ...)
 local L = GW.L
 
+local unitInfoOptions = GW.Retail and {"ITEM_LEVEL", "PVP_LEVEL", "NONE"} or {"ITEM_LEVEL", "NONE"}
+local unitInfoOptionNames = GW.Retail and {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE} or {STAT_AVERAGE_ITEM_LEVEL, NONE}
+
 local function UpdateUnitFrameReactionColors()
     GW.UpdateUnitFrameReactionColors()
 
@@ -271,7 +274,7 @@ local function LoadTargetPanel(sWindow)
     p_target:AddOption(L["Shorten health values"], nil, {getterSetter = "unitframes.target.shortValues", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.target.enabled"] = true}, hidden = not GW.Retail, group = "healthText"})
     p_target:AddOption(L["Show Threat"], L["Show Threat"], {getterSetter = "unitframes.target.threatValue", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.target.enabled"] = true}, group = "unitInfo"})
     p_target:AddOption(L["Show Combo Points on Target"], L["Show combo points on target, below the health bar."], {getterSetter = "unitframes.target.hookComboPoints", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.target.enabled"] = true}, group = "unitInfo"})
-    p_target:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "unitframes.target.itemLevel", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["unitframes.target.enabled"] = true}, hidden = GW.Classic, group = "unitInfo"})
+    p_target:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "unitframes.target.itemLevel", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = unitInfoOptions, optionNames = unitInfoOptionNames, dependence = {["unitframes.target.enabled"] = true}, hidden = GW.Classic, group = "unitInfo"})
     p_target:AddOption(L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], {getterSetter = "unitframes.target.floatingCombatText", callback = function() GwTargetUnitFrame:ToggleTargetFrameCombatFeedback() end, dependence = {["unitframes.target.enabled"] = true}, group = "portrait"})
     p_target:AddOption(L["Invert target frame"], nil, {getterSetter = "unitframes.target.invert", callback = function() GW.ShowRlPopup = true end, dependence = {["unitframes.target.enabled"] = true}, group = "frameAppearance"})
     p_target:AddOption(L["Show alternative background texture"], nil, {getterSetter = "unitframes.target.altBackground", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.target.enabled"] = true}, group = "frameAppearance"})
@@ -366,7 +369,7 @@ local function LoadTargetPanel(sWindow)
     p_focus:AddOption(CLASS_COLORS, L["Display the class color as the health bar."], {getterSetter = "unitframes.focus.classColor", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic, group = "healthBars"})
     p_focus:AddOption(L["Show absorb bar"], nil, {getterSetter = "unitframes.focus.showAbsorbBar", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "healthBars"})
     p_focus:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "unitframes.focus.healthBarTexture", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic, group = "healthBars"})
-    p_focus:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "unitframes.focus.itemLevel", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic, group = "unitInfo"})
+    p_focus:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "unitframes.focus.itemLevel", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = unitInfoOptions, optionNames = unitInfoOptionNames, dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic, group = "unitInfo"})
 
     p_focus:AddGroupHeader(AURAS)
     p_focus:AddOption(BUFFS_ON_TOP, nil, {getterSetter = "unitframes.focus.aurasOnTop", callback = function() GwFocusUnitFrame:ToggleSettings() end, groupHeaderName = AURAS, dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic})

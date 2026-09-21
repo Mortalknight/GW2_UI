@@ -289,7 +289,13 @@ do
                 if slotInfo == "tooSoon" then
                     tinsert(tryAgain, i)
                 else
-                    iLevelDB[i] = slotInfo.iLvl
+                    -- classic style items carry no item level line in their tooltip, the link has it
+                    local link = not slotInfo.iLvl and GetInventoryItemLink(unit, i)
+                    if link and GW.NotSecretValue(link) then
+                        iLevelDB[i] = C_Item.GetDetailedItemLevelInfo(link)
+                    else
+                        iLevelDB[i] = slotInfo.iLvl
+                    end
                 end
             end
         end
