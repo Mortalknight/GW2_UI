@@ -21,6 +21,15 @@ local function stat_OnEnter(self)
     GameTooltip:Show()
 end
 
+local function happiness_OnEnter(self)
+    local diet = C_PetInfo.GetPetFoodTypes()
+
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(_G["PET_HAPPINESS" .. (C_PetInfo.GetPetHappiness() or 1)], 1, 1, 1)
+    GameTooltip:AddLine(format(PET_DIET_TEMPLATE, #diet > 0 and table.concat(diet, PET_FOOD_DELIMIT) or NONE), 1, 1, 1, true)
+    GameTooltip:Show()
+end
+
 local function GetPetStatTile(stats, index)
     stats.tiles = stats.tiles or {}
     local tile = stats.tiles[index]
@@ -85,21 +94,17 @@ local function UpdatePetPanel(dressingRoom)
         expBar.value:SetText(GW.CommaValue(currXP or 0) .. " / " .. GW.CommaValue(nextXP or 0) .. " - " .. math.floor((currXP or 0) / math.max(nextXP or 1, 1) * 100) .. "%")
         expBar:Show()
 
-        if GetPetHappiness then
-            dressingRoom.classIcon:SetTexCoord(GW.getSprite(petStateSprite, GetPetHappiness() or 1, 1))
-            dressingRoom.classIcon:Show()
-            dressingRoom.happiness:Show()
-        end
-        if GetPetTrainingPoints then
-            local totalPoints, spent = GetPetTrainingPoints()
-            dressingRoom.itemLevel:SetText((totalPoints or 0) - (spent or 0))
-            dressingRoom.itemLevel:Show()
-            dressingRoom.itemLevelLabel:Show()
-        end
-        if GetPetLoyalty then
-            dressingRoom.characterData:SetText(GetPetLoyalty() or "")
-            dressingRoom.characterData:Show()
-        end
+        dressingRoom.classIcon:SetTexCoord(GW.getSprite(petStateSprite, C_PetInfo.GetPetHappiness() or 1, 1))
+        dressingRoom.classIcon:Show()
+        dressingRoom.happiness:Show()
+
+        local totalPoints, spentPoints = C_PetInfo.GetPetTrainingPoints()
+        dressingRoom.itemLevel:SetText((totalPoints or 0) - (spentPoints or 0))
+        dressingRoom.itemLevel:Show()
+        dressingRoom.itemLevelLabel:Show()
+
+        dressingRoom.characterData:SetText(C_PetInfo.GetPetLoyalty() or "")
+        dressingRoom.characterData:Show()
         dressingRoom.model:SetPosition(-2, 0, -0.5)
         dressingRoom.model:SetRotation(-0.15)
     else
@@ -178,6 +183,9 @@ function GW.LoadPetPanel(tabContainer, fmMenu)
     dressingRoom.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
     dressingRoom.itemLevelLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     dressingRoom.itemLevelLabel:SetText(PET_TRAINING_POINTS or "")
+
+    dressingRoom.happiness:SetScript("OnEnter", happiness_OnEnter)
+    dressingRoom.happiness:SetScript("OnLeave", GameTooltip_Hide)
 
     dressingRoom.stats.petMenu = fmMenu.petMenu
     dressingRoom.stats:SetScript("OnEvent", petStats_OnEvent)

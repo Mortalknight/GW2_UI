@@ -933,6 +933,8 @@ local function evLoadSkins()
         loadStep(GW.LoadQuestLogFrameSkin)
     end
 
+    loadStep(GW.LoadQuestFrameSkin)
+
     if GW.Forever then
         loadStep(GW.LoadLegacySystemSkin)
     end

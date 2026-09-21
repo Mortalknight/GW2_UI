@@ -2,6 +2,7 @@
 local GW = select(2, ...)
 local LoadAuras = GW.LoadAuras
 local RegisterMovableFrame = GW.RegisterMovableFrame
+local GetPetHappinessInfo = C_PetInfo and C_PetInfo.GetPetHappiness or GetPetHappiness
 
 local petStateSprite = {
     width = 512,
@@ -124,7 +125,7 @@ function GwPlayerPetFrameMixin:Update()
 end
 
 function GwPlayerPetFrameMixin:UpdateHappiness()
-    local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
+    local happiness, damagePercentage, loyaltyRate = GetPetHappinessInfo()
     local _, isHunterPet = HasPetUI()
 
     if not happiness or not isHunterPet then
@@ -161,7 +162,7 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         SetPortraitTexture(self.portrait, "pet")
         self:UpdateHealthBar()
         self:UpdatePowerBar(true)
-        if GW.Classic or GW.TBC or GW.Wrath then
+        if GetPetHappinessInfo then
             C_Timer.After(0.1, function() self:UpdateHappiness() end)
         end
     elseif event == "UNIT_AURA" then
@@ -184,6 +185,9 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
             self:UpdatePowerBar(true)
             if self.auras.ForceUpdate then -- Classic path; on Retail the container refreshes itself
                 self.auras:ForceUpdate()
+            end
+            if GetPetHappinessInfo then
+                self:UpdateHappiness()
             end
         end
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
@@ -466,6 +470,9 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
     if GW.Classic or GW.TBC or GW.Wrath then
         playerPetFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "pet")
+    end
+
+    if GetPetHappinessInfo then
         playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     end
 

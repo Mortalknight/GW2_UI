@@ -1,45 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function UpdateGreetingFrame()
-	local i = 1
-	local title = _G['QuestTitleButton'..i]
-	while (title and title:IsVisible()) do
-		GreetingText:SetTextColor(1, 1, 1)
-		CurrentQuestsText:SetTextColor(1, 0.80, 0.10)
-		AvailableQuestsText:SetTextColor(1, 0.80, 0.10)
-
-		local text = title:GetFontString()
-		local textString = gsub(title:GetText(), '|c[Ff][Ff]%x%x%x%x%x%x(.+)|r', '%1')
-		title:SetText(textString)
-
-		local icon = _G['QuestTitleButton'..i..'QuestIcon']
-		if title.isActive == 1 then
-			icon:SetTexture(132048)
-			icon:SetDesaturation(1)
-			text:SetTextColor(.6, .6, .6)
-		else
-			icon:SetTexture(132049)
-			icon:SetDesaturation(0)
-			text:SetTextColor(1, .8, .1)
-		end
-
-		local numEntries = GetNumQuestLogEntries()
-		for y = 1, numEntries do
-			local titleText, _, _, _, _, isComplete, _, questId = GetQuestLogTitle(y)
-			if not titleText then
-				break
-			elseif strmatch(titleText, textString) and (isComplete == 1 or IsQuestComplete(questId)) then
-				icon:SetDesaturation(0)
-				text:SetTextColor(1, .8, .1)
-				break
-			end
-		end
-
-		i = i + 1
-		title = _G['QuestTitleButton'..i]
-	end
-end
 
 local function handleItemButton(item)
     if not item then return end
@@ -435,14 +396,6 @@ local function LoadQuestLogFrameSkin()
 		end
 	end)
 
-    for i = 1, MAX_NUM_QUESTS do
-		_G['QuestTitleButton'..i..'QuestIcon']:SetPoint('TOPLEFT', 4, 2)
-		_G['QuestTitleButton'..i..'QuestIcon']:SetSize(16, 16)
-	end
-
-    QuestFrameGreetingPanel:HookScript('OnUpdate', UpdateGreetingFrame)
-	hooksecurefunc('QuestFrameGreetingPanel_OnShow', UpdateGreetingFrame)
-
 	GW.CreateFrameHeaderWithBody(QuestLogFrame, QuestLogTitleText:GetText(), "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {QuestLogListScrollFrame, QuestLogDetailScrollFrame}, nil, nil, true)
 	QuestLogListScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 2)
     QuestLogDetailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 4)
@@ -475,17 +428,6 @@ local function LoadQuestLogFrameSkin()
     QuestLogFrame:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
     end)
-
-    QuestFrameNpcNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE")
-    QuestFrame:GwStripTextures()
-    QuestFrame:GwCreateBackdrop()
-    QuestFrame.tex = QuestFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-    QuestFrame.tex:SetPoint("TOP", QuestFrame, "TOP", 0, 20)
-    QuestFrame.tex:SetSize(QuestFrame:GetSize())
-    QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
-
-    QuestFrameCloseButton:GwSkinButton(true)
-    QuestFrameCloseButton:SetSize(20, 20)
 
     QuestFrameDetailPanel:GwStripTextures(nil, true)
     QuestDetailScrollFrame:GwStripTextures()
