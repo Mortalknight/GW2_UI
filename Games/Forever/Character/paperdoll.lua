@@ -47,12 +47,12 @@ local function LoadPaperDoll(tabContainer)
     GwCharacterWindow:SetHeroPanelMenu(fmMenu)
     fmMenu.SetupBackButton = menu_SetupBackButton
 
-    local button = AddMenuButton(fmMenu, "equipmentMenu", BAG_FILTER_EQUIPMENT, nil, true, "paperdollequipment")
-    button = AddMenuButton(fmMenu, "outfitsMenu", EQUIPMENT_MANAGER, button, false, "paperdolloutfits")
-    button = AddMenuButton(fmMenu, "titlesMenu", PAPERDOLL_SIDEBAR_TITLES, button, true, "paperdolltitles")
-    button = AddMenuButton(fmMenu, "skillsMenu", SKILLS, button, false, "paperdollskills")
-    button = AddMenuButton(fmMenu, "honorMenu", PVP, button, true, "paperdollhonor")
-    button = AddMenuButton(fmMenu, "petMenu", PET, button, false, "paperdollpet")
+    local button = AddMenuButton(fmMenu, "equipmentMenu", BAG_FILTER_EQUIPMENT, nil, false, "paperdollequipment")
+    button = AddMenuButton(fmMenu, "outfitsMenu", EQUIPMENT_MANAGER, button, true, "paperdolloutfits")
+    button = AddMenuButton(fmMenu, "titlesMenu", PAPERDOLL_SIDEBAR_TITLES, button, false, "paperdolltitles")
+    button = AddMenuButton(fmMenu, "skillsMenu", SKILLS, button, true, "paperdollskills")
+    button = AddMenuButton(fmMenu, "honorMenu", PVP, button, false, "paperdollhonor")
+    button = AddMenuButton(fmMenu, "petMenu", PET, button, true, "paperdollpet")
 
     local dressingRoom, paperDollBagItemList = GW.LoadPDBagList(fmMenu, tabContainer)
     local paperDollOutfits = GW.LoadPDEquipset(fmMenu, tabContainer)
@@ -73,7 +73,7 @@ local function LoadPaperDoll(tabContainer)
     GwCharacterWindow:SetFrameRef("GwPaperHonor", honorPanel)
     GwCharacterWindow:SetFrameRef("GwPetContainer", petContainer)
 
-    GwCharacterWindow:SetNextAddonMenuButtonShadowState(fmMenu.petMenu:IsShown())
+    GwCharacterWindow:SetNextAddonMenuButtonShadowState(not fmMenu.petMenu:IsShown())
     GwCharacterWindow:SetNextAddonMenuButtonAnchor(fmMenu.petMenu:IsShown() and fmMenu.petMenu or fmMenu.honorMenu)
     fmMenu.Pawn = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Pawn",

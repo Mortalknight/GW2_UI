@@ -77,8 +77,21 @@ local function CreateInspectTexture(slot, x, y)
     return texture, backdrop
 end
 
+local FOREVER_STACKED_SLOTS = GW.Forever and {[9] = true, [11] = true} or {}
+
+local function UsesStackedText(id)
+    return id >= 12 or FOREVER_STACKED_SLOTS[id] or false
+end
+
 local function GetInspectPoints(id)
     if not id then return end
+
+    if FOREVER_STACKED_SLOTS[id] then
+        if id == 9 then
+            return 0, 26, "TOP", "TOP"
+        end
+        return 0, -26, "BOTTOM", "BOTTOM"
+    end
 
     if id <= 11 then
         return 3, 0, "LEFT", "RIGHT"
@@ -96,9 +109,10 @@ local function CreateSlotStrings()
             local x, y, justify, point = GetInspectPoints(tbl.id)
 
             slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
-            slot.enchantText:SetSize(tbl.id >= 12 and 40 or 100, 30)
-            slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, tbl.id >= 12 and -4 or -2)
-            slot.enchantText:SetJustifyH(tbl.id >= 12 and "CENTER" or "LEFT")
+            local stacked = UsesStackedText(tbl.id)
+            slot.enchantText:SetSize(stacked and 40 or 100, 30)
+            slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, stacked and -4 or -2)
+            slot.enchantText:SetJustifyH(stacked and "CENTER" or "LEFT")
             slot.enchantText:SetPoint(justify, slot, point, x + (justify == "CENTER" and 5 or 0), y)
 
             local bg = slot:CreateTexture(nil, "BACKGROUND")
@@ -107,14 +121,13 @@ local function CreateSlotStrings()
             bg:SetPoint("TOPLEFT", slot.enchantText, "TOPLEFT", -2, 2)
             bg:SetPoint("BOTTOMRIGHT", slot.enchantText, "BOTTOMRIGHT", 2, -2)
             bg:Hide()
-            if tbl.id >= 12 and tbl.id <= 14 then
-                bg:SetRotation(1.5708)
-            elseif tbl.id >= 15 then
-                bg:SetRotation(4.7124)
+            if stacked then
+                local below = tbl.id >= 15 or tbl.id == 11
+                bg:SetRotation(below and 4.7124 or 1.5708)
             end
             slot.enchantTextBg = bg
 
-            if tbl.id >= 12 then
+            if stacked then
                 local enchantHoverFrame = CreateFrame("Button", nil, slot)
                 enchantHoverFrame:SetAllPoints(slot.enchantText)
                 enchantHoverFrame:SetFrameLevel(slot:GetFrameLevel() + 1)

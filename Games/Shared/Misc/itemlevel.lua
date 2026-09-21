@@ -195,6 +195,21 @@ do
             end
 
         end
+
+        -- classic style items carry no item level line in their tooltip, the link knows it.
+        -- the colour usually comes from the tooltips first line, so take the quality colour instead
+        if not slotInfo.iLvl then
+            local link = itemlink or (slot and GetInventoryItemLink(unit, slot))
+            if GW.NotSecretValue(link) and link then
+                slotInfo.iLvl = C_Item.GetDetailedItemLevelInfo(link)
+
+                local quality = select(3, C_Item.GetItemInfo(link))
+                if quality and slotInfo.itemLevelColors then
+                    slotInfo.itemLevelColors[1], slotInfo.itemLevelColors[2], slotInfo.itemLevelColors[3] = C_Item.GetItemQualityColor(quality)
+                end
+            end
+        end
+
         tt:Hide()
         return slotInfo
     end
@@ -289,13 +304,7 @@ do
                 if slotInfo == "tooSoon" then
                     tinsert(tryAgain, i)
                 else
-                    -- classic style items carry no item level line in their tooltip, the link has it
-                    local link = not slotInfo.iLvl and GetInventoryItemLink(unit, i)
-                    if link and GW.NotSecretValue(link) then
-                        iLevelDB[i] = C_Item.GetDetailedItemLevelInfo(link)
-                    else
-                        iLevelDB[i] = slotInfo.iLvl
-                    end
+                    iLevelDB[i] = slotInfo.iLvl
                 end
             end
         end

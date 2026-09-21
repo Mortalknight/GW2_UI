@@ -243,7 +243,7 @@ local function CharacterSlots(dressingRoom)
         {CharacterWaistSlot, CharacterHandsSlot, "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
         {CharacterLegsSlot, CharacterWaistSlot, "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
         {CharacterFeetSlot, CharacterLegsSlot, "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
-        {CharacterMainHandSlot, CharacterFeetSlot, "TOPLEFT", "BOTTOMLEFT", 0, -20, 50},
+        {CharacterMainHandSlot, CharacterFeetSlot, "TOPLEFT", "BOTTOMLEFT", 0, -34, 50},
         {CharacterSecondaryHandSlot, CharacterMainHandSlot, "TOPLEFT", "TOPRIGHT", 5, 0, 50},
         {CharacterRangedSlot, CharacterMainHandSlot, "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
         {CharacterAmmoSlot, CharacterRangedSlot, "TOPLEFT", "TOPRIGHT", 5, 0, 50},
