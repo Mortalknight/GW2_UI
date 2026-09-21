@@ -390,6 +390,29 @@ local function MakeMovable(frame)
     frame.mover = mover
 end
 
+local HEADER_OVERLAP = 32
+
+local function GrowForHeader()
+    if not PlayerSpellsFrame:IsShown() then return end
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("gw_player_spells_height", GrowForHeader)
+        return
+    end
+
+    local content = (PlayerSpellsFrame.SpellBookFrame and PlayerSpellsFrame.SpellBookFrame:IsShown() and PlayerSpellsFrame.SpellBookFrame)
+        or (PlayerSpellsFrame.TalentsFrame and PlayerSpellsFrame.TalentsFrame:IsShown() and PlayerSpellsFrame.TalentsFrame)
+        or (PlayerSpellsFrame.SpecFrame and PlayerSpellsFrame.SpecFrame:IsShown() and PlayerSpellsFrame.SpecFrame)
+    if not content then return end
+
+    local frameTop, contentTop = PlayerSpellsFrame:GetTop(), content:GetTop()
+    if not frameTop or not contentTop then return end
+
+    local missing = HEADER_OVERLAP - (frameTop - contentTop)
+    if missing > 0.5 then
+        PlayerSpellsFrame:SetHeight(PlayerSpellsFrame:GetHeight() + missing)
+    end
+end
+
 local function skinPlayerSpells()
     GW.HandlePortraitFrame(PlayerSpellsFrame)
     GW.CreateFrameHeaderWithBody(PlayerSpellsFrame, PlayerSpellsFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {PlayerSpellsFrame.SpecFrame, PlayerSpellsFrame.TalentsFrame}, -3, false, true)
@@ -400,24 +423,8 @@ local function skinPlayerSpells()
             hooksecurefunc(PlayerSpellsFrame, method, HidePortrait)
         end
     end
-    -- camelot hangs the content from the bottom edge, our header reaches 32 pixels into the window
-    if PlayerSpellsFrame.spellBookHeight and not PlayerSpellsFrame.gwHeightAdjusted then
-        PlayerSpellsFrame.gwHeightAdjusted = true
-        local headerOverlap = 32
-        local spellBook = PlayerSpellsFrame.SpellBookFrame
-        local talents = PlayerSpellsFrame.TalentsFrame
-        local function GrowFor(current, content)
-            local _, _, _, _, bottomOffset = content:GetPoint(1)
-            local gap = tonumber(current) - (bottomOffset or 0) - content:GetHeight()
-            return tonumber(current) + math.max(0, headerOverlap - gap)
-        end
-        if spellBook then
-            PlayerSpellsFrame.spellBookHeight = GrowFor(PlayerSpellsFrame.spellBookHeight, spellBook)
-        end
-        if PlayerSpellsFrame.talentsHeight and talents then
-            PlayerSpellsFrame.talentsHeight = GrowFor(PlayerSpellsFrame.talentsHeight, talents)
-        end
-    end
+    hooksecurefunc(PlayerSpellsFrame, "UpdateSize", GrowForHeader)
+    PlayerSpellsFrame:HookScript("OnShow", GrowForHeader)
 
     local contentLevel = math.max(PlayerSpellsFrame.SpellBookFrame and PlayerSpellsFrame.SpellBookFrame:GetFrameLevel() or 0, PlayerSpellsFrame.TalentsFrame:GetFrameLevel())
     PlayerSpellsFrame.gwHeader:SetFrameLevel(contentLevel + 10)
@@ -557,15 +564,15 @@ local function skinPlayerSpells()
         PagedSpellsFrame.View1:DisableDrawLayer("OVERLAY")
 
         local PagingControls = PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.PagingControls
-        GW.HandleNextPrevButton(PagingControls.PrevPageButton, nil, nil, true)
-        GW.HandleNextPrevButton(PagingControls.NextPageButton, nil, nil, true)
+        GW.HandleNextPrevButton(PagingControls.PrevPageButton)
+        GW.HandleNextPrevButton(PagingControls.NextPageButton)
         PagingControls.PageText:SetTextColor(1, 1, 1)
     end
 end
 
 local function LoadPlayerSpellsSkin()
     if not GW.settings.skins.playerSpells.enabled then return end
-
+    C_AddOns.LoadAddOn("Blizzard_PlayerSpells")
     GW.RegisterLoadHook(skinPlayerSpells, "Blizzard_PlayerSpells", PlayerSpellsFrame)
 end
 GW.LoadPlayerSpellsSkin = LoadPlayerSpellsSkin
