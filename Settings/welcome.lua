@@ -518,7 +518,7 @@ STEPS = RemoveHiddenSteps({
     {
         title = COMBAT_TEXT_LABEL,
         desc = COMBAT_SUBTEXT,
-        hidden = GW.Retail,
+        hidden = GW.isModern,
         buildContent = function(content, step)
             local dropdown = CreateFrame("DropdownButton", nil, content, "WowStyle1DropdownTemplate")
             dropdown:SetSize(220, 25)

@@ -536,13 +536,6 @@ local function LoadGossipSkin()
 
     local GossipFrame = GossipFrame
 
-    if GW.isModern then
-        GW.HandleTrimScrollBar(ItemTextScrollFrame.ScrollBar)
-        GW.HandleScrollControls(ItemTextScrollFrame)
-    else
-        ItemTextScrollFrameScrollBar:GwSkinScrollBar()
-        ItemTextScrollFrame:GwSkinScrollFrame()
-    end
     GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar)
     GW.HandleScrollControls(GossipFrame.GreetingPanel)
     GossipFrame.GreetingPanel.GoodbyeButton:Hide()
@@ -558,16 +551,6 @@ local function LoadGossipSkin()
         end
     end
 
-    ItemTextPageText:SetTextColor("P", 1, 1, 1)
-    hooksecurefunc(ItemTextPageText, "SetTextColor", function(pageText, headerType, r, g, b)
-        if r ~= 1 or g ~= 1 or b ~= 1 then
-            pageText:SetTextColor(headerType, 1, 1, 1)
-        end
-    end)
-
-    ItemTextFrame:GwStripTextures(true)
-    GW.HandlePortraitFrameArt(ItemTextFrame)
-    ItemTextFrame:GwCreateBackdrop()
     QuestFont:SetTextColor(1, 1, 1)
     if GossipFrameInset then
         GossipFrameInset:Hide()
@@ -577,15 +560,6 @@ local function LoadGossipSkin()
     if GossipFrame.Background then
         GossipFrame.Background:Hide()
     end
-
-    local tex = ItemTextFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-    local w, h = ItemTextFrame:GetSize()
-    tex:SetPoint("TOP", ItemTextFrame, "TOP", 0, 20)
-    tex:SetSize(w + 50, h + 70)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
-    ItemTextFrame.tex = tex
-
-    ItemTextScrollFrame:GwStripTextures()
 
     GossipFrame:GwStripTextures()
     GW.HandlePortraitFrameArt(GossipFrame)
@@ -698,16 +672,6 @@ local function LoadGossipSkin()
     GossipFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton.png")
     GossipFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton.png")
     GossipFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton.png")
-    if ItemTextFrameCloseButton then
-        ItemTextFrameCloseButton:GwSkinButton(true)
-        ItemTextFrameCloseButton:SetSize(20, 20)
-    end
-
-    if ItemTextCloseButton then
-        ItemTextCloseButton:GwSkinButton(true)
-        ItemTextCloseButton:SetSize(20, 20)
-    end
-
     GossipFrame.GreetingPanel.ScrollBox:ClearAllPoints()
     GossipFrame.GreetingPanel.ScrollBox:SetPoint("TOPLEFT", GossipFrame.ListBackground, "TOPLEFT")
     GossipFrame.GreetingPanel.ScrollBox:SetPoint("BOTTOMRIGHT", GossipFrame.ListBackground, "BOTTOMRIGHT", 0, 126)
@@ -715,9 +679,6 @@ local function LoadGossipSkin()
     if GossipFrame.UpdateScrollBox then
         hooksecurefunc(GossipFrame, "UpdateScrollBox", setupGreetingPanelView)
     end
-    GW.HandleNextPrevButton(ItemTextPrevPageButton)
-    GW.HandleNextPrevButton(ItemTextNextPageButton)
-
     local GossipPaginControler = CreateFrame("Button", "GossipPaginControler", GossipFrame)
     local GossipPagingBack = CreateFrame("Button", "GossipPagingBack", GossipPaginControler, "GwCharacterPanelMenuButtonBackTemplate")
     local GossipPagingForward = CreateFrame("Button", "GossipPagingForward", GossipPaginControler, "GwCharacterPanelMenuButtonBackTemplate")
