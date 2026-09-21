@@ -95,6 +95,11 @@ function GwBattlegroundLandmarkMixin:IconOverrider(icon)
     return true
 end
 
+-- bases and flag carriers share the row, so the width follows both counts
+local function UpdateMidWidth(self)
+    self.MID:SetWidth(36 * math.max((self.poiCount or 0) + (self.flagCount or 0), 1))
+end
+
 function BattlegroundHudMixin:GetPoints(widget)
     local widgetID = widget and widget.widgetID
     if widgetID then
@@ -119,12 +124,14 @@ function BattlegroundHudMixin:PointsAndPoiOnEvent(event, ...)
         self.timer:SetText("")
     end
 
-    self.poiList = GetAreaPOIsForPlayerByMapIDCached(self.activeBgId)
+    -- the poi api wants the ui map id, activeBgId is the instance id the battleground is keyed by
+    local mapID = C_Map.GetBestMapForUnit("player")
+    self.poiList = mapID and GetAreaPOIsForPlayerByMapIDCached(mapID) or {}
     self.landMarkFramePool:ReleaseAll()
 
     local counter = 0
     for i = 1, #self.poiList do
-        local poiInfo = C_AreaPoiInfo.GetAreaPOIInfo(self.activeBgId, self.poiList[i])
+        local poiInfo = C_AreaPoiInfo.GetAreaPOIInfo(mapID, self.poiList[i])
         if poiInfo and poiInfo.atlasName then
             local atlas = C_Texture.GetAtlasInfo(poiInfo.atlasName)
             local f = self.landMarkFramePool:Acquire()
@@ -154,7 +161,8 @@ function BattlegroundHudMixin:PointsAndPoiOnEvent(event, ...)
             end
         end
     end
-    self.MID:SetWidth(36 * counter)
+    self.poiCount = counter
+    UpdateMidWidth(self)
 end
 
 function BattlegroundHudMixin:OnlyPointsOnEvent(event, ...)
@@ -187,12 +195,12 @@ function BattlegroundHudMixin:TimerFlagOnUpdate(elapsed)
     end
     --Check flag
     if self.TrackFlag then
-        self.landMarkFramePool:ReleaseAll()
+        self.flagFramePool:ReleaseAll()
         local counter = 0
         for i = 1, 5 do
             if GW.UnitExists("arena" .. i)  then
-                local f = self.landMarkFramePool:Acquire()
-                f:SetPoint("CENTER", self.MID, "BOTTOMLEFT", (36) * (counter) + 18, self.hasTimer and 32 or 45)
+                local f = self.flagFramePool:Acquire()
+                f:SetPoint("CENTER", self.MID, "BOTTOMLEFT", 36 * (counter + (self.poiCount or 0)) + 18, self.hasTimer and 32 or 45)
 
                 local classificationFaction = PvPClassificationFaction[UnitPvpClassification("arena" .. i)]
                 if classificationFaction == "H" then
@@ -206,7 +214,8 @@ function BattlegroundHudMixin:TimerFlagOnUpdate(elapsed)
                 counter = counter + 1
             end
         end
-        self.MID:SetWidth(36 * counter)
+        self.flagCount = counter
+        UpdateMidWidth(self)
     end
 end
 
@@ -219,6 +228,9 @@ local function OnEvent(self, event)
             self.battlegroundHud.scoreLeft:SetText(0)
             self.battlegroundHud.MID:SetWidth(36)
             self.battlegroundHud.landMarkFramePool:ReleaseAll()
+            self.battlegroundHud.flagFramePool:ReleaseAll()
+            self.battlegroundHud.poiCount = 0
+            self.battlegroundHud.flagCount = 0
             self.battlegroundHud:SetScript("OnEvent", nil)
             self.battlegroundHud:SetScript("OnUpdate", nil)
         end
@@ -246,6 +258,9 @@ local function OnEvent(self, event)
         self.battlegroundHud:Show()
     else
         self.battlegroundHud.landMarkFramePool:ReleaseAll()
+        self.battlegroundHud.flagFramePool:ReleaseAll()
+        self.battlegroundHud.poiCount = 0
+        self.battlegroundHud.flagCount = 0
         self.battlegroundHud:UnregisterAllEvents()
         self.battlegroundHud:Hide()
         self.battlegroundHud.hasTimer = false
@@ -391,6 +406,11 @@ local function LoadBattlegrounds()
             hasTimer = true,
             TrackFlag = true
         },
+        [489] = { --Warsong Gulch, the classic instance forever uses
+            OnEvent = BattlegroundHudMixin.OnlyPointsOnEvent,
+            OnUpdate = BattlegroundHudMixin.TimerFlagOnUpdate,
+            TrackFlag = true
+        },
         [2106] = { --Warsong
             OnEvent = BattlegroundHudMixin.OnlyPointsOnEvent,
             OnUpdate = BattlegroundHudMixin.TimerFlagOnUpdate,
@@ -438,6 +458,9 @@ local function LoadBattlegrounds()
     hudManager.battlegroundHud.timer:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
 
     hudManager.battlegroundHud.landMarkFramePool = CreateFramePool("Frame", hudManager.battlegroundHud, "GwBattleLandMarkFrame", ResetLandMark)
+    hudManager.battlegroundHud.flagFramePool = CreateFramePool("Frame", hudManager.battlegroundHud, "GwBattleLandMarkFrame", ResetLandMark)
+    hudManager.battlegroundHud.poiCount = 0
+    hudManager.battlegroundHud.flagCount = 0
     hudManager.battlegroundHud.activeBgId = 0
 
     hudManager:RegisterEvent("PLAYER_JOINED_PVP_MATCH")

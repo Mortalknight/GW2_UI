@@ -710,7 +710,7 @@ local function evPlayerLogin(self)
         CharacterBag3Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
     end
 
-    if GW.Retail and GW.settings.general.battlegroundHud then
+    if GW.isModern and GW.settings.general.battlegroundHud then
         loadStep(GW.LoadBattlegrounds)
     end
 

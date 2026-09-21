@@ -9,5 +9,5 @@
     <Include file ="Objectives\Load.xml"/>
     <Include file ="Character\Load.xml"/>
     <Include file ="..\Modern\Inventory\Load.xml"/>
-    <Include file ="Battlegrounds\Load.xml"/>
+    <Include file ="..\Modern\Battlegrounds\Load.xml"/>
 </Ui>

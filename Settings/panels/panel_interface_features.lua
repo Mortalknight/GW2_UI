@@ -24,7 +24,7 @@ local function LoadInterfaceFeaturesPanel(sWindow)
 
     p:AddGroupHeader(L["Components"])
     p:AddOption(INVENTORY_TOOLTIP, L["Enable the unified inventory interface."], {getterSetter = "bags.enabled", callback = function() GW.ShowRlPopup = true end, groupHeaderName = L["Components"], incompatibleAddons = "Inventory", isMasterToggle = true})
-    p:AddOption(BATTLEGROUND, nil, {getterSetter = "general.battlegroundHud", callback = function() GW.ShowRlPopup = true end, groupHeaderName = L["Components"], hidden = not GW.Retail, isMasterToggle = true})
+    p:AddOption(BATTLEGROUND, nil, {getterSetter = "general.battlegroundHud", callback = function() GW.ShowRlPopup = true end, groupHeaderName = L["Components"], hidden = not GW.isModern, isMasterToggle = true})
 
     sWindow:AddSettingsPanel(p, L["Interface Features"], L["Enable or disable standalone GW2 UI features."])
 end

@@ -8,4 +8,5 @@
     <Include file ="Objectives\Load.xml"/>
     <Include file ="Mainbar\Load.xml"/>
     <Include file ="Character\Load.xml"/>
+    <Include file ="..\Modern\Battlegrounds\Load.xml"/>
 </Ui>
