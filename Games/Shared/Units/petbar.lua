@@ -87,7 +87,7 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
         button.gw_ShowMacroName = GW.settings.actionbars.showMacroNames
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
-        if not GW.Retail then
+        if not GW.isModern then
             GW.RegisterCooldown(button.cooldown)
         end
     end
@@ -209,7 +209,7 @@ function GwPlayerPetFrameMixin:ToggleAuraPosition()
         self.auras:SetPoint("TOPRIGHT", self.Background, "BOTTOMRIGHT", -3, 100)
     end
 
-    if GW.Retail and self.aurasContainer then
+    if GW.isModern and self.aurasContainer then
         -- above the frame (default) the rows have to grow UPWARD, away from the
         -- action buttons — below the powerbar they grow downward (old auraPositon logic)
         local cfg = self.aurasContainer.gwConfig
@@ -300,7 +300,7 @@ function GwPlayerPetFrameMixin:UpdateSettings()
     self.showHealthValue = GW.settings.unitframes.pet.healthValueRaw
     self.showHealthPrecentage = GW.settings.unitframes.pet.healthValuePercent
 
-    if GW.Retail and self.aurasContainer then
+    if GW.isModern and self.aurasContainer then
         self:ApplyAuraSettings()
     else
         self.displayBuffs = GW.settings.unitframes.pet.buffFilter == "none" and 0 or 32
@@ -327,10 +327,10 @@ end
 
 local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent,
-        GW.Retail and "GwPlayerPetFramePingableTemplate" or "GwPlayerPetFrameTemplate")
+        GW.isModern and "GwPlayerPetFramePingableTemplate" or "GwPlayerPetFrameTemplate")
     GW.SetFrameRoleset(playerPetFrame, "unitFrames")
 
-    if GW.Retail then
+    if GW.isModern then
         playerPetFrame.hpValues = CreateUnitHealPredictionCalculator()
         playerPetFrame.hpValues:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MissingHealth)
         playerPetFrame.hpValues:SetHealAbsorbClampMode(Enum.UnitHealAbsorbClampMode.CurrentHealth)
@@ -452,7 +452,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_MAXPOWER", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_HEALTH", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "pet")
-    if not GW.Retail then -- on Retail the AuraContainer handles the aura updates itself
+    if not GW.isModern then -- on Modern the AuraContainer handles the aura updates itself
         playerPetFrame:RegisterUnitEvent("UNIT_AURA", "pet")
     end
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")

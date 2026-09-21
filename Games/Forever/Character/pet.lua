@@ -41,8 +41,7 @@ local function GetPetStatTile(stats, index)
         tile.Label:SetFont(UNIT_NAME_FONT, 1, "")
         tile.Label:SetTextColor(0, 0, 0, 0)
         tile.icon:SetSize(30, 30)
-        tile.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon-classic.png")
-        tile.icon:SetTexCoord(0, 0.25, 0, 0.125)
+        tile.icon:SetPoint("TOPLEFT")
         local column, row = (index - 1) % 2, math.floor((index - 1) / 2)
         tile:SetPoint("TOPLEFT", stats, "TOPLEFT", 5 + column * TILE_WIDTH, -TOP_OFFSET - row * ROW_HEIGHT)
         stats.tiles[index] = tile
@@ -62,6 +61,7 @@ local function UpdatePetStats(stats)
                     tile.unit = "pet"
                     tile.tooltip, tile.tooltip2, tile.onEnterFunc = nil, nil, nil
                     info.updateFunc(tile, "pet")
+                    GW.SetPaperDollStatIcon(tile, stat.stat)
                     if stat.hideAt ~= nil and stat.hideAt == tile.numericValue then
                         tile:Hide()
                     else
@@ -84,27 +84,35 @@ local function UpdatePetPanel(dressingRoom)
     local name = UnitName("pet") or ""
     local level = format(UNIT_LEVEL_TEMPLATE, UnitLevel("pet") or "", "")
     local family = UnitCreatureFamily("pet")
-    dressingRoom.characterName:SetText(family and (name .. " - " .. level .. " " .. family) or (name .. " - " .. level))
+    dressingRoom.characterName:SetText((family and family ~= name) and (name .. " - " .. level .. " " .. family) or (name .. " - " .. level))
 
     if isHunterPet then
         local currXP, nextXP = GetPetExperience()
         local expBar = dressingRoom.model.expBar
-        expBar:SetMinMaxValues(0, math.max(nextXP or 1, 1))
-        expBar:SetValue(currXP or 0)
-        expBar.value:SetText(GW.CommaValue(currXP or 0) .. " / " .. GW.CommaValue(nextXP or 0) .. " - " .. math.floor((currXP or 0) / math.max(nextXP or 1, 1) * 100) .. "%")
-        expBar:Show()
+        expBar:SetShown(nextXP ~= nil and nextXP > 0)
+        if expBar:IsShown() then
+            expBar:SetMinMaxValues(0, nextXP)
+            expBar:SetValue(currXP or 0)
+            expBar.value:SetText(GW.CommaValue(currXP or 0) .. " / " .. GW.CommaValue(nextXP) .. " - " .. math.floor((currXP or 0) / nextXP * 100) .. "%")
+        end
 
-        dressingRoom.classIcon:SetTexCoord(GW.getSprite(petStateSprite, C_PetInfo.GetPetHappiness() or 1, 1))
-        dressingRoom.classIcon:Show()
-        dressingRoom.happiness:Show()
+        local happiness = C_PetInfo.GetPetHappiness()
+        dressingRoom.classIcon:SetShown(happiness ~= nil)
+        dressingRoom.happiness:SetShown(happiness ~= nil)
+        if happiness then
+            dressingRoom.classIcon:SetTexCoord(GW.getSprite(petStateSprite, happiness, 1))
+        end
 
         local totalPoints, spentPoints = C_PetInfo.GetPetTrainingPoints()
-        dressingRoom.itemLevel:SetText((totalPoints or 0) - (spentPoints or 0))
-        dressingRoom.itemLevel:Show()
-        dressingRoom.itemLevelLabel:Show()
+        dressingRoom.itemLevel:SetShown(totalPoints ~= nil)
+        dressingRoom.itemLevelLabel:SetShown(totalPoints ~= nil)
+        if totalPoints then
+            dressingRoom.itemLevel:SetText(totalPoints - (spentPoints or 0))
+        end
 
-        dressingRoom.characterData:SetText(C_PetInfo.GetPetLoyalty() or "")
-        dressingRoom.characterData:Show()
+        local loyalty = C_PetInfo.GetPetLoyalty()
+        dressingRoom.characterData:SetShown(loyalty ~= nil)
+        dressingRoom.characterData:SetText(loyalty or "")
         dressingRoom.model:SetPosition(-2, 0, -0.5)
         dressingRoom.model:SetRotation(-0.15)
     else
@@ -182,7 +190,15 @@ function GW.LoadPetPanel(tabContainer, fmMenu)
     dressingRoom.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     dressingRoom.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
     dressingRoom.itemLevelLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    dressingRoom.itemLevelLabel:SetText(PET_TRAINING_POINTS or "")
+    -- the global is a format string ("Training Points: %s"), we print the number ourselves
+    local trainingPointsLabel = TRAINING_POINTS or PET_TRAINING_POINTS or ""
+    trainingPointsLabel = trainingPointsLabel:gsub("%%s", "")
+    trainingPointsLabel = trainingPointsLabel:gsub("%s*:%s*$", "")
+    dressingRoom.itemLevelLabel:SetText(strtrim(trainingPointsLabel))
+
+    GW.HandleModelControlFrame(dressingRoom.model.controlFrame)
+    GW.AddStatusBarFrame(dressingRoom.model.expBar)
+    dressingRoom.model.expBar.value:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
 
     dressingRoom.happiness:SetScript("OnEnter", happiness_OnEnter)
     dressingRoom.happiness:SetScript("OnLeave", GameTooltip_Hide)

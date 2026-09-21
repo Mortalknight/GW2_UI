@@ -125,6 +125,7 @@ local function setStatIcon(self, stat)
     end
     self.icon:SetDesaturated(false)
 end
+GW.SetPaperDollStatIcon = setStatIcon
 
 local function AddStatTile(self, entries, statKey, hideAt, editMode)
     if not PAPERDOLL_STATINFO[statKey] then return end
