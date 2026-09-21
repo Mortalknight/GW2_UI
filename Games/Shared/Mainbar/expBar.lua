@@ -81,17 +81,13 @@ local function xpbar_OnEnter(self)
 end
 
 local function xpbar_OnClick()
-    if not GW.Retail then
-        return
-    end
-
-    if not IsAtMaxLevel() then
+    if GW.Forever and not IsAtMaxLevel() then
         if GwLevelingRewards:IsShown() then
             GwLevelingRewards:Hide()
         else
             GwLevelingRewards:Show()
         end
-    elseif C_AzeriteEmpoweredItem and C_AzeriteEmpoweredItem.IsHeartOfAzerothEquipped() then
+    elseif GW.Retail and IsAtMaxLevel() and C_AzeriteEmpoweredItem and C_AzeriteEmpoweredItem.IsHeartOfAzerothEquipped() then
         local heartItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
         if heartItemLocation and heartItemLocation:IsEqualTo(ItemLocation:CreateFromEquipmentSlot(2)) then
             if AzeriteEssenceUI and AzeriteEssenceUI:IsShown() then
@@ -540,7 +536,7 @@ local function UpdateData(self)
 
     experiencebarAnimation = valPrec
 
-    if GW.Retail and GW.IsUpcomingSpellAvalible() then
+    if GW.Forever and GW.IsUpcomingSpellAvalible() then
         nextLevel = nextLevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon.png:20:20:0:0|t"
     end
 
@@ -666,10 +662,15 @@ local function LoadXPBar()
 
     StatusTrackingBarManager:GwKill()
 
-    if GW.Retail then
-        PetBattleFrameXPBar:GwKill()
-        GW.LoadUpcomingSpells()
+    GW.UpdateExpBar = function()
+        queueUpdate(experiencebar)
+    end
 
+    if GW.Forever then
+        GW.LoadUpcomingSpells()
+    end
+
+    if GW.isModern then
         experiencebar.rightButton:SetScript("OnClick", xpbar_OnClick)
         experiencebar.rightButton:SetScript(
             "OnEnter",
@@ -690,6 +691,10 @@ local function LoadXPBar()
                 p.NextLevel:SetTextColor(p.NextLevel.oldColor.r, p.NextLevel.oldColor.g, p.NextLevel.oldColor.b)
             end
         )
+    end
+
+    if GW.Retail then
+        PetBattleFrameXPBar:GwKill()
 
         experiencebar.AzeritBar.animation:SetScript(
             "OnShow",

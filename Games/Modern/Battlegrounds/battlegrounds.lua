@@ -17,6 +17,8 @@ local PvPClassificationFaction = {
     --[Enum.PvPUnitClassification.OrbCarrierPurple] = "orb"
 }
 
+local ARENA_UNITS = {"arena1", "arena2", "arena3", "arena4", "arena5"}
+
 local function ResetLandMark(_, self)
     self:ClearAllPoints()
     self:Hide()
@@ -127,11 +129,26 @@ function BattlegroundHudMixin:PointsAndPoiOnEvent(event, ...)
     -- the poi api wants the ui map id, activeBgId is the instance id the battleground is keyed by
     local mapID = C_Map.GetBestMapForUnit("player")
     self.poiList = mapID and GetAreaPOIsForPlayerByMapIDCached(mapID) or {}
+
+    local signature = ""
+    local poiInfos = {}
+    for i = 1, #self.poiList do
+        local poiInfo = C_AreaPoiInfo.GetAreaPOIInfo(mapID, self.poiList[i])
+        poiInfos[i] = poiInfo
+        if poiInfo then
+            signature = signature .. (poiInfo.atlasName or poiInfo.textureIndex or "") .. ","
+        end
+    end
+    if signature == self.poiSignature then
+        return
+    end
+    self.poiSignature = signature
+
     self.landMarkFramePool:ReleaseAll()
 
     local counter = 0
     for i = 1, #self.poiList do
-        local poiInfo = C_AreaPoiInfo.GetAreaPOIInfo(mapID, self.poiList[i])
+        local poiInfo = poiInfos[i]
         if poiInfo and poiInfo.atlasName then
             local atlas = C_Texture.GetAtlasInfo(poiInfo.atlasName)
             local f = self.landMarkFramePool:Acquire()
@@ -147,8 +164,8 @@ function BattlegroundHudMixin:PointsAndPoiOnEvent(event, ...)
             counter = counter + 1
             if poiInfo.textureIndex == 0 then
                 for y = 1, 5 do
-                    if GW.UnitExists("arena" .. y) then
-                        local classificationFaction = PvPClassificationFaction[UnitPvpClassification("arena" .. y)]
+                    if GW.UnitExists(ARENA_UNITS[y]) then
+                        local classificationFaction = PvPClassificationFaction[UnitPvpClassification(ARENA_UNITS[y])]
                         if classificationFaction == "H" then
                             f.IconBackground:SetVertexColor(GW.Colors.FactionColors.Horde:GetRGB())
                         elseif classificationFaction == "A" then
@@ -195,14 +212,27 @@ function BattlegroundHudMixin:TimerFlagOnUpdate(elapsed)
     end
     --Check flag
     if self.TrackFlag then
+        local signature = ""
+        for i = 1, 5 do
+            local unit = ARENA_UNITS[i]
+            if GW.UnitExists(unit) then
+                signature = signature .. i .. (PvPClassificationFaction[UnitPvpClassification(unit)] or "N")
+            end
+        end
+        if signature == self.flagSignature then
+            return
+        end
+        self.flagSignature = signature
+
         self.flagFramePool:ReleaseAll()
         local counter = 0
         for i = 1, 5 do
-            if GW.UnitExists("arena" .. i)  then
+            local unit = ARENA_UNITS[i]
+            if GW.UnitExists(unit) then
                 local f = self.flagFramePool:Acquire()
                 f:SetPoint("CENTER", self.MID, "BOTTOMLEFT", 36 * (counter + (self.poiCount or 0)) + 18, self.hasTimer and 32 or 45)
 
-                local classificationFaction = PvPClassificationFaction[UnitPvpClassification("arena" .. i)]
+                local classificationFaction = PvPClassificationFaction[UnitPvpClassification(unit)]
                 if classificationFaction == "H" then
                     f.IconBackground:SetVertexColor(GW.Colors.FactionColors.Horde:GetRGB())
                 elseif classificationFaction == "A" then
@@ -219,6 +249,20 @@ function BattlegroundHudMixin:TimerFlagOnUpdate(elapsed)
     end
 end
 
+local function RefreshFromWidgets(hud)
+    local setID = C_UIWidgetManager.GetTopCenterWidgetSetID()
+    if setID then
+        for _, widget in ipairs(C_UIWidgetManager.GetAllWidgetsBySetID(setID)) do
+            if widget.widgetType == Enum.UIWidgetVisualizationType.DoubleStatusBar then
+                hud:GetPoints(widget)
+            end
+        end
+    end
+    if hud.activeBg and hud.activeBg.OnEvent then
+        hud.activeBg.OnEvent(hud, "GW_REFRESH")
+    end
+end
+
 local function OnEvent(self, event)
     local playerInstanceMapId = select(8, GetInstanceInfo())
     if self.bgs[playerInstanceMapId] then
@@ -231,6 +275,8 @@ local function OnEvent(self, event)
             self.battlegroundHud.flagFramePool:ReleaseAll()
             self.battlegroundHud.poiCount = 0
             self.battlegroundHud.flagCount = 0
+            self.battlegroundHud.flagSignature = nil
+            self.battlegroundHud.poiSignature = nil
             self.battlegroundHud:SetScript("OnEvent", nil)
             self.battlegroundHud:SetScript("OnUpdate", nil)
         end
@@ -256,11 +302,14 @@ local function OnEvent(self, event)
         self.battlegroundHud:RegisterEvent("AREA_POIS_UPDATED")
 
         self.battlegroundHud:Show()
+        RefreshFromWidgets(self.battlegroundHud)
     else
         self.battlegroundHud.landMarkFramePool:ReleaseAll()
         self.battlegroundHud.flagFramePool:ReleaseAll()
         self.battlegroundHud.poiCount = 0
         self.battlegroundHud.flagCount = 0
+        self.battlegroundHud.flagSignature = nil
+        self.battlegroundHud.poiSignature = nil
         self.battlegroundHud:UnregisterAllEvents()
         self.battlegroundHud:Hide()
         self.battlegroundHud.hasTimer = false
@@ -276,6 +325,35 @@ local function OnEvent(self, event)
     end
 end
 
+-- the three arathi instances share their bases
+local ARATHI_ICONS = {
+            [16] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
+            [17] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
+            [18] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
+            [19] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
+            [20] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
+            [21] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
+            [22] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
+            [23] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
+            [24] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
+            [25] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
+            [26] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
+            [27] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
+            [28] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
+            [29] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
+            [30] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
+            [31] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
+            [32] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
+            [33] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
+            [34] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
+            [35] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
+            [36] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
+            [37] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
+            [38] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
+            [39] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
+            [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36}
+}
+
 local function LoadBattlegrounds()
     local hudManager = CreateFrame("Frame", nil, UIParent)
     hudManager.battlegroundHud = CreateFrame("Frame", nil, UIParent, "GwBattleGroundScores")
@@ -284,93 +362,15 @@ local function LoadBattlegrounds()
     hudManager.bgs = {
         [529] = { --Arathi
             OnEvent = BattlegroundHudMixin.PointsAndPoiOnEvent,
-            icons = {
-                [16] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [17] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [18] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [19] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [20] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [21] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [22] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [23] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [24] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [25] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [26] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [27] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [28] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [29] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [30] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [31] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [32] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [33] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [34] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [35] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [36] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [37] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [38] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [39] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36}
-            }
+            icons = ARATHI_ICONS
         },
         [1681] = { --Arathi
             OnEvent = BattlegroundHudMixin.PointsAndPoiOnEvent,
-            icons = {
-                [16] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [17] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [18] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [19] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [20] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [21] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [22] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [23] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [24] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [25] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [26] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [27] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [28] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [29] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [30] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [31] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [32] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [33] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [34] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [35] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [36] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [37] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [38] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [39] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36}
-            }
+            icons = ARATHI_ICONS
         },
         [2107] = { --Arathi
             OnEvent = BattlegroundHudMixin.PointsAndPoiOnEvent,
-            icons = {
-                [16] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [17] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [18] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [19] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [20] = {[1] = 0.25, [2] = 0.50, [3] = 0,    [4] = 0.5,  normalState = 16},
-                [21] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [22] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [23] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [24] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [25] = {[1] = 0,    [2] = 0.25, [3] = 0,    [4] = 0.5,  normalState = 21},
-                [26] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [27] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [28] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [29] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [30] = {[1] = 0,    [2] = 0.25, [3] = 0.5,  [4] = 1,    normalState = 26},
-                [31] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [32] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [33] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [34] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [35] = {[1] = 0.75, [2] = 1,    [3] = 0,    [4] = 0.5,  normalState = 31},
-                [36] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [37] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [38] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [39] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36},
-                [40] = {[1] = 0.5,  [2] = 0.75, [3] = 0,    [4] = 0.5,  normalState = 36}
-            }
+            icons = ARATHI_ICONS
         },
         [2245] = { --Deepwind (TODO: Add cart carrier to top)
             OnEvent = BattlegroundHudMixin.PointsAndPoiOnEvent,

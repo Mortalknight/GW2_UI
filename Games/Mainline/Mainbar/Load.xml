@@ -1,6 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file ="upcomingSpells.xml"/>
-    <Script file ="upcomingSpells.lua"/>
     <Include file ="orderbar.xml"/>
     <Script file ="orderbar.lua"/>
     <Script file ="..\..\Modern\Mainbar\mirrortimer.lua"/>
