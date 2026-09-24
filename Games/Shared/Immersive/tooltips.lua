@@ -7,7 +7,7 @@ local nameRoleIcon = GW.nameRoleIcon
 
 local pawnTooltipBorderRegistered = false
 
-local MountIDs = {}
+local mountInfos = {}
 local classification = {
     worldboss = format("|cffAF5050 %s|r", BOSS),
     rareelite = format("|cffAF5050+ %s|r", ITEM_QUALITY3_DESC),
@@ -586,44 +586,47 @@ local function AddTargetInfo(self, unit)
     end
 end
 
-local function AddMountInfo(self, unit)
-    local index = 1
-    local auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
-    while auraData do
-        if GW.IsSecretValue(auraData.spellId) then
-            break
-        else
-            local mountID = MountIDs[auraData.spellId]
-            if mountID then
-                self:AddDoubleLine(format("%s:", MOUNT), auraData.name, nil, nil, nil, 1, 1, 1)
+local function CheckMountInfo(self, aura)
+    local mountInfo = mountInfos[aura.spellId]
+    if not mountInfo then return end
 
-                local sourceText = mountID.sourceText
-                local mountText = sourceText and IsControlKeyDown() and gsub(sourceText, "|n%s+|n", "|n")
-                if mountText then
-                    local sourceModified = gsub(mountText, "|n", "\10")
-                    for x in gmatch(sourceModified, "[^\10]+\10?") do
-                        local left, right = strmatch(x, "(.-|r)%s?([^\10]+)\10?")
-                        if left and right then
-                            self:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
-                        else
-                            self:AddDoubleLine(FROM, gsub(mountText, "|c%x%x%x%x%x%x%x%x",""), nil, nil, nil, 1, 1, 1)
-                        end
-                    end
-                end
+    self:AddDoubleLine(format("%s:", MOUNT), aura.name, nil, nil, nil, 1, 1, 1)
 
-                break
+    local sourceText = mountInfo.sourceText
+    local mountText = sourceText and IsControlKeyDown() and gsub(sourceText, "|n%s+|n", '|n')
+    if mountText then
+        local sourceModified = gsub(mountText, "|n", "\10")
+        for x in gmatch(sourceModified, "[^\10]+\10?") do
+            local left, right = strmatch(x, "(.-|r)%s?([^\10]+)\10?")
+            if left and right then
+                self:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
             else
-                index = index + 1
-                auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
+                self:AddDoubleLine(FROM, gsub(mountText, "|c%x%x%x%x%x%x%x%x",""), nil, nil, nil, 1, 1, 1)
             end
         end
+    end
+
+    return true
+end
+
+local function AddMountInfo(self, unit)
+    if GW.IsRestrictedInstance() then return end
+    local index = 1
+    local aura = C_UnitAuras.GetBuffDataByIndex(unit, index, "HELPFUL")
+    while aura do
+        if GW.IsSecretValue(aura.spellId) or CheckMountInfo(self, aura) then
+            break
+        end
+
+        index = index + 1
+        aura = C_UnitAuras.GetBuffDataByIndex(unit, index, "HELPFUL")
     end
 end
 
 local function AddRoleInfo(self, unit)
     local unitRaid, unitParty = UnitInRaid(unit), UnitInParty(unit)
-	local unitSecret = GW.IsSecretValue(unitRaid) or GW.IsSecretValue(unitParty)
-	if unitSecret or not (unitRaid or unitParty) then return end
+    local unitSecret = GW.IsSecretValue(unitRaid) or GW.IsSecretValue(unitParty)
+    if unitSecret or not (unitRaid or unitParty) then return end
 
     local role = UnitGroupRolesAssigned(unit)
     if GW.IsSecretValue(role) or (not role or role == "NONE") then return end
@@ -761,7 +764,7 @@ local function SetUnitInfo(self, unit, data)
         AddMythicInfo(self, unit)
     end
 
-    if (GW.Retail or GW.Mists) and GW.settings.tooltip.unit.mount and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown and not isInCombat and not GW.AreAurasSecret() then
+    if (GW.Retail or GW.Mists) and GW.settings.tooltip.unit.mount and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown and not isInCombat then
         AddMountInfo(self, unit)
     end
 
@@ -1244,13 +1247,13 @@ local function LoadTooltips()
     --hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
 
     -- Functions
-    MountIDs = {}
+    mountInfos = {}
     if GW.Retail or GW.Mists then
         local mountIDs = C_MountJournal.GetMountIDs()
         for _, mountID in ipairs(mountIDs) do
             local _, spellID = C_MountJournal.GetMountInfoByID(mountID)
             local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
-            MountIDs[spellID] = {mountId = mountID, sourceText = sourceText}
+            mountInfos[spellID] = {mountId = mountID, sourceText = sourceText}
         end
     end
 
