@@ -493,7 +493,9 @@ local function skinPlayerSpells()
             hooksecurefunc(PlayerSpellsFrame, method, HidePortrait)
         end
     end
-    hooksecurefunc(PlayerSpellsFrame, "UpdateSize", GrowForHeader)
+    if PlayerSpellsFrame.UpdateSize then
+        hooksecurefunc(PlayerSpellsFrame, "UpdateSize", GrowForHeader)
+    end
     PlayerSpellsFrame:HookScript("OnShow", GrowForHeader)
 
     local contentLevel = math.max(PlayerSpellsFrame.SpellBookFrame and PlayerSpellsFrame.SpellBookFrame:GetFrameLevel() or 0, PlayerSpellsFrame.TalentsFrame:GetFrameLevel())
