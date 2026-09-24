@@ -416,8 +416,15 @@ local function worldMapSkin()
         WorldMapFrame.mover:SetScript("OnDragStop", mover_OnDragStop)
     end
 
-    WorldMapFrame:SetClampedToScreen(true)
-    WorldMapFrame:SetClampRectInsets(0, 0, WorldMapFrameHeader:GetHeight() - 30, 0)
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("WorldMapClampedToScreen", function()
+            WorldMapFrame:SetClampedToScreen(true)
+            WorldMapFrame:SetClampRectInsets(0, 0, WorldMapFrameHeader:GetHeight() - 30, 0)
+        end)
+    else
+        WorldMapFrame:SetClampedToScreen(true)
+        WorldMapFrame:SetClampRectInsets(0, 0, WorldMapFrameHeader:GetHeight() - 30, 0)
+    end
 
     -- 11.0 Map Legend
     QuestMapFrame.MapLegend.TitleText:SetFont(STANDARD_TEXT_FONT, 16)

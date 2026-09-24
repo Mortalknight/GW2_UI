@@ -456,7 +456,14 @@ local function MakeMovable(frame)
     mover:SetScript("OnDragStop", function(self) self:GetParent():StopMovingOrSizing() end)
 
     frame:SetMovable(true)
-    frame:SetClampedToScreen(true)
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("PlayerSpellsClampedToScreen", function()
+            frame:SetClampedToScreen(true)
+        end)
+    else
+        frame:SetClampedToScreen(true)
+    end
+
     frame.mover = mover
 end
 
