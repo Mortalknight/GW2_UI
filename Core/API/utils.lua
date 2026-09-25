@@ -1697,10 +1697,25 @@ local function DoesAncestryIncludeAny(ancestry, frames)
 end
 GW.DoesAncestryIncludeAny = DoesAncestryIncludeAny
 
+-- activating the saved layout makes the client fire EDIT_MODE_LAYOUTS_UPDATED, and blizzards handler applies
+-- it untainted; applying it from here taints the action bar state and blocks the stance bar in combat
+local layoutsUpdated = false
+local layoutWatcher = CreateFrame("Frame")
+layoutWatcher:SetScript("OnEvent", function()
+    layoutsUpdated = true
+end)
+
 local function ApplyLayoutChanges()
+    layoutsUpdated = false
+    layoutWatcher:RegisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
     GW.Libs.LEMO:SaveOnly()
-    EditModeManagerFrame:UpdateLayoutInfo(C_EditMode.GetLayouts())
-    ManageFramePositions()
+    layoutWatcher:UnregisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
+
+    if not layoutsUpdated then
+        GW.Debug("edit mode layout was not re-applied by the client, applying it ourselves")
+        EditModeManagerFrame:UpdateLayoutInfo(C_EditMode.GetLayouts())
+        ManageFramePositions()
+    end
 end
 GW.ApplyLayoutChanges = ApplyLayoutChanges
 
