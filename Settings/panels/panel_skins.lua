@@ -83,7 +83,7 @@ local function LoadSkinsPanel(sWindow)
     addonSkins:AddOption("|cffaaaaaa[AddOn]|r World Quest Tracker", nil, {getterSetter = "skins.wqt.enabled", callback = function() GW.ShowRlPopup = true end, dependence = {["objectives.enabled"] = true}, incompatibleAddons = "Objectives", hidden = not GW.Retail})
     addonSkins:AddOption("|cffaaaaaa[AddOn]|r Immersion", nil, {getterSetter = "skins.immersion.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     addonSkins:AddOption("|cffaaaaaa[AddOn]|r PetTracker", nil, {getterSetter = "skins.petTracker.enabled", callback = function() GW.ShowRlPopup = true end, dependence = {["objectives.enabled"] = true}, incompatibleAddons = "Objectives", hidden = not GW.Retail})
-    addonSkins:AddOption("|cffaaaaaa[AddOn]|r Auctionator", nil, {getterSetter = "skins.auctionator.enabled", callback = function() GW.ShowRlPopup = true end, dependence = {["skins.auctionHouse.enabled"] = true}, hidden = not GW.Retail})
+    addonSkins:AddOption("|cffaaaaaa[AddOn]|r Auctionator", nil, {getterSetter = "skins.auctionator.enabled", callback = function() GW.ShowRlPopup = true end, dependence = {["skins.auctionHouse.enabled"] = true}, hidden = not GW.isModern})
     addonSkins:AddOption("|cffaaaaaa[AddOn]|r Todoloo", nil, {getterSetter = "skins.todoloo.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     addonSkins:AddOption("|cffaaaaaa[AddOn]|r Extended Transmog Sets", nil, {getterSetter = "skins.extendedSets.enabled", callback = function() GW.ShowRlPopup = true end, dependence = {["skins.collections.enabled"] = true}, hidden = not GW.Retail})
 
@@ -91,7 +91,7 @@ local function LoadSkinsPanel(sWindow)
         {name = GENERAL, frame = general},
         {name = L["Game Frames"], frame = gameFrames},
     }
-    if GW.Retail then
+    if GW.isModern then
         tinsert(panels, {name = ADDONS, frame = addonSkins})
     end
 

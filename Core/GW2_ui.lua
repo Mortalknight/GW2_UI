@@ -899,7 +899,6 @@ local function evLoadSkins()
         GW.LoadExpansionLadningPageSkin()
         GW.LoadGenericTraitFrameSkin()
         GW.LoadImmersionAddonSkin()
-        GW.LoadAuctionatorAddonSkin()
         GW.LoadExtendedSetsAddonSkin()
         GW.LoadTSMAddonSkin()
         GW.LoadOrderBar()
@@ -940,6 +939,7 @@ local function evLoadSkins()
         GW.LoadCommunitiesSkin()
         GW.LoadBattlefieldMapSkin()
         GW.LoadCooldownManagerSkin()
+        GW.LoadAuctionatorAddonSkin()
     end
 
     if not (GW.Classic or GW.TBC) then
