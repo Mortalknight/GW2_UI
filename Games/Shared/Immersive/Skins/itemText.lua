@@ -50,15 +50,8 @@ local function LoadItemTextSkin()
     end
 
     local title = ItemTextTitleText or (ItemTextFrame.TitleContainer and ItemTextFrame.TitleContainer.TitleText)
-    GW.CreateFrameHeaderWithBody(ItemTextFrame, title, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png")
-    ItemTextFrame.gwHeader.windowIcon:ClearAllPoints()
-    ItemTextFrame.gwHeader.windowIcon:SetPoint("CENTER", ItemTextFrame.gwHeader, "BOTTOMLEFT", 24, 30)
-
     local closeButton = ItemTextFrameCloseButton or ItemTextCloseButton or ItemTextFrame.CloseButton
-    closeButton:GwSkinButton(true, false)
-    closeButton:SetSize(25, 25)
-    closeButton:ClearAllPoints()
-    closeButton:SetPoint("TOPRIGHT", ItemTextFrame, "TOPRIGHT", -6, 4)
+    GW.SkinSmallWindow(ItemTextFrame, title, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", closeButton)
 
     SkinScrollFrame()
     SkinPageText()

@@ -18,17 +18,9 @@ local PANEL_BUTTONS = {
     "CombatConfigSettingsSaveButton",
 }
 
+-- only the art shrinks, blizzards rows are laid out around the button size
 local function SkinCheckButton(button, isRadio)
-    if button.gwSkinned then return end
-
-    -- only the art shrinks, the buttons keep their size so blizzards row layout stays intact
-    local size = button:GetHeight() < 22 and 13 or 15
-    button:GwSkinCheckButton(isRadio)
-    for _, texture in ipairs({button:GetNormalTexture(), button:GetPushedTexture(), button:GetCheckedTexture(), button:GetDisabledCheckedTexture()}) do
-        texture:ClearAllPoints()
-        texture:SetPoint("CENTER")
-        texture:SetSize(size, size)
-    end
+    button:GwSkinCheckButton(isRadio, button:GetHeight() < 22 and 13 or 15, true)
 end
 
 -- blizzard colours either the normal texture (old swatches) or the Color texture (ColorSwatchTemplate)
@@ -47,7 +39,7 @@ local function SkinColorSwatch(swatch)
         swatch.Color:SetSize(12, 12)
     end
 
-    local normal = swatch.GetNormalTexture and swatch:GetNormalTexture()
+    local normal = swatch:GetNormalTexture()
     if normal then
         normal:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
         normal:ClearAllPoints()
@@ -233,8 +225,7 @@ local function SkinCombatSettings()
     GW.HandleNextPrevButton(ChatConfigMoveFilterDownButton, "down")
 
     local editBox = CombatConfigSettingsNameEditBox
-    local editBoxName = editBox:GetName()
-    GW.SkinTextBox(editBox.Middle or _G[editBoxName .. "Middle"], editBox.Left or _G[editBoxName .. "Left"], editBox.Right or _G[editBoxName .. "Right"])
+    GW.SkinTextBox(editBox.Middle, editBox.Left, editBox.Right)
 
     for _, name in ipairs(RADIO_BUTTONS) do
         SkinCheckButton(_G[name], true)
@@ -259,6 +250,7 @@ local function SkinButtons()
     for _, name in ipairs(PANEL_BUTTONS) do
         _G[name]:GwSkinButton(false, true)
     end
+    -- classic only
     if ChatConfigFrame.ToggleChatButton then
         ChatConfigFrame.ToggleChatButton:GwSkinButton(false, true)
     end
@@ -281,5 +273,8 @@ local function LoadChatConfigSkin()
     ChatConfigFrame:HookScript("OnShow", Refresh)
     hooksecurefunc("ChatConfigCategory_OnClick", Refresh)
     hooksecurefunc("ChatConfig_CreateCheckboxes", Refresh)
+    -- the combat message types and the text to speech message types build their check buttons outside those two
+    hooksecurefunc("ChatConfig_CreateTieredCheckboxes", Refresh)
+    hooksecurefunc("TextToSpeechFrame_UpdateMessageCheckboxes", Refresh)
 end
 GW.LoadChatConfigSkin = LoadChatConfigSkin

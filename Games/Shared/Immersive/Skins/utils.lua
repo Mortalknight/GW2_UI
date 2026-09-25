@@ -756,6 +756,20 @@ function GW.AddDetailsBackground(frame, detailBackgroundsXOffset, detailBackgrou
     frame.tex = detailBg
 end
 
+-- blizzards round help / info buttons become the help icon of our micro menu
+function GW.SkinHelpIconButton(button, size)
+    -- blanked, so blizzards ring pulse for new players stays invisible
+    button:GwStripTextures()
+    -- some templates inset their hit rect by 20 on every side, at our size nothing would be left
+    button:SetHitRectInsets(0, 0, 0, 0)
+    button:SetSize(size, size)
+    local icon = button:CreateTexture(nil, "ARTWORK")
+    icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/helpmicrobutton-up.png")
+    icon:SetAllPoints(button)
+    button.gwIcon = icon
+    button:GwStyleButton(nil, true)
+end
+
 function GW.AddStatusBarFrame(bar)
     local background = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
     background:SetAllPoints(bar)
@@ -882,6 +896,21 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     UpdateFrameHeaderBodyLayout()
 end
 GW.CreateFrameHeaderWithBody = CreateFrameHeaderWithBody
+
+-- blizzards art stays with the skins, every small window brings different art
+local function SkinSmallWindow(frame, title, icon, closeButton)
+    CreateFrameHeaderWithBody(frame, title, icon)
+    frame.gwHeader.windowIcon:ClearAllPoints()
+    frame.gwHeader.windowIcon:SetPoint("CENTER", frame.gwHeader, "BOTTOMLEFT", 24, 30)
+
+    if closeButton then
+        closeButton:GwSkinButton(true)
+        closeButton:SetSize(25, 25)
+        closeButton:ClearAllPoints()
+        closeButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -2)
+    end
+end
+GW.SkinSmallWindow = SkinSmallWindow
 
 local function HandleListIcon(frame)
     if not frame.tableBuilder then return end

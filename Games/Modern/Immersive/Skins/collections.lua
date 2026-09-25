@@ -89,16 +89,7 @@ local function SkinHelpButton(button)
     if not button then return end
     if not button.gwSkinned then
         button.gwSkinned = true
-        -- blanked, so blizzards ring pulse for new players stays invisible
-        button:GwStripTextures()
-        -- the 64 unit template insets its hit rect by 20 on every side, at our size nothing would be left
-        button:SetHitRectInsets(0, 0, 0, 0)
-        button:SetSize(HELP_BUTTON_SIZE, HELP_BUTTON_SIZE)
-        local icon = button:CreateTexture(nil, "ARTWORK")
-        icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/helpmicrobutton-up.png")
-        icon:SetAllPoints(button)
-        button.gwIcon = icon
-        button:GwStyleButton(nil, true)
+        GW.SkinHelpIconButton(button, HELP_BUTTON_SIZE)
         skinnedHelpButtons[button] = true
         SkinHelpPlateTooltip()
         HookHelpTips()

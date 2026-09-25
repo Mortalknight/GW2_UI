@@ -205,9 +205,9 @@ end
 
 local function buttonHighlightTexture(frame, texture) if texture ~= nil then frame:SetHighlightTexture(nil) end end
 
-local function GwSkinCheckButton(button, isRadio, size)
+local function GwSkinCheckButton(button, isRadio, size, artOnly)
     if button.gwSkinned then return end
-    if size then
+    if size and not artOnly then
         button:SetSize(size, size)
     end
     if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png") end
@@ -233,7 +233,12 @@ local function GwSkinCheckButton(button, isRadio, size)
         local texture = button[getter] and button[getter](button)
         if texture then
             texture:ClearAllPoints()
-            texture:SetAllPoints(button)
+            if artOnly then
+                texture:SetPoint("CENTER")
+                texture:SetSize(size, size)
+            else
+                texture:SetAllPoints(button)
+            end
         end
     end
 

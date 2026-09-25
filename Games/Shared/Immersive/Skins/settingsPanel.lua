@@ -121,18 +121,6 @@ local function SkinCategoryRow(row)
 end
 
 ---------- controls ----------
-local function SkinCheckbox(checkbox)
-    if checkbox.gwSkinned then return end
-    checkbox:GwSkinCheckButton(false, 20)
-    for _, texture in ipairs({checkbox:GetNormalTexture(), checkbox:GetPushedTexture(), checkbox:GetCheckedTexture(), checkbox:GetDisabledCheckedTexture()}) do
-        if texture then
-            texture:ClearAllPoints()
-            texture:SetPoint("CENTER")
-            texture:SetSize(20, 20)
-        end
-    end
-end
-
 local function SkinArrowButton(button, direction)
     if not button or button.gwSkinned then return end
     HideTextureRegions(button)
@@ -216,7 +204,7 @@ end
 local function SkinControl(frame)
     SkinLabel(frame, "Text")
     if frame.Checkbox then
-        SkinCheckbox(frame.Checkbox)
+        frame.Checkbox:GwSkinCheckButton(false, 20)
     end
     if frame.SliderWithSteppers then
         SkinStepSlider(frame.SliderWithSteppers)
