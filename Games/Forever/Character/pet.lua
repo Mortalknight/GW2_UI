@@ -176,9 +176,7 @@ function GW.SetupPetMenuButton(petMenu)
             self:GetFrameRef("GwCharacterWindow"):SetAttribute("HasPetUI", true)
         end
     ]=])
-    if GW.SecureSnippetsWork() then -- TEMP-FOREVER-SNIPPETS
-        RegisterAttributeDriver(petMenu, "state-petstate", "[@pet,noexists] nopet; [@pet,help] hasPet; [@pet,harm] nopet")
-    end
+    RegisterAttributeDriver(petMenu, "state-petstate", "[@pet,noexists] nopet; [@pet,help] hasPet; [@pet,harm] nopet")
     UpdatePetMenuState(petMenu)
 end
 

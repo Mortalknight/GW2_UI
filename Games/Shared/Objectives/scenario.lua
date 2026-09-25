@@ -18,7 +18,7 @@ local UI_WIDGET_TYPE_SCENARIO_CURRENCIES = 11
 -- without touching aura data and works on secret auras. The taint the override
 -- itself puts on every layout is covered: the only known downstream victim, the
 -- spell button cooldown, is handled via duration objects (see next block).
-if GW.Retail and ShouldShowMawBuffs then
+if ShouldShowMawBuffs then
     -- our tracker renders its own Maw buff button: mute Blizzards container in
     -- the hidden default tracker — its display loop compares secret aura data
     -- (applications) and its updates are invisible anyway
