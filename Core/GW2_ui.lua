@@ -125,6 +125,8 @@ local function TriggerButtonHoverAnimation(self, hover, to, duration)
         duration,
         function(p)
             local w = self:GetWidth()
+            if w <= 0 then return end
+
             local lerp = GW.lerp(0, w + (w * 0.5), p)
             local lerp2 = min(1, max(0.4, GW.lerp(0.4, 1, p)))
             local stripAmount = 1 - max(0, (lerp / w) - 1)
