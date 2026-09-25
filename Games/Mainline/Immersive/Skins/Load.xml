@@ -36,4 +36,5 @@
     <Script file="addons\todoloo.lua"/>
     <Script file="addons\extendedSets.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\classTrainer.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\communities.lua"/>
 </Ui>

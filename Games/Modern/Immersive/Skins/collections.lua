@@ -1162,6 +1162,9 @@ local function GetSlotCollectionCounts(button)
         return collected, total
     end
     local categoryID = location:GetArmorCategoryID()
+    if not categoryID then
+        return 0, 0
+    end
     return C_TransmogCollection.GetCategoryCollectedCount(categoryID), C_TransmogCollection.GetCategoryTotal(categoryID)
 end
 

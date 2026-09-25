@@ -263,6 +263,23 @@ local function HandlePortraitFrameArt(frame)
 end
 GW.HandlePortraitFrameArt = HandlePortraitFrameArt
 
+local function SkinArrowDropdown(dropdown)
+    if not dropdown or dropdown.gwSkinned then return end
+    dropdown:GwSkinButton(false, false, false, true, true, true)
+    dropdown:SetSize(20, 20)
+    if dropdown.Icon then dropdown.Icon:SetAlpha(0) end
+    if dropdown.Arrow then dropdown.Arrow:SetAlpha(0) end
+    if dropdown.GetHighlightTexture and dropdown:GetHighlightTexture() then
+        dropdown:GetHighlightTexture():SetAlpha(0)
+    end
+    local arrow = dropdown:CreateTexture(nil, "OVERLAY")
+    arrow:SetPoint("CENTER")
+    arrow:SetSize(16, 16)
+    arrow:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+    dropdown.gwArrow = arrow
+end
+GW.SkinArrowDropdown = SkinArrowDropdown
+
 local function HandleIcon(icon, backdrop, backdropTexture, isBorder)
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
@@ -778,7 +795,9 @@ function GW.WhitenFontStrings(frame)
 end
 
 local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, detailBackgroundsXOffset, addLeftSidePanel, addFrameOpenAnimation)
-    local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
+    -- blizzard dialogs are often only a parentKey, those get unnamed header parts
+    local frameName = frame:GetName()
+    local header = CreateFrame("Frame", frameName and (frameName .. "Header"), frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
     header:SetClampedToScreen(true)
     header:SetMovable(true)
@@ -828,7 +847,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     end
 
     if addLeftSidePanel then
-        frame.LeftSidePanel = CreateFrame("Frame", frame:GetName() .. "LeftPanel", frame, "GwWindowLeftPanel")
+        frame.LeftSidePanel = CreateFrame("Frame", frameName and (frameName .. "LeftPanel"), frame, "GwWindowLeftPanel")
     end
 
     if addFrameOpenAnimation then

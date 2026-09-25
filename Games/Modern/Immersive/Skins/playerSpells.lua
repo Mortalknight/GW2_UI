@@ -217,21 +217,6 @@ local function SkinTabSystem(tabSystem, direction)
     end
 end
 
-local function SkinArrowDropdown(dropdown)
-    if not dropdown or dropdown.gwSkinned then return end
-    dropdown:GwSkinButton(false, false, false, true, true, true)
-    dropdown:SetSize(20, 20)
-    if dropdown.Icon then dropdown.Icon:SetAlpha(0) end
-    if dropdown.Arrow then dropdown.Arrow:SetAlpha(0) end
-    if dropdown.GetHighlightTexture and dropdown:GetHighlightTexture() then
-        dropdown:GetHighlightTexture():SetAlpha(0)
-    end
-    local arrow = dropdown:CreateTexture(nil, "OVERLAY")
-    arrow:SetPoint("CENTER")
-    arrow:SetSize(16, 16)
-    arrow:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-    dropdown.gwArrow = arrow
-end
 
 local function HidePortrait()
     if PlayerSpellsFrame.PortraitContainer then
@@ -527,7 +512,7 @@ local function skinPlayerSpells()
             TalentsFrame[key]:GwSkinButton(false, true)
         end
     end
-    SkinArrowDropdown(TalentsFrame.SearchOptionsDropdown)
+    GW.SkinArrowDropdown(TalentsFrame.SearchOptionsDropdown)
 
     TalentsFrame.ApplyButton:GwSkinButton(false, true)
     if TalentsFrame.LoadSystem and TalentsFrame.LoadSystem.Dropdown then
@@ -635,7 +620,7 @@ local function skinPlayerSpells()
         end
 
         SpellBookFrame.HelpPlateButton:GwKill()
-        SkinArrowDropdown(SpellBookFrame.SettingsDropdown)
+        GW.SkinArrowDropdown(SpellBookFrame.SettingsDropdown)
 
         SkinTabSystem(SpellBookFrame.CategoryTabSystem, "top")
 

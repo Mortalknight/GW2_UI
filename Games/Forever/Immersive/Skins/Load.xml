@@ -15,6 +15,7 @@
     <Script file="..\..\..\Modern\Immersive\Skins\auctionHouse.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\collections.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\classTrainer.lua"/>
+    <Script file="..\..\..\Modern\Immersive\Skins\communities.lua"/>
     <Script file="legacySystem.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\battlefieldMap.lua"/>
     <Script file="..\..\..\Modern\Immersive\Skins\cooldownManager.lua"/>
