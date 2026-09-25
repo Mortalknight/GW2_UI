@@ -439,7 +439,7 @@ function GwPartyFrameMixin:UpdatePortrait()
     local playerInstanceId = select(4, UnitPosition("player"))
     local instanceId = select(4, UnitPosition(self.gwUnit))
 
-    if playerInstanceId ~= instanceId then
+    if playerInstanceId ~= instanceId or not UnitIsConnected(self.gwUnit) then
         self.portrait:SetTexture(nil)
         return
     end
