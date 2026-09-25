@@ -553,63 +553,6 @@ local function setLittleManaBar(f, barType)
     f.littleManaBarEventFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
 
-
--- COMBO POINTS with a secret power value (the 12.x secret package: retail, forever). The point
--- count can not be compared or calculated with in addon code, but a status bar may take it as
--- value. So every point gets a bar spanning exactly its own integer (i-1 .. i): the power fills it
--- completely once the point is earned and leaves it empty otherwise, nothing in between. The bars
--- carry the point art themselves and replace the plain textures while the value is secret; the
--- flare on a gained point needs the old/new comparison and stays off in this mode.
-local COMBO_POINT_TEXTURE = "Interface/AddOns/GW2_UI/textures/altpower/combopoints.png"
-
-local function GetSecretComboPointBar(combopoints, i)
-    combopoints.gwSecretBars = combopoints.gwSecretBars or {}
-    local bar = combopoints.gwSecretBars[i]
-    if not bar then
-        bar = CreateFrame("StatusBar", nil, combopoints)
-        bar:SetAllPoints(combopoints["combo" .. i])
-        bar:SetFrameLevel(combopoints:GetFrameLevel() + 1)
-        bar:SetStatusBarTexture(COMBO_POINT_TEXTURE)
-        bar:SetMinMaxValues(i - 1, i)
-        combopoints.gwSecretBars[i] = bar
-    end
-    return bar
-end
-
-local function HideSecretComboPointBars(combopoints)
-    if not combopoints.gwSecretBars then return end
-    for _, bar in pairs(combopoints.gwSecretBars) do
-        bar:Hide()
-    end
-end
-
-local function UpdateSecretComboPoints(self, pwr, pwrMax, chargedPowerPoints)
-    local cp = self.combopoints
-    cp.comboFlare:Hide()
-    -- the slots the plain path shows: up to the extra point, but never beyond the max
-    local shown = math.min(self.showExtraPoint or pwrMax, pwrMax)
-    for i = 1, 9 do
-        cp["combo" .. i]:Hide()
-        if i <= shown then
-            local bar = GetSecretComboPointBar(cp, i)
-            bar:SetValue(pwr)
-            -- after the value: the texcoords belong to the art, not to the fill state
-            if chargedPowerPoints and tContains(chargedPowerPoints, i) then
-                bar:GetStatusBarTexture():SetTexCoord(0, 0.5, 0.5, 1)
-            else
-                bar:GetStatusBarTexture():SetTexCoord(0.5, 1, 0.5, 0)
-            end
-            bar:Show()
-            cp["runeTex" .. i]:Show()
-        else
-            cp["runeTex" .. i]:Hide()
-            if cp.gwSecretBars and cp.gwSecretBars[i] then
-                cp.gwSecretBars[i]:Hide()
-            end
-        end
-    end
-end
-
 -- COMBO POINTS (multi class use)
 local function powerCombo(self, event, ...)
     local pType = select(2, ...)
@@ -620,14 +563,9 @@ local function powerCombo(self, event, ...)
     local pwrMax = UnitPowerMax("player", Enum.PowerType.ComboPoints)
     local pwr = UnitPower("player", Enum.PowerType.ComboPoints)
     local chargedPowerPoints = GetUnitChargedPowerPoints and GetUnitChargedPowerPoints("player") or {}
-    -- the max is never secret for the player, only the current value can be
-    local secret = GW.IsSecretValue(pwr)
 
     if self.unit == "vehicle" then
-        if secret then
-            -- no way to tell an empty bar apart, the slots stay visible
-            self.combopoints:Show()
-        elseif GetComboPoints(self.unit, "target") == 0 then
+        if GetComboPoints(self.unit, "target") == 0 then
             self.combopoints:Hide()
             return
         else
@@ -638,13 +576,9 @@ local function powerCombo(self, event, ...)
     local old_power = self.gwPower
     local showPoint
     -- a secret must not be remembered: the next plain update would compare against it
-    self.gwPower = secret and -1 or pwr
+    self.gwPower = pwr
 
-    if secret then
-        if not self:IsShown() then
-            self.combopoints:Show()
-        end
-    elseif pwr > 0 and not self:IsShown() and UnitExists("target") then
+    if pwr > 0 and not self:IsShown() and UnitExists("target") then
         self.combopoints:Show()
     end
 
@@ -667,13 +601,6 @@ local function powerCombo(self, event, ...)
         self.combopoints["runeTex" .. i]:Hide()
         self.combopoints["combo" .. i]:Hide()
     end
-
-    if secret then
-        UpdateSecretComboPoints(self, pwr, pwrMax, chargedPowerPoints)
-        return
-    end
-    -- back on plain values (or never secret): the bars of the secret mode must not linger
-    HideSecretComboPointBars(self.combopoints)
 
     for i = 1, self.showExtraPoint do
         local isCharged = chargedPowerPoints and tContains(chargedPowerPoints, i)

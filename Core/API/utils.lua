@@ -1549,7 +1549,7 @@ local function BlizzardDropdownRadioButtonInitializer(button, description, menu,
     button.highlight:SetDrawLayer("BACKGROUND")
     button.highlight:SetBlendMode("BLEND")
     button.highlight:SetAlpha(0.5)
-    if GW.Retail then
+    if GW.isModern then
         button.leftTexture1:SetSize(13, 13)
         button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/radio-unselected.png")
         button.leftTexture1:SetPoint("LEFT", 0, 0)
@@ -1588,7 +1588,7 @@ local function BlizzardDropdownCheckButtonInitializer(button, description, menu,
     button.highlight:SetBlendMode("BLEND")
     button.highlight:SetAlpha(0.5)
     button.leftTexture1:SetSize(13, 13)
-    if GW.Retail or not isSelected then
+    if GW.isModern or not isSelected then
         button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
         if button.leftTexture2 then
             button.leftTexture2:SetSize(13, 13)
