@@ -357,23 +357,6 @@ local function errorhandler(err)
 end
 GW.ErrorHandler = errorhandler
 
--- runs one login step in its own protected call: an error still goes to the error handler
--- (bugsack, the blizzard error frame) exactly like before, but it no longer aborts the rest of
--- the login. One broken module - or a client bug like the forever beta losing its secure
--- snippet compiler - then only takes that module down, not the whole ui. Returns what the
--- step returned, nil when it failed
-local function loadStep(fn, ...)
-    if type(fn) ~= "function" then
-        -- a module this flavor does not load: name the calling line, xpcall(nil) would not
-        errorhandler("login step is not a function (nil on this client): " .. debugstack(2, 1, 0))
-        return
-    end
-    local ok, result = xpcall(fn, errorhandler, ...)
-    if ok then
-        return result
-    end
-end
-
 local addonLoadHooks = {}
 local function RegisterLoadHook(func, name, cond)
     if not func or type(func) ~= "function" or not name or type(name) ~= "string" then
@@ -514,10 +497,10 @@ end
 local function evPlayerLogin(self)
     Debug("OK~EVENT~PLAYER_LOGIN; loaded:", loaded)
     if loaded then
-        loadStep(GW.UpdateCharData)
+        GW.UpdateCharData()
         return
     end
-    loadStep(GW.LoadFonts)
+    GW.LoadFonts()
 
     if GW.Retail then
         -- fetch data
@@ -528,8 +511,8 @@ local function evPlayerLogin(self)
 
             for i = 1, numTiers do
                 EJ_SelectTier(i)
-                loadStep(GW.GetInstanceImages, 1, false)
-                loadStep(GW.GetInstanceImages, 1, true)
+                GW.GetInstanceImages(1, false)
+                GW.GetInstanceImages(1, true)
             end
 
             -- Set it back to the previous tier
@@ -540,29 +523,29 @@ local function evPlayerLogin(self)
     end
 
     -- Remove old debuffs from db
-    loadStep(GW.RemoveOldRaidDebuffsFormProfiles)
-    loadStep(GW.DisableBlizzardFrames)
+    GW.RemoveOldRaidDebuffsFormProfiles()
+    GW.DisableBlizzardFrames()
 
     loaded = true
-    loadStep(GW.CheckRole) -- some API's deliver a nil value on init.lua load, we we fill this values also here
+    GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
 
     GW.CombatQueue:Initialize()
 
     --Create the mainbar layout manager
-    local lm = loadStep(GW.LoadMainbarLayout)
+    local lm = GW.LoadMainbarLayout()
     mainbarLM = lm
 
     --Create Settings window
-    loadStep(GW.SetUpDatabaseForProfileSpecSwitch)
-    loadStep(GW.BuildPrefixValues)
-    loadStep(GW.LoadMovers, lm and lm.layoutFrame)
-    loadStep(GW.BuildSettingsWindow)
+    GW.SetUpDatabaseForProfileSpecSwitch()
+    GW.BuildPrefixValues()
+    GW.LoadMovers(lm and lm.layoutFrame)
+    GW.BuildSettingsWindow()
     if not GW.isModern then
-        loadStep(GW.LoadHoverBinds)
+        GW.LoadHoverBinds()
     end
 
     -- Create Popup frame
-    loadStep(GW.CreatePopupFrame)
+    GW.CreatePopupFrame()
 
     -- disable Move Anything bag handling
     disableMABags()
@@ -571,19 +554,19 @@ local function evPlayerLogin(self)
     end
 
     -- Load Slash commands
-    loadStep(GW.LoadSlashCommands)
+    GW.LoadSlashCommands()
 
     -- Misc
-    loadStep(GW.InitializeMiscFunctions)
-    loadStep(GW.SetupVendorJunk, GW.settings.bags.vendorGrays)
-    loadStep(GW.LoadRaidMarkerCircle)
+    GW.InitializeMiscFunctions()
+    GW.SetupVendorJunk(GW.settings.bags.vendorGrays)
+    GW.LoadRaidMarkerCircle()
 
     --Create general skins
     if GW.isModern then
-        loadStep(GW.StoreGameMenuButton)
+        GW.StoreGameMenuButton()
     end
     if GW.settings.skins.mainMenu.enabled then
-        loadStep(GW.SkinMainMenu)
+        GW.SkinMainMenu()
     else
         -- do not add our button via AddButton/AddSection: acquiring a pool button from addon code taints
         -- the button pool, the next secure InitButtons run then wires blizzards logout/exit callbacks
@@ -612,19 +595,19 @@ local function evPlayerLogin(self)
     end
 
     if GW.Mists or GW.isModern or GW.TBC or GW.Wrath then
-        loadStep(GW.WidgetUISetup)
+        GW.WidgetUISetup()
     end
 
     -- make sure to load the objetives tracker before we load the altert system prevent some errors with other addons
     if GW.settings.objectives.enabled and not GW.ShouldBlockIncompatibleAddon("Objectives") then
-        loadStep(GW.LoadObjectivesTracker)
+        GW.LoadObjectivesTracker()
     end
 
     -- load alert settings
     if not (GW.Classic or GW.TBC) then
-        loadStep(GW.LoadAlertSystem)
-        loadStep(GW.SetupAlertFramePosition)
-        loadStep(GW.LoadOurAlertSubSystem)
+        GW.LoadAlertSystem()
+        GW.SetupAlertFramePosition()
+        GW.LoadOurAlertSubSystem()
     end
 
     --Create hud art
@@ -632,7 +615,7 @@ local function evPlayerLogin(self)
 
     --Create experiencebar
     if GW.settings.hud.xpBar then
-        loadStep(GW.LoadXPBar)
+        GW.LoadXPBar()
     elseif hudArtFrame then
         hudArtFrame.actionBarHud:ClearAllPoints()
         hudArtFrame.actionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
@@ -652,49 +635,49 @@ local function evPlayerLogin(self)
                 else
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
                 end
-                loadStep(GW.LoadDamageText, true)
+                GW.LoadDamageText(true)
             elseif GW.settings.combatText.mode == "BLIZZARD" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
                 C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
-                loadStep(GW.LoadDamageText, false)
+                GW.LoadDamageText(false)
             else
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
                 C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
-                loadStep(GW.LoadDamageText, false)
+                GW.LoadDamageText(false)
             end
         else
-            loadStep(GW.LoadDamageText, false)
+            GW.LoadDamageText(false)
         end
     end
 
     if GW.settings.castingbar.enabled then
-        loadStep(GW.LoadCastingBar, "GwCastingBarPlayer", "player", true)
-        loadStep(GW.LoadCastingBar, "GwCastingBarPet", "pet", false)
+        GW.LoadCastingBar("GwCastingBarPlayer", "player", true)
+        GW.LoadCastingBar("GwCastingBarPet", "pet", false)
     end
 
     if GW.settings.tooltip.enabled then
-        loadStep(GW.LoadTooltips)
+        GW.LoadTooltips()
     end
 
-    loadStep(GW.LoadImmersiveQuesting)
+    GW.LoadImmersiveQuesting()
 
     --Create player hud
     if GW.settings.unitframes.healthGlobe.enabled and not GW.settings.unitframes.player.enabled then
-        local hg = loadStep(GW.LoadHealthGlobe)
-        loadStep(GW.LoadDodgeBar, hg, false)
+        local hg = GW.LoadHealthGlobe()
+        GW.LoadDodgeBar(hg, false)
     elseif GW.settings.unitframes.healthGlobe.enabled and GW.settings.unitframes.player.enabled then
-        local hg = loadStep(GW.LoadPlayerFrame)
-        loadStep(GW.LoadDodgeBar, hg, true)
+        local hg = GW.LoadPlayerFrame()
+        GW.LoadDodgeBar(hg, true)
         if (GW.Classic or GW.TBC or GW.Wrath) and GW.settings.unitframes.player.energyManaTick then
-            loadStep(GW.Load5SR, hg)
+            GW.Load5SR(hg)
         end
     end
 
-    loadStep(GW.LoadPowerBar)
+    GW.LoadPowerBar()
 
     if not GW.ShouldBlockIncompatibleAddon("Inventory") then -- Only touch this setting if no other addon for this is loaded
         if GW.settings.bags.enabled then
-            loadStep(GW.LoadInventory)
+            GW.LoadInventory()
         end
     elseif not GW.isModern and not C_AddOns.IsAddOnLoaded("Bartender4") then
         MainMenuBarBackpackButton:ClearAllPoints()
@@ -711,38 +694,38 @@ local function evPlayerLogin(self)
     end
 
     if GW.isModern and GW.settings.general.battlegroundHud then
-        loadStep(GW.LoadBattlegrounds)
+        GW.LoadBattlegrounds()
     end
 
     GW.LoadCharacter()
 
     if GW.isModern or GW.TBC then
-        loadStep(GW.LoadSocialFrame)
+        GW.LoadSocialFrame()
     end
 
     if GW.Retail then
-        loadStep(GW.LoadWorldEventTimer)
+        GW.LoadWorldEventTimer()
     end
 
-    loadStep(GW.Create_Raid_Counter)
-    loadStep(GW.LoadMirrorTimers)
+    GW.Create_Raid_Counter()
+    GW.LoadMirrorTimers()
     if GW.Forever then
-        loadStep(GW.LoadSwingTimerSkin)
+        GW.LoadSwingTimerSkin()
     end
-    loadStep(GW.LoadAutoRepair)
+    GW.LoadAutoRepair()
     if not GW.isModern then
-        loadStep(GW.ToggleInterruptAnncouncement)
+        GW.ToggleInterruptAnncouncement()
     end
 
     --Create unitframes
     if not GW.Classic and GW.settings.unitframes.focus.enabled then
-        local unitFrame = loadStep(GW.LoadUnitFrame, "Focus", GW.settings.unitframes.focus.invert)
-        loadStep(GW.LoadTargetOfUnit, "Focus", unitFrame)
+        local unitFrame = GW.LoadUnitFrame("Focus", GW.settings.unitframes.focus.invert)
+        GW.LoadTargetOfUnit("Focus", unitFrame)
     end
 
     if GW.settings.unitframes.target.enabled then
-        local unitFrame = loadStep(GW.LoadUnitFrame, "Target", GW.settings.unitframes.target.invert)
-        loadStep(GW.LoadTargetOfUnit, "Target", unitFrame)
+        local unitFrame = GW.LoadUnitFrame("Target", GW.settings.unitframes.target.invert)
+        GW.LoadTargetOfUnit("Target", unitFrame)
 
         -- move zone text frame
         if not IsFrameModified("ZoneTextFrame") then
@@ -758,23 +741,23 @@ local function evPlayerLogin(self)
         end
     end
 
-    loadStep(GW.LoadMarkers)
+    GW.LoadMarkers()
 
     if GW.settings.classpower.enabled then
-        loadStep(GW.LoadClassPowers)
+        GW.LoadClassPowers()
     end
 
     -- create pet frame
     if GW.settings.unitframes.pet.enabled and not GW.ShouldBlockIncompatibleAddon("PetFrame") then
-        loadStep(GW.LoadPetFrame, lm)
+        GW.LoadPetFrame(lm)
     end
 
     -- create buff frame
     if GW.settings.playerAuras.enabled then
-        loadStep(GW.LoadPlayerAuras, lm)
+        GW.LoadPlayerAuras(lm)
     end
 
-    loadStep(GW.LoadAFKAnimation)
+    GW.LoadAFKAnimation()
 
     if not GW.ShouldBlockIncompatibleAddon("DynamicCam") then -- Only touch this setting if no other addon for this is loaded
         if GW.settings.general.dynamicCam then
@@ -790,26 +773,26 @@ local function evPlayerLogin(self)
     end
 
     if GW.settings.chat.bubbles.enabled then
-        loadStep(GW.LoadChatBubbles)
+        GW.LoadChatBubbles()
     end
 
     if GW.settings.unitframes.party.enabled then
-        loadStep(GW.LoadPartyFrames)
+        GW.LoadPartyFrames()
     end
 
     if GW.settings.groupFrames.enabled then
-        loadStep(GW.InitializeRaidFrames) --TODO
+        GW.InitializeRaidFrames() --TODO
     end
 
-    loadStep(GW.UpdateHudScale)
+    GW.UpdateHudScale()
 
     if (forcedMABags) then
-        loadStep(GW.Notice, L["MoveAnything bag handling disabled."])
+        GW.Notice(L["MoveAnything bag handling disabled."])
     end
 
     --Check if we should show Welcomepage or Changelog
     if GW.private.GW2_UI_VERSION == "WELCOME" then
-        loadStep(GW.ShowWelcomePanel)
+        GW.ShowWelcomePanel()
     elseif GW.private.GW2_UI_VERSION ~= GW.GetVersionString() then
         ShowUIPanel(GwSettingsWindow)
         HideUIPanel(GameMenuFrame)
@@ -817,7 +800,7 @@ local function evPlayerLogin(self)
     GW.private.GW2_UI_VERSION = GW.GetVersionString()
 
     self:SetScript("OnUpdate", gw_OnUpdate)
-    loadStep(GW.UpdateCharData)
+    GW.UpdateCharData()
 end
 
 -- second login stage: everything in here depends on blizzard ui state that is not ready before
@@ -832,7 +815,7 @@ local function evPlayerLoginLate()
     lateLoaded = true
 
     if GW.settings.minimap.enabled and not GW.ShouldBlockIncompatibleAddon("Minimap") then
-        loadStep(GW.LoadMinimap)
+        GW.LoadMinimap()
     elseif QueueStatusButton then
         QueueStatusButton:ClearAllPoints()
         QueueStatusButton:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
@@ -840,38 +823,38 @@ local function evPlayerLoginLate()
         QueueStatusButton:SetParent(UIParent)
     end
 
-    loadStep(GW.LoadChat)
+    GW.LoadChat()
 
     -- create new microbuttons
-    loadStep(GW.LoadMicroMenu)
+    GW.LoadMicroMenu()
 
     -- create action bars
     if GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
         if GW.isModern then
             if GW.settings.actionbars.barLayout then
-                loadStep(GW.LoadActionBars, mainbarLM, false)
+                GW.LoadActionBars(mainbarLM, false)
                 --GW.ExtraAB_BossAB_Setup() -- Test
             else
-                loadStep(GW.LoadActionBars, mainbarLM, true)
+                GW.LoadActionBars(mainbarLM, true)
             end
         else
-            loadStep(GW.LoadActionBars, mainbarLM)
+            GW.LoadActionBars(mainbarLM)
             -- to update our bars
             MultiActionBar_Update()
 
             if GW.Mists then
-                loadStep(GW.ExtraAB_BossAB_Setup)
+                GW.ExtraAB_BossAB_Setup()
             end
         end
     end
 
     if not GW.isModern then
-        loadStep(GW.SecureGameMenuLogoutButtons)
+        GW.SecureGameMenuLogoutButtons()
     end
-    loadStep(GW.HandleBlizzardEditMode)
+    GW.HandleBlizzardEditMode()
 
     -- scale the frames created in this stage too
-    loadStep(GW.UpdateHudScale)
+    GW.UpdateHudScale()
 end
 
 -- third login stage: all blizzard and addon skins load in their own execution one frame after
@@ -884,89 +867,89 @@ local function evLoadSkins()
     end
     skinsLoaded = true
 
-    loadStep(GW.LoadWorldMapSkin)
-    loadStep(GW.LoadFlightMapSkin)
-    loadStep(GW.LoadMacroOptionsSkin)
+    GW.LoadWorldMapSkin()
+    GW.LoadFlightMapSkin()
+    GW.LoadMacroOptionsSkin()
 
-    loadStep(GW.LoadStaticPopupSkin)
-    loadStep(GW.LoadBNToastSkin)
-    loadStep(GW.LoadDropDownSkin)
-    loadStep(GW.LoadReadyCheckSkin)
-    loadStep(GW.LoadMiscBlizzardFrameSkins)
-    loadStep(GW.LoadAddonListSkin)
-    loadStep(GW.LoadHelperFrameSkin)
-    loadStep(GW.LoadGossipSkin)
-    loadStep(GW.LoadItemTextSkin)
-    loadStep(GW.LoadTimeManagerSkin)
-    loadStep(GW.LoadSettingsPanelSkin)
-    loadStep(GW.LoadMerchantFrameSkin)
-    loadStep(GW.SetUpExtendedVendor)
-    loadStep(GW.LoadLootFrameSkin)
-    loadStep(GW.LoadDetailsSkin)
-    loadStep(GW.AddMasqueSkin)
-    loadStep(GW.SkinAndEnhanceColorPicker)
-    loadStep(GW.AddCoordsToWorldMap)
+    GW.LoadStaticPopupSkin()
+    GW.LoadBNToastSkin()
+    GW.LoadDropDownSkin()
+    GW.LoadReadyCheckSkin()
+    GW.LoadMiscBlizzardFrameSkins()
+    GW.LoadAddonListSkin()
+    GW.LoadHelperFrameSkin()
+    GW.LoadGossipSkin()
+    GW.LoadItemTextSkin()
+    GW.LoadTimeManagerSkin()
+    GW.LoadSettingsPanelSkin()
+    GW.LoadMerchantFrameSkin()
+    GW.SetUpExtendedVendor()
+    GW.LoadLootFrameSkin()
+    GW.LoadDetailsSkin()
+    GW.AddMasqueSkin()
+    GW.SkinAndEnhanceColorPicker()
+    GW.AddCoordsToWorldMap()
 
-    loadStep(GW.LoadDressUpFrameSkin)
+    GW.LoadDressUpFrameSkin()
 
     if GW.Retail then
-        loadStep(GW.LoadExpansionLadningPageSkin)
-        loadStep(GW.LoadGenericTraitFrameSkin)
-        loadStep(GW.LoadImmersionAddonSkin)
-        loadStep(GW.LoadAuctionatorAddonSkin)
-        loadStep(GW.LoadExtendedSetsAddonSkin)
-        loadStep(GW.LoadTSMAddonSkin)
-        loadStep(GW.LoadOrderBar)
-        loadStep(GW.LoadEncounterJournalSkin)
-        loadStep(GW.LoadAchivementSkin)
-        loadStep(GW.LoadAlliedRacesUISkin)
-        loadStep(GW.LoadChromieTimerSkin)
-        loadStep(GW.LoadCovenantSanctumSkin)
-        loadStep(GW.LoadItemUpgradeSkin)
-        loadStep(GW.LoadLFGSkin)
-        loadStep(GW.LoadOrderHallTalentFrameSkin)
-        loadStep(GW.LoadSoulbindsSkin)
-        loadStep(GW.LoadWeeklyRewardsSkin)
-        loadStep(GW.LoadPerksProgramSkin)
-        loadStep(GW.LoadAdventureMapSkin)
-        loadStep(GW.LoadMajorFactionsFrameSkin)
+        GW.LoadExpansionLadningPageSkin()
+        GW.LoadGenericTraitFrameSkin()
+        GW.LoadImmersionAddonSkin()
+        GW.LoadAuctionatorAddonSkin()
+        GW.LoadExtendedSetsAddonSkin()
+        GW.LoadTSMAddonSkin()
+        GW.LoadOrderBar()
+        GW.LoadEncounterJournalSkin()
+        GW.LoadAchivementSkin()
+        GW.LoadAlliedRacesUISkin()
+        GW.LoadChromieTimerSkin()
+        GW.LoadCovenantSanctumSkin()
+        GW.LoadItemUpgradeSkin()
+        GW.LoadLFGSkin()
+        GW.LoadOrderHallTalentFrameSkin()
+        GW.LoadSoulbindsSkin()
+        GW.LoadWeeklyRewardsSkin()
+        GW.LoadPerksProgramSkin()
+        GW.LoadAdventureMapSkin()
+        GW.LoadMajorFactionsFrameSkin()
     elseif not GW.Forever then
-        loadStep(GW.LoadQuestLogFrameSkin)
+        GW.LoadQuestLogFrameSkin()
     end
 
-    loadStep(GW.LoadQuestFrameSkin)
+    GW.LoadQuestFrameSkin()
 
     if GW.Forever then
-        loadStep(GW.LoadLegacySystemSkin)
+        GW.LoadLegacySystemSkin()
     end
 
     -- skins of the systems both modern clients share (Games/Modern)
     if GW.isModern then
-        loadStep(GW.LoadPlayerSpellsSkin)
-        loadStep(GW.LoadTalkingHeadSkin)
-        loadStep(GW.LoadDeathRecapSkin)
-        loadStep(GW.LoadBarShopUISkin)
-        loadStep(GW.LoadDamageMeterSkin)
-        loadStep(GW.LoadCalendarSkin)
-        loadStep(GW.LoadAuctionHouseSkin)
-        loadStep(GW.LoadCollectionsSkin)
-        loadStep(GW.LoadClassTrainerSkin)
-        --loadStep(GW.LoadCommunitiesSkin)
-        loadStep(GW.LoadBattlefieldMapSkin)
-        loadStep(GW.LoadCooldownManagerSkin)
+        GW.LoadPlayerSpellsSkin()
+        GW.LoadTalkingHeadSkin()
+        GW.LoadDeathRecapSkin()
+        GW.LoadBarShopUISkin()
+        GW.LoadDamageMeterSkin()
+        GW.LoadCalendarSkin()
+        GW.LoadAuctionHouseSkin()
+        GW.LoadCollectionsSkin()
+        GW.LoadClassTrainerSkin()
+        GW.LoadCommunitiesSkin()
+        GW.LoadBattlefieldMapSkin()
+        GW.LoadCooldownManagerSkin()
     end
 
     if not (GW.Classic or GW.TBC) then
-        loadStep(GW.MakeAltPowerBarMovable)
-        loadStep(GW.LoadLFGSkins)
-        loadStep(GW.LoadMailSkin)
+        GW.MakeAltPowerBarMovable()
+        GW.LoadLFGSkins()
+        GW.LoadMailSkin()
     end
 
-    loadStep(GW.LoadQuestTimersSkin)
-    loadStep(GW.LoadInspectFrameSkin)
+    GW.LoadQuestTimersSkin()
+    GW.LoadInspectFrameSkin()
 
     if not (GW.Classic or GW.TBC or GW.Wrath) then
-        loadStep(GW.LoadSocketUISkin)
+        GW.LoadSocketUISkin()
     end
 end
 
