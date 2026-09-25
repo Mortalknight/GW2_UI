@@ -1697,6 +1697,12 @@ local function DoesAncestryIncludeAny(ancestry, frames)
 end
 GW.DoesAncestryIncludeAny = DoesAncestryIncludeAny
 
+local function ApplyLayoutChanges()
+    GW.Libs.LEMO:SaveOnly()
+    EditModeManagerFrame:UpdateLayoutInfo(C_EditMode.GetLayouts())
+    ManageFramePositions()
+end
+GW.ApplyLayoutChanges = ApplyLayoutChanges
 
 -- NOTE: no skip-when-unchanged shortcut here! An earlier optimization compared the saved
 -- layout values and skipped ApplyChanges when they matched — but the saved values say
@@ -1739,7 +1745,7 @@ local function AddGw2Layout(init)
 
         -- PossessActionBar
         GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainActionBar, "TOP", -110, 40)
-        GW.Libs.LEMO:ApplyChanges()
+        ApplyLayoutChanges()
     end
 
     if init then
@@ -1767,7 +1773,7 @@ local function MakeActionbuttonsVisible()
         GW.Libs.LEMO:SetFrameSetting(MultiBar5, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
         GW.Libs.LEMO:SetFrameSetting(MultiBar6, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
         GW.Libs.LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
-        GW.Libs.LEMO:ApplyChanges()
+        ApplyLayoutChanges()
 
         GW.Notice("Making action buttons visible via LEMO")
     else

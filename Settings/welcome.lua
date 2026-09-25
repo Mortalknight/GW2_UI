@@ -57,7 +57,7 @@ local function ApplyChatSetup()
                 LEMO:SetActiveLayout("GW2_Layout")
             end
             LEMO:ReanchorFrame(frame, "BOTTOMLEFT", UIParent, 40, 60)
-            LEMO:ApplyChanges()
+            GW.ApplyLayoutChanges()
             frame:SetUserPlaced(true)
         elseif id == 2 then
             FCF_SetWindowName(frame, GUILD_EVENT_LOG)
