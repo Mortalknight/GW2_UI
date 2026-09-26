@@ -823,10 +823,6 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
 
     local function UpdateFrameHeaderBodyLayout()
         header.BGLEFT:SetWidth(math.max(0, math.min(512, frame:GetWidth() - 20)))
-
-        if frame.backgroundMask and frame.tex and frame:GetAlpha() >= 1 then
-            frame.backgroundMask:SetPoint("BOTTOMRIGHT", frame.tex, "BOTTOMLEFT", frame.tex:GetWidth() + 200, 0)
-        end
     end
 
     frame:HookScript("OnSizeChanged", UpdateFrameHeaderBodyLayout)
@@ -886,13 +882,28 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
         end
         frame.backgroundMask = bgMask
 
+        -- anchored to the right edge the revealed mask follows size and scale changes of the frame
+        local function RevealBackground()
+            bgMask:SetPoint("BOTTOMRIGHT", frame.tex, "BOTTOMRIGHT", 200, 0)
+        end
+        RevealBackground()
+
+        -- blizzard can dim a frame on its own (world map opacity), the fade in ends there instead of fully opaque
+        local shownAlpha, fadingIn = 1, false
         frame:HookScript("OnShow",function()
+        if not fadingIn and frame:GetAlpha() > 0 then
+            shownAlpha = frame:GetAlpha()
+        end
+        fadingIn = true
         GW.AddToAnimation((frame.GetDebugName and frame:GetDebugName() or tostring(frame)) .. "_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
             function(p)
-                frame:SetAlpha(p)
-                bgMask:SetPoint("BOTTOMRIGHT", frame.tex, "BOTTOMLEFT", GW.lerp(-64, frame.tex:GetWidth(), p), 0)
+                frame:SetAlpha(p * shownAlpha)
+                -- the mask lives on UIParent, so its offset is in UIParent units
+                local width = frame.tex:GetWidth() * frame:GetEffectiveScale() / UIParent:GetEffectiveScale()
+                bgMask:SetPoint("BOTTOMRIGHT", frame.tex, "BOTTOMLEFT", GW.lerp(-64, width, p), 0)
             end, 1, function()
-                bgMask:SetPoint("BOTTOMRIGHT", frame.tex, "BOTTOMLEFT", frame.tex:GetWidth() + 200 , 0)
+                fadingIn = false
+                RevealBackground()
             end)
         end)
     end

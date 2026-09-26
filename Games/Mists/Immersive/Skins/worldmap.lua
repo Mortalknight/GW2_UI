@@ -106,7 +106,22 @@ local function worldMapSkin()
 
     -- Enable movement
     WorldMapFrame:SetMovable(true)
+    WorldMapFrame:SetClampedToScreen(true)
+    WorldMapFrame:SetClampRectInsets(0, 0, WorldMapFrameHeader:GetHeight() - 30, 0)
     WorldMapFrame:RegisterForDrag("LeftButton")
+
+    local header = WorldMapFrame.gwHeader
+    header:EnableMouse(true)
+    header:RegisterForDrag("LeftButton")
+    header:SetScript("OnDragStart", function() WorldMapFrame:GetScript("OnDragStart")(WorldMapFrame) end)
+    header:SetScript("OnDragStop", function() WorldMapFrame:GetScript("OnDragStop")(WorldMapFrame) end)
+    WorldMapFrame.MaximizeMinimizeFrame:SetFrameLevel(header:GetFrameLevel() + 1)
+    -- it also covers blizzards title button of the mini mode, which has the options menu
+    header:SetScript("OnMouseUp", function(_, button)
+        if button == "RightButton" and WorldMapTitleButton:IsShown() then
+            WorldMapTitleButton:Click("RightButton")
+        end
+    end)
 
     WorldMapFrame:SetScript("OnDragStart", function()
         WorldMapFrame:StartMoving()

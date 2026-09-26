@@ -38,8 +38,6 @@ local function LoadWorldMapSkin()
     WorldMapFrame.BorderFrame.headerText = WorldMapFrame.BorderFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     WorldMapFrame.BorderFrame.headerText:SetAlpha(0)
 
-    WorldMapFrame.BorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-    WorldMapFrame.MiniBorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     MiniWorldMapTitle:SetAlpha(0)
 
     WorldMapContinentDropdown:GwHandleDropDownBox()
@@ -103,7 +101,34 @@ local function LoadWorldMapSkin()
 
     -- Enable movement
     WorldMapFrame:SetMovable(true)
+    WorldMapFrame:SetClampedToScreen(true)
+    WorldMapFrame:SetClampRectInsets(0, 0, WorldMapFrameHeader:GetHeight() - 30, 0)
     WorldMapFrame:RegisterForDrag("LeftButton")
+
+    local header = WorldMapFrame.gwHeader
+    header:EnableMouse(true)
+    header:RegisterForDrag("LeftButton")
+    header:SetScript("OnDragStart", function() WorldMapFrame:GetScript("OnDragStart")(WorldMapFrame) end)
+    header:SetScript("OnDragStop", function() WorldMapFrame:GetScript("OnDragStop")(WorldMapFrame) end)
+    WorldMapFrame.MaximizeMinimizeFrame:SetFrameLevel(header:GetFrameLevel() + 1)
+    -- it also covers blizzards title button of the mini mode, which has the options menu
+    header:SetScript("OnMouseUp", function(_, button)
+        if button == "RightButton" and WorldMapTitleButton:IsShown() then
+            WorldMapTitleButton:Click("RightButton")
+        end
+    end)
+
+    -- blizzards mini mode leaves room for its old border art, here the map sits right below the header
+    local function UpdateMapLayout(frame)
+        if frame:IsMaximized() then
+            frame.ScrollContainer:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -11, 30)
+        else
+            frame.ScrollContainer:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -32)
+            frame.ScrollContainer:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+        end
+    end
+    hooksecurefunc(WorldMapFrame, "SynchronizeDisplayState", UpdateMapLayout)
+    UpdateMapLayout(WorldMapFrame)
 
     WorldMapFrame:SetScript("OnDragStart", function()
         WorldMapFrame:StartMoving()
@@ -141,7 +166,7 @@ local function LoadWorldMapSkin()
     local scaleHandle = CreateFrame("Frame", nil, WorldMapFrame)
     scaleHandle:SetWidth(50)
     scaleHandle:SetHeight(50)
-    scaleHandle:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT", -10, 30)
+    scaleHandle:SetPoint("BOTTOMRIGHT", WorldMapFrame.ScrollContainer, "BOTTOMRIGHT", 0, 0)
     scaleHandle:SetFrameStrata(WorldMapFrame:GetFrameStrata())
     scaleHandle:SetFrameLevel(WorldMapFrame:GetFrameLevel() + 15)
 
