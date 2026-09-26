@@ -488,6 +488,7 @@ L["Spent:"] = true
 L["Deficit:"] = true
 L["Profit:"] = true
 L["Gossip Frame"] = true
+L["Quest Frame"] = true
 L["Saved Raid(s)"] = true
 L["Saved Dungeon(s)"] = true
 L["Daily Reset"] = true

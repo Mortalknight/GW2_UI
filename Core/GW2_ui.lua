@@ -915,6 +915,7 @@ local function evLoadSkins()
         GW.LoadPerksProgramSkin()
         GW.LoadAdventureMapSkin()
         GW.LoadMajorFactionsFrameSkin()
+        GW.LoadTalkingHeadSkin()
     elseif not GW.Forever then
         GW.LoadQuestLogFrameSkin()
     end
@@ -928,7 +929,6 @@ local function evLoadSkins()
     -- skins of the systems both modern clients share (Games/Modern)
     if GW.isModern then
         GW.LoadPlayerSpellsSkin()
-        GW.LoadTalkingHeadSkin()
         GW.LoadDeathRecapSkin()
         GW.LoadBarShopUISkin()
         GW.LoadDamageMeterSkin()
@@ -951,7 +951,7 @@ local function evLoadSkins()
     GW.LoadQuestTimersSkin()
     GW.LoadInspectFrameSkin()
 
-    if not (GW.Classic or GW.TBC or GW.Wrath) then
+    if not (GW.Classic or GW.TBC or GW.Wrath or GW.Forever) then
         GW.LoadSocketUISkin()
     end
 end
