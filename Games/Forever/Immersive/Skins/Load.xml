@@ -1,22 +1,3 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
-
-    <Script file="..\..\..\Modern\Immersive\Skins\worldmap.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\inspectFrame.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\colorPicker.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\flightmap.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\barber.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\damageMeter.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\calendar.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\dressUpFrame.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\talkinghead.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\deathrecapframe.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\playerSpells.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\auctionHouse.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\collections.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\classTrainer.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\communities.lua"/>
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file="legacySystem.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\battlefieldMap.lua"/>
-    <Script file="..\..\..\Modern\Immersive\Skins\cooldownManager.lua"/>
 </Ui>

@@ -1,0 +1,5 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="paperdollOutfits.xml"/>
+    <Script file ="paperdollEquipment.lua"/>
+    <Script file ="paperdoll_equipset.lua"/>
+</Ui>

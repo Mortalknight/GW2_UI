@@ -1,5 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file ="..\..\Modern\Mainbar\mirrortimer.lua"/>
     <Include file ="upcomingSpells.xml"/>
     <Script file ="upcomingSpells.lua"/>
     <Script file ="swingTimer.lua"/>

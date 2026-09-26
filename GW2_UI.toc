@@ -51,6 +51,7 @@ Libs\Forever\Load.xml [AllowLoadGameType camelot][ExcludeLoadGameType standard, 
 
 Core\Load.xml
 
+Games\Modern\Load.xml [AllowLoadGameType standard, camelot][ExcludeLoadGameType classic]
 Games\Mainline\Load.xml [AllowLoadGameType standard]
 Games\Wrath\Load.xml [AllowLoadGameType wrath]
 Games\Classic\Load.xml [AllowLoadGameType vanilla]

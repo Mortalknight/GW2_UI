@@ -1,6 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file ="..\..\Modern\Objectives\ObjectivesItemButtonMixin.lua"/>
-    <Script file ="..\..\Modern\Objectives\objectives.lua"/>
     <Script file ="monthlyActivitiesTracking.lua"/>
     <Script file ="housingInitiative.lua"/>
 </Ui>

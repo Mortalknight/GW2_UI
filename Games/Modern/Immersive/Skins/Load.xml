@@ -1,0 +1,18 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file="worldmap.lua"/>
+    <Script file="inspectFrame.lua"/>
+    <Script file="colorPicker.lua"/>
+    <Script file="flightmap.lua"/>
+    <Script file="barber.lua"/>
+    <Script file="damageMeter.lua"/>
+    <Script file="calendar.lua"/>
+    <Script file="dressUpFrame.lua"/>
+    <Script file="deathrecapframe.lua"/>
+    <Script file="playerSpells.lua"/>
+    <Script file="auctionHouse.lua"/>
+    <Script file="collections.lua"/>
+    <Script file="classTrainer.lua"/>
+    <Script file="communities.lua"/>
+    <Script file="battlefieldMap.lua"/>
+    <Script file="cooldownManager.lua"/>
+</Ui>

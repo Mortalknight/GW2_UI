@@ -1,6 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file ="..\..\Modern\Actionbar\Bindings.lua"/>
-    <Include file ="..\..\Modern\Actionbar\actionbars.xml"/>
-    <Script file ="..\..\Modern\Actionbar\actionbars.lua"/>
-    <Script file ="..\..\Modern\Actionbar\extraAB_bossAB.lua"/>
-</Ui>

@@ -1,14 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="character.xml"/>
-    <Include file ="..\..\Modern\Character\paperdollOutfits.xml"/>
     <Include file ="paperdoll.xml"/>
     <Include file ="skills.xml"/>
     <Include file ="statistics.xml"/>
     <Include file ="currency.xml"/>
     <Script file ="windowManager.lua"/>
-    <Script file ="..\..\Modern\Character\paperdollEquipment.lua"/>
     <Script file ="paperdoll_equipment.lua"/>
-    <Script file ="..\..\Modern\Character\paperdoll_equipset.lua"/>
     <Script file ="skills.lua"/>
     <Script file ="honor.lua"/>
     <Script file ="pet.lua"/>
