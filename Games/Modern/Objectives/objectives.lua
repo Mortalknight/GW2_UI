@@ -140,6 +140,29 @@ local function BuildQuestBlockSignature(quest, questID, questLogIndex, colorKey)
     return table.concat(signatureParts, "\1", 1, signatureCount)
 end
 
+local GROUP_CONTENT_TAGS = {
+    [Enum.QuestTag.PvP] = true,
+    [Enum.QuestTag.Raid] = true,
+    [Enum.QuestTag.Heroic] = true,
+    [Enum.QuestTag.Raid10] = true,
+    [Enum.QuestTag.Raid25] = true,
+    [Enum.QuestTag.Scenario] = true,
+}
+
+local function GetQuestLevelPrefix(quest, questID)
+    if not GW.Forever or not quest.level then return "" end
+
+    local tagInfo = C_QuestLog.GetQuestTagInfo(questID)
+    if tagInfo and tagInfo.tagID == Enum.QuestTag.Dungeon then
+        return "[" .. quest.level .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t] "
+    elseif tagInfo and (tagInfo.tagID == Enum.QuestTag.Group or tagInfo.isElite) then
+        return "[" .. quest.level .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t] "
+    elseif tagInfo and GROUP_CONTENT_TAGS[tagInfo.tagID] then
+        return "[" .. quest.level .. "+] "
+    end
+    return "[" .. quest.level .. "] "
+end
+
 local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, signature)
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
@@ -164,7 +187,7 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, 
     self.gwSignature = signature or BuildQuestBlockSignature(quest, questID, questLogIndex, self.gwColorKey)
     self.title = quest.title
     self.isSuperTracked = isSuperTracked
-    self.Header:SetText(quest.title)
+    self.Header:SetText(GetQuestLevelPrefix(quest, questID) .. quest.title)
 
     if isSuperTracked then
         local r, g, b = BrightenColor(self.color.r, self.color.g, self.color.b, 0.3)
