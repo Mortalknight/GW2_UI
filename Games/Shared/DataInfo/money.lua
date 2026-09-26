@@ -20,7 +20,7 @@ local function UpdateMarketPrice()
 end
 
 local function UpdateWarbandGold()
-    if C_Bank and C_Bank.FetchDepositedMoney and Enum.BankType and Enum.BankType.Account then
+    if C_Bank and C_Bank.FetchDepositedMoney and Enum.BankType and Enum.BankType.Account and C_Bank.CanViewBank(Enum.BankType.Account) then
         warbandGold = C_Bank.FetchDepositedMoney(Enum.BankType.Account) or 0
     end
 end
@@ -146,11 +146,14 @@ local function Money_OnEnter(self)
     end
 
     GameTooltip:AddDoubleLine(TOTAL .. ":", FormatMoneyForChat(totalAlliance + totalHorde + totalNeutral), 1, 1, 1, 1, 1, 1)
-    GameTooltip:AddLine(" ")
-    GameTooltip:AddDoubleLine(L["Warband:"], FormatMoneyForChat(warbandGold), 1, 1, 1, 1, 1, 1)
+
+    if Enum.BankType and C_Bank and C_Bank.CanViewBank and C_Bank.CanViewBank(Enum.BankType.Account) then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddDoubleLine(L["Warband:"], FormatMoneyForChat(warbandGold), 1, 1, 1, 1, 1, 1)
+    end
 
     GameTooltip:AddLine(" ")
-    C_WowTokenPublic.UpdateMarketPrice()
+    UpdateMarketPrice()
     GameTooltip:AddDoubleLine(TOKEN_FILTER_LABEL .. ":", FormatMoneyForChat(C_WowTokenPublic.GetCurrentMarketPrice() or 0), 0, 0.8, 1, 1, 1, 1)
 
     local grayValue = GetGraysValue()
