@@ -2138,9 +2138,10 @@ end
 
 local CHAT_TAB_SIDES_PADDING = 20 -- local in Blizzards FloatingChatFrame.lua
 local CHAT_TAB_SECRET_WIDTH = 90 -- CHAT_TAB_DOCKED_MAX_WIDTH, local as well
+-- mainline only: classic tabs have a fixed width middle art that PanelTemplates_TabResize sizes around the text
 local function EnforceTabSize(chatFrame)
     local tab = GetTab(chatFrame)
-    if not tab or not tab.Text then return end
+    if not GW.isModern or not tab or not tab.Text then return end
 
     local padding = tab.sizePadding or 0
 
@@ -2265,15 +2266,16 @@ local function styleChatWindow(frame)
     local name = frame:GetName()
     local tab = GetTab(frame)
     tab.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    -- blizzard swaps the tab font objects on hover and select
+    local fontObject = tab.Text:GetFontObject()
+    tab:SetNormalFontObject(fontObject)
+    tab:SetHighlightFontObject(fontObject)
+    tab:SetDisabledFontObject(fontObject)
     tab.Text:SetTextColor(1, 1, 1)
     if GW.isModern then
-        local fontObject = tab.Text:GetFontObject()
-        if fontObject then
-            tab:SetNormalFontObject(fontObject)
-            tab:SetHighlightFontObject(fontObject)
-            tab:SetDisabledFontObject(fontObject)
-        end
         EnforceTabSize(frame)
+    else
+        PanelTemplates_TabResize(tab, tab.sizePadding or 0)
     end
 
     if frame.styled then return end
@@ -3044,6 +3046,28 @@ local function LoadChat()
         FriendsMicroButtonCount:SetPoint("TOP", FriendsMicroButton, "BOTTOM", 1, 1)
     end
 
+    -- before the styling below, that already runs dock updates which colour the selected tab
+    hooksecurefunc(
+        "FCFTab_UpdateColors",
+        function(self)
+            local left = GW.isModern and self.ActiveLeft or self.leftSelectedTexture
+            local right = GW.isModern and self.ActiveRight or self.rightSelectedTexture
+            local middle = GW.isModern and self.ActiveMiddle or self.middleSelectedTexture
+            self:GetFontString():SetTextColor(1, 1, 1)
+            left:SetVertexColor(1, 1, 1)
+            middle:SetVertexColor(1, 1, 1)
+            right:SetVertexColor(1, 1, 1)
+
+            local leftHighlight = GW.isModern and self.HighlightLeft or self.leftHighlightTexture
+            local rightHighlight= GW.isModern and self.HighlightRight or self.rightHighlightTexture
+            local middleHighlight = GW.isModern and self.HighlightMiddle or self.middleHighlightTexture
+            leftHighlight:SetVertexColor(1, 1, 1)
+            middleHighlight:SetVertexColor(1, 1, 1)
+            rightHighlight:SetVertexColor(1, 1, 1)
+            self.glow:SetVertexColor(1, 1, 1)
+        end
+    )
+
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
         -- possible fix for chatframe floating max error
@@ -3188,27 +3212,6 @@ local function LoadChat()
             if frameForPosition:IsShown() and frameForPosition.hasContainer then setButtonPosition(frameForPosition) end
         end
     end)
-
-    hooksecurefunc(
-        "FCFTab_UpdateColors",
-        function(self)
-            local left = GW.isModern and self.ActiveLeft or self.leftSelectedTexture
-            local right = GW.isModern and self.ActiveRight or self.rightSelectedTexture
-            local middle = GW.isModern and self.ActiveMiddle or self.middleSelectedTexture
-            self:GetFontString():SetTextColor(1, 1, 1)
-            left:SetVertexColor(1, 1, 1)
-            middle:SetVertexColor(1, 1, 1)
-            right:SetVertexColor(1, 1, 1)
-
-            local leftHighlight = GW.isModern and self.HighlightLeft or self.leftHighlightTexture
-            local rightHighlight= GW.isModern and self.HighlightRight or self.rightSelectedTexture
-            local middleHighlight = GW.isModern and self.HighlightMiddle or self.middleHighlightTexture
-            leftHighlight:SetVertexColor(1, 1, 1)
-            middleHighlight:SetVertexColor(1, 1, 1)
-            rightHighlight:SetVertexColor(1, 1, 1)
-            self.glow:SetVertexColor(1, 1, 1)
-        end
-    )
 
     hooksecurefunc("FCF_FadeOutChatFrame", handleChatFrameFadeOut)
     hooksecurefunc("FCF_FadeInChatFrame", handleChatFrameFadeIn)
