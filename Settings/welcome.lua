@@ -18,7 +18,7 @@ local function ToggleChatColorNamesByClassGroup(checked, group)
 end
 
 local function AddCompleteAlert(text)
-    if not (GW.Classic or GW.TBC or GW.Wrath) then
+    if not (GW.Classic or GW.TBC) then
         GW.AlertSystem:AddAlert(L["Complete"], nil, text, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
     end
 end

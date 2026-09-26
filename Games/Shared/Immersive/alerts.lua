@@ -654,8 +654,23 @@ local function GW2_UIAlertFrame_OnIconEnter(self)
     GameTooltip:Show()
 end
 
+local LAYOUT_ACHIEVEMENT = 2416
+
+local function SetUpAlertLayout(frame)
+    if GetAchievementInfo(LAYOUT_ACHIEVEMENT) then
+        AchievementAlertFrame_SetUp(frame, LAYOUT_ACHIEVEMENT, true)
+        return
+    end
+    frame:SetHeight(101)
+    frame.Icon:SetPoint("TOPLEFT", -4, -15)
+    frame.Unlocked:SetPoint("TOP", 27, -23)
+    frame.Shield.Points:Hide()
+    frame.Shield.Icon:Hide()
+    frame.GuildName:Hide()
+end
+
 local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID, targetName, vignetteID)
-    AchievementAlertFrame_SetUp(frame, 2416, true)
+    SetUpAlertLayout(frame)
     frame.Name:SetFormattedText(name)
     frame.Unlocked:SetFormattedText(toptext or "")
     SetTexts(frame.Unlocked, frame.Name)
