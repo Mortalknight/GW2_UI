@@ -81,6 +81,7 @@
             <Button parentKey="bagHeader5" id="5" inherits="GwBagHeaderTemplate"/>
             <Button parentKey="bagHeader6" id="6" inherits="GwBagHeaderTemplate"/>
             <Button parentKey="bagHeader7" id="7" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader8" id="8" inherits="GwBagHeaderTemplate"/>
             <Frame parentkey="mover" enableMouse="true">
                 <Size y="40" />
                 <Anchors>

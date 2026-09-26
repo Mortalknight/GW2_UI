@@ -967,11 +967,14 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
         -- the bag layout stores the rows it actually used, headers, gaps and placeholders included
         rows = f.gw_layout_rows
     elseif sep and not isBag then
-        -- one row per visible section header: main bank + equipped bank bags
-        local headers = 1
-        for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-            if GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(i)) then
-                headers = headers + 1
+        -- one row per visible section header: main bank + equipped bank bags; the forever bank counts its own
+        local headers = f.gw_bank_headers
+        if not headers then
+            headers = 1
+            for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+                if GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(i)) then
+                    headers = headers + 1
+                end
             end
         end
         f.finishedRow = f.finishedRow or 0

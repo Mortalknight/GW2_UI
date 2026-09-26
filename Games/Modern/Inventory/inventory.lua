@@ -116,7 +116,7 @@ end
 
 
 local function ContainerFrame_IsCharacterBankTab(id)
-	return id >= Enum.BagIndex.CharacterBankTab_1 and id <= Enum.BagIndex.CharacterBankTab_6
+	return id >= Enum.BagIndex.CharacterBankTab_1 and id < Enum.BagIndex.CharacterBankTab_1 + Constants.InventoryConstants.NumCharacterBankSlots
 end
 
 

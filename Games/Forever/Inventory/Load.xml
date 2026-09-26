@@ -1,0 +1,7 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="..\..\Modern\Inventory\lootframe.xml"/>
+    <Script file ="..\..\Modern\Inventory\inventory.lua"/>
+    <Script file ="..\..\Modern\Inventory\bag.lua"/>
+    <Script file ="..\..\Modern\Inventory\lootframe.lua"/>
+    <Script file ="bank.lua"/>
+</Ui>
