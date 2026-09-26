@@ -71,7 +71,7 @@ local function RemoveTrashLines(self)
 end
 
 local function ShowAuraInfo(self, auraData)
-    local mountID, mountText = GW.NotSecretValue(auraData.spellId) and MountIDs[auraData.spellId]
+    local mountID, mountText = GW.NotSecretValue(auraData.spellId) and mountInfos[auraData.spellId]
 
     if mountID then
         local sourceText = mountID.sourceText

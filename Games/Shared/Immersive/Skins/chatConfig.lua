@@ -171,11 +171,7 @@ local function SkinTabs()
         tab:SetHeight(24)
     end
 
-    -- mainline lists the chat windows as tabs above the categories, pooled and rebuilt on every show
     local tabManager = ChatConfigFrame.ChatTabManager
-    if not tabManager then return end
-
-    -- UpdateTabDisplay selects before our hook on it has skinned freshly acquired tabs, those follow right after
     local function UpdateSelection(manager, selectedIndex)
         for tab in manager.tabPool:EnumerateActive() do
             if tab.background then
@@ -183,7 +179,7 @@ local function SkinTabs()
             end
         end
     end
-    hooksecurefunc(tabManager, "UpdateTabDisplay", function(manager)
+    hooksecurefunc(tabManager, "UpdateWidth", function(manager)
         for tab in manager.tabPool:EnumerateActive() do
             if not tab.gwSkinned then
                 GW.HandleTabs(tab, "top")

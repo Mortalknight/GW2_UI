@@ -10,7 +10,7 @@ function GW.GetSkillLineInfo(index)
     else
         local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier,
         skillMaxRank, isAbandonable, _, _, _, _,
-        skillDescription = GetSkillLineInfo(skillIndex)
+        skillDescription = GetSkillLineInfo(index)
         return {
             skillID = index,
             name = skillName,
