@@ -1084,6 +1084,13 @@ local function HandleItemListScrollBoxHover(self)
 end
 GW.HandleItemListScrollBoxHover = HandleItemListScrollBoxHover
 
+-- blizzard sets the hover border atlas on every state change
+local function SetTalentHoverTexture(texture)
+    texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+    texture:ClearAllPoints()
+    texture:SetAllPoints(texture:GetParent().Icon.backdrop)
+end
+
 function GW.SkinTalentButton(button)
     if button.gwSkinned then return end
     button.gwSkinned = true
@@ -1093,6 +1100,11 @@ function GW.SkinTalentButton(button)
     if button.DisabledOverlay then button.DisabledOverlay:SetVertexColor(0, 0, 0, 0.6) end
     GW.HandleIcon(button.Icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
     button.Icon.backdrop:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
+
+    if button.StateBorderHover then
+        SetTalentHoverTexture(button.StateBorderHover)
+        hooksecurefunc(button.StateBorderHover, "SetAtlas", SetTalentHoverTexture)
+    end
 end
 
 local function SkinSideTabButton(self, iconTexture, tooltipText)

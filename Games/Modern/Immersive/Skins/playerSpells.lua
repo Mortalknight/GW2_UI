@@ -367,7 +367,8 @@ local function SkinLegacyTalentTree(TalentsFrame)
         PinPoint(TalentsFrame.SearchOptionsDropdown, "LEFT", TalentsFrame.SearchBox, "RIGHT", 6, 0)
     end
     if TalentsFrame.ApplyButton then
-        PinPoint(TalentsFrame.ApplyButton, "BOTTOM", PlayerSpellsFrame, "BOTTOM", 0, 8)
+        PinPoint(TalentsFrame.ApplyButton, "BOTTOM", PlayerSpellsFrame, "BOTTOM", 0, 5)
+        TalentsFrame.ApplyButton:SetFrameLevel(footer:GetFrameLevel() + 1)
     end
     if TalentsFrame.LoadSystem then
         PinPoint(TalentsFrame.LoadSystem, "BOTTOMRIGHT", PlayerSpellsFrame, "BOTTOMRIGHT", -20, 5)
