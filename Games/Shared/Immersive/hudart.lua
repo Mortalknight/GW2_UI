@@ -106,7 +106,7 @@ local function selectBg(self)
         end
 
         local auraFound = false
-        if not GW.Retail then
+        if not GW.isModern then
             for spellID, auraData in pairs(actionHudPlayerAuras) do
                 if C_UnitAuras.GetPlayerAuraBySpellID(spellID) then
                     right = auraData.right
