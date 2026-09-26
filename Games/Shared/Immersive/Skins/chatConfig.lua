@@ -164,12 +164,20 @@ local function SkinCategories()
     end
 end
 
+local function SkinTab(tab)
+    GW.HandleTabs(tab, "top")
+    tab:SetHeight(24)
+end
+
 local function SkinTabs()
     for index = 1, #COMBAT_CONFIG_TABS do
-        local tab = _G[CHAT_CONFIG_COMBAT_TAB_NAME .. index]
-        GW.HandleTabs(tab, "top")
-        tab:SetHeight(24)
+        SkinTab(_G[CHAT_CONFIG_COMBAT_TAB_NAME .. index])
     end
+    hooksecurefunc("ChatConfig_UpdateCombatTabs", function(selectedTabID)
+        for index = 1, #COMBAT_CONFIG_TABS do
+            _G[CHAT_CONFIG_COMBAT_TAB_NAME .. index].background:SetBlendMode(index == selectedTabID and "MOD" or "BLEND")
+        end
+    end)
 
     local tabManager = ChatConfigFrame.ChatTabManager
     local function UpdateSelection(manager, selectedIndex)
@@ -182,8 +190,7 @@ local function SkinTabs()
     hooksecurefunc(tabManager, "UpdateWidth", function(manager)
         for tab in manager.tabPool:EnumerateActive() do
             if not tab.gwSkinned then
-                GW.HandleTabs(tab, "top")
-                tab:SetHeight(24)
+                SkinTab(tab)
                 -- the chat tab art fades itself out, here the tabs have no mouseover fading
                 tab:SetAlpha(1)
             end
@@ -216,6 +223,11 @@ local function SkinCombatSettings()
             index = index + 1
         end
     end
+
+    -- blizzard puts the buttons right on the edge of the list, that is on our border
+    local deleteButton = ChatConfigCombatSettingsFiltersDeleteButton
+    deleteButton:ClearAllPoints()
+    deleteButton:SetPoint("TOPRIGHT", filters, "BOTTOMRIGHT", 0, -3)
 
     GW.HandleNextPrevButton(ChatConfigMoveFilterUpButton, "up")
     GW.HandleNextPrevButton(ChatConfigMoveFilterDownButton, "down")

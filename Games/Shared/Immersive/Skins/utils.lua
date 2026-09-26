@@ -660,6 +660,10 @@ local function HandleTabs(self, direction, textures, setDesaturated)
         if self.Text then
             self.Text:SetPoint("CENTER", self, "CENTER", 0, 0)
         end
+        if self.GetFontString and self:GetFontString() then
+            self:GetFontString():ClearAllPoints()
+            self:GetFontString():SetPoint("CENTER")
+        end
 
         if self.SetTabSelected then
             hooksecurefunc(self, "SetTabSelected", function(tab)
