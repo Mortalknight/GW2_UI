@@ -429,8 +429,9 @@ local function HandleScrollControls(self, specifiedScrollBar)
     scrollBar:SetWidth(20)
 
     scrollBar.Track:ClearAllPoints()
-    scrollBar.Track:SetPoint("TOPLEFT", scrollBar, "TOPLEFT", 0, -12)
-    scrollBar.Track:SetPoint("BOTTOMRIGHT", scrollBar, "BOTTOMRIGHT", 0, 12)
+    scrollBar.Track:SetPoint("TOP", scrollBar, "TOP", 0, -12)
+    scrollBar.Track:SetPoint("BOTTOM", scrollBar, "BOTTOM", 0, 12)
+    scrollBar.Track:SetWidth(12)
 
     local bg = scrollBar.Track:CreateTexture(nil, "BACKGROUND", nil, 0)
     bg:ClearAllPoints()
@@ -489,6 +490,15 @@ local function HandleTrimScrollBar(frame)
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
+
+function GW.SkinSlimScrollBar(scrollBar)
+    HandleTrimScrollBar(scrollBar)
+    scrollBar:SetHideIfUnscrollable(true)
+    scrollBar:SetWidth(6)
+    local thumb = scrollBar:GetThumb()
+    thumb:SetWidth(4)
+    thumb.gwTex:SetVertexColor(1, 1, 1, 0.45)
+end
 
 local function HandleItemButton(b, setInside)
     if b.gwSkinned then return end
@@ -888,7 +898,6 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
         end
         RevealBackground()
 
-        -- blizzard can dim a frame on its own (world map opacity), the fade in ends there instead of fully opaque
         local shownAlpha, fadingIn = 1, false
         frame:HookScript("OnShow",function()
         if not fadingIn and frame:GetAlpha() > 0 then

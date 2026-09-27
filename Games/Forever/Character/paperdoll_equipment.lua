@@ -265,12 +265,7 @@ local function SetupStatsScroll(stats)
     stats.tiles = stats.scroll.tiles or stats.scroll:GetScrollChild()
     stats.gwTileParent = stats.tiles
     ScrollUtil.InitScrollFrameWithScrollBar(stats.scroll, stats.scrollBar)
-    GW.HandleTrimScrollBar(stats.scrollBar)
-    stats.scrollBar:SetHideIfUnscrollable(true)
-    stats.scrollBar:SetWidth(6)
-    local thumb = stats.scrollBar:GetThumb()
-    thumb:SetWidth(4)
-    thumb.gwTex:SetVertexColor(1, 1, 1, 0.45)
+    GW.SkinSlimScrollBar(stats.scrollBar)
     return stats.tiles
 end
 

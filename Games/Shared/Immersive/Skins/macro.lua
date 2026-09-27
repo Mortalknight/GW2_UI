@@ -2,17 +2,32 @@
 local GW = select(2, ...)
 
 -- One skin for the macro window of every client. The window itself is the same everywhere, what differs is its
--- art: the classic clients still use plain textures where mists and retail have nine slice frames, only they
--- have the old grid of macro buttons, and retail hangs the gw2 backgrounds behind the stripped list instead of
--- giving it a backdrop of its own.
-local CLASSIC = GW.Classic or GW.TBC or GW.Wrath
+-- art: the classic clients still use plain textures where mists and retail have nine slice frames.
 local WINDOW_ICON = "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png"
 local BUTTON_HIGHLIGHT = "Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png"
+local SLOT_BACKGROUND = "Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty.png"
+
+local function AddIconBorder(button)
+    button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+    button.backdrop:SetBackdropBorderColor(0.6, 0.6, 0.6)
+    button:SetHighlightTexture(BUTTON_HIGHLIGHT)
+    button:GetHighlightTexture():SetAllPoints(button.backdrop)
+end
 
 local function SkinSelectorButton(button)
-    if button.Icon then
-        GW.HandleItemButton(button, true)
+    if button.gwSkinned or not button.Icon then return end
+    button.gwSkinned = true
+
+    for _, region in ipairs({button:GetRegions()}) do
+        if region:IsObjectType("Texture") and region ~= button.Icon and region ~= button.SelectedTexture and region ~= button.Highlight then
+            region:SetTexture(SLOT_BACKGROUND)
+            region:SetAllPoints(button)
+        end
     end
+    button.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    AddIconBorder(button)
+    button.SelectedTexture:SetTexture(BUTTON_HIGHLIGHT)
+    button.SelectedTexture:SetAllPoints(button.backdrop)
 end
 
 local function UpdateSelectorButtons(scrollBox)
@@ -27,7 +42,7 @@ end
 
 -- the window title is the second font string on the classic clients, the first everywhere else
 local function GetHeaderText(regions)
-    local wanted, found = CLASSIC and 2 or 1, 0
+    local wanted, found = (GW.Classic or GW.TBC or GW.Wrath) and 2 or 1, 0
     for _, region in pairs(regions) do
         if region:GetObjectType() == "FontString" then
             found = found + 1
@@ -39,16 +54,24 @@ local function GetHeaderText(regions)
 end
 
 local function SkinWindow(regions, headerText)
-    -- retail puts its detail backgrounds where the blizzard art was, so that has to go first
-    if GW.Retail then
-        MacroFrameInset:GwStripTextures()
-        MacroFrame.MacroSelector.ScrollBox:GwStripTextures()
+    -- the detail backgrounds go where the blizzard art was, so that has to go first
+    MacroFrameInset:GwStripTextures()
+    if MacroFrameInset.NineSlice then
+        MacroFrameInset.NineSlice:Hide()
+    end
+    MacroFrame.MacroSelector.ScrollBox:GwStripTextures()
+    -- the box behind the macro text gets one on every client: a nine slice from mists on, plain textures before that
+    local textBackground = MacroFrameTextBackground
+    if textBackground.NineSlice then
+        textBackground.NineSlice:Hide()
+    else
+        textBackground:GwStripTextures()
     end
 
-    local detailBackgrounds = GW.Mists and {MacroFrameInset} or {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox}
+    local detailBackgrounds = {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox, MacroFrameTextBackground}
     GW.CreateFrameHeaderWithBody(MacroFrame, headerText, WINDOW_ICON, detailBackgrounds, nil, false, true)
 
-    if GW.Retail then
+    if GW.isModern then
         local header = MacroFrame.gwHeader
         header.BGLEFT:ClearAllPoints()
         header.BGLEFT:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 0, 0)
@@ -70,26 +93,8 @@ local function SkinWindow(regions, headerText)
     MacroFrame:GwCreateBackdrop()
     MacroHorizontalBarLeft:Hide()
 
-    if MacroFrameInset.NineSlice then
-        MacroFrameInset.NineSlice:Hide()
-    end
-    if CLASSIC then
-        MacroFrameInset:GwStripTextures()
-    end
-
-    -- the box behind the macro text: a nine slice from mists on, plain textures before that
-    local textBackground = MacroFrameTextBackground
-    if CLASSIC then
-        textBackground:GwStripTextures()
-        textBackground:GwCreateBackdrop(GW.BackdropTemplates.Default)
-    else
-        if not textBackground.NineSlice.SetBackdrop then
-            Mixin(textBackground.NineSlice, BackdropTemplateMixin)
-            textBackground.NineSlice:HookScript("OnSizeChanged", textBackground.NineSlice.OnBackdropSizeChanged)
-        end
-        textBackground.NineSlice:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-        textBackground.NineSlice:SetBackdropBorderColor(0, 0, 0)
-    end
+    textBackground:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+    textBackground.backdrop:SetBackdropBorderColor(0, 0, 0)
 
     for _, region in pairs(regions) do
         if region:GetObjectType() == "Texture" then
@@ -100,20 +105,24 @@ end
 
 local function SkinScrollFrames()
     local selector = MacroFrame.MacroSelector
-    if not GW.Retail then
-        selector.ScrollBox:GwStripTextures()
-        selector.ScrollBox:GwCreateBackdrop(GW.BackdropTemplates.Default)
-    end
     GW.HandleTrimScrollBar(selector.ScrollBar)
     GW.HandleScrollControls(selector)
+    -- the classic template puts its trim bar flush into the corner, mainline insets its minimal bar
+    selector.ScrollBar:ClearAllPoints()
+    selector.ScrollBar:SetPoint("TOPRIGHT", selector, "TOPRIGHT", 5, -5)
+    selector.ScrollBar:SetPoint("BOTTOMRIGHT", selector, "BOTTOMRIGHT", 5, 5)
 
-    -- the macro text has the new scrollbar on retail and the old one on the other clients
-    if MacroFrameScrollFrame.ScrollBar then
-        GW.HandleTrimScrollBar(MacroFrameScrollFrame.ScrollBar)
-        GW.HandleScrollControls(MacroFrameScrollFrame)
-    elseif _G.MacroFrameScrollFrameScrollBar then
-        _G.MacroFrameScrollFrameScrollBar:GwSkinScrollBar()
+    -- the macro text has the minimal bar on mainline, the old clients still give it the panel bar,
+    -- there it gets a minimal bar at mainlines offsets instead
+    local scrollBar = MacroFrameScrollFrame.ScrollBar
+    if not GW.isModern then
+        MacroFrameScrollFrameScrollBar:Hide()
+        scrollBar = CreateFrame("EventFrame", nil, MacroFrameTextBackground, "MinimalScrollBar")
+        scrollBar:SetPoint("TOPLEFT", MacroFrameScrollFrame, "TOPRIGHT", 6, -4)
+        scrollBar:SetPoint("BOTTOMLEFT", MacroFrameScrollFrame, "BOTTOMRIGHT", 6, 5)
+        ScrollUtil.InitScrollFrameWithScrollBar(MacroFrameScrollFrame, scrollBar)
     end
+    GW.SkinSlimScrollBar(scrollBar)
 end
 
 local function SkinButtons()
@@ -129,9 +138,8 @@ local function SkinButtons()
         buttons[i]:GwSkinButton(false, true)
     end
     MacroDeleteButton:GwSkinNegativeButton()
-    if GW.Retail then
-        MacroNewButton:SetPoint("BOTTOMRIGHT", -86, 4)
-    end
+    MacroNewButton:ClearAllPoints()
+    MacroNewButton:SetPoint("BOTTOMRIGHT", MacroExitButton, "BOTTOMLEFT", -1, 0)
 
     MacroFrameCloseButton:GwSkinButton(true)
     MacroFrameCloseButton:SetSize(25, 25)
@@ -140,12 +148,6 @@ local function SkinButtons()
 end
 
 local function SkinTabs()
-    if CLASSIC then
-        MacroFrameTab1:GwSkinTab()
-        MacroFrameTab2:GwSkinTab()
-        return
-    end
-
     GW.HandleTabs(MacroFrameTab1, "top")
     GW.HandleTabs(MacroFrameTab2, "top")
     MacroFrameTab1:SetHeight(25)
@@ -177,40 +179,11 @@ local function SkinSelectedMacro()
     button:GetNormalTexture():SetTexture()
     button.Icon:GwSetInside()
     button.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    button:SetHighlightTexture(BUTTON_HIGHLIGHT)
+    AddIconBorder(button)
     MacroFrameSelectedMacroBackground:GwKill()
 
     if MacroFrameSelectedMacroName then
         MacroFrameSelectedMacroName:SetTextColor(1, 1, 1)
-    end
-end
-
--- the grid of macro buttons; retail lists them in the selector instead
-local function SkinMacroButtons()
-    if not _G.MacroButton1 then return end
-
-    for i = 1, _G.MAX_ACCOUNT_MACROS do
-        local button = _G["MacroButton" .. i]
-        local icon = _G["MacroButton" .. i .. "Icon"]
-
-        if button then
-            button:SetHighlightTexture(BUTTON_HIGHLIGHT)
-            button:SetCheckedTexture(BUTTON_HIGHLIGHT)
-            local index = 1
-            for _, region in pairs({button:GetRegions()}) do
-                if region:GetObjectType() == "Texture" then
-                    if index == 1 then
-                        region:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty.png")
-                        region:SetSize(button:GetSize())
-                    end
-                    index = index + 1
-                end
-            end
-        end
-
-        if icon then
-            icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        end
     end
 end
 
@@ -224,7 +197,6 @@ local function ApplyMacroOptionsSkin()
     SkinButtons()
     SkinTabs()
     SkinSelectedMacro()
-    SkinMacroButtons()
 
     hooksecurefunc(MacroFrame.MacroSelector.ScrollBox, "Update", UpdateSelectorButtons)
 
