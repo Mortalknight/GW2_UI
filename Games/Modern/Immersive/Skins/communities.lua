@@ -409,6 +409,12 @@ local function SkinGuildInfo(info)
     end
 
     GW.SkinSlimScrollFrame(info.MOTDScrollFrame)
+    local motdBar = info.MOTDScrollFrame.ScrollBar
+    motdBar.Back:Hide()
+    motdBar.Forward:Hide()
+    motdBar.Track:ClearAllPoints()
+    motdBar.Track:SetPoint("TOP", motdBar, "TOP")
+    motdBar.Track:SetPoint("BOTTOM", motdBar, "BOTTOM")
     GW.SkinSlimScrollFrame(info.DetailsFrame)
 end
 
