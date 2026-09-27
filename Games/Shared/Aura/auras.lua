@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 local BadDispels = GW.Libs.Dispel:GetBadList()
 
-if GW.Retail then return end
+if GW.isModern then return end
 
 local function UpdateTooltip(self)
     if GameTooltip:IsForbidden() then return end
