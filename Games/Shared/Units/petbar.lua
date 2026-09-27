@@ -4,6 +4,8 @@ local LoadAuras = GW.LoadAuras
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetPetHappinessInfo = C_PetInfo and C_PetInfo.GetPetHappiness or GetPetHappiness
 
+local HEALTH_COLOR = GW.globalDefault.profile.unitframes.reactionColors.Hostile
+
 local petStateSprite = {
     width = 512,
     height = 128,
@@ -27,7 +29,7 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
         local point, relativeFrame, relativePoint, x, y
 
         if i == 1 then
-            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", self, "BOTTOMLEFT", 3, 30
+            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", self, "BOTTOMLEFT", self:GetFirstButtonOffset(), 30
         elseif i == 8 then
             point, relativeFrame, relativePoint, x, y = "BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN
         else
@@ -127,16 +129,19 @@ end
 function GwPlayerPetFrameMixin:UpdateHappiness()
     local happiness, damagePercentage, loyaltyRate = GetPetHappinessInfo()
     local _, isHunterPet = HasPetUI()
-
-    if not happiness or not isHunterPet then
-        self.happiness:Hide()
-        return
+    local display = GW.settings.unitframes.pet.happinessDisplay
+    if not isHunterPet or display == "HIDE" then
+        happiness = nil
     end
-    self.happiness:Show()
+
+    local color = happiness and display == "HEALTHCOLOR" and GW.Colors.PetHappinessColors[happiness] or HEALTH_COLOR
+    self.health:SetStatusBarColor(color.r, color.g, color.b)
+    self.happiness:SetShown(happiness and display == "ICON")
+    self.happiness.tooltip = happiness and _G["PET_HAPPINESS" .. happiness]
+    if not happiness then return end
 
     self.happiness.icon:SetTexCoord(GW.getSprite(petStateSprite, happiness, 1))
 
-    self.happiness.tooltip = _G["PET_HAPPINESS" .. happiness]
     self.happiness.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage)
 
     if loyaltyRate < 0 then
@@ -196,6 +201,47 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         self:UpdatePowerBar()
     elseif event == "UNIT_HAPPINESS" then
         self:UpdateHappiness()
+    end
+end
+
+-- the buttons start above the bars; protected frames only anchor to frames, so they sit on the pet frame itself
+function GwPlayerPetFrameMixin:GetFirstButtonOffset()
+    return GW.settings.unitframes.pet.portraitPosition == "LEFT" and self.portraitBackground:GetWidth() + 3 or 3
+end
+
+function GwPlayerPetFrameMixin:TogglePortraitSide()
+    local firstButton = self.buttons[1]
+    if firstButton and firstButton.point then
+        firstButton.gwX = self:GetFirstButtonOffset()
+        firstButton:ClearAllPoints()
+        firstButton:SetPoint(firstButton.point, firstButton.relativeFrame, firstButton.relativePoint, firstButton.gwX, firstButton.gwY)
+    end
+
+    local position = GW.settings.unitframes.pet.portraitPosition
+    self.portrait:SetShown(position ~= "HIDE")
+    self.portraitBackground:SetShown(position ~= "HIDE")
+
+    -- next to the bars without a portrait, so it has to match their height instead of the portraits corner
+    self.happiness:SetSize(position == "HIDE" and 24 or 30, position == "HIDE" and 24 or 30)
+    self.happiness:SetFrameLevel(self.health:GetFrameLevel() + 2)
+
+    self.Background:ClearAllPoints()
+    self.portraitBackground:ClearAllPoints()
+    self.happiness:ClearAllPoints()
+    if position == "LEFT" then
+        self.portraitBackground:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, 1)
+        self.Background:SetPoint("BOTTOMLEFT", self.portraitBackground, "BOTTOMRIGHT", 0, 3)
+        self.happiness:SetPoint("CENTER", self.portraitBackground, "BOTTOMLEFT", 7, 8)
+        self.portrait:SetTexCoord(0, 1, 0, 1)
+    else
+        self.Background:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, 4)
+        self.portraitBackground:SetPoint("BOTTOMLEFT", self.Background, "BOTTOMRIGHT", 0, -3)
+        self.portrait:SetTexCoord(1, 0, 0, 1)
+        if position == "HIDE" then
+            self.happiness:SetPoint("LEFT", self.Background, "RIGHT", 3, -2)
+        else
+            self.happiness:SetPoint("CENTER", self.portraitBackground, "BOTTOMRIGHT", -7, 8)
+        end
     end
 end
 
@@ -358,30 +404,25 @@ local function LoadPetFrame(lm)
     RegisterStateDriver(playerPetFrame, "visibility",
         "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
 
-    playerPetFrame.health:SetStatusBarColor(GW.globalDefault.profile.unitframes.reactionColors.Hostile.r, GW.globalDefault.profile.unitframes.reactionColors.Hostile.g, GW.globalDefault.profile.unitframes.reactionColors.Hostile.b)
+    playerPetFrame.health:SetStatusBarColor(HEALTH_COLOR.r, HEALTH_COLOR.g, HEALTH_COLOR.b)
     playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
 
     playerPetFrame:SetScript("OnEnter", function(self)
         GameTooltip:ClearLines()
         GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
         GameTooltip:SetUnit(self.gwUnit)
+        local happiness = self.happiness
+        if happiness.tooltip then
+            GameTooltip:AddLine(" ")
+            GameTooltip:AddLine(happiness.tooltip, 1, 1, 1)
+            GameTooltip:AddLine(happiness.tooltipDamage, 1, 1, 1, true)
+            if happiness.tooltipLoyalty then
+                GameTooltip:AddLine(happiness.tooltipLoyalty, 1, 1, 1, true)
+            end
+        end
         GameTooltip:Show()
     end)
 
-    playerPetFrame.happiness:SetScript("OnEnter", function(self)
-        if self.tooltip then
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(self.tooltip, 1, 1, 1)
-            if self.tooltipDamage then
-                GameTooltip:AddLine(self.tooltipDamage, 1, 1, 1, true)
-            end
-            if self.tooltipLoyalty then
-                GameTooltip:AddLine(self.tooltipLoyalty, 1, 1, 1, true)
-            end
-            GameTooltip:Show()
-        end
-    end)
-    playerPetFrame.happiness:SetScript("OnLeave", GameTooltip_Hide)
 
     if GW.isModern then
         -- 12.1: pet auras run through the AuraContainer system (factory) —
@@ -490,6 +531,7 @@ local function LoadPetFrame(lm)
         button:Show()
         playerPetFrame.buttons[i] = button
     end
+    playerPetFrame:TogglePortraitSide()
     playerPetFrame:SetActionButtonPositionAndStyle()
 
     PetActionBar.ignoreFramePositionManager = true

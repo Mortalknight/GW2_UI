@@ -136,6 +136,12 @@ GW.Colors.ClassColors = {
     EVOKER = CreateColor(56 / 255, 99 / 255, 113 / 255, 1)
 }
 
+GW.Colors.PetHappinessColors = {
+    CreateColor(0.69, 0.13, 0.36),
+    CreateColor(0.72, 0.6, 0.12),
+    CreateColor(0.3, 0.64, 0.18),
+}
+
 GW.Colors.FactionColors = {
     Horde = CreateColor(163 / 255, 46 / 255, 54 / 255), --Horde
     Alliance = CreateColor(57 / 255, 115 / 255, 186 / 255) --Alliance

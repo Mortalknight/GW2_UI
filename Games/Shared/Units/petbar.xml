@@ -64,27 +64,13 @@
                 </Anchors>
             </Frame>
             <Frame parentKey="happiness" enableMouse="false" hidden="true">
-                <Size x="25" y="25"></Size>
+                <Size x="30" y="30"></Size>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.portraitBackground" x="0" y="22"></Anchor>
+                    <Anchor point="CENTER" relativePoint="BOTTOMRIGHT" relativeKey="$parent.portraitBackground" x="-7" y="8"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar.png" parentKey="Background">
-                            <Color r="0" g="0" b="0" a="0.8"/>
-                            <Size x="25" y="25"/>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" relativeKey="$parent.happiness" x="0" y="0"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                    <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture parentKey="icon" alphaMode="add" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness.png">
-                            <Size x="25" y="25"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" relativeKey="$parent.Background" x="0" y="1"></Anchor>
-                            </Anchors>
-                        </Texture>
+                        <Texture parentKey="icon" setAllPoints="true" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness.png"/>
                     </Layer>
                 </Layers>
             </Frame>
