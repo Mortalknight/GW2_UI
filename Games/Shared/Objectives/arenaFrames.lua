@@ -27,7 +27,10 @@ function GwArenaFrameMixin:UpdateName()
 
     if inArena == "arena" then
         local specID = GetArenaOpponentSpec(self.id)
-        if specID and specID > 0 then
+        -- 12.1.5 hands out the opponent spec as a secret, blizzards display helper still resolves the name
+        if GW.IsSecretValue(specID) then
+            nameString = format("%s - %s", name, UnitFrameUtil.GetArenaOpponentSpecDisplayInfo(self.id).specName)
+        elseif specID and specID > 0 then
             local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.gwUnit))
             if role and nameRoleIcon[role] and specName and name then
                 nameString = nameRoleIcon[role] .. name .. " - " .. specName
@@ -260,7 +263,13 @@ function GwObjectivesArenaContainerMixin:OnEvent(event)
             local prepFrame = arenaPrepFrames[i]
             if i <= numOpps then
                 local specID, gender = GetArenaOpponentSpec(i)
-                if specID > 0 then
+                if GW.IsSecretValue(specID) then
+                    UnitFrameUtil.UpdateArenaOpponentSpecDisplayName(prepFrame.name, i)
+                    prepFrame.health:SetStatusBarColor(0.5, 0.5, 0.5)
+                    prepFrame.power:SetStatusBarColor(0.5, 0.5, 0.5)
+                    SetClassIcon(prepFrame.icon)
+                    prepFrame:Show()
+                elseif specID > 0 then
                     local nameString = UNKNOWN
                     local className, classFile
                     local _, specName, _, _, role, class = GetSpecializationInfoByID(specID, gender)

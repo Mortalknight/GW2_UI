@@ -1,52 +1,49 @@
 ---@class GW2
 local GW = select(2, ...)
 
--- Shared factory for unit aura containers (12.1 AuraContainer system).
--- On Retail this replaces the UpdateBuffLayout engine from Games/Shared/Aura/auras.lua
--- for pet, target/focus and party. The buttons get the GwAuraFrame look
--- (black backdrop, dispel-colored background as border, white cooldown swipe).
+-- Factory for the unit aura containers of the 12.1 AuraContainer system (pet, target/focus, party, grid);
+-- the buttons get the GwAuraFrame look.
 --
 -- config = {
 --     name = "GwPetAuraContainer",          -- global frame name (optional)
---     unit = "pet",
---     parent = frame,                        -- parent (default UIParent)
+--     unit = "pet",                          -- nil = disabled until GwSetUnit
+--     parent = frame,                        -- default UIParent
 --     cancelButtons = "RightButtonUp, RightButtonDown", -- nil = no right-click cancel
 --     tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
 --     refreshEvents = { "UNIT_PET" },        -- events that trigger UpdateAllAuras
 --     refreshUnit = "player",                -- unit for RegisterUnitEvent (nil = regular events)
+--     onSettingsRefresh = function() end,    -- re-derives the config on a central refresh (default GwUpdateLayout)
+--     newAuraAnimation = true,               -- zoom in newly shown buffs (engine driven, see AddAuraShownAnimation)
 --     anchorPoint = "TOPRIGHT",              -- starting corner of the flow layout
---     growLeft = false, growUp = false,      -- growth direction
---     vertical = false,                      -- true = column instead of row layout
+--     growLeft = false, growUp = false,
+--     vertical = false,                      -- column instead of row layout
 --     maximumLineSize = 160,                 -- line length in pixels
 --     elementSpacing = 3, lineSpacing = 20,
 --     groups = {
 --         {
---             key = "buffs",                 -- unique group key
+--             key = "buffs",
 --             filter = "HELPFUL",
---             candidateFilters = {...},      -- nil = all (see AuraContainerUtil.DoesAuraPassCandidateFilters)
---             size = 20,                     -- button size
---             iconInset = 1,                 -- icon inset from the edge (1 = small, 3 = big look)
+--             candidateFilters = {...},      -- nil = all (AuraContainerUtil.DoesAuraPassCandidateFilters)
+--             size = 20,
+--             iconInset = 1,                 -- 1 = small, 3 = big look
 --             maxFrameCount = 32,            -- 0 = group disabled
 --             sortMethod = AuraContainerSortMethod.Default,
 --             sortDirection = AuraContainerSortDirection.Normal,
---             forceNewLine = false,          -- group starts a new line
---             isDebuff = false,              -- enables dispel coloring of the border
---             bigFont = false,               -- Normal instead of Small fonts (bigBuff look)
---             showStealable = false,         -- stealable buffs get a colored border
+--             forceNewLine = false,
+--             isDebuff = false,              -- dispel colored border
+--             bigFont = false,
+--             showStealable = false,
 --             showDispelIcon = false,        -- dispel type icon in the corner
 --             dispelIconSize = 12,
---             showPandemic = false,          -- glow while inside the refresh window
+--             showPandemic = false,          -- glow inside the refresh window
 --         },
 --     },
 -- }
 --
--- Returns: the container. Layout/filters/sizes can be re-applied at runtime via
--- container:GwUpdateLayout() after config values have been changed.
+-- Changed config values are applied with container:GwUpdateLayout().
 
--- Advanced filters narrow the existing groups, tri-state: true = required,
--- 1 = excluded. Tokens fail open for secret auras (show too much, never double);
--- candidate fields stay exact. PLAYER must stay a token — the container's
--- isFromPlayerOrPlayerPet aura data is relative to the unit, not the player.
+-- Advanced filters narrow the groups, tri-state: true = required, 1 = excluded. Tokens fail open for secret
+-- auras, candidate fields stay exact. PLAYER stays a token: isFromPlayerOrPlayerPet is relative to the unit
 local ADVANCED_FILTER_TOKENS = {
     { setting = "isAuraPlayer",            token = "PLAYER" },
     { setting = "isAuraRaid",              token = "RAID" },
@@ -55,11 +52,10 @@ local ADVANCED_FILTER_TOKENS = {
     { setting = "isAuraCrowdControl",      token = "CROWD_CONTROL" },
     { setting = "isAuraBigDefensive",      token = "BIG_DEFENSIVE" },
     { setting = "isAuraExternalDefensive", token = "EXTERNAL_DEFENSIVE" },
-    { setting = "isAuraImportant",         token = "IMPORTANT" }, -- token re-added in 12.1
+    { setting = "isAuraImportant",         token = "IMPORTANT" },
 }
 
--- Candidate fields (AuraContainerUtil.DoesAuraPassCandidateFilters); the
--- "Dispellable" option maps to dispel type candidates instead (LibDispel).
+-- "Dispellable" is not a field, it maps to dispel type candidates (LibDispel)
 local ADVANCED_CANDIDATE_FIELDS = {
     { setting = "isAuraStealable",         field = "isStealable" },
     { setting = "isAuraBoss",              field = "isBossAura" },
@@ -75,8 +71,7 @@ local function ResolveFilterToken(entry, value)
     return value == 1 and ("!" .. entry.token) or entry.token
 end
 
--- true stays true (required), 1 becomes false (excluded); gwDispellable is
--- resolved per group role in ComposeAuraGroupCandidates
+-- gwDispellable keeps the tri-state, ComposeAuraGroupCandidates resolves it per group role
 local function BuildCandidateSelection(db)
     local selection
     for _, entry in ipairs(ADVANCED_CANDIDATE_FIELDS) do
@@ -93,8 +88,7 @@ local function BuildCandidateSelection(db)
     return selection
 end
 
--- Advanced filter table (e.g. target_Buff_Filter_advanced) -> filter string
--- suffix + candidate selection; empty selection = show everything
+-- advanced filter settings -> filter string suffix + candidate selection
 function GW.BuildAuraFilterSuffix(db)
     if not db then return "", nil end
 
@@ -110,12 +104,11 @@ function GW.BuildAuraFilterSuffix(db)
     return suffix, BuildCandidateSelection(db)
 end
 
--- nothing passes an empty include list (mutes a dispel twin half)
+-- nothing passes an empty include list, it mutes a dispel twin half
 local EMPTY_DISPEL_TYPES = {}
 
--- Effective candidateFilters of a group: configured base + caller extra + advanced
--- selection + the dispel twin role ("include" = what this character can dispel,
--- carries the icon; "exclude" = the rest). Apply via ApplyStableCandidates.
+-- base + extra + advanced selection + the dispel twin role: "include" holds what this character can
+-- dispel and carries the icon, "exclude" the rest. Apply via ApplyStableCandidates
 function GW.ComposeAuraGroupCandidates(group, selection, extra)
     local merged
     local function put(field, value)
@@ -140,11 +133,10 @@ function GW.ComposeAuraGroupCandidates(group, selection, extra)
     local dispellable = selection and selection.gwDispellable
     local myTypes = GW.Libs.Dispel:GetMyDispelTypes()
     if group.gwDispelRole == "include" then
-        -- "Dispellable" excluded → this half shows nothing
         put("includeDispelTypes", dispellable == 1 and EMPTY_DISPEL_TYPES or myTypes)
     elseif group.gwDispelRole == "exclude" then
+        -- "Dispellable" required: the include half owns everything
         if dispellable == true then
-            -- "Dispellable" required → the include half owns everything
             put("includeDispelTypes", EMPTY_DISPEL_TYPES)
         else
             put("excludeDispelTypes", myTypes)
@@ -158,8 +150,6 @@ function GW.ComposeAuraGroupCandidates(group, selection, extra)
     return merged
 end
 
--- keep the previous table when the content is unchanged — ApplyLayout skips the
--- engine re-apply by reference compare
 local function SameCandidates(a, b)
     if a == b then return true end
     if not a or not b then return false end
@@ -172,14 +162,14 @@ local function SameCandidates(a, b)
     return true
 end
 
+-- keeps the previous table for unchanged content, ApplyLayout compares by reference
 function GW.ApplyStableCandidates(group, candidates)
     if not SameCandidates(candidates, group.candidateFilters) then
         group.candidateFilters = candidates
     end
 end
 
--- Stealable buffs use one color for every dispel type; customDispelColorMap is keyed
--- by dispel type name, "None" covers auras without one
+-- customDispelColorMap is keyed by dispel type name, "None" covers auras without one
 local stealableColorMap
 local function GetStealableColorMap()
     if not stealableColorMap then
@@ -193,11 +183,9 @@ local function GetStealableColorMap()
     return stealableColorMap
 end
 
--- Step curve dispel type -> GW debuff color, shared by every aura consumer
--- (factory buttons, player bars)
 local debuffColorCurve
 local function GetDebuffColorCurve()
-    if not debuffColorCurve and C_CurveUtil then
+    if not debuffColorCurve then
         debuffColorCurve = C_CurveUtil.CreateColorCurve()
         debuffColorCurve:SetType(Enum.LuaCurveType.Step)
         for _, dispelIndex in next, GW.Enum.DispelType do
@@ -210,8 +198,7 @@ local function GetDebuffColorCurve()
 end
 GW.GetDebuffColorCurve = GetDebuffColorCurve
 
--- Container tooltips are global for all AuraContainers — switch them to the GW look
--- once, but only if the GW tooltip skin is active (TOOLTIPS_ENABLED)
+-- the container tooltip is shared by every AuraContainer
 local tooltipStyled = false
 local function EnsureTooltipStyle()
     if tooltipStyled or not GW.settings.tooltip.enabled then return end
@@ -223,17 +210,11 @@ local function EnsureTooltipStyle()
 end
 GW.EnsureAuraTooltipStyle = EnsureTooltipStyle
 
--- Central registry of all aura containers: settings that affect several frame types
--- (e.g. RAIDDEBUFFS toggles/scale) refresh everything with ONE call instead of poking
--- each consumer — future grid containers join automatically on creation.
--- A container may carry cfg.onSettingsRefresh to re-derive its config from settings
--- (e.g. the party containers recompute sizes/filters); default is a plain re-apply.
+-- every aura container with the refresh it runs on a central settings refresh
 local containerRegistry = {}
 
--- change-detection generation: ApplyLayout skips re-applying candidate filters when
--- the SOURCE tables are unchanged — but the engine holds a secure copy, so in-place
--- mutations (e.g. the RAIDDEBUFFS list) are invisible to a reference compare. The
--- central refresh bumps the generation, which invalidates every cached application.
+-- the engine keeps a secure copy of the candidate filters, so in-place changes of a filter table are
+-- invisible to ApplyLayout's reference compare; a new generation re-applies them everywhere
 local settingsGeneration = 0
 
 local function RegisterAuraContainer(container, refreshFunc)
@@ -241,22 +222,12 @@ local function RegisterAuraContainer(container, refreshFunc)
 end
 GW.RegisterAuraContainer = RegisterAuraContainer
 
--- invalidate the cached candidate filter applications WITHOUT refreshing anything:
--- callers that mutate a filter table in place (e.g. the spell list widget writing
--- into an ignore list) bump the generation, the consumers' own settings callbacks
--- then re-apply with fresh data
+-- for callers that change a filter table in place and re-apply through their own settings callback
 function GW.BumpAuraContainerSettingsGeneration()
     settingsGeneration = settingsGeneration + 1
 end
 
--- Pandemic highlight: a border glow the engine shows while the aura is inside its
--- refresh window. The region hangs on an own holder frame the engine knows nothing
--- about - the opt out hides the HOLDER, so it can never fight whatever the engine
--- does to the region itself (Shown today, possibly alpha animations with 12.1.5).
--- isEnabled is the hosts per frame setting getter, re-evaluated on every update.
--- The engine owns the button lists — enumerate instead of caching them ourselves.
--- Group keys come from gwConfig.groups (factory containers, including the advanced
--- branch slots appended later) or gwGroupKeys (containers with fixed groups)
+-- the engine owns the button lists, they are enumerated instead of cached
 local function ForEachGroupButton(container, groupKey, func)
     for i = 1, container:GetAuraGroupFrameCount(groupKey) do
         func(container:GetAuraGroupFrame(groupKey, i))
@@ -278,12 +249,8 @@ GW.ForEachAuraContainerButton = ForEachContainerButton
 
 local PANDEMIC_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/pandemic-glow.png"
 
--- The Add*/Remove* API changed with 12.1.5: up to 12.1.0 Add* returns a list index and
--- Remove* takes one (stored indices go stale as soon as the list changes), from 12.1.5 on
--- Add* returns nothing and Remove* takes the region itself. Whether the client hands back
--- an index on Add decides the removal path. The registered texture keeps its identity
--- (the inbound wrapper returns the same object), so on the index clients the index is
--- looked up at removal time instead of being stored
+-- 12.1.0 compat, remove with 12.1.5: up to 12.1.0 Add* returns a list index and Remove* takes one, a stored
+-- index would go stale, so it is looked up at removal time; 12.1.5 removes by region
 local function RemoveDispelTypeTextureByIdentity(button, texture, indexed)
     if not indexed then
         button:RemoveDispelTypeTexture(texture)
@@ -297,12 +264,8 @@ local function RemoveDispelTypeTextureByIdentity(button, texture, indexed)
     end
 end
 
--- Both regions are engine driven and their Shown state becomes a secret aspect on
--- registration — the opt out therefore DE-REGISTERS the region (Remove*/Clear*) instead
--- of hiding it. A removed region keeps its last engine state, so its texture content is
--- cleared to render nothing; re-enabling restores it and registers again. Registering
--- the same region twice raises an error since 12.1.5, so the registration is tracked
--- by an own flag, never by what Add* returns
+-- registered regions have a secret Shown state, so the opt out de-registers them and clears their
+-- texture instead of hiding them; registering twice errors since 12.1.5, hence the own flags
 local function ApplyAuraOptionRegions(button)
     local pandemic = button.gwPandemicRegion
     if pandemic then
@@ -313,11 +276,23 @@ local function ApplyAuraOptionRegions(button)
                 button.gwPandemicRegistered = true
             end
         elseif button.gwPandemicRegistered then
-            -- the buttons only pandemic region is ours: Clear* exists on every version
-            -- and needs neither an index nor a region
+            -- the only pandemic region is ours, Clear* works on every version
             button:ClearPandemicRegions()
             button.gwPandemicRegistered = nil
             pandemic:SetTexture()
+        end
+    end
+
+    local zoom = button.gwShownAnimation
+    if zoom then
+        if not button.gwShownAnimationEnabled or button.gwShownAnimationEnabled() then
+            if not button.gwShownAnimationRegistered then
+                button:AddAuraShownAnimation(zoom)
+                button.gwShownAnimationRegistered = true
+            end
+        elseif button.gwShownAnimationRegistered then
+            button:RemoveAuraShownAnimation(zoom)
+            button.gwShownAnimationRegistered = nil
         end
     end
 
@@ -327,9 +302,10 @@ local function ApplyAuraOptionRegions(button)
             if not button.gwDispelIconRegistered then
                 local index = button:AddDispelTypeTexture(dispelIcon, button.gwDispelIconOptions)
                 button.gwDispelIconRegistered = true
-                button.gwDispelIconIndexed = index ~= nil
+                button.gwDispelIconIndexed = index ~= nil -- 12.1.0 compat, remove with 12.1.5
             end
         elseif button.gwDispelIconRegistered then
+            -- 12.1.0 compat, with 12.1.5: button:RemoveDispelTypeTexture(dispelIcon)
             RemoveDispelTypeTextureByIdentity(button, dispelIcon, button.gwDispelIconIndexed)
             button.gwDispelIconRegistered = nil
             dispelIcon:SetTexture()
@@ -345,9 +321,7 @@ function GW.UpdateAuraOptionRegions()
     end
 end
 
--- Pandemic border glow, shown by the engine while the aura is inside its refresh
--- window. textureParent overrides where the region is created (buttons whose visuals
--- live directly on the button need it there for the draw order)
+-- isEnabled is re-evaluated on every update; textureParent is for buttons that draw on themselves
 function GW.AddPandemicHighlight(button, anchor, isEnabled, textureParent)
     local region = (textureParent or anchor):CreateTexture(nil, "OVERLAY", nil, 1)
     region:SetPoint("TOPLEFT", anchor, "TOPLEFT", -4, 4)
@@ -359,8 +333,26 @@ function GW.AddPandemicHighlight(button, anchor, isEnabled, textureParent)
     ApplyAuraOptionRegions(button)
 end
 
--- Dispel type icon in the top right corner of the aura, shown by the engine while
--- the aura carries a dispel type
+-- the zoom in of a new aura, played by the engine the first time an aura shows on the button;
+-- isEnabled nil = always. 12.1.0 compat: the check, the API comes with 12.1.5
+function GW.AddAuraShownAnimation(button, target, isEnabled, scaleFrom)
+    if not button.AddAuraShownAnimation then return end
+
+    local zoom = target:CreateAnimationGroup()
+    local fade = zoom:CreateAnimation("Alpha")
+    fade:SetFromAlpha(0.85)
+    fade:SetToAlpha(1)
+    fade:SetDuration(0.25)
+    local scale = zoom:CreateAnimation("Scale")
+    scale:SetScaleFrom(scaleFrom or 2.5, scaleFrom or 2.5)
+    scale:SetScaleTo(1, 1)
+    scale:SetDuration(0.25)
+
+    button.gwShownAnimation = zoom
+    button.gwShownAnimationEnabled = isEnabled
+    ApplyAuraOptionRegions(button)
+end
+
 function GW.AddDispelTypeIcon(button, anchor, group, isEnabled)
     local size = group.dispelIconSize or 12
     local dispelIcon = anchor:CreateTexture(nil, "OVERLAY", nil, 2)
@@ -381,9 +373,7 @@ end
 function GW.RefreshAllAuraContainers()
     settingsGeneration = settingsGeneration + 1
 
-    -- the refresh writes secure attributes (aurabar layout proxy) - blocked in combat,
-    -- and the dispel type callback can fire there (SPELLS_CHANGED). Rerun once after
-    -- combat instead; the queue key collapses multiple triggers into one refresh.
+    -- writes secure attributes (aurabar layout proxy) and can be triggered in combat (SPELLS_CHANGED)
     if InCombatLockdown() then
         GW.CombatQueue:Queue("gw_refresh_all_aura_containers", GW.RefreshAllAuraContainers)
         return
@@ -392,79 +382,22 @@ function GW.RefreshAllAuraContainers()
     for _, entry in ipairs(containerRegistry) do
         if entry.refresh then
             entry.refresh(entry.container)
-        elseif entry.container.gwConfig and entry.container.gwConfig.onSettingsRefresh then
-            entry.container.gwConfig.onSettingsRefresh(entry.container)
-        elseif entry.container.GwUpdateLayout then
-            entry.container:GwUpdateLayout()
         end
     end
 end
 
--- the dispel type candidates hold LibDispel's table, which mutates in place —
--- invisible to the reference compares, so bump + refresh when the lib reports a change
-EventRegistry:RegisterCallback("GW2_UI.DispelTypesChanged", function()
-    GW.BumpAuraContainerSettingsGeneration()
-    GW.RefreshAllAuraContainers()
-end, "GW2_UI")
+-- LibDispel's type table changes in place, invisible to the reference compares
+EventRegistry:RegisterCallback("GW2_UI.DispelTypesChanged", GW.RefreshAllAuraContainers, "GW2_UI")
 
--- /run GW.DumpAuraContainers("target") — per group: filter, candidates, mute state,
--- shown counts (substring match on config name or unit, nil = all). Frame names and
--- IsShown can be SECRET in raids: plain-string identification, secret counter.
-function GW.DumpAuraContainers(match)
-    for index, entry in ipairs(containerRegistry) do
-        local container = entry.container
-        local cfg = container.gwConfig
-        local unit = tostring(container.gwAppliedUnit or (cfg and cfg.unit))
-        local label = (cfg and cfg.name or ("container#" .. index)) .. " unit: " .. unit
-        if cfg and cfg.groups and (not match or label:lower():find(match:lower(), 1, true)) then
-            print("|cff88ffff" .. label .. "|r")
-            for _, group in ipairs(cfg.groups) do
-                local shown, total, secret = 0, 0, 0
-                ForEachGroupButton(container, group.key, function(button)
-                    total = total + 1
-                    local ok, isShown = pcall(button.IsShown, button)
-                    if not ok or GW.IsSecretValue(isShown) then
-                        secret = secret + 1
-                    elseif isShown then
-                        shown = shown + 1
-                    end
-                end)
-                -- candidate summary: nested dispel type tables list their truthy keys
-                local candText = ""
-                for field, value in next, group.candidateFilters or {} do
-                    if type(value) == "table" then
-                        local keys = {}
-                        for k, v in next, value do
-                            if v then tinsert(keys, tostring(k)) end
-                        end
-                        candText = format("%s %s={%s}", candText, field, table.concat(keys, ","))
-                    else
-                        candText = format("%s %s=%s", candText, field, tostring(value))
-                    end
-                end
-                local muted = (group.maxFrameCount or 1) == 0
-                if shown > 0 or secret > 0 or not muted then
-                    print(format("    %s shown:%d/%d%s%s %s%s", group.key, shown, total,
-                        secret > 0 and (" secret:" .. secret) or "", muted and " (muted)" or "",
-                        (group.filter or ""):gsub("|", "||"), candText))
-                end
-            end
-        end
-    end
-end
-
--- Height of the duration text strip below the icon; it is part of the BUTTON size
--- (not extra line spacing) so that the container's self-measured size covers the
--- full visual extent — other frames can then be anchored directly beneath it
+-- part of the button height, so the container's own size covers the text and frames can anchor below it
 local DURATION_TEXT_HEIGHT = 14
 
 local function GetGroupTextPad(group)
     return group.hideDuration and 0 or DURATION_TEXT_HEIGHT
 end
 
--- Applies the size to wrapper and button; only callable via pcall — while auras
--- are secret the access restriction denies tainted access to the whole subtree.
--- The applied size is recorded on success so unchanged layout passes can skip it.
+-- pcall only: while auras are secret the whole button subtree denies tainted access;
+-- the size is recorded on success, so unchanged layout passes skip it
 local function SetAuraButtonSize(button, size, textPad)
     button.gwVisual:SetSize(size, size)
     button:SetSize(size, size + textPad)
@@ -472,15 +405,12 @@ local function SetAuraButtonSize(button, size, textPad)
     button.gwAppliedTextPad = textPad
 end
 
--- Duration text formatter: like Blizzard's DefaultAuraDurationFormatter (single unit,
--- values <= 90s/90m/36h stay in the smaller interval), but WITHOUT the whitespace
--- between value and unit ("17s" instead of "17 s") — deDE/ruRU keep the whitespace
--- by default, which makes wide values overlap the neighboring buttons
+-- Blizzards DefaultAuraDurationFormatter without the whitespace before the unit,
+-- deDE/ruRU keep it and wide values overlap the neighbours
 local durationTextFormatter
 local function GetDurationTextFormatter()
     if not durationTextFormatter then
-        -- '+1' because curves promote to the next interval on exact matches —
-        -- 90 should still render as "90s", not as "1m" (cf. Blizzard_AuraContainerShared)
+        -- +1: curves promote to the next interval on exact matches, 90 stays "90s"
         local maxIntervalCurve = C_CurveUtil.CreateCurve()
         maxIntervalCurve:AddPoint(1 + (1.5 * 60), Enum.SecondsFormatterInterval.Minutes)
         maxIntervalCurve:AddPoint(1 + (1.5 * 3600), Enum.SecondsFormatterInterval.Hours)
@@ -497,7 +427,6 @@ local function GetDurationTextFormatter()
 end
 GW.GetAuraDurationTextFormatter = GetDurationTextFormatter
 
--- Sort presets for the per-unitframe "Aura Sorting" setting
 local AURA_SORT_PRESETS = {
     DEFAULT = { method = AuraContainerSortMethod.Default, direction = AuraContainerSortDirection.Normal },
     EXPIRATION_ASC = { method = AuraContainerSortMethod.ExpirationOnly, direction = AuraContainerSortDirection.Normal },
@@ -510,15 +439,9 @@ function GW.GetAuraSortPreset(value)
     return AURA_SORT_PRESETS[value] or AURA_SORT_PRESETS.DEFAULT
 end
 
--- GwAuraFrame look for a container button (cf. aurabar_legacy.xml + setAuraType):
--- black 1px backdrop, background as border (dispel color for debuffs),
--- white cooldown swipe, icon with inset, stacks inside the icon, duration text below
 local function BuildAuraButton(button, container, group)
-    -- The button itself is forbidden (secret aspects) — the visuals hang off a wrapper.
-    -- The wrapper is anchored to the TOP (the strip below it belongs to the duration
-    -- text) and explicitly sized: the button only accepts SetSize during
-    -- initializeFrame (access restrictions are applied afterwards), so later size
-    -- changes have to be carried by our own frame
+    -- the button itself is forbidden and only takes SetSize during initializeFrame, the visuals and
+    -- later size changes live on an own wrapper; the strip below it belongs to the duration text
     local visual = CreateFrame("Frame", nil, button)
     visual:SetPoint("TOP", button, "TOP")
     visual:SetSize(group.size, group.size)
@@ -537,8 +460,7 @@ local function BuildAuraButton(button, container, group)
     background:SetAllPoints(visual)
     button.background = background
 
-    -- visible swipe ring = icon inset minus cooldown inset; keep it at 1px so the
-    -- ring looks as slim as on the player buff bar (2px on 32px buttons there)
+    -- 1px swipe ring, as slim as on the player buff bar
     local swipeInset = math.max(0, (group.iconInset or 1) - 1)
     local cooldown = CreateFrame("Cooldown", nil, visual, "CooldownFrameTemplate")
     cooldown:SetFrameLevel(visual:GetFrameLevel() + 1)
@@ -585,7 +507,6 @@ local function BuildAuraButton(button, container, group)
         status.duration:GwSetFontTemplate(UNIT_NAME_FONT, textSize, nil, group.bigFont and 0 or -1)
     end
 
-    -- the container takes care of the display updates
     button:SetIcon(status.icon)
     button:SetDurationCooldown(cooldown)
     if status.duration then
@@ -594,14 +515,11 @@ local function BuildAuraButton(button, container, group)
     button:SetApplicationCount(status.stacks)
 
     local cfg = container.gwConfig
-    -- prefix match: advanced filter branches ("HELPFUL|CANCELABLE|...") are
-    -- cancelable buffs as well
+    -- prefix match, advanced branches ("HELPFUL|CANCELABLE|...") are cancelable too
     if cfg.cancelButtons and group.filter and group.filter:sub(1, 7) == "HELPFUL" then
         button:SetCancelAuraButtons(cfg.cancelButtons)
     end
     if cfg.enableMouse == false then
-        -- pure display buttons (e.g. grid frames with tooltips disabled): no aura
-        -- tooltip and no mouse interception over the underlying unit button
         button:EnableMouse(false)
     end
     if cfg.tooltipAnchor then
@@ -633,12 +551,9 @@ local function BuildAuraButton(button, container, group)
         })
     end
 
-    -- every debuff group carries the region, the three state setting decides the
-    -- registration live: "ALL" puts the icon on every debuff with a dispel type,
-    -- "DISPELLABLE" only on the groups holding the player-dispellable half of the
-    -- split (showDispelIcon — for advanced slots that role can change with the
-    -- selected filters, the getter reads the CURRENT one), "OFF" on none
-    local dispelIconGetter = container.gwConfig and container.gwConfig.dispelIconEnabled
+    -- every debuff group carries the icon region, the setting registers it live: "ALL" on every debuff,
+    -- "DISPELLABLE" only on the player-dispellable half of the split (the role of advanced slots can change)
+    local dispelIconGetter = cfg.dispelIconEnabled
     if dispelIconGetter and group.isDebuff then
         GW.AddDispelTypeIcon(button, visual, group, function()
             local mode = dispelIconGetter()
@@ -647,12 +562,15 @@ local function BuildAuraButton(button, container, group)
         end)
     end
 
-    -- the getter decides the VISIBILITY (live, via UpdatePandemicHighlights) — the
-    -- region itself is always built when the host wires a setting, so enabling it
-    -- later never needs a reload
-    local pandemicSettingGetter = container.gwConfig and container.gwConfig.pandemicEnabled
+    -- built whenever the host wires the setting, so enabling it later needs no reload
+    local pandemicSettingGetter = cfg.pandemicEnabled
     if group.showPandemic and pandemicSettingGetter then
         GW.AddPandemicHighlight(button, visual, pandemicSettingGetter)
+    end
+
+    -- like the old unit frame auras: new buffs only, at twice their size
+    if cfg.newAuraAnimation and not group.isDebuff then
+        GW.AddAuraShownAnimation(button, visual, nil, 2)
     end
 
     if cfg.hideTooltipInCombat then
@@ -663,16 +581,36 @@ local function BuildAuraButton(button, container, group)
     SetAuraButtonSize(button, group.size, GetGroupTextPad(group))
 end
 
+-- every engine setter can trigger a container re-evaluation, with many containers (grids) a full re-apply per
+-- settings pass freezes the client; true when the inputs differ from the last applied ones, tables by reference
+local function InputsChanged(owner, key, ...)
+    local applied = owner.gwApplied
+    if not applied then
+        applied = {}
+        owner.gwApplied = applied
+    end
+
+    local last = applied[key]
+    local count = select("#", ...)
+    if last and last.n == count then
+        local changed = false
+        for i = 1, count do
+            if last[i] ~= select(i, ...) then
+                changed = true
+                break
+            end
+        end
+        if not changed then return false end
+    end
+
+    applied[key] = { n = count, ... }
+    return true
+end
+
 local function ApplyLayout(container)
     local cfg = container.gwConfig
 
-    -- every engine setter below can trigger a container re-evaluation — with many
-    -- containers (grids!) a full re-apply per settings pass freezes the client, so
-    -- each block is skipped when its inputs are unchanged
-    local flowSig = strjoin(":", cfg.vertical and "V" or "H", cfg.anchorPoint or "TOPLEFT",
-        cfg.growLeft and "L" or "R", cfg.growUp and "U" or "D", tostring(cfg.maximumLineSize or 0))
-    if container.gwAppliedFlowSig ~= flowSig then
-        container.gwAppliedFlowSig = flowSig
+    if InputsChanged(container, "flow", cfg.vertical, cfg.anchorPoint, cfg.growLeft, cfg.growUp, cfg.maximumLineSize) then
         container:SetFlowLayoutAxis(cfg.vertical and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal)
         container:SetFlowLayoutAnchorPoint(cfg.anchorPoint or "TOPLEFT")
         container:SetFlowLayoutGrowthDirection(
@@ -682,25 +620,18 @@ local function ApplyLayout(container)
         container:SetFlowLayoutMaximumLineSize(cfg.maximumLineSize or math.huge)
     end
 
+    local elementSpacing = cfg.elementSpacing or 3
+    local lineSpacing = cfg.lineSpacing or 20
+
     for index, group in ipairs(cfg.groups) do
         local textPad = GetGroupTextPad(group)
 
-        if group.gwAppliedFilter ~= group.filter then
-            group.gwAppliedFilter = group.filter
+        if InputsChanged(group, "filter", group.filter) then
             container:SetAuraGroupFilterString(group.key, group.filter)
         end
 
-        -- container-wide ignore list (cfg.excludeSpellIDs, e.g. the "Ignored Auras"
-        -- setting) is merged into every group's candidate filters. Reference compare
-        -- plus the settings generation (see RefreshAllAuraContainers) — the engine
-        -- keeps a secure copy, in-place table mutations need the generation bump
-        if group.gwAppliedCandidates ~= group.candidateFilters
-            or group.gwAppliedExclude ~= cfg.excludeSpellIDs
-            or group.gwAppliedGeneration ~= settingsGeneration then
-            group.gwAppliedCandidates = group.candidateFilters
-            group.gwAppliedExclude = cfg.excludeSpellIDs
-            group.gwAppliedGeneration = settingsGeneration
-
+        -- the container wide ignore list is merged into every group
+        if InputsChanged(group, "candidates", group.candidateFilters, cfg.excludeSpellIDs, settingsGeneration) then
             local candidateFilters = group.candidateFilters
             if cfg.excludeSpellIDs and next(cfg.excludeSpellIDs) then
                 candidateFilters = candidateFilters and CopyTable(candidateFilters, true) or {}
@@ -710,43 +641,38 @@ local function ApplyLayout(container)
         end
 
         local maxFrameCount = group.maxFrameCount or math.huge
-        if group.gwAppliedMaxCount ~= maxFrameCount then
-            group.gwAppliedMaxCount = maxFrameCount
+        if InputsChanged(group, "maxFrameCount", maxFrameCount) then
             container:SetAuraGroupMaxFrameCount(group.key, maxFrameCount)
+            -- 12.1.5 stops processing a disabled group entirely; 12.1.0 compat, the check goes with 12.1.5
+            if container.SetAuraGroupEnabled then
+                container:SetAuraGroupEnabled(group.key, maxFrameCount > 0)
+            end
         end
 
         local sortMethod = group.sortMethod or AuraContainerSortMethod.Default
         local sortDirection = group.sortDirection or AuraContainerSortDirection.Normal
-        if group.gwAppliedSortMethod ~= sortMethod or group.gwAppliedSortDirection ~= sortDirection then
-            group.gwAppliedSortMethod = sortMethod
-            group.gwAppliedSortDirection = sortDirection
+        if InputsChanged(group, "sort", sortMethod, sortDirection) then
             container:SetAuraGroupSortMethod(group.key, sortMethod, sortDirection)
         end
 
-        local layoutSig = strjoin(":", tostring(cfg.elementSpacing or 3), tostring(cfg.lineSpacing or 20),
-            tostring(group.size), tostring(textPad), tostring(group.forceNewLine or false), tostring(group.layoutIndex or index))
-        if group.gwAppliedLayoutSig ~= layoutSig then
-            group.gwAppliedLayoutSig = layoutSig
+        local forceNewLine = group.forceNewLine or false
+        local layoutIndex = group.layoutIndex or index
+        if InputsChanged(group, "layout", elementSpacing, lineSpacing, group.size, textPad, forceNewLine, layoutIndex) then
             container:SetAuraGroupLayout(group.key, {
-                elementSpacing = cfg.elementSpacing or 3,
-                lineSpacing = cfg.lineSpacing or 20,
-                -- spacing at GROUP boundaries (e.g. a forceNewLine transition) is governed
-                -- by the group values, not by element/lineSpacing — keep them in sync
-                groupSpacing = cfg.elementSpacing or 3,
-                groupLineSpacing = cfg.lineSpacing or 20,
+                elementSpacing = elementSpacing,
+                lineSpacing = lineSpacing,
+                -- group boundaries (forceNewLine) use the group values
+                groupSpacing = elementSpacing,
+                groupLineSpacing = lineSpacing,
                 elementWidth = group.size,
-                -- element height includes the duration text strip below the icon
                 elementHeight = group.size + textPad,
-                forceNewLine = group.forceNewLine or false,
-                layoutIndex = group.layoutIndex or index,
+                forceNewLine = forceNewLine,
+                layoutIndex = layoutIndex,
             })
         end
 
-        -- the flow layout does not set the frame size itself (only anchors) — apply
-        -- sizes best-effort: the access restriction (DenyTaintedAccessWhenAurasAreSecret)
-        -- covers the WHOLE button subtree including our own child frames while auras
-        -- are secret; failed buttons keep their creation size until the next layout
-        -- pass outside that state
+        -- the flow layout only anchors; sizes are best effort, buttons that fail while auras are secret
+        -- keep their size until the next pass
         ForEachGroupButton(container, group.key, function(button)
             if button.gwAppliedSize ~= group.size or button.gwAppliedTextPad ~= textPad then
                 pcall(SetAuraButtonSize, button, group.size, textPad)
@@ -755,17 +681,16 @@ local function ApplyLayout(container)
     end
 end
 
--- Maps the shared per-unit aura settings onto the two stacked containers of a
--- frame — ONE buffs group and ONE debuffs group (plus its dispel icon twin), so
--- an aura can never render twice. Growth/anchoring stay with the caller.
+-- Maps the shared per-unit aura settings onto the two stacked containers of a frame: one buffs group and
+-- one debuffs group (plus its dispel icon twin), so an aura never renders twice. Growth stays with the caller.
 --
 -- opts = {
 --     smallSize = 20, bigSize = 24,        -- buff / debuff button size
---     buffFilter = "all|none|advanced",    -- preset setting values
+--     buffFilter = "all|none|advanced",
 --     debuffFilter = "all|none|player|advanced",
---     buffAdvanced = {...}, debuffAdvanced = {...}, -- advanced filter tables
+--     buffAdvanced = {...}, debuffAdvanced = {...},
 --     sort = "DEFAULT",                    -- see GW.GetAuraSortPreset
---     excludeSpellIDs = {...},             -- ignore list ({[spellID] = true})
+--     excludeSpellIDs = {...},             -- {[spellID] = true}
 -- }
 function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
     local cfg = buffContainer.gwConfig
@@ -779,7 +704,6 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
     if opts.debuffFilter == "advanced" then
         debuffSuffix, debuffCandidates = GW.BuildAuraFilterSuffix(opts.debuffAdvanced)
     elseif opts.debuffFilter == "player" then
-        -- the "player" preset is just the PLAYER token on the single group
         debuffSuffix = "|PLAYER"
     end
 
@@ -807,7 +731,7 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
         group.sortDirection = sort.direction
         group.gwBaseFilter = group.gwBaseFilter or group.filter
         GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, debuffCandidates, nil))
-        -- gwBaseKey covers the dispel icon twin (see SplitDispelIconGroups)
+        -- gwBaseKey covers the dispel icon twin
         if (group.gwBaseKey or group.key) == "debuffs" then
             group.filter = group.gwBaseFilter .. debuffSuffix
             group.size = opts.bigSize
@@ -819,8 +743,7 @@ function GW.ApplyAuraContainerSettings(buffContainer, debuffContainer, opts)
     ApplyLayout(debuffContainer)
 end
 
--- The container only refreshes on UNIT_AURA — if the unit BEHIND the token changes
--- (pet swap, target change, roster update), UpdateAllAuras must be triggered
+-- the container only refreshes on UNIT_AURA, not when the unit behind the token changes
 local function AttachRefreshWatcher(container, config)
     if not config.refreshEvents then
         return
@@ -840,8 +763,7 @@ local function AttachRefreshWatcher(container, config)
     container.gwRefreshWatcher = watcher
 end
 
--- SetUnit plus the deferred first enable for containers that were created before
--- their unit existed (see the comment in CreateUnitAuraContainer)
+-- containers created without a unit get enabled on their first unit
 local function GwContainerSetUnit(container, unit)
     if not unit then
         return
@@ -853,35 +775,25 @@ local function GwContainerSetUnit(container, unit)
     end
 end
 
--- Single-button tracker container: the AuraContainer finds the aura in its secure
--- environment (works even while aura values are secret) and drives display widgets
--- engine-side — a StatusBar as remaining-duration bar (SetDurationBar) and/or a
--- FontString as application counter (SetApplicationCount). No Lua arithmetic on
--- duration/expirationTime is involved, so this is fully secret-proof.
--- Used by the classpower spec trackers (Shield of the Righteous, Metamorphosis,
--- pet Frenzy, Mongoose Fury, ...).
---
--- The inbound widgets MUST be descendants of the aura button (the container
--- validates this and forbids reparenting afterwards) — they are therefore built
--- inside createWidgets, as children of the button. The button is shown/hidden by
--- the container depending on whether the tracked aura is present, so the whole
--- display disappears automatically when the aura is missing.
+-- Single-button tracker for the classpower spec trackers (Shield of the Righteous, Metamorphosis, ...): the
+-- engine finds the aura even while it is secret and drives the widgets itself, no Lua math on durations.
+-- The widgets must be descendants of the button (validated, no reparenting afterwards), so they are built in
+-- createWidgets; the container hides the button while the aura is missing.
 --
 -- config = {
 --     name = "GwClassPowerTrackerX",     -- global frame name (optional)
---     parent = frame,                     -- default UIParent; position the returned
---                                         -- container yourself (normal frame)
+--     parent = frame,                     -- default UIParent, position the container yourself
 --     unit = "player",
---     filter = "HELPFUL",                 -- base filter string
---     spellIDs = { [132403] = true },     -- tracked spells ({[spellID] = true})
---     width = 164, height = 14,           -- button size (widgets usually fill it)
---     createWidgets = function(button)    -- build widgets as children of the button;
---         return { durationBar = bar,     --   optional: engine-driven decay bar
---                  durationText = fs,     --   optional: engine-driven countdown text
---                  counterText = fs }     --   optional: stacks (empty at 0/1 stacks)
+--     filter = "HELPFUL",
+--     spellIDs = { [132403] = true },
+--     width = 164, height = 14,           -- button size
+--     createWidgets = function(button)
+--         return { durationBar = bar,     -- optional: decay bar
+--                  durationText = fs,     -- optional: countdown text
+--                  counterText = fs }     -- optional: stacks
 --     end,
---     refreshEvents = { "UNIT_PET" },     -- events that trigger UpdateAllAuras
---     refreshUnit = "player",             -- unit for RegisterUnitEvent (nil = regular)
+--     refreshEvents = { "UNIT_PET" },
+--     refreshUnit = "player",
 -- }
 function GW.CreateAuraTrackerContainer(config)
     local container = CreateFrame("AuraContainer", config.name, config.parent or UIParent, "CustomAuraContainerTemplate")
@@ -892,10 +804,8 @@ function GW.CreateAuraTrackerContainer(config)
 
     container:AddAuraGroup("tracker", config.filter, {
         initializeFrame = function(button)
-            -- the flow layout only anchors, it never sizes — and after initialization
-            -- the button subtree becomes access restricted, so size it now
+            -- the button subtree is access restricted after initialization
             button:SetSize(config.width or 1, config.height or 1)
-            -- trackers are pure displays: no aura tooltip, no mouse interception
             button:EnableMouse(false)
 
             local widgets = config.createWidgets and config.createWidgets(button) or {}
@@ -915,7 +825,6 @@ function GW.CreateAuraTrackerContainer(config)
     container:SetAuraGroupCandidateFilters("tracker", { includeSpellIDs = config.spellIDs })
     container:SetAuraGroupMaxFrameCount("tracker", 1)
     container.GwSetUnit = GwContainerSetUnit
-    -- same unit guard as CreateUnitAuraContainer: no unit yet = stay disabled
     if config.unit then
         container.gwEnabled = true
         container:SetUnit(config.unit)
@@ -929,10 +838,8 @@ function GW.CreateAuraTrackerContainer(config)
     return container
 end
 
--- The corner dispel icon must only appear on auras this character can dispel —
--- a group boundary: icon-bearing groups split into the dispellable half (keeps
--- key + icon, gwDispelRole "include") and a twin for the rest ("exclude").
--- Candidate based, so exact even for secret auras. Preset roles are left alone.
+-- the corner dispel icon may only show on auras this character can dispel, exact even for secret auras only as
+-- a group boundary: icon groups split into the dispellable half ("include", keeps key and icon) and a twin
 local DISPEL_TWIN_FIELDS = {"size", "maxFrameCount", "isDebuff", "hideDuration", "iconInset", "bigFont", "showPandemic", "candidateFilters", "sortMethod", "sortDirection", "forceNewLine"}
 local function SplitDispelIconGroups(groups)
     local index = 1
@@ -961,7 +868,6 @@ function GW.CreateUnitAuraContainer(config)
 
     for index, group in ipairs(config.groups) do
         group.layoutIndex = group.layoutIndex or index
-        -- configured candidates = compose base, the appliers rebuild the effective table
         group.gwBaseCandidates = group.candidateFilters
         group.candidateFilters = GW.ComposeAuraGroupCandidates(group, nil, nil)
         container:AddAuraGroup(group.key, group.filter, {
@@ -970,11 +876,8 @@ function GW.CreateUnitAuraContainer(config)
     end
 
     container.GwSetUnit = GwContainerSetUnit
-    -- the grid frames are pre-created by the secure header BEFORE their units exist.
-    -- Binding unit-less containers to a fallback like "player" made every one of the
-    -- ~125 pre-created grid frames track the players own auras and build a full set
-    -- of skinned aura buttons for them (tens of MB, growing with every own aura) —
-    -- without a unit the container stays disabled until GwSetUnit delivers one
+    -- the secure header creates ~125 grid frames before their units exist, a fallback unit would build
+    -- skinned buttons for the players own auras on every one of them
     if config.unit then
         container.gwEnabled = true
         container:SetUnit(config.unit)
@@ -986,7 +889,7 @@ function GW.CreateUnitAuraContainer(config)
 
     ApplyLayout(container)
     EnsureTooltipStyle()
-    RegisterAuraContainer(container)
+    RegisterAuraContainer(container, config.onSettingsRefresh or ApplyLayout)
 
     return container
 end

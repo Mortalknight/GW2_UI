@@ -171,6 +171,7 @@ local function InitializeAuraButton(button, header, isDebuff, isEnchant, withDis
 
     if not isEnchant then
         GW.AddPandemicHighlight(button, visual, function() return GW.settings.playerAuras.pandemicHighlight end)
+        GW.AddAuraShownAnimation(button, visual, function() return GW.settings.playerAuras[header.auraKey].NewAuraAnimation end)
     end
     if isDebuff then
         GW.AddDispelTypeIcon(button, visual, { isDebuff = true }, function()

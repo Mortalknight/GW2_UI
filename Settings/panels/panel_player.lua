@@ -184,7 +184,7 @@ local function LoadPlayerPanel(sWindow)
     p_player_aura:AddOptionSlider(L["Height"], nil, { getterSetter = "playerAuras.buffs.IconHeight", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true, ["playerAuras.buffs.KeepSizeRatio"] = false}, groupHeaderName = L["Buffs"]})
     p_player_aura:AddOption(L["Keep Size Ratio"], nil, {getterSetter = "playerAuras.buffs.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("playerAuras.buffs.IconSize"); widget.title:SetText(value == true and L["Size"] or L["Width"]); GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"]})
     -- No longer feasible on Retail: the AuraContainer system blocks OnShow handlers on aura buttons (secret aspects)
-    p_player_aura:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "playerAuras.buffs.NewAuraAnimation", dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"], hidden = GW.Retail})
+    p_player_aura:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "playerAuras.buffs.NewAuraAnimation", callback = GW.UpdateAuraOptionRegions, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"], hidden = GW.Retail and GW.wowToc < 120105})
 
     p_player_aura:AddGroupHeader(L["Debuffs"])
     p_player_aura:AddOptionDropdown(L["Player Debuffs Growth Direction"], nil, { getterSetter = "playerAuras.debuffs.GrowDirection", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, optionsList = auraGrowthOptions, optionNames = auraGrowthOptionNames, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"]})
@@ -199,7 +199,7 @@ local function LoadPlayerPanel(sWindow)
     p_player_aura:AddOptionSlider(L["Size"], nil, { getterSetter = "playerAuras.debuffs.IconSize", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"]})
     p_player_aura:AddOptionSlider(L["Height"], nil, { getterSetter = "playerAuras.debuffs.IconHeight", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["playerAuras.enabled"] = true, ["playerAuras.debuffs.KeepSizeRatio"] = false}, groupHeaderName = L["Debuffs"]})
     p_player_aura:AddOption(L["Keep Size Ratio"], nil, {getterSetter = "playerAuras.debuffs.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("playerAuras.debuffs.IconSize"); widget.title:SetText(value == true and L["Size"] or L["Width"]); GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"]})
-    p_player_aura:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "playerAuras.debuffs.NewAuraAnimation", dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
+    p_player_aura:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "playerAuras.debuffs.NewAuraAnimation", callback = GW.UpdateAuraOptionRegions, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail and GW.wowToc < 120105})
 
 
     -- FADER
