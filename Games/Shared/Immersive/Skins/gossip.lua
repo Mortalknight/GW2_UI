@@ -937,8 +937,7 @@ local function LoadGossipSkin()
         QuestNPCModelTextScrollFrame:SetPoint("BOTTOMRIGHT", QuestModelScene.ModelTextFrame, -10, 6)
         QuestNPCModelTextScrollChildFrame:GwSetInside(QuestNPCModelTextScrollFrame)
 
-        GW.HandleTrimScrollBar(QuestNPCModelTextScrollFrame.ScrollBar)
-        GW.HandleScrollControls(QuestNPCModelTextScrollFrame)
+        GW.SkinSlimScrollFrame(QuestNPCModelTextScrollFrame)
         hooksecurefunc("QuestFrame_ShowQuestPortrait", function(frame, _, _, _, _, _, x, y)
             local mapFrame = QuestMapFrame:GetParent()
 

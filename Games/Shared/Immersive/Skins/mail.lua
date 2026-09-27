@@ -155,13 +155,7 @@ local function SkinOpenMailFrame()
     OpenAllMail:GwSkinButton(false, true)
     OpenAllMail:ClearAllPoints()
     OpenAllMail:SetPoint("CENTER",InboxFrame,"BOTTOM",0,114)
-    if GW.isModern then
-        GW.HandleTrimScrollBar(OpenMailScrollFrame.ScrollBar)
-        GW.HandleScrollControls(OpenMailScrollFrame)
-    else
-        OpenMailScrollFrame:GwSkinScrollFrame()
-        OpenMailScrollFrameScrollBar:GwSkinScrollBar()
-    end
+    GW.SkinSlimScrollFrame(OpenMailScrollFrame)
 
     OpenMailScrollFrame:SetPoint("TOPLEFT",OpenMailFrame,"TOPLEFT",8,-84)
     OpenMailScrollFrame:SetPoint("TOPRIGHT", OpenMailFrame, "TOPRIGHT", -26, -84)
@@ -235,7 +229,13 @@ local function SkinSendMailFrame()
         MailEditBox.ScrollBox.EditBox:SetTextColor(1, 1, 1)
         MailEditBox.ScrollBox:GwStripTextures()
         MailEditBox.ScrollBox:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 10, 10)
-        GW.HandleTrimScrollBar(MailEditBoxScrollBar)
+        -- the classic trim bar insets its track by 7 on each side, too much for the slim bar: mainlines minimal bar instead
+        MailEditBoxScrollBar:Hide()
+        local scrollBar = CreateFrame("EventFrame", nil, SendMailFrame, "MinimalScrollBar")
+        scrollBar:SetPoint("TOPLEFT", MailEditBox, "TOPRIGHT", 6, -4)
+        scrollBar:SetPoint("BOTTOMLEFT", MailEditBox, "BOTTOMRIGHT", 6, 5)
+        ScrollUtil.RegisterScrollBoxWithScrollBar(MailEditBox.ScrollBox, scrollBar)
+        GW.SkinSlimScrollBar(scrollBar)
     end
 
     SkinMoneyFrame()
@@ -257,8 +257,7 @@ local function SkinSendMailFrame()
 
     if GW.isModern then
         SendMailScrollFrame:GwStripTextures(true)
-        GW.HandleTrimScrollBar(SendMailScrollFrame.ScrollBar)
-        GW.HandleScrollControls(SendMailScrollFrame)
+        GW.SkinSlimScrollFrame(SendMailScrollFrame)
     end
 
     SendMailMoneyFrame:ClearAllPoints()

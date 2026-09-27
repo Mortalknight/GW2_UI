@@ -53,6 +53,8 @@ local function ApplyCalendarFrameSkin()
     SkinContainer(CalendarCreateEventInviteList)
     SkinContainer(CalendarViewEventDescriptionContainer, CalendarViewEventDescriptionScrollFrame)
     SkinContainer(CalendarCreateEventDescriptionContainer, CalendarCreateEventDescriptionScrollFrame)
+    GW.SkinSlimScrollBar(CalendarViewEventDescriptionContainer.ScrollBar)
+    GW.SkinSlimScrollBar(CalendarCreateEventDescriptionContainer.ScrollBar)
 
     CalendarCreateEventFrameButtonBackground:Hide()
     CalendarCreateEventMassInviteButtonBorder:Hide()

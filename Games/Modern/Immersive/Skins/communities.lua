@@ -408,8 +408,8 @@ local function SkinGuildInfo(info)
         end
     end
 
-    SkinScroll(info.MOTDScrollFrame)
-    SkinScroll(info.DetailsFrame)
+    GW.SkinSlimScrollFrame(info.MOTDScrollFrame)
+    GW.SkinSlimScrollFrame(info.DetailsFrame)
 end
 
 -- the art only fades out, the name and the text frame below the model are anchored to it
@@ -620,7 +620,7 @@ local function SkinInputBox(editBox)
 end
 
 local function SkinInputScrollText(scroll)
-    SkinScroll(scroll)
+    GW.SkinSlimScrollFrame(scroll)
     local editBox = scroll.EditBox
     editBox:SetTextInsets(TEXTBOX_PADDING, TEXTBOX_PADDING, 4, 4)
     editBox.Instructions:ClearAllPoints()
@@ -704,7 +704,7 @@ local function SkinGuildDialog(frame, title, closeButton, buttons)
     if container then
         container.NineSlice:Hide()
         GW.AddDetailsBackground(container)
-        SkinScroll(container.ScrollFrame)
+        GW.SkinSlimScrollFrame(container.ScrollFrame)
     end
 end
 

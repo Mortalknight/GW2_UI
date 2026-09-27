@@ -461,7 +461,6 @@ local function LoadQuestLogFrameSkin()
 	QuestNPCModelTextScrollFrame:SetPoint("BOTTOMRIGHT", QuestNPCModelTextFrame, -10, 6)
 	QuestNPCModelTextScrollChildFrame:GwSetInside(QuestNPCModelTextScrollFrame)
 
-	QuestNPCModelTextScrollFrame.ScrollBar:GwSkinScrollBar()
-	QuestNPCModelTextScrollFrame:GwSkinScrollFrame()
+	GW.SkinSlimScrollFrame(QuestNPCModelTextScrollFrame)
 end
 GW.LoadQuestLogFrameSkin = LoadQuestLogFrameSkin

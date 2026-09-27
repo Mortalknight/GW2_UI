@@ -112,17 +112,7 @@ local function SkinScrollFrames()
     selector.ScrollBar:SetPoint("TOPRIGHT", selector, "TOPRIGHT", 5, -5)
     selector.ScrollBar:SetPoint("BOTTOMRIGHT", selector, "BOTTOMRIGHT", 5, 5)
 
-    -- the macro text has the minimal bar on mainline, the old clients still give it the panel bar,
-    -- there it gets a minimal bar at mainlines offsets instead
-    local scrollBar = MacroFrameScrollFrame.ScrollBar
-    if not GW.isModern then
-        MacroFrameScrollFrameScrollBar:Hide()
-        scrollBar = CreateFrame("EventFrame", nil, MacroFrameTextBackground, "MinimalScrollBar")
-        scrollBar:SetPoint("TOPLEFT", MacroFrameScrollFrame, "TOPRIGHT", 6, -4)
-        scrollBar:SetPoint("BOTTOMLEFT", MacroFrameScrollFrame, "BOTTOMRIGHT", 6, 5)
-        ScrollUtil.InitScrollFrameWithScrollBar(MacroFrameScrollFrame, scrollBar)
-    end
-    GW.SkinSlimScrollBar(scrollBar)
+    GW.SkinSlimScrollFrame(MacroFrameScrollFrame, MacroFrameTextBackground)
 end
 
 local function SkinButtons()

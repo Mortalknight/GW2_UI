@@ -500,6 +500,19 @@ function GW.SkinSlimScrollBar(scrollBar)
     thumb.gwTex:SetVertexColor(1, 1, 1, 0.45)
 end
 
+-- the classic clients still give their text boxes the old panel slider, it makes way for mainlines minimal bar
+function GW.SkinSlimScrollFrame(scrollFrame, parent)
+    local scrollBar = scrollFrame.ScrollBar
+    if scrollBar:IsObjectType("Slider") then
+        scrollBar:Hide()
+        scrollBar = CreateFrame("EventFrame", nil, parent or scrollFrame:GetParent(), "MinimalScrollBar")
+        scrollBar:SetPoint("TOPLEFT", scrollFrame, "TOPRIGHT", 6, -4)
+        scrollBar:SetPoint("BOTTOMLEFT", scrollFrame, "BOTTOMRIGHT", 6, 5)
+        ScrollUtil.InitScrollFrameWithScrollBar(scrollFrame, scrollBar)
+    end
+    GW.SkinSlimScrollBar(scrollBar)
+end
+
 local function HandleItemButton(b, setInside)
     if b.gwSkinned then return end
 
