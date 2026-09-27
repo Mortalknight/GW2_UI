@@ -405,23 +405,19 @@ local function SetAuraButtonSize(button, size, textPad)
     button.gwAppliedTextPad = textPad
 end
 
--- Blizzards DefaultAuraDurationFormatter without the whitespace before the unit,
--- deDE/ruRU keep it and wide values overlap the neighbours
+-- GWs compact units like on the classic clients ("12s", "46m", "2h", "1d"); the seconds formatter uses the
+-- localized unit names, which are "min" or longer in some locales and overlap the neighbours
 local durationTextFormatter
 local function GetDurationTextFormatter()
     if not durationTextFormatter then
-        -- +1: curves promote to the next interval on exact matches, 90 stays "90s"
-        local maxIntervalCurve = C_CurveUtil.CreateCurve()
-        maxIntervalCurve:AddPoint(1 + (1.5 * 60), Enum.SecondsFormatterInterval.Minutes)
-        maxIntervalCurve:AddPoint(1 + (1.5 * 3600), Enum.SecondsFormatterInterval.Hours)
-        maxIntervalCurve:AddPoint(1 + (1.5 * 86400), Enum.SecondsFormatterInterval.Days)
-
-        durationTextFormatter = C_StringUtil.CreateSecondsFormatter()
-        durationTextFormatter:SetDefaultAbbreviation(Enum.SecondsFormatterAbbreviation.OneLetter)
-        durationTextFormatter:SetMinInterval(Enum.SecondsFormatterInterval.Seconds)
-        durationTextFormatter:SetMaxIntervalCurve(maxIntervalCurve)
-        durationTextFormatter:SetDesiredUnitCount(1)
-        durationTextFormatter:SetStripIntervalWhitespace(Enum.SecondsFormatterIntervalWhitespace.StripIgnoreLocale)
+        local rounding = Enum.NumericRuleFormatRounding
+        durationTextFormatter = C_StringUtil.CreateNumericRuleFormatter()
+        durationTextFormatter:SetBreakpoints({
+            { threshold = 0, step = 1, rounding = rounding.Down, format = "%.0fs" },
+            { threshold = 60, format = "%.0fm", components = { { div = 60, step = 1, rounding = rounding.Nearest } } },
+            { threshold = 3600, format = "%.0fh", components = { { div = 3600, step = 1, rounding = rounding.Nearest } } },
+            { threshold = 86400, format = "%.0fd", components = { { div = 86400, step = 1, rounding = rounding.Nearest } } },
+        })
     end
     return durationTextFormatter
 end
