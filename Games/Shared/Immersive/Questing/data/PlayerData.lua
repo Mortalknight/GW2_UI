@@ -99,4 +99,6 @@ GW.immersiveQuesting.playerScales = {
     [5548259] = {['sf'] = -10, ['x'] = 5, ['z'] = 8}, -- earthen female
     [5422149] = {['sf'] = 6, ['x'] = 5, ['z'] = 15}, -- haranir male
     [5422147] = {['sf'] = 5, ['x'] = 5, ['z'] = 7}, -- haranir female
+    [7478487] = p_blood_elf_M, -- skyborne elf male
+    [7478494] = p_blood_elf_F, -- skyborne elf female
 }

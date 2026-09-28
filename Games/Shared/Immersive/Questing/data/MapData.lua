@@ -170,6 +170,8 @@ GW.immersiveQuesting.mapBackgrounds = {
     [2424] = "Midnight/queldanas",
     [2432] = "Midnight/queldanas_intro",
     [2437] = "Midnight/zulaman",
+    [2600] = "Midnight/naigtal",
+    [2521] = "Forever/zephras_isle",
 }
 
 -- background textures by instanceID (mainly for dungeons)

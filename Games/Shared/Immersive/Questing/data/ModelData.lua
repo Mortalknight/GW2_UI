@@ -90,6 +90,8 @@ GW.immersiveQuesting.modelTweaks = {
     [5548259] = {['sf'] = -33, ['x'] = 38}, -- earthen female
     [5422149] = {['sf'] = -20.5, ['x'] = -10}, -- haranir male
     [5422147] = {['sf'] = -21, ['x'] = -15}, -- haranir female
+    [7478487] = {['sf'] = -25.9, ['x'] = 10}, -- skyborne elf male
+    [7478494] = {['sf'] = -30.5, ['x'] = 30}, -- skyborne elf female
 
     -- non-creature items/objects
     [1822634] = {['sf'] = -50, ['x'] = -250, ['z'] = -40, ['ia'] = -1, ['f'] = -0.7}, -- generic quest board
@@ -222,7 +224,10 @@ GW.immersiveQuesting.modelTweaks = {
     [6181816] = 8, -- decimus
     [6181818] = 7, -- perodius
     [6254251] = -47, -- amani child (kuvahn)
-    [6647868] = -47, -- haranir child (chua)
+    [6647868] = -47, -- haranir child male (chua)
+    [6647866] = -47, -- haranir child female (nayeli)
+    [1719397] = -47, -- tortollan child (trishe)
+    [1721534] = 20, -- cyclone construct
 }
 
 -- NPC (creatureID) tweaks; takes priority over model tweaks
@@ -254,6 +259,7 @@ GW.immersiveQuesting.npcTweaks = {
     [241140] = -25, [243948] = -25, -- moratari
     [95130] = {['x'] = 400}, -- moozy, displays as nelf for some reason, so just hide that
     [251601] = n_dundun, [242704] = n_dundun,
+    [251166] = 15, -- earth manifestation
 }
 
 -- display ID override by creature ID

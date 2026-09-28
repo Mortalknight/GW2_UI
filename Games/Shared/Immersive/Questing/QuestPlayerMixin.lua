@@ -110,6 +110,8 @@ local NO_KIT_FRAMES = {
     [10] = { [2] = 180, [3] = 180 }, -- blood elf
     [11] = { [2] = 180, [3] = 180 }, -- draenei
     [22] = { [2] = 180, [3] = 180 }, -- worgen
+    [95] = { [2] = 180, [3] = 180 }, -- alliance skyborne
+    [96] = { [2] = 180, [3] = 180 }, -- horde skyborne
     -- don't need any others because by MOP races we have the scroll kit
 }
 function GwImmersiveQuestingPlayerModelMixin:SetAction(action)
