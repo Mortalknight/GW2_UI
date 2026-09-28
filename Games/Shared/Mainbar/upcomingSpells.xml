@@ -37,24 +37,32 @@
                     </Anchors>
                 </Texture>
 
-                <FontString parentKey="name" justifyH="LEFT" text="Unknown">
-                    <Size x="200" y="20"></Size>
+                <FontString parentKey="name" justifyH="LEFT" text="Unknown" wordwrap="false">
+                    <Size x="220" y="20"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="60" y="8"></Anchor>
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="costString" justifyH="LEFT">
-                    <Size x="200" y="16"></Size>
+                <FontString parentKey="requirementString" justifyH="LEFT" wordwrap="false">
+                    <Size x="186" y="16"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="60" y="-12"></Anchor>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="levelString" text="??" justifyH="RIGHT">
-                    <Size x="70" y="50"></Size>
+                    <Size x="80" y="24"></Size>
                     <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT" x="-6"></Anchor>
+                        <!-- the level icon has a transparent margin, the coins below have none -->
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="-2" y="8"></Anchor>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="costString" justifyH="RIGHT">
+                    <Size x="80" y="16"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="-6" y="-12"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -82,18 +90,6 @@
                         <Anchor point="TOP" relativePoint="TOP" y="-10"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="rewardHeader" text="REWARD" justifyH="LEFT">
-                    <Size x="100" y="25"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-55"></Anchor>
-                    </Anchors>
-                </FontString>
-                <FontString parentKey="levelHeader" text="LEVEL" justifyH="RIGHT">
-                    <Size x="100" y="25"></Size>
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-20" y="-55"></Anchor>
-                    </Anchors>
-                </FontString>
                 <FontString parentKey="hint" justifyH="CENTER" hidden="true">
                     <Size x="300" y="120"></Size>
                     <Anchors>
@@ -104,9 +100,9 @@
         </Layers>
         <Frames>
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
-                <Size x="336" y="235"></Size>
+                <Size x="336" y="227"></Size>
                 <Anchors>
-                    <Anchor point="TOP" relativeKey="$parent.header" relativePoint="BOTTOM" x="-6" y="-20"></Anchor>
+                    <Anchor point="TOP" relativeKey="$parent.header" relativePoint="BOTTOM" x="-6" y="-28"></Anchor>
                 </Anchors>
             </Frame>
             <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
@@ -115,6 +111,13 @@
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-4" y="0"></Anchor>
                 </Anchors>
             </EventFrame>
+            <EditBox parentKey="search" inherits="GwSearchBoxTemplate" autoFocus="false">
+                <Size y="22"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPLEFT" x="3" y="6"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBar" relativePoint="TOPRIGHT" x="-3" y="6"/>
+                </Anchors>
+            </EditBox>
             <Button parentKey="CloseButton" inherits="GwStandardButton" text="Close">
                 <Size x="70" y="20" />
                 <Anchors>

@@ -129,7 +129,7 @@ local function Money_OnEnter(self)
         local color = GW.GWGetClassColor(g.class, true)
         local icon = g.faction == "Alliance" and ALLIANCE_ICON or g.faction == "Horde" and HORDE_ICON or NEUTRAL_ICON
         local label = format("%s%s", icon, g.name)
-        if g.name == GW.myname then
+        if g.name == GetStorage("name") then
             label = label .. " |TInterface/COMMON/Indicator-Green:14:14:0:-2|t"
         end
         GameTooltip:AddDoubleLine(label, FormatMoneyForChat(g.amount), color.r, color.g, color.b, 1, 1, 1)

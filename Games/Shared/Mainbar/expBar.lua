@@ -7,6 +7,8 @@ local Diff = GW.Diff
 local animations = GW.animations
 
 local FormatNumber = GW.GetLocalizedNumber or CommaValue or tostring
+-- clients that teach their spells at the class trainer get the upcoming level rewards
+local HAS_LEVEL_REWARDS = GW.Classic or GW.TBC or GW.Wrath or GW.Forever
 
 -- forward function defs
 local experiencebarAnimation = 0
@@ -81,7 +83,7 @@ local function xpbar_OnEnter(self)
 end
 
 local function xpbar_OnClick()
-    if GW.Forever and not IsAtMaxLevel() then
+    if HAS_LEVEL_REWARDS and not IsAtMaxLevel() then
         if GwLevelingRewards:IsShown() then
             GwLevelingRewards:Hide()
         else
@@ -536,7 +538,7 @@ local function UpdateData(self)
 
     experiencebarAnimation = valPrec
 
-    if GW.Forever and GW.IsUpcomingSpellAvalible() then
+    if HAS_LEVEL_REWARDS and GW.IsUpcomingSpellAvalible() then
         nextLevel = nextLevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon.png:20:20:0:0|t"
     end
 
@@ -666,11 +668,11 @@ local function LoadXPBar()
         queueUpdate(experiencebar)
     end
 
-    if GW.Forever then
+    if HAS_LEVEL_REWARDS then
         GW.LoadUpcomingSpells()
     end
 
-    if GW.isModern then
+    if GW.isModern or HAS_LEVEL_REWARDS then
         experiencebar.rightButton:SetScript("OnClick", xpbar_OnClick)
         experiencebar.rightButton:SetScript(
             "OnEnter",

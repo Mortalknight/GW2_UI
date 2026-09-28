@@ -422,21 +422,24 @@ local function SetPointsRestricted(frame)
 end
 GW.SetPointsRestricted = SetPointsRestricted
 
-local function FormatMoneyForChat(amount)
+-- hideEmptyUnits drops the zero silver and copper, like blizzards price tags
+local function FormatMoneyForChat(amount, hideEmptyUnits)
     local str, coppercolor, silvercolor, goldcolor = "", "|cffb16022", "|cffaaaaaa", "|cffddbc44"
 
     local value = abs(amount)
     local gold = math.floor(value / (COPPER_PER_SILVER * SILVER_PER_GOLD))
     local silver = math.floor((value - (gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
     local copper = mod(value, COPPER_PER_SILVER)
+    local showSilver = silver > 0 or (gold > 0 and not hideEmptyUnits)
+    local showCopper = copper > 0 or not hideEmptyUnits or value == 0
 
     if gold > 0 then
-        str = format("%s%s |r|TInterface/AddOns/GW2_UI/textures/icons/coins.png:12:12:0:0:64:32:22:42:1:20|t%s", goldcolor, GW.GetLocalizedNumber(gold), " ")
+        str = format("%s%s |r|TInterface/AddOns/GW2_UI/textures/icons/coins.png:12:12:0:0:64:32:22:42:1:20|t%s", goldcolor, GW.GetLocalizedNumber(gold), (showSilver or showCopper) and " " or "")
     end
-    if silver > 0 or gold > 0 then
-        str = format("%s%s%d |r|TInterface/AddOns/GW2_UI/textures/icons/coins.png:12:12:0:0:64:32:43:64:1:20|t%s", str, silvercolor, silver, (copper > 0 or gold > 0) and " " or "")
+    if showSilver then
+        str = format("%s%s%d |r|TInterface/AddOns/GW2_UI/textures/icons/coins.png:12:12:0:0:64:32:43:64:1:20|t%s", str, silvercolor, silver, (copper > 0 or gold > 0) and showCopper and " " or "")
     end
-    if copper > 0 or value == 0 or value > 0 then
+    if showCopper then
         str = format("%s%s%d |r|TInterface/AddOns/GW2_UI/textures/icons/coins.png:12:12:0:0:64:32:0:21:1:20|t", str, coppercolor, copper)
     end
 

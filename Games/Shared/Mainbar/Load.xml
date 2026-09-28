@@ -4,6 +4,8 @@
     <Script file ="raidControl.lua"/>
     <Script file ="altPowerBar.lua"/>
     <Script file ="totemBar.lua"/>
+    <Include file ="upcomingSpells.xml"/>
+    <Script file ="upcomingSpells.lua"/>
     <Script file ="expBar.lua"/>
     <Script file ="5sr.lua"/>
 </Ui>
