@@ -229,13 +229,15 @@ local function SkinSendMailFrame()
         MailEditBox.ScrollBox.EditBox:SetTextColor(1, 1, 1)
         MailEditBox.ScrollBox:GwStripTextures()
         MailEditBox.ScrollBox:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 10, 10)
-        -- the classic trim bar insets its track by 7 on each side, too much for the slim bar: mainlines minimal bar instead
-        MailEditBoxScrollBar:Hide()
-        local scrollBar = CreateFrame("EventFrame", nil, SendMailFrame, "MinimalScrollBar")
-        scrollBar:SetPoint("TOPLEFT", MailEditBox, "TOPRIGHT", 6, -4)
-        scrollBar:SetPoint("BOTTOMLEFT", MailEditBox, "BOTTOMRIGHT", 6, 5)
-        ScrollUtil.RegisterScrollBoxWithScrollBar(MailEditBox.ScrollBox, scrollBar)
-        GW.SkinSlimScrollBar(scrollBar)
+        -- blizzard already pairs the box with this bar; its track is inset by 7 on each side, too much for the slim bar
+        MailEditBoxScrollBar:ClearAllPoints()
+        MailEditBoxScrollBar:SetPoint("TOPLEFT", MailEditBox, "TOPRIGHT", 6, -4)
+        MailEditBoxScrollBar:SetPoint("BOTTOMLEFT", MailEditBox, "BOTTOMRIGHT", 6, 5)
+        GW.SkinSlimScrollBar(MailEditBoxScrollBar)
+        MailEditBoxScrollBar.Track:ClearAllPoints()
+        MailEditBoxScrollBar.Track:SetPoint("TOPLEFT", 0, -20)
+        MailEditBoxScrollBar.Track:SetPoint("BOTTOMRIGHT", 0, 20)
+        MailEditBoxScrollBar:GetThumb():SetPoint("LEFT", 1, 0)
     end
 
     SkinMoneyFrame()
