@@ -638,7 +638,7 @@ local function animateAzeriteBar(self, elapsed)
 end
 
 local function updateBarSize(self)
-    local m = (UIParent:GetWidth() - 180) / 10
+    local m = (self:GetWidth() - 180) / 10
     local i = 1
     for _, v in ipairs(self.barOverlay.barSep) do
         local rm = (m * i) + 90
@@ -647,7 +647,7 @@ local function updateBarSize(self)
         i = i + 1
     end
 
-    m = (UIParent:GetWidth() - 180)
+    m = (self:GetWidth() - 180)
     self.barOverlay.dubbleBarSep:SetWidth(m)
     self.barOverlay.dubbleBarSep:ClearAllPoints()
     self.barOverlay.dubbleBarSep:SetPoint("LEFT", self, "LEFT", 90, 0)
@@ -732,6 +732,7 @@ local function LoadXPBar()
     experiencebar.CurrentLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
     updateBarSize(experiencebar)
+    experiencebar:SetScript("OnSizeChanged", updateBarSize)
 
     experiencebar:SetScript("OnEvent", xpbar_OnEvent)
 
