@@ -4,7 +4,7 @@ local L = GW.L
 
 local TRAINER_CACHE_KEY = "upcomingTrainerRewards"
 local PET_TRAINER_CACHE_KEY = "upcomingPetTrainerRewards"
-local TRAINER_CACHE_VERSION = 4
+local TRAINER_CACHE_VERSION = 6
 local TRAINER_FILTERS = {"available", "unavailable", "used"}
 local LEVEL_ICON = " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon.png:20:20:0:0|t"
 
@@ -12,16 +12,16 @@ local trainableRewards = {}
 local upcomingLevelRewards = {}
 local petTrainableRewards = {}
 local petUpcomingRewards = {}
--- "name (rank)" of every listed reward, the way the trainer names its requirements
-local pendingRewardNames = {}
+-- "name (rank)" of every trainer reward, the way the trainer names its requirements; true while not learned
+local rewardPending = {}
 -- pets learn at the pet trainer on these clients, wrath pets use their own talent tree
 local HAS_PET_TRAINERS = GW.myclass == "HUNTER" and (GW.Classic or GW.TBC or GW.Forever)
 local scanningTrainer = false
 local dirty = true
 
--- the trainer API: forever has the mainline one (step index, icon and level in the service info),
--- the classic clients still have the old globals
-local MAINLINE_TRAINER = GetTrainerServiceStepIndex ~= nil
+-- forever has the mainline GetTrainerServiceInfo (icon and level in it), the classic clients the old one;
+-- same global on both, and the classic binaries have GetTrainerServiceStepIndex too
+local MAINLINE_TRAINER = GW.Forever
 
 local function IsClassOrPetTrainer()
     if C_Trainer and C_Trainer.GetTrainerType then
@@ -31,13 +31,28 @@ local function IsClassOrPetTrainer()
     return not IsTradeskillTrainer()
 end
 
--- forever has no per service flag and reports its pet trainers as general ones: the player knows the learned
--- services of a class trainer, a pet trainer teaches through spells of its own that nobody knows afterwards;
--- nil without learned services
+-- for trainers without pet spell flags, needs all services listed; nil while undecidable
 local function IsPetTrainerOffer(rewards)
     if C_Trainer and C_Trainer.GetTrainerType and C_Trainer.GetTrainerType() == Enum.TrainerType.Pet then
         return true
     end
+
+    -- classic: only the class trainer teaches in the skill lines of the spell book
+    if not MAINLINE_TRAINER then
+        local spellBookLines = {}
+        for tab = 1, GetNumSpellTabs() do
+            spellBookLines[GetSpellTabInfo(tab)] = true
+        end
+        for index = 1, GetNumTrainerServices() do
+            if spellBookLines[GetTrainerServiceSkillLine(index) or ""] then
+                return false
+            end
+        end
+        return true
+    end
+
+    -- forever reports its pet trainers as general ones: the player knows the learned services of a class trainer,
+    -- a pet trainer teaches through spells of its own that nobody knows afterwards
     local hasLearned = false
     for _, reward in ipairs(rewards) do
         if reward.known and reward.spellID then
@@ -55,10 +70,10 @@ end
 local function GetTrainerServiceRequirements(index)
     local requirements
     for i = 1, GetTrainerServiceNumAbilityReq(index) do
-        local ability = GetTrainerServiceAbilityReq(index, i)
+        local ability, hasReq = GetTrainerServiceAbilityReq(index, i)
         if ability then
             requirements = requirements or {}
-            tinsert(requirements, ability)
+            tinsert(requirements, {name = ability, met = hasReq})
         end
     end
     return requirements
@@ -124,33 +139,38 @@ local function CacheTrainerRewards()
         end
     end
 
+    local isPetTrainer = false
+    if #petRewards == 0 and HAS_PET_TRAINERS then
+        isPetTrainer = IsPetTrainerOffer(rewards)
+    end
+
     for filter in pairs(restore) do
         SetTrainerServiceTypeFilter(filter, false)
     end
 
     scanningTrainer = false
 
-    if not IsTrainerServiceLearnSpell then
-        local isPetTrainer = IsPetTrainerOffer(rewards)
-        if isPetTrainer == nil then
-            return
-        elseif isPetTrainer then
-            rewards, petRewards = petRewards, rewards
-        end
+    if isPetTrainer == nil then
+        return
+    elseif isPetTrainer then
+        rewards, petRewards = petRewards, rewards
     end
+    -- unflagged pet spells on classic are learned by the hunter himself, so their levels are his
+    local playerLevels = isPetTrainer and not MAINLINE_TRAINER or nil
 
     if #rewards > 0 then
         GW.SetStorage(TRAINER_CACHE_KEY, {version = TRAINER_CACHE_VERSION, rewards = rewards})
     end
     if #petRewards > 0 then
-        GW.SetStorage(PET_TRAINER_CACHE_KEY, {version = TRAINER_CACHE_VERSION, rewards = petRewards})
+        GW.SetStorage(PET_TRAINER_CACHE_KEY, {version = TRAINER_CACHE_VERSION, rewards = petRewards, playerLevels = playerLevels})
     end
 end
 
 local function GetTrainerCache(key)
     local cache = GW.GetStorage(key)
-
-    return cache and cache.version == TRAINER_CACHE_VERSION and cache.rewards or nil
+    if cache and cache.version == TRAINER_CACHE_VERSION then
+        return cache.rewards, cache.playerLevels
+    end
 end
 
 -- pet trainer spells only teach the pet, so their state is the one of the last visit
@@ -211,11 +231,50 @@ local function SortByLevel(a, b)
     return a.level < b.level
 end
 
+local function GetRewardKey(reward)
+    return reward.subText and reward.subText ~= "" and format("%s (%s)", reward.name, reward.subText) or reward.name
+end
+
+-- requirements outside the trainer offer (talents) keep the state of the last visit
+local function IsRequirementMet(requirement)
+    local pending = rewardPending[requirement.name]
+    if pending == nil then
+        return requirement.met
+    end
+    return not pending
+end
+
+local function IsRewardTrainable(reward, level)
+    if reward.level > level then
+        return false
+    end
+    for _, requirement in ipairs(reward.requirements or {}) do
+        if not IsRequirementMet(requirement) then
+            return false
+        end
+    end
+    return true
+end
+
 local function UpdateUpcomingSpells()
     wipe(trainableRewards)
     wipe(upcomingLevelRewards)
 
     local seen, seenNames = {}, {}
+    local classRewards = GetTrainerCache(TRAINER_CACHE_KEY) or {}
+    local petRewards, petPlayerLevels
+    if HAS_PET_TRAINERS then
+        petRewards, petPlayerLevels = GetTrainerCache(PET_TRAINER_CACHE_KEY)
+    end
+    petRewards = petRewards or {}
+
+    wipe(rewardPending)
+    for _, reward in ipairs(classRewards) do
+        rewardPending[GetRewardKey(reward)] = not IsRewardKnown(reward)
+    end
+    for _, reward in ipairs(petRewards) do
+        rewardPending[GetRewardKey(reward)] = not IsRewardKnown(reward, true)
+    end
 
     ForEachFutureSpell(function(spellID, name, subName)
         AddUpcomingSpell(seen, spellID)
@@ -232,7 +291,7 @@ local function UpdateUpcomingSpells()
         end
     end
 
-    for _, reward in ipairs(GetTrainerCache(TRAINER_CACHE_KEY) or {}) do
+    for _, reward in ipairs(classRewards) do
         local key = reward.name .. (reward.subText or "")
         if not seenNames[key] and not (reward.spellID and seen[reward.spellID]) and not IsRewardKnown(reward) then
             seenNames[key] = true
@@ -240,7 +299,7 @@ local function UpdateUpcomingSpells()
                 seen[reward.spellID] = true
             end
 
-            tinsert(reward.level > GW.mylevel and upcomingLevelRewards or trainableRewards, reward)
+            tinsert(IsRewardTrainable(reward, GW.mylevel) and trainableRewards or upcomingLevelRewards, reward)
         end
     end
 
@@ -250,25 +309,14 @@ local function UpdateUpcomingSpells()
     -- the pet trainer levels are the ones of the pet
     wipe(petTrainableRewards)
     wipe(petUpcomingRewards)
-    if HAS_PET_TRAINERS then
-        local petLevel = UnitExists("pet") and UnitLevel("pet") or GW.mylevel
-        for _, reward in ipairs(GetTrainerCache(PET_TRAINER_CACHE_KEY) or {}) do
-            if not IsRewardKnown(reward, true) then
-                tinsert(reward.level > petLevel and petUpcomingRewards or petTrainableRewards, reward)
-            end
-        end
-        table.sort(petTrainableRewards, SortByLevel)
-        table.sort(petUpcomingRewards, SortByLevel)
-    end
-
-    wipe(pendingRewardNames)
-    for _, rewards in ipairs({trainableRewards, upcomingLevelRewards, petTrainableRewards, petUpcomingRewards}) do
-        for _, reward in ipairs(rewards) do
-            if reward.name then
-                pendingRewardNames[reward.subText and reward.subText ~= "" and format("%s (%s)", reward.name, reward.subText) or reward.name] = true
-            end
+    local petLevel = not petPlayerLevels and UnitExists("pet") and UnitLevel("pet") or GW.mylevel
+    for _, reward in ipairs(petRewards) do
+        if not IsRewardKnown(reward, true) then
+            tinsert(IsRewardTrainable(reward, petLevel) and petTrainableRewards or petUpcomingRewards, reward)
         end
     end
+    table.sort(petTrainableRewards, SortByLevel)
+    table.sort(petUpcomingRewards, SortByLevel)
 
     dirty = false
 end
@@ -300,14 +348,14 @@ local function GetRewardDisplay(elementData)
     return icon, name, subText
 end
 
--- requirements still waiting in the list are red, like at the trainer; the rest keeps the text color
+-- unmet requirements are red, like at the trainer; the rest keeps the text color
 local function GetRequirementText(requirements)
     if not requirements then
         return nil
     end
     local texts = {}
     for _, requirement in ipairs(requirements) do
-        tinsert(texts, pendingRewardNames[requirement] and RED_FONT_COLOR:WrapTextInColorCode(requirement) or requirement)
+        tinsert(texts, IsRequirementMet(requirement) and requirement.name or RED_FONT_COLOR:WrapTextInColorCode(requirement.name))
     end
     return REQUIRES_LABEL .. " " .. table.concat(texts, ", ")
 end
