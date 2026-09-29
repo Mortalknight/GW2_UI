@@ -1163,11 +1163,6 @@ local function setupMicroButtons(mbf)
         cref:HookScript("OnLeave", GameTooltip_Hide)
         cref:HookScript("OnEvent", GW.Friends_OnEvent)
         cref:HookScript("OnClick", GW.Friends_OnClick)
-        cref:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE")
-        cref:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE")
-        cref:RegisterEvent("BN_FRIEND_INFO_CHANGED")
-        cref:RegisterEvent("FRIENDLIST_UPDATE")
-        cref:RegisterEvent("CHAT_MSG_SYSTEM")
         cref:RegisterEvent("MODIFIER_STATE_CHANGED")
     else
         cref = CharacterMicroButton
