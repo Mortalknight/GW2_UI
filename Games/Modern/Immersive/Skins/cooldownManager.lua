@@ -1,60 +1,100 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local CooldownManagerFunctions = {}
+local WHITE = "Interface/AddOns/GW2_UI/textures/uistuff/white.png"
+local ARROW = "Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png"
+local SEPARATOR = "Interface/AddOns/GW2_UI/textures/bag/bag-sep.png"
+local ROUND_ICON_MASK = 6707800
+local ICON_OVERLAY_ATLAS = "UI-HUD-CoolDownManager-IconOverlay"
+local BAR_BACKGROUND_ATLAS = "UI-HUD-CoolDownManager-Bar-BG"
 
-local function updateCollapse(self, collapsed)
-    if collapsed then
-        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        self.Icon:SetRotation(1.570796325)
-    else
-        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        self.Icon:SetRotation(0)
+local function ForEachTexture(frame, func)
+    for _, region in ipairs({frame:GetRegions()}) do
+        if region:IsObjectType("Texture") then
+            func(region)
+        end
     end
 end
 
-local function updateTextColor(self, r, g, b)
-    if r ~= 1 or g ~= 1 or b ~= 1 then
-        self:SetTextColor(1, 1, 1)
-    end
+-- atlases can be secret on these frames
+local function HasAtlas(region, atlas)
+    local current = region:GetAtlas()
+    return GW.NotSecretValue(current) and current == atlas
 end
 
-local function SkinHeaders(header)
-    if header.gwSkinned then return end
+---------- the category headers of the settings window ----------
 
-    if header.HighlightMiddle then header.HighlightMiddle:SetAlpha(0) end
-    if header.HighlightLeft then header.HighlightLeft:SetAlpha(0) end
-    if header.HighlightRight then header.HighlightRight:SetAlpha(0) end
-    if header.Middle then header.Middle:Hide() end
-    if header.Left then header.Left:Hide() end
-    if header.Right then header.Right:Hide() end
+-- collapsed categories point their arrow to the side
+local function UpdateCollapseArrow(header, collapsed)
+    header.gwArrow:SetRotation(collapsed and math.pi / 2 or 0)
+end
+
+local function SkinCategoryHeader(header)
+    for _, key in ipairs({"Left", "Middle", "Right"}) do
+        if header[key] then
+            header[key]:Hide()
+        end
+        if header["Highlight" .. key] then
+            header["Highlight" .. key]:SetAlpha(0)
+        end
+    end
 
     header:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
     header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-    header:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
-    header:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+    header:SetNormalTexture(SEPARATOR)
+    header:SetHighlightTexture(SEPARATOR)
     header:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+    for _, texture in ipairs({header:GetNormalTexture(), header:GetHighlightTexture()}) do
+        texture:ClearAllPoints()
+        texture:SetPoint("TOPLEFT", header, "TOPLEFT", 1, -1)
+        texture:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -1, 1)
+    end
 
-    header:GetNormalTexture():ClearAllPoints()
-    header:GetNormalTexture():SetPoint("TOPLEFT", header, "TOPLEFT", 1, -1)
-    header:GetNormalTexture():SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -1, 1)
-
-    header:GetHighlightTexture():ClearAllPoints()
-    header:GetHighlightTexture():SetPoint("TOPLEFT", header, "TOPLEFT", 1, -1)
-    header:GetHighlightTexture():SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -1, 1)
-
-    header.Name:SetTextColor(1, 1, 1)
-    header.Icon = header:CreateTexture(nil, "ARTWORK")
-    header.Icon:SetSize(16, 16)
-    header.Icon:SetPoint("RIGHT", header, "RIGHT", -4, 0)
-    updateCollapse(header, false)
-    hooksecurefunc(header, "UpdateCollapsedState", updateCollapse)
-    hooksecurefunc(header.Name, "SetTextColor", updateTextColor)
-
-    header.gwSkinned = true
+    GW.LockFontStringColor(header.Name, 1, 1, 1)
+    header.gwArrow = header:CreateTexture(nil, "ARTWORK")
+    header.gwArrow:SetSize(16, 16)
+    header.gwArrow:SetPoint("RIGHT", header, "RIGHT", -4, 0)
+    header.gwArrow:SetTexture(ARROW)
+    UpdateCollapseArrow(header, false)
+    hooksecurefunc(header, "UpdateCollapsedState", UpdateCollapseArrow)
 end
 
-function CooldownManagerFunctions:CountText(text, parent)
+-- the spells and auras of a category: square icons with a light highlight
+local function SkinSettingItem(item)
+    local icon = item.Icon
+    if not icon then return end
+    if item.Highlight then
+        item.Highlight:SetColorTexture(1, 1, 1, 0.25)
+        item.Highlight:SetAllPoints(icon)
+    end
+    GW.HandleIcon(icon, true)
+end
+
+local skinnedHeaders = setmetatable({}, {__mode = "k"})
+local hookedItemPools = setmetatable({}, {__mode = "k"})
+
+local function SkinCategories(content)
+    if not content then return end
+    for _, category in ipairs({content:GetChildren()}) do
+        local header = category.Header
+        if header and not skinnedHeaders[header] then
+            skinnedHeaders[header] = true
+            SkinCategoryHeader(header)
+        end
+
+        local pool = category.itemPool
+        if pool and not hookedItemPools[pool] then
+            hookedItemPools[pool] = true
+            GW.SkinPoolFrames(pool, SkinSettingItem)
+            hooksecurefunc(pool, "Acquire", function(acquiredFrom) GW.SkinPoolFrames(acquiredFrom, SkinSettingItem) end)
+        end
+    end
+end
+
+---------- the cooldown viewers ----------
+
+-- stack and charge counts in the top right corner
+local function SkinCountText(text, parent)
     text:ClearAllPoints()
     text:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, 0)
     text:SetJustifyH("RIGHT")
@@ -62,252 +102,167 @@ function CooldownManagerFunctions:CountText(text, parent)
     text:SetTextColor(1, 1, 0.6)
 end
 
-function CooldownManagerFunctions:UpdateTextContainer(container)
-    local countText = container.Applications and container.Applications.Applications
-    if countText then
-        CooldownManagerFunctions:CountText(countText, container)
+-- a square icon in the backdrop of our action buttons; blizzards round mask becomes a plain square,
+-- the ring over it goes
+local function SkinIcon(container, icon)
+    local stacks = container.Applications and container.Applications.Applications
+    local charges = container.ChargeCount and container.ChargeCount.Current
+    for _, text in ipairs({stacks or false, charges or false}) do
+        if text then
+            SkinCountText(text, container)
+        end
     end
-
-    local chargeText = container.ChargeCount and container.ChargeCount.Current
-    if chargeText then
-        CooldownManagerFunctions:CountText(chargeText, container)
-    end
-end
-
-function CooldownManagerFunctions:UpdateTextBar(bar)
-    if bar.Name then
-        bar.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
-    end
-
-    if bar.Duration then
-        bar.Duration:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
-    end
-end
-
---TODO
-function CooldownManagerFunctions:RefreshIconBorder()
-    if self.DebuffBorder then
-        self.DebuffBorder.Texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-	end
-end
-
-function CooldownManagerFunctions:SkinIcon(container, icon)
-    CooldownManagerFunctions:UpdateTextContainer(container)
     icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     if not container.gwBackdrop then
-        local backDrop = CreateFrame("Frame", nil, container, "GwActionButtonBackdropTmpl")
-        local backDropSize = 1
-
-        backDrop:SetPoint("TOPLEFT", container, "TOPLEFT", -backDropSize, backDropSize)
-        backDrop:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", backDropSize, -backDropSize)
-
-        container.gwBackdrop = backDrop
+        container.gwBackdrop = CreateFrame("Frame", nil, container, "GwActionButtonBackdropTmpl")
+        container.gwBackdrop:SetPoint("TOPLEFT", container, "TOPLEFT", -1, 1)
+        container.gwBackdrop:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", 1, -1)
+    end
+    local alpha = tonumber(GW.settings.actionbars.backgroundAlpha)
+    for _, key in ipairs({"bg", "border1", "border2", "border3", "border4"}) do
+        container.gwBackdrop[key]:SetAlpha(alpha)
     end
 
-    local alpha = tonumber(GW.settings.actionbars.backgroundAlpha)
-    container.gwBackdrop.bg:SetAlpha(alpha)
-    container.gwBackdrop.border1:SetAlpha(alpha)
-    container.gwBackdrop.border2:SetAlpha(alpha)
-    container.gwBackdrop.border3:SetAlpha(alpha)
-    container.gwBackdrop.border4:SetAlpha(alpha)
+    ForEachTexture(container, function(region)
+        local texture = region:GetTexture()
+        if HasAtlas(region, ICON_OVERLAY_ATLAS) then
+            region:SetAlpha(0)
+        elseif GW.NotSecretValue(texture) and texture == ROUND_ICON_MASK then
+            region:SetTexture(WHITE)
+        end
+    end)
+end
 
-    for _, region in next, { container:GetRegions() } do
-        if region:IsObjectType("Texture") then
-            local texture = region:GetTexture()
-            local atlas = region:GetAtlas()
-
-            if GW.NotSecretValue(texture) and texture == 6707800 then
-                region:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
-            elseif GW.NotSecretValue(atlas) and atlas == "UI-HUD-CoolDownManager-IconOverlay" then -- 6704514
-                region:SetAlpha(0)
-            end
+-- a bar with its icon in front: our bar texture and spark over our status bar background
+local function SkinBar(frame, bar)
+    for _, text in ipairs({bar.Name or false, bar.Duration or false}) do
+        if text then
+            text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
         end
     end
-end
-
-function CooldownManagerFunctions:RefreshCooldownInfo()
-    local pipTexture = self:GetPipTexture()
-    pipTexture:Hide()
-end
-
-function CooldownManagerFunctions:SkinBar(frame, bar)
-    CooldownManagerFunctions:UpdateTextBar(bar)
-
     if frame.Icon then
         bar:SetPoint("LEFT", frame.Icon, "RIGHT", 2, 0)
-
-        CooldownManagerFunctions:SkinIcon(frame.Icon, frame.Icon.Icon)
+        SkinIcon(frame.Icon, frame.Icon.Icon)
     end
 
-    for _, region in next, { bar:GetRegions() } do
-        if region:IsObjectType("Texture") then
-            local atlas = region:GetAtlas()
-
-            if atlas == "UI-HUD-CoolDownManager-Bar-BG" then
-                region:SetAlpha(0)
-                if not frame.GwStatusBarBackground then
-                    frame.GwStatusBarBackground = CreateFrame("Frame", nil, frame, "GwStatusBarBackground")
-                    frame.GwStatusBarBackground:ClearAllPoints()
-                    frame.GwStatusBarBackground:SetAllPoints(frame.Bar)
-                    frame.GwStatusBarBackground:SetFrameStrata("BACKGROUND")
-                end
-                break
-            end
+    ForEachTexture(bar, function(region)
+        if HasAtlas(region, BAR_BACKGROUND_ATLAS) then
+            region:SetAlpha(0)
         end
+    end)
+    if not frame.GwStatusBarBackground then
+        frame.GwStatusBarBackground = CreateFrame("Frame", nil, frame, "GwStatusBarBackground")
+        frame.GwStatusBarBackground:SetAllPoints(bar)
+        frame.GwStatusBarBackground:SetFrameStrata("BACKGROUND")
     end
 
-    local barTex = bar:GetStatusBarTexture()
-    barTex:SetTexCoord(0, 1, 0, 1)
-    barTex:SetVertexColor(1, 1, 1, 1)
-    barTex:ClearAllPoints()
-    barTex:GwSetInside(frame.GwStatusBarBackground)
+    local fill = bar:GetStatusBarTexture()
+    fill:SetTexCoord(0, 1, 0, 1)
+    fill:SetVertexColor(1, 1, 1, 1)
+    fill:ClearAllPoints()
+    fill:GwSetInside(frame.GwStatusBarBackground)
     bar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/rage.png")
 
-    bar.Pip:SetHeight(bar:GetHeight())
-    bar.Pip:SetTexCoord(0, 1, 0, 1)
-    bar.Pip:SetWidth(6)
-    bar.Pip:SetBlendMode("BLEND")
-    bar.Pip:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/ragespark.png")
+    local spark = bar.Pip
+    spark:SetSize(6, bar:GetHeight())
+    spark:SetTexCoord(0, 1, 0, 1)
+    spark:SetBlendMode("BLEND")
+    spark:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/ragespark.png")
 end
 
-function CooldownManagerFunctions:RefreshSpellCooldownInfo()
-    if not self.Cooldown then return end
-    self.Cooldown:SetSwipeColor(0, 0, 0, 1)
-end
+-- blizzard sets these again whenever the cooldown or the aura of an item changes
+local ITEM_HOOKS = {
+    RefreshSpellCooldownInfo = function(item)
+        if item.Cooldown then
+            item.Cooldown:SetSwipeColor(0, 0, 0, 1)
+        end
+    end,
+    SetTimerShown = function(item)
+        if item.Cooldown then
+            GW.ToggleBlizzardCooldownText(item.Cooldown, item.Cooldown.timer)
+        end
+    end,
+    RefreshIconBorder = function(item)
+        if item.DebuffBorder then
+            item.DebuffBorder.Texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+        end
+    end,
+}
 
-function CooldownManagerFunctions:SetTimerShown()
-    if self.Cooldown then
-        GW.ToggleBlizzardCooldownText(self.Cooldown, self.Cooldown.timer)
-    end
-end
+local hookedItems = setmetatable({}, {__mode = "k"})
 
-do
-    local hookFunctions = {
-        RefreshSpellCooldownInfo = CooldownManagerFunctions.RefreshSpellCooldownInfo,
-        SetTimerShown = CooldownManagerFunctions.SetTimerShown,
-        RefreshIconBorder = CooldownManagerFunctions.RefreshIconBorder
-    }
-
-    function CooldownManagerFunctions:SkinItemFrame(frame)
-        if frame.Cooldown then
-            frame.Cooldown:SetSwipeTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
-
-            if not frame.Cooldown.isHooked then
-                for key, func in next, hookFunctions do
-                    if frame[key] then
-                        hooksecurefunc(frame, key, func)
-                    end
+local function SkinItemFrame(item)
+    if item.Cooldown then
+        item.Cooldown:SetSwipeTexture(WHITE)
+        if not hookedItems[item] then
+            hookedItems[item] = true
+            for method, func in pairs(ITEM_HOOKS) do
+                if item[method] then
+                    hooksecurefunc(item, method, func)
                 end
-                frame.Cooldown.isHooked = true
-            end
-        end
-
-        if frame.Bar then
-            CooldownManagerFunctions:SkinBar(frame, frame.Bar)
-        elseif frame.Icon then
-            CooldownManagerFunctions:SkinIcon(frame, frame.Icon)
-        end
-    end
-end
-
-function CooldownManagerFunctions:AcquireItemFrame(frame)
-    CooldownManagerFunctions:SkinItemFrame(frame)
-end
-
-function CooldownManagerFunctions:HandleViewer(element)
-    hooksecurefunc(element, "OnAcquireItemFrame", CooldownManagerFunctions.AcquireItemFrame)
-
-    for frame in element.itemFramePool:EnumerateActive() do
-        CooldownManagerFunctions:SkinItemFrame(frame)
-    end
-end
-
-local function HandleSettingItem(item)
-	if item.gwSkinned then return end
-
-	local icon = item.Icon
-	if icon then
-		local highlight = item.Highlight
-		if highlight then
-			highlight:SetColorTexture(1, 1, 1, .25)
-			highlight:SetAllPoints(icon)
-		end
-
-		GW.HandleIcon(icon, true)
-	end
-
-	item.gwSkinned = true
-end
-
-local function HandleSettingItemPool(self)
-	for frame in self:EnumerateActive() do
-		HandleSettingItem(frame)
-	end
-end
-
-do
-    local hookedItemPools = {}
-
-    function CooldownManagerFunctions:SkinCategoryHeaders(content)
-        if not content then return end
-
-        for _, child in next, { content:GetChildren() } do
-            local header = child.Header
-            if header and not header.gwSkinned then
-                SkinHeaders(child.Header)
-            end
-
-            local itemPool = child.itemPool
-            if itemPool and not hookedItemPools[itemPool] then
-                hookedItemPools[itemPool] = true
-
-                HandleSettingItemPool(itemPool)
-
-                hooksecurefunc(itemPool, "Acquire", HandleSettingItemPool)
             end
         end
     end
+
+    if item.Bar then
+        SkinBar(item, item.Bar)
+    elseif item.Icon then
+        SkinIcon(item, item.Icon)
+    end
+end
+
+-- blizzard hands out the items of a viewer from a pool, each new one is skinned on its way out
+local function HandleViewer(viewer)
+    hooksecurefunc(viewer, "OnAcquireItemFrame", function(_, item) SkinItemFrame(item) end)
+    for item in viewer.itemFramePool:EnumerateActive() do
+        SkinItemFrame(item)
+    end
+end
+
+---------- the settings window ----------
+
+local function SkinSettings(settings)
+    GW.HandlePortraitFrame(settings)
+    GW.CreateFrameHeaderWithBody(settings, settings.TitleContainer.TitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {settings.CooldownScroll}, nil, nil, true)
+
+    GW.SkinTextBox(settings.SearchBox.Middle, settings.SearchBox.Left, settings.SearchBox.Right)
+    for _, scroll in ipairs({settings.CooldownScroll, settings.GroupBuffFilter.Scroll}) do
+        GW.HandleTrimScrollBar(scroll.ScrollBar)
+        GW.HandleScrollControls(scroll)
+    end
+    settings.UndoButton:GwSkinButton(false, true)
+    settings.LayoutDropdown:GwHandleDropDownBox()
+
+    -- spells, auras and group buffs as tabs down the right side
+    local previous
+    for _, tab in ipairs({settings.SpellsTab, settings.AurasTab, settings.GroupBuffsTab}) do
+        GW.HandleTabs(tab, "right", {tab.Icon}, true)
+        tab:ClearAllPoints()
+        if previous then
+            tab:SetPoint("TOP", previous, "BOTTOM", 0, 1)
+        else
+            tab:SetPoint("TOPLEFT", settings, "TOPRIGHT", 0, -30)
+        end
+        previous = tab
+    end
+
+    local function SkinAllCategories()
+        SkinCategories(settings.CooldownScroll.Content)
+        SkinCategories(settings.GroupBuffFilter.Scroll.Content)
+    end
+    SkinAllCategories()
+    hooksecurefunc(settings, "RefreshLayout", SkinAllCategories)
 end
 
 local function ApplyCooldownManagerSkin()
     if not GW.settings.skins.cooldownManager.enabled then return end
 
-    CooldownManagerFunctions:HandleViewer(UtilityCooldownViewer)
-    CooldownManagerFunctions:HandleViewer(BuffBarCooldownViewer)
-    CooldownManagerFunctions:HandleViewer(BuffIconCooldownViewer)
-    CooldownManagerFunctions:HandleViewer(EssentialCooldownViewer)
-
+    for _, viewer in ipairs({UtilityCooldownViewer, BuffBarCooldownViewer, BuffIconCooldownViewer, EssentialCooldownViewer}) do
+        HandleViewer(viewer)
+    end
     if CooldownViewerSettings then
-        GW.HandlePortraitFrame(CooldownViewerSettings)
-        GW.CreateFrameHeaderWithBody(CooldownViewerSettings, CooldownViewerSettings.TitleContainer.TitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {CooldownViewerSettings.CooldownScroll}, nil, nil, true)
-
-        GW.SkinTextBox(CooldownViewerSettings.SearchBox.Middle, CooldownViewerSettings.SearchBox.Left, CooldownViewerSettings.SearchBox.Right)
-        GW.HandleTrimScrollBar(CooldownViewerSettings.CooldownScroll.ScrollBar)
-        GW.HandleScrollControls(CooldownViewerSettings.CooldownScroll)
-        GW.HandleTrimScrollBar(CooldownViewerSettings.GroupBuffFilter.Scroll.ScrollBar)
-        GW.HandleScrollControls(CooldownViewerSettings.GroupBuffFilter.Scroll)
-        CooldownViewerSettings.UndoButton:GwSkinButton(false, true)
-        CooldownViewerSettings.LayoutDropdown:GwHandleDropDownBox()
-
-        local lastTab = nil
-        for i, tab in next, { CooldownViewerSettings.SpellsTab, CooldownViewerSettings.AurasTab, CooldownViewerSettings.GroupBuffsTab } do
-            GW.HandleTabs(tab, "right", {tab.Icon}, true)
-            if i > 1 then
-                tab:ClearAllPoints()
-                tab:SetPoint("TOP", lastTab, "BOTTOM", 0, 1)
-            else
-                tab:ClearAllPoints()
-                tab:SetPoint("TOPLEFT", CooldownViewerSettings, "TOPRIGHT", 0, -30)
-            end
-            lastTab = tab
-        end
-        CooldownManagerFunctions:SkinCategoryHeaders(CooldownViewerSettings.CooldownScroll.Content)
-        CooldownManagerFunctions:SkinCategoryHeaders(CooldownViewerSettings.GroupBuffFilter.Scroll.Content)
-        hooksecurefunc(CooldownViewerSettings, 'RefreshLayout', function()
-            CooldownManagerFunctions:SkinCategoryHeaders(CooldownViewerSettings.CooldownScroll.Content)
-            CooldownManagerFunctions:SkinCategoryHeaders(CooldownViewerSettings.GroupBuffFilter.Scroll.Content)
-        end)
+        SkinSettings(CooldownViewerSettings)
     end
 end
 

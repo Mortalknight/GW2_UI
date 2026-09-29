@@ -4,9 +4,10 @@ local GW = select(2, ...)
 local LOCK_TEXTURE = "Interface/AddOns/GW2_UI/textures/talents/lock.png"
 local epicColor = GW.GetQualityColor(Enum.ItemQuality.Epic or 4)
 
-local function ReskinConfirmIcon(frame)
-    GW.HandleIcon(frame.Icon, true)
-    GW.HandleIconBorder(frame.IconBorder, frame.Icon.backdrop)
+-- the items of the confirm dialog: square icons, the quality on our frame
+local function SkinConfirmItem(item)
+    GW.HandleIcon(item.Icon, true)
+    GW.HandleIconBorder(item.IconBorder, item.Icon.backdrop)
 end
 
 local function SkinRewardIcon(itemFrame)
@@ -20,32 +21,27 @@ local function SkinRewardIcon(itemFrame)
     end
 end
 
-local function SelectReward(reward)
-    local selection = reward.confirmSelectionFrame
-    if selection then
-        WeeklyRewardsFrameNameFrame:Hide()
-        ReskinConfirmIcon(selection.ItemFrame)
-
-        local alsoItems = selection.AlsoItemsFrame
-        if alsoItems and alsoItems.pool then
-            for items in alsoItems.pool:EnumerateActive() do
-                ReskinConfirmIcon(items)
-            end
-        end
-    end
+-- picking a reward opens the confirm dialog over the vault; its extra items come from a pool
+local function SkinConfirmDialog(vault)
+    local dialog = vault.confirmSelectionFrame
+    if not dialog then return end
+    WeeklyRewardsFrameNameFrame:Hide()
+    SkinConfirmItem(dialog.ItemFrame)
+    local alsoItems = dialog.AlsoItemsFrame
+    GW.SkinPoolFrames(alsoItems and alsoItems.pool, SkinConfirmItem)
 end
 
-local function UpdateOverlay(frame)
-    local overlay = frame.Overlay
-    if overlay then
-        overlay:GwStripTextures()
-        if not overlay.SetBackdrop then
-            _G.Mixin(overlay, _G.BackdropTemplateMixin)
-            overlay:HookScript("OnSizeChanged", overlay.OnBackdropSizeChanged)
-        end
-        overlay:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-        overlay:SetBackdropBorderColor(1, 0.99, 0.85)
+-- the overlay over a locked vault, in our frame with the light border
+local function SkinVaultOverlay(vault)
+    local overlay = vault.Overlay
+    if not overlay then return end
+    overlay:GwStripTextures()
+    if not overlay.SetBackdrop then
+        Mixin(overlay, BackdropTemplateMixin)
+        overlay:HookScript("OnSizeChanged", overlay.OnBackdropSizeChanged)
     end
+    overlay:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+    overlay:SetBackdropBorderColor(1, 0.99, 0.85)
 end
 
 local function HandleWarning(frame)
@@ -249,8 +245,8 @@ local function ApplyWeeklyRewardsSkin()
         WeeklyRewardExpirationWarningDialog.NineSlice:HookScript("OnShow", HandleWarning)
     end
 
-    hooksecurefunc(WeeklyRewardsFrame, "SelectReward", SelectReward)
-    hooksecurefunc(WeeklyRewardsFrame, "UpdateOverlay", UpdateOverlay)
+    hooksecurefunc(WeeklyRewardsFrame, "SelectReward", SkinConfirmDialog)
+    hooksecurefunc(WeeklyRewardsFrame, "UpdateOverlay", SkinVaultOverlay)
 end
 
 function GW.LoadWeeklyRewardsSkin()

@@ -53,64 +53,74 @@ local function hook_NotifyDialogShow(_, dialog)
 end
 
 
+-- the collapse arrow of the quest log headers; blizzards icon has the flat size of its own atlas,
+-- our arrow needs a square, pointing to the side while collapsed
 local function updateCollapse(self, collapsed)
-    if collapsed then
-        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        self.Icon:SetRotation(1.570796325)
-        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        self:GetHighlightTexture():SetRotation(1.570796325)
-    else
-        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        self.Icon:SetRotation(0)
-        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        self:GetHighlightTexture():SetRotation(0)
+    local rotation = collapsed and math.pi / 2 or 0
+    self.Icon:SetSize(14, 14)
+    for _, texture in ipairs({self.Icon, self:GetHighlightTexture()}) do
+        texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        texture:SetRotation(rotation)
+    end
+    self:GetHighlightTexture():SetAllPoints(self.Icon)
+end
+
+local SEPARATOR = "Interface/AddOns/GW2_UI/textures/bag/bag-sep.png"
+local HOVER = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
+
+-- a header of the quest log or the event list: a thin light frame around our separator art
+local function FrameHeaderArt(owner, art)
+    owner:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+    owner.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+    if art then
+        art:SetTexture(SEPARATOR)
     end
 end
 
+local function SkinQuestHeader(button)
+    if not button.ButtonText then return end
+    FrameHeaderArt(button)
+    button:SetNormalTexture(SEPARATOR)
+    button:SetHighlightTexture(SEPARATOR)
+    button:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+    if button.CollapseButton then
+        hooksecurefunc(button.CollapseButton, "UpdateCollapsedState", updateCollapse)
+    end
+end
+
+-- the track checkbox of a quest: our box and tick; blizzard shows the tick while the quest is tracked
+local function SkinQuestTitle(button)
+    local checkbox = button.Checkbox
+    if not checkbox then return end
+    for _, region in ipairs({checkbox:GetRegions()}) do
+        if region:IsObjectType("Texture") then
+            local isTick = region == checkbox.CheckMark
+            region:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/" .. (isTick and "checkboxchecked.png" or "checkbox.png"))
+            region:SetSize(14, 14)
+            region:ClearAllPoints()
+            region:SetPoint("CENTER")
+            -- the hover copy of the box only lightens it
+            if region:GetDrawLayer() == "HIGHLIGHT" then
+                region:SetVertexColor(1, 1, 1, 0.3)
+            end
+        end
+    end
+end
+
+local function SkinCampaignHeader(header)
+    if not header.CollapseButton then return end
+    header.minimumCollapsedHeight = 25
+    FrameHeaderArt(header.Background, header.Background)
+    header.Highlight:SetTexture(SEPARATOR)
+    header.Highlight:SetColorTexture(1, 0.93, 0.73, 0.25)
+    hooksecurefunc(header.CollapseButton, "UpdateCollapsedState", updateCollapse)
+end
+
+-- the quest log builds its rows from pools on every update
 local function hook_QuestLogQuests_Update()
-    for button in QuestScrollFrame.headerFramePool:EnumerateActive() do
-        if button.ButtonText then
-            if not button.gwSkinned then
-                button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-                button.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-                button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
-                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
-                button:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
-
-                if button.CollapseButton then
-                    hooksecurefunc(button.CollapseButton, "UpdateCollapsedState", updateCollapse)
-                end
-
-                button.gwSkinned = true
-            end
-        end
-    end
-
-    for button in QuestScrollFrame.titleFramePool:EnumerateActive() do
-        if not button.gwSkinned then
-            if button.Checkbox then
-                if button.Checkbox then
-                    button.Checkbox:GwStripTextures(true)
-                    button.Checkbox:GwCreateBackdrop("Transparent")
-                end
-            end
-
-            button.gwSkinned = true
-        end
-    end
-
-    for header in QuestScrollFrame.campaignHeaderMinimalFramePool:EnumerateActive() do
-        if header.CollapseButton and not header.gwSkinned then
-            header.minimumCollapsedHeight = 25
-            header.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-            header.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-            header.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
-            header.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
-            header.Highlight:SetColorTexture(1, 0.93, 0.73, 0.25)
-            hooksecurefunc(header.CollapseButton, "UpdateCollapsedState", updateCollapse)
-            header.gwSkinned = true
-        end
-    end
+    GW.SkinPoolFrames(QuestScrollFrame.headerFramePool, SkinQuestHeader)
+    GW.SkinPoolFrames(QuestScrollFrame.titleFramePool, SkinQuestTitle)
+    GW.SkinPoolFrames(QuestScrollFrame.campaignHeaderMinimalFramePool, SkinCampaignHeader)
 end
 
 
@@ -124,72 +134,58 @@ local function mover_OnDragStop(self)
 end
 
 
-local EventsFrameHookedElements = {}
-local function EventsFrameHighlightTexture(element)
-    element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
-    element:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+-- the event list of the map: headers like the quest log, events with the hover of our lists
+local function SetEventHover(texture)
+    texture:SetTexture(HOVER)
+    texture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
 end
 
-local function EventsFrameBackgroundNormal(element, texture)
-    if texture ~= "Interface/AddOns/GW2_UI/textures/character/menu-hover.png" then
-        element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
-        element:SetVertexColor(0.8, 0.8, 0.8, 0.8)
-
-        local parent = element:GetParent()
-        if parent and parent.Highlight then
-            EventsFrameHighlightTexture(parent.Highlight)
-        end
+-- ongoing events set their background atlas again on every refresh
+local function KeepEventBackground(background)
+    SetEventHover(background)
+    local event = background:GetParent()
+    if event and event.Highlight then
+        SetEventHover(event.Highlight)
     end
 end
 
-local EventsFrameFunctions = {
-    function(element) -- 1: OngoingHeader
-        if not element.Background.backdrop then
-            element.Background:GwStripTextures()
-            element.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-            element.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
-        end
-
-        element.Label:SetTextColor(1, 1, 1)
-    end,
-    function(element) -- 2: OngoingEvent
-        if not EventsFrameHookedElements[element] then
-            hooksecurefunc(element.Background, "SetAtlas", EventsFrameBackgroundNormal)
-            EventsFrameHookedElements[element] = element.Background
-        end
-    end,
-    function(element) -- 3: ScheduledHeader
-        if not element.Background.backdrop then
-            element.Background:GwStripTextures()
-            element.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-            element.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
-        end
-
-        element.Label:SetTextColor(1, 1, 1)
-    end,
-    function(element) -- 4: ScheduledEvent
-        if element.Highlight then
-            if not element.gwSkinned then
-                GW.AddListItemChildHoverTexture(element)
-
-                element.gwSkinned = true
-            end
-            EventsFrameHighlightTexture(element.Highlight)
-        end
+local function SkinEventHeader(header)
+    if not header.Background.backdrop then
+        header.Background:GwStripTextures()
+        FrameHeaderArt(header.Background, header.Background)
     end
-}
+    header.Label:SetTextColor(1, 1, 1)
+end
 
-local function EventsFrameCallback(_, frame, elementData)
-    if not elementData.data then return end
-
-    local func = EventsFrameFunctions[elementData.data.entryType]
-    if func then
-        func(frame)
+local hookedEventBackgrounds = setmetatable({}, {__mode = "k"})
+local function SkinOngoingEvent(event)
+    if not hookedEventBackgrounds[event.Background] then
+        hookedEventBackgrounds[event.Background] = true
+        hooksecurefunc(event.Background, "SetAtlas", KeepEventBackground)
     end
 end
 
+local function SkinScheduledEvent(event)
+    if not event.Highlight then return end
+    if not event.gwHoverAdded then
+        event.gwHoverAdded = true
+        GW.AddListItemChildHoverTexture(event)
+    end
+    SetEventHover(event.Highlight)
+end
+
+-- by entry type: ongoing header, ongoing event, scheduled header, scheduled event
+local EVENT_ROW_SKINS = {SkinEventHeader, SkinOngoingEvent, SkinEventHeader, SkinScheduledEvent}
+
+local function SkinEventRow(row, elementData)
+    local data = elementData and elementData.data
+    local skin = data and EVENT_ROW_SKINS[data.entryType]
+    if skin then
+        skin(row)
+    end
+end
+
+-- the quest model beside the map goes with the quest log, like blizzards QuestFrame_HideQuestPortrait
 local function WorldMap_QuestMapHide(self)
 	if self:GetParent() == QuestModelScene:GetParent() then -- variant of QuestFrame_HideQuestPortrait
 		QuestModelScene:SetParent(nil)
@@ -343,10 +339,9 @@ local function worldMapSkin()
                 Tracking.Icon:SetTexture(136460) -- Interface\Minimap\Tracking/None
             end
             SetTrackingIcon()
+            -- the plain tracking icon glows on hover
             Tracking:SetHighlightTexture(136460, "ADD")
-
-            local TrackingHighlight = Tracking:GetHighlightTexture()
-            TrackingHighlight:SetAllPoints(Tracking.Icon)
+            Tracking:GetHighlightTexture():SetAllPoints(Tracking.Icon)
 
             if not Tracking.Background then
                 -- forever: a bare dropdown atlas button without the round minimap art of
@@ -359,15 +354,15 @@ local function worldMapSkin()
             end
         end
 
+        -- the waypoint pin without its round frame, the tracked pin over it, the pin itself glowing on hover
         if Pin and Pin.Icon then
             Pin.Icon:SetAtlas("Waypoint-MapPin-Untracked")
             Pin.ActiveTexture:SetAtlas("Waypoint-MapPin-Tracked")
             Pin.ActiveTexture:SetAllPoints(Pin.Icon)
-            Pin:SetHighlightTexture(3500068, "ADD") -- Interface\Waypoint\WaypoinMapPinUI
-
-            local PinHighlight = Pin:GetHighlightTexture()
-            PinHighlight:SetAllPoints(Pin.Icon)
-            PinHighlight:SetTexCoord(0.3203125, 0.5546875, 0.015625, 0.484375)
+            Pin:SetHighlightTexture(3500068, "ADD") -- Interface\Waypoint\WaypoinMapPinUI, the pin part of it
+            local glow = Pin:GetHighlightTexture()
+            glow:SetAllPoints(Pin.Icon)
+            glow:SetTexCoord(0.3203125, 0.5546875, 0.015625, 0.484375)
         end
     end
 
@@ -502,7 +497,10 @@ local function worldMapSkin()
 
     GW.HandleTrimScrollBar(QuestMapFrame.EventsFrame.ScrollBar)
 
-    ScrollUtil.AddAcquiredFrameCallback(QuestMapFrame.EventsFrame.ScrollBox, EventsFrameCallback, QuestMapFrame.EventsFrame, true)
+    -- ForEachFrame hands out (row, data), the acquired callback (owner, row, data)
+    local eventsBox = QuestMapFrame.EventsFrame.ScrollBox
+    eventsBox:ForEachFrame(SkinEventRow)
+    ScrollUtil.AddAcquiredFrameCallback(eventsBox, function(_, row, elementData) SkinEventRow(row, elementData) end, QuestMapFrame.EventsFrame)
 end
 
 local function LoadWorldMapSkin()

@@ -3,44 +3,31 @@ local GW = select(2, ...)
 
 local DROPDOWN_WIDTH_OFFSET = 8
 
-local function ButtonOnEnter(self)
-    local normalTex = self:GetNormalTexture()
-    if not normalTex then return end 
+local RESIZE_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/resize.png"
+local ARROW_TEXTURE = "Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png"
 
-    normalTex:SetVertexColor(0, 0, 0)
-end
-
-local function ButtonOnLeave(self)
-    local normalTex = self:GetNormalTexture()
-    if not normalTex then return end
-
-    normalTex:SetVertexColor(1, 1, 1)
+-- the resize grip turns dark while the mouse is on it
+local function TintResizeGrip(button, shade)
+    local normal = button:GetNormalTexture()
+    if normal then
+        normal:SetVertexColor(shade, shade, shade)
+    end
 end
 
 local function HandleResizeButton(button)
     if not button or button.gwSkinned then return end
-
-    button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
-    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
-    button:GetHighlightTexture():SetTexture("")
-
-    local normalTex = button:GetNormalTexture()
-    local pushedTex = button:GetPushedTexture()
-
-    if not normalTex or not pushedTex then return end
-
-    normalTex:SetVertexColor(1, 1, 1)
-    normalTex:SetTexCoord(0, 1, 0, 1)
-    normalTex:SetAllPoints()
-
-    pushedTex:SetVertexColor(1, 1, 1)
-    pushedTex:SetTexCoord(0, 1, 0, 1)
-    pushedTex:SetAllPoints()
-
-    button:HookScript("OnEnter", ButtonOnEnter)
-    button:HookScript("OnLeave", ButtonOnLeave)
-
     button.gwSkinned = true
+
+    button:GetHighlightTexture():SetTexture("")
+    for _, state in ipairs({"Normal", "Pushed"}) do
+        button["Set" .. state .. "Texture"](button, RESIZE_TEXTURE)
+        local texture = button["Get" .. state .. "Texture"](button)
+        texture:SetVertexColor(1, 1, 1)
+        texture:SetTexCoord(0, 1, 0, 1)
+        texture:SetAllPoints()
+    end
+    button:HookScript("OnEnter", function(self) TintResizeGrip(self, 0) end)
+    button:HookScript("OnLeave", function(self) TintResizeGrip(self, 1) end)
 end
 
 local function BackdropSetAlpha(self, alpha)
@@ -49,7 +36,7 @@ local function BackdropSetAlpha(self, alpha)
     end
 end
 
-local function HandleBackground(window, background, x1, y1, x2, y2)
+local function HandleBackground(window, background)
     if not window or not background or background.backdrop then return end
 
     background:SetTexture()
@@ -116,11 +103,9 @@ local function HandleSessionDropdown(window, dropdown)
     if dropdown.Arrow then
         dropdown.Arrow:SetAlpha(0)
     end
-
     if dropdown.ResetButton then
         dropdown.ResetButton:GwSkinButton(true)
     end
-
     if dropdown.SessionName then
         dropdown.SessionName:SetTextColor(0, 0, 0)
     end
@@ -135,17 +120,15 @@ local function HandleSettingsDropdown(window, dropdown)
     dropdown:SetSize(20, 20)
     dropdown:GwNudgePoint(2, 0)
 
+    -- the cog of our micro menu instead of blizzards icon
     if dropdown.Icon then
         dropdown.Icon:SetAlpha(0)
     end
-
-    local customIcon = not dropdown.customIcon and dropdown:CreateTexture(nil, "BACKGROUND")
-    if customIcon then
-        customIcon:SetPoint("CENTER")
-        customIcon:SetSize(20, 20)
-        customIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-up.png")
-
-        dropdown.customIcon = customIcon
+    if not dropdown.gwCog then
+        dropdown.gwCog = dropdown:CreateTexture(nil, "BACKGROUND")
+        dropdown.gwCog:SetPoint("CENTER")
+        dropdown.gwCog:SetSize(20, 20)
+        dropdown.gwCog:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-up.png")
     end
 
 end
@@ -180,10 +163,10 @@ local function ScrollBoxUpdate(self)
 end
 
 local function HandleScrollBoxes(window)
+    -- the slim bar of our windows, the meter is small
     local ScrollBar = window.GetScrollBar and window:GetScrollBar()
     if ScrollBar then
-        GW.HandleTrimScrollBar(ScrollBar)
-        GW.HandleScrollControls(window)
+        GW.SkinSlimScrollBar(ScrollBar)
     end
 
     local ScrollBox = window.GetScrollBox and window:GetScrollBox()
@@ -215,7 +198,7 @@ end
 local function HandleSourceWindow(window, sourceWindow)
     if not sourceWindow or sourceWindow.gwSkinned then return end
 
-    HandleBackground(sourceWindow, sourceWindow.Background, -4, nil, -18)
+    HandleBackground(sourceWindow, sourceWindow.Background)
     HandleScrollBoxes(sourceWindow)
     if sourceWindow.AnchorToSessionWindow then
         hooksecurefunc(sourceWindow, "AnchorToSessionWindow", RepositionResizeButton)
@@ -223,48 +206,31 @@ local function HandleSourceWindow(window, sourceWindow)
     sourceWindow.gwSkinned = true
 end
 
+-- the own bar shown while the window is minimized keeps its background visible
 local function HandleLocalPlayerEntry(self)
     local entry = self.MinimizeContainer.LocalPlayerEntry
-
     if not entry then return end
-
     HandleStatusBar(entry)
-
-    local StatusBarBackground = entry.StatusBar and entry.StatusBar.Background
-    if StatusBarBackground then
-        StatusBarBackground:SetAlpha(1)
+    if entry.StatusBar and entry.StatusBar.Background then
+        entry.StatusBar.Background:SetAlpha(1)
     end
 end
 
+-- the minimize button is our arrow, pointing to the side while minimized
 local function SetMinimized(self, collapsed)
-    local MinimizeButton = self.MinimizeButton
-    if not MinimizeButton then return end
-
-    local normalTexture = MinimizeButton:GetNormalTexture()
-    local pushedTexture = MinimizeButton:GetPushedTexture()
-    local highlightTexture = MinimizeButton:GetHighlightTexture()
-
-    if collapsed then
-        normalTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        pushedTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        highlightTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        normalTexture:SetRotation(1.570796325)
-        pushedTexture:SetRotation(1.570796325)
-        highlightTexture:SetRotation(1.570796325)
-    else
-        normalTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        pushedTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        highlightTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-        normalTexture:SetRotation(0)
-        pushedTexture:SetRotation(0)
-        highlightTexture:SetRotation(0)
+    local button = self.MinimizeButton
+    if not button then return end
+    for _, state in ipairs({"Normal", "Pushed", "Highlight"}) do
+        local texture = button["Get" .. state .. "Texture"](button)
+        texture:SetTexture(ARROW_TEXTURE)
+        texture:SetRotation(collapsed and math.pi / 2 or 0)
     end
 end
 
 local function HandleMinimizeContainer(window, container)
     if not container or container.gwSkinned then return end
 
-    HandleBackground(window, container.Background, 13, nil, -18)
+    HandleBackground(window, container.Background)
     RepositionResizeButton(container)
 
     container.gwSkinned = true
