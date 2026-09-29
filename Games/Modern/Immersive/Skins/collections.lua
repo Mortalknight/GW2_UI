@@ -34,7 +34,7 @@ local function SkinHelpPlateTooltip()
     tooltip:GwStripTextures()
     tooltip:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     tooltip.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    tooltip.Text:SetTextColor(1, 1, 1)
+    tooltip.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 -- HelpTip frames are pooled and shared with the whole game: only tips on our buttons get our look,
@@ -130,7 +130,7 @@ local function SkinProgressBar(bar)
     bar:SetStatusBarTexture(STATUSBAR_TEXTURE)
     bar:SetStatusBarColor(unpack(PROGRESS_COLOR))
     bar.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    bar.text:SetTextColor(1, 1, 1)
+    bar.text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 -- hover on a progress bar: collected, missing and percentage, plus what the tab adds (extraLines)
@@ -167,7 +167,7 @@ local function SkinPagingFrame(paging)
     SkinPageButton(paging.PrevPageButton, "left")
     SkinPageButton(paging.NextPageButton, "right")
     paging.PageText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    paging.PageText:SetTextColor(1, 1, 1)
+    paging.PageText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 -- the filter template relayouts itself on hover, the dropdown helper needs the layout hook for it
@@ -222,7 +222,7 @@ local function KeepLabelWhite(text)
         if self.gwRecoloring then return end
         if r and g and b and r > 0.85 and g > 0.6 and b < 0.3 then
             self.gwRecoloring = true
-            self:SetTextColor(1, 1, 1)
+            self:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
             self.gwRecoloring = nil
         end
     end
@@ -309,7 +309,7 @@ local function RecolorCollectionText(text, r, g, b)
     if text.gwRecoloring then return end
     text.gwRecoloring = true
     if r == 1 and g == 0.82 and b == 0 then
-        text:SetTextColor(1, 1, 1)
+        text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     elseif r == 0.33 and g == 0.27 and b == 0.2 then
         text:SetTextColor(unpack(DISABLED_TEXT))
     end
@@ -492,7 +492,7 @@ local function SkinJournalTabs()
             tab.Text = tab:CreateFontString(nil, "OVERLAY")
             tab.Text:SetPoint("CENTER", 0, 2)
             tab.Text:SetFontObject(GameFontNormalSmall)
-            tab.Text:SetTextColor(1, 1, 1)
+            tab.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
             tab.Text:SetText(tab.tooltipText)
             tab.Text:SetWidth(tab.Text:GetStringWidth())
             tab:SetWidth(tab.Text:GetStringWidth() + 20)
@@ -546,7 +546,7 @@ local function SkinAchievementStatus(button, bar)
     button.icon:ClearAllPoints()
     button.icon:SetPoint("RIGHT", button, "RIGHT", 0, 0)
     button.SumText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    button.SumText:SetTextColor(1, 1, 1)
+    button.SumText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     button.SumText:ClearAllPoints()
     button.SumText:SetPoint("RIGHT", button.icon, "LEFT", -4, 0)
 end
@@ -673,11 +673,11 @@ local function SkinMountJournal()
     display.ModelScene:SetPoint("BOTTOMRIGHT", display, "BOTTOMRIGHT", 0, 0)
     GW.HandleModelSceneControlFrame(display.ModelScene.ControlFrame)
     display.ModelScene.TogglePlayer:GwSkinCheckButton(nil, CHECKBOX_SIZE)
-    display.ModelScene.TogglePlayer.TogglePlayerText:SetTextColor(1, 1, 1)
+    display.ModelScene.TogglePlayer.TogglePlayerText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     BackdropAroundIcon(display.InfoButton.Icon)
-    display.InfoButton.Name:SetTextColor(1, 1, 1)
-    display.InfoButton.Source:SetTextColor(1, 1, 1)
-    display.InfoButton.Lore:SetTextColor(1, 1, 1)
+    display.InfoButton.Name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    display.InfoButton.Source:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    display.InfoButton.Lore:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     local slot = journal.BottomLeftInset.SlotButton
     slot:GwStripTextures()
@@ -695,8 +695,8 @@ local function SkinLoadoutPet(pet)
     pet.iconBorder:SetAlpha(0)
     pet.levelBG:SetAlpha(0)
     pet.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
-    pet.name:SetTextColor(1, 1, 1)
-    pet.subName:SetTextColor(1, 1, 1)
+    pet.name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    pet.subName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     BackdropAroundIcon(pet.icon, GW.BackdropTemplates.ColorableBorderOnly)
     pet.icon.backdrop:SetFrameLevel(pet:GetFrameLevel() + 2)
     GW.HandleIconBorder(pet.qualityBorder, pet.icon.backdrop)
@@ -729,7 +729,7 @@ local function SkinPetCard(card)
         info.levelBG:SetAlpha(0)
         info.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
     end
-    info.name:SetTextColor(1, 1, 1)
+    info.name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     if info.icon and info.qualityBorder then
         BackdropAroundIcon(info.icon, GW.BackdropTemplates.DefaultWithColorableBorder)
         GW.HandleIconBorder(info.qualityBorder, info.icon.backdrop)
@@ -1065,7 +1065,7 @@ local function SkinHeirlooms()
         button.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE", 3)
         local owned = button.itemID and C_Heirloom.PlayerHasHeirloom(button.itemID)
         if owned then
-            button.name:SetTextColor(1, 1, 1)
+            button.name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
             SetBackdropQuality(button, Enum.ItemQuality.Heirloom)
         else
             button.name:SetTextColor(unpack(DISABLED_TEXT))
@@ -1322,7 +1322,7 @@ local function SkinWardrobe()
         details[key]:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         details[key]:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     end
-    details.Label:SetTextColor(1, 1, 1)
+    details.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     -- the item icons of a set: border in the quality color of the collected source
     hooksecurefunc(sets, "SetItemFrameQuality", function(_, itemFrame)
         local icon = itemFrame.Icon

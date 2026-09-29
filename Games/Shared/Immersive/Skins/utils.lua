@@ -133,7 +133,7 @@ local function SkinCrumb(button, index)
 
     button:GwStripTextures()
     local text = button:GetFontString()
-    text:SetTextColor(1, 1, 1, 1)
+    text:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
     text:SetShadowOffset(0, 0)
 
     button.tex = button:CreateTexture(nil, "BACKGROUND")
@@ -677,7 +677,7 @@ local function HandleTabs(self, direction, textures, setDesaturated)
         end
 
         if self.GetFontString and self:GetFontString() ~= nil then
-            self:GetFontString():SetTextColor(1, 1, 1, 1)
+            self:GetFontString():SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
             self:GetFontString():SetShadowOffset(0, 0)
         end
 
@@ -876,7 +876,7 @@ function GW.WhitenFontStrings(frame)
     if not frame then return end
     for _, region in next, {frame:GetRegions()} do
         if region:IsObjectType("FontString") then
-            region:SetTextColor(1, 1, 1)
+            region:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 end
@@ -1027,7 +1027,7 @@ local function HandleHeaders(frame)
 
             if not header.backdrop then
                 header:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
-                header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+                header.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
             end
 
             header.gwSkinned = true
@@ -1050,7 +1050,7 @@ local function HandleScrollFrameHeaderButton(button, isLastButton)
 
         if not button.backdrop then
             button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
-            button.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            button.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
             button.backdrop:SetFrameLevel(button:GetFrameLevel())
         end
 
@@ -1085,14 +1085,14 @@ local function AddListItemChildHoverTexture(child)
     child.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if child.HighlightTexture then
         child.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
-        child.HighlightTexture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+        child.HighlightTexture:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
         child.HighlightTexture:GwSetInside(child.Background)
         child:HookScript("OnEnter", function()
             GW.TriggerButtonHoverAnimation(child, child.HighlightTexture)
         end)
     elseif child.Highlight then
         child.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
-        child.Highlight:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+        child.Highlight:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
         child.Highlight:GwSetInside(child.Background)
         child:HookScript("OnEnter", function()
             GW.TriggerButtonHoverAnimation(child, child.Highlight)
@@ -1100,7 +1100,7 @@ local function AddListItemChildHoverTexture(child)
     else -- create hover texture
         child.gwHoverTexture = child:CreateTexture(nil, "ARTWORK", nil, 0)
         child.gwHoverTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
-        child.gwHoverTexture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+        child.gwHoverTexture:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
         child.gwHoverTexture:SetPoint("LEFT", child, "LEFT", 0, 0)
         child.gwHoverTexture:SetPoint("TOP", child, "TOP", 0, 0)
         child.gwHoverTexture:SetPoint("BOTTOM", child, "BOTTOM", 0, 0)
@@ -1145,9 +1145,9 @@ local function HandleItemListScrollBoxHover(self)
         if child.Background then
             local zebra = child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 or false
             if zebra then
-                child.Background:SetVertexColor(1, 1, 1, 1)
+                child.Background:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
             else
-                child.Background:SetVertexColor(0, 0, 0, 0)
+                child.Background:SetVertexColor(GW.Colors.Transparent:GetRGBA())
             end
         end
 
@@ -1182,7 +1182,7 @@ function GW.SkinTalentButton(button)
     if button.StateBorder then button.StateBorder:SetAlpha(0) end
     if button.DisabledOverlay then button.DisabledOverlay:SetVertexColor(0, 0, 0, 0.6) end
     GW.HandleIcon(button.Icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
-    button.Icon.backdrop:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
+    button.Icon.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
 
     if button.StateBorderHover then
         SetTalentHoverTexture(button.StateBorderHover)
@@ -1244,14 +1244,14 @@ GW.SkinSideTabButton = SkinSideTabButton
 
 local function LockBlackButtonColor(button, r, g, b)
     if r ~= 0 or g ~= 0 or b ~= 0 then
-        button:SetTextColor(0, 0, 0)
+        button:SetTextColor(GW.Colors.Fallback:GetRGB())
     end
 end
 GW.LockBlackButtonColor = LockBlackButtonColor
 
 local function LockWhiteButtonColor(button, r, g, b)
     if r ~= 1 or g ~= 1 or b ~= 1 then
-        button:SetTextColor(1, 1, 1)
+        button:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 end
 GW.LockWhiteButtonColor = LockWhiteButtonColor
@@ -1289,7 +1289,7 @@ local function HandleItemReward(frame, isMap)
     end
 
     if frame.Name then
-        frame.Name:SetTextColor(1, 1, 1)
+        frame.Name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     if frame.IconOverlay then
@@ -1350,7 +1350,7 @@ local function QuestInfo_Display(template, parentFrame)
     local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
     if #spellRewards > 0 then
         for spellHeader in fRwd.spellHeaderPool:EnumerateActive() do
-            spellHeader:SetVertexColor(1, 1, 1)
+            spellHeader:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
         end
         for spellIcon in fRwd.spellRewardPool:EnumerateActive() do
             GW.HandleItemReward(spellIcon, isMapStyle)
@@ -1390,38 +1390,38 @@ local function QuestInfo_Display(template, parentFrame)
         end
     end
 
-    _G.QuestInfoTitleHeader:SetTextColor(1, 0.8, 0.1)
-    _G.QuestInfoDescriptionHeader:SetTextColor(1, 0.8, 0.1)
-    _G.QuestInfoDescriptionText:SetTextColor(1, 1, 1)
-    _G.QuestInfoObjectivesHeader:SetTextColor(1, 0.8, 0.1)
-    _G.QuestInfoObjectivesText:SetTextColor(1, 1, 1)
-    _G.QuestInfoGroupSize:SetTextColor(1, 1, 1)
-    _G.QuestInfoRewardText:SetTextColor(1, 1, 1)
-    _G.QuestInfoQuestType:SetTextColor(1, 1, 1)
+    _G.QuestInfoTitleHeader:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
+    _G.QuestInfoDescriptionHeader:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
+    _G.QuestInfoDescriptionText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    _G.QuestInfoObjectivesHeader:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
+    _G.QuestInfoObjectivesText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    _G.QuestInfoGroupSize:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    _G.QuestInfoRewardText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    _G.QuestInfoQuestType:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     select(1, _G.QuestInfoItemHighlight:GetRegions()):SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/questitemhighlight.png")
-    fRwd.ItemChooseText:SetTextColor(1, 1, 1)
-    fRwd.ItemReceiveText:SetTextColor(1, 1, 1)
+    fRwd.ItemChooseText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    fRwd.ItemReceiveText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     if GW.Retail then
         QuestMapFrame.DetailsFrame.BackFrame.AccountCompletedNotice.Text:SetTextColor(0, 0.9, 0.6)
     end
 
     if not isMapStyle and GW.settings.immersiveQuesting.enabled then
-        fRwd.Header:SetTextColor(1, 1, 1)
+        fRwd.Header:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         fRwd.Header:SetShadowColor(0, 0, 0, 1)
     elseif fRwd.Header.SetTextColor then
-        fRwd.Header:SetTextColor(1, 0.8, 0.1)
+        fRwd.Header:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
     end
 
     if fRwd.SpellLearnText then
-        fRwd.SpellLearnText:SetTextColor(1, 1, 1)
+        fRwd.SpellLearnText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     if fRwd.PlayerTitleText then
-        fRwd.PlayerTitleText:SetTextColor(1, 1, 1)
+        fRwd.PlayerTitleText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     if fRwd.XPFrame.ReceiveText then
-        fRwd.XPFrame.ReceiveText:SetTextColor(1, 1, 1)
+        fRwd.XPFrame.ReceiveText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     local objectives = _G.QuestInfoObjectivesFrame.Objectives
@@ -1444,7 +1444,7 @@ local function QuestInfo_Display(template, parentFrame)
                 if isCompleted then
                     objective:SetTextColor(0.2, 1, 0.2)
                 else
-                    objective:SetTextColor(1, 1, 1)
+                    objective:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
                 end
             end
         end

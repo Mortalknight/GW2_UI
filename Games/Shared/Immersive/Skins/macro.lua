@@ -9,7 +9,7 @@ local SLOT_BACKGROUND = "Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty
 
 local function AddIconBorder(button)
     button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-    button.backdrop:SetBackdropBorderColor(0.6, 0.6, 0.6)
+    button.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.Disabled:GetRGB())
     button:SetHighlightTexture(BUTTON_HIGHLIGHT)
     button:GetHighlightTexture():SetAllPoints(button.backdrop)
 end
@@ -94,7 +94,7 @@ local function SkinWindow(regions, headerText)
     MacroHorizontalBarLeft:Hide()
 
     textBackground:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-    textBackground.backdrop:SetBackdropBorderColor(0, 0, 0)
+    textBackground.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGB())
 
     for _, region in pairs(regions) do
         if region:GetObjectType() == "Texture" then
@@ -173,7 +173,7 @@ local function SkinSelectedMacro()
     MacroFrameSelectedMacroBackground:GwKill()
 
     if MacroFrameSelectedMacroName then
-        MacroFrameSelectedMacroName:SetTextColor(1, 1, 1)
+        MacroFrameSelectedMacroName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 end
 

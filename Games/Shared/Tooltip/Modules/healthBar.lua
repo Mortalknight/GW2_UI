@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 local Tooltip = GW.Tooltip
 
-local UNKNOWN_UNIT_COLOR = CreateColor(0.6, 0.6, 0.6)
+local UNKNOWN_UNIT_COLOR = GW.Colors.SkinColors.Disabled
 local VALUE_COLOR = CreateColor(159 / 255, 159 / 255, 159 / 255)
 
 local function FormatValue(value)

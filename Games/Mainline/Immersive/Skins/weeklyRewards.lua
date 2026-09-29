@@ -41,7 +41,7 @@ local function SkinVaultOverlay(vault)
         overlay:HookScript("OnSizeChanged", overlay.OnBackdropSizeChanged)
     end
     overlay:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-    overlay:SetBackdropBorderColor(1, 0.99, 0.85)
+    overlay:SetBackdropBorderColor(GW.Colors.SkinColors.CreamBorder:GetRGB())
 end
 
 local function HandleWarning(frame)
@@ -58,7 +58,7 @@ local function SetStateBorder(frame, selected, unlocked)
     elseif unlocked then
         frame.backdrop:SetBackdropBorderColor(epicColor.r, epicColor.g, epicColor.b)
     else
-        frame.backdrop:SetBackdropBorderColor(0, 0, 0)
+        frame.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGB())
     end
 end
 
@@ -198,7 +198,7 @@ local function ApplyWeeklyRewardsSkin()
     header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     header.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     header.gwLine = header:CreateTexture(nil, "ARTWORK")
-    header.gwLine:SetColorTexture(1, 1, 1, 0.2)
+    header.gwLine:SetColorTexture(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
     header.gwLine:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 60, 12)
     header.gwLine:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -60, 12)
     header.gwLine:SetHeight(1)

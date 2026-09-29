@@ -35,7 +35,7 @@ local function ApplyAlliedRacesUISkin()
 
     GW.AddDetailsBackground(AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame)
     AlliedRacesFrame.RaceInfoFrame.AlliedRacesRaceName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RaceDescriptionText:SetTextColor(1, 1, 1)
+    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RaceDescriptionText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RacialTraitsLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
     AlliedRacesFrame:HookScript("OnShow", function(self)
@@ -43,7 +43,7 @@ local function ApplyAlliedRacesUISkin()
             select(3, button:GetRegions()):Hide()
             GW.HandleIcon(button.Icon, true)
 
-            button.Text:SetTextColor(1, 1, 1)
+            button.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end)
 end

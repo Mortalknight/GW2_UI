@@ -22,7 +22,7 @@ local function HandleResizeButton(button)
     for _, state in ipairs({"Normal", "Pushed"}) do
         button["Set" .. state .. "Texture"](button, RESIZE_TEXTURE)
         local texture = button["Get" .. state .. "Texture"](button)
-        texture:SetVertexColor(1, 1, 1)
+        texture:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
         texture:SetTexCoord(0, 1, 0, 1)
         texture:SetAllPoints()
     end
@@ -107,7 +107,7 @@ local function HandleSessionDropdown(window, dropdown)
         dropdown.ResetButton:GwSkinButton(true)
     end
     if dropdown.SessionName then
-        dropdown.SessionName:SetTextColor(0, 0, 0)
+        dropdown.SessionName:SetTextColor(GW.Colors.Fallback:GetRGB())
     end
 
 end
@@ -146,7 +146,7 @@ local function HandleStatusBar(self)
 
     if StatusBar.Background then
         StatusBar.Background:SetTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white.png")
-        StatusBar.Background:SetVertexColor(0, 0, 0, 0)
+        StatusBar.Background:SetVertexColor(GW.Colors.Transparent:GetRGBA())
     end
 
     if StatusBar.BackgroundEdge then

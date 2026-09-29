@@ -178,7 +178,7 @@ local function SkinAndEnhanceColorPicker()
     ColorPickerFrame.Content.HexBox.Hash:SetFontObject("GameFontNormalSmall")
     local HexText = ColorPickerFrame.Content.HexBox:GetRegions()
     HexText:SetFontObject("GameFontNormalSmall")
-    HexText:SetTextColor(1, 1, 1)
+    HexText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     ColorPickerFrame.Content.ColorPicker:SetScript("OnColorSelect", onColorSelect)
 
@@ -207,7 +207,7 @@ local function SkinAndEnhanceColorPicker()
     -- add Color Swatch for the copied color
     local swatchWidth, swatchHeight = ColorPickerFrame.Content.ColorSwatchCurrent:GetSize()
     local copiedColor = ColorPickerFrame:CreateTexture("GwColorPPCopyColorSwatch")
-    copiedColor:SetColorTexture(0,0,0)
+    copiedColor:SetColorTexture(GW.Colors.Fallback:GetRGB())
     copiedColor:SetSize(swatchWidth, swatchHeight)
     copiedColor:Hide()
 
@@ -300,7 +300,7 @@ local function SkinAndEnhanceColorPicker()
 
         GW.SkinTextBox(box.Middle, box.Left, box.Right)
         box:SetFontObject("GameFontNormalSmall")
-        box:SetTextColor(1, 1, 1)
+        box:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
         box:SetMaxLetters(3)
         box:SetWidth(40)
@@ -310,7 +310,7 @@ local function SkinAndEnhanceColorPicker()
         local label = box:CreateFontString("GwColorPPBoxLabel" .. rgb, "ARTWORK", "GameFontNormalSmall")
         label:SetPoint("RIGHT", "GwColorPPBox" .. rgb, "LEFT", -5, 0)
         label:SetText(rgb)
-        label:SetTextColor(1, 1, 1)
+        label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
         -- set up scripts to handle event appropriately
         if i == 4 then

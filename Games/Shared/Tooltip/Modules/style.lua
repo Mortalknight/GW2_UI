@@ -51,7 +51,7 @@ GW.Tooltip.SetStyle = SetStyle
 local function SkinBar(bar)
     bar:GwStripTextures()
     bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
-    bar.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
+    bar.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGBA())
     bar:SetStatusBarTexture(BAR_TEXTURE)
 end
 

@@ -182,13 +182,13 @@ function GW.CreatePopupPanelDecoration(popup, anchorButton)
     anchorBand(leftShade)
     leftShade:SetWidth(FOOTER_SHADE_EDGE)
     leftShade:SetPoint("LEFT", popup, "LEFT", 5, 0)
-    leftShade:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0), CreateColor(0, 0, 0, FOOTER_SHADE_ALPHA))
+    leftShade:SetGradient("HORIZONTAL", GW.Colors.Transparent, CreateColor(0, 0, 0, FOOTER_SHADE_ALPHA))
 
     local rightShade = popup:CreateTexture(nil, "BACKGROUND", nil, 1)
     anchorBand(rightShade)
     rightShade:SetWidth(FOOTER_SHADE_EDGE)
     rightShade:SetPoint("RIGHT", popup, "RIGHT", -5, 0)
-    rightShade:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, FOOTER_SHADE_ALPHA), CreateColor(0, 0, 0, 0))
+    rightShade:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, FOOTER_SHADE_ALPHA), GW.Colors.Transparent)
 
     popup.gwFooterShadeMiddle = middleShade
     popup.gwFooterShadeLeft = leftShade

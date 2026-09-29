@@ -70,7 +70,7 @@ local function CreateInspectTexture(slot, x, y)
         backdrop:HookScript("OnSizeChanged", backdrop.OnBackdropSizeChanged)
         backdrop:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
     end
-    backdrop:SetBackdropColor(0, 0, 0, 0)
+    backdrop:SetBackdropColor(GW.Colors.Transparent:GetRGBA())
     backdrop:GwSetOutside(texture)
     backdrop:Hide()
 

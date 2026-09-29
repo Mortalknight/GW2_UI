@@ -29,7 +29,7 @@ local function SkinColorSwatch(swatch)
     swatch.gwSkinned = true
 
     local background = swatch.SwatchBg or _G[swatch:GetName() .. "SwatchBg"]
-    background:SetColorTexture(0, 0, 0, 1)
+    background:SetColorTexture(GW.Colors.Fallback:GetRGBA())
     background:SetSize(14, 14)
 
     if swatch.InnerBorder then
@@ -87,7 +87,7 @@ local function SkinBox(box)
     end
 
     box:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-    box.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+    box.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
 end
 
 local function SkinDescendants(frame)
@@ -121,7 +121,7 @@ local function SkinListButton(button)
     button:SetHighlightFontObject(listFont)
     button:SetHighlightTexture(LIST_HOVER)
     local highlight = button:GetHighlightTexture()
-    highlight:SetVertexColor(1, 1, 1, 1)
+    highlight:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
     highlight:SetBlendMode("BLEND")
 end
 

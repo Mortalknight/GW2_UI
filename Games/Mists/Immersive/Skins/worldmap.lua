@@ -39,7 +39,7 @@ local function worldMapSkin()
     WorldMapZoneMinimapDropdown:GwHandleDropDownBox()
     WorldMapFrame.WorldMapOptionsDropDown:GwHandleDropDownBox()
     WorldMapTrackQuest:GwSkinCheckButton(false, 15)
-    WorldMapTrackQuestText:SetTextColor(1, 1, 1)
+    WorldMapTrackQuestText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     QuestMapFrame.DetailsFrame.ScrollFrame:GwSkinScrollFrame()
     QuestMapFrame.DetailsFrame.ScrollFrame.ScrollBar:GwSkinScrollBar()
@@ -62,7 +62,7 @@ local function worldMapSkin()
         local regions = {v:GetRegions()}
         for regionKey, c in pairs(regions) do
             if c:GetObjectType() == "FontString" and regionKey == 4 then
-                c:SetTextColor(1, 1, 1)
+                c:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
                 c:ClearAllPoints()
                 c:SetPoint("TOPLEFT", v, "TOPLEFT", 5, 10)
 

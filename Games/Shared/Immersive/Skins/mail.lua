@@ -36,8 +36,8 @@ local function FixMailSkin()
     MailFrameTab2:ClearAllPoints()
     MailFrameTab2:SetPoint("BOTTOMLEFT", MailItem1, "TOPLEFT", 0, 10)
     MailFrameTab2:SetPoint("BOTTOMRIGHT", MailItem1, "TOPRIGHT", 0, 10)
-    SendMailSendMoneyButtonText:SetTextColor(1, 1, 1, 1)
-    SendMailCODButtonText:SetTextColor(1, 1, 1, 1)
+    SendMailSendMoneyButtonText:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
+    SendMailCODButtonText:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
 end
 
 local function AddFrameSeperator()
@@ -91,14 +91,14 @@ end
 
 local function SkinPager()
     local r = { InboxPrevPageButton:GetRegions() }
-    r[1]:SetTextColor(1, 1, 1, 1)
+    r[1]:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
     r[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon.png")
     r[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon.png")
     r[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon.png")
     r[4]:SetDesaturated(true)
 
     r = { InboxNextPageButton:GetRegions() }
-    r[1]:SetTextColor(1, 1, 1, 1)
+    r[1]:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
     r[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon.png")
     r[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon.png")
     r[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon.png")
@@ -130,12 +130,12 @@ local function SkinOpenMailFrame()
     OpenMailSenderLabel:Hide()
     OpenMailSender.Name:SetPoint("TOPLEFT", OpenMailScrollFrame, "TOPLEFT", 0, 50)
     OpenMailSender.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    OpenMailSender.Name:SetTextColor(1, 1, 1, 1)
+    OpenMailSender.Name:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
 
     OpenMailSubjectLabel:Hide()
     OpenMailSubject:SetPoint("TOPLEFT", OpenMailSender.Name, "BOTTOMLEFT", 0, -10)
     OpenMailSubject:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    OpenMailSubject:SetTextColor(1, 1, 1, 1)
+    OpenMailSubject:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
 
     OpenMailReportSpamButton:GwSkinButton(false, true)
     OpenMailReplyButton:GwSkinButton(false, true)
@@ -190,7 +190,7 @@ local function SkinOpenMailFrame()
 end
 
 local function setFontColorToWhite(self)
-    self:SetTextColor(1, 1, 1, 1)
+    self:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
 end
 
 local function SkinMailFrameSendItems()
@@ -226,7 +226,7 @@ local function SkinSendMailFrame()
     GW.MutateInaccessableObject(SendMailSubjectEditBox, "FontString", setFontColorToWhite)
 
     if not GW.isModern then
-        MailEditBox.ScrollBox.EditBox:SetTextColor(1, 1, 1)
+        MailEditBox.ScrollBox.EditBox:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         MailEditBox.ScrollBox:GwStripTextures()
         MailEditBox.ScrollBox:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 10, 10)
         -- blizzard already pairs the box with this bar; its track is inset by 7 on each side, too much for the slim bar
@@ -241,7 +241,7 @@ local function SkinSendMailFrame()
     end
 
     SkinMoneyFrame()
-    SendMailMoneyText:SetTextColor(1, 1, 1, 1)
+    SendMailMoneyText:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
 
     -- configure location of SendMail Frame
     SendMailFrame:ClearAllPoints()
@@ -386,8 +386,8 @@ local function LoadMailSkin()
     eventFrame:RegisterEvent("TRIAL_STATUS_UPDATE")
     eventFrame:SetScript("OnEvent", FixMailSkin)
 
-    InvoiceTextFontNormal:SetTextColor(1, 1, 1)
-    MailTextFontNormal:SetTextColor(1, 1, 1)
+    InvoiceTextFontNormal:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    MailTextFontNormal:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     -- Strip and hide default textures
     ClearMailTextures()

@@ -2,11 +2,11 @@
 local GW = select(2, ...)
 
 local function SetBorderWhite(button)
-    button.backdrop:SetBackdropBorderColor(1, 1, 1)
+    button.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local function SetBorderBlack(button)
-    button.backdrop:SetBackdropBorderColor(0, 0, 0)
+    button.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGB())
 end
 
 -- the options with arrows left and right and a popout list in the middle
@@ -41,7 +41,7 @@ end
 local function SkinDropdownOption(option)
     local dropdown = option.Dropdown
     dropdown:GwSkinButton(false, true)
-    option.Label:SetTextColor(1, 1, 1)
+    option.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     for _, text in ipairs({dropdown.Text, dropdown.SelectionDetails.SelectionName, dropdown.SelectionDetails.SelectionNumber}) do
         GW.LockFontStringColor(text, 0, 0, 0)
     end

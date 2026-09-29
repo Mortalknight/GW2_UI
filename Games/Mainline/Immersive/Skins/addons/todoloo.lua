@@ -88,7 +88,7 @@ local function SetUpObjectivesBlock(block, name, isCompleted, resetType)
     if isCompleted then
         block.ObjectiveText:SetTextColor(OBJECTIVE_TRACKER_COLOR.Complete.r, OBJECTIVE_TRACKER_COLOR.Complete.g, OBJECTIVE_TRACKER_COLOR.Complete.b)
     else
-        block.ObjectiveText:SetTextColor(1, 1, 1)
+        block.ObjectiveText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
     block.StatusBar:Hide()
     local h = block.ObjectiveText:GetStringHeight() + 10

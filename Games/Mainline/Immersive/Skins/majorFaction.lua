@@ -41,7 +41,7 @@ local function ApplyMajorFactionsFrameSkin()
 
     MajorFactionRenownFrame.TrackFrame.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
     MajorFactionRenownFrame.TrackFrame.AccountWideLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    MajorFactionRenownFrame.TrackFrame.AccountWideLabel:SetTextColor(1, 1, 1)
+    MajorFactionRenownFrame.TrackFrame.AccountWideLabel:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     MajorFactionRenownFrame.TrackFrame.AccountWideLabel:ClearAllPoints()
     MajorFactionRenownFrame.TrackFrame.AccountWideLabel:SetPoint("RIGHT", MajorFactionRenownFrame.TrackFrame.Title, "RIGHT", MajorFactionRenownFrame.TrackFrame.AccountWideLabel:GetStringWidth(), 0)

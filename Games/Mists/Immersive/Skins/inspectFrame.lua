@@ -50,7 +50,7 @@ local function UpdateTalentButtons()
                     button.outline:SetTexture(activeOutline)
                 end
 
-                button.icon:SetVertexColor(1, 1, 1, 1)
+                button.icon:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
                 button:SetAlpha(1)
                 if talentInfo.selected or button.available then
                     button.highlight:Show()
@@ -88,7 +88,7 @@ local function SkinSpec()
             frame.tooltip = desc
             frame.roleIcon:SetSize(20, 20)
             frame.roleIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-            frame.roleName:SetTextColor(1, 1, 1)
+            frame.roleName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
             frame.specIcon:SetTexture(icon)
             frame.specName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
         end

@@ -95,7 +95,7 @@ local function SkinListEntry(entry)
             -- a border only, lifted above the row: the row background would cover a backdrop behind it
             GW.HandleIcon(entry.Icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
             entry.Icon.backdrop:SetFrameLevel(entry:GetFrameLevel() + 2)
-            entry.Icon.backdrop:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
+            entry.Icon.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
         end
         entry.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     end
@@ -108,7 +108,7 @@ local function SkinListEntry(entry)
     highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
     highlight:SetTexCoord(0, 1, 0, 1)
     highlight:SetBlendMode("BLEND")
-    highlight:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+    highlight:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
     highlight:ClearAllPoints()
     highlight:SetAllPoints(entry.Background)
 
@@ -223,7 +223,7 @@ local function SkinMemberList(memberList)
     SkinScroll(memberList)
 
     memberList.MemberCount:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    memberList.MemberCount:SetTextColor(1, 1, 1)
+    memberList.MemberCount:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     -- blizzard puts the member list 6 above the chat, the stream dropdown row sits on the chat top
     memberList.MemberCount:ClearAllPoints()
     memberList.MemberCount:SetPoint("LEFT", memberList, "TOPLEFT", 4, 14)
@@ -281,7 +281,7 @@ end
 local function SkinRowIcon(icon)
     GW.HandleIcon(icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
     icon.backdrop:SetFrameLevel(icon:GetParent():GetFrameLevel() + 2)
-    icon.backdrop:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
+    icon.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
 end
 
 -- perks draw their plate from four unnamed guild frame textures, the icon is the only region worth keeping
@@ -377,7 +377,7 @@ local function SkinAchievementPointDisplay(display)
     display.Icon:SetTexCoord(0, 1, 0, 1)
     display.Icon:SetSize(18, 18)
     display.SumText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    display.SumText:SetTextColor(1, 1, 1)
+    display.SumText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     display.Highlight:SetAlpha(0)
 end
 
@@ -400,7 +400,7 @@ local function SkinGuildInfo(info)
     for index, challenge in ipairs(info.Challenges) do
         challenge.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         challenge.count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-        challenge.count:SetTextColor(1, 1, 1)
+        challenge.count:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         if index % 2 == 1 then
             local zebra = challenge:CreateTexture(nil, "BACKGROUND")
             zebra:SetAllPoints(challenge)
@@ -429,7 +429,7 @@ local function SkinBossModel(model)
 
     model.BossName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     SetLightHeader(model.BossName)
-    model.TextFrame.BossLocationText:SetTextColor(1, 1, 1)
+    model.TextFrame.BossLocationText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local function SkinGuildNews(news)
@@ -522,7 +522,7 @@ local function AvatarSelected_OnShown(selected, shown)
     if shown then
         border:SetBackdropBorderColor(1, 0.82, 0.1, 1)
     else
-        border:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
+        border:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
     end
 end
 
@@ -718,7 +718,7 @@ end
 local function SkinNewsFilterCheckbox(checkbox)
     checkbox:GwSkinCheckButton(false, 15, true)
     checkbox.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    checkbox.Text:SetTextColor(1, 1, 1)
+    checkbox.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local function SkinGuildDialogs()
@@ -897,7 +897,7 @@ local function SkinTicketManager(dialog)
     dialog:HookScript("OnShow", UpdateTicketManagerAvatar)
     dialog.Separator:SetColorTexture(1, 1, 1, 0.1)
 
-    dialog.LinkInstructions:SetTextColor(1, 1, 1)
+    dialog.LinkInstructions:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     for _, label in ipairs({dialog.ExpandLabel, dialog.ExpiresDropdownLabel, dialog.UsesDropdownLabel}) do
         SetLightHeader(label)
     end
@@ -945,9 +945,9 @@ local function SkinInvitationFrame(frame, displayMethod)
     hooksecurefunc(frame, displayMethod, UpdateInvitationIcon)
 
     SetLightHeader(frame.InvitationText)
-    frame.Name:SetTextColor(1, 1, 1)
+    frame.Name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     for _, text in ipairs({frame.Type, frame.MemberCount, frame.Leader, frame.Description}) do
-        text:SetTextColor(1, 1, 1)
+        text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     frame.AcceptButton:GwSkinButton(false, true)
@@ -1021,7 +1021,7 @@ local function SkinFinderGuildCard(card)
     local background = GW.CreateDetailsBackgroundTexture(card, 0)
     background:SetAllPoints(card)
     card:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-    card.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+    card.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
     card.RequestJoin:GwSkinButton(false, true)
 end
 
@@ -1071,7 +1071,7 @@ local function SkinFinderOptions(options)
     local searchBox = options.SearchBox
     searchBox:SetHeight(SEARCH_BOX_HEIGHT)
     GW.SkinTextBox(searchBox.Middle, searchBox.Left, searchBox.Right)
-    searchBox.Instructions:SetTextColor(1, 1, 1)
+    searchBox.Instructions:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     -- blizzard hangs the button 15 into its tall box, under ours it gets a gap and the box width
     options.Search:ClearAllPoints()
     options.Search:SetPoint("TOPLEFT", searchBox, "BOTTOMLEFT", 0, -SEARCH_BUTTON_GAP)
@@ -1133,7 +1133,7 @@ local function SkinRequestToJoin(dialog)
     -- ClubDescription2 is retail only
     for _, key in ipairs({"ClubDescription", "ClubDescription2", "ErrorDescription", "RecruitingSpecDescriptions"}) do
         if dialog[key] then
-            dialog[key]:SetTextColor(1, 1, 1)
+            dialog[key]:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 
@@ -1153,8 +1153,8 @@ local function SkinClubFinder(finder)
     SkinFinderCommunityCards(finder.PendingCommunityCards)
     -- blizzards inset starts under the lowered dropdowns and right at the list scroll bar
     GW.AddDetailsBackground(finder.InsetFrame, FINDER_DETAILS_LEFT, -FINDER_DETAILS_TOP)
-    finder.InsetFrame.GuildDescription:SetTextColor(1, 1, 1)
-    finder.InsetFrame.ErrorDescription:SetTextColor(1, 1, 1)
+    finder.InsetFrame.GuildDescription:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    finder.InsetFrame.ErrorDescription:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     SkinFinderTabs(finder)
     SkinRequestToJoin(finder.RequestToJoinFrame)
 end

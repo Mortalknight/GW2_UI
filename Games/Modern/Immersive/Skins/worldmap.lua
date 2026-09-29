@@ -71,7 +71,7 @@ local HOVER = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
 -- a header of the quest log or the event list: a thin light frame around our separator art
 local function FrameHeaderArt(owner, art)
     owner:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-    owner.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+    owner.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
     if art then
         art:SetTexture(SEPARATOR)
     end
@@ -82,7 +82,7 @@ local function SkinQuestHeader(button)
     FrameHeaderArt(button)
     button:SetNormalTexture(SEPARATOR)
     button:SetHighlightTexture(SEPARATOR)
-    button:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+    button:GetHighlightTexture():SetColorTexture(GW.Colors.SkinColors.SeparatorHighlight:GetRGBA())
     if button.CollapseButton then
         hooksecurefunc(button.CollapseButton, "UpdateCollapsedState", updateCollapse)
     end
@@ -112,7 +112,7 @@ local function SkinCampaignHeader(header)
     header.minimumCollapsedHeight = 25
     FrameHeaderArt(header.Background, header.Background)
     header.Highlight:SetTexture(SEPARATOR)
-    header.Highlight:SetColorTexture(1, 0.93, 0.73, 0.25)
+    header.Highlight:SetColorTexture(GW.Colors.SkinColors.SeparatorHighlight:GetRGBA())
     hooksecurefunc(header.CollapseButton, "UpdateCollapsedState", updateCollapse)
 end
 
@@ -137,7 +137,7 @@ end
 -- the event list of the map: headers like the quest log, events with the hover of our lists
 local function SetEventHover(texture)
     texture:SetTexture(HOVER)
-    texture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+    texture:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
 end
 
 -- ongoing events set their background atlas again on every refresh
@@ -154,7 +154,7 @@ local function SkinEventHeader(header)
         header.Background:GwStripTextures()
         FrameHeaderArt(header.Background, header.Background)
     end
-    header.Label:SetTextColor(1, 1, 1)
+    header.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local hookedEventBackgrounds = setmetatable({}, {__mode = "k"})
@@ -226,7 +226,7 @@ local function worldMapSkin()
     local r = {WorldMapFrame.NavBar.homeButton:GetRegions()}
     for _,c in pairs(r) do
         if c:GetObjectType() == "FontString" then
-            c:SetTextColor(1, 1, 1, 1)
+            c:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
             c:SetShadowOffset(0, 0)
         end
     end
@@ -259,7 +259,7 @@ local function worldMapSkin()
     QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame:GwCreateBackdrop(GW.BackdropTemplates.DopwDown)
     QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint("TOPLEFT", -3, -14)
     QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint("BOTTOMRIGHT", -1, 1)
-    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetBackdropColor(0, 0, 0, 1)
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetBackdropColor(GW.Colors.Fallback:GetRGBA())
 
     QuestMapFrame.DetailsFrame.BackFrame:GwStripTextures()
     QuestMapFrame.DetailsFrame.BackFrame.BackButton:GwSkinButton(false, true)
@@ -306,7 +306,7 @@ local function worldMapSkin()
         if QuestLogQuestCount then
             -- blizzard only colors the numbers, the label keeps the font objects yellow
             QuestLogQuestCount:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-            QuestLogQuestCount:SetTextColor(1, 1, 1)
+            QuestLogQuestCount:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 

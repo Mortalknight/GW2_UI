@@ -183,7 +183,7 @@ local ReplacedGossipColor = {
 
 local function Gossip_SetTextColor(text, r, g, b)
     if r ~= 1 or g ~= 1 or b ~= 1 then
-        text:SetTextColor(1, 1, 1)
+        text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 end
 
@@ -241,7 +241,7 @@ local function skinGossipOption(self)
         hl:SetDrawLayer("BACKGROUND", -7)
         hl:SetPoint("LEFT", 16, 0)
         hl:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover.png")
-        hl:SetVertexColor(1, 1, 1, 1)
+        hl:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
         hl:Hide()
         self:HookScript("OnEnter", function()
             hl:Show()
@@ -262,7 +262,7 @@ local function skinGossipOption(self)
     if buttonText and buttonText:IsObjectType("FontString") then
         buttonText:ClearAllPoints()
         buttonText:SetPoint("LEFT", self, "LEFT", 40, 0)
-        buttonText:SetTextColor(1, 1, 1)
+        buttonText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         hooksecurefunc(buttonText, "SetTextColor", Gossip_SetTextColor)
 
         ReplaceGossipText(self, self:GetText())
@@ -546,12 +546,12 @@ local function LoadGossipSkin()
     for i = 1, 4 do
         local notch = statusbar["Notch" .. i]
         if notch then
-            notch:SetColorTexture(0, 0, 0)
+            notch:SetColorTexture(GW.Colors.Fallback:GetRGB())
             notch:SetSize(1, 16)
         end
     end
 
-    QuestFont:SetTextColor(1, 1, 1)
+    QuestFont:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     if GossipFrameInset then
         GossipFrameInset:Hide()
     end
@@ -645,7 +645,7 @@ local function LoadGossipSkin()
 
     portraitFrame.npcNameText = portraitFrame:CreateFontString(nil, "ARTWORK")
     portraitFrame.npcNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
-    portraitFrame.npcNameText:SetTextColor(1, 1, 1)
+    portraitFrame.npcNameText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     portraitFrame.npcNameText:ClearAllPoints()
     portraitFrame.npcNameText:SetPoint("TOPLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 0)
     portraitFrame.npcNameText:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "BOTTOMRIGHT", -10, 0)
@@ -847,22 +847,22 @@ local function LoadGossipSkin()
             GW.QuestInfo_Display_hooked = true
         end
         hooksecurefunc("QuestFrame_SetTitleTextColor", function(self)
-            self:SetTextColor(1, 0.8, 0.1)
+            self:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
         end)
         hooksecurefunc("QuestFrame_SetTextColor", function(self)
-            self:SetTextColor(1, 1, 1)
+            self:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end)
         hooksecurefunc("QuestFrameProgressItems_Update", function()
-            QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
-            QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
+            QuestProgressRequiredItemsText:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
+            QuestProgressRequiredMoneyText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end)
         hooksecurefunc("QuestInfo_ShowRequiredMoney", function()
             local requiredMoney = GetQuestLogRequiredMoney()
             if requiredMoney > 0 then
                 if requiredMoney > GetMoney() then
-                    QuestInfoRequiredMoneyText:SetTextColor(0.63, 0.09, 0.09)
+                    QuestInfoRequiredMoneyText:SetTextColor(GW.Colors.SkinColors.ObjectiveOpen:GetRGB())
                 else
-                    QuestInfoRequiredMoneyText:SetTextColor(1, 0.8, 0.1)
+                    QuestInfoRequiredMoneyText:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
                 end
             end
         end)
@@ -914,7 +914,7 @@ local function LoadGossipSkin()
         QuestFrameCompleteQuestButton:GwSkinButton(false, true)
 
         QuestModelScene.ModelTextFrame:GwStripTextures()
-        QuestNPCModelText:SetTextColor(1, 1, 1)
+        QuestNPCModelText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
         QuestModelScene:SetHeight(253)
         QuestModelScene:GwStripTextures()
@@ -924,7 +924,7 @@ local function LoadGossipSkin()
         QuestNPCModelNameText:ClearAllPoints()
         QuestNPCModelNameText:SetPoint("TOP", QuestModelScene, 0, -10)
         QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
-        QuestNPCModelNameText:SetTextColor(1, 1, 1)
+        QuestNPCModelNameText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
         QuestNPCModelText:SetJustifyH("CENTER")
         QuestNPCModelTextScrollFrame:ClearAllPoints()

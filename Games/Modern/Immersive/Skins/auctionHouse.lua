@@ -67,7 +67,7 @@ local function HandleSellFrame(frame)
 
 	ItemButton.EmptyBackground:Hide()
 	ItemButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
-	ItemButton.Highlight:SetColorTexture(1, 1, 1, .25)
+	ItemButton.Highlight:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
 	ItemButton.Highlight:SetAllPoints(ItemButton.Icon)
 
 	GW.HandleIcon(ItemButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
@@ -83,7 +83,7 @@ local function HandleSellFrame(frame)
 	if frame.SecondaryPriceInput then
 		GW.SkinTextBox(frame.SecondaryPriceInput.MoneyInputFrame.GoldBox.Middle, frame.SecondaryPriceInput.MoneyInputFrame.GoldBox.Left, frame.SecondaryPriceInput.MoneyInputFrame.GoldBox.Right)
 		GW.SkinTextBox(frame.SecondaryPriceInput.MoneyInputFrame.SilverBox.Middle, frame.SecondaryPriceInput.MoneyInputFrame.SilverBox.Left, frame.SecondaryPriceInput.MoneyInputFrame.SilverBox.Right)
-		frame.SecondaryPriceInput.Label:SetTextColor(1, 1, 1)
+		frame.SecondaryPriceInput.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 	end
 
 	frame.Duration.Dropdown:GwHandleDropDownBox()
@@ -93,17 +93,17 @@ local function HandleSellFrame(frame)
 
 	if frame.BuyoutModeCheckButton then
 		frame.BuyoutModeCheckButton:GwSkinCheckButton(false, 20)
-		frame.BuyoutModeCheckButton.Text:SetTextColor(1, 1, 1)
+		frame.BuyoutModeCheckButton.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 	end
 	if frame.QuantityInput then
-		frame.QuantityInput.Label:SetTextColor(1, 1, 1)
+		frame.QuantityInput.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 	end
 
-	frame.PriceInput.Label:SetTextColor(1, 1, 1)
-	hooksecurefunc(frame.PriceInput.Label, "SetTextColor", function(self, r, g, b) if r ~=1 or g ~= 1 or b ~= 1 then self:SetTextColor(1, 1, 1) end end)
-	frame.Duration.Label:SetTextColor(1, 1, 1)
-	frame.Deposit.Label:SetTextColor(1, 1, 1)
-	frame.TotalPrice.Label:SetTextColor(1, 1, 1)
+	frame.PriceInput.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+	hooksecurefunc(frame.PriceInput.Label, "SetTextColor", function(self, r, g, b) if r ~=1 or g ~= 1 or b ~= 1 then self:SetTextColor(GW.Colors.FallbackWhite:GetRGB()) end end)
+	frame.Duration.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+	frame.Deposit.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+	frame.TotalPrice.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local function HandleAuctionButtons(button)
@@ -147,7 +147,7 @@ local function HandleTokenSellFrame(frame)
 
 	ItemButton.EmptyBackground:Hide()
 	ItemButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
-	ItemButton.Highlight:SetColorTexture(1, 1, 1, .25)
+	ItemButton.Highlight:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
 	ItemButton.Highlight:SetAllPoints(ItemButton.Icon)
 
 	GW.HandleIcon(ItemButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
@@ -166,14 +166,14 @@ end
 local function HandleSellList(frame, hasHeader, fitScrollBar)
 	if frame.RefreshFrame then
 		HandleAuctionButtons(frame.RefreshFrame.RefreshButton)
-		frame.RefreshFrame.TotalQuantity:SetTextColor(1, 1, 1)
+		frame.RefreshFrame.TotalQuantity:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 	end
 
 	GW.HandleTrimScrollBar(frame.ScrollBar)
 	GW.HandleScrollControls(frame)
 
 	if frame.LoadingSpinner then
-		frame.LoadingSpinner.SearchingText:SetTextColor(1, 1, 1)
+		frame.LoadingSpinner.SearchingText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 	end
 
 	if fitScrollBar then
@@ -289,7 +289,7 @@ local function ApplyAuctionHouseSkin()
 			button.Background:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
 			button.Background:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
 			button.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
-			button.HighlightTexture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+			button.HighlightTexture:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
 			button.HighlightTexture:GwSetInside(button.Background)
 
 			button:HookScript("OnEnter",function()
@@ -347,9 +347,9 @@ local function ApplyAuctionHouseSkin()
 		--zebra
 		local zebra = (button:GetOrderIndex() % 2) == 1 or false
 		if zebra then
-			button.Background:SetVertexColor(1, 1, 1, 1)
+			button.Background:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
 		else
-			button.Background:SetVertexColor(0, 0, 0, 0)
+			button.Background:SetVertexColor(GW.Colors.Transparent:GetRGBA())
 		end
 	end)
 
@@ -369,7 +369,7 @@ local function ApplyAuctionHouseSkin()
 	Browse.tex:SetPoint("TOPLEFT", Browse, "TOPLEFT", 2, 0)
 	Browse.tex:SetPoint("BOTTOMRIGHT", Browse, "BOTTOMRIGHT", 0, 0)
 
-	BrowseList.LoadingSpinner.SearchingText:SetTextColor(1, 1, 1)
+	BrowseList.LoadingSpinner.SearchingText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
 	--BuyOut Frame
 	local CommoditiesBuyFrame = AuctionHouseFrame.CommoditiesBuyFrame
@@ -382,16 +382,16 @@ local function ApplyAuctionHouseSkin()
 	GW.HandleTrimScrollBar(CommoditiesBuyList.ScrollBar)
 	GW.HandleScrollControls(CommoditiesBuyList)
 	HookItemListScrollBoxHover(CommoditiesBuyList.ScrollBox)
-	CommoditiesBuyList.RefreshFrame.TotalQuantity:SetTextColor(1, 1, 1)
-	CommoditiesBuyList.LoadingSpinner.SearchingText:SetTextColor(1, 1, 1)
+	CommoditiesBuyList.RefreshFrame.TotalQuantity:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+	CommoditiesBuyList.LoadingSpinner.SearchingText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
 	local BuyDisplay = AuctionHouseFrame.CommoditiesBuyFrame.BuyDisplay
 	GW.SkinTextBox(BuyDisplay.QuantityInput.InputBox.Middle, BuyDisplay.QuantityInput.InputBox.Left, BuyDisplay.QuantityInput.InputBox.Right)
 	BuyDisplay.BuyButton:GwSkinButton(false, true)
 
-	BuyDisplay.QuantityInput.Label:SetTextColor(1, 1, 1)
-	BuyDisplay.UnitPrice.Label:SetTextColor(1, 1, 1)
-	BuyDisplay.TotalPrice.Label:SetTextColor(1, 1, 1)
+	BuyDisplay.QuantityInput.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+	BuyDisplay.UnitPrice.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+	BuyDisplay.TotalPrice.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
 	SkinItemDisplay(BuyDisplay)
 
@@ -409,8 +409,8 @@ local function ApplyAuctionHouseSkin()
 	ItemBuyList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
 	hooksecurefunc(ItemBuyList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end) --TODO
 	hooksecurefunc(ItemBuyList, "RefreshScrollFrame", GW.HandleSrollBoxHeaders)
-	ItemBuyList.RefreshFrame.TotalQuantity:SetTextColor(1, 1, 1)
-	ItemBuyList.LoadingSpinner.SearchingText:SetTextColor(1, 1, 1)
+	ItemBuyList.RefreshFrame.TotalQuantity:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+	ItemBuyList.LoadingSpinner.SearchingText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
 	local EditBoxes = {
 		AuctionHouseFrameGold,
@@ -535,9 +535,9 @@ local function ApplyAuctionHouseSkin()
 	WowTokenGameTimeTutorial.CloseButton:GwSkinButton(true)
 	WowTokenGameTimeTutorial.RightDisplay.StoreButton:GwSkinButton(false, true)
 	WowTokenGameTimeTutorial.Bg:SetAlpha(0)
-	WowTokenGameTimeTutorial.LeftDisplay.Label:SetTextColor(1, 1, 1)
+	WowTokenGameTimeTutorial.LeftDisplay.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 	WowTokenGameTimeTutorial.LeftDisplay.Tutorial1:SetTextColor(1, 0, 0)
-	WowTokenGameTimeTutorial.RightDisplay.Label:SetTextColor(1, 1, 1)
+	WowTokenGameTimeTutorial.RightDisplay.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 	WowTokenGameTimeTutorial.RightDisplay.Tutorial1:SetTextColor(1, 0, 0)
 
 	--Dialogs

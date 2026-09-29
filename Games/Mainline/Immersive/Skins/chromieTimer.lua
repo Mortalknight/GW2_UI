@@ -25,7 +25,7 @@ local function ApplyChromieTimerSkin()
     InfoFrame:DisableDrawLayer("BACKGROUND")
     InfoFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     InfoFrame.Name:SetTextColor(1, 0.8, 0)
-    InfoFrame.Description:SetTextColor(1, 1, 1)
+    InfoFrame.Description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local function LoadChromieTimerSkin()

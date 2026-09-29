@@ -33,7 +33,7 @@ local function SkinTab(tab)
 
     local function ApplyText(self)
         self.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-        self.Text:SetTextColor(1, 1, 1)
+        self.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         self.Text:ClearAllPoints()
         self.Text:SetPoint("CENTER")
         self.background:SetBlendMode(self:IsSelected() and "MOD" or "BLEND")
@@ -94,7 +94,7 @@ local function SkinCategoryRow(row)
         self.gwHover:SetShown(not selected and self.over)
         self.Label:SetFont(UNIT_NAME_FONT, MENU_SUB_FONT_SIZE, "")
         if selected then
-            self.Label:SetTextColor(1, 1, 1)
+            self.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         else
             self.Label:SetTextColor(unpack(MENU_TEXT_COLOR))
         end
@@ -148,7 +148,7 @@ local function SkinStepSlider(stepper)
             if enabled == false then
                 label:SetVertexColor(0.5, 0.5, 0.5)
             else
-                label:SetVertexColor(1, 1, 1)
+                label:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
             end
         end
     end
@@ -183,7 +183,7 @@ local function ApplyLabel(label, enabled)
     if enabled == false then
         label:SetTextColor(0.5, 0.5, 0.5)
     else
-        label:SetTextColor(1, 1, 1)
+        label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 end
 
@@ -258,20 +258,20 @@ local function SkinBindingButton(button)
     HideTextureRegions(button)
     button:SetFrameLevel(button:GetFrameLevel() + 2)
     button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-    button.backdrop:SetBackdropBorderColor(0, 0, 0)
+    button.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGB())
     button:SetHighlightTexture(MENU_HOVER)
     button:GetHighlightTexture():SetAlpha(0.6)
     local text = button:GetFontString()
     if text then
         text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        text:SetTextColor(1, 1, 1)
+        text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
     if button.SetSelected then
         hooksecurefunc(button, "SetSelected", function(self, selected)
             if selected then
                 self.backdrop:SetBackdropBorderColor(1, 0.82, 0)
             else
-                self.backdrop:SetBackdropBorderColor(0, 0, 0)
+                self.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGB())
             end
         end)
     end

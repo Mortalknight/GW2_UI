@@ -3,8 +3,8 @@ local GW = select(2, ...)
 
 local ARROW_DOWN = "Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png"
 local WHITE = "Interface/AddOns/GW2_UI/textures/uistuff/white.png"
-local ADD_COLOR = CreateColor(0.3, 1, 0.3)
-local REMOVE_COLOR = CreateColor(1, 0.3, 0.3)
+local ADD_COLOR = GW.Colors.SkinColors.Positive
+local REMOVE_COLOR = GW.Colors.SkinColors.Negative
 
 -- the cart toggle of a product shows a plain plus or minus; blizzard sets its art again with the state
 local function UpdateCartToggle(button)
@@ -50,7 +50,7 @@ local function SkinItemRow(row)
         GW.HandleIcon(row.PriceIcon)
     end
     if row.HighlightTexture then
-        row.HighlightTexture:SetColorTexture(1, 1, 1, 0.25)
+        row.HighlightTexture:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
         row.HighlightTexture:GwSetInside()
     end
     for _, key in ipairs({"TopBraceTexture", "BottomBraceTexture"}) do
@@ -153,7 +153,7 @@ local function SkinProducts(products)
     if cart then
         cart.Background:Hide()
         SkinPanel(cart)
-        cart.Title:SetTextColor(1, 1, 1, 1)
+        cart.Title:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
         cart.CloseButton:GwSkinButton(true)
         cart.CloseButton:SetFrameLevel(cart.backdrop:GetFrameLevel() + 1)
         cart.PurchaseCartButton:GwSkinButton(false, true)
@@ -182,7 +182,7 @@ local function SkinProducts(products)
     for _, sort in ipairs({list.NameSortButton, list.PriceSortButton}) do
         if sort and sort.Label then
             sort.Label:SetFont(UNIT_NAME_FONT, 14)
-            sort.Label:SetTextColor(1, 1, 1, 1)
+            sort.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
         end
     end
     GW.SkinScrollBoxFrames(list.ScrollBox, SkinProduct)

@@ -29,21 +29,21 @@ local function SkinAddonButtons()
         PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.Slider:GwSkinSliderFrame()
         PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.Back:Hide()
         PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.Forward:Hide()
-        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.LeftText:SetTextColor(1, 1, 1)
-        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.RightText:SetTextColor(1, 1, 1)
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.LeftText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.RightText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     if PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider then
         PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.Slider:GwSkinSliderFrame()
         PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.Back:Hide()
         PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.Forward:Hide()
-        PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.LeftText:SetTextColor(1, 1, 1)
-        PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.RightText:SetTextColor(1, 1, 1)
+        PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.LeftText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+        PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.RightText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     if ClassTalentLoadoutImportDialog and ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox then
         ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox:GwSkinCheckButton(false, 13)
-        ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox.text:SetTextColor(1, 1, 1)
+        ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox.text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 end
 
@@ -65,7 +65,7 @@ local function HandleTalentFrameDialog(dialog)
     dialog.NameControl.EditBox:SetPoint("TOPLEFT", dialog.NameControl.Label, "BOTTOMLEFT", 0, -10)
     dialog.NameControl.EditBox:SetHeight(25)
 
-    dialog.NameControl.Label:SetTextColor(1, 1, 1)
+    dialog.NameControl.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local function UpdateSpecFrame(frame)
@@ -76,8 +76,8 @@ local function UpdateSpecFrame(frame)
             specContentFrame.ActivateButton:GwSkinButton(false, true)
 
             local role = LFGRoleEnumToString[GetSpecializationRoleEnum(specContentFrame.specIndex, false, false)]
-            specContentFrame.Description:SetTextColor(1, 1, 1)
-            specContentFrame.RoleName:SetTextColor(1, 1, 1)
+            specContentFrame.Description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+            specContentFrame.RoleName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
             specContentFrame.RoleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon.png")
 
             --SpecName
@@ -124,7 +124,7 @@ local function UpdateSpecFrame(frame)
         if specContentFrame.isInGlowState then
             specContentFrame.SpecImage.backdrop:SetBackdropBorderColor(247/255, 203/255, 96/255)
         else
-            specContentFrame.SpecImage.backdrop:SetBackdropBorderColor(1, 1, 1)
+            specContentFrame.SpecImage.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 
@@ -145,7 +145,7 @@ local function HandleHeroTalents(frame)
                 end
             if specFrame.Description then
                 specFrame.Description:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-                specFrame.Description:SetTextColor(1, 1, 1)
+                specFrame.Description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
                 end
 
             if specFrame.CurrencyFrame then
@@ -292,7 +292,7 @@ local function SkinLegacyTalentTree(TalentsFrame)
         end
 
         GW.HandleIcon(header.Icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
-        header.Icon.backdrop:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
+        header.Icon.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
 
         header.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         header.Name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -560,7 +560,7 @@ local function skinPlayerSpells()
 
     if ClassTalentLoadoutImportDialog then
         HandleTalentFrameDialog(ClassTalentLoadoutImportDialog)
-        ClassTalentLoadoutImportDialog.ImportControl.Label:SetTextColor(1, 1, 1)
+        ClassTalentLoadoutImportDialog.ImportControl.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         ClassTalentLoadoutImportDialog.ImportControl.InputContainer:GwStripTextures()
         GW.SkinTextBox(ClassTalentLoadoutImportDialog.ImportControl.InputContainer.MiddleTex, ClassTalentLoadoutImportDialog.ImportControl.InputContainer.LeftTex, ClassTalentLoadoutImportDialog.ImportControl.InputContainer.RightTex, nil, nil, 5, 5)
     end
@@ -581,7 +581,7 @@ local function skinPlayerSpells()
         local check = ClassTalentLoadoutEditDialog.UsesSharedActionBars
         if check then
             check.CheckButton:GwSkinCheckButton(false, 20)
-            check.Label:SetTextColor(1, 1, 1)
+            check.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 
@@ -617,7 +617,7 @@ local function skinPlayerSpells()
         SpellBookFrame.SearchBox:SetHeight(20)
         if SpellBookFrame.HidePassivesCheckButton then
             SpellBookFrame.HidePassivesCheckButton.Button:GwSkinCheckButton(false, 20)
-            SpellBookFrame.HidePassivesCheckButton.Label:SetTextColor(1, 1, 1)
+            SpellBookFrame.HidePassivesCheckButton.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
 
         SpellBookFrame.HelpPlateButton:GwKill()
@@ -631,7 +631,7 @@ local function skinPlayerSpells()
         local PagingControls = PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.PagingControls
         GW.HandleNextPrevButton(PagingControls.PrevPageButton)
         GW.HandleNextPrevButton(PagingControls.NextPageButton)
-        PagingControls.PageText:SetTextColor(1, 1, 1)
+        PagingControls.PageText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 end
 

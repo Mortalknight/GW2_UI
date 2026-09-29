@@ -5,7 +5,7 @@ local GW = select(2, ...)
 local Social = {}
 GW.Social = Social
 
-Social.SAME_PLACE_COLOR = CreateColor(0.3, 1, 0.3)
+Social.SAME_PLACE_COLOR = GW.Colors.SkinColors.Positive
 Social.OTHER_PLACE_COLOR = CreateColor(0.65, 0.65, 0.65)
 Social.IN_GROUP_MARK = "|cffaaaaaa*|r"
 Social.TIMERUNNING_ICON = CreateAtlasMarkup("timerunning-glues-icon-small", 12, 10)
@@ -44,7 +44,11 @@ end
 
 -- the tooltip a micro button shows on its own, the social lists go below it
 function Social.StartMicroButtonTooltip(button)
+    -- blizzards micro button has just shown its own tooltip with the same owner, a new owner call alone
+    -- keeps the size of the last tooltip
+    GameTooltip:Hide()
     GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+    GameTooltip:ClearLines()
     GameTooltip_SetTitle(GameTooltip, button.tooltipText)
     if not button:IsEnabled() then
         local reason = button.factionGroup == "Neutral" and FEATURE_NOT_AVAILBLE_PANDAREN

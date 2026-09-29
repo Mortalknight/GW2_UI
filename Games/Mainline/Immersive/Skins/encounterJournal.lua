@@ -17,7 +17,7 @@ local function SkinLightButton(button, strip)
     button:GwSkinButton(false, true, nil, nil, strip)
     local text = button:GetFontString()
     if text then
-        text:SetTextColor(0, 0, 0)
+        text:SetTextColor(GW.Colors.Fallback:GetRGB())
     end
 end
 
@@ -46,7 +46,7 @@ local function SkinOverviewSection(frame, _, index)
     GW.LockFontStringColor(section.button.expandedIcon, 0, 0, 0)
     section.descriptionBG:SetAlpha(0)
     section.descriptionBGBottom:SetAlpha(0)
-    section.description:SetTextColor(1, 1, 1)
+    section.description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local function SkinOverviewBullets(object)
@@ -67,7 +67,7 @@ local function SkinAbilitySections()
             hooksecurefunc(section.flashAnim, "Play", StopAnimation)
             section.descriptionBG:SetTexture(DETAILS_BACKGROUND)
             section.descriptionBGBottom:SetAlpha(0)
-            section.description:SetTextColor(1, 1, 1)
+            section.description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
             StripPaperHeader(button)
             SkinLightButton(button)
@@ -127,7 +127,7 @@ local function SkinSuggestion(suggestion, titleSize)
     suggestion.tex:SetPoint("BOTTOMRIGHT", suggestion, "BOTTOMRIGHT", 1, -1)
 
     local display = suggestion.centerDisplay
-    display.title.text:SetTextColor(1, 1, 1)
+    display.title.text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     display.title.text:SetFont(DAMAGE_TEXT_FONT, titleSize, "")
     display.description.text:SetTextColor(0.9, 0.9, 0.9)
 
@@ -199,7 +199,7 @@ local function SkinInstanceTile(tile)
     tile:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
     local highlight = tile:GetHighlightTexture()
     highlight:SetBlendMode("BLEND")
-    highlight:SetVertexColor(0.8, 0.8, 0.8, 0.35)
+    highlight:SetVertexColor(GW.Colors.SkinColors.CardHover:GetRGBA())
     highlight:GwSetInside(tile.bgImage, 0, 0)
     tile.gwHoverFrame = CreateFrame("Frame", nil, tile, "BackdropTemplate")
     tile.gwHoverFrame:SetAllPoints(tile.bgImage)
@@ -276,12 +276,12 @@ local function SkinLootRow(row)
     end
     for _, key in ipairs({"boss", "slot", "armorType"}) do
         if row[key] then
-            row[key]:SetTextColor(1, 1, 1)
+            row[key]:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 
     row:GwCreateBackdrop("Transparent")
-    row.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
+    row.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGBA())
     row.backdrop:SetPoint("TOPLEFT")
     row.backdrop:SetPoint("BOTTOMRIGHT", 0, 1)
 end
@@ -371,8 +371,8 @@ local function SkinEncounterInfo(info)
     hooksecurefunc("EncounterJournal_ToggleHeaders", SkinAbilitySections)
 
     -- white texts on our dark background
-    info.detailsScroll.child.description:SetTextColor(1, 1, 1)
-    info.overviewScroll.child.loreDescription:SetTextColor(1, 1, 1)
+    info.detailsScroll.child.description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    info.overviewScroll.child.loreDescription:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     local overview = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild
     EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildHeader:SetAlpha(0)
     EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle:SetFontObject("GameFontNormalLarge")
@@ -396,14 +396,14 @@ local function SkinInstanceFrame(frame)
     local title = EncounterJournalEncounterFrameInstanceFrameTitle
     title:ClearAllPoints()
     title:SetPoint("TOP", 0, -30)
-    title:SetTextColor(1, 1, 1)
+    title:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
     EncounterJournalEncounterFrameInstanceFrameMapButton:ClearAllPoints()
     EncounterJournalEncounterFrameInstanceFrameMapButton:SetPoint("LEFT", 55, -70)
 
     for _, line in ipairs({frame.LoreScrollingFont.ScrollBox.ScrollTarget:GetChildren()}) do
         if line.FontString then
-            line.FontString:SetTextColor(1, 1, 1)
+            line.FontString:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 end
@@ -456,7 +456,7 @@ local function SkinJourneyCard(card)
         local function SetHoverTexture()
             local highlight = card:GetHighlightTexture()
             highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
-            highlight:SetVertexColor(0.8, 0.8, 0.8, 0.35)
+            highlight:SetVertexColor(GW.Colors.SkinColors.CardHover:GetRGBA())
             highlight:SetAllPoints(card.tex)
         end
         SetHoverTexture()
@@ -466,10 +466,10 @@ local function SkinJourneyCard(card)
     local watchCheckbox = card.WatchedFactionToggleFrame and card.WatchedFactionToggleFrame.WatchFactionCheckbox
     if watchCheckbox then
         watchCheckbox:GwSkinCheckButton(false, 15)
-        watchCheckbox.Label:SetTextColor(1, 1, 1) -- the label hangs on the checkbox, not on its frame
+        watchCheckbox.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB()) -- the label hangs on the checkbox, not on its frame
     end
 
-    name:SetTextColor(1, 1, 1)
+    name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     local level = card.RenownCardFactionLevel or card.JourneyCardLevel
     if level then
         level:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -493,7 +493,7 @@ local function SkinJourneyRewardCard(card)
     card.RewardCardBGGlow:SetAlpha(0)
     card.RewardCardIconBorderDefault:SetAlpha(0)
     GW.AddDetailsBackground(card)
-    card.RewardCardName:SetTextColor(1, 1, 1)
+    card.RewardCardName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     local icon = card.RewardCardIcon
     if card.TextureMask then
@@ -517,7 +517,7 @@ local function SkinProgressDetails(details)
         details.JourneyLevel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     end
     if details.JourneyLevelProgress then
-        details.JourneyLevelProgress:SetTextColor(1, 1, 1)
+        details.JourneyLevelProgress:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 end
 
@@ -532,7 +532,7 @@ local function SkinParagonLevel(paragon)
     GW.AddDetailsBackground(paragon)
 
     if paragon.Label then
-        paragon.Label:SetTextColor(1, 1, 1)
+        paragon.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
     if paragon.Level then
         paragon.Level:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -559,7 +559,7 @@ local function SkinRewardTrackCard(card)
         SkinJourneyIcon(card.Icon)
     end
     if card.RewardName then
-        card.RewardName:SetTextColor(1, 1, 1)
+        card.RewardName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
     if card.Level then
         card.Level:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -594,13 +594,13 @@ local function SkinCompanionButton(button)
         SkinJourneyIcon(button.Icon)
     end
     if button.CompanionName then
-        button.CompanionName:SetTextColor(1, 1, 1)
+        button.CompanionName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     local function SetHoverTexture()
         local highlight = button:GetHighlightTexture()
         highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
-        highlight:SetVertexColor(0.8, 0.8, 0.8, 0.35)
+        highlight:SetVertexColor(GW.Colors.SkinColors.CardHover:GetRGBA())
         highlight:SetAllPoints(button.tex)
     end
     SetHoverTexture()
@@ -685,7 +685,7 @@ local function encounterJournalSkin()
     home:GwStripTextures()
     for _, region in ipairs({home:GetRegions()}) do
         if region:IsObjectType("FontString") then
-            region:SetTextColor(1, 1, 1, 1)
+            region:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
             region:SetShadowOffset(0, 0)
         end
     end
@@ -750,7 +750,7 @@ local function encounterJournalSkin()
     hooksecurefunc(monthly.ScrollBox, "Update", function(frame)
         GW.HandleItemListScrollBoxHover(frame)
         for _, child in next, {frame.ScrollTarget:GetChildren()} do
-            child.TextContainer.NameText:SetTextColor(1, 1, 1)
+            child.TextContainer.NameText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end)
 

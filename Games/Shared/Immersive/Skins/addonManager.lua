@@ -11,7 +11,7 @@ local function HandleAddonEntry(entry, treeNode)
         entry.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         entry.Status:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         entry.Reload:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        entry.Reload:SetTextColor(1.0, 0.3, 0.3)
+        entry.Reload:SetTextColor(GW.Colors.SkinColors.Negative:GetRGB())
         entry.LoadAddonButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
 
         GW.AddListItemChildHoverTexture(entry)
@@ -34,7 +34,7 @@ local function HandleAddonEntry(entry, treeNode)
         checktex:SetVertexColor(1, 0.93, 0.73)
         checktex:SetDesaturated(false)
     elseif checkstate == 2 then
-        checktex:SetVertexColor(1, 1, 1)
+        checktex:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
         checktex:SetDesaturated(false)
     end
 end
@@ -60,7 +60,7 @@ local function LoadAddonListSkin()
 
     for _, region in next, { AddonList.ForceLoad:GetRegions() } do
         if region:IsObjectType("FontString") then
-            region:SetTextColor(1, 1, 1)
+            region:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 

@@ -9,11 +9,11 @@ local GW = select(2, ...)
 ]]
 
 local HEADER_COLOR = GW.Colors.TextColors.LightHeader
-local TEXT_COLOR = CreateColor(1, 1, 1)
-local MONEY_MISSING_COLOR = CreateColor(0.6, 0.6, 0.6)
-local MONEY_OK_COLOR = CreateColor(1, 0.8, 0.1)
-local OBJECTIVE_DONE_COLOR = CreateColor(1, 0.8, 0.1)
-local OBJECTIVE_OPEN_COLOR = CreateColor(0.63, 0.09, 0.09)
+local TEXT_COLOR = GW.Colors.FallbackWhite
+local MONEY_MISSING_COLOR = GW.Colors.SkinColors.Disabled
+local MONEY_OK_COLOR = GW.Colors.SkinColors.QuestGold
+local OBJECTIVE_DONE_COLOR = GW.Colors.SkinColors.QuestGold
+local OBJECTIVE_OPEN_COLOR = GW.Colors.SkinColors.ObjectiveOpen
 local ARROW_RIGHT = "Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right.png"
 local ARROW_DOWN = "Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png"
 local LIST_WIDTH = 303
@@ -75,6 +75,8 @@ end
 
 -- name and frame in the quality color of the item, white for common and below
 local function ColorItemByQuality(item, name, link)
+    -- reward buttons blizzard has not created yet
+    if not item or not name then return end
     SkinItemButton(item)
     local quality = link and select(3, GetItemInfo(link))
     local r, g, b = 1, 1, 1
@@ -167,7 +169,7 @@ local function ColorQuestInfoTexts()
     local spellHeaders = rewards.spellHeaderPool
     spellHeaders.textR, spellHeaders.textG, spellHeaders.textB = TEXT_COLOR:GetRGB()
     for header in spellHeaders:EnumerateActive() do
-        header:SetVertexColor(1, 1, 1)
+        header:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
     end
     GW.SkinPoolFrames(rewards.spellRewardPool, SkinItemButton)
 
@@ -266,7 +268,7 @@ local function SkinQuestCount(listBackground)
         QuestLogCount:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
         QuestLogCount.backdrop:SetFrameLevel(QuestLogFrame:GetFrameLevel() + 1)
         QuestLogQuestCount:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.Enum.TextSizeType.Small)
-        QuestLogQuestCount:SetTextColor(1, 1, 1)
+        QuestLogQuestCount:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         if QuestLogDetailFrame then
             hooksecurefunc("QuestLogUpdateQuestCount", function()
                 QuestLogCount:ClearAllPoints()
@@ -290,7 +292,7 @@ local function LayoutSplitLog()
     QuestLogDetailScrollFrame:SetWidth(LIST_WIDTH)
     QuestLogFrameAbandonButton:SetWidth(129)
     if QuestLogFrameShowMapButtonText then
-        QuestLogFrameShowMapButtonText:SetTextColor(1, 1, 1)
+        QuestLogFrameShowMapButtonText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     -- the detail frame of its own in our window background
@@ -361,8 +363,8 @@ local function SkinQuestModel()
     QuestNPCModelNameText:ClearAllPoints()
     QuestNPCModelNameText:SetPoint("TOP", QuestModelScene, 0, -10)
     QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
-    QuestNPCModelNameText:SetTextColor(1, 1, 1)
-    QuestNPCModelText:SetTextColor(1, 1, 1)
+    QuestNPCModelNameText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    QuestNPCModelText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     QuestNPCModelText:SetJustifyH("CENTER")
 
     QuestNPCModelTextScrollFrame:ClearAllPoints()

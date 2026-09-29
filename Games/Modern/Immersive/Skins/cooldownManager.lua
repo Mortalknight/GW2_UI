@@ -40,10 +40,10 @@ local function SkinCategoryHeader(header)
     end
 
     header:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
-    header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+    header.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
     header:SetNormalTexture(SEPARATOR)
     header:SetHighlightTexture(SEPARATOR)
-    header:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+    header:GetHighlightTexture():SetColorTexture(GW.Colors.SkinColors.SeparatorHighlight:GetRGBA())
     for _, texture in ipairs({header:GetNormalTexture(), header:GetHighlightTexture()}) do
         texture:ClearAllPoints()
         texture:SetPoint("TOPLEFT", header, "TOPLEFT", 1, -1)
@@ -64,7 +64,7 @@ local function SkinSettingItem(item)
     local icon = item.Icon
     if not icon then return end
     if item.Highlight then
-        item.Highlight:SetColorTexture(1, 1, 1, 0.25)
+        item.Highlight:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
         item.Highlight:SetAllPoints(icon)
     end
     GW.HandleIcon(icon, true)
@@ -159,7 +159,7 @@ local function SkinBar(frame, bar)
 
     local fill = bar:GetStatusBarTexture()
     fill:SetTexCoord(0, 1, 0, 1)
-    fill:SetVertexColor(1, 1, 1, 1)
+    fill:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
     fill:ClearAllPoints()
     fill:GwSetInside(frame.GwStatusBarBackground)
     bar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/rage.png")

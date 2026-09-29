@@ -8,7 +8,7 @@ local FLYOUT_PADDING = 5
 local function FitSlotArt(frame)
     local button = frame.UpgradeItemButton
     button:GetNormalTexture():GwSetInside()
-    button:GetPushedTexture():SetColorTexture(1, 1, 1, 0.2)
+    button:GetPushedTexture():SetColorTexture(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
 end
 local skinnedFlyoutButtons = setmetatable({}, {__mode = "k"})
 

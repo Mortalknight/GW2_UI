@@ -12,7 +12,7 @@ local function LoadGhostFrameSkin()
     GhostFrame.tex = tex
     GhostFrame:GwSkinButton(false, false, true)
 
-    _G.GhostFrameContentsFrameText:SetTextColor(0, 0, 0, 1)
+    _G.GhostFrameContentsFrameText:SetTextColor(GW.Colors.Fallback:GetRGBA())
     _G.GhostFrameContentsFrameText:SetShadowOffset(0, 0)
 
     _G.GhostFrameContentsFrameIcon:SetTexture("Interface/Icons/spell_holy_guardianspirit")

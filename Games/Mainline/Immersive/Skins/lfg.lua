@@ -384,7 +384,7 @@ local function SkinLookingForGroupFrames()
     LFDQueueFrameTypeDropdown:ClearAllPoints()
     LFDQueueFrameTypeDropdown:SetPoint("BOTTOMLEFT", 40, 287)
     LFDQueueFrameTypeDropdown:SetWidth(300)
-    LFDQueueFrameTypeDropdownName:SetTextColor(1, 1, 1)
+    LFDQueueFrameTypeDropdownName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     LFDQueueFrameTypeDropdownName:ClearAllPoints()
     LFDQueueFrameTypeDropdownName:SetPoint("RIGHT", LFDQueueFrameTypeDropdown, "LEFT", 0, 0)
 
@@ -393,14 +393,14 @@ local function SkinLookingForGroupFrames()
     RaidFinderQueueFrameSelectionDropdown:ClearAllPoints()
     RaidFinderQueueFrameSelectionDropdown:SetPoint("BOTTOMLEFT", 90, 287)
     RaidFinderQueueFrameSelectionDropdown:SetWidth(250)
-    RaidFinderQueueFrameSelectionDropdownName:SetTextColor(1, 1, 1)
+    RaidFinderQueueFrameSelectionDropdownName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     RaidFinderQueueFrameSelectionDropdownName:ClearAllPoints()
     RaidFinderQueueFrameSelectionDropdownName:SetPoint("RIGHT", RaidFinderQueueFrameSelectionDropdown, "LEFT", 0, 0)
 
     RaidFinderFrameFindRaidButton:GwStripTextures()
     RaidFinderFrameFindRaidButton:GwSkinButton(false, true)
 
-    RaidFinderQueueFrameSelectionDropdownName:SetTextColor(1, 1, 1)
+    RaidFinderQueueFrameSelectionDropdownName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     RaidFinderQueueFrameScrollFrameChildFrameTitle:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     RaidFinderQueueFrameScrollFrameChildFrameRewardsLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -444,10 +444,10 @@ local function SkinLookingForGroupFrames()
     EntryCreation.ListGroupButton:ClearAllPoints()
     EntryCreation.ListGroupButton:SetPoint("BOTTOMRIGHT", -6, 3)
     EntryCreation.Description:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 5, 5)
-    EntryCreation.Label:SetTextColor(1, 1, 1)
+    EntryCreation.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     EntryCreation.Label:SetFont(DAMAGE_TEXT_FONT, 16)
-    EntryCreation.NameLabel:SetTextColor(1, 1, 1)
-    EntryCreation.DescriptionLabel:SetTextColor(1, 1, 1)
+    EntryCreation.NameLabel:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    EntryCreation.DescriptionLabel:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     GW.HandleBlizzardRegions(EntryCreation.Description)
 
     EntryCreation.ItemLevel.EditBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
@@ -511,7 +511,7 @@ local function SkinLookingForGroupFrames()
     hooksecurefunc(LFGListFrame.SearchPanel.ScrollBox, "Update", function(self)
         for _, child in next, {self.ScrollTarget:GetChildren()} do
             if not child.gwSkinned and child.Name then
-                child.Name:SetTextColor(1, 1, 1)
+                child.Name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
                 hooksecurefunc(child.Name, "SetTextColor", GW.LockWhiteButtonColor)
                 GW.AddListItemChildHoverTexture(child)
                 child.gwSkinned = true
@@ -592,10 +592,10 @@ local function SkinLookingForGroupFrames()
 
     LFGListFrame.ApplicationViewer.Inset:GwStripTextures()
     LFGListFrame.ApplicationViewer.UnempoweredCover.Background:SetAlpha(0)
-    LFGListFrame.ApplicationViewer.UnempoweredCover.Label:SetTextColor(1, 1, 1)
-    LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot1:SetVertexColor(1, 1, 1)
-    LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot2:SetVertexColor(1, 1, 1)
-    LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot3:SetVertexColor(1, 1, 1)
+    LFGListFrame.ApplicationViewer.UnempoweredCover.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot1:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
+    LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot2:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
+    LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot3:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
 
     GW.AddDetailsBackground(LFGListFrame.ApplicationViewer.UnempoweredCover)
 
@@ -662,7 +662,7 @@ local function SkinLookingForGroupFrames()
             -- one line on our narrower tiles
             local label = button.Label
             label:SetFontObject("GameFontNormal")
-            label:SetTextColor(1, 1, 1)
+            label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
             label:SetShadowColor(0, 0, 0, 0)
             label:SetShadowOffset(1, -1)
             KeepOneLine(label)
@@ -791,7 +791,7 @@ local function SkinModeButton(button)
     button:SetHighlightTexture(HOVER_TEXTURE)
     local highlight = button:GetHighlightTexture()
     highlight:SetBlendMode("BLEND")
-    highlight:SetVertexColor(0.8, 0.8, 0.8, 0.35)
+    highlight:SetVertexColor(GW.Colors.SkinColors.CardHover:GetRGBA())
     highlight:SetAllPoints(button)
 
     -- blizzards glow stays hidden, its state picks the color of our frame
@@ -906,7 +906,7 @@ local function ApplyPvPUISkin()
         if seasonState == SEASON_STATE_OFFSEASON then
             self.Tier.Title:SetTextColor(DISABLED_FONT_COLOR:GetRGB())
         else
-            self.Tier.Title:SetTextColor(1, 1, 1)
+            self.Tier.Title:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end)
 
@@ -927,7 +927,7 @@ local function ApplyPvPUISkin()
 
     for _, region in next, { SeasonReward:GetRegions() } do
         if region:IsObjectType("FontString") then
-            region:SetTextColor(1, 1, 1)
+            region:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 
@@ -1083,7 +1083,7 @@ local function ApplyChallengesUISkin()
     ChallengesFrame:DisableDrawLayer("BACKGROUND")
     ChallengesFrameInset:GwStripTextures()
 
-    ChallengesFrame.WeeklyInfo.Child.Description:SetTextColor(1, 1, 1)
+    ChallengesFrame.WeeklyInfo.Child.Description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     -- Mythic+ KeyStoneFrame
     local tex = ChallengesKeystoneFrame:CreateTexture(nil, "BACKGROUND")
@@ -1117,7 +1117,7 @@ local function ApplyChallengesUISkin()
             if not child.gwSkinned then
                 child:GetRegions():SetAlpha(0)
                 SetFrameBackdrop(child, GW.BackdropTemplates.DefaultWithColorableBorder)
-                child:SetBackdropBorderColor(1, 0.99, 0.85)
+                child:SetBackdropBorderColor(GW.Colors.SkinColors.CreamBorder:GetRGB())
 
                 if child.mapID then
                     local _, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(child.mapID)
@@ -1154,7 +1154,7 @@ local function ApplyChallengesUISkin()
 
     local notice = ChallengesFrame.SeasonChangeNoticeFrame
     SkinSeasonNotice(notice)
-    notice:SetBackdropBorderColor(1, 1, 1)
+    notice:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
     SetNoticeText(notice.NewSeason, 1, 0.8, 0)
     SetNoticeText(notice.SeasonDescription, 1, 1, 1)
     SetNoticeText(notice.SeasonDescription2, 1, 1, 1)
@@ -1199,9 +1199,9 @@ local function ApplyDelvesDifficultyPickerSkin()
     DelvesDifficultyPickerFrame.CloseButton:SetSize(20, 20)
 
     DelvesDifficultyPickerFrame.ScenarioLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    DelvesDifficultyPickerFrame.Description:SetTextColor(1, 1, 1)
+    DelvesDifficultyPickerFrame.Description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
-    DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.RewardText:SetTextColor(1, 1, 1)
+    DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.RewardText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     hooksecurefunc(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame, "SetRewards", function(self)
         C_Timer.After(0, function()

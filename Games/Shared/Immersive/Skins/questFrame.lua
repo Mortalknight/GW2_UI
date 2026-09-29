@@ -40,15 +40,15 @@ local function SkinGreetingButton(button)
     -- a quest the npc is still waiting on is greyed out, everything turn in ready or new stays gold
     if button.isActive == 1 and not select(2, GetActiveTitle(button:GetID())) then
         icon:SetDesaturation(1)
-        text:SetTextColor(0.6, 0.6, 0.6)
+        text:SetTextColor(GW.Colors.SkinColors.Disabled:GetRGB())
     else
         icon:SetDesaturation(0)
-        text:SetTextColor(1, 0.8, 0.1)
+        text:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
     end
 end
 
 local function GreetingPanel_OnShow(self)
-    GreetingText:SetTextColor(1, 1, 1)
+    GreetingText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     if self.titleButtonPool then
         for button in self.titleButtonPool:EnumerateActive() do

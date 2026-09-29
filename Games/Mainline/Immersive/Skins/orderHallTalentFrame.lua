@@ -26,7 +26,7 @@ local function ApplyOrderHallTalentFrameSkin()
                     bu:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
 
                     bu.Border:SetAlpha(0)
-                    bu.Highlight:SetColorTexture(1, 1, 1, 0.25)
+                    bu.Highlight:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
                     bu.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
                     bu.Icon:GwSetInside()
                     local isAvailable = bu.talent.talentAvailability == Enum.GarrisonTalentAvailability.Available
@@ -39,7 +39,7 @@ local function ApplyOrderHallTalentFrameSkin()
                     elseif isAvailable or shouldDisplayAsAvailable then
                         bu:SetBackdropBorderColor(0, 1, 0)
                     else
-                        bu:SetBackdropBorderColor(1, 1, 1)
+                        bu:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
                     end
                 end
             end

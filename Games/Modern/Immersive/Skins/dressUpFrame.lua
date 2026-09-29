@@ -5,7 +5,7 @@ local function SetItemQuality(slot)
     if not slot.slotState and not slot.isHiddenVisual and slot.transmogID then
         slot.Icon.backdrop:SetBackdropBorderColor(slot.Name:GetTextColor())
     else
-        slot.Icon.backdrop:SetBackdropBorderColor(0, 0, 0)
+        slot.Icon.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGB())
     end
 end
 

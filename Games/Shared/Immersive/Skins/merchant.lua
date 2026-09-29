@@ -119,12 +119,12 @@ local function LoadMerchantFrameSkin()
                             button.icon.backdrop:SetBackdropBorderColor(r, g, b)
                             name:SetTextColor(r, g, b)
                         else
-                            button.icon.backdrop:SetBackdropBorderColor(1, 1, 1)
-                            name:SetTextColor(1, 1, 1)
+                            button.icon.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
+                            name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
                         end
                     else
-                        button.icon.backdrop:SetBackdropBorderColor(1, 1, 1)
-                        name:SetTextColor(1, 1, 1)
+                        button.icon.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
+                        name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
                     end
                 end
 
@@ -136,11 +136,11 @@ local function LoadMerchantFrameSkin()
                         MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(r, g, b)
                         MerchantBuyBackItemName:SetTextColor(r, g, b)
                     else
-                        MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(1, 1, 1)
-                        MerchantBuyBackItemName:SetTextColor(1, 1, 1)
+                        MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
+                        MerchantBuyBackItemName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
                     end
                 else
-                    MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(1, 1, 1)
+                    MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
                 end
             end
 
@@ -263,12 +263,12 @@ local function LoadMerchantFrameSkin()
         GW.HandleNextPrevButton(btn, nil, true)
         for _, c in pairs( {btn:GetRegions()} ) do
             if c:GetObjectType() == "FontString" then
-                c:SetTextColor(1, 1, 1)
+                c:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
                 break
             end
         end
     end
-    MerchantPageText:SetTextColor(1, 1, 1)
+    MerchantPageText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     MerchantNextPageButton:ClearAllPoints()
     MerchantNextPageButton:SetPoint("LEFT", MerchantPageText, "RIGHT", 100, 4)

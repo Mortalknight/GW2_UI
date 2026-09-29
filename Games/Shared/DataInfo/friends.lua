@@ -111,9 +111,10 @@ end
 
 -- "Character | Level" with afk or dnd behind it, the account name on the right; the place below only
 -- while shift is held
-local function AddEntry(section, isAFK, isDND, title, account, place, sortName, inMyZone)
+local function AddEntry(section, isAFK, isDND, title, account, place, sortName, inMyZone, color)
     tinsert(section.lines, {
         text = title .. Social.GetStatusTag(isAFK, isDND),
+        color = color or GW.Colors.FallbackWhite,
         account = account or "",
         place = place,
         placeColor = Social.GetPlaceColor(inMyZone),
@@ -160,9 +161,13 @@ local function CollectSections(showDetails)
             local place = showDetails and GW.friendsList.FormatPlace(game.areaName, realm)
             AddEntry(section, isAFK, isDND, title, account.accountName, place ~= "" and place or showDetails and game.richPresence, characterName, game.areaName == myZone)
         else
-            local gameName = GW.friendsList.projectCodes[strupper(game.clientProgram or "")]
+            -- desktop and mobile app in the one app color, like our friends list; the protected account name
+            -- stays plain, the color comes with the line
+            local code = APP_CLIENTS[game.clientProgram] and "APP" or strupper(game.clientProgram or "")
+            local client = GW.friendsList.clientData[GW.friendsList.projectCodes[code] or ""]
+            local color = client and client.color
             local activity = showDetails and not APP_CLIENTS[game.clientProgram] and game.richPresence or nil
-            AddEntry(section, isAFK, isDND, GW.friendsList.FormatTitle(account.accountName, gameName), nil, activity, account.accountName)
+            AddEntry(section, isAFK, isDND, account.accountName or "", nil, activity, account.accountName, nil, color)
         end
     end
 
@@ -187,7 +192,7 @@ local function Friends_OnEnter(self)
                 GameTooltip:AddLine(" ")
                 GameTooltip:AddLine(section.title, r, g, b)
                 for _, line in ipairs(section.lines) do
-                    GameTooltip:AddDoubleLine(line.text, line.account, 1, 1, 1, ACCOUNT_COLOR:GetRGB())
+                    GameTooltip:AddDoubleLine(line.text, line.account, line.color.r, line.color.g, line.color.b, ACCOUNT_COLOR:GetRGB())
                     if line.place and line.place ~= "" then
                         GameTooltip:AddLine("   " .. line.place, line.placeColor:GetRGB())
                     end
@@ -197,6 +202,12 @@ local function Friends_OnEnter(self)
     end
 
     GameTooltip:Show()
+    -- new lines and the protected account names have their final size a frame later
+    C_Timer.After(0, function()
+        if GameTooltip:GetOwner() == self then
+            GameTooltip:Show()
+        end
+    end)
 end
 GW.Friends_OnEnter = Friends_OnEnter
 

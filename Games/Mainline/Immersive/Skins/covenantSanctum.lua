@@ -13,11 +13,11 @@ local function SkinTalent(talent)
         talent:HookScript("OnSizeChanged", talent.OnBackdropSizeChanged)
     end
     talent:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-    talent:SetBackdropBorderColor(1, 0.99, 0.85)
+    talent:SetBackdropBorderColor(GW.Colors.SkinColors.CreamBorder:GetRGB())
 
     GW.HandleIcon(talent.Icon, true)
     talent.Icon:SetPoint("TOPLEFT", 7, -7)
-    talent.Highlight:SetColorTexture(1, 1, 1, 0.25)
+    talent.Highlight:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
     GW.KeepTextIconsSmall(talent.InfoText)
 end
 

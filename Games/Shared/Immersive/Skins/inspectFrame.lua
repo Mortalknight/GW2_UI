@@ -138,7 +138,7 @@ local function SkinPaperDoll()
         slot.itemlevel = slot.gwTextOverlay:CreateFontString(nil, "OVERLAY")
         slot.itemlevel:SetSize(100, 10)
         slot.itemlevel:SetPoint("BOTTOMLEFT", slot, "BOTTOMLEFT", 1, 2)
-        slot.itemlevel:SetTextColor(1, 1, 1)
+        slot.itemlevel:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         slot.itemlevel:SetJustifyH("LEFT")
         slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
     end

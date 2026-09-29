@@ -98,7 +98,7 @@ local function SkinDayButtons()
         _G["CalendarDayButton" .. i .. "DarkFrame"]:SetAlpha(0.5)
         day:DisableDrawLayer("BACKGROUND")
         day:GwSetFrameTemplate("Dark")
-        day:SetBackdropColor(0, 0, 0, 0)
+        day:SetBackdropColor(GW.Colors.Transparent:GetRGBA())
         day:GwOffsetFrameLevel(1)
 
         day:SetHighlightTexture(HOVER)
@@ -117,7 +117,7 @@ local function SkinDayButtons()
                 event:SetHighlightTexture(EVENT_HOVER)
                 local eventHighlight = event:GetHighlightTexture()
                 eventHighlight:SetBlendMode("BLEND")
-                eventHighlight:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+                eventHighlight:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
             end
         end
     end
@@ -125,7 +125,7 @@ local function SkinDayButtons()
     -- today gets a light frame instead of the pulsing glow; blizzard moves it to the day of today
     CalendarTodayFrame:GwSetFrameTemplate()
     CalendarTodayFrame:SetBackdropBorderColor(HEADER_COLOR:GetRGB())
-    CalendarTodayFrame:SetBackdropColor(0, 0, 0, 0)
+    CalendarTodayFrame:SetBackdropColor(GW.Colors.Transparent:GetRGBA())
     CalendarTodayFrame:SetScript("OnUpdate", nil)
     hooksecurefunc("CalendarFrame_SetToday", function() CalendarTodayFrame:SetAllPoints() end)
 

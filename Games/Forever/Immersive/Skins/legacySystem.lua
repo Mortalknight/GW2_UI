@@ -33,7 +33,7 @@ end
 
 local function SkinIconTexture(icon)
     GW.HandleIcon(icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
-    icon.backdrop:SetBackdropBorderColor(0.45, 0.45, 0.45, 1)
+    icon.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
 end
 
 local function SkinProgressBar(bar)
@@ -52,7 +52,7 @@ end
 local function AddRowHover(row, texture)
     row.gwHover = row:CreateTexture(nil, "ARTWORK", nil, 1)
     row.gwHover:SetTexture(texture)
-    row.gwHover:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+    row.gwHover:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
     row.gwHover:SetPoint("LEFT", row, "LEFT")
     row.gwHover:SetPoint("TOP", row, "TOP")
     row.gwHover:SetPoint("BOTTOM", row, "BOTTOM")
@@ -110,7 +110,7 @@ end
 
 local function SkinCriteria(criteria)
     criteria.Background:SetTexture(ROW_BG)
-    criteria.Background:SetVertexColor(1, 1, 1, 0.25)
+    criteria.Background:SetVertexColor(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
     criteria.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     criteria.Name:GwLockTextColor(1, 1, 1)
     criteria.ProgressBarBackground:SetAlpha(0)
@@ -297,7 +297,7 @@ local function SquareHighlight(button)
     local highlight = button:GetHighlightTexture()
     highlight:RemoveMaskTexture(button.CircleMask)
     highlight:SetTexture(MENU_HOVER)
-    highlight:SetVertexColor(1, 1, 1, 0.25)
+    highlight:SetVertexColor(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
     highlight:ClearAllPoints()
     highlight:SetAllPoints(button)
 end

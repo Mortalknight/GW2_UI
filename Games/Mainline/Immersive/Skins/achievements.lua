@@ -28,12 +28,12 @@ end
 GW.AchievementFrameSkinFunction.SetSmallText = setSmallText
 local function setNormalText(self)
     self:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    self:SetTextColor(1, 1, 1)
+    self:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 GW.AchievementFrameSkinFunction.SetNormalText = setNormalText
 local function setTitleText(self)
     self:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-    self:SetTextColor(1, 1, 1)
+    self:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 GW.AchievementFrameSkinFunction.SetTitleText = setTitleText
 
@@ -68,12 +68,12 @@ local function customCategorieInit(self, elementData)
         self.Button:SetWidth(ACHIEVEMENTUI_CATEGORIESWIDTH - 25);
         self.Button.Label:SetFontObject("GameFontHighlight");
         self.parentID = elementData.parent;
-        self.Button.Background:SetVertexColor(0.6, 0.6, 0.6);
+        self.Button.Background:SetVertexColor(GW.Colors.SkinColors.Disabled:GetRGB());
     else
         self.Button:SetWidth(ACHIEVEMENTUI_CATEGORIESWIDTH - 10);
         self.Button.Label:SetFontObject("GameFontNormal");
         self.parentID = elementData.parent;
-        self.Button.Background:SetVertexColor(1, 1, 1);
+        self.Button.Background:SetVertexColor(GW.Colors.FallbackWhite:GetRGB());
     end
 
     local categoryName, _, flags;
@@ -276,9 +276,9 @@ local function catMenuButtonState(self, selected)
     ---zeeeebra
     local zebra = (self:GetOrderIndex() % 2)==1 or false
     if zebra then
-        self.Button.Background:SetVertexColor(1, 1, 1, 1)
+        self.Button.Background:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
     else
-        self.Button.Background:SetVertexColor(0, 0, 0, 0)
+        self.Button.Background:SetVertexColor(GW.Colors.Transparent:GetRGBA())
     end
 
     local elementData = self:GetElementData()
@@ -335,7 +335,7 @@ local function SetupButtonHighlight(button, background)
     button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
     button.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     local hl = button:GetHighlightTexture()
-    hl:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+    hl:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
     hl:GwSetInside(background)
     button:HookScript("OnEnter",function()
         GW.TriggerButtonHoverAnimation(button, hl)
@@ -391,7 +391,7 @@ local function skinAchievementSummaryStatusBar(self)
     text:ClearAllPoints()
     text:SetPoint("RIGHT",self,"RIGHT",-5,0)
     text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-    text:SetTextColor(1,1,1)
+    text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
 
@@ -452,7 +452,7 @@ local function skinCriteriaStatusbar(parentFrame,self)
     )
 
     text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-    text:SetTextColor(1,1,1)
+    text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
 end
@@ -511,7 +511,7 @@ local function skinAchievementFrameSummaryAchievement(self)
     self.fBackground:SetPoint("TOPLEFT")
     self.fBackground:SetPoint("BOTTOMRIGHT")
     self.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
-    self.fBackground:SetVertexColor(1,1,1,0.2)
+    self.fBackground:SetVertexColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
 
     self.Highlight:GwStripTextures()
     self.Highlight.Bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover.png")
@@ -520,7 +520,7 @@ local function skinAchievementFrameSummaryAchievement(self)
     self.Highlight.Bottom:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.Highlight.Bottom:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",0,0)
     self.Highlight.Bottom:SetTexCoord(0,1,0,1)
-    self.Highlight.Bottom:SetVertexColor(1,1,1,1)
+    self.Highlight.Bottom:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
     self.hasSkinnedHighlight = true
 
     self:HookScript("OnEnter", function()
@@ -677,7 +677,7 @@ local function skinAchievementFrameListAchievement(self)
         self.fBackground:SetPoint("TOPLEFT")
         self.fBackground:SetPoint("BOTTOMRIGHT")
         self.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
-        self.fBackground:SetVertexColor(1,1,1,0.2)
+        self.fBackground:SetVertexColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
     end
     if not self.bottomBar then
         self.bottomBar = self:CreateTexture(nil, "BACKGROUND", nil, 2)
@@ -712,7 +712,7 @@ local function skinAchievementFrameListAchievement(self)
     self.Highlight.Bottom:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.Highlight.Bottom:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",0,0)
     self.Highlight.Bottom:SetTexCoord(0,1,0,1)
-    self.Highlight.Bottom:SetVertexColor(1,1,1,1)
+    self.Highlight.Bottom:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
     self.hasSkinnedHighlight = true
 
     self:HookScript("OnEnter",function()
@@ -792,8 +792,8 @@ local function UpdateAchievementFrameListAchievement(self)
     self.BottomRightTsunami:Hide()
     self.BottomLeftTsunami:Hide()
 
-    self.HiddenDescription:SetTextColor(1,1,1)
-    self.Description:SetTextColor(1,1,1)
+    self.HiddenDescription:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    self.Description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local function skinAchievementFrameListStats(self)
@@ -962,7 +962,7 @@ local function skinAchievementComparison(self,isPlayer)
         parent.fBackground:SetPoint("TOPLEFT")
         parent.fBackground:SetPoint("BOTTOMRIGHT")
         parent.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
-        parent.fBackground:SetVertexColor(1,1,1,0.2)
+        parent.fBackground:SetVertexColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
     end
 end
 
@@ -991,9 +991,9 @@ local function updateAchievementComparison(self,isPlayer)
     if isPlayer and parent.GetOrderIndex then
         local zebra = (parent:GetOrderIndex() % 2)==1 or false
         if zebra then
-            parent.fBackground:SetVertexColor(1, 1, 1, 0.2)
+            parent.fBackground:SetVertexColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
         else
-            parent.fBackground:SetVertexColor(0, 0, 0, 0)
+            parent.fBackground:SetVertexColor(GW.Colors.Transparent:GetRGBA())
         end
     end
 end
@@ -1031,7 +1031,7 @@ local function skinAchievementCompareSummaryStatusBar(self,isPlayer)
     text:ClearAllPoints()
     text:SetPoint("RIGHT",self,"RIGHT",-5,0)
     text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-    text:SetTextColor(1,1,1)
+    text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
 end
@@ -1049,7 +1049,7 @@ local function updatePointsDisplay()
         end
         if AchievementFrame.selectedTab==3  and AchievementFrame.cacheAchievementPoints then
             AchievementFrame.Header.Points:SetText(AchievementFrame.cacheAchievementPoints)
-            AchievementFrame.Header.Points:SetTextColor(1,1,1)
+            AchievementFrame.Header.Points:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
         AchievementFrame.Header.Shield:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementpointicon.png");
     end

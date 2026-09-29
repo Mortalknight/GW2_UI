@@ -30,6 +30,23 @@ GW.Colors.DebuffColors.Stealable = CreateColor(0.93, 0.91, 0.55)
 
 GW.Colors.Fallback = CreateColor(0, 0, 0, 1)
 GW.Colors.FallbackWhite = CreateColor(1, 1, 1, 1)
+GW.Colors.Transparent = CreateColor(0, 0, 0, 0)
+
+-- the colors our skins share, so every window looks the same
+GW.Colors.SkinColors = {
+    HeaderBorder = CreateColor(1, 1, 1, 0.2), -- the thin light frame of list and section headers
+    SeparatorHighlight = CreateColor(1, 0.93, 0.73, 0.25), -- hover over a header separator
+    ListHover = CreateColor(0.8, 0.8, 0.8, 0.8), -- menu-hover.png on list rows
+    CardHover = CreateColor(0.8, 0.8, 0.8, 0.35), -- menu-hover.png over art and cards
+    HighlightWhite = CreateColor(1, 1, 1, 0.25), -- flat white highlight over icons and buttons
+    IconBorder = CreateColor(0.45, 0.45, 0.45, 1), -- the frame of an icon without quality
+    CreamBorder = CreateColor(1, 0.99, 0.85), -- the light frame of cards and tiles
+    QuestGold = CreateColor(1, 0.8, 0.1), -- quest titles, enough money, finished objectives
+    ObjectiveOpen = CreateColor(0.63, 0.09, 0.09), -- an objective still to do
+    Disabled = CreateColor(0.6, 0.6, 0.6), -- greyed out text, money that is missing
+    Positive = CreateColor(0.3, 1, 0.3),
+    Negative = CreateColor(1, 0.3, 0.3),
+}
 
 GW.Colors.PowerBarCustomColors = {
     MANA = CreateColor(37 / 255, 133 / 255, 240 / 255),

@@ -7,7 +7,7 @@ local function HandleDropdownHeaderText(dropdown)
     for idx, c in pairs({dropdown:GetRegions()}) do
         if idx > 3 and c:GetObjectType() == "FontString" then
             c:SetPoint("TOPLEFT", 5, 9)
-            c:SetTextColor(1, 1, 1)
+            c:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
             break
         end
     end

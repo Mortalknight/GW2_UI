@@ -249,7 +249,7 @@ function GW.SkinAndEnhanceColorPicker()
         local label = box:CreateFontString("ColorPPBoxLabel" .. rgb, "ARTWORK", "GameFontNormalSmall")
         label:SetPoint("RIGHT", "ColorPPBox" .. rgb, "LEFT", -5, 0)
         label:SetText(i == 4 and "#" or rgb)
-        label:SetTextColor(1, 1, 1)
+        label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
         if i == 5 then
             box:SetScript("OnKeyUp", function(eb, key)
