@@ -1,29 +1,165 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function SkinContainer(frame, container)
+local HEADER_COLOR = GW.Colors.TextColors.LightHeader
+local HOVER = "Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png"
+local EVENT_HOVER = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
+
+-- blizzards borders and backgrounds around buttons, dividers and the month and year plates
+local HIDDEN_ART = {
+    "CalendarCreateEventFrameButtonBackground", "CalendarCreateEventMassInviteButtonBorder", "CalendarCreateEventCreateButtonBorder",
+    "CalendarCreateEventRaidInviteButtonBorder", "CalendarEventPickerFrameButtonBackground", "CalendarEventPickerCloseButtonBorder",
+    "CalendarTexturePickerFrameButtonBackground", "CalendarTexturePickerAcceptButtonBorder", "CalendarTexturePickerCancelButtonBorder",
+    "CalendarClassTotalsButtonBackgroundTop", "CalendarClassTotalsButtonBackgroundMiddle", "CalendarClassTotalsButtonBackgroundBottom",
+    "CalendarViewEventDivider", "CalendarCreateEventDivider", "CalendarTodayTexture", "CalendarTodayTextureGlow",
+}
+
+local CLOSE_BUTTONS = {
+    "CalendarCloseButton", "CalendarCreateEventCloseButton", "CalendarMassInviteCloseButton", "CalendarViewRaidCloseButton",
+    "CalendarViewHolidayCloseButton", "CalendarViewEventCloseButton",
+}
+
+local ACTION_BUTTONS = {
+    "CalendarCreateEventCreateButton", "CalendarCreateEventMassInviteButton", "CalendarCreateEventInviteButton",
+    "CalendarCreateEventRaidInviteButton", "CalendarTexturePickerAcceptButton", "CalendarTexturePickerCancelButton",
+    "CalendarMassInviteAcceptButton", "CalendarViewEventAcceptButton", "CalendarViewEventTentativeButton",
+    "CalendarViewEventRemoveButton", "CalendarViewEventDeclineButton", "CalendarEventPickerCloseButton",
+}
+
+-- dropdowns and their width
+local DROPDOWNS = {
+    {"CalendarCreateEventFrame", "EventTypeDropdown", 120}, {"CalendarCreateEventFrame", "HourDropdown", 52},
+    {"CalendarCreateEventFrame", "MinuteDropdown", 52}, {"CalendarCreateEventFrame", "AMPMDropdown", 57},
+    {"CalendarCreateEventFrame", "DifficultyOptionDropdown", 80}, {"CalendarMassInviteFrame", "CommunityDropdown", 200},
+    {"CalendarMassInviteFrame", "RankDropdown", 140},
+}
+
+-- the popups beside the calendar; true for those that open right next to it
+local POPUPS = {
+    CalendarCreateEventFrame = true, CalendarViewRaidFrame = true, CalendarViewHolidayFrame = true, CalendarViewEventFrame = true,
+    CalendarTexturePickerFrame = false, CalendarMassInviteFrame = false, CalendarEventPickerFrame = false,
+}
+
+local function SkinPopup(popup, besideCalendar)
+    popup:GwStripTextures(popup == CalendarViewHolidayFrame)
+    popup:GwSetFrameTemplate("Dark")
+    popup.Header:GwStripTextures()
+    popup.Header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    popup.Header.Text:SetTextColor(HEADER_COLOR:GetRGB())
+    if besideCalendar then
+        popup:SetPoint("TOPLEFT", CalendarFrame, "TOPRIGHT", 3, -24)
+    end
+end
+
+-- the rows of the lists get the hover of our item lists
+local function AddListHover(frame)
+    hooksecurefunc(frame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
+end
+
+local function SkinScrollBar(frame)
+    GW.HandleTrimScrollBar(frame.ScrollBar)
+    GW.HandleScrollControls(frame)
+end
+
+local function SkinTextSection(frame, background)
     frame.NineSlice:GwKill()
-
-    if frame.ScrollBox then
-        hooksecurefunc(frame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
-    end
-
-    local child = container or frame
-    if child and not child.backdrop then
-        GW.AddDetailsBackground(child)
+    local target = background or frame
+    if not target.backdrop then
+        GW.AddDetailsBackground(target)
     end
 end
 
-local function StripClassTextures(button, classFile)
-    button:SetTexCoord(GW.GetClassCoords(classFile, true))
+local function SkinTextBox(edit)
+    GW.SkinTextBox(edit.Middle, edit.Left, edit.Right)
 end
 
-local function HandleEventIcon(icon)
+-- the event icon sits big in the corner of the event header, the title or date beside it
+local function SkinEventIcon(icon, label)
     icon:SetSize(54, 54)
     icon:ClearAllPoints()
     icon:SetPoint("TOPLEFT", CalendarViewEventFrame.HeaderFrame, "TOPLEFT", 15, -20)
     icon:GwCreateBackdrop()
     icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    label:ClearAllPoints()
+    label:SetPoint("TOPLEFT", icon, "TOPRIGHT", 5, 0)
+end
+
+-- blizzard lights the selected day up to full alpha, ours keeps a soft hover on every day
+local HIGHLIGHT_ALPHA = 0.15
+local function KeepHighlightAlpha(highlight, alpha)
+    if alpha ~= HIGHLIGHT_ALPHA then
+        highlight:SetAlpha(HIGHLIGHT_ALPHA)
+    end
+end
+
+local function SkinDayButtons()
+    for i = 1, 42 do
+        local day = _G["CalendarDayButton" .. i]
+        _G["CalendarDayButton" .. i .. "DarkFrame"]:SetAlpha(0.5)
+        day:DisableDrawLayer("BACKGROUND")
+        day:GwSetFrameTemplate("Dark")
+        day:SetBackdropColor(0, 0, 0, 0)
+        day:GwOffsetFrameLevel(1)
+
+        day:SetHighlightTexture(HOVER)
+        local highlight = day:GetHighlightTexture()
+        -- blended, not added: on the bright event art an added white washes everything out
+        highlight:SetBlendMode("BLEND")
+        highlight:SetPoint("TOPLEFT", -1, 1)
+        highlight:SetPoint("BOTTOMRIGHT")
+        highlight:SetAlpha(HIGHLIGHT_ALPHA)
+        hooksecurefunc(highlight, "SetAlpha", KeepHighlightAlpha)
+
+        -- the event lines of the day hover like the rows of our lists
+        for j = 1, 4 do
+            local event = _G["CalendarDayButton" .. i .. "EventButton" .. j]
+            if event then
+                event:SetHighlightTexture(EVENT_HOVER)
+                local eventHighlight = event:GetHighlightTexture()
+                eventHighlight:SetBlendMode("BLEND")
+                eventHighlight:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+            end
+        end
+    end
+
+    -- today gets a light frame instead of the pulsing glow; blizzard moves it to the day of today
+    CalendarTodayFrame:GwSetFrameTemplate()
+    CalendarTodayFrame:SetBackdropBorderColor(HEADER_COLOR:GetRGB())
+    CalendarTodayFrame:SetBackdropColor(0, 0, 0, 0)
+    CalendarTodayFrame:SetScript("OnUpdate", nil)
+    hooksecurefunc("CalendarFrame_SetToday", function() CalendarTodayFrame:SetAllPoints() end)
+
+    CalendarWeekdaySelectedTexture:SetDesaturated(true)
+    CalendarWeekdaySelectedTexture:SetVertexColor(1, 1, 1, 0.6)
+    for i = 1, 7 do
+        _G["CalendarWeekday" .. i .. "Background"]:SetAlpha(0)
+        _G["CalendarWeekday" .. i .. "Name"]:SetTextColor(HEADER_COLOR:GetRGB())
+    end
+end
+
+-- the class counts of a raid event: class icons in a column
+local function SkinClassButtons()
+    CalendarClassButton1:SetPoint("TOPLEFT", CalendarClassButtonContainer, "TOPLEFT", 3, 0)
+    for i, class in ipairs(CLASS_SORT_ORDER) do
+        local button = _G["CalendarClassButton" .. i]
+        button:GetNormalTexture():SetTexCoord(GW.GetClassCoords(class, true))
+        button:GetRegions():Hide()
+        button:GwSetFrameTemplate("Dark")
+        button:SetSize(28, 28)
+        if i > 1 then
+            button:ClearAllPoints()
+            button:SetPoint("TOPLEFT", _G["CalendarClassButton" .. i - 1], "BOTTOMLEFT", 0, -8)
+        end
+
+        local count = _G["CalendarClassButton" .. i .. "Count"]
+        count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        count:ClearAllPoints()
+        count:SetPoint("BOTTOMRIGHT", 0, 1)
+    end
+
+    CalendarClassTotalsButton:GwStripTextures()
+    CalendarClassTotalsButton:GwSetFrameTemplate("Dark")
+    CalendarClassTotalsButton:SetSize(28, 18)
 end
 
 local function ApplyCalendarFrameSkin()
@@ -34,223 +170,66 @@ local function ApplyCalendarFrameSkin()
     CalendarFrameHeader:SetFrameLevel(0)
     CalendarFrame.FilterButton:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 85)
     CalendarFrame.FilterButton:SetPoint("TOPRIGHT", CalendarFrame, "TOPRIGHT", -4, -34)
-    CalendarCloseButton:GwSkinButton(true)
-    CalendarCloseButton:SetPoint("TOPRIGHT", CalendarFrame, "TOPRIGHT", -4, -2)
+    CalendarFrameModalOverlay:SetAlpha(0.25)
 
     CalendarMonthName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader)
     CalendarYearName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    CalendarYearName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-
-    CalendarMonthBackground:SetPoint("TOP", -3, 8)
-    CalendarYearBackground:SetPoint("TOP", CalendarMonthBackground, "BOTTOM", -2, 15)
-
-    for i = 1, 7 do
-        _G["CalendarWeekday" .. i .. "Background"]:SetAlpha(0)
-        _G["CalendarWeekday" .. i .. "Name"]:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    end
-
-    SkinContainer(CalendarViewEventInviteList)
-    SkinContainer(CalendarCreateEventInviteList)
-    SkinContainer(CalendarViewEventDescriptionContainer, CalendarViewEventDescriptionScrollFrame)
-    SkinContainer(CalendarCreateEventDescriptionContainer, CalendarCreateEventDescriptionScrollFrame)
-    GW.SkinSlimScrollBar(CalendarViewEventDescriptionContainer.ScrollBar)
-    GW.SkinSlimScrollBar(CalendarCreateEventDescriptionContainer.ScrollBar)
-
-    CalendarCreateEventFrameButtonBackground:Hide()
-    CalendarCreateEventMassInviteButtonBorder:Hide()
-    CalendarCreateEventCreateButtonBorder:Hide()
-    CalendarEventPickerFrameButtonBackground:Hide()
-    CalendarEventPickerCloseButtonBorder:Hide()
-    CalendarCreateEventRaidInviteButtonBorder:Hide()
+    CalendarYearName:SetTextColor(HEADER_COLOR:GetRGB())
     CalendarMonthBackground:SetAlpha(0)
+    CalendarMonthBackground:SetPoint("TOP", -3, 8)
     CalendarYearBackground:SetAlpha(0)
-    CalendarFrameModalOverlay:SetAlpha(.25)
-    CalendarTexturePickerFrameButtonBackground:Hide()
-    CalendarTexturePickerAcceptButtonBorder:Hide()
-    CalendarTexturePickerCancelButtonBorder:Hide()
-    CalendarClassTotalsButtonBackgroundTop:Hide()
-    CalendarClassTotalsButtonBackgroundMiddle:Hide()
-    CalendarClassTotalsButtonBackgroundBottom:Hide()
-    CalendarViewEventDivider:Hide()
-    CalendarCreateEventDivider:Hide()
+    CalendarYearBackground:SetPoint("TOP", CalendarMonthBackground, "BOTTOM", -2, 15)
+    GW.HandleNextPrevButton(CalendarPrevMonthButton)
+    GW.HandleNextPrevButton(CalendarNextMonthButton)
 
-    GW.HandleNextPrevButton(CalendarPrevMonthButton, nil, nil)
-    GW.HandleNextPrevButton(CalendarNextMonthButton, nil, nil)
-
-    for i = 1, 42 do
-        _G["CalendarDayButton" .. i .. "DarkFrame"]:SetAlpha(.5)
-        local bu = _G["CalendarDayButton" .. i]
-
-        bu:DisableDrawLayer("BACKGROUND")
-        bu:GwSetFrameTemplate("Dark")
-        bu:SetBackdropColor(0, 0, 0, 0)
-        bu:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
-        bu:GwOffsetFrameLevel(1)
-
-        local hl = bu:GetHighlightTexture()
-        hl:SetVertexColor(1, 1, 1, 0.3)
-        hl:SetPoint("TOPLEFT", -1, 1)
-        hl:SetPoint("BOTTOMRIGHT")
-        hl.SetAlpha = GW.NoOp
+    for _, name in ipairs(HIDDEN_ART) do
+        _G[name]:Hide()
+    end
+    for _, name in ipairs(CLOSE_BUTTONS) do
+        _G[name]:GwSkinButton(true)
+    end
+    CalendarCloseButton:SetPoint("TOPRIGHT", CalendarFrame, "TOPRIGHT", -4, -2)
+    for _, name in ipairs(ACTION_BUTTONS) do
+        _G[name]:GwSkinButton(false, true)
+    end
+    CalendarViewEventRemoveButton:GwSkinNegativeButton()
+    for _, dropdown in ipairs(DROPDOWNS) do
+        _G[dropdown[1]][dropdown[2]]:GwHandleDropDownBox(nil, nil, nil, dropdown[3])
+    end
+    for name, besideCalendar in pairs(POPUPS) do
+        SkinPopup(_G[name], besideCalendar)
     end
 
-    CalendarWeekdaySelectedTexture:SetDesaturated(true)
-    CalendarWeekdaySelectedTexture:SetVertexColor(1, 1, 1, 0.6)
+    SkinDayButtons()
+    SkinClassButtons()
 
-    CalendarTodayTexture:Hide()
-    CalendarTodayTextureGlow:Hide()
-
-    CalendarTodayFrame:GwSetFrameTemplate()
-    CalendarTodayFrame:SetBackdropBorderColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    CalendarTodayFrame:SetBackdropColor(0, 0, 0, 0)
-    CalendarTodayFrame:SetScript("OnUpdate", nil)
-
-    hooksecurefunc("CalendarFrame_SetToday", function()
-        CalendarTodayFrame:SetAllPoints()
-    end)
-
-    -- CreateEventFrame
-    CalendarCreateEventFrame:GwStripTextures()
-    CalendarCreateEventFrame:GwSetFrameTemplate("Dark")
-    CalendarCreateEventFrame:SetPoint("TOPLEFT", CalendarFrame, "TOPRIGHT", 3, -24)
-    CalendarCreateEventFrame.Header:GwStripTextures()
-    CalendarCreateEventFrame.Header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    CalendarCreateEventFrame.Header.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    GW.HandleTrimScrollBar(CalendarCreateEventInviteList.ScrollBar)
-    GW.HandleScrollControls(CalendarCreateEventInviteList)
-    hooksecurefunc(CalendarCreateEventInviteList.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
-
-    CalendarCreateEventCreateButton:GwSkinButton(false, true)
-    CalendarCreateEventMassInviteButton:GwSkinButton(false, true)
-    CalendarCreateEventInviteButton:GwSkinButton(false, true)
+    -- create event: invite line, title, lock check and difficulty
+    CalendarCreateEventInviteEdit:SetWidth(CalendarCreateEventInviteEdit:GetWidth() - 2)
     CalendarCreateEventInviteButton:SetPoint("TOPLEFT", CalendarCreateEventInviteEdit, "TOPRIGHT", 4, 1)
-    CalendarCreateEventInviteEdit:SetWidth(CalendarCreateEventInviteEdit:GetWidth() - 2, CalendarCreateEventInviteEdit:GetWidth() - 2)
-
-    GW.SkinTextBox(CalendarCreateEventInviteEdit.Middle, CalendarCreateEventInviteEdit.Left, CalendarCreateEventInviteEdit.Right)
-    GW.SkinTextBox(CalendarCreateEventTitleEdit.Middle, CalendarCreateEventTitleEdit.Left, CalendarCreateEventTitleEdit.Right)
-    CalendarCreateEventFrame.EventTypeDropdown:GwHandleDropDownBox(nil, nil, nil, 120)
-
-    CalendarCreateEventCloseButton:GwSkinButton(true)
+    for _, edit in ipairs({CalendarCreateEventInviteEdit, CalendarCreateEventTitleEdit, CalendarMassInviteMinLevelEdit, CalendarMassInviteMaxLevelEdit}) do
+        SkinTextBox(edit)
+    end
     CalendarCreateEventLockEventCheck:GwSkinCheckButton()
-
-    CalendarCreateEventFrame.HourDropdown:GwHandleDropDownBox(nil, nil, nil, 52)
-    CalendarCreateEventFrame.MinuteDropdown:GwHandleDropDownBox(nil, nil, nil, 52)
-    CalendarCreateEventFrame.AMPMDropdown:GwHandleDropDownBox(nil, nil, nil, 57)
-
-    -- Difficulty Dropdown
-    CalendarCreateEventFrame.DifficultyOptionDropdown:GwHandleDropDownBox(nil, nil, nil, 80)
     CalendarCreateEventFrame.DifficultyOptionDropdown:ClearAllPoints()
     CalendarCreateEventFrame.DifficultyOptionDropdown:SetPoint("TOPLEFT", CalendarCreateEventFrame, "TOPLEFT", 220, -114)
+    SkinEventIcon(CalendarViewEventIcon, CalendarViewEventTitle)
+    SkinEventIcon(CalendarCreateEventIcon, CalendarCreateEventDateLabel)
 
-    CalendarViewEventTitle:ClearAllPoints()
-    CalendarViewEventTitle:SetPoint("TOPLEFT", CalendarViewEventIcon, "TOPRIGHT", 5, 0)
-    HandleEventIcon(CalendarViewEventIcon)
-
-    CalendarCreateEventDateLabel:ClearAllPoints()
-    CalendarCreateEventDateLabel:SetPoint("TOPLEFT", CalendarCreateEventIcon, "TOPRIGHT", 5, 0)
-    HandleEventIcon(CalendarCreateEventIcon)
-
-    CalendarClassButton1:SetPoint("TOPLEFT", CalendarClassButtonContainer, "TOPLEFT", 3, 0)
-
-    local lastClassButton
-    for i, class in next, CLASS_SORT_ORDER do
-        local button = _G["CalendarClassButton" .. i]
-        local count = _G["CalendarClassButton" .. i .. "Count"]
-        StripClassTextures(button:GetNormalTexture(), class)
-        button:GetRegions():Hide()
-        button:GwSetFrameTemplate("Dark")
-        button:SetSize(28, 28)
-
-        count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-        count:ClearAllPoints()
-        count:SetPoint("BOTTOMRIGHT", 0, 1)
-
-        if lastClassButton then
-            button:ClearAllPoints()
-            button:SetPoint("TOPLEFT", lastClassButton, "BOTTOMLEFT", 0, -8)
-        end
-
-        lastClassButton = button
-    end
-
-    CalendarClassTotalsButton:GwStripTextures()
-    CalendarClassTotalsButton:GwSetFrameTemplate("Dark")
-    CalendarClassTotalsButton:SetSize(28, 18)
-
-    -- Texture Picker Frame
-    CalendarTexturePickerFrame:GwStripTextures()
-    CalendarTexturePickerFrame.Header:GwStripTextures()
-    CalendarTexturePickerFrame.Header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    CalendarTexturePickerFrame.Header.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    CalendarTexturePickerFrame:GwSetFrameTemplate("Dark")
-    GW.HandleTrimScrollBar(CalendarTexturePickerFrame.ScrollBar)
-    GW.HandleScrollControls(CalendarTexturePickerFrame)
-    hooksecurefunc(CalendarTexturePickerFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
-
-    CalendarTexturePickerAcceptButton:GwSkinButton(false, true)
-    CalendarTexturePickerCancelButton:GwSkinButton(false, true)
-    CalendarCreateEventInviteButton:GwSkinButton(false, true)
-    CalendarCreateEventRaidInviteButton:GwSkinButton(false, true)
-
-    -- Mass Invite Frame
-    CalendarMassInviteFrame:GwStripTextures()
-    CalendarMassInviteFrame:GwSetFrameTemplate("Dark")
-    CalendarMassInviteFrame.Header:GwStripTextures()
-    CalendarMassInviteFrame.Header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    CalendarMassInviteFrame.Header.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    CalendarMassInviteFrame.CommunityDropdown:GwHandleDropDownBox(nil, nil, nil, 200)
-    CalendarMassInviteFrame.RankDropdown:GwHandleDropDownBox(nil, nil, nil, 140)
-    GW.SkinTextBox(CalendarMassInviteMinLevelEdit.Middle, CalendarMassInviteMinLevelEdit.Left, CalendarMassInviteMinLevelEdit.Right)
-    GW.SkinTextBox(CalendarMassInviteMaxLevelEdit.Middle, CalendarMassInviteMaxLevelEdit.Left, CalendarMassInviteMaxLevelEdit.Right)
-    CalendarMassInviteCloseButton:GwSkinButton(true)
-    CalendarMassInviteAcceptButton:GwSkinButton(false, true)
-
-    -- Raid View
-    CalendarViewRaidFrame:GwStripTextures()
-    CalendarViewRaidFrame:GwSetFrameTemplate("Dark")
-    CalendarViewRaidFrame:SetPoint("TOPLEFT", CalendarFrame, "TOPRIGHT", 3, -24)
-    CalendarViewRaidFrame.Header:GwStripTextures()
-    CalendarViewRaidFrame.Header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    CalendarViewRaidFrame.Header.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    CalendarViewRaidCloseButton:GwSkinButton(true)
-
-    -- Holiday View
-    CalendarViewHolidayFrame:GwStripTextures(true)
-    CalendarViewHolidayFrame:GwSetFrameTemplate("Dark")
-    CalendarViewHolidayFrame:SetPoint("TOPLEFT", CalendarFrame, "TOPRIGHT", 3, -24)
-    CalendarViewHolidayFrame.Header:GwStripTextures()
-    CalendarViewHolidayFrame.Header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    CalendarViewHolidayFrame.Header.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    CalendarViewHolidayFrameModalOverlay:SetAlpha(0)
-    CalendarViewHolidayCloseButton:GwSkinButton(true)
-
-    -- Event View
-    CalendarViewEventFrame:GwStripTextures()
-    CalendarViewEventFrame:GwSetFrameTemplate("Dark")
-    CalendarViewEventFrame:SetPoint("TOPLEFT", CalendarFrame, "TOPRIGHT", 3, -24)
-    CalendarViewEventFrame.Header:GwStripTextures()
-    CalendarViewEventFrame.Header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    CalendarViewEventFrame.Header.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    -- invite lists, descriptions and the pickers
+    SkinTextSection(CalendarViewEventInviteList)
+    SkinTextSection(CalendarCreateEventInviteList)
+    SkinTextSection(CalendarViewEventDescriptionContainer, CalendarViewEventDescriptionScrollFrame)
+    SkinTextSection(CalendarCreateEventDescriptionContainer, CalendarCreateEventDescriptionScrollFrame)
+    GW.SkinSlimScrollBar(CalendarViewEventDescriptionContainer.ScrollBar)
+    GW.SkinSlimScrollBar(CalendarCreateEventDescriptionContainer.ScrollBar)
     CalendarViewEventInviteListSection:GwStripTextures()
-
-    CalendarViewEventCloseButton:GwSkinButton(true)
-    CalendarViewEventAcceptButton:GwSkinButton(false, true)
-    CalendarViewEventTentativeButton:GwSkinButton(false, true)
-    CalendarViewEventRemoveButton:GwSkinButton(false, true)
-    CalendarViewEventRemoveButton:GwSkinNegativeButton()
-    CalendarViewEventDeclineButton:GwSkinButton(false, true)
-
-    -- Event Picker Frame
-    CalendarEventPickerFrame:GwStripTextures()
-    CalendarEventPickerFrame.Header:GwStripTextures()
-    CalendarEventPickerFrame.Header.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    CalendarEventPickerFrame.Header.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    CalendarEventPickerFrame:GwSetFrameTemplate("Dark")
-
-    GW.HandleTrimScrollBar(CalendarEventPickerFrame.ScrollBar)
-    GW.HandleScrollControls(CalendarEventPickerFrame)
-    hooksecurefunc(CalendarEventPickerFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
-    CalendarEventPickerCloseButton:GwSkinButton(false, true)
+    CalendarViewHolidayFrameModalOverlay:SetAlpha(0)
+    for _, list in ipairs({CalendarCreateEventInviteList, CalendarTexturePickerFrame, CalendarEventPickerFrame}) do
+        SkinScrollBar(list)
+    end
+    for _, list in ipairs({CalendarViewEventInviteList, CalendarCreateEventInviteList, CalendarTexturePickerFrame, CalendarEventPickerFrame}) do
+        AddListHover(list)
+    end
 end
 
 function GW.LoadCalendarSkin()

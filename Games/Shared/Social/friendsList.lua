@@ -164,6 +164,44 @@ GW.friendsList.statusIcons = {
     },
 }
 
+-- the look of a friend in the list and in the friends tooltip:
+-- "Account | Character | Level" in client, class and difficulty color, below it "Zone - Realm"
+function GW.friendsList.GetStatus(isOnline, isAFK, isDND)
+    return not isOnline and "Offline" or isAFK and "AFK" or isDND and "DND" or "Online"
+end
+
+function GW.friendsList.FormatTitle(realID, gameName, name, className, level, wowID, timerunningSeasonID)
+    local clientColor = GW.friendsList.clientData[gameName] and GW.friendsList.clientData[gameName].color
+    local realIDString = realID and clientColor and GW.StringWithRGB(realID, clientColor) or realID
+
+    local nameString
+    if name and name ~= "" then
+        nameString = GW.StringWithRGB(name, GW.GWGetClassColor(GW.UnlocalizedClassName(className), true, true))
+        if TimerunningUtil and timerunningSeasonID and timerunningSeasonID ~= "" then
+            nameString = TimerunningUtil.AddSmallIcon(nameString) or nameString
+        end
+        if wowID and GW.friendsList.expansionData[wowID] and level and level ~= 0 then
+            nameString = nameString .. GW.StringWithRGB(delimiter .. level, GetQuestDifficultyColor(level))
+        end
+    end
+
+    if nameString and realIDString and realIDString ~= "" then
+        return realIDString .. delimiter .. nameString
+    end
+    return nameString or realIDString or ""
+end
+
+-- the realm only when it is not ours
+function GW.friendsList.FormatPlace(area, server)
+    if area and area ~= "" then
+        if server and server ~= "" and server ~= GW.myrealm then
+            return area .. " - " .. server
+        end
+        return area
+    end
+    return server or ""
+end
+
 local function HandleInviteTexNormal(self)
     self:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png")
     self:SetTexCoord(0, 1, 0, 1)
@@ -236,17 +274,7 @@ local function UpdateFriendButton(button)
         area = friendInfo.area
         faction = GW.myfaction
 
-        if friendInfo.connected then
-            if friendInfo.afk then
-                status = "AFK"
-            elseif friendInfo.dnd then
-                status = "DND"
-            else
-                status = "Online"
-            end
-        else
-            status = "Offline"
-        end
+        status = GW.friendsList.GetStatus(friendInfo.connected, friendInfo.afk, friendInfo.dnd)
     elseif button.buttonType == FRIENDS_BUTTON_TYPE_BNET and BNConnected() then
         -- Battle.net friends
         local friendAccountInfo = C_BattleNet.GetFriendAccountInfo(button.id)
@@ -256,17 +284,8 @@ local function UpdateFriendButton(button)
             local gameAccountInfo = friendAccountInfo.gameAccountInfo
             gameName = GW.friendsList.projectCodes[strupper(gameAccountInfo.clientProgram)]
 
-            if gameAccountInfo.isOnline then
-                if friendAccountInfo.isAFK or gameAccountInfo.isGameAFK then
-                    status = "AFK"
-                elseif friendAccountInfo.isDND or gameAccountInfo.isGameBusy then
-                    status = "DND"
-                else
-                    status = "Online"
-                end
-            else
-                status = "Offline"
-            end
+            status = GW.friendsList.GetStatus(gameAccountInfo.isOnline, friendAccountInfo.isAFK or gameAccountInfo.isGameAFK,
+                friendAccountInfo.isDND or gameAccountInfo.isGameBusy)
 
             -- Fetch version if friend playing WoW
             if gameName == "World of Warcraft" then
@@ -298,45 +317,9 @@ local function UpdateFriendButton(button)
     button.gameIcon:SetTexCoord(0, 1, 0, 1)
 
     if gameName then
-        local buttonTitle, buttonText
-
-        -- real ID
-        local clientColor = GW.friendsList.clientData[gameName] and GW.friendsList.clientData[gameName].color
-        local realIDString = realID and clientColor and GW.StringWithRGB(realID, clientColor) or realID
-
-        -- name
-        local classColor = GW.GWGetClassColor(GW.UnlocalizedClassName(class), true, true)
-        local nameString = name and classColor and GW.StringWithRGB(name, classColor) or name
-        if TimerunningUtil and timerunningSeasonID and timerunningSeasonID ~= "" and nameString ~= nil then
-            nameString = TimerunningUtil.AddSmallIcon(nameString) or nameString -- add timerunning tag
-        end
-
-        if wowID and GW.friendsList.expansionData[wowID] and level and level ~= 0 then
-            nameString = nameString .. GW.StringWithRGB(delimiter .. level, GetQuestDifficultyColor(level))
-        end
-
-        -- combine Real ID and Name
-        if nameString and nameString ~= "" and realIDString and realIDString ~= "" then
-            buttonTitle = realIDString .. delimiter .. nameString
-        elseif nameString and nameString ~= "" then
-            buttonTitle = nameString
-        else
-            buttonTitle = realIDString or ""
-        end
-
-        button.name:SetText(buttonTitle)
-
-        -- area
+        button.name:SetText(GW.friendsList.FormatTitle(realID, gameName, name, class, level, wowID, timerunningSeasonID))
         if area then
-            if area ~= "" and server and server ~= "" and server ~= GW.myrealm then
-                buttonText = GW.StringWithRGB(area .. " - " .. server, {r = 1, g = 1, b = 1})
-            elseif area ~= "" then
-                buttonText = GW.StringWithRGB(area, {r = 1, g = 1, b = 1})
-            else
-                buttonText = server or ""
-            end
-
-            button.info:SetText(buttonText)
+            button.info:SetText(GW.StringWithRGB(GW.friendsList.FormatPlace(area, server), {r = 1, g = 1, b = 1}))
         end
 
         -- game icon

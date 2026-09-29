@@ -1,57 +1,56 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function HandlePanel(panel)
-    if panel.DragonridingPanel then
-        panel.DragonridingPanel.SkillsButton:GwSkinButton(false, true)
-    end
+local skinnedLists = setmetatable({}, {__mode = "k"})
 
-    if panel.CloseButton then
-        panel.CloseButton:GwSkinButton(true)
-        panel.CloseButton:SetPoint("TOPRIGHT", -3, -2)
+local function SkinFactionList(owner)
+    local list = owner and owner.MajorFactionList
+    if list and not skinnedLists[list] then
+        skinnedLists[list] = true
+        GW.HandleTrimScrollBar(list.ScrollBar)
+        GW.HandleScrollControls(list)
     end
 end
 
-local function DelayedMajorFactionList(frame)
-    C_Timer.After(0.1, function()
-        if frame.MajorFactionList then
-            GW.HandleTrimScrollBar(frame.MajorFactionList.ScrollBar)
-            GW.HandleScrollControls(frame.MajorFactionList)
+-- Create hands the new list to its caller, which puts it on the parent right after
+local function SkinFactionListSoon(parent)
+    RunNextFrame(function() SkinFactionList(parent) end)
+end
+
+local function SkinCloseButton(button)
+    button:GwSkinButton(true)
+    button:SetSize(20, 20)
+end
+
+-- the overlay of the newest expansion; blizzard creates it when the page first needs it
+local skinnedOverlays = setmetatable({}, {__mode = "k"})
+local function SkinOverlays()
+    for _, overlay in ipairs({ExpansionLandingPage.Overlay:GetChildren()}) do
+        if not skinnedOverlays[overlay] then
+            skinnedOverlays[overlay] = true
+            overlay:GwStripTextures()
+            if overlay.ScrollFadeOverlay then
+                overlay.ScrollFadeOverlay:Hide()
+            end
+            if overlay.DragonridingPanel then
+                overlay.DragonridingPanel.SkillsButton:GwSkinButton(false, true)
+            end
+            if overlay.CloseButton then
+                SkinCloseButton(overlay.CloseButton)
+            end
+            SkinFactionListSoon(overlay)
         end
-    end)
+    end
 end
 
 local function ExpansionLadningPageSkin()
     GW.CreateFrameHeaderWithBody(ExpansionLandingPage, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", nil, nil, false, true)
 
-    local factionList = LandingPageMajorFactionList
-    if factionList then
-        hooksecurefunc(factionList, "Create", DelayedMajorFactionList)
+    if LandingPageMajorFactionList then
+        hooksecurefunc(LandingPageMajorFactionList, "Create", SkinFactionListSoon)
     end
-
-    local overlay = ExpansionLandingPage.Overlay
-    if overlay then
-        for _, child in next, { overlay:GetChildren() } do
-            child:GwStripTextures()
-
-            if child.ScrollFadeOverlay then
-                child.ScrollFadeOverlay:Hide()
-            end
-
-            if child.DragonridingPanel then
-                HandlePanel(child)
-            end
-        end
-
-        local landingOverlay = overlay.WarWithinLandingOverlay
-        if landingOverlay then
-            landingOverlay.CloseButton:GwSkinButton(true)
-            landingOverlay.CloseButton:SetPoint("TOPRIGHT", 35, 30)
-            if landingOverlay.MajorFactionList then
-                DelayedMajorFactionList(landingOverlay)
-            end
-        end
-    end
+    SkinOverlays()
+    EventRegistry:RegisterCallback("ExpansionLandingPage.OverlayChanged", SkinOverlays, ExpansionLandingPage)
 end
 
 local function LoadExpansionLadningPageSkin()

@@ -295,10 +295,16 @@ do
         ["Professions-Slot-Frame-Blue"] = Enum.ItemQuality.Rare,
         ["Professions-Slot-Frame-Epic"] = Enum.ItemQuality.Epic,
         ["Professions-Slot-Frame-Legendary"] = Enum.ItemQuality.Legendary,
+        ["loottab-set-itemborder-green"] = Enum.ItemQuality.Uncommon,
+        ["loottab-set-itemborder-blue"] = Enum.ItemQuality.Rare,
+        ["loottab-set-itemborder-purple"] = Enum.ItemQuality.Epic,
+        ["loottab-set-itemborder-orange"] = Enum.ItemQuality.Legendary,
+        ["loottab-set-itemborder-artifact"] = Enum.ItemQuality.Artifact,
     }
 
     -- the blizzard border stays hidden, our backdrop shows what it would; kept out of blizzards tables
     local backdrops = setmetatable({}, {__mode = "k"})
+    local emptyColors = setmetatable({}, {__mode = "k"})
     local wantsShown = setmetatable({}, {__mode = "k"})
     local hidingBorder -- our own Hide call, its hook must not count as blizzards
 
@@ -306,7 +312,8 @@ do
         local backdrop = backdrops[border]
         local quality = ATLAS_QUALITY[border:GetAtlas()]
         if not wantsShown[border] then
-            backdrop:SetBackdropBorderColor(1, 1, 1)
+            local color = emptyColors[border]
+            backdrop:SetBackdropBorderColor(color and color.r or 1, color and color.g or 1, color and color.b or 1)
         elseif quality then
             local color = GW.GetBagItemQualityColor(quality)
             backdrop:SetBackdropBorderColor(color.r, color.g, color.b, 1)
@@ -335,14 +342,15 @@ do
         end
     end
 
-    -- backdrop: the parents backdrop by default
-    local function HandleIconBorder(border, backdrop)
+    -- backdrop: the parents backdrop by default; emptyColor for a slot without quality, white by default
+    local function HandleIconBorder(border, backdrop, emptyColor)
         if not backdrop then
             local parent = border:GetParent()
             backdrop = parent.backdrop or parent
         end
         local hooked = backdrops[border] ~= nil
         backdrops[border] = backdrop
+        emptyColors[border] = emptyColor
         if not hooked then
             hooksecurefunc(border, "Show", OnShow)
             hooksecurefunc(border, "Hide", OnHide)
@@ -498,14 +506,74 @@ local function HandleItemButton(button, setInside)
 end
 GW.HandleItemButton = HandleItemButton
 
+-- blizzard builds many windows from frame pools; func runs once for every frame a pool hands out
 do
-    local skinnedChoices = setmetatable({}, {__mode = "k"})
+    local skinnedPoolFrames = setmetatable({}, {__mode = "k"})
+    function GW.SkinPoolFrames(pool, func)
+        if not pool then return end
+        for frame in pool:EnumerateActive() do
+            if not skinnedPoolFrames[frame] then
+                skinnedPoolFrames[frame] = true
+                func(frame)
+            end
+        end
+    end
+end
 
-    -- one icon of the selector grid; the grid reuses its buttons, each is skinned once
+-- the stepper arrows of AlphaHighlightButtonMixin buttons (barber, trading post); on press the mixin
+-- sets a highlight atlas our arrow textures do not have, so the press scripts go
+function GW.SkinStepperArrow(button, size)
+    GW.HandleNextPrevButton(button)
+    if size then
+        button:SetSize(size, size)
+    end
+    for _, script in ipairs({"OnMouseDown", "OnMouseUp"}) do
+        button:SetScript(script, nil)
+    end
+end
+
+-- the rows of a scroll box, the ones there now and every one it creates later; func runs once per row
+do
+    local skinnedRows = setmetatable({}, {__mode = "k"})
+    function GW.SkinScrollBoxFrames(scrollBox, func)
+        local function SkinRow(row)
+            if not skinnedRows[row] then
+                skinnedRows[row] = true
+                func(row)
+            end
+        end
+        scrollBox:ForEachFrame(SkinRow)
+        -- an own owner per call, the callback registry keeps one callback per owner
+        ScrollUtil.AddAcquiredFrameCallback(scrollBox, function(_, row) SkinRow(row) end, {})
+    end
+end
+
+-- icons inside a text (currencies, costs) at blizzards size become small and cropped; the hook keeps
+-- them small when the text changes
+do
+    local SMALL_ICON = "|T%1:14:14:0:0:64:64:5:59:5:59|t"
+    local rewriting = false
+
+    local function ShrinkTextIcons(fontString)
+        local text = fontString:GetText()
+        if rewriting or GW.IsSecretValue(text) or not text then return end
+        local shrunk = gsub(text, "|T([^:|]+)[^|]*|t", SMALL_ICON)
+        if shrunk ~= text then
+            rewriting = true
+            fontString:SetText(shrunk)
+            rewriting = false
+        end
+    end
+
+    function GW.KeepTextIconsSmall(fontString)
+        ShrinkTextIcons(fontString)
+        hooksecurefunc(fontString, "SetText", ShrinkTextIcons)
+    end
+end
+
+do
+    -- one icon of the selector grid
     local function SkinIconChoice(button)
-        if skinnedChoices[button] then return end
-        skinnedChoices[button] = true
-
         local icon = button.Icon
         local texture = icon and icon:GetTexture()
         button:GwStripTextures()
@@ -557,11 +625,27 @@ do
 
         GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar)
         GW.HandleScrollControls(frame.IconSelector)
-        local scrollBox = frame.IconSelector.ScrollBox
-        scrollBox:ForEachFrame(SkinIconChoice)
-        ScrollUtil.AddAcquiredFrameCallback(scrollBox, function(_, button) SkinIconChoice(button) end, frame)
+        GW.SkinScrollBoxFrames(frame.IconSelector.ScrollBox, SkinIconChoice)
     end
     GW.HandleIconSelectionFrame = HandleIconSelectionFrame
+end
+
+-- old style tabs only learn their state through the global PanelTemplates functions; one hook each,
+-- the skinned tabs register their handler instead of hooking again for every tab
+local tabHandlers = {Select = setmetatable({}, {__mode = "k"}), Deselect = setmetatable({}, {__mode = "k"}), Resize = setmetatable({}, {__mode = "k"})}
+for state, handlers in pairs(tabHandlers) do
+    hooksecurefunc(state == "Resize" and "PanelTemplates_TabResize" or "PanelTemplates_" .. state .. "Tab", function(tab)
+        local handler = handlers[tab]
+        if handler then
+            handler(tab)
+        end
+    end)
+end
+
+local function OnTabState(tab, onSelect, onDeselect, onResize)
+    tabHandlers.Select[tab] = onSelect
+    tabHandlers.Deselect[tab] = onDeselect
+    tabHandlers.Resize[tab] = onResize
 end
 
 local function HandleTabs(self, direction, textures, setDesaturated)
@@ -670,22 +754,13 @@ local function HandleTabs(self, direction, textures, setDesaturated)
                 self.tex:SetAlpha(1)
             end
         else
-            hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
-                if self == tab then
-                    tab.background:SetBlendMode("BLEND")
-                    if tab.Text then
-                        tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
-                    end
+            local function SetTabBlend(tab, mode)
+                tab.background:SetBlendMode(mode)
+                if tab.Text then
+                    tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
                 end
-            end)
-            hooksecurefunc("PanelTemplates_SelectTab", function(tab)
-                if self == tab then
-                    tab.background:SetBlendMode("MOD")
-                    if tab.Text then
-                        tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
-                    end
-                end
-            end)
+            end
+            OnTabState(self, function(tab) SetTabBlend(tab, "MOD") end, function(tab) SetTabBlend(tab, "BLEND") end)
             if self.LeftActive and self.LeftActive:IsShown() then -- selected
                 self.background:SetBlendMode("MOD")
             else
@@ -1154,21 +1229,10 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
             self.icon:SetTexCoord(0, 0.5, 0, 0.625)
         end
     else
-        hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
-            if self == tab then
-                tab.icon:SetTexCoord(0.51, 1, 0, 0.625)
-            end
-        end)
-        hooksecurefunc("PanelTemplates_SelectTab", function(tab)
-            if self == tab then
-                tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
-            end
-        end)
-        hooksecurefunc("PanelTemplates_TabResize", function(tab)
-            if self == tab then
-                tab:SetSize(64, 40)
-            end
-        end)
+        OnTabState(self,
+            function(tab) tab.icon:SetTexCoord(0, 0.5, 0, 0.625) end,
+            function(tab) tab.icon:SetTexCoord(0.51, 1, 0, 0.625) end,
+            function(tab) tab:SetSize(64, 40) end)
 
         -- frame based side tabs (legacy system) have no enabled state
         if self.IsEnabled and not self:IsEnabled() then -- selected tab

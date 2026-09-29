@@ -76,52 +76,42 @@ local function SkinDropDownList()
     end)
 end
 
-local backdrops = {}
-local function SkinFrame(frame)
-    frame:GwStripTextures()
+-- blizzards menu frames come from a pool and lose their art again on every open; the backdrop is
+-- created once per frame and kept here, not on the frame
+local menuBackdrops = setmetatable({}, {__mode = "k"})
 
-    if backdrops[frame] then
-        frame.backdrop = backdrops[frame] -- relink it back
-    else
-        frame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        backdrops[frame] = frame.backdrop
-
-        if frame.ScrollBar then
-            GW.HandleTrimScrollBar(frame.ScrollBar)
+local function SkinMenuFrame(menu)
+    menu:GwStripTextures()
+    local backdrop = menuBackdrops[menu]
+    if not backdrop then
+        menu:GwCreateBackdrop(GW.BackdropTemplates.Default)
+        backdrop = menu.backdrop
+        menuBackdrops[menu] = backdrop
+        -- long menus scroll, with the slim bar of our windows
+        if menu.ScrollBar then
+            GW.SkinSlimScrollBar(menu.ScrollBar)
         end
     end
-
-    if frame.backdrop then
-        frame.backdrop:GwOffsetFrameLevel(-1, frame)
-    end
+    -- submenus open above their parent, the backdrop follows the level of its menu
+    backdrop:SetFrameLevel(math.max(0, menu:GetFrameLevel() - 1))
 end
 
-local widgets = {}
-local function SkinFrameAttachments(frame)
-    if not frame.attachments then return end
-
-    for _, widget in next, frame.attachments do
-        if widget:IsObjectType("Texture") then
-            if widget:GetTexture() == 130940 then
-                widget:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
-                widget:SetRotation(-1.57)
-                widget:SetSize(15, 15)
-
-                widgets[widget] = true
-            elseif widgets[widget] then
-                widget:SetRotation(0)
-                widgets[widget] = nil
-            end
-        end
-    end
-end
-
-local function OpenMenu(manager, region, menuDescription)
+-- the opened menu, and every submenu it opens later
+local function SkinOpenedMenu(manager, _, description)
     local menu = manager:GetOpenMenu()
-    if not menu then return end
+    if menu then
+        SkinMenuFrame(menu)
+        description:AddMenuAcquiredCallback(SkinMenuFrame)
+    end
+end
 
-    SkinFrame(menu)
-    menuDescription:AddMenuAcquiredCallback(SkinFrame)
+-- our arrow already points right, a pooled texture reused for something else keeps no rotation
+local function SkinSubmenuArrow(entry)
+    local arrow = entry.arrow
+    if arrow then
+        arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png")
+        arrow:SetSize(15, 15)
+    end
 end
 
 local function LoadDropDownSkin()
@@ -132,10 +122,9 @@ local function LoadDropDownSkin()
 
     local manager = Menu.GetManager()
     if manager then
-        hooksecurefunc(manager, "OpenMenu", OpenMenu)
-        hooksecurefunc(manager, "OpenContextMenu", OpenMenu)
+        hooksecurefunc(manager, "OpenMenu", SkinOpenedMenu)
+        hooksecurefunc(manager, "OpenContextMenu", SkinOpenedMenu)
     end
-
-    hooksecurefunc(CompositorMixin, "AttachTexture", SkinFrameAttachments)
+    hooksecurefunc(MenuVariants, "CreateSubmenuArrow", SkinSubmenuArrow)
 end
 GW.LoadDropDownSkin = LoadDropDownSkin

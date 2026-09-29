@@ -3,8 +3,6 @@ local GW = select(2, ...)
 
 local APP_CLIENTS = {App = true, BSAp = true}
 local Social = GW.Social
-local ACCOUNT_COLOR = CreateColor(0.93, 0.93, 0.93)
-local OTHER_PLACE_COLOR = Social.OTHER_PLACE_COLOR
 
 -- friends lists name the class localized
 local function FormatCharacter(level, name, className)
@@ -84,66 +82,117 @@ local function GetOnlineBNetEntries()
     return entries
 end
 
-local function AddSectionTitle(title)
-    GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(title)
-end
+local WOW_NAME = "World of Warcraft"
+local ACCOUNT_COLOR = CreateColor(0.93, 0.93, 0.93)
 
-local function AddFriendLines(friends, myZone)
-    AddSectionTitle(CHARACTER_FRIEND)
-    for _, info in ipairs(friends) do
-        local name = FormatCharacter(info.level, info.name, info.className)
-            .. (Social.IsGroupMember(info.name) and Social.IN_GROUP_MARK or "") .. Social.GetStatusTag(info.afk, info.dnd)
-        local zoneColor = Social.GetPlaceColor(info.area == myZone)
-        GameTooltip:AddDoubleLine(name, info.area, 1, 1, 1, zoneColor.r, zoneColor.g, zoneColor.b)
+-- the name of a game: wow versions by their project, other games by their client
+local function GetGameName(game)
+    local client = game.clientProgram
+    -- the desktop and the mobile app share one heading
+    local code = APP_CLIENTS[client] and "APP" or strupper(client or "")
+    local title = GW.friendsList.projectCodes[code] or client or ""
+    if client == BNET_CLIENT_WOW then
+        local expansion = GW.friendsList.expansionData[game.wowProjectID]
+        title = WOW_NAME .. (expansion and expansion.suffix and " " .. expansion.suffix or "")
     end
+    return title
 end
 
--- shift adds the zone and realm of wow friends and what everybody else is doing
-local function AddBNetLines(entries, myZone, showDetails)
-    AddSectionTitle(BATTLENET_OPTIONS_LABEL)
-    for _, entry in ipairs(entries) do
+local function GetSection(sections, key, game, order)
+    local section = sections[key]
+    if not section then
+        local name = GetGameName(game)
+        section = {name = name, title = BNet_GetClientEmbeddedAtlas(game.clientProgram, 14) .. " " .. name, order = order, lines = {}}
+        sections[key] = section
+        tinsert(sections, section)
+    end
+    return section
+end
+
+-- "Character | Level" with afk or dnd behind it, the account name on the right; the place below only
+-- while shift is held
+local function AddEntry(section, isAFK, isDND, title, account, place, sortName, inMyZone)
+    tinsert(section.lines, {
+        text = title .. Social.GetStatusTag(isAFK, isDND),
+        account = account or "",
+        place = place,
+        placeColor = Social.GetPlaceColor(inMyZone),
+        sortName = sortName or "",
+    })
+end
+
+local function SortLines(a, b)
+    return a.sortName < b.sortName
+end
+
+local function SortSections(a, b)
+    if a.order ~= b.order then
+        return a.order < b.order
+    end
+    return a.name < b.name
+end
+
+-- all online friends by game: our own wow first, then other wow versions, other games and the app
+local function CollectSections(showDetails)
+    local sections = {}
+    local myZone = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+
+    local ownWow = GetSection(sections, "WoW" .. WOW_PROJECT_ID, {clientProgram = BNET_CLIENT_WOW, wowProjectID = WOW_PROJECT_ID}, 1)
+    for _, info in ipairs(GetOnlineFriends()) do
+        local name, realm = strsplit("-", info.name)
+        local title = GW.friendsList.FormatTitle(nil, WOW_NAME, name, info.className, info.level, WOW_PROJECT_ID)
+            .. (Social.IsGroupMember(info.name) and " " .. Social.IN_GROUP_MARK or "")
+        AddEntry(ownWow, info.afk, info.dnd, title, nil, showDetails and GW.friendsList.FormatPlace(info.area, realm), name, info.area == myZone)
+    end
+
+    for _, entry in ipairs(GetOnlineBNetEntries()) do
         local account, game = entry.account, entry.game
-        local icon = BNet_GetClientEmbeddedAtlas(game.clientProgram, 14) .. " "
-        local status = Social.GetStatusTag(account.isAFK or game.isGameAFK, account.isDND or game.isGameBusy)
+        local key = game.clientProgram == BNET_CLIENT_WOW and "WoW" .. (game.wowProjectID or "") or APP_CLIENTS[game.clientProgram] and "App" or game.clientProgram
+        local section = GetSection(sections, key, game, entry.order)
+        local isAFK, isDND = account.isAFK or game.isGameAFK, account.isDND or game.isGameBusy
 
         local characterName = GetCharacterName(game)
         if characterName then
-            local name = icon .. FormatCharacter(game.characterLevel, characterName, game.className)
-                .. (Social.IsGroupMember(characterName, game.realmName) and Social.IN_GROUP_MARK or "") .. status
-                .. (game.timerunningSeasonID and Social.TIMERUNNING_ICON or "")
-            GameTooltip:AddDoubleLine(name, account.accountName, 1, 1, 1, ACCOUNT_COLOR.r, ACCOUNT_COLOR.g, ACCOUNT_COLOR.b)
-            if showDetails then
-                local zoneColor = Social.GetPlaceColor(game.areaName == myZone)
-                local realmColor = Social.GetPlaceColor(game.realmName == GW.myrealm)
-                GameTooltip:AddDoubleLine(game.areaName or game.richPresence, game.realmName, zoneColor.r, zoneColor.g, zoneColor.b, realmColor.r, realmColor.g, realmColor.b)
-            end
+            local realm = game.realmDisplayName or game.realmName
+            local title = GW.friendsList.FormatTitle(nil, WOW_NAME, characterName, game.className, game.characterLevel,
+                game.wowProjectID, game.timerunningSeasonID)
+                .. (Social.IsGroupMember(characterName, game.realmName) and " " .. Social.IN_GROUP_MARK or "")
+            local place = showDetails and GW.friendsList.FormatPlace(game.areaName, realm)
+            AddEntry(section, isAFK, isDND, title, account.accountName, place ~= "" and place or showDetails and game.richPresence, characterName, game.areaName == myZone)
         else
-            local activity = showDetails and not APP_CLIENTS[game.clientProgram] and game.richPresence or ""
-            GameTooltip:AddDoubleLine(icon .. account.accountName .. status, activity, ACCOUNT_COLOR.r, ACCOUNT_COLOR.g, ACCOUNT_COLOR.b, OTHER_PLACE_COLOR.r, OTHER_PLACE_COLOR.g, OTHER_PLACE_COLOR.b)
+            local gameName = GW.friendsList.projectCodes[strupper(game.clientProgram or "")]
+            local activity = showDetails and not APP_CLIENTS[game.clientProgram] and game.richPresence or nil
+            AddEntry(section, isAFK, isDND, GW.friendsList.FormatTitle(account.accountName, gameName), nil, activity, account.accountName)
         end
     end
+
+    table.sort(sections, SortSections)
+    return sections
 end
 
--- the micro button tooltip first, the online friends below it
+-- the micro button tooltip first, the online friends below it; shift adds what the others are doing
 local function Friends_OnEnter(self)
     Social.StartMicroButtonTooltip(self)
 
-    local friends, entries = GetOnlineFriends(), GetOnlineBNetEntries()
     local numBNet, numBNetOnline = BNGetNumFriends()
-    local numOnline = #friends + numBNetOnline
+    local numOnline = C_FriendList.GetNumOnlineFriends() + numBNetOnline
     if numOnline > 0 then
-        local headerColor = GW.Colors.FactionColors[GW.myfaction] or GW.Colors.FactionColors.Alliance
-        local myZone = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
-
+        local r, g, b = GW.Colors.TextColors.LightHeader:GetRGB()
         GameTooltip:AddLine(" ")
-        GameTooltip:AddDoubleLine(FRIENDS_LIST, format("%s: %d/%d", FRIENDS_LIST_ONLINE, numOnline, C_FriendList.GetNumFriends() + numBNet),
-            headerColor.r, headerColor.g, headerColor.b, headerColor.r, headerColor.g, headerColor.b)
-        if #friends > 0 then
-            AddFriendLines(friends, myZone)
-        end
-        if #entries > 0 then
-            AddBNetLines(entries, myZone, IsShiftKeyDown())
+        GameTooltip:AddDoubleLine(FRIENDS_LIST, format("%s: %d/%d", FRIENDS_LIST_ONLINE, numOnline, C_FriendList.GetNumFriends() + numBNet), r, g, b, r, g, b)
+
+        for _, section in ipairs(CollectSections(IsShiftKeyDown())) do
+            if #section.lines > 0 then
+                table.sort(section.lines, SortLines)
+                GameTooltip:AddLine(" ")
+                GameTooltip:AddLine(section.title, r, g, b)
+                for _, line in ipairs(section.lines) do
+                    GameTooltip:AddDoubleLine(line.text, line.account, 1, 1, 1, ACCOUNT_COLOR:GetRGB())
+                    if line.place and line.place ~= "" then
+                        GameTooltip:AddLine("   " .. line.place, line.placeColor:GetRGB())
+                    end
+                end
+            end
         end
     end
 

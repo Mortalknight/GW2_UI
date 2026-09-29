@@ -45,6 +45,9 @@ local function SetStyle(tooltip, _, isEmbedded)
     end
 end
 
+-- skins outside the tooltip modules style their own tooltips the same way
+GW.Tooltip.SetStyle = SetStyle
+
 local function SkinBar(bar)
     bar:GwStripTextures()
     bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)

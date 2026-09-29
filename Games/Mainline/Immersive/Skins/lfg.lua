@@ -1,101 +1,115 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function HandleGoldIcon(button)
-    local Button = _G[button]
-    if Button.backdrop then return end
+-- blizzard frames without the backdrop mixin get it for our backdrop
+local function SetFrameBackdrop(frame, template)
+    if not frame.SetBackdrop then
+        Mixin(frame, BackdropTemplateMixin)
+        frame:HookScript("OnSizeChanged", frame.OnBackdropSizeChanged)
+    end
+    frame:SetBackdrop(template)
+end
 
-    local count = _G[button.."Count"]
-    local nameFrame = _G[button.."NameFrame"]
-    local iconTexture = _G[button.."IconTexture"]
+-- our menu and tile labels stay on one line; blizzards texts break with a newline or "|n",
+-- a hyphen before it joins the word again
+local joiningLines = false
+local function JoinLines(label)
+    local text = label:GetText()
+    if joiningLines or GW.IsSecretValue(text) or not text then return end
+    local joined = text:gsub("-\n", ""):gsub("-|n", ""):gsub("\n", " "):gsub("|n", " ")
+    if joined ~= text then
+        joiningLines = true
+        label:SetText(joined)
+        joiningLines = false
+    end
+end
 
-    Button:GwCreateBackdrop()
-    Button.backdrop:ClearAllPoints()
-    Button.backdrop:SetPoint("LEFT", 1, 0)
-    Button.backdrop:SetSize(42, 42)
+-- the text already there and every one blizzard sets later
+local function KeepOneLine(label)
+    JoinLines(label)
+    hooksecurefunc(label, "SetText", JoinLines)
+end
 
-    iconTexture:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    iconTexture:SetDrawLayer("OVERLAY")
-    iconTexture:SetParent(Button.backdrop)
-    iconTexture:GwSetInside()
-
-    count:SetParent(Button.backdrop)
+-- a reward of the finders: the icon in a 42px frame on the left, the plate behind the name gone
+local function SkinReward(button, icon, count, nameFrame, template)
+    button:GwCreateBackdrop(template)
+    button.backdrop:ClearAllPoints()
+    button.backdrop:SetPoint("LEFT", 1, 0)
+    button.backdrop:SetSize(42, 42)
+    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    icon:SetDrawLayer("OVERLAY")
+    icon:GwSetInside(button.backdrop)
     count:SetDrawLayer("OVERLAY")
-
     nameFrame:SetTexture()
     nameFrame:SetSize(118, 39)
 end
 
-local function SkinItemButton(parentFrame, _, index, _, _, _, _, _, _, quality)
-    local parentName = parentFrame:GetName()
-    local item = _G[parentName .. "Item" .. index]
-    if item and not item.backdrop then
-        item:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
-        item.backdrop:ClearAllPoints()
-        item.backdrop:SetPoint("LEFT", 1, 0)
-        item.backdrop:SetSize(42, 42)
+local function SkinMoneyReward(name)
+    local button = _G[name]
+    if not button.backdrop then
+        SkinReward(button, _G[name .. "IconTexture"], _G[name .. "Count"], _G[name .. "NameFrame"])
+    end
+end
 
-        item.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        item.Icon:SetDrawLayer("OVERLAY")
-        item.Icon:SetParent(item.backdrop)
-        item.Icon:GwSetInside()
-
-        item.Count:SetDrawLayer("OVERLAY")
-        item.Count:SetParent(item.backdrop)
-
-        item.NameFrame:SetTexture()
-        item.NameFrame:SetSize(118, 39)
-
+-- item rewards, the frame in their quality color; this works for the dungeon, raid and scenario finder
+local function SkinItemReward(parentFrame, _, index, _, _, _, _, _, _, quality)
+    local item = _G[parentFrame:GetName() .. "Item" .. index]
+    if not item then return end
+    if not item.backdrop then
+        SkinReward(item, item.Icon, item.Count, item.NameFrame, GW.BackdropTemplates.ColorableBorderOnly)
         item.shortageBorder:SetTexture()
-
-        item.roleIcon1:SetParent(item.backdrop)
-        item.roleIcon2:SetParent(item.backdrop)
-
-        GW.HandleIconBorder(item.IconBorder, item.backdrop)
         item.IconBorder:GwKill()
     end
     if quality then
         local color = GW.GetBagItemQualityColor(quality)
-        local r, g, b = 1, 1, 1
-        if color then
-            r, g, b = color.r, color.g, color.b
-        end
-        item.backdrop:SetBackdropBorderColor(r, g, b)
+        item.backdrop:SetBackdropBorderColor(color and color.r or 1, color and color.g or 1, color and color.b or 1)
     end
 end
 
-local function HandleAffixIcons(self)
-    local MapID, _, PowerLevel = C_ChallengeMode.GetSlottedKeystoneInfo()
-
-    if MapID then
-        local Name = C_ChallengeMode.GetMapUIInfo(MapID)
-
-        if Name and PowerLevel then
-            self.DungeonName:SetText(Name .. "|cffffffff - |r" .. "(" .. PowerLevel .. ")")
-        end
-
-        self.PowerLevel:SetText("")
+local function GetAffixTexture(affix)
+    if affix.info then
+        return CHALLENGE_MODE_EXTRA_AFFIX_INFO[affix.info.key].texture
+    elseif affix.affixID then
+        return select(3, C_ChallengeMode.GetAffixInfo(affix.affixID))
     end
-    local list = self.AffixesContainer and self.AffixesContainer.Affixes or self.Affixes
-    if not list then return end
+end
 
-    for _, frame in ipairs(list) do
-        frame.Border:SetTexture()
-        frame.Portrait:SetTexture()
-        if frame.CircleMask then
-            frame.CircleMask:Hide()
+-- the affixes of the week and of a slotted keystone as square icons; the keystone frame names its
+-- dungeon and level in one line
+local function SkinAffixes(frame)
+    local mapID, _, level = C_ChallengeMode.GetSlottedKeystoneInfo()
+    if mapID and frame.DungeonName then
+        local mapName = C_ChallengeMode.GetMapUIInfo(mapID)
+        if mapName and level then
+            frame.DungeonName:SetText(mapName .. "|cffffffff - |r(" .. level .. ")")
         end
+        frame.PowerLevel:SetText("")
+    end
 
-        if frame.info then
-            frame.Portrait:SetTexture(CHALLENGE_MODE_EXTRA_AFFIX_INFO[frame.info.key].texture)
-        elseif frame.affixID then
-            local _, _, filedataid = C_ChallengeMode.GetAffixInfo(frame.affixID)
-            frame.Portrait:SetTexture(filedataid)
+    local affixes = frame.AffixesContainer and frame.AffixesContainer.Affixes or frame.Affixes
+    for _, affix in ipairs(affixes or {}) do
+        affix.Border:SetTexture()
+        if affix.CircleMask then
+            affix.CircleMask:Hide()
         end
+        affix.Portrait:SetTexture(GetAffixTexture(affix))
+        GW.HandleIcon(affix.Portrait, true)
+        affix.Percent:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
+    end
+end
 
-        GW.HandleIcon(frame.Portrait, true)
+-- a season notice of the pvp or mythic+ tab: our frame, gold headings and white text
+local function SkinSeasonNotice(notice)
+    notice:GwStripTextures()
+    SetFrameBackdrop(notice, GW.BackdropTemplates.DefaultWithColorableBorder)
+    notice:SetFrameLevel(5)
+    notice.Leave:GwSkinButton(false, true)
+end
 
-        frame.Percent:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
+local function SetNoticeText(text, r, g, b)
+    if text then
+        text:SetTextColor(r, g, b)
+        text:SetShadowOffset(1, -1)
     end
 end
 
@@ -188,149 +202,119 @@ local function SkinLookingForGroupFrames()
     LFDQueueFramePartyBackfillBackfillButton:GwSkinButton(false, true)
     LFDQueueFramePartyBackfillNoBackfillButton:GwSkinButton(false, true)
 
-    LFDQueueFrameRoleButtonTankIncentiveIcon:SetAlpha(0)
-    LFDQueueFrameRoleButtonHealerIncentiveIcon:SetAlpha(0)
-    LFDQueueFrameRoleButtonDPSIncentiveIcon:SetAlpha(0)
-    LFDQueueFrameRoleButtonTank.shortageBorder:GwKill()
-    LFDQueueFrameRoleButtonDPS.shortageBorder:GwKill()
-    LFDQueueFrameRoleButtonHealer.shortageBorder:GwKill()
+    -- the call to arms bonus of a role shows on the role icon, not in blizzards extra art
+    for _, role in ipairs({"Tank", "Healer", "DPS"}) do
+        _G["LFDQueueFrameRoleButton" .. role .. "IncentiveIcon"]:SetAlpha(0)
+        _G["LFDQueueFrameRoleButton" .. role].shortageBorder:GwKill()
+    end
 
-    local RoleButtons1 = {
-        _G.LFDQueueFrameRoleButtonHealer,
-        _G.LFDQueueFrameRoleButtonDPS,
-        _G.LFDQueueFrameRoleButtonLeader,
-        _G.LFDQueueFrameRoleButtonTank,
-        _G.RaidFinderQueueFrameRoleButtonHealer,
-        _G.RaidFinderQueueFrameRoleButtonDPS,
-        _G.RaidFinderQueueFrameRoleButtonLeader,
-        _G.RaidFinderQueueFrameRoleButtonTank,
-        _G.RolePollPopupRoleButtonTank,
-        _G.RolePollPopupRoleButtonHealer,
-        _G.RolePollPopupRoleButtonDPS,
-    }
-
-    for _, roleButton in pairs(RoleButtons1) do
-        local checkButton = roleButton.checkButton or roleButton.CheckButton
-        checkButton:GwSkinCheckButton(false, 15)
+    -- the role checks of the dungeon and raid finder and of the role poll
+    for _, prefix in ipairs({"LFDQueueFrameRoleButton", "RaidFinderQueueFrameRoleButton", "RolePollPopupRoleButton"}) do
+        for _, role in ipairs({"Tank", "Healer", "DPS", "Leader"}) do
+            local button = _G[prefix .. role]
+            if button then
+                (button.checkButton or button.CheckButton):GwSkinCheckButton(false, 15)
+            end
+        end
     end
 
     hooksecurefunc("SetCheckButtonIsRadio", function(self)
         self:GwSkinCheckButton(false, 15)
     end)
 
-    local repositionCheckButtons = {
-        LFGListApplicationDialog.TankButton.CheckButton,
-        LFGListApplicationDialog.HealerButton.CheckButton,
-        LFGListApplicationDialog.DamagerButton.CheckButton,
-    }
-    for _, checkButton in pairs(repositionCheckButtons) do
-        checkButton:ClearAllPoints()
-        checkButton:SetPoint("BOTTOMLEFT", 0, 0)
+    -- the checks of the application dialog sit in the corner of their role icon
+    for _, key in ipairs({"TankButton", "HealerButton", "DamagerButton"}) do
+        local check = LFGListApplicationDialog[key].CheckButton
+        check:ClearAllPoints()
+        check:SetPoint("BOTTOMLEFT", 0, 0)
     end
 
+    -- the application dialog centers the roles the player can take; all three keep blizzards layout
     hooksecurefunc("LFGListApplicationDialog_UpdateRoles", function(dialog)
-        local availTank, availHealer, availDPS = C_LFGList.GetAvailableRoles()
-
-        local avail1, avail2
-        if availTank then
-            avail1 = dialog.TankButton
-        end
-        if availHealer then
-            if avail1 then
-                avail2 = dialog.HealerButton
-            else
-                avail1 = dialog.HealerButton
+        local tank, healer, dps = C_LFGList.GetAvailableRoles()
+        local roles = {}
+        for i, button in ipairs({dialog.TankButton, dialog.HealerButton, dialog.DamagerButton}) do
+            if select(i, tank, healer, dps) then
+                tinsert(roles, button)
             end
         end
-        if availDPS then
-            if avail1 then
-                avail2 = dialog.DamagerButton
-            else
-                avail1 = dialog.DamagerButton
-            end
-        end
-
-        if avail2 then
-            avail1:ClearAllPoints()
-            avail1:SetPoint("TOPRIGHT", dialog, "TOP", -40, -35)
-            avail2:ClearAllPoints()
-            avail2:SetPoint("TOPLEFT", dialog, "TOP", 40, -35)
-        elseif avail1 then
-            avail1:ClearAllPoints()
-            avail1:SetPoint("TOP", dialog, "TOP", 0, -35)
+        if #roles == 1 then
+            roles[1]:ClearAllPoints()
+            roles[1]:SetPoint("TOP", dialog, "TOP", 0, -35)
+        elseif #roles == 2 then
+            roles[1]:ClearAllPoints()
+            roles[1]:SetPoint("TOPRIGHT", dialog, "TOP", -40, -35)
+            roles[2]:ClearAllPoints()
+            roles[2]:SetPoint("TOPLEFT", dialog, "TOP", 40, -35)
         end
     end)
 
+    -- blizzard hides the art and the check of a role that cannot be picked; the art stays (grey when
+    -- the role is never available), the check only while it is set
+    local function KeepRoleArt(button, grey)
+        -- the pvp role buttons call it bg
+        local art = button.background or button.bg
+        if art then
+            art:Show()
+            if grey then
+                art:SetDesaturated(true)
+            end
+        end
+    end
     hooksecurefunc("LFG_DisableRoleButton", function(button)
-        if button.checkButton:GetChecked() then
-            button.checkButton:SetAlpha(1)
-        else
-            button.checkButton:SetAlpha(0)
-        end
-
-        if button.background then
-            button.background:Show()
-        end
+        local check = button.checkButton
+        check:SetAlpha(check:GetChecked() and 1 or 0)
+        KeepRoleArt(button)
     end)
-
     hooksecurefunc("LFG_EnableRoleButton", function(button)
         button.checkButton:SetAlpha(1)
     end)
-
     hooksecurefunc("LFG_PermanentlyDisableRoleButton", function(button)
-        if button.background then
-            button.background:Show()
-            button.background:SetDesaturated(true)
-        end
+        KeepRoleArt(button, true)
     end)
+
+    -- the menu of the group finder: our menu rows with an arrow, one line of text each
+    local function SkinGroupButton(button, index)
+        button.ring:GwKill()
+        button.bg:GwKill()
+        button.icon:Hide()
+        button:GwSkinButton(false, true)
+        button.gwBorderFrame:Hide()
+        button:SetHeight(36)
+        -- every other row is a little lighter
+        if index % 2 == 1 then
+            button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
+        else
+            button:ClearNormalTexture()
+        end
+        button.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
+        button.limitHoverStripAmount = 1 -- our hover texture needs the full strip
+
+        button.arrow = button:CreateTexture(nil, "OVERLAY")
+        button.arrow:SetSize(10, 20)
+        button.arrow:SetPoint("RIGHT", button, "RIGHT", 0, 0)
+        button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow.png")
+
+        local name = button.name
+        name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        name:SetJustifyH("LEFT")
+        name:SetPoint("LEFT", button, "LEFT", 5, 0)
+        name:SetWidth(button:GetWidth())
+        KeepOneLine(name)
+    end
 
     hooksecurefunc("GroupFinderFrame_EvaluateButtonVisibility", function()
         for i = 1, 4 do
-            local bu = GroupFinderFrame["groupButton" .. i]
-            GroupFinderFrame.groupButton1:GetText()
-            bu.ring:GwKill()
-            bu.bg:GwKill()
-            bu:GwSkinButton(false, true)
-
-            bu:SetHeight(36)
-
-            bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
-            bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
-            bu.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
-            if i % 2 == 1 then
-                bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
-            else
-                bu:ClearNormalTexture()
+            local button = GroupFinderFrame["groupButton" .. i]
+            -- GwSkinButton marks the button itself, the arrow tells ours apart
+            if not button.arrow then
+                SkinGroupButton(button, i)
             end
-
-            bu.arrow = bu:CreateTexture(nil, "OVERLAY")
-            bu.arrow:SetSize(10, 20)
-            bu.arrow:SetPoint("RIGHT", bu, "RIGHT", 0, 0)
-            bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow.png")
-
-            bu.name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-            bu.name:SetJustifyH("LEFT")
-            bu.name:SetPoint("LEFT", bu, "LEFT", 5, 0)
-            bu.name:SetWidth(bu:GetWidth())
-            if not bu.name._gw2TextHooked then
-                bu.name._gw2TextHooked = true
-                hooksecurefunc(bu.name, "SetText", function(self, text)
-                    if self._gw2SetText then return end
-                    self._gw2SetText = true
-                    self:SetText((text or self:GetText() or ""):gsub("-\n", ""):gsub("\n", ""))
-                    self._gw2SetText = false
-                end)
-            end
-
-            bu.gwBorderFrame:Hide()
-
-            bu.icon:Hide()
-
-            bu:ClearAllPoints()
+            button:ClearAllPoints()
             if i == 1 then
-                bu:SetPoint("TOPLEFT", 10, -40)
+                button:SetPoint("TOPLEFT", 10, -40)
             else
-                bu:SetPoint("TOP", GroupFinderFrame["groupButton" .. i - 1], "BOTTOM", 0, 0)
+                button:SetPoint("TOP", GroupFinderFrame["groupButton" .. i - 1], "BOTTOM", 0, 0)
             end
         end
     end)
@@ -351,19 +335,15 @@ local function SkinLookingForGroupFrames()
         end
     end)
 
+    -- the scenario finder only exists in some seasons
     if ScenarioQueueFrame then
-        ScenarioQueueFrame:GwStripTextures()
-        ScenarioFinderFrameInset:GwStripTextures()
+        for _, frame in ipairs({ScenarioQueueFrame, ScenarioFinderFrameInset, ScenarioQueueFrameSpecificScrollFrame}) do
+            frame:GwStripTextures()
+        end
         ScenarioQueueFrameBackground:SetAlpha(0)
         ScenarioQueueFrameTypeDropdown:GwHandleDropDownBox()
-        GW.HandleTrimScrollBar(ScenarioQueueFrameRandomScrollFrame.ScrollBar)
         ScenarioQueueFrameFindGroupButton:GwSkinButton(false, true)
-
-        ScenarioQueueFrameSpecificScrollFrame:GwStripTextures()
-
-        if ScenarioQueueFrameRandomScrollFrameScrollBar then
-            ScenarioQueueFrameRandomScrollFrameScrollBar:SetAlpha(0)
-        end
+        GW.HandleTrimScrollBar(ScenarioQueueFrameRandomScrollFrame.ScrollBar)
     end
 
     -- Raid finder
@@ -372,8 +352,8 @@ local function SkinLookingForGroupFrames()
     LFDParentFrame:GwStripTextures()
     LFDParentFrameInset:GwStripTextures()
 
-    HandleGoldIcon("LFDQueueFrameRandomScrollFrameChildFrameMoneyReward")
-    HandleGoldIcon("RaidFinderQueueFrameScrollFrameChildFrameMoneyReward")
+    SkinMoneyReward("LFDQueueFrameRandomScrollFrameChildFrameMoneyReward")
+    SkinMoneyReward("RaidFinderQueueFrameScrollFrameChildFrameMoneyReward")
 
     LFDQueueFrameRandomScrollFrameChildFrameTitle:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     LFDQueueFrameRandomScrollFrameChildFrameTitle:SetShadowColor(0, 0, 0, 0)
@@ -391,13 +371,12 @@ local function SkinLookingForGroupFrames()
     GW.HandleTrimScrollBar(LFDQueueFrameRandomScrollFrame.ScrollBar)
     GW.HandleScrollControls(LFDQueueFrameRandomScrollFrame)
 
+    -- dungeon groups of the specific list open and close with our arrows
     hooksecurefunc("LFGDungeonListButton_SetDungeon", function(button)
-        if button and button.expandOrCollapseButton:IsShown() then
-            if button.isCollapsed then
-                button.expandOrCollapseButton:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right.png")
-            else
-                button.expandOrCollapseButton:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-            end
+        local toggle = button and button.expandOrCollapseButton
+        if toggle and toggle:IsShown() then
+            local arrow = button.isCollapsed and "arrow_right" or "arrowdown_down"
+            toggle:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/" .. arrow .. ".png")
         end
     end)
 
@@ -430,8 +409,7 @@ local function SkinLookingForGroupFrames()
     RaidFinderQueueFrameScrollFrameChildFrameDescription:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     RaidFinderQueueFrameScrollFrameChildFrameRewardsDescription:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
-    --Skin Reward Items (This works for all frames, LFD, Raid, Scenario)
-    hooksecurefunc("LFGRewardsFrame_SetItemButton", SkinItemButton)
+    hooksecurefunc("LFGRewardsFrame_SetItemButton", SkinItemReward)
 
     GW.HandleTrimScrollBar(LFDQueueFrameSpecific.ScrollBar)
     GW.HandleScrollControls(LFDQueueFrameSpecific)
@@ -578,25 +556,23 @@ local function SkinLookingForGroupFrames()
         end
     end)
 
+    -- the suggestions below the search box as our buttons, a little apart from each other
     hooksecurefunc("LFGListSearchPanel_UpdateAutoComplete", function(panel)
-        for _, child in next, { LFGListFrame.SearchPanel.AutoCompleteFrame:GetChildren() } do
-            if not child.gwSkinned and child:IsObjectType("Button") then
-                child:GwSkinButton(false, true)
+        local autoComplete = panel.AutoCompleteFrame
+        local shown = 0
+        for i, button in ipairs(autoComplete.Results) do
+            button:GwSkinButton(false, true)
+            if i > 1 then
+                button:SetPoint("TOPLEFT", autoComplete.Results[i - 1], "BOTTOMLEFT", 0, -2)
+                button:SetPoint("TOPRIGHT", autoComplete.Results[i - 1], "BOTTOMRIGHT", 0, -2)
+            end
+            if button:IsShown() then
+                shown = shown + 1
             end
         end
-
-        local matchingActivities = C_LFGList.GetAvailableActivities(panel.categoryID, nil, panel.filters, panel.SearchBox:GetText())
-        local numResults = min(#matchingActivities, MAX_LFG_LIST_SEARCH_AUTOCOMPLETE_ENTRIES)
-
-        for i = 2, numResults do
-            local button = panel.AutoCompleteFrame.Results[i]
-            if button and not button.moved then
-                button:SetPoint("TOPLEFT", panel.AutoCompleteFrame.Results[i-1], "BOTTOMLEFT", 0, -2)
-                button:SetPoint("TOPRIGHT", panel.AutoCompleteFrame.Results[i-1], "BOTTOMRIGHT", 0, -2)
-                button.moved = true
-            end
+        if shown > 0 then
+            autoComplete:SetHeight(shown * (autoComplete.Results[1]:GetHeight() + 3.5) + 8)
         end
-        panel.AutoCompleteFrame:SetHeight(numResults * (panel.AutoCompleteFrame.Results[1]:GetHeight() + 3.5) + 8)
     end)
 
     LFGListFrame.SearchPanel.AutoCompleteFrame:GwStripTextures()
@@ -657,60 +633,44 @@ local function SkinLookingForGroupFrames()
 
     hooksecurefunc(LFGListFrame.ApplicationViewer.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 
+    -- the leader has the edit button, the remove button goes beside it; the others get the corner
     hooksecurefunc("LFGListApplicationViewer_UpdateInfo", function(frame)
-        frame.RemoveEntryButton:ClearAllPoints()
-
+        local remove = frame.RemoveEntryButton
+        remove:ClearAllPoints()
         if UnitIsGroupLeader("player", LE_PARTY_CATEGORY_HOME) then
-            frame.RemoveEntryButton:SetPoint("RIGHT", frame.EditButton, "LEFT", -2, 0)
+            remove:SetPoint("RIGHT", frame.EditButton, "LEFT", -2, 0)
         else
-            frame.RemoveEntryButton:SetPoint("BOTTOMLEFT", -1, 3)
+            remove:SetPoint("BOTTOMLEFT", -1, 3)
         end
     end)
 
-    hooksecurefunc("LFGListCategorySelection_AddButton", function(btn, btnIndex, categoryID, filters)
-        local button = btn.CategoryButtons[btnIndex]
-        if button then
-            if not button.gwSkinned then
-                if not button.SetBackdrop then
-                    _G.Mixin(button, _G.BackdropTemplateMixin)
-                    button:HookScript("OnSizeChanged", button.OnBackdropSizeChanged)
-                end
-                button:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+    -- the category tiles of the premade groups: framed art, the selected one with a yellow frame
 
-                button.Icon:SetDrawLayer("BACKGROUND", 2)
-                button.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-                button.Icon:GwSetInside()
-                button.Cover:Hide()
-                button.HighlightTexture:SetColorTexture(1, 1, 1, 0.1)
-                button.HighlightTexture:GwSetInside()
+    hooksecurefunc("LFGListCategorySelection_AddButton", function(selection, index, categoryID, filters)
+        local button = selection.CategoryButtons[index]
+        if not button then return end
+        if not button.gwSkinned then
+            button.gwSkinned = true
+            SetFrameBackdrop(button, GW.BackdropTemplates.DefaultWithColorableBorder)
+            button.Cover:Hide()
+            button.Icon:SetDrawLayer("BACKGROUND", 2)
+            button.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+            button.Icon:GwSetInside()
+            button.HighlightTexture:SetColorTexture(1, 1, 1, 0.1)
+            button.HighlightTexture:GwSetInside()
 
-                button.Label:SetFontObject("GameFontNormal")
-
-                button.Label:SetTextColor(1, 1, 1)
-                button.Label:SetShadowColor(0, 0, 0, 0)
-                button.Label:SetShadowOffset(1, -1)
-
-                if not button.Label._gw2TextHooked then
-                    button.Label._gw2TextHooked = true
-                    hooksecurefunc(button.Label, "SetText", function(self, text)
-                        if self._gw2SetText then return end
-                        self._gw2SetText = true
-                        self:SetText((text or self:GetText() or ""):gsub("-\n", ""):gsub("\n", ""))
-                        self._gw2SetText = false
-                    end)
-                end
-
-                button.gwSkinned = true
-            end
-
-            button.SelectedTexture:Hide()
-            local selected = btn.selectedCategory == categoryID and btn.selectedFilters == filters
-            if selected then
-                button:SetBackdropBorderColor(1, 1, 0)
-            else
-                button:SetBackdropBorderColor(0, 0, 0)
-            end
+            -- one line on our narrower tiles
+            local label = button.Label
+            label:SetFontObject("GameFontNormal")
+            label:SetTextColor(1, 1, 1)
+            label:SetShadowColor(0, 0, 0, 0)
+            label:SetShadowOffset(1, -1)
+            KeepOneLine(label)
         end
+
+        button.SelectedTexture:Hide()
+        local selected = selection.selectedCategory == categoryID and selection.selectedFilters == filters
+        button:SetBackdropBorderColor(selected and 1 or 0, selected and 1 or 0, 0)
     end)
 
     C_Timer.After(2, function()
@@ -794,6 +754,88 @@ local function SkinLookingForGroupFrames()
     PVEFrame:SetClampRectInsets(-40, 0, PVEFrameHeader:GetHeight() - 30, 0)
 end
 
+-- the mode buttons of the pvp tabs: a dark frame, our hover, and a light frame while selected
+local HOVER_TEXTURE = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
+local modeButtons = setmetatable({}, {__mode = "k"})
+
+local function UpdateModeSelection(selected)
+    local button = modeButtons[selected]
+    if button then
+        local r, g, b = 0, 0, 0
+        if selected:IsShown() then
+            r, g, b = GW.Colors.TextColors.LightHeader:GetRGB()
+        end
+        button.backdrop:SetBackdropBorderColor(r, g, b)
+    end
+end
+
+-- blizzard dims the art of a mode that cannot be queued, our frame dims with it
+local function DimModeButton(normal, alpha)
+    local button = modeButtons[normal]
+    if button then
+        button.backdrop:SetAlpha(alpha)
+    end
+end
+
+local function SkinModeButton(button)
+    -- emptied, not faded: blizzard sets the alpha of its art itself
+    button.NormalTexture:SetTexture()
+    button:GetPushedTexture():SetTexture()
+    button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true, 0, 0)
+    -- dark on its own, the tabs below differ in brightness
+    button.backdrop:SetBackdropColor(0.35, 0.35, 0.35, 1)
+    modeButtons[button.NormalTexture] = button
+    DimModeButton(button.NormalTexture, button.NormalTexture:GetAlpha())
+    hooksecurefunc(button.NormalTexture, "SetAlpha", DimModeButton)
+
+    button:SetHighlightTexture(HOVER_TEXTURE)
+    local highlight = button:GetHighlightTexture()
+    highlight:SetBlendMode("BLEND")
+    highlight:SetVertexColor(0.8, 0.8, 0.8, 0.35)
+    highlight:SetAllPoints(button)
+
+    -- blizzards glow stays hidden, its state picks the color of our frame
+    local selected = button.SelectedTexture
+    selected:SetAlpha(0)
+    modeButtons[selected] = button
+    for _, method in ipairs({"Show", "Hide", "SetShown"}) do
+        hooksecurefunc(selected, method, UpdateModeSelection)
+    end
+    UpdateModeSelection(selected)
+
+    local reward = button.Reward
+    if reward then
+        reward.Border:Hide()
+        reward.CircleMask:Hide()
+        GW.HandleIcon(reward.Icon)
+        reward.Icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
+    end
+end
+
+-- the conquest and honor bars in our status bar look; blizzard picks the fill by state
+local CONQUEST_FILL = {
+    ["_pvpqueue-conquestbar-fill-yellow"] = CreateColor(1, 0.82, 0),
+    ["_pvpqueue-conquestbar-fill-blue"] = CreateColor(0.3, 0.6, 1),
+    ["_pvpqueue-conquestbar-fill-disabled"] = CreateColor(0.45, 0.45, 0.45),
+}
+
+local function RecolorConquestFill(fill, atlas)
+    fill:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    fill:SetVertexColor((CONQUEST_FILL[atlas] or CONQUEST_FILL["_pvpqueue-conquestbar-fill-yellow"]):GetRGB())
+end
+
+local function SkinConquestBar(bar)
+    for _, art in ipairs({bar.Border, bar.Background, bar.Reward.Ring, bar.Reward.CircleMask}) do
+        art:Hide()
+    end
+    GW.AddStatusBarFrame(bar)
+    RecolorConquestFill(bar.FillTexture, bar.FillTexture:GetAtlas())
+    hooksecurefunc(bar.FillTexture, "SetAtlas", RecolorConquestFill)
+    bar.Reward:ClearAllPoints()
+    bar.Reward:SetPoint("LEFT", bar, "RIGHT", 4, 0)
+    GW.HandleIcon(bar.Reward.Icon, true)
+end
+
 local function ApplyPvPUISkin()
     if not GW.settings.skins.lfg.enabled then return end
 
@@ -827,14 +869,7 @@ local function ApplyPvPUISkin()
         bu.Name:SetJustifyH("LEFT")
         bu.Name:SetPoint("LEFT", bu, "LEFT", 5, 0)
         bu.Name:SetWidth(bu:GetWidth())
-        bu.Name:SetText(bu.Name:GetText():gsub("-|n", ""):gsub("|n", ""))
-
-        hooksecurefunc(bu.Name, "SetText", function(self, text)
-            if self._gw2SetText then return end
-            self._gw2SetText = true
-            self:SetText((text or self:GetText() or ""):gsub("-|n", ""):gsub("|n", ""))
-            self._gw2SetText = false
-        end)
+        KeepOneLine(bu.Name)
 
         bu.gwBorderFrame:Hide()
 
@@ -883,7 +918,8 @@ local function ApplyPvPUISkin()
     end
 
     local SeasonReward = PVPQueueFrame.HonorInset.RatedPanel.SeasonRewardFrame
-    SeasonReward:GwCreateBackdrop()
+    SeasonReward:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+    SeasonReward.backdrop:SetBackdropBorderColor(0.6, 0.6, 0.6, 0.8)
     SeasonReward.Icon:GwSetInside(SeasonReward.backdrop)
     SeasonReward.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     SeasonReward.CircleMask:Hide()
@@ -921,11 +957,7 @@ local function ApplyPvPUISkin()
     for _, bonusButton in pairs({"RandomBGButton", "Arena1Button", "RandomEpicBGButton", "BrawlButton", "BrawlButton2"}) do
         local bu = BonusFrame[bonusButton]
         local reward = bu.Reward
-
-        reward.Border:Hide()
-        reward.CircleMask:Hide()
-        GW.HandleIcon(reward.Icon)
-        reward.Icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder , true)
+        SkinModeButton(bu)
 
         reward.EnlistmentBonus:GwStripTextures()
         reward.EnlistmentBonus:SetSize(20, 20)
@@ -950,9 +982,6 @@ local function ApplyPvPUISkin()
         end
     end)
 
-    hooksecurefunc("LFG_PermanentlyDisableRoleButton", function(s)
-        if s.bg then s.bg:SetDesaturated(true) end
-    end)
 
     HonorFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton(false, 15)
     HonorFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton(false, 15)
@@ -967,41 +996,38 @@ local function ApplyPvPUISkin()
     ConquestFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton(false, 15)
     ConquestFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton(false, 15)
 
-    for _, bu in pairs({ConquestFrame.RatedSoloShuffle, ConquestFrame.Arena2v2, ConquestFrame.Arena3v3, ConquestFrame.RatedBG}) do
-        local reward = bu.Reward
-        reward.Border:Hide()
-        reward.CircleMask:Hide()
-        GW.HandleIcon(reward.Icon)
-        reward.Icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
+    for _, key in ipairs({"RatedSoloShuffle", "RatedBGBlitz", "Arena2v2", "Arena3v3", "RatedBG"}) do
+        if ConquestFrame[key] then
+            SkinModeButton(ConquestFrame[key])
+        end
     end
 
-    -- Item Borders for HonorFrame & ConquestFrame
+    -- the reward of a pvp mode: an artifact currency comes first, else the first item; its quality on our frame
+    local function GetPvPReward(itemRewards, currencyRewards)
+        for _, reward in ipairs(currencyRewards or {}) do
+            local info = C_CurrencyInfo.GetCurrencyInfo(reward.id)
+            if info and info.quality == ITEMQUALITY_ARTIFACT then
+                local _, texture, _, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(reward.id, reward.quantity, info.name, info.iconFileID, info.quality)
+                return texture, quality
+            end
+        end
+        local item = itemRewards and itemRewards[1]
+        if item then
+            local _, _, quality, _, _, _, _, _, _, texture = C_Item.GetItemInfo(item.id)
+            return texture, quality
+        end
+    end
+
     hooksecurefunc("PVPUIFrame_ConfigureRewardFrame", function(rewardFrame, _, _, itemRewards, currencyRewards)
-        local rewardTexture, rewardQuaility, _ = nil, 1, nil
-
-        if currencyRewards then
-            for _, reward in ipairs(currencyRewards) do
-                local info = C_CurrencyInfo.GetCurrencyInfo(reward.id)
-                if info and info.quality == ITEMQUALITY_ARTIFACT then
-                    _, rewardTexture, _, rewardQuaility = CurrencyContainerUtil.GetCurrencyContainerInfo(reward.id, reward.quantity, info.name, info.iconFileID, info.quality)
-                end
-            end
+        local texture, quality = GetPvPReward(itemRewards, currencyRewards)
+        if not texture then return end
+        local icon = rewardFrame.Icon
+        icon:SetTexture(texture)
+        if not icon.backdrop then
+            icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
         end
-
-        if not rewardTexture and itemRewards then
-            local reward = itemRewards[1]
-            if reward then
-                _, _, rewardQuaility, _, _, _, _, _, _, rewardTexture = C_Item.GetItemInfo(reward.id)
-            end
-        end
-        if rewardTexture then
-            local color = GW.GetQualityColor(rewardQuaility)
-            rewardFrame.Icon:SetTexture(rewardTexture)
-            if not rewardFrame.Icon.backdrop then
-                rewardFrame.Icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
-            end
-            rewardFrame.Icon.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
-        end
+        local color = GW.GetQualityColor(quality or 1)
+        icon.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
     end)
 
     if GW.settings.tooltip.enabled then
@@ -1014,62 +1040,25 @@ local function ApplyPvPUISkin()
         })
     end
 
-    -- PvP StatusBars
-    for _, Frame in pairs({ HonorFrame, ConquestFrame }) do
-        Frame.ConquestBar.Border:Hide()
-        Frame.ConquestBar.Background:Hide()
-        Frame.ConquestBar.Reward.Ring:Hide()
-        Frame.ConquestBar.Reward.CircleMask:Hide()
-        if not Frame.ConquestBar.SetBackdrop then
-            _G.Mixin(Frame.ConquestBar, _G.BackdropTemplateMixin)
-            Frame.ConquestBar:HookScript("OnSizeChanged", Frame.ConquestBar.OnBackdropSizeChanged)
-        end
-        Frame.ConquestBar:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-
-        Frame.ConquestBar.Reward:ClearAllPoints()
-        Frame.ConquestBar.Reward:SetPoint("LEFT", Frame.ConquestBar, "RIGHT", 0, 0)
-        GW.HandleIcon(Frame.ConquestBar.Reward.Icon, true)
+    -- the conquest bars of the honor, conquest and training grounds tab
+    for _, tab in ipairs({HonorFrame, ConquestFrame, TrainingGroundsFrame}) do
+        SkinConquestBar(tab.ConquestBar)
     end
 
-    -- New Season Frame
-    local NewSeasonPopup = _G.PVPQueueFrame.NewSeasonPopup
-    NewSeasonPopup.Leave:GwSkinButton(false, true)
-    NewSeasonPopup:GwStripTextures()
-    if not NewSeasonPopup.SetBackdrop then
-        _G.Mixin(NewSeasonPopup, _G.BackdropTemplateMixin)
-        NewSeasonPopup:HookScript("OnSizeChanged", NewSeasonPopup.OnBackdropSizeChanged)
-    end
-    NewSeasonPopup:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-    NewSeasonPopup:SetFrameLevel(5)
-
-    local RewardFrame = NewSeasonPopup.SeasonRewardFrame
-    RewardFrame:GwCreateBackdrop()
-    RewardFrame.CircleMask:Hide()
-    RewardFrame.Ring:Hide()
-    RewardFrame.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    RewardFrame.backdrop:GwSetOutside(RewardFrame.Icon)
-
-    if NewSeasonPopup.NewSeason then
-        NewSeasonPopup.NewSeason:SetTextColor(1, 0.8, 0)
-        NewSeasonPopup.NewSeason:SetShadowOffset(1, -1)
-    end
-
-    if NewSeasonPopup.SeasonRewardText then
-        NewSeasonPopup.SeasonRewardText:SetTextColor(1, 0.8, 0)
-        NewSeasonPopup.SeasonRewardText:SetShadowOffset(1, -1)
-    end
-
-    if NewSeasonPopup.SeasonDescriptionHeader then
-        NewSeasonPopup.SeasonDescriptionHeader:SetTextColor(0, 0, 0)
-        NewSeasonPopup.SeasonDescriptionHeader:SetShadowOffset(1, -1)
-    end
-
-    NewSeasonPopup:HookScript("OnShow", function(popup)
-        if popup.SeasonDescriptions then
-            for _, text in next, popup.SeasonDescriptions do
-                text:SetTextColor(1, 1, 1)
-                text:SetShadowOffset(1, -1)
-            end
+    local seasonPopup = PVPQueueFrame.NewSeasonPopup
+    SkinSeasonNotice(seasonPopup)
+    local seasonReward = seasonPopup.SeasonRewardFrame
+    seasonReward:GwCreateBackdrop()
+    seasonReward.CircleMask:Hide()
+    seasonReward.Ring:Hide()
+    seasonReward.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    seasonReward.backdrop:GwSetOutside(seasonReward.Icon)
+    SetNoticeText(seasonPopup.NewSeason, 1, 0.8, 0)
+    SetNoticeText(seasonPopup.SeasonRewardText, 1, 0.8, 0)
+    SetNoticeText(seasonPopup.SeasonDescriptionHeader, 0, 0, 0)
+    seasonPopup:HookScript("OnShow", function(popup)
+        for _, text in ipairs(popup.SeasonDescriptions or {}) do
+            SetNoticeText(text, 1, 1, 1)
         end
     end)
 
@@ -1078,6 +1067,9 @@ local function ApplyPvPUISkin()
     TrainingGroundsFrameTypeDropdown:GwHandleDropDownBox()
     TrainingGroundsFrame.BonusTrainingGroundList.ShadowOverlay:Hide()
     TrainingGroundsFrame.BonusTrainingGroundList.WorldBattlesTexture:Hide()
+    for _, button in ipairs(TrainingGroundsFrame.BonusTrainingGroundList.BonusTrainingGroundButtons or {}) do
+        SkinModeButton(button)
+    end
     GW.HandleTrimScrollBar(TrainingGroundsFrame.SpecificTrainingGroundList.ScrollBar)
     TrainingGroundsFrame.Inset:GwStripTextures()
     TrainingGroundsFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton(false, 15)
@@ -1118,17 +1110,13 @@ local function ApplyChallengesUISkin()
         end
     end)
 
-    hooksecurefunc(ChallengesKeystoneFrame, "OnKeystoneSlotted", HandleAffixIcons)
+    hooksecurefunc(ChallengesKeystoneFrame, "OnKeystoneSlotted", SkinAffixes)
 
     hooksecurefunc(ChallengesFrame, "Update", function(frame)
         for _, child in ipairs(frame.DungeonIcons) do
             if not child.gwSkinned then
                 child:GetRegions():SetAlpha(0)
-                if not child.SetBackdrop then
-                    _G.Mixin(child, _G.BackdropTemplateMixin)
-                    child:HookScript("OnSizeChanged", child.OnBackdropSizeChanged)
-                end
-                child:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+                SetFrameBackdrop(child, GW.BackdropTemplates.DefaultWithColorableBorder)
                 child:SetBackdropBorderColor(1, 0.99, 0.85)
 
                 if child.mapID then
@@ -1151,45 +1139,30 @@ local function ApplyChallengesUISkin()
 
     hooksecurefunc(ChallengesFrame.WeeklyInfo, "SetUp", function(info)
         if C_MythicPlus.GetCurrentAffixes() then
-            HandleAffixIcons(info.Child)
+            SkinAffixes(info.Child)
         end
     end)
 
+    -- blizzard shows its slot art again whenever the keystone frame resets
     hooksecurefunc(ChallengesKeystoneFrame, "Reset", function(frame)
         frame:GetRegions():SetAlpha(0)
         frame.InstructionBackground:SetAlpha(0)
-        frame.KeystoneSlotGlow:Hide()
-        frame.SlotBG:Hide()
-        frame.KeystoneFrame:Hide()
-        frame.Divider:Hide()
+        for _, art in ipairs({frame.KeystoneSlotGlow, frame.SlotBG, frame.KeystoneFrame, frame.Divider}) do
+            art:Hide()
+        end
     end)
 
-    -- New Season Frame
-    local NoticeFrame = ChallengesFrame.SeasonChangeNoticeFrame
-    NoticeFrame.Leave:GwSkinButton(false, true)
-    NoticeFrame:GwStripTextures()
+    local notice = ChallengesFrame.SeasonChangeNoticeFrame
+    SkinSeasonNotice(notice)
+    notice:SetBackdropBorderColor(1, 1, 1)
+    SetNoticeText(notice.NewSeason, 1, 0.8, 0)
+    SetNoticeText(notice.SeasonDescription, 1, 1, 1)
+    SetNoticeText(notice.SeasonDescription2, 1, 1, 1)
+    SetNoticeText(notice.SeasonDescription3, 1, 0.8, 0)
 
-    if not NoticeFrame.SetBackdrop then
-        _G.Mixin(NoticeFrame, _G.BackdropTemplateMixin)
-        NoticeFrame:HookScript("OnSizeChanged", NoticeFrame.OnBackdropSizeChanged)
-    end
-    NoticeFrame:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-    NoticeFrame:SetBackdropBorderColor(1, 1, 1)
-
-    NoticeFrame:SetFrameLevel(5)
-    NoticeFrame.NewSeason:SetTextColor(1, 0.8, 0)
-    NoticeFrame.NewSeason:SetShadowOffset(1, -1)
-    NoticeFrame.SeasonDescription:SetTextColor(1, 1, 1)
-    NoticeFrame.SeasonDescription:SetShadowOffset(1, -1)
-    NoticeFrame.SeasonDescription2:SetTextColor(1, 1, 1)
-    NoticeFrame.SeasonDescription2:SetShadowOffset(1, -1)
-    NoticeFrame.SeasonDescription3:SetTextColor(1, 0.8, 0)
-    NoticeFrame.SeasonDescription3:SetShadowOffset(1, -1)
-
-    local affix = NoticeFrame.Affix
+    local affix = notice.Affix
     affix.AffixBorder:Hide()
     affix.Portrait:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-
     hooksecurefunc(affix, "SetUp", function(_, affixID)
         local _, _, texture = C_ChallengeMode.GetAffixInfo(affixID)
         if texture then

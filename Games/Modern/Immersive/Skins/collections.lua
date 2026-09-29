@@ -828,6 +828,20 @@ local function GetGridMargin(icons)
     return (width - GRID_CONTENT_WIDTH) / 2 - GRID_SECTION_PAD
 end
 
+-- a grid has no screen position before its first frame on screen: the layout tries again on the next
+-- frames, a few times and only while the window is open; the next OnShow lays it out anyway
+local MAX_LAYOUT_TRIES = 5
+local function RetryLayout(frame, layout)
+    if frame.gwLayoutRetry or not frame:IsVisible() then return end
+    frame.gwLayoutTries = (frame.gwLayoutTries or 0) + 1
+    if frame.gwLayoutTries > MAX_LAYOUT_TRIES then return end
+    frame.gwLayoutRetry = true
+    C_Timer.After(0, function()
+        frame.gwLayoutRetry = nil
+        layout(frame)
+    end)
+end
+
 -- false until the grid has a screen position
 local function AlignControlRow(frame, icons, searchBox, leftControl)
     local margin = GetGridMargin(icons)
@@ -863,12 +877,10 @@ local function SkinToyBox()
         details:SetPoint("TOPLEFT", box.iconsFrame, "TOPLEFT", margin, GRID_SECTION_TOP)
         details:SetPoint("BOTTOMRIGHT", box.iconsFrame, "BOTTOMRIGHT", -margin, GRID_SECTION_BOTTOM)
         details:Show()
-        if not AlignControlRow(box, box.iconsFrame, box.searchBox) and not box.gwLayoutRetry then
-            box.gwLayoutRetry = true
-            C_Timer.After(0, function()
-                box.gwLayoutRetry = nil
-                LayoutToyGrid()
-            end)
+        if AlignControlRow(box, box.iconsFrame, box.searchBox) then
+            box.gwLayoutTries = nil
+        else
+            RetryLayout(box, LayoutToyGrid)
         end
     end
     box:HookScript("OnShow", LayoutToyGrid)
@@ -1234,14 +1246,9 @@ local function LayoutWardrobeControls(frame)
         if not AlignControlRow(frame, items, frame.SearchBox) then
             frame.SearchBox:ClearAllPoints()
             frame.SearchBox:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -(FILTER_WIDTH + 16), CONTROL_ROW_Y)
-            -- on the very first show the grid has no screen position yet, align once it has one
-            if not frame.gwLayoutRetry then
-                frame.gwLayoutRetry = true
-                C_Timer.After(0, function()
-                    frame.gwLayoutRetry = nil
-                    LayoutWardrobeControls(frame)
-                end)
-            end
+            RetryLayout(frame, LayoutWardrobeControls)
+        else
+            frame.gwLayoutTries = nil
         end
         if margin then
             frame.ClassDropdown:ClearAllPoints()

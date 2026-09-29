@@ -875,11 +875,6 @@ local function LoadGossipSkin()
                 end
             end
         end)
-        hooksecurefunc("QuestFrameProgressItems_Update", function()
-            QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
-            QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
-        end)
-
         for i = 1, 6 do
             local button = _G["QuestProgressItem" .. i]
             local icon = _G["QuestProgressItem" .. i .. "IconTexture"]

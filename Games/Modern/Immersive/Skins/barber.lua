@@ -1,143 +1,101 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function HandleNextPrev(button)
-    GW.HandleNextPrevButton(button)
-    button:SetSize(30, 30)
-
-    -- remove these to fix error on SetHighlightAtlas from AlphaHighlightButtonMixin
-    button:SetScript("OnMouseUp", nil)
-    button:SetScript("OnMouseDown", nil)
+local function SetBorderWhite(button)
+    button.backdrop:SetBackdropBorderColor(1, 1, 1)
 end
 
-local function SetSelectedCategory(list)
-    if list.selectionPopoutPool then
-        for frame in list.selectionPopoutPool:EnumerateActive() do
-            if not frame.gwSkinned then
-                if frame.DecrementButton then
-                    HandleNextPrev(frame.DecrementButton)
-                    HandleNextPrev(frame.IncrementButton)
-                end
+local function SetBorderBlack(button)
+    button.backdrop:SetBackdropBorderColor(0, 0, 0)
+end
 
-                local button = frame.Button
-                if button then
-                    if button.HighlightTexture then
-                        button.HighlightTexture:SetAlpha(0)
-                    end
-
-                    if button.NormalTexture then
-                        button.NormalTexture:SetAlpha(0)
-                    end
-
-                    local popout = button.Popout
-                    if popout then
-                        local r, g, b, a = 1, 1, 1,
-                        popout:GwStripTextures()
-                        popout:GwCreateBackdrop(GW.BackdropTemplates.Default)
-                        popout:SetBackdropColor(r, g, b, max(a, 0.7))
-                        popout.backdrop:SetFrameLevel(popout:GetFrameLevel())
-                    end
-
-                    button:GwSkinButton(false, true, false, true)
-                    button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-                    button.backdrop:SetBackdropBorderColor(0, 0, 0)
-                    button.backdrop:GwSetInside(nil, 4, 4)
-
-                    button:HookScript("OnEnter", function()
-                        button.backdrop:SetBackdropBorderColor(1, 1, 1)
-                    end)
-                    button:HookScript("OnLeave", function()
-                        button.backdrop:SetBackdropBorderColor(0, 0, 0)
-                    end)
-
-                end
-
-                frame.gwSkinned = true
-            end
-        end
+-- the options with arrows left and right and a popout list in the middle
+local function SkinSelectionPopout(frame)
+    if frame.DecrementButton then
+        GW.SkinStepperArrow(frame.DecrementButton, 30)
+        GW.SkinStepperArrow(frame.IncrementButton, 30)
     end
 
-    if list.dropdownPool then
-        for option in list.dropdownPool:EnumerateActive() do
-            if not option.gwSkinned then
-                option.Dropdown:GwSkinButton(false, true)
-                option.Label:SetTextColor(1, 1, 1)
-                option.Dropdown.Text:SetTextColor(0, 0, 0)
-                option.Dropdown.SelectionDetails.SelectionName:SetTextColor(0, 0, 0)
-                option.Dropdown.SelectionDetails.SelectionNumber:SetTextColor(0, 0, 0)
-                hooksecurefunc(option.Dropdown.SelectionDetails.SelectionNumber, "SetTextColor", function(self, r, g, b)
-                    if r ~= 0 or g ~= 0 or b ~= 0 then
-                        self:SetTextColor(0, 0, 0)
-                    end
-                end)
-                hooksecurefunc(option.Dropdown.SelectionDetails.SelectionName, "SetTextColor", function(self, r, g, b)
-                    if r ~= 0 or g ~= 0 or b ~= 0 then
-                        self:SetTextColor(0, 0, 0)
-                    end
-                end)
-                hooksecurefunc(option.Dropdown.Text, "SetTextColor", function(self, r, g, b)
-                    if r ~= 0 or g ~= 0 or b ~= 0 then
-                        self:SetTextColor(0, 0, 0)
-                    end
-                end)
-                option.DecrementButton:GwSkinButton(false, true, nil, nil, nil, nil, true)
-                option.IncrementButton:GwSkinButton(false, true, nil, nil, nil, nil, true)
-
-                option.gwSkinned = true
-            end
+    local button = frame.Button
+    if not button then return end
+    for _, key in ipairs({"HighlightTexture", "NormalTexture"}) do
+        if button[key] then
+            button[key]:SetAlpha(0)
         end
     end
-
-    if list.sliderPool then
-        for slider in list.sliderPool:EnumerateActive() do
-            if not slider.gwSkinned then
-                slider:GwSkinSliderFrame()
-
-                slider.gwSkinned = true
-            end
-        end
+    if button.Popout then
+        button.Popout:GwStripTextures()
+        button.Popout:GwCreateBackdrop(GW.BackdropTemplates.Default)
+        button.Popout.backdrop:SetFrameLevel(button.Popout:GetFrameLevel())
     end
 
-    local optionPool = list.pools and list.pools:GetPool("CharCustomizeOptionCheckButtonTemplate")
-    if optionPool then
-        for frame in optionPool:EnumerateActive() do
-            if not frame.gwSkinned then
-                if frame.Button then
-                    frame.Button:GwSkinCheckButton(false, 20)
-                end
+    button:GwSkinButton(false, true, false, true)
+    button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+    button.backdrop:GwSetInside(nil, 4, 4)
+    SetBorderBlack(button)
+    button:HookScript("OnEnter", SetBorderWhite)
+    button:HookScript("OnLeave", SetBorderBlack)
+end
 
-                frame.gwSkinned = true
-            end
-        end
+-- our buttons are light, their texts stay black whatever blizzard colors them
+local function SkinDropdownOption(option)
+    local dropdown = option.Dropdown
+    dropdown:GwSkinButton(false, true)
+    option.Label:SetTextColor(1, 1, 1)
+    for _, text in ipairs({dropdown.Text, dropdown.SelectionDetails.SelectionName, dropdown.SelectionDetails.SelectionNumber}) do
+        GW.LockFontStringColor(text, 0, 0, 0)
+    end
+    for _, arrow in ipairs({option.DecrementButton, option.IncrementButton}) do
+        arrow:GwSkinButton(false, true, nil, nil, nil, nil, true)
     end
 end
 
+local function SkinSlider(slider)
+    slider:GwSkinSliderFrame()
+end
+
+local function SkinCheckOption(frame)
+    if frame.Button then
+        frame.Button:GwSkinCheckButton(false, 20)
+    end
+end
+
+-- blizzard adds the options of a category when it is picked
+local function SkinOptions(list)
+    GW.SkinPoolFrames(list.selectionPopoutPool, SkinSelectionPopout)
+    GW.SkinPoolFrames(list.dropdownPool, SkinDropdownOption)
+    GW.SkinPoolFrames(list.sliderPool, SkinSlider)
+    -- the check buttons were renamed with the shared customization ui (12.x)
+    for _, template in ipairs({"CustomizationOptionCheckButtonTemplate", "CharCustomizeOptionCheckButtonTemplate"}) do
+        GW.SkinPoolFrames(list.pools and list.pools:GetPool(template), SkinCheckOption)
+    end
+end
 
 local function SkinCharacterCustomizeSkin()
     if not GW.settings.skins.barberShop.enabled then return end
+    local frame = CharCustomizeFrame
 
-    CharCustomizeFrame.SmallButtons.ResetCameraButton:GwSkinButton(nil, nil, nil, true, nil, true, true)
-    CharCustomizeFrame.SmallButtons.ZoomOutButton:GwSkinButton(false, false, false, true, false, true, true)
-    CharCustomizeFrame.SmallButtons.ZoomInButton:GwSkinButton(false, false, false, true, false, true, true)
-    CharCustomizeFrame.SmallButtons.RotateLeftButton:GwSkinButton(false, false, false, true, false, true, true)
-    CharCustomizeFrame.SmallButtons.RotateRightButton:GwSkinButton(false, false, false, true, false, true, true)
-    CharCustomizeFrame.RandomizeAppearanceButton:GwSkinButton(false, false, false, true, false, true, true)
+    frame.SmallButtons.ResetCameraButton:GwSkinButton(nil, nil, nil, true, nil, true, true)
+    for _, button in ipairs({frame.SmallButtons.ZoomOutButton, frame.SmallButtons.ZoomInButton, frame.SmallButtons.RotateLeftButton,
+        frame.SmallButtons.RotateRightButton, frame.RandomizeAppearanceButton}) do
+        button:GwSkinButton(false, false, false, true, false, true, true)
+    end
 
-    hooksecurefunc(CharCustomizeFrame, "AddMissingOptions", SetSelectedCategory)
+    hooksecurefunc(frame, "AddMissingOptions", SkinOptions)
 end
-
 
 local function SkinBarShop()
     if not GW.settings.skins.barberShop.enabled then return end
-    BarberShopFrame.ResetButton:GwSkinButton(false, true)
-    BarberShopFrame.CancelButton:GwSkinButton(false, true)
-    BarberShopFrame.AcceptButton:GwSkinButton(false, true)
+    local frame = BarberShopFrame
 
-    BarberShopFrame.TopBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
-    BarberShopFrame.LeftBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
-    BarberShopFrame.RightBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
+    for _, button in ipairs({frame.ResetButton, frame.CancelButton, frame.AcceptButton}) do
+        button:GwSkinButton(false, true)
+    end
+    -- the overlays go below the model
+    for _, overlay in ipairs({frame.TopBackgroundOverlay, frame.LeftBackgroundOverlay, frame.RightBackgroundOverlay}) do
+        overlay:SetDrawLayer("BACKGROUND", 0)
+    end
 end
-
 
 local function LoadBarShopUISkin()
     GW.RegisterLoadHook(SkinBarShop, "Blizzard_BarbershopUI", BarberShopFrame)

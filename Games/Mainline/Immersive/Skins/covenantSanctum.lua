@@ -1,108 +1,79 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function HandleIconString(self, text)
-    if self._gw2SetText then return end
-    if not text then text = self:GetText() end
-    if not text or text == "" then return end
+local BACKGROUND = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png"
 
-    local new, count = gsub(text, "|T([^:]-):[%d+:]+|t", "|T%1:14:14:0:0:64:64:5:59:5:59|t")
-    if count > 0 and new ~= text then
-        self._gw2SetText = true
-        self:SetFormattedText("%s", new)
-        self._gw2SetText = false
+-- a talent row: our frame instead of blizzards borders
+local function SkinTalent(talent)
+    for _, art in ipairs({talent.Border, talent.IconBorder, talent.TierBorder, talent.Background}) do
+        art:SetAlpha(0)
     end
+    if not talent.SetBackdrop then
+        Mixin(talent, BackdropTemplateMixin)
+        talent:HookScript("OnSizeChanged", talent.OnBackdropSizeChanged)
+    end
+    talent:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+    talent:SetBackdropBorderColor(1, 0.99, 0.85)
+
+    GW.HandleIcon(talent.Icon, true)
+    talent.Icon:SetPoint("TOPLEFT", 7, -7)
+    talent.Highlight:SetColorTexture(1, 1, 1, 0.25)
+    GW.KeepTextIconsSmall(talent.InfoText)
 end
 
-local function ReskinTalents(self)
-    for frame in self.talentPool:EnumerateActive() do
-        if not frame.gwSkinned then
-            frame.Border:SetAlpha(0)
-            frame.IconBorder:SetAlpha(0)
-            frame.TierBorder:SetAlpha(0)
-            frame.Background:SetAlpha(0)
-
-            if not frame.SetBackdrop then
-                _G.Mixin(frame, _G.BackdropTemplateMixin)
-                frame:HookScript("OnSizeChanged", frame.OnBackdropSizeChanged)
-            end
-            frame:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-            frame:SetBackdropBorderColor(1, 0.99, 0.85)
-
-            GW.HandleIcon(frame.Icon, true)
-            frame.Icon:SetPoint("TOPLEFT", 7, -7)
-            frame.Highlight:SetColorTexture(1, 1, 1, 0.25)
-
-            HandleIconString(frame.InfoText)
-            hooksecurefunc(frame.InfoText, "SetText", HandleIconString)
-
-            frame.gwSkinned = true
-        end
-    end
+local function SkinCurrency(currency)
+    GW.KeepTextIconsSmall(currency.Text)
 end
 
-local function ReplaceCurrencies(displayGroup)
-    for frame in displayGroup.currencyFramePool:EnumerateActive() do
-        if not frame.gwSkinned then
-            HandleIconString(frame.Text)
-            hooksecurefunc(frame.Text, "SetText", HandleIconString)
+-- the window gets our background once it has its size
+local function SkinWindow(frame)
+    if frame.tex then return end
+    local width, height = frame:GetSize()
+    frame.tex = frame:CreateTexture(nil, "BACKGROUND")
+    frame.tex:SetPoint("TOP", frame, "TOP", 0, 25)
+    frame.tex:SetSize(width + 50, height + 50)
+    frame.tex:SetTexture(BACKGROUND)
+    frame.NineSlice:SetAlpha(0)
 
-            frame.gwSkinned = true
-        end
-    end
+    local close = frame.CloseButton
+    close.Border:SetAlpha(0)
+    close:GwSkinButton(true)
+    close:SetSize(20, 20)
+    close:ClearAllPoints()
+    close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 2, 2)
 end
 
 local function ApplyCovenantSanctumSkin()
     if not GW.settings.skins.covenantSanctum.enabled then return end
+    local frame = CovenantSanctumFrame
 
-    CovenantSanctumFrame.LevelFrame.Level:SetFont(UNIT_NAME_FONT, 20)
+    frame.LevelFrame.Level:SetFont(UNIT_NAME_FONT, 20)
+    frame.LevelFrame.Background:SetAlpha(0)
 
-    CovenantSanctumFrame.LevelFrame.Background:SetAlpha(0)
-
-    local UpgradesTab = CovenantSanctumFrame.UpgradesTab
-    UpgradesTab.Background:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-    UpgradesTab.DepositButton:GwSkinButton(false, true)
-    UpgradesTab.DepositButton:SetFrameLevel(10)
-    UpgradesTab.CurrencyBackground:SetAlpha(0)
-    ReplaceCurrencies(UpgradesTab.CurrencyDisplayGroup)
-
-    for _, upgrade in ipairs(UpgradesTab.Upgrades) do
+    local upgrades = frame.UpgradesTab
+    upgrades.Background:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    upgrades.CurrencyBackground:SetAlpha(0)
+    GW.SkinPoolFrames(upgrades.CurrencyDisplayGroup.currencyFramePool, SkinCurrency)
+    for _, upgrade in ipairs(upgrades.Upgrades) do
         if upgrade.TierBorder then
             upgrade.TierBorder:SetAlpha(0)
         end
     end
 
-    local TalentList = CovenantSanctumFrame.UpgradesTab.TalentsList
-    TalentList:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-    TalentList.UpgradeButton:GwSkinButton(false, true)
-    TalentList.UpgradeButton:SetFrameLevel(10)
-    TalentList.IntroBox.Background:Hide()
-    hooksecurefunc(TalentList, "Refresh", ReskinTalents)
+    local talents = upgrades.TalentsList
+    talents:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    talents.IntroBox.Background:Hide()
+    talents.Divider:SetAlpha(0)
+    talents.BackgroundTile:SetAlpha(0)
+    hooksecurefunc(talents, "Refresh", function(list) GW.SkinPoolFrames(list.talentPool, SkinTalent) end)
 
-    TalentList.Divider:SetAlpha(0)
-    TalentList.BackgroundTile:SetAlpha(0)
+    -- the buttons sit above the backdrops
+    for _, button in ipairs({upgrades.DepositButton, talents.UpgradeButton}) do
+        button:GwSkinButton(false, true)
+        button:SetFrameLevel(10)
+    end
 
-    CovenantSanctumFrame:HookScript("OnShow", function()
-        if not CovenantSanctumFrame.gwSkinned then
-            --CovenantSanctumFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-
-            local tex = CovenantSanctumFrame:CreateTexture(nil, "BACKGROUND")
-            tex:SetPoint("TOP", CovenantSanctumFrame, "TOP", 0, 25)
-            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
-            local w, h = CovenantSanctumFrame:GetSize()
-            tex:SetSize(w + 50, h + 50)
-            CovenantSanctumFrame.tex = tex
-            CovenantSanctumFrame.NineSlice:SetAlpha(0)
-
-            CovenantSanctumFrame.CloseButton.Border:SetAlpha(0)
-            CovenantSanctumFrame.CloseButton:GwSkinButton(true)
-            CovenantSanctumFrame.CloseButton:SetSize(20, 20)
-            CovenantSanctumFrame.CloseButton:ClearAllPoints()
-            CovenantSanctumFrame.CloseButton:SetPoint("TOPRIGHT", CovenantSanctumFrame, "TOPRIGHT", 2, 2)
-
-            CovenantSanctumFrame.gwSkinned = true
-        end
-    end)
+    frame:HookScript("OnShow", SkinWindow)
 end
 
 local function LoadCovenantSanctumSkin()
