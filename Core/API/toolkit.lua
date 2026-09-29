@@ -2,190 +2,126 @@
 local GW = select(2, ...)
 
 ----- Added API to Frames -----
-local BlizzardRegions = {
-    "Left",
-    "Middle",
-    "Right",
-    "Mid",
-    "LeftDisabled",
-    "MiddleDisabled",
-    "RightDisabled",
-    "TopLeft",
-    "TopRight",
-    "BottomLeft",
-    "BottomRight",
-    "TopMiddle",
-    "MiddleLeft",
-    "MiddleRight",
-    "BottomMiddle",
-    "MiddleMiddle",
-    "TabSpacer",
-    "TabSpacer1",
-    "TabSpacer2",
-    "_RightSeparator",
-    "_LeftSeparator",
-    "Cover",
-    "Border",
-    "Background",
-    "TopTex",
-    "TopLeftTex",
-    "TopRightTex",
-    "LeftTex",
-    "BottomTex",
-    "BottomLeftTex",
-    "BottomRightTex",
-    "RightTex",
-    "MiddleTex",
-    "Center",
+
+-- the art pieces of blizzards button, tab and border templates, by key or global name suffix
+local TEMPLATE_ART = {
+    "Left", "Middle", "Mid", "Right", "LeftDisabled", "MiddleDisabled", "RightDisabled",
+    "TopLeft", "TopMiddle", "TopRight", "MiddleLeft", "MiddleMiddle", "MiddleRight", "BottomLeft", "BottomMiddle", "BottomRight",
+    "TopLeftTex", "TopTex", "TopRightTex", "LeftTex", "MiddleTex", "RightTex", "BottomLeftTex", "BottomTex", "BottomRightTex",
+    "TabSpacer", "TabSpacer1", "TabSpacer2", "_LeftSeparator", "_RightSeparator",
+    "Background", "Border", "Center", "Cover",
 }
 
-local ArrowRotation = {
-    up = 0,
-    down = 3.14,
-    left = 1.57,
-    right = -1.57,
+-- child frames of blizzard templates that carry nothing but art, stripping a frame strips them too
+local ART_FRAMES = {
+    "Inset", "inset", "InsetFrame", "LeftInset", "RightInset", "bottomInset", "BottomInset",
+    "NineSlice", "BG", "border", "Border", "BorderFrame", "ScrollFrameBorder", "bgLeft", "bgRight",
+    "Portrait", "portrait", "PortraitOverlay", "ArtOverlayFrame", "FilligreeOverlay",
 }
 
-local tabs = {
-    "LeftDisabled",
-    "MiddleDisabled",
-    "RightDisabled",
-    "Left",
-    "Middle",
-    "Right"
-}
+local tabs = {"Left", "Middle", "Right", "LeftDisabled", "MiddleDisabled", "RightDisabled"}
 
-local StripTexturesBlizzFrames = {
-    "Inset",
-    "inset",
-    "InsetFrame",
-    "LeftInset",
-    "RightInset",
-    "NineSlice",
-    "BG",
-    "border",
-    "Border",
-    "BorderFrame",
-    "bottomInset",
-    "BottomInset",
-    "bgLeft",
-    "bgRight",
-    "FilligreeOverlay",
-    "PortraitOverlay",
-    "ArtOverlayFrame",
-    "Portrait",
-    "portrait",
-    "ScrollFrameBorder",
-}
+-- our arrow textures point up
+local ArrowRotation = {up = 0, down = math.pi, left = math.pi / 2, right = -math.pi / 2}
+
+local function GetPart(frame, key, name)
+    return frame[key] or name and _G[name .. key]
+end
 
 local function HandleBlizzardRegions(frame)
     local name = frame.GetName and frame:GetName()
-    for _, area in pairs(BlizzardRegions) do
-        local object = (name and _G[name .. area]) or frame[area]
-        if object then
-            object:SetAlpha(0)
+    for _, key in ipairs(TEMPLATE_ART) do
+        local art = GetPart(frame, key, name)
+        if art then
+            art:SetAlpha(0)
         end
     end
 end
 GW.HandleBlizzardRegions = HandleBlizzardRegions
 
--- 12.0 secret restrictions break SetBackdrop (width is secret...)
-function GW.NotSizeRestricted(frame)
-    if not frame or not frame.GetSize then return true end
-
+-- 12.x: the backdrop mixin fails on a secret frame size, such frames keep their texture coordinates
+local function SetupTextureCoordinates(frame)
     local width, height = frame:GetSize()
-    return GW.NotSecretValue(width) and GW.NotSecretValue(height)
-end
-
-function GW.SetupTextureCoordinates(self)
-    if GW.NotSizeRestricted(self) then
-        _G.BackdropTemplateMixin.SetupTextureCoordinates(self)
+    if GW.NotSecretValue(width) and GW.NotSecretValue(height) then
+        BackdropTemplateMixin.SetupTextureCoordinates(frame)
     end
 end
 
--- temp until blizzard fixes the backdrop mixin from this error
 function GW.ReplaceSetupTextureCoordinates(frame)
-    if GW.Retail and frame.SetupTextureCoordinates ~= GW.SetupTextureCoordinates then
-        frame.SetupTextureCoordinates = GW.SetupTextureCoordinates
+    if issecretvalue then
+        frame.SetupTextureCoordinates = SetupTextureCoordinates
     end
 end
 
-local upButtons = {"ScrollUpButton", "UpButton", "ScrollUp", {"scrollUp", true}, "Back"}
-local downButtons = {"ScrollDownButton", "DownButton", "ScrollDown", {"scrollDown", true}, "Forward"}
-local thumbButtons = {"ThumbTexture", "thumbTexture", "Thumb"}
+-- the parts of old style scroll bars; some templates keep the arrows on the parent
+local SCROLL_UP_KEYS = {"ScrollUpButton", "UpButton", "ScrollUp", "Back"}
+local SCROLL_DOWN_KEYS = {"ScrollDownButton", "DownButton", "ScrollDown", "Forward"}
+local SCROLL_THUMB_KEYS = {"ThumbTexture", "thumbTexture", "Thumb"}
 
-local function GetElement(frame, element, useParent)
-    if useParent then frame = frame:GetParent() end
-    if not frame then return end
-
-    local child = frame[element]
-    if child then return child end
-
-    local name = frame.GetName and frame:GetName()
-    if name then return _G[name..element] end
-end
-
-local function GetButton(frame, buttons)
-    for _, data in ipairs(buttons) do
-        if type(data) == "string" then
-            local found = GetElement(frame, data)
-            if found then return found end
-        else
-            local found = GetElement(frame, data[1], data[2])
-            if found then return found end
+local function FindScrollPart(frame, keys, parentKey)
+    local name = frame:GetName()
+    for _, key in ipairs(keys) do
+        local part = GetPart(frame, key, name)
+        if part then
+            return part
         end
     end
+    local parent = parentKey and frame:GetParent()
+    return parent and parent[parentKey]
 end
 
-local function StripRegion(which, object, kill, alpha)
-    if kill then
-        object:GwKill()
-    elseif alpha then
-        object:SetAlpha(0)
-    elseif which == "Texture" then
-        object:SetTexture()
-    elseif which == "FontString" then
-        object:SetText("")
-    end
+local killedRegions = setmetatable({}, {__mode = "k"})
+
+local function StayHidden(region)
+    region:Hide()
 end
 
-local function StripType(which, object, kill, alpha)
-    if object:IsObjectType(which) then
-        StripRegion(which, object, kill, alpha)
-    else
-        if which == "Texture" then
-            local FrameName = object.GetName and object:GetName()
-            for _, Blizzard in pairs(StripTexturesBlizzFrames) do
-                local BlizzFrame = object[Blizzard] or (FrameName and _G[FrameName .. Blizzard])
-                if BlizzFrame and BlizzFrame.GwStripTextures then
-                    BlizzFrame:GwStripTextures(kill, alpha)
-                end
-            end
-        end
-
-        if object.GetNumRegions then
-            for _, region in ipairs({object:GetRegions()}) do
-                if region and region.IsObjectType and region:IsObjectType(which) then
-                    StripRegion(which, region, kill, alpha)
-                end
-            end
-        end
-    end
-end
-
-local function GwStripTextures(object, kill, alpha)
-    StripType("Texture", object, kill, alpha)
-end
-
+-- gone for good: frames leave for the hidden parent, regions hide again whenever they are shown;
+-- secure hooks instead of replacing Show, writing into blizzards regions would taint
 local function GwKill(object)
     if object.UnregisterAllEvents then
         object:UnregisterAllEvents()
         object:SetParent(GW.HiddenFrame)
+    elseif not killedRegions[object] then
+        killedRegions[object] = true
+        hooksecurefunc(object, "Show", StayHidden)
+        hooksecurefunc(object, "SetShown", StayHidden)
+    end
+    object:Hide()
+end
+
+-- kill hides the textures for good, alpha only fades them, otherwise they lose their file
+local function StripTexture(texture, kill, alpha)
+    if kill then
+        texture:GwKill()
+    elseif alpha then
+        texture:SetAlpha(0)
     else
-        object.Show = object.Hide
+        texture:SetTexture()
+    end
+end
+
+-- every texture of the frame and of its art child frames
+local function GwStripTextures(object, kill, alpha)
+    if object:IsObjectType("Texture") then
+        StripTexture(object, kill, alpha)
+        return
     end
 
-    object:Hide()
+    local name = object.GetName and object:GetName()
+    for _, key in ipairs(ART_FRAMES) do
+        local child = GetPart(object, key, name)
+        if child and child.GwStripTextures then
+            child:GwStripTextures(kill, alpha)
+        end
+    end
+    if object.GetRegions then
+        for _, region in ipairs({object:GetRegions()}) do
+            if region:IsObjectType("Texture") then
+                StripTexture(region, kill, alpha)
+            end
+        end
+    end
 end
 
 local function GwAddHover(self)
@@ -657,9 +593,9 @@ local function GwSkinScrollFrame(frame)
 end
 
 local function GwSkinScrollBar(frame)
-    local ScrollUpButton = GetButton(frame, upButtons)
-    local ScrollDownButton = GetButton(frame, downButtons)
-    local Thumb = GetButton(frame, thumbButtons) or (frame.GetThumbTexture and frame:GetThumbTexture())
+    local ScrollUpButton = FindScrollPart(frame, SCROLL_UP_KEYS, "scrollUp")
+    local ScrollDownButton = FindScrollPart(frame, SCROLL_DOWN_KEYS, "scrollDown")
+    local Thumb = FindScrollPart(frame, SCROLL_THUMB_KEYS) or (frame.GetThumbTexture and frame:GetThumbTexture())
 
     if ScrollUpButton and ScrollUpButton.SetNormalTexture then
         ScrollUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up.png")
@@ -769,151 +705,118 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textB
     end
 end
 
-local btns = { MaximizeButton = "up", MinimizeButton = "down" }
+local ARROW_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png"
+
+local function SkinMaxMinButton(button, direction)
+    button:SetSize(20, 20)
+    button:ClearAllPoints()
+    button:SetPoint("CENTER")
+    button:SetHitRectInsets(1, 1, 1, 1)
+    button:GetHighlightTexture():GwKill()
+    for _, state in ipairs({"Normal", "Pushed"}) do
+        button["Set" .. state .. "Texture"](button, ARROW_TEXTURE)
+        button["Get" .. state .. "Texture"](button):SetRotation(ArrowRotation[direction])
+    end
+end
+
+-- the maximize and minimize arrows of the world map and co.
 local function GwHandleMaxMinFrame(frame)
     if frame.gwSkinned then return end
+    frame.gwSkinned = true
 
     frame:GwStripTextures(true)
+    if frame.MaximizeButton then
+        SkinMaxMinButton(frame.MaximizeButton, "up")
+    end
+    if frame.MinimizeButton then
+        SkinMaxMinButton(frame.MinimizeButton, "down")
+    end
+end
 
-    for name, direction in pairs(btns) do
-        local button = frame[name]
-        if button then
-            button:SetSize(20, 20)
-            button:ClearAllPoints()
-            button:SetPoint("CENTER")
-            button:SetHitRectInsets(1, 1, 1, 1)
-            button:GetHighlightTexture():GwKill()
+-- words in a button name that tell where its arrow points, checked in this order; down if none fits
+local ARROW_NAME_WORDS = {
+    {"left", {"left", "prev", "back", "decrement"}},
+    {"right", {"right", "next", "forward", "increment"}},
+    {"up", {"scrollup", "upbutton", "top", "asc", "home", "maximize"}},
+}
 
-            button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
-            button:GetNormalTexture():SetRotation(ArrowRotation[direction])
-
-            button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
-            button:GetPushedTexture():SetRotation(ArrowRotation[direction])
+local function GuessArrowDirection(button)
+    local name = strlower(button:GetDebugName() or "")
+    for _, entry in ipairs(ARROW_NAME_WORDS) do
+        for _, word in ipairs(entry[2]) do
+            if strfind(name, word, 1, true) then
+                return entry[1]
+            end
         end
     end
-
-    frame.gwSkinned = true
+    return "down"
 end
 
 local function HandleNextPrevButton(button, arrowDir, noBackdrop)
     if button.gwSkinned then return end
+    button.gwSkinned = true
 
-    if not arrowDir then
-        arrowDir = "down"
-        local name = button:GetDebugName()
-        local ButtonName = name and name:lower()
-        if ButtonName then
-            if strfind(ButtonName, "left") or strfind(ButtonName, "prev") or strfind(ButtonName, "decrement") or strfind(ButtonName, "backward") or strfind(ButtonName, "back") then
-                arrowDir = "left"
-            elseif strfind(ButtonName, "right") or strfind(ButtonName, "next") or strfind(ButtonName, "increment") or strfind(ButtonName, "forward") then
-                arrowDir = "right"
-            elseif strfind(ButtonName, "scrollup") or strfind(ButtonName, "upbutton") or strfind(ButtonName, "top") or strfind(ButtonName, "asc") or strfind(ButtonName, "home") or strfind(ButtonName, "maximize") then
-                arrowDir = "up"
+    button:GwStripTextures()
+    button:SetSize(20, 20)
+    local rotation = ArrowRotation[arrowDir or GuessArrowDirection(button)]
+    for _, state in ipairs({"Normal", "Pushed", "Disabled", "Highlight"}) do
+        button["Set" .. state .. "Texture"](button, ARROW_TEXTURE)
+        local texture = button["Get" .. state .. "Texture"](button)
+        if texture then
+            texture:SetTexCoord(0, 1, 0, 1)
+            if rotation then
+                texture:SetRotation(rotation)
             end
         end
     end
 
-    button:GwStripTextures()
-
-    button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
-    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
-    button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
-    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
-
-    local Normal, Disabled, Pushed, Highlight = button:GetNormalTexture(), button:GetDisabledTexture(),
-        button:GetPushedTexture(), button:GetHighlightTexture()
-
+    local shade = noBackdrop and 0.5 or 0.3
+    button:GetDisabledTexture():SetVertexColor(shade, shade, shade)
     if noBackdrop then
-        button:SetSize(20, 20)
-        Disabled:SetVertexColor(.5, .5, .5)
-        button.Texture = Normal
-    else
-        button:SetSize(20, 20)
-        Disabled:SetVertexColor(.3, .3, .3)
+        button.Texture = button:GetNormalTexture()
     end
-
-    Normal:SetTexCoord(0, 1, 0, 1)
-    Pushed:SetTexCoord(0, 1, 0, 1)
-    Disabled:SetTexCoord(0, 1, 0, 1)
-    if Highlight then
-        Highlight:SetTexCoord(0, 1, 0, 1)
-    end
-
-    local rotation = ArrowRotation[arrowDir]
-    if rotation then
-        Normal:SetRotation(rotation)
-        Pushed:SetRotation(rotation)
-        Disabled:SetRotation(rotation)
-        if Highlight then
-            Highlight:SetRotation(rotation)
-        end
-    end
-
-    button.gwSkinned = true
 end
 GW.HandleNextPrevButton = HandleNextPrevButton
 
-local function GwSetOutside(obj, anchor, xOffset, yOffset, anchor2, noScale)
-    if not anchor then anchor = obj:GetParent() end
-
-    if not xOffset then xOffset = GW.BorderSize end
-    if not yOffset then yOffset = GW.BorderSize end
-    local x = (noScale and xOffset) or GW.Scale(xOffset)
-    local y = (noScale and yOffset) or GW.Scale(yOffset)
-
-    if GW.SetPointsRestricted(obj) or obj:GetPoint() then
-        obj:ClearAllPoints()
+-- lays obj over the anchor, by default its parent: grown by the offsets on every side, or shrunk
+local function Span(obj, anchor, xOffset, yOffset, grow)
+    anchor = anchor or obj:GetParent()
+    local x, y = GW.Scale(xOffset or GW.BorderSize), GW.Scale(yOffset or GW.BorderSize)
+    if grow then
+        x, y = -x, -y
     end
-
-    obj:SetPoint("TOPLEFT", anchor, "TOPLEFT", -x, y)
-    obj:SetPoint("BOTTOMRIGHT", anchor2 or anchor, "BOTTOMRIGHT", x, -y)
-end
-
-local function GwSetInside(obj, anchor, xOffset, yOffset, anchor2, noScale)
-    if not anchor then anchor = obj:GetParent() end
-
-    if not xOffset then xOffset = GW.BorderSize end
-    if not yOffset then yOffset = GW.BorderSize end
-    local x = (noScale and xOffset) or GW.Scale(xOffset)
-    local y = (noScale and yOffset) or GW.Scale(yOffset)
-
-    if GW.SetPointsRestricted(obj) or obj:GetPoint() then
-        obj:ClearAllPoints()
-    end
-
+    obj:ClearAllPoints()
     obj:SetPoint("TOPLEFT", anchor, "TOPLEFT", x, -y)
-    obj:SetPoint("BOTTOMRIGHT", anchor2 or anchor, "BOTTOMRIGHT", -x, y)
+    obj:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", -x, y)
 end
+
+local function GwSetOutside(obj, anchor, xOffset, yOffset)
+    Span(obj, anchor, xOffset, yOffset, true)
+end
+
+local function GwSetInside(obj, anchor, xOffset, yOffset)
+    Span(obj, anchor, xOffset, yOffset, false)
+end
+
+-- flat overlays for hover, pushed and checked; the no* flags keep what the button has
+local STYLE_OVERLAYS = {
+    {key = "hover", texture = "HighlightTexture", color = {1, 1, 1, 0.3}},
+    {key = "pushed", texture = "PushedTexture", color = {0.9, 0.8, 0.1, 0.3}},
+    {key = "checked", texture = "CheckedTexture", color = {1, 1, 1, 0.3}},
+}
 
 local function GwStyleButton(button, noHover, noPushed, noChecked)
-    if button.SetHighlightTexture and button.CreateTexture and not button.hover and not noHover then
-        button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
-
-        local hover = button:GetHighlightTexture()
-        hover:GwSetInside()
-        hover:SetBlendMode("ADD")
-        hover:SetColorTexture(1, 1, 1, 0.3)
-        button.hover = hover
-    end
-
-    if button.SetPushedTexture and button.CreateTexture and not button.pushed and not noPushed then
-        button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
-
-        local pushed = button:GetPushedTexture()
-        pushed:GwSetInside()
-        pushed:SetBlendMode("ADD")
-        pushed:SetColorTexture(0.9, 0.8, 0.1, 0.3)
-        button.pushed = pushed
-    end
-
-    if button.SetCheckedTexture and button.CreateTexture and not button.checked and not noChecked then
-        button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
-
-        local checked = button:GetCheckedTexture()
-        checked:GwSetInside()
-        checked:SetBlendMode("ADD")
-        checked:SetColorTexture(1, 1, 1, 0.3)
-        button.checked = checked
+    local skip = {noHover, noPushed, noChecked}
+    for i, overlay in ipairs(STYLE_OVERLAYS) do
+        local setter = button["Set" .. overlay.texture]
+        if setter and not skip[i] and not button[overlay.key] then
+            setter(button, "Interface/AddOns/GW2_UI/textures/uistuff/white.png")
+            local texture = button["Get" .. overlay.texture](button)
+            texture:GwSetInside()
+            texture:SetBlendMode("ADD")
+            texture:SetColorTexture(unpack(overlay.color))
+            button[overlay.key] = texture
+        end
     end
 
     if button.cooldown then
@@ -930,62 +833,33 @@ local function GwKillEditMode(object)
     object.Selection:EnableMouse(false)
 end
 
-do
-    -- Blizzard broke font shadows on FontStrings in 12.0.7; shadows only render when
-    -- defined on font objects, so we generate our own font families and set them there
-    local members, alphabets = {}, { roman = {}, korean = {}, simplifiedchinese = {}, traditionalchinese = {}, russian = {} }
+-- 12.0.7: font strings lost their own shadow, only font objects still draw one; so every font, size,
+-- style and shadow combination gets a font family of its own, the same font for every alphabet
+local FONT_ALPHABETS = {"roman", "korean", "simplifiedchinese", "traditionalchinese", "russian"}
+local fontFamilies, fontFamilyCount = {}, 0
 
-    local function GenerateFontMembers(font, size, style)
-        local index = 0
-        for which, data in next, alphabets do
-            index = index + 1
-
-            data.alphabet = which
-            data.file = font
-            data.height = size
-            data.flags = style
-
-            members[index] = data
-        end
-
-        return members
-    end
-
-    local familyCount = {}
-    local function GenerateFontFamily(prefix, font, size, style)
-        local count = (familyCount[prefix] or 0) + 1
-        familyCount[prefix] = count
-
-        return CreateFontFamily(prefix .. count, GenerateFontMembers(font, size, style))
-    end
-
-    local function SetFontShadow(family, style, shadow)
-        for which in next, alphabets do
-            local fontObject = family:GetFontObjectForAlphabet(which)
-            fontObject:SetShadowColor(0, 0, 0, (shadow and (style == "" and 1 or 0.6)) or 0)
-            fontObject:SetShadowOffset((shadow and 1) or 0, (shadow and -1) or 0)
-        end
-    end
-    GW.SetFontShadow = SetFontShadow
-
-    local objects = {}
-    function GW.GenerateFontObject(prefix, font, size, style, shadow)
-        local sizes = objects[font]
-        if not sizes then sizes = {} objects[font] = sizes end
-
-        local styles = sizes[size]
-        if not styles then styles = {} sizes[size] = styles end
-
-        local key = shadow and ("SHADOW" .. style) or style
-        local family = styles[key]
-        if not family then
-            family = GenerateFontFamily(prefix, font, size, style)
-            SetFontShadow(family, style, shadow)
-            styles[key] = family
-        end
-
+local function GetFontFamily(prefix, font, size, style, shadow)
+    local key = font .. "|" .. size .. "|" .. style .. (shadow and "|shadow" or "")
+    local family = fontFamilies[key]
+    if family then
         return family
     end
+
+    local members = {}
+    for i, alphabet in ipairs(FONT_ALPHABETS) do
+        members[i] = {alphabet = alphabet, file = font, height = size, flags = style}
+    end
+    fontFamilyCount = fontFamilyCount + 1
+    family = CreateFontFamily(prefix .. fontFamilyCount, members)
+
+    -- outlined text needs a lighter shadow
+    for _, alphabet in ipairs(FONT_ALPHABETS) do
+        local fontObject = family:GetFontObjectForAlphabet(alphabet)
+        fontObject:SetShadowColor(0, 0, 0, shadow and (style == "" and 1 or 0.6) or 0)
+        fontObject:SetShadowOffset(shadow and 1 or 0, shadow and -1 or 0)
+    end
+    fontFamilies[key] = family
+    return family
 end
 
 -- Gold value fill between track start and thumb; the anchors follow the thumb, so
@@ -1083,7 +957,7 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
     if style == "NONE" then style = "" end
 
     if CreateFontFamily and object.SetFontObject then
-        object:SetFontObject(GW.GenerateFontObject("GW2_UI_FontTemplate", font, size, style, shadow))
+        object:SetFontObject(GetFontFamily("GW2_UI_FontTemplate", font, size, style, shadow))
     else
         object:SetFont(font, size, style)
         if shadow then
@@ -1120,101 +994,67 @@ local function GwLockTextColor(object, r, g, b, a)
 end
 GW.LockFontStringColor = GwLockTextColor
 
-local function GrabPoint(obj, pointValue)
-    if type(pointValue) == "string" then
-        local pointIndex = tonumber(pointValue)
-        if not pointIndex then
-            for i = 1, obj:GetNumPoints() do
-                local point, relativeTo, relativePoint, xOfs, yOfs = obj:GetPoint(i)
-                if not point then
-                    break
-                elseif point == pointValue then
-                    return point, relativeTo, relativePoint, xOfs, yOfs
-                end
-            end
-        end
-
-        pointValue = pointIndex
-    end
-
-    return obj:GetPoint(pointValue)
-end
-
-local function GwNudgePoint(obj, xAxis, yAxis, noScale, pointValue, clearPoints)
-    if not xAxis then xAxis = 0 end
-    if not yAxis then yAxis = 0 end
-
-    local x = (noScale and xAxis) or GW.Scale(xAxis)
-    local y = (noScale and yAxis) or GW.Scale(yAxis)
-
-    local point, relativeTo, relativePoint, xOfs, yOfs = GrabPoint(obj, pointValue)
-
-    -- anchors of Blizzard-managed frames can be secret in combat (e.g. the
-    -- DamageMeter windows on a combat reload) — neither arithmetic on the offsets
-    -- nor SetPoint with secret components is possible, so skip the nudge
-    if GW.IsSecretValue(point) or GW.IsSecretValue(relativePoint) or GW.IsSecretValue(xOfs) or GW.IsSecretValue(yOfs) then
+-- shifts the frame by x/y from its first anchor; the anchors of blizzard frames can be secret in
+-- combat (the damage meter on a combat reload), those stay where they are
+local function GwNudgePoint(obj, x, y)
+    local point, relativeTo, relativePoint, xOfs, yOfs = obj:GetPoint(1)
+    if GW.IsSecretValue(point) or GW.IsSecretValue(relativePoint) or GW.IsSecretValue(xOfs) or GW.IsSecretValue(yOfs) or not point then
         return
     end
+    obj:SetPoint(point, relativeTo, relativePoint, xOfs + GW.Scale(x or 0), yOfs + GW.Scale(y or 0))
+end
 
-    if clearPoints or GW.SetPointsRestricted(obj) then
-        obj:ClearAllPoints()
+-- all widgets of one type share a method table, so one widget of each type is enough
+local API = {
+    GwKill = GwKill,
+    GwStripTextures = GwStripTextures,
+    GwAddHover = GwAddHover,
+    GwSkinCheckButton = GwSkinCheckButton,
+    GwSkinSliderFrame = GwSkinSliderFrame,
+    GwCreateBackdrop = GwCreateBackdrop,
+    GwSkinButton = GwSkinButton,
+    GwSkinNegativeButton = GwSkinNegativeButton,
+    GwSkinTab = GwSkinTab,
+    GwSkinScrollFrame = GwSkinScrollFrame,
+    GwSkinScrollBar = GwSkinScrollBar,
+    GwSkinDropDownMenu = GwSkinDropDownMenu,
+    GwHandleMaxMinFrame = GwHandleMaxMinFrame,
+    GwSetOutside = GwSetOutside,
+    GwSetInside = GwSetInside,
+    GwStyleButton = GwStyleButton,
+    GwKillEditMode = GwKillEditMode,
+    GwHandleDropDownBox = GwHandleDropDownBox,
+    GwSetFontTemplate = GwSetFontTemplate,
+    GwLockTextColor = GwLockTextColor,
+    GwOffsetFrameLevel = GwOffsetFrameLevel,
+    GwNudgePoint = GwNudgePoint,
+    GwSetFrameTemplate = GwSetFrameTemplate,
+}
+
+local methodTables = {}
+local function Collect(widget)
+    methodTables[getmetatable(widget).__index] = true
+end
+
+local sample = CreateFrame("Frame")
+Collect(sample)
+Collect(sample:CreateTexture())
+Collect(sample:CreateFontString())
+Collect(sample:CreateMaskTexture())
+Collect(GameFontNormal)
+
+-- the widget types that already exist
+local frame = EnumerateFrames()
+while frame do
+    if not frame:IsForbidden() then
+        Collect(frame)
     end
-
-    obj:SetPoint(point, relativeTo, relativePoint, xOfs + x, yOfs + y)
+    frame = EnumerateFrames(frame)
 end
 
-local function addapi(object)
-    local mt = getmetatable(object).__index
-    if not object.GwKill then mt.GwKill = GwKill end
-    if not object.GwStripTextures then mt.GwStripTextures = GwStripTextures end
-    if not object.GwAddHover then mt.GwAddHover = GwAddHover end
-    if not object.GwSkinCheckButton then mt.GwSkinCheckButton = GwSkinCheckButton end
-    if not object.GwSkinSliderFrame then mt.GwSkinSliderFrame = GwSkinSliderFrame end
-    if not object.GwCreateBackdrop then mt.GwCreateBackdrop = GwCreateBackdrop end
-    if not object.GwSkinButton then mt.GwSkinButton = GwSkinButton end
-    if not object.GwSkinNegativeButton then mt.GwSkinNegativeButton = GwSkinNegativeButton end
-    if not object.GwSkinTab then mt.GwSkinTab = GwSkinTab end
-    if not object.GwSkinScrollFrame then mt.GwSkinScrollFrame = GwSkinScrollFrame end
-    if not object.GwSkinScrollBar then mt.GwSkinScrollBar = GwSkinScrollBar end
-    if not object.GwSkinDropDownMenu then mt.GwSkinDropDownMenu = GwSkinDropDownMenu end
-    if not object.GwHandleMaxMinFrame then mt.GwHandleMaxMinFrame = GwHandleMaxMinFrame end
-    if not object.GwSetOutside then mt.GwSetOutside = GwSetOutside end
-    if not object.GwSetInside then mt.GwSetInside = GwSetInside end
-    if not object.GwStyleButton then mt.GwStyleButton = GwStyleButton end
-    if not object.GwKillEditMode then mt.GwKillEditMode = GwKillEditMode end
-    if not object.GwHandleDropDownBox then mt.GwHandleDropDownBox = GwHandleDropDownBox end
-    if not object.GwSetFontTemplate then mt.GwSetFontTemplate = GwSetFontTemplate end
-    if not object.GwLockTextColor then mt.GwLockTextColor = GwLockTextColor end
-    if not object.GwOffsetFrameLevel then mt.GwOffsetFrameLevel = GwOffsetFrameLevel end
-    if not object.GwNudgePoint then mt.GwNudgePoint = GwNudgePoint end
-    if not object.GwSetFrameTemplate then mt.GwSetFrameTemplate = GwSetFrameTemplate end
-
-end
-
-local handled = { Frame = true }
-local object = CreateFrame("Frame")
-addapi(object)
-addapi(object:CreateTexture())
-addapi(object:CreateFontString())
-addapi(object:CreateMaskTexture())
-
-object = EnumerateFrames()
-while object do
-    local objectType = object:GetObjectType()
-    if not object:IsForbidden() and not handled[objectType] then
-        addapi(object)
-        handled[objectType] = true
-    end
-
-    object = EnumerateFrames(object)
-end
-
-addapi(GameFontNormal)
-addapi(CreateFrame("ScrollFrame"))
-
--- widget types that may not exist yet while we load: load on demand addons (collections, encounter journal ...)
--- create their models and bars later, EnumerateFrames above cannot see those types
-for _, frameType in ipairs({"Button", "CheckButton", "EditBox", "StatusBar", "Slider", "Cooldown", "SimpleHTML", "MessageFrame", "ScrollingMessageFrame", "PlayerModel", "DressUpModel", "CinematicModel", "ModelScene", "ColorSelect"}) do
+-- and those that may not exist yet: load on demand addons (collections, encounter journal ...)
+-- create their models and bars later
+for _, frameType in ipairs({"Button", "CheckButton", "EditBox", "StatusBar", "Slider", "Cooldown", "ScrollFrame", "SimpleHTML", "MessageFrame", "ScrollingMessageFrame", "PlayerModel", "DressUpModel", "CinematicModel", "ModelScene", "ColorSelect"}) do
     local ok, widget = pcall(CreateFrame, frameType, nil, GW.HiddenFrame)
     if ok and widget then
         -- the probe frames must never take input: an edit box auto focuses and would swallow the keyboard
@@ -1227,6 +1067,14 @@ for _, frameType in ipairs({"Button", "CheckButton", "EditBox", "StatusBar", "Sl
         end
         widget:EnableMouse(false)
         widget:Hide()
-        addapi(widget)
+        Collect(widget)
+    end
+end
+
+for methods in pairs(methodTables) do
+    for name, func in pairs(API) do
+        if methods[name] == nil then
+            methods[name] = func
+        end
     end
 end

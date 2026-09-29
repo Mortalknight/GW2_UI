@@ -903,7 +903,6 @@ end
 
 -- one details background per slot header, reaching down to the next header or the paging row
 local function AcquireSectionBackground(journal, index)
-    journal.gwSectionBackgrounds = journal.gwSectionBackgrounds or {}
     local bg = journal.gwSectionBackgrounds[index]
     if not bg then
         bg = GW.CreateDetailsBackgroundTexture(journal.iconsFrame)
@@ -918,6 +917,8 @@ local function LayoutHeirloomSections(journal)
     local icons = journal.iconsFrame
     local iconsLeft, margin = icons:GetLeft(), GetGridMargin(icons)
     if not iconsLeft or not margin then return end
+    -- a page without headers still has to hide the backgrounds of the last one
+    journal.gwSectionBackgrounds = journal.gwSectionBackgrounds or {}
 
     local headers = {}
     for _, header in ipairs(journal.heirloomHeaderFrames) do
