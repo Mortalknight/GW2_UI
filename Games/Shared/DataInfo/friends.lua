@@ -2,41 +2,13 @@
 local GW = select(2, ...)
 
 local APP_CLIENTS = {App = true, BSAp = true}
-local SAME_PLACE_COLOR = CreateColor(0.3, 1, 0.3)
-local OTHER_PLACE_COLOR = CreateColor(0.65, 0.65, 0.65)
+local Social = GW.Social
 local ACCOUNT_COLOR = CreateColor(0.93, 0.93, 0.93)
-local IN_GROUP_MARK = "|cffaaaaaa*|r"
-local AFK_TAG = " |cffff9900<" .. AFK .. ">|r"
-local DND_TAG = " |cffff3333<" .. DND .. ">|r"
-local TIMERUNNING_ICON = CreateAtlasMarkup("timerunning-glues-icon-small", 12, 10)
+local OTHER_PLACE_COLOR = Social.OTHER_PLACE_COLOR
 
-local function GetStatusTag(isAFK, isDND)
-    return isAFK and AFK_TAG or isDND and DND_TAG or ""
-end
-
-local function IsGroupMember(name, realm)
-    if realm and realm ~= "" and realm ~= GW.myrealm then
-        name = name .. "-" .. realm
-    end
-    local inParty, inRaid = UnitInParty(name), UnitInRaid(name)
-    if GW.IsSecretValue(inParty) or GW.IsSecretValue(inRaid) then
-        return false
-    end
-    return (inParty or inRaid) and true or false
-end
-
--- level in its difficulty color, name in its class color
+-- friends lists name the class localized
 local function FormatCharacter(level, name, className)
-    local classColor = GW.GWGetClassColor(GW.UnlocalizedClassName(className), true)
-    if not level or level == 0 then
-        return classColor:WrapTextInColorCode(name)
-    end
-    local levelColor = GetQuestDifficultyColor(level)
-    return GW.RGBToHex(levelColor.r, levelColor.g, levelColor.b, nil, level .. "|r ") .. classColor:WrapTextInColorCode(name)
-end
-
-local function GetPlaceColor(isSame)
-    return isSame and SAME_PLACE_COLOR or OTHER_PLACE_COLOR
+    return Social.FormatCharacter(level, name, GW.UnlocalizedClassName(className))
 end
 
 local function GetOnlineFriends()
@@ -116,8 +88,8 @@ local function AddFriendLines(friends, myZone)
     AddSectionTitle(CHARACTER_FRIEND)
     for _, info in ipairs(friends) do
         local name = FormatCharacter(info.level, info.name, info.className)
-            .. (IsGroupMember(info.name) and IN_GROUP_MARK or "") .. GetStatusTag(info.afk, info.dnd)
-        local zoneColor = GetPlaceColor(info.area == myZone)
+            .. (Social.IsGroupMember(info.name) and Social.IN_GROUP_MARK or "") .. Social.GetStatusTag(info.afk, info.dnd)
+        local zoneColor = Social.GetPlaceColor(info.area == myZone)
         GameTooltip:AddDoubleLine(name, info.area, 1, 1, 1, zoneColor.r, zoneColor.g, zoneColor.b)
     end
 end
@@ -128,16 +100,16 @@ local function AddBNetLines(entries, myZone, showDetails)
     for _, entry in ipairs(entries) do
         local account, game = entry.account, entry.game
         local icon = BNet_GetClientEmbeddedAtlas(game.clientProgram, 14) .. " "
-        local status = GetStatusTag(account.isAFK or game.isGameAFK, account.isDND or game.isGameBusy)
+        local status = Social.GetStatusTag(account.isAFK or game.isGameAFK, account.isDND or game.isGameBusy)
 
         if game.clientProgram == BNET_CLIENT_WOW and game.characterName then
             local name = icon .. FormatCharacter(game.characterLevel, game.characterName, game.className)
-                .. (IsGroupMember(game.characterName, game.realmName) and IN_GROUP_MARK or "") .. status
-                .. (game.timerunningSeasonID and TIMERUNNING_ICON or "")
+                .. (Social.IsGroupMember(game.characterName, game.realmName) and Social.IN_GROUP_MARK or "") .. status
+                .. (game.timerunningSeasonID and Social.TIMERUNNING_ICON or "")
             GameTooltip:AddDoubleLine(name, account.accountName, 1, 1, 1, ACCOUNT_COLOR.r, ACCOUNT_COLOR.g, ACCOUNT_COLOR.b)
             if showDetails then
-                local zoneColor = GetPlaceColor(game.areaName == myZone)
-                local realmColor = GetPlaceColor(game.realmName == GW.myrealm)
+                local zoneColor = Social.GetPlaceColor(game.areaName == myZone)
+                local realmColor = Social.GetPlaceColor(game.realmName == GW.myrealm)
                 GameTooltip:AddDoubleLine(game.areaName or game.richPresence, game.realmName, zoneColor.r, zoneColor.g, zoneColor.b, realmColor.r, realmColor.g, realmColor.b)
             end
         else
@@ -149,16 +121,7 @@ end
 
 -- the micro button tooltip first, the online friends below it
 local function Friends_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip_SetTitle(GameTooltip, self.tooltipText)
-    if not self:IsEnabled() then
-        local reason = self.factionGroup == "Neutral" and FEATURE_NOT_AVAILBLE_PANDAREN
-            or self.minLevel and format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, self.minLevel)
-            or self.disabledTooltip and GetValueOrCallFunction(self, "disabledTooltip")
-        if reason then
-            GameTooltip_AddErrorLine(GameTooltip, reason, true)
-        end
-    end
+    Social.StartMicroButtonTooltip(self)
 
     local friends, entries = GetOnlineFriends(), GetOnlineBNetEntries()
     local numBNet, numBNetOnline = BNGetNumFriends()
@@ -188,23 +151,6 @@ local function Friends_OnEvent(self, event, key)
     end
 end
 GW.Friends_OnEvent = Friends_OnEvent
-
-local function InviteFriend(target, guid, isBNet)
-    local inviteType = guid and GetDisplayedInviteType(guid) or "INVITE"
-    if inviteType == "REQUEST_INVITE" then
-        if isBNet then
-            BNRequestInviteFriend(target)
-        else
-            C_PartyInfo.RequestInviteFromUnit(target)
-        end
-    elseif inviteType == "INVITE" or inviteType == "SUGGEST_INVITE" then
-        if isBNet then
-            C_BattleNet.InviteFriend(target)
-        else
-            C_PartyInfo.InviteUnit(target)
-        end
-    end
-end
 
 -- afk and dnd are toggles: sending the active one again clears it
 local function SetChatStatus(status)
@@ -243,8 +189,8 @@ local function BuildMenu(_, root)
     for _, info in ipairs(GetOnlineFriends()) do
         local label = FormatCharacter(info.level, info.name, info.className)
         whisperMenu:CreateButton(label, function() ChatFrameUtil.SendTell(info.name) end)
-        if not IsGroupMember(info.name) then
-            inviteMenu:CreateButton(label, function() InviteFriend(info.name, info.guid) end)
+        if not Social.IsGroupMember(info.name) then
+            inviteMenu:CreateButton(label, function() Social.Invite(info.name, info.guid) end)
         end
     end
 
@@ -256,9 +202,9 @@ local function BuildMenu(_, root)
             whisperMenu:CreateButton(account.accountName, function() ChatFrameUtil.SendBNetTell(account.accountName) end)
         end
         if game.clientProgram == BNET_CLIENT_WOW and game.wowProjectID == WOW_PROJECT_ID and game.characterName
-            and not IsGroupMember(game.characterName, game.realmName) then
+            and not Social.IsGroupMember(game.characterName, game.realmName) then
             inviteMenu:CreateButton(FormatCharacter(game.characterLevel, game.characterName, game.className), function()
-                InviteFriend(game.gameAccountID, game.playerGuid, true)
+                Social.Invite(game.gameAccountID, game.playerGuid, true)
             end)
         end
     end

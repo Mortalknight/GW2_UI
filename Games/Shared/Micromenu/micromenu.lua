@@ -285,7 +285,6 @@ local function updateGuildButton(self, event)
         end
 
         if (StoreFrame and not StoreFrame_IsShown()) and GW.DoesAncestryIncludeAny(self, GetMouseFoci()) then
-            GW.FetchGuildMembers()
             GW.Guild_OnEnter(self)
         end
     elseif event == "MODIFIER_STATE_CHANGED" then

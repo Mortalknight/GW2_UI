@@ -1,308 +1,191 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local C_GuildInfo_GetMOTD = C_GuildInfo and C_GuildInfo.GetMOTD or GetGuildRosterMOTD
-
-local onlinestatus = {
-    [0] = "",
-    [1] = format(" |cffFFFFFF[|r|cffFF9900%s|r|cffFFFFFF]|r", AFK),
-    [2] = format(" |cffFFFFFF[|r|cffFF3333%s|r|cffFFFFFF]|r", DND),
+local Social = GW.Social
+local GetGuildMOTD = C_GuildInfo and C_GuildInfo.GetMOTD or GetGuildRosterMOTD
+local MAX_MEMBERS_SHOWN = 20
+local CLUB_REFRESH_INTERVAL = 10
+local NOTE_COLOR = CreateColor(1, 0.93, 0.73)
+local OFFICER_NOTE_COLOR = CreateColor(0.3, 1, 0.3)
+local FACTION_ICONS = {
+    [0] = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/horde.png:13:13|t ",
+    [1] = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/alliance.png:13:13|t ",
 }
-local mobilestatus = {
-    [0] = [[|TInterface\ChatFrame\UI-ChatIcon-ArmoryChat:14:14:0:0:16:16:0:16:0:16:73:177:73|t]],
-    [1] = [[|TInterface\ChatFrame\UI-ChatIcon-ArmoryChat-AwayMobile:14:14:0:0:16:16:0:16:0:16|t]],
-    [2] = [[|TInterface\ChatFrame\UI-ChatIcon-ArmoryChat-BusyMobile:14:14:0:0:16:16:0:16:0:16|t]],
+-- members on the app show the armory icon, its variants mean away and busy
+local MOBILE_ICONS = {
+    [0] = " |TInterface\\ChatFrame\\UI-ChatIcon-ArmoryChat:14:14:0:0:16:16:0:16:0:16:73:177:73|t",
+    [1] = " |TInterface\\ChatFrame\\UI-ChatIcon-ArmoryChat-AwayMobile:14:14:0:0:16:16:0:16:0:16|t",
+    [2] = " |TInterface\\ChatFrame\\UI-ChatIcon-ArmoryChat-BusyMobile:14:14:0:0:16:16:0:16:0:16|t",
 }
 
-local TIMERUNNING_ATLAS = "|A:timerunning-glues-icon-small:%s:%s:0:0|a"
-local TIMERUNNING_SMALL = format(TIMERUNNING_ATLAS, 12, 10)
-
-local FACTION_ALLIANCE = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/alliance.png:13:13|t"
-local FACTION_HORDE = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/horde.png:13:13|t"
-
-local tthead = GW.myfaction == "Alliance" and GW.Colors.FactionColors.Alliance or GW.Colors.FactionColors.Horde
-local ttsubh = {r = 1, g = 0.93, b = 0.73}
-local ttoff = {r = 0.3, g = 1, b = 0.3}
-local activezone = {r = 0.3, g = 1.0, b = 0.3}
-local inactivezone = {r = 0.65, g = 0.65, b = 0.65}
-local guildInfoString = "%s"
-local guildInfoString2 = GUILD .. ": %d/%d"
-local guildMotDString = "%s |cffaaaaaa- |cffffffff%s"
-local levelNameString = "|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r"
-local levelNameStatusString = "%s |cff%02x%02x%02x%d|r %s%s%s %s"
-local nameRankString = "%s %s |cff999999-|cffffffff %s"
-local standingString = GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. "%s:|r |cFFFFFFFF%s/%s (%s%%)"
-local moreMembersOnlineString = strjoin("", "+%d ", FRIENDS_LIST_ONLINE, "...")
-local noteString = strjoin("", "|cff999999   ", LABEL_NOTE, ":|r %s")
-local officerNoteString = strjoin("", "|cff999999   ", GUILD_RANK1_DESC, ":|r %s")
-local clubTable, guildTable = {}, {}
-local isFetchingGuild = false
-local fetchingGuildWaitQueued = false
-local lastGuildFetch = 0
-local GUILD_FETCH_INTERVAL = 3
-
-local function sortByRank(a, b)
-    if a and b then
-        if a.rankIndex == b.rankIndex then
-            return a.name < b.name
-        end
-        return a.rankIndex < b.rankIndex
-    end
+local function Plain(value)
+    return GW.NotSecretValue(value) and value or nil
 end
 
-local function sortByName(a, b)
-    if a and b then
-        return a.name < b.name
+-- faction and timerunning only the guild community knows; a big guild has many members, so the
+-- lookup is kept for a few seconds
+local clubMembers, clubMembersTime = {}, 0
+local function GetClubMembers()
+    if not (C_Club and CommunitiesUtil) or GetTime() - clubMembersTime < CLUB_REFRESH_INTERVAL then
+        return clubMembers
     end
-end
-
-local function SortGuildTable(shift)
-    if shift then
-        sort(guildTable, sortByRank)
-    else
-        sort(guildTable, sortByName)
-    end
-end
-
-local function inGroup(name)
-    local nameRaid = UnitInRaid(name)
-    local nameParty = UnitInParty(name)
-    if GW.IsSecretValue(nameRaid) or GW.IsSecretValue(nameParty) then
-        return ""
-    end
-
-    return (nameParty or nameRaid) and "|cffaaaaaa*|r" or ""
-end
-
-local function FetchGuildMembers_Internal()
-    isFetchingGuild = true
-    lastGuildFetch = GetTime()
-    wipe(guildTable)
-    wipe(clubTable)
+    clubMembersTime = GetTime()
+    wipe(clubMembers)
 
     local clubs = C_Club.GetSubscribedClubs()
-    if GW.NotSecretValue(clubs) and clubs then -- use this to get the timerunning flag (and other info?)
-        local guildClubID
-        for _, data in next, clubs do
-            if data.clubType == Enum.ClubType.Guild then
-                guildClubID = data.clubId
-                break
-            end
-        end
-
-        local members = CommunitiesUtil.GetMemberIdsSortedByName(guildClubID)
-		local memberInfo = GW.NotSecretValue(members) and CommunitiesUtil.GetMemberInfo(guildClubID, members)
-		local membersSorted = memberInfo and CommunitiesUtil.SortMemberInfo(guildClubID, memberInfo)
-        if membersSorted then
-            for _, data in next, membersSorted do
-                if data.guid then
-                    clubTable[data.guid] = data
+    if GW.IsSecretValue(clubs) or not clubs then
+        return clubMembers
+    end
+    for _, club in ipairs(clubs) do
+        if club.clubType == Enum.ClubType.Guild then
+            local memberIDs = CommunitiesUtil.GetMemberIdsSortedByName(club.clubId)
+            for _, info in ipairs(CommunitiesUtil.GetMemberInfo(club.clubId, memberIDs) or {}) do
+                if Plain(info.guid) then
+                    clubMembers[info.guid] = info
                 end
             end
+            break
         end
     end
+    return clubMembers
+end
 
-    local totalMembers = GetNumGuildMembers() or 0
-    for i = 1, totalMembers do
-        local name, rank, rankIndex, level, _, zone, note, officerNote, connected, memberstatus, className, _, _, isMobile, _, _, guid = GetGuildRosterInfo(i)
-        if not name then break end
+local function SortByName(a, b)
+    return a.name < b.name
+end
 
-        local statusInfo = isMobile and mobilestatus[memberstatus] or onlinestatus[memberstatus]
-        zone = (isMobile and not connected) and REMOTE_CHAT or zone
+local function SortByRank(a, b)
+    if a.rankIndex ~= b.rankIndex then
+        return a.rankIndex < b.rankIndex
+    end
+    return a.name < b.name
+end
 
-        if connected or isMobile then
-            local clubMember = clubTable[guid]
-            local data = {
-                name = gsub(name, format("%%-%s", gsub(GW.myrealm, "[%s%-]", "")), ""),
-                rank = rank,
+-- everybody online in game or on the app, sorted by name, or by rank for the shift view
+local function GetOnlineMembers(byRank)
+    local members, club = {}, GetClubMembers()
+    for i = 1, GetNumGuildMembers() do
+        local name, rank, rankIndex, level, _, zone, note, officerNote, online, status, class, _, _, isMobile, _, _, guid = GetGuildRosterInfo(i)
+        name = Plain(name)
+        if name and (online or isMobile) then
+            local clubInfo = Plain(guid) and club[guid]
+            tinsert(members, {
+                name = Ambiguate(name, "guild"),
+                fullName = name, -- invites and whispers need the realm
+                rank = Plain(rank) or "",
+                rankIndex = rankIndex or 0,
                 level = level,
-                zone = zone,
-                note = GW.NotSecretValue(note) and note or "",
-                officerNote = GW.NotSecretValue(officerNote) and officerNote or "",
-                online = connected,
-                status = statusInfo,
-                class = className,
-                rankIndex = rankIndex,
-                isMobile = isMobile,
-                guid = guid
-            }
-
-            if clubMember then
-                data.timerunningID = clubMember.timerunningSeasonID
-                data.faction = clubMember.faction
-            end
-
-            guildTable[#guildTable + 1] = data
+                class = class,
+                zone = (isMobile and not online) and REMOTE_CHAT or Plain(zone),
+                note = Plain(note) or "",
+                officerNote = Plain(officerNote) or "",
+                status = isMobile and MOBILE_ICONS[status] or Social.GetStatusTag(status == 1, status == 2),
+                onlyMobile = isMobile and not online,
+                guid = Plain(guid),
+                faction = clubInfo and FACTION_ICONS[Plain(clubInfo.faction)] or "",
+                timerunning = clubInfo and clubInfo.timerunningSeasonID and Social.TIMERUNNING_ICON or "",
+            })
         end
     end
-
-    isFetchingGuild = false
+    table.sort(members, byRank and SortByRank or SortByName)
+    return members
 end
 
-local function FetchGuildMembersRun()
-    if isFetchingGuild then
-        GW.Wait(0.5, FetchGuildMembersRun)
+local function AddReputation()
+    local data = C_Reputation and C_Reputation.GetGuildFactionData and C_Reputation.GetGuildFactionData()
+    if not data or data.reaction == (MAX_REPUTATION_REACTION or 8) then
         return
     end
-
-    local now = GetTime()
-    local elapsed = now - lastGuildFetch
-    if elapsed < GUILD_FETCH_INTERVAL then
-        GW.Wait(GUILD_FETCH_INTERVAL - elapsed, FetchGuildMembersRun)
-        return
-    end
-
-    FetchGuildMembers_Internal()
-    fetchingGuildWaitQueued = false
-end
-
-local function FetchGuildMembers()
-    if not fetchingGuildWaitQueued then
-        fetchingGuildWaitQueued = true
-        GW.Wait(0.1, FetchGuildMembersRun)
+    local current = data.currentStanding - data.currentReactionThreshold
+    local needed = data.nextReactionThreshold - data.currentReactionThreshold
+    if needed > 0 then
+        GameTooltip:AddDoubleLine(COMBAT_FACTION_CHANGE, format("%s/%s (%d%%)", GW.GetLocalizedNumber(current), GW.GetLocalizedNumber(needed), math.floor(current / needed * 100)),
+            NOTE_COLOR.r, NOTE_COLOR.g, NOTE_COLOR.b, 1, 1, 1)
     end
 end
-GW.FetchGuildMembers = FetchGuildMembers
 
-local function Guild_OnEnter(self)
-    if not IsInGuild() then return end
-
-    GameTooltip:ClearLines()
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    -- get blizzard tooltip infos:
-    GameTooltip_SetTitle(GameTooltip, self.tooltipText)
-    if not self:IsEnabled() then
-        if self.factionGroup == "Neutral" then
-            GameTooltip:AddLine(FEATURE_NOT_AVAILBLE_PANDAREN, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
-        elseif self.minLevel then
-            GameTooltip:AddLine(format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, self.minLevel), RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
-        elseif self.disabledTooltip then
-            local disabledTooltipText = GetValueOrCallFunction(self, "disabledTooltip")
-            GameTooltip:AddLine(disabledTooltipText, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
-        end
-    end
-    GameTooltip:AddLine(" ")
-
-    local shiftDown = IsShiftKeyDown()
-    local total, online = GetNumGuildMembers()
-    if #guildTable == 0 then FetchGuildMembers() end
-
-    if not total then total = 0 end
-    if not online then online = 0 end
-
-    SortGuildTable(shiftDown)
-
-    local guildName, guildRank = GetGuildInfo("player")
-
-    if guildName and guildRank then
-        GameTooltip:AddDoubleLine(format(guildInfoString, guildName), format(guildInfoString2, online, total), tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
-        GameTooltip:AddLine(guildRank, 1, 1, 1, 1)
-    end
-
-    local guildMotD = not InCombatLockdown() and C_GuildInfo_GetMOTD()
-    if guildMotD and strlen(guildMotD) > 0 then
-        GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(format(guildMotDString, GUILD_MOTD, guildMotD), tthead.r, tthead.g, tthead.b, 1)
-    end
-
-    local guildFactionData = C_Reputation.GetGuildFactionData()
-    -- Show only if not on max rep
-    if guildFactionData and guildFactionData.reaction ~= 8 then
-        local nextReactionThreshold = guildFactionData.nextReactionThreshold - guildFactionData.currentReactionThreshold
-        local currentStanding = guildFactionData.currentStanding - guildFactionData.currentReactionThreshold
-        GameTooltip:AddLine(format(standingString, COMBAT_FACTION_CHANGE, GW.GetLocalizedNumber(currentStanding), GW.GetLocalizedNumber(nextReactionThreshold), ceil((currentStanding / nextReactionThreshold) * 100)))
-    end
-
-    local zonec
-
-    GameTooltip:AddLine(" ")
-    local limit = 20
-    for i, info in ipairs(guildTable) do
-        if i > limit then
-            local count = online - limit
-            if count > 1 then
-                GameTooltip:AddLine(format(moreMembersOnlineString, count), ttsubh.r, ttsubh.g, ttsubh.b)
-            end
-
+-- shift shows rank and notes instead of level and status
+local function AddMemberLines(members, showDetails)
+    local myZone = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+    for index, member in ipairs(members) do
+        if index > MAX_MEMBERS_SHOWN then
+            GameTooltip:AddLine(format("+%d %s ...", #members - MAX_MEMBERS_SHOWN, FRIENDS_LIST_ONLINE), NOTE_COLOR.r, NOTE_COLOR.g, NOTE_COLOR.b)
             break
         end
 
-        local zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
-        if zoneText and (zoneText == info.zone) then
-            zonec = activezone
-        else
-            zonec = inactivezone
-        end
-
-        local faction = info.faction == 1 and FACTION_ALLIANCE or info.faction == 0 and FACTION_HORDE or ""
-
-        local classc, levelc = GW.GWGetClassColor(info.class, true), GetQuestDifficultyColor(info.level)
-        if not classc then classc = levelc end
-
-        if shiftDown then
-            GameTooltip:AddDoubleLine(format(nameRankString, faction, info.name, info.rank), info.zone, classc.r, classc.g, classc.b, zonec.r, zonec.g, zonec.b)
-            if info.note ~= "" then
-                GameTooltip:AddLine(format(noteString, info.note), ttsubh.r, ttsubh.g, ttsubh.b, 1)
+        local zoneColor = Social.GetPlaceColor(member.zone and member.zone == myZone)
+        if showDetails then
+            local classColor = GW.GWGetClassColor(member.class, true, true)
+            GameTooltip:AddDoubleLine(member.faction .. classColor:WrapTextInColorCode(member.name) .. " |cff999999-|r " .. member.rank, member.zone,
+                1, 1, 1, zoneColor.r, zoneColor.g, zoneColor.b)
+            if member.note ~= "" then
+                GameTooltip:AddLine("   " .. LABEL_NOTE .. ": " .. member.note, NOTE_COLOR.r, NOTE_COLOR.g, NOTE_COLOR.b, true)
             end
-            if info.officerNote ~= "" then
-                GameTooltip:AddLine(format(officerNoteString, info.officerNote), ttoff.r, ttoff.g, ttoff.b, 1)
+            if member.officerNote ~= "" then
+                GameTooltip:AddLine("   " .. GUILD_RANK1_DESC .. ": " .. member.officerNote, OFFICER_NOTE_COLOR.r, OFFICER_NOTE_COLOR.g, OFFICER_NOTE_COLOR.b, true)
             end
         else
-            GameTooltip:AddDoubleLine(format(levelNameStatusString, faction, levelc.r*255, levelc.g*255, levelc.b*255, info.level, strmatch(info.name,"([^%-]+).*"), inGroup(info.name), info.status, info.timerunningID and TIMERUNNING_SMALL or ""), info.zone, classc.r,classc.g,classc.b, zonec.r,zonec.g,zonec.b)
+            local line = member.faction .. Social.FormatCharacter(member.level, member.name, member.class)
+                .. (Social.IsGroupMember(member.fullName) and Social.IN_GROUP_MARK or "") .. member.status .. member.timerunning
+            GameTooltip:AddDoubleLine(line, member.zone, 1, 1, 1, zoneColor.r, zoneColor.g, zoneColor.b)
         end
     end
+end
 
+local function Guild_OnEnter(self)
+    if not IsInGuild() then
+        return
+    end
+    Social.StartMicroButtonTooltip(self)
+
+    local headerColor = GW.Colors.FactionColors[GW.myfaction] or GW.Colors.FactionColors.Alliance
+    local total, online = GetNumGuildMembers()
+    local guildName, rankName = GetGuildInfo("player")
+    if guildName then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddDoubleLine(guildName, format("%s: %d/%d", GUILD, online or 0, total or 0),
+            headerColor.r, headerColor.g, headerColor.b, headerColor.r, headerColor.g, headerColor.b)
+        GameTooltip:AddLine(rankName, 1, 1, 1)
+    end
+
+    local motd = not InCombatLockdown() and GetGuildMOTD()
+    if GW.NotSecretValue(motd) and motd and motd ~= "" then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa-|r |cffffffff" .. motd, headerColor.r, headerColor.g, headerColor.b, true)
+    end
+    AddReputation()
+
+    local showDetails = IsShiftKeyDown()
+    GameTooltip:AddLine(" ")
+    AddMemberLines(GetOnlineMembers(showDetails), showDetails)
     GameTooltip:Show()
 end
 GW.Guild_OnEnter = Guild_OnEnter
 
-local function inviteClick(name, guid)
-    if not (name and name ~= "") then return end
+local function BuildMenu(_, root)
+    root:SetMinimumWidth(1)
+    root:CreateTitle(OPTIONS)
+    local inviteMenu = root:CreateButton(INVITE)
+    local whisperMenu = root:CreateButton(CHAT_MSG_WHISPER_INFORM)
 
-    if guid then
-        local inviteType = GetDisplayedInviteType(guid)
-        if inviteType == "INVITE" or inviteType == "SUGGEST_INVITE" then
-            C_PartyInfo.InviteUnit(name)
-        elseif inviteType == "REQUEST_INVITE" then
-            C_PartyInfo.RequestInviteFromUnit(name)
+    for _, member in ipairs(GetOnlineMembers()) do
+        if member.name ~= GW.myname then
+            local label = Social.FormatCharacter(member.level, member.name, member.class)
+            if Social.IsGroupMember(member.fullName) then
+                label = label .. " " .. Social.IN_GROUP_MARK
+            elseif not member.onlyMobile then
+                inviteMenu:CreateButton(label, function() Social.Invite(member.fullName, member.guid) end)
+            end
+            whisperMenu:CreateButton(label, function() ChatFrameUtil.SendTell(member.fullName) end)
         end
     end
-end
-
-local function whisperClick(playerName)
-    SetItemRef("player:" .. playerName, format("|Hplayer:%1$s|h[%1$s]|h", playerName), "LeftButton")
 end
 
 local function Guild_OnClick(self, button)
     if button == "LeftButton" then
         self:OnClick()
     elseif button == "RightButton" and IsInGuild() then
-        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-            rootDescription:SetMinimumWidth(1)
-            rootDescription:CreateTitle(OPTIONS)
-            local submenuInvite = rootDescription:CreateButton(INVITE)
-            local submenuWisper = rootDescription:CreateButton(CHAT_MSG_WHISPER_INFORM)
-
-            for _, info in ipairs(guildTable) do
-                if (info.online or info.isMobile) and strmatch(info.name, "([^%-]+).*") ~= GW.myname then
-                    local classc, levelc = GW.GWGetClassColor(info.class, true), GetQuestDifficultyColor(info.level)
-                    if not classc then classc = levelc end
-
-                    local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, strmatch(info.name, "([^%-]+).*"))
-                    if inGroup(strmatch(info.name, "([^%-]+).*")) ~= "" then
-                        name = name .. " |cffaaaaaa*|r"
-                    elseif not (info.isMobile and info.zone == REMOTE_CHAT) then
-                        submenuInvite:CreateButton(name, function()
-                            inviteClick(strmatch(info.name, "([^%-]+).*"), info.guid)
-                        end)
-                    end
-
-                    submenuWisper:CreateButton(name, function()
-                        whisperClick(strmatch(info.name, "([^%-]+).*"))
-                    end)
-                end
-            end
-        end)
+        MenuUtil.CreateContextMenu(self, BuildMenu)
     end
 end
 GW.Guild_OnClick = Guild_OnClick
