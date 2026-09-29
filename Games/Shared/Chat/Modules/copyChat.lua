@@ -1,6 +1,8 @@
 ---@class GW2
 local GW = select(2, ...)
 
+local L = GW.L
+local PROTECTED_LINE = L["<protected message, cannot be copied>"]
 local window
 
 -- the last lines of a chat window as plain text in their chat colors
@@ -9,8 +11,9 @@ local function GetChatText(chatFrame)
     local numMessages = chatFrame:GetNumMessages()
     for index = math.max(1, numMessages - GW.settings.chat.maxCopyLines + 1), numMessages do
         local text, r, g, b = chatFrame:GetMessageInfo(index)
-        -- battle.net names are protected strings, those lines stay out
-        if GW.NotSecretValue(text) and type(text) == "string" and not strfind(text, "|K", 1, true) then
+        if GW.IsSecretValue(text) or type(text) == "string" and strfind(text, "|K", 1, true) then
+            tinsert(lines, GW.RGBToHex(GW.Colors.SkinColors.Disabled:GetRGB()) .. PROTECTED_LINE .. "|r")
+        elseif type(text) == "string" then
             tinsert(lines, GW.RGBToHex(r or 1, g or 1, b or 1) .. GW.GetPlainChatLine(text, true) .. "|r")
         end
     end
@@ -70,10 +73,15 @@ local function ToggleWindow(chatFrame)
         window:Hide()
         return
     end
+    local editBox = window.text:GetEditBox()
     window.text:SetText(GetChatText(chatFrame))
     window:Show()
-    -- the newest lines at the bottom are the interesting ones
-    C_Timer.After(0, function() window.text:GetScrollBox():ScrollToEnd() end)
+    editBox:SetCursorPosition(editBox:GetNumLetters())
+    for _, delay in ipairs({0, 0.1}) do
+        C_Timer.After(delay, function()
+            window.text:GetScrollBox():ScrollToEnd(ScrollBoxConstants.NoScrollInterpolation)
+        end)
+    end
 end
 
 -- a right click on the button of the main window opens blizzards chat menu instead
@@ -98,20 +106,13 @@ local function CreateButton(chatFrame)
     button:SetPoint("TOPRIGHT", chatFrame, "TOPRIGHT", GW.isModern and 20 or 0, GW.isModern and 26 or 4)
     button:SetFrameLevel(chatFrame:GetFrameLevel() + 5)
     button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png")
-    button:SetAlpha(0.35)
+    button:GetNormalTexture():SetAlpha(0.35)
     button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    button:SetScript("OnClick", function(self, mouseButton)
-        if mouseButton == "RightButton" and chatFrame:GetID() == 1 then
-            OpenChatMenu(self)
-        else
-            ToggleWindow(chatFrame)
-        end
+    button:SetScript("OnClick", function()
+        ToggleWindow(chatFrame)
     end)
-    button:SetScript("OnEnter", function(self) self:SetAlpha(1) end)
-    button:SetScript("OnLeave", function(self)
-        local tab = _G[chatFrame:GetName() .. "Tab"]
-        self:SetAlpha(tab and tab.Text:IsShown() and 0.35 or 0)
-    end)
+    button:SetScript("OnEnter", function(self) self:GetNormalTexture():SetAlpha(1) end)
+    button:SetScript("OnLeave", function(self) self:GetNormalTexture():SetAlpha(0.35) end)
     chatFrame.copyButton = button
 end
 

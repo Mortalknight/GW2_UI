@@ -426,7 +426,7 @@ local function handleChatFrameFadeIn(chatFrame, force)
     end
 
     if chatFrame.copyButton then
-        UIFrameFadeIn(chatFrame.copyButton, 0.5, chatFrame.copyButton:GetAlpha(), 0.35)
+        UIFrameFadeIn(chatFrame.copyButton, 0.5, chatFrame.copyButton:GetAlpha(), 1)
     end
     if chatFrame.buttonEmote then
         UIFrameFadeIn(chatFrame.buttonEmote, 0.5, chatFrame.buttonEmote:GetAlpha(), 0.35)
