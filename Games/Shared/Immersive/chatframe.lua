@@ -583,8 +583,7 @@ function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _,
     end
 
     -- handle the class color
-
-    local info = name and arg12 and _G.ChatTypeInfo[chatType]
+    local info = name and arg12 and ChatTypeInfo[chatType]
     if info and ChatFrameUtil.ShouldColorChatByClass(info) then
         local data = GW_GetPlayerInfoByGUID(arg12)
         local color = data and data.classColor
@@ -1347,17 +1346,20 @@ local function DisplayChatHistory()
 
     SoundTimer = true -- ignore sounds
 
-    for _, chat in ipairs(CHAT_FRAMES) do
-        for _, d in ipairs(data) do
-            if type(d) == "table" then
-                for _, messageType in pairs(_G[chat].messageTypeList) do
-                    local historyType, skip = historyTypes[d[50]]
-                    if historyType then -- let others go by..
-                        if not GW.settings.chat.history.types[historyType] then skip = true end
-                    end
-                    if not skip and gsub(strsub(d[50],10),"_INFORM","") == messageType then
-                        if d[1] and not GW.ChatFunctions:IsMessageProtected(d[1]) then
-                            GW.ChatFrame_MessageEventHandler(_G[chat],d[50],d[1],d[2],d[3],d[4],d[5],d[6],d[7],d[8],d[9],d[10],d[11],d[12],d[13],d[14],d[15],d[16],d[17], d[18],"GW2UI_ChatHistory",d[51],d[52],d[53])
+    for _, chatName in ipairs(CHAT_FRAMES) do
+        local chat = _G[chatName]
+        if chat then
+            for _, d in ipairs(data) do
+                local event = type(d) == "table" and d[50]
+                if event then
+                    local historyType = historyTypes[event]
+                    if not historyType or GW.settings.chat.history.types[historyType] then
+                        local chatType = gsub(strsub(event, 10), "_INFORM", "")
+                        for _, messageType in pairs(chat.messageTypeList) do
+                            local msg = chatType == messageType and d[1]
+                            if msg and not GW.ChatFunctions:IsMessageProtected(msg) then
+                                GW.ChatFrame_MessageEventHandler(chat,event,msg,d[2],d[3],d[4],d[5],d[6],d[7],d[8],d[9],d[10],d[11],d[12],d[13],d[14],d[15],d[16],d[17], d[18],"GW2UI_ChatHistory",d[51],d[52],d[53])
+                            end
                         end
                     end
                 end
@@ -1640,7 +1642,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
 
     local nameWithRealm, realm
     local data = GW_GetPlayerInfoByGUID(arg12)
-    if data then
+    if data and not GW.Forever then
         realm = data.realm
         nameWithRealm = data.nameWithRealm
     end
@@ -1767,7 +1769,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
     end
 
     if event == 'CAUTIONARY_CHAT_MESSAGE' then -- hyperlinkLineID, confirmNumber
-		ChatFrameUtil.HandleCautionaryChatMessage(arg1, arg2)
+        ChatFrameUtil.HandleCautionaryChatMessage(arg1, arg2)
     elseif strsub(event, 1, 8) == "CHAT_MSG" then
         if arg16 then return true end -- hiding sender in letterbox: do NOT even show in chat window (only shows in cinematic frame)
 
@@ -3359,8 +3361,8 @@ local function LoadChat()
     end
 
     if GW.Mists then -- allow chat to stay shown
-		hooksecurefunc("PetBattleFrame_Display", PetBattleFrame_Display)
-	end
+        hooksecurefunc("PetBattleFrame_Display", PetBattleFrame_Display)
+    end
 
     -- events for functions
     if GW.isModern then

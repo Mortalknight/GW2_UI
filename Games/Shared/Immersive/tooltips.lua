@@ -20,6 +20,13 @@ local genderTable = {
     " " .. FEMALE .. " "
 }
 
+local englishRaces = {
+    Pandaren = true,
+    Dracthyr = true,
+    EarthenDwarf = true,
+    Harronir = true
+}
+
 local LEVEL1 = strlower(TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?",""))
 local LEVEL2 = strlower((TOOLTIP_UNIT_LEVEL_RACE or TOOLTIP_UNIT_LEVEL_CLASS):gsub("^%%2$s%s?(.-)%s?%%1$s","%1"):gsub("^%-?г?о?%s?",""):gsub("%s?%%s%s?%-?",""))
 local IDLine = "|cffffedba%s|r %d"
@@ -413,20 +420,29 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local level, realLevel = UnitEffectiveLevel(unit), UnitLevel(unit)
         local relationship = UnitRealmRelationship(unit)
         local isShiftKeyDown = IsShiftKeyDown()
+        local useTitle = GW.settings.tooltip.unit.playerTitles and (pvpName and pvpName ~= "")
+
+        if GW.IsSecretValue(guildName) then
+            guildName, guildRankName, guildRealm = nil, nil, nil
+        end
 
         local nameColor = GWGetClassColor(class, GW.settings.tooltip.unit.classColor, true)
 
-        if GW.settings.tooltip.unit.playerTitles and pvpName and pvpName ~= "" then
+        if useTitle then
             name = pvpName
         end
 
-        if realm and realm ~= "" then
+        if GW.Forever then
+            if realm and not useTitle then
+                name = format("%s %s", name, realm)
+            end
+        elseif realm and realm ~= "" then
             if isShiftKeyDown or GW.settings.tooltip.unit.realmAlways then
-                name = name .. "-" .. realm
+                name = format("%s-%s", name, realm)
             elseif relationship == LE_REALM_RELATION_COALESCED then
-                name = name .. FOREIGN_SERVER_LABEL
+                name = format("%s%s", name, FOREIGN_SERVER_LABEL)
             elseif relationship == LE_REALM_RELATION_VIRTUAL then
-                name = name .. INTERACTIVE_SERVER_LABEL
+                name = format("%s%s", name, INTERACTIVE_SERVER_LABEL)
             end
         end
 
@@ -436,7 +452,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local levelLine, specLine = GetLevelLine(self, (guildName and not (GW.Classic or GW.TBC or GW.Wrath) and 2) or 1)
         if guildName then
             if guildRealm and isShiftKeyDown then
-                guildName = guildName.."-"..guildRealm
+                guildName = guildName .. "-" .. guildRealm
             end
 
             local text = GW.settings.tooltip.unit.guildRanks and format("<|cff00ff10%s|r> [|cff00ff10%s|r]", guildName, guildRankName) or format("<|cff00ff10%s|r>", guildName)
@@ -449,23 +465,25 @@ local function SetUnitText(self, unit, isPlayerUnit)
 
         if levelLine then
             local diffColor = GetCreatureDifficultyColor(level)
+            local shownLevel = level > 0 and level or "??"
             local race, englishRace = UnitRace(unit)
             if GW.IsSecretValue(race) or GW.IsSecretValue(englishRace) then
                 race, englishRace = "", ""
             end
 
             local _, localizedFaction = GW.GetUnitBattlefieldFaction(unit)
-            if localizedFaction and (englishRace == "Pandaren" or englishRace == "Dracthyr" or englishRace == "Earthen") then
-                race = localizedFaction .. " " .. race
+            if localizedFaction and englishRaces[englishRace] then
+                race = format("%s %s", localizedFaction, race)
             end
             local hexColor = GW.RGBToHex(diffColor.r, diffColor.g, diffColor.b)
             local unitGender = GW.settings.tooltip.unit.gender and GW.NotSecretValue(gender) and genderTable[gender]
 
             local levelText
+
             if level < realLevel then
-                levelText = format("%s%s|r |cffFFFFFF(%s)|r %s%s", hexColor, level > 0 and level or "??", realLevel, unitGender or "", race or "")
+                levelText = format("%s%s|r |cffFFFFFF(%s)|r %s%s", hexColor, shownLevel, realLevel, unitGender or "", race or "")
             else
-                levelText = format("%s%s|r %s%s", hexColor, level > 0 and level or "??", unitGender or "", race or "")
+                levelText = format("%s%s|r %s%s", hexColor, shownLevel, unitGender or "", race or "")
             end
 
             if GW.isModern then
