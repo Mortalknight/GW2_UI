@@ -341,23 +341,19 @@ local function Minimap_OnMouseWheel(_, d)
     end
 end
 
+-- the colors blizzards own minimap gives the zone name, by pvp type of the zone
+local HOSTILE_ZONE_COLOR = CreateColor(1, 0.1, 0.1)
+local ZONE_COLORS = {
+    sanctuary = CreateColor(0.41, 0.8, 0.94),
+    friendly = CreateColor(0.1, 1, 0.1),
+    contested = CreateColor(1, 0.7, 0),
+    hostile = HOSTILE_ZONE_COLOR,
+    arena = HOSTILE_ZONE_COLOR,
+    combat = HOSTILE_ZONE_COLOR,
+}
+
 local function GetLocTextColor()
-    local pvpType = C_PvP.GetZonePVPInfo()
-    if pvpType == "arena" then
-        return 0.84, 0.03, 0.03
-    elseif pvpType == "friendly" then
-        return 0.05, 0.85, 0.03
-    elseif pvpType == "contested" then
-        return 0.9, 0.85, 0.05
-    elseif pvpType == "hostile" then
-        return 0.84, 0.03, 0.03
-    elseif pvpType == "sanctuary" then
-        return 0.035, 0.58, 0.84
-    elseif pvpType == "combat" then
-        return 0.84, 0.03, 0.03
-    else
-        return 0.9, 0.85, 0.05
-    end
+    return (ZONE_COLORS[C_PvP.GetZonePVPInfo()] or NORMAL_FONT_COLOR):GetRGB()
 end
 
 local function Update_ZoneText()

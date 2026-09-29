@@ -173,19 +173,17 @@ function GW.CropRatio(width, height, mult)
     return left, right, top, bottom
 end
 
-function GW.GetClassCoords(classFile, crop, get)
-    local t = CLASS_ICON_TCOORDS[classFile]
-    if not t then return 0, 1, 0, 1 end
-
-    if get then
-        return t
-    elseif type(crop) == "number" then
-        return t[1] + crop, t[2] - crop, t[3] + crop, t[4] - crop
-    elseif crop then
-        return t[1] + 0.022, t[2] - 0.025, t[3] + 0.022, t[4] - 0.025
-    else
-        return t[1], t[2], t[3], t[4]
+-- the class icon coords, crop trims the round border a little
+function GW.GetClassCoords(classFile, crop)
+    local coords = CLASS_ICON_TCOORDS[classFile]
+    if not coords then
+        return 0, 1, 0, 1
     end
+    local left, right, top, bottom = unpack(coords)
+    if crop then
+        return left + 0.022, right - 0.025, top + 0.022, bottom - 0.025
+    end
+    return left, right, top, bottom
 end
 
 local function SetAlphaRecursive(frame, alpha)

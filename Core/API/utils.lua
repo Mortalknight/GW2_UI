@@ -499,27 +499,21 @@ end
 GW.HexToRGB = HexToRGB
 
 
-local function GetUnitBattlefieldFaction(unit)
-    local englishFaction, localizedFaction = UnitFactionGroup(unit)
-
-    -- this might be a rated BG or wargame and if so the player's faction might be altered
-    -- should also apply if `player` is a mercenary.
-    if unit == "player" and GW.Retail then
-        if C_PvP.IsRatedBattleground() or IsWargame() then
-            englishFaction = PLAYER_FACTION_GROUP[GetBattlefieldArenaFaction()]
-            localizedFaction = (englishFaction == "Alliance" and FACTION_ALLIANCE) or FACTION_HORDE
-        elseif UnitIsMercenary(unit) then
-            if englishFaction == "Alliance" then
-                englishFaction, localizedFaction = "Horde", FACTION_HORDE
-            else
-                englishFaction, localizedFaction = "Alliance", FACTION_ALLIANCE
-            end
-        end
+-- the side a unit fights for: rated battlegrounds, wargames and mercenary mode can put the player on the other one
+function GW.GetUnitBattlefieldFaction(unit)
+    local faction, localizedFaction = UnitFactionGroup(unit)
+    if unit ~= "player" or not GW.Retail then
+        return faction, localizedFaction
     end
-
-    return englishFaction, localizedFaction
+    if C_PvP.IsRatedBattleground() or IsWargame() then
+        faction = PLAYER_FACTION_GROUP[GetBattlefieldArenaFaction()]
+    elseif UnitIsMercenary(unit) then
+        faction = faction == "Alliance" and "Horde" or "Alliance"
+    else
+        return faction, localizedFaction
+    end
+    return faction, faction == "Alliance" and FACTION_ALLIANCE or FACTION_HORDE
 end
-GW.GetUnitBattlefieldFaction = GetUnitBattlefieldFaction
 
 local function FillTable(T, map, ...)
     wipe(T)

@@ -94,73 +94,52 @@ function GwCastingBarMixin:SetCastTicks(numTicks)
     end
 end
 
-function GwCastingBarMixin:CheckForTicks()
-    local baseTicks = GW.ChannelTicks[self.spellID]
+-- the ticks of the running channel: a talent or an aura can change the count, recasting a chain
+-- channel in time adds some, and haste adds one per full tick worth of haste, from half a tick on
+local function GetChannelTicks(bar)
+    local spellID = bar.spellID
+    local ticks = GW.NotSecretValue(spellID) and GW.ChannelTicks[spellID]
+    if not ticks then
+        return
+    end
 
-    local talentTicks = baseTicks and GW.TalentChannelTicks[self.spellID]
-    if talentTicks then
-        for auraId, tickCount in next, talentTicks do
-            if GW.IsSpellKnown(auraId) then
-                if GW.IsSpellInSpellBook(auraId) or GW.IsSpellKnown(auraId) then
-					baseTicks = tickCount
-					break
-				end
-            end
+    for talentID, count in pairs(GW.TalentChannelTicks[spellID] or {}) do
+        if GW.IsSpellKnown(talentID) then
+            ticks = count
+            break
+        end
+    end
+    local auraTicks = GW.AuraChannelTicks[spellID]
+    for auraID, count in pairs(auraTicks and auraTicks.spells or {}) do
+        if C_UnitAuras.GetPlayerAuraBySpellID(auraID) then
+            ticks = count
+            break
         end
     end
 
-    local auraTicks = baseTicks and GW.AuraChannelTicks[self.spellID]
-    if auraTicks then
-        for auraID, tickCount in next, auraTicks.spells do
-            local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(auraID)
-            if auraInfo then
-                baseTicks = tickCount
-                break
-            end
+    local chainBonus = GW.ChainChannelTicks[spellID]
+    if chainBonus then
+        local now, window = GetTime(), GW.ChainChannelTime[spellID]
+        if window and bar.lastChainSpell == spellID and now - bar.lastChainTime < window then
+            ticks = ticks + chainBonus
         end
-    end
-
-    local chainTicks = baseTicks and GW.ChainChannelTicks[self.spellID]
-    if chainTicks then
-        local now = GetTime()
-        local seconds = GW.ChainChannelTime[self.spellID]
-        local match = seconds and self.chainTime and self.chainTick == self.spellID
-
-        if match and (now - seconds) < self.chainTime then
-            baseTicks = baseTicks + chainTicks
-        end
-
-        self.chainTime = now
-        self.chainTick = self.spellID
+        bar.lastChainSpell, bar.lastChainTime = spellID, now
     else
-        self.chainTick = nil
-        self.chainTime = nil
+        bar.lastChainSpell = nil
     end
 
-    local hasteTicks = baseTicks and GW.HastedChannelTicks[self.spellID]
-    if hasteTicks then -- requires tickSize
-        local haste = UnitSpellHaste("player") * 0.01
-        local rate = 1 / baseTicks
-        local first = rate * 0.5
+    local haste = GW.HastedChannelTicks[spellID] and UnitSpellHaste("player")
+    if GW.NotSecretValue(haste) and haste then
+        haste = haste / 100
+        ticks = ticks + math.max(0, math.floor(haste * ticks + 0.5))
+    end
+    return ticks
+end
 
-        local bonus = 0
-        if haste >= first then
-            bonus = bonus + 1
-        end
-
-        local x = GW.RoundDec(first + rate, 2)
-        while haste >= x do
-            x = GW.RoundDec(first + (rate * bonus), 2)
-
-            if haste >= x then
-                bonus = bonus + 1
-            end
-        end
-
-        self:SetCastTicks(baseTicks + bonus)
-        self.hadTicks = true
-    elseif baseTicks then
-        self:SetCastTicks(baseTicks)
+function GwCastingBarMixin:CheckForTicks()
+    local ticks = GetChannelTicks(self)
+    if ticks then
+        self:SetCastTicks(ticks)
         self.hadTicks = true
     else
         self:HideTicks()
@@ -422,8 +401,7 @@ function GwCastingBarMixin:Reset()
     if self.hadTicks and self.unit == "player" then
         self:HideTicks()
         self.hadTicks = false
-        self.chainTick = nil
-        self.chainTime = nil
+        self.lastChainSpell = nil
     end
 end
 
