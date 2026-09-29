@@ -359,7 +359,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
     if not (GW.Classic or GW.TBC or GW.Wrath) and canInspect then
         if self.showItemLevel == "ITEM_LEVEL" then
             local guid = UnitGUID(self.gwUnit)
-            if guid then
+            if GW.NotSecretValue(guid) and guid then
                 local cachedIlvl = GW.unitIlvlsCache[guid]
                 if cachedIlvl and cachedIlvl.itemLevel then
                     txt = RoundDec(cachedIlvl.itemLevel, 0)
@@ -427,7 +427,8 @@ end
 
 function GwUnitFrameMixin:UpdateAvgItemLevel(guid)
     local selfGuid = UnitGUID(self.gwUnit)
-    if (GW.NotSecretValue(self.gwUnit) and GW.NotSecretValue(guid) and GW.NotSecretValue(selfGuid)) and (guid ~= selfGuid or not UnitIsPlayer(self.gwUnit) or (GW.Mists and not InCombatLockdown() and not CheckInteractDistance(self.gwUnit, 4)) or not CanInspect(self.gwUnit)) then return end
+    -- secret guids cannot be compared nor used as cache keys
+    if GW.IsSecretValue(guid) or GW.IsSecretValue(selfGuid) or guid ~= selfGuid or not UnitIsPlayer(self.gwUnit) or (GW.Mists and not InCombatLockdown() and not CheckInteractDistance(self.gwUnit, 4)) or not CanInspect(self.gwUnit) then return end
 
     local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel(self.gwUnit)
 

@@ -13,7 +13,7 @@ local GetItemInfoInstant = C_Item.GetItemInfoInstant or GetItemInfoInstant
 
 -- the item levels of inspected players, for tooltips and unit frames
 function GW.PopulateUnitIlvlsCache(unitGUID, itemLevel)
-    if not itemLevel then
+    if GW.IsSecretValue(unitGUID) or not unitGUID or not itemLevel then
         return
     end
     local cached = GW.unitIlvlsCache[unitGUID] or {}
