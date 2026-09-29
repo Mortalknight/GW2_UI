@@ -2,5 +2,4 @@
 ..\FrameXML\UI.xsd">
 
     <Script file="worldmap.lua"/>
-    <Script file="questLog.lua"/>
 </Ui>

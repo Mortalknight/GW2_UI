@@ -3,6 +3,5 @@
 
     <Script file="worldmap.lua"/>
     <Script file="flightmap.lua"/>
-    <Script file="questLog.lua"/>
     <Script file="inspectFrame.lua"/>
 </Ui>
