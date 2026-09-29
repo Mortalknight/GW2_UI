@@ -23,6 +23,11 @@ local function GetOnlineFriends()
     return friends
 end
 
+local function GetCharacterName(game)
+    local name = game.clientProgram == BNET_CLIENT_WOW and game.characterName
+    return GW.NotSecretValue(name) and name ~= "" and name or nil
+end
+
 -- own wow project first, then other wow projects, other games, and friends who only have the app open
 local function GetClientOrder(game)
     if game.clientProgram == BNET_CLIENT_WOW then
@@ -32,7 +37,7 @@ local function GetClientOrder(game)
 end
 
 local function GetEntryName(entry)
-    return entry.game.clientProgram == BNET_CLIENT_WOW and entry.game.characterName or entry.account.accountName or ""
+    return GetCharacterName(entry.game) or entry.account.accountName or ""
 end
 
 local function SortEntries(a, b)
@@ -102,9 +107,10 @@ local function AddBNetLines(entries, myZone, showDetails)
         local icon = BNet_GetClientEmbeddedAtlas(game.clientProgram, 14) .. " "
         local status = Social.GetStatusTag(account.isAFK or game.isGameAFK, account.isDND or game.isGameBusy)
 
-        if game.clientProgram == BNET_CLIENT_WOW and game.characterName then
-            local name = icon .. FormatCharacter(game.characterLevel, game.characterName, game.className)
-                .. (Social.IsGroupMember(game.characterName, game.realmName) and Social.IN_GROUP_MARK or "") .. status
+        local characterName = GetCharacterName(game)
+        if characterName then
+            local name = icon .. FormatCharacter(game.characterLevel, characterName, game.className)
+                .. (Social.IsGroupMember(characterName, game.realmName) and Social.IN_GROUP_MARK or "") .. status
                 .. (game.timerunningSeasonID and Social.TIMERUNNING_ICON or "")
             GameTooltip:AddDoubleLine(name, account.accountName, 1, 1, 1, ACCOUNT_COLOR.r, ACCOUNT_COLOR.g, ACCOUNT_COLOR.b)
             if showDetails then
@@ -201,9 +207,9 @@ local function BuildMenu(_, root)
             whisperAdded[account.bnetAccountID] = true
             whisperMenu:CreateButton(account.accountName, function() ChatFrameUtil.SendBNetTell(account.accountName) end)
         end
-        if game.clientProgram == BNET_CLIENT_WOW and game.wowProjectID == WOW_PROJECT_ID and game.characterName
-            and not Social.IsGroupMember(game.characterName, game.realmName) then
-            inviteMenu:CreateButton(FormatCharacter(game.characterLevel, game.characterName, game.className), function()
+        local characterName = GetCharacterName(game)
+        if characterName and game.wowProjectID == WOW_PROJECT_ID and not Social.IsGroupMember(characterName, game.realmName) then
+            inviteMenu:CreateButton(FormatCharacter(game.characterLevel, characterName, game.className), function()
                 Social.Invite(game.gameAccountID, game.playerGuid, true)
             end)
         end
