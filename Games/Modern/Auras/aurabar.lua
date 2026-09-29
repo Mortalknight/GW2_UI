@@ -3,57 +3,6 @@ local GW = select(2, ...)
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetDebuffColorCurve = GW.GetDebuffColorCurve
 
-local DIRECTION_TO_POINT = {
-    DOWNR = "TOPLEFT",
-    DOWN = "TOPRIGHT",
-    UPR = "BOTTOMLEFT",
-    UP = "BOTTOMRIGHT",
-    UPL_COLUMN = "BOTTOMRIGHT",
-    UPR_COLUMN = "BOTTOMLEFT",
-    DOWNL_COLUMN = "TOPRIGHT",
-    DOWNR_COLUMN = "TOPLEFT",
-}
-
-local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
-    UPR = 1,
-    DOWNR = 1,
-    DOWN = -1,
-    UP = -1,
-    UPL_COLUMN = -1,
-    UPR_COLUMN = 1,
-    DOWNL_COLUMN = -1,
-    DOWNR_COLUMN = 1,
-}
-
-local DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER = {
-    UPR = 1,
-    DOWNR = -1,
-    DOWN = -1,
-    UP = 1,
-    UPL_COLUMN = 1,
-    UPR_COLUMN = 1,
-    DOWNL_COLUMN = -1,
-    DOWNR_COLUMN = -1,
-}
-
-local DIRECTION_IS_COLUMN_LAYOUT = {
-    UPL_COLUMN = true,
-    UPR_COLUMN = true,
-    DOWNL_COLUMN = true,
-    DOWNR_COLUMN = true,
-}
-
-local DIRECTION_TO_DEBUFF_ANCHOR = {
-    DOWNR = "BOTTOMLEFT",
-    DOWN = "BOTTOMRIGHT",
-    UPR = "TOPLEFT",
-    UP = "TOPRIGHT",
-    UPL_COLUMN = "TOPRIGHT",
-    UPR_COLUMN = "TOPLEFT",
-    DOWNL_COLUMN = "BOTTOMRIGHT",
-    DOWNR_COLUMN = "BOTTOMLEFT",
-}
-
 local GROUP_OWN = "GwAurasOwn"
 local GROUP_OTHERS = "GwAurasOthers"
 local GROUP_OWN_DISPELLABLE = "GwAurasOwnDispellable"
@@ -62,7 +11,7 @@ local GROUP_OTHERS_DISPELLABLE = "GwAurasOthersDispellable"
 local function GetButtonMainAxisSize(db)
     local width = db.IconSize
     local height = db.KeepSizeRatio and width or db.IconHeight
-    return DIRECTION_IS_COLUMN_LAYOUT[db.GrowDirection] and height or width, width, height
+    return GW.GetAuraGrowDirection(db.GrowDirection).column and height or width, width, height
 end
 
 local function ApplyButtonSizeAndCrop(button, width, height, keepSizeRatio)
@@ -192,8 +141,8 @@ local function UpdateAuraHeader(header)
 
     local db = GW.settings.playerAuras[header.auraKey]
     local mainAxisSize, width, height = GetButtonMainAxisSize(db)
-    local grow_dir = db.GrowDirection
-    local isColumnLayout = DIRECTION_IS_COLUMN_LAYOUT[grow_dir]
+    local grow = GW.GetAuraGrowDirection(db.GrowDirection)
+    local isColumnLayout = grow.column
     local horizontalSpacing = db.HorizontalSpacing
     local verticalSpacing = db.VerticalSpacing
     local maxWraps = db.MaxWraps
@@ -207,10 +156,10 @@ local function UpdateAuraHeader(header)
 
     -- flow layout of the container
     header:SetFlowLayoutAxis(isColumnLayout and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal)
-    header:SetFlowLayoutAnchorPoint(DIRECTION_TO_POINT[grow_dir])
+    header:SetFlowLayoutAnchorPoint(grow.point)
     header:SetFlowLayoutGrowthDirection(
-        DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] > 0 and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left,
-        DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] > 0 and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
+        grow.x > 0 and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left,
+        grow.y > 0 and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
     )
     -- wrapAfter (count) -> maximum line length in pixels
     header:SetFlowLayoutMaximumLineSize(wrapAfter * (mainAxisSize + mainAxisSpacing))
@@ -293,14 +242,13 @@ local function UpdateAuraHeader(header)
     -- anchoring: buffs to the mover, debuffs relative to the buffs (as long as not moved separately)
     if header.filter == "HELPFUL" then
         header:ClearAllPoints()
-        header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
+        header:SetPoint(grow.point, header.gwMover, grow.point, 0, 0)
     else
         header:ClearAllPoints()
         if not header.isMoved then
-            local anchor = DIRECTION_TO_DEBUFF_ANCHOR[grow_dir]
-            header:SetPoint(anchor, GW2UIPlayerBuffs, anchor, 0, DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height))
+            header:SetPoint(grow.below, GW2UIPlayerBuffs, grow.below, 0, grow.y * (verticalSpacing + height))
         else
-            header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
+            header:SetPoint(grow.point, header.gwMover, grow.point, 0, 0)
         end
     end
 end
@@ -394,8 +342,7 @@ local function loadAuras(lm)
     hb:Show()
     lm:RegisterBuffFrame(hb.gwLayoutProxy)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function()
-        local grow_dir = GW.settings.playerAuras[hb.auraKey].GrowDirection
-        local anchor_hb = DIRECTION_TO_POINT[grow_dir]
+        local anchor_hb = GW.GetAuraGrowDirection(GW.settings.playerAuras[hb.auraKey].GrowDirection).point
 
         hb:ClearAllPoints()
         hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
@@ -405,8 +352,7 @@ local function loadAuras(lm)
     hd:Show()
     lm:RegisterDebuffFrame(hd.gwLayoutProxy)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function()
-        local grow_dir = GW.settings.playerAuras[hd.auraKey].GrowDirection
-        local anchor_hd = DIRECTION_TO_POINT[grow_dir]
+        local anchor_hd = GW.GetAuraGrowDirection(GW.settings.playerAuras[hd.auraKey].GrowDirection).point
 
         hd:ClearAllPoints()
         hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)

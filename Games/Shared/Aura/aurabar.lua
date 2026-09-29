@@ -1,644 +1,372 @@
 ---@class GW2
 local GW = select(2, ...)
 
-if GW.Retail then return end
+-- the classic clients show the player auras through blizzards secure aura header
+if GW.isModern then return end
 
-local Debug = GW.Debug
 local BadDispels = GW.Libs.Dispel:GetBadList()
-local RegisterMovableFrame = GW.RegisterMovableFrame
 
-local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
-    UPR = 1,
-    DOWNR = 1,
-    DOWN = -1,
-    UP = -1,
-    UPL_COLUMN = -1,
-    UPR_COLUMN = 1,
-    DOWNL_COLUMN = -1,
-    DOWNR_COLUMN = 1,
+local SHORT_AURA_DURATION = 121 -- up to here an aura shows the cooldown swipe
+local NEW_AURA_WINDOW = 0.5
+local REFRESH_INTERVAL = 0.1
+local ENCHANT_REFRESH_INTERVAL = 1
+
+-- the sort settings the modern aura bars share, as secure header attributes
+local SORT = {
+    DEFAULT = {method = "INDEX", direction = "+"},
+    EXPIRATION_ASC = {method = "TIME", direction = "+"},
+    EXPIRATION_DESC = {method = "TIME", direction = "-"},
+    NAME_ASC = {method = "NAME", direction = "+"},
+    NAME_DESC = {method = "NAME", direction = "-"},
 }
 
-local DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER = {
-    UPR = 1,
-    DOWNR = -1,
-    DOWN = -1,
-    UP = 1,
-    UPL_COLUMN = 1,
-    UPR_COLUMN = 1,
-    DOWNL_COLUMN = -1,
-    DOWNR_COLUMN = -1,
-}
-
-local DIRECTION_TO_POINT = {
-    DOWNR = "TOPLEFT",
-    DOWN = "TOPRIGHT",
-    UPR = "BOTTOMLEFT",
-    UP = "BOTTOMRIGHT",
-    UPL_COLUMN = "BOTTOMRIGHT",
-    UPR_COLUMN = "BOTTOMLEFT",
-    DOWNL_COLUMN = "TOPRIGHT",
-    DOWNR_COLUMN = "TOPLEFT",
-}
-
-local DIRECTION_TO_DEBUFF_ANCHOR = {
-    DOWNR = "BOTTOMLEFT",
-    DOWN = "BOTTOMRIGHT",
-    UPR = "TOPLEFT",
-    UP = "TOPRIGHT",
-    UPL_COLUMN = "TOPRIGHT",
-    UPR_COLUMN = "TOPLEFT",
-    DOWNL_COLUMN = "BOTTOMRIGHT",
-    DOWNR_COLUMN = "BOTTOMLEFT",
-}
-
-local DIRECTION_IS_COLUMN_LAYOUT = {
-    UPL_COLUMN = true,
-    UPR_COLUMN = true,
-    DOWNL_COLUMN = true,
-    DOWNR_COLUMN = true,
-}
-
-local AttributeCustomsVisibility = [[
+local VISIBILITY_SNIPPET = [[
     local header = self:GetFrameRef("AuraHeader")
-    local hide, shown = newstate == 0, header:IsShown()
-    if hide and shown then header:Hide() elseif not hide and not shown then header:Show() end
+    if newstate == 0 then header:Hide() else header:Show() end
 ]]
 
-local AttributeInitialConfig = [[
+local INITIAL_CONFIG_SNIPPET = [[
     local header = self:GetParent()
-
     self:SetWidth(header:GetAttribute("config-width"))
     self:SetHeight(header:GetAttribute("config-height"))
 ]]
 
-local function setLongCD(self, stackCount)
-    self.cooldown:Hide()
-    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW", -1)
-
-    if stackCount and stackCount > 99 then
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOWOUTLINE", -2)
-    else
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOWOUTLINE")
-    end
-
-    self.status:ClearAllPoints()
-    self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -6)
-    self.status:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -4, 2)
-    self.border:ClearAllPoints()
-    self.border:SetPoint("TOPLEFT", self, "TOPLEFT", 2, -4)
-    self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 0)
+local function GetSettings(button)
+    return GW.settings.playerAuras[button.header.auraKey]
 end
 
-local function setShortCD(self, expires, duration, stackCount)
-    self.cooldown:SetCooldown(expires - duration, duration)
-    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW", -1)
-
-    if stackCount and stackCount > 99 then
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOWOUTLINE", -2)
-    else
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOWOUTLINE")
-    end
-
-    self.status:ClearAllPoints()
-    self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4)
-    self.status:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -4, 4)
-    self.border:ClearAllPoints()
-    self.border:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-    self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
-end
-
-local function SetTooltip(self)
-    GameTooltip:ClearLines()
-
-    if self:GetAttribute("index") then
-        GameTooltip:SetUnitAura(self.header:GetAttribute("unit"), self:GetID(), self:GetFilter())
-    elseif self:GetAttribute("target-slot") then
-        GameTooltip:SetInventoryItem("player", self:GetID())
-    end
-end
-
-local function AuraOnEnter(self)
-    if(GameTooltip:IsForbidden() or not self:IsVisible()) then return end
-    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", -5, -5)
-
-    self.elapsed = 1
-end
-
-local function AuraOnShow(self)
-    if self.enchantIndex then
-        self.header.enchants[self.enchantIndex] = self
-        self.header.elapsedEnchants = 1
-    end
-end
-
-local function AuraOnHide(self)
-    if self.enchantIndex then
-        self.header.enchants[self.enchantIndex] = nil
-    else
-        self.instant = true
-    end
-end
-
-local function UpdateAura_OnUpdate(self, xpr, elapsed)
-    if self.nextUpdate > 0 then
-        self.nextUpdate = self.nextUpdate - elapsed
+-- short auras show the swipe and a big timer, long ones, endless ones and weapon enchants a small one
+local function SetTimerLayout(button, short, stacks)
+    local key = short and "short" or "long"
+    local manyStacks = stacks and stacks > 99
+    if button.timerLayout == key and button.manyStacks == manyStacks then
         return
     end
+    button.timerLayout, button.manyStacks = key, manyStacks
 
-    local now = GetTime()
-    local text, nextUpdate = GW.GetTimeInfo(self.endTime - now)
-    self.nextUpdate = nextUpdate
-
-    if self.auraType and self.auraType == 2 then -- temp weapon enchant
-        setLongCD(self, self.stackCount)
-
-        self.status.duration:SetText(text)
-        self.status.duration:Show()
-    elseif self.duration and self.duration ~= 0 then -- normal aura with duration
-        local remains = xpr - now
-        if self.duration < 121 then
-            setShortCD(self, xpr, self.duration, self.stackCount)
-            if self.duration - remains < 0.1 then
-                if GW.settings.playerAuras[self.header.auraKey].NewAuraAnimation and (self.oldAuraName ~= self.auraName) then
-                    self.agZoomIn:Play()
-                end
-            end
-        else
-            setLongCD(self, self.stackCount)
-        end
-        self.status.duration:SetText(text)
-        self.status.duration:Show()
-    else -- aura without duration or invalid
-        setLongCD(self, self.stackCount)
-        self.status.duration:Hide()
-    end
-end
-
-local function AuraButton_OnUpdate(self, elapsed)
-    local xpr = self.endTime
-    if xpr then
-        UpdateAura_OnUpdate(self, xpr, elapsed)
-    end
-
-    if self.elapsed and self.elapsed > 0.1 then
-        if GameTooltip:IsOwned(self) then
-            SetTooltip(self)
-        end
-
-        if xpr then
-            GW.UpdateTime(self, xpr)
-        end
-
-        self.elapsed = 0
+    local size = short and GW.Enum.TextSizeType.Normal or GW.Enum.TextSizeType.Small
+    button.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, size, "SHADOW", -1)
+    if manyStacks then
+        button.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOWOUTLINE", -2)
     else
-        self.elapsed = (self.elapsed or 0) + elapsed
+        button.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, size, "SHADOWOUTLINE")
+    end
+
+    local inset = short and 0 or 2
+    button.status:ClearAllPoints()
+    button.status:SetPoint("TOPLEFT", 4, short and -4 or -6)
+    button.status:SetPoint("BOTTOMRIGHT", -4, short and 4 or 2)
+    button.border:ClearAllPoints()
+    button.border:SetPoint("TOPLEFT", inset, -inset * 2)
+    button.border:SetPoint("BOTTOMRIGHT", -inset, 0)
+end
+
+local function ClearTimer(button)
+    button.expiration = nil
+    button.cooldown:Hide()
+    button.status.duration:SetText("")
+    SetTimerLayout(button, false, button.stacks)
+end
+
+local function ShowTimer(button, expiration, duration, noSwipe)
+    local short = not noSwipe and duration < SHORT_AURA_DURATION
+    button.expiration = expiration
+    button.nextTextUpdate = 0
+    SetTimerLayout(button, short, button.stacks)
+    if short then
+        button.cooldown:SetCooldown(expiration - duration, duration)
+        button.cooldown:Show()
+    else
+        button.cooldown:Hide()
     end
 end
 
-local function ClearAuraTime(self)
-    self.auraType = nil
-    self.stackCount = nil
-    self.duration = nil
-
-    self.auraName = nil
-    self.oldAuraName = nil
-    self.endTime = nil
-    self.auraInstanceID = nil
-    self.status.duration:SetText("")
-    self.cooldown:SetAlpha(0)
-
-    setLongCD(self, 0) -- to reset border and timer
-end
-
-local function UpdateTime(self, expires)
-    if (expires - GetTime()) < 0.1 then
-        ClearAuraTime(self)
-    end
-end
-GW.UpdateTime = UpdateTime
-
-local function SetCD(self, auraData, auraType)
-    local oldEnd = self.endTime
-    self.endTime = auraData.expirationTime
-    self.auraType = auraType
-    self.stackCount = auraData.applications
-    self.oldAuraName = self.auraName
-    self.auraName = auraData.name
-    self.auraInstanceID = auraData.auraInstanceID
-    self.duration = auraData.duration
-
-    if oldEnd ~= self.endTime then
-        self.nextUpdate = 0
-    end
-
-    UpdateTime(self, self.endTime)
-    self.elapsed = 0
-end
-
-local function SetCount(self, auraData)
-    if not self or not self.status or not self.gwInit then
-        return
-    end
-
-    self.status.stacks:SetText(auraData.applications > 1 and auraData.applications or "")
-end
-
-local function SetIcon(self, icon, dtype, auraType, spellId)
-    if not self or not self.status or not self.gwInit then
-        return
-    end
-
-    self.status.icon:SetTexture(icon)
-
+local function SetBorderColor(button, dispelType, spellID)
     local color
-    if auraType == 0 then -- Debuff
-        if dtype and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(dtype) then
-            color = GW.Colors.DebuffColors.BadDispel
-        else
-            color = GW.Colors.DebuffColors[dtype]
-        end
-        if not color then
-            color = GW.Colors.DebuffColors.None
-        end
-    elseif auraType == 1 then -- Buffs
-        color = GW.Colors.Fallback
-    elseif auraType == 2 then -- temp weapon enchant
+    if button.enchantIndex then
         color = GW.Colors.DebuffColors.Curse
+    elseif button.header.filter == "HELPFUL" then
+        color = GW.Colors.Fallback
+    elseif dispelType and BadDispels[spellID] and GW.Libs.Dispel:IsDispellableByMe(dispelType) then
+        color = GW.Colors.DebuffColors.BadDispel
+    else
+        color = GW.Colors.DebuffColors[dispelType] or GW.Colors.DebuffColors.None
     end
-    self.border.inner:SetVertexColor(color:GetRGB())
+    button.border.inner:SetVertexColor(color:GetRGB())
 end
 
-local function UpdateAura(self, index)
-    local auraData = C_UnitAuras.GetAuraDataByIndex(self.header:GetUnit(), index, self:GetFilter())
-    if not auraData then
-        self.oldAuraName = nil
-        self.auraName = nil
-        self.auraInstanceID = nil
+-- a new aura that was just applied zooms in
+local function UpdateAura(button, index)
+    local aura = C_UnitAuras.GetAuraDataByIndex(button.header:GetAttribute("unit"), index, button.header.filter)
+    if not aura then
+        button.auraInstanceID = nil
+        ClearTimer(button)
         return
     end
 
-    local auraType = self.header:GetAType()
-    self.auraInstanceID = auraData.auraInstanceID
-    self:SetIcon(auraData.icon, auraData.dispelName, auraType, auraData.spellId)
-    self:SetCount(auraData)
+    local isNew = aura.auraInstanceID ~= button.auraInstanceID
+    button.auraInstanceID = aura.auraInstanceID
+    button.stacks = aura.applications
+    button.status.icon:SetTexture(aura.icon)
+    button.status.stacks:SetText(aura.applications > 1 and aura.applications or "")
+    SetBorderColor(button, aura.dispelName, aura.spellId)
 
-    if auraData.duration > 0 and auraData.expirationTime then
-        self:SetCD(auraData, auraType)
+    if aura.duration > 0 and aura.expirationTime then
+        ShowTimer(button, aura.expirationTime, aura.duration)
+        if isNew and GetSettings(button).NewAuraAnimation and GetTime() - (aura.expirationTime - aura.duration) < NEW_AURA_WINDOW then
+            button.agZoomIn:Play()
+        end
     else
-        ClearAuraTime(self)
+        ClearTimer(button)
     end
 end
 
-local function UpdateTempEnchant(self, index, expires)
-    if expires then
-        self:SetIcon(GetInventoryItemTexture("player", index), nil, 2)
-        self.status.stacks:SetText("")
-        local auraData = {
-            expirationTime = (expires / 1000) + GetTime(),
-            duration = (expires / 1000),
-            applications = 0,
-            name = GetInventoryItemLink("player", index),
-        }
-        self:SetCD(auraData, 2)
-    else
-        ClearAuraTime(self)
+-- enchant buttons are TempEnchant1 to 3: main hand, off hand, ranged
+local function UpdateTempEnchant(button)
+    local _, mainHand, _, _, _, offHand, _, _, _, ranged = GetWeaponEnchantInfo()
+    local remaining = select(button.enchantIndex, mainHand, offHand, ranged)
+    if not remaining then
+        ClearTimer(button)
+        return
+    end
+    button.stacks = nil
+    button.status.icon:SetTexture(GetInventoryItemTexture("player", button:GetID()))
+    button.status.stacks:SetText("")
+    SetBorderColor(button)
+    ShowTimer(button, GetTime() + remaining / 1000, remaining / 1000, true)
+end
+
+local function UpdateTooltip(button)
+    GameTooltip:ClearLines()
+    if button:GetAttribute("index") then
+        GameTooltip:SetUnitAura(button.header:GetAttribute("unit"), button:GetID(), button.header.filter)
+    elseif button:GetAttribute("target-slot") then
+        GameTooltip:SetInventoryItem("player", button:GetID())
     end
 end
 
-local function HeaderOnEvent(self, event)
-    if event == "WEAPON_ENCHANT_CHANGED" then
-        local header = self.frame
-        for enchantIndex, button in next, header.enchantButtons do
-            if header.enchants[enchantIndex] ~= button then
-                header.enchants[enchantIndex] = button
-                header.elapsedEnchants = 0 -- reset the timer
+local function OnUpdate(button, elapsed)
+    if button.expiration then
+        button.nextTextUpdate = button.nextTextUpdate - elapsed
+        if button.nextTextUpdate <= 0 then
+            local remaining = button.expiration - GetTime()
+            if remaining < 0.1 then
+                ClearTimer(button)
+            else
+                local text, nextUpdate = GW.GetTimeInfo(remaining)
+                button.status.duration:SetText(text)
+                button.nextTextUpdate = nextUpdate
             end
         end
     end
-end
 
-local function HeaderOnUpdate(self, elapsed)
-    local header = self.frame
-
-    if header.elapsedSpells and header.elapsedSpells > 0.1 then
-        local button, value = next(header.spells)
-        while button do
-            UpdateAura(button, value)
-
-            header.spells[button] = nil
-            button, value = next(header.spells)
+    button.sinceRefresh = (button.sinceRefresh or 0) + elapsed
+    if button.sinceRefresh >= REFRESH_INTERVAL then
+        button.sinceEnchantRefresh = (button.sinceEnchantRefresh or 0) + button.sinceRefresh
+        button.sinceRefresh = 0
+        if GameTooltip:IsOwned(button) then
+            UpdateTooltip(button)
         end
-
-        header.elapsedSpells = 0
-    else
-        header.elapsedSpells = (header.elapsedSpells or 0) + elapsed
-    end
-
-    if header.elapsedEnchants and header.elapsedEnchants > 0.5 then
-        local index, enchant = next(header.enchants)
-        if index then
-            local _, main, _, _, _, offhand, _, _, _, ranged = GetWeaponEnchantInfo()
-
-            while enchant do
-                UpdateTempEnchant(enchant, enchant:GetID(), (index == 1 and main) or (index == 2 and offhand) or (index == 3 and ranged))
-
-                header.enchants[index] = nil
-                index, enchant = next(header.enchants)
-            end
+        -- poisons and oils can be renewed without any attribute changing
+        if button.enchantIndex and button.sinceEnchantRefresh >= ENCHANT_REFRESH_INTERVAL then
+            button.sinceEnchantRefresh = 0
+            UpdateTempEnchant(button)
         end
-
-        header.elapsedEnchants = 0
-    else
-        header.elapsedEnchants = (header.elapsedEnchants or 0) + elapsed
     end
 end
 
-local function GetFilter(self)
-    return self.header:GetFilter(self)
-end
-
-
-local function AuraOnAttributeChanged(self, attribute, value)
+-- the secure header hands each button its aura or weapon slot through these attributes
+local function OnAttributeChanged(button, attribute, value)
     if attribute == "index" then
-        if self.instant then
-            UpdateAura(self, value)
-            self.instant = nil
-        elseif self.header.spells[self] ~= value then
-            self.header.spells[self] = value
-        end
-    elseif attribute == "target-slot" and self.enchantIndex and self.header.enchants[self.enchantIndex] ~= self then
-        self.header.enchants[self.enchantIndex] = self
-        self.header.elapsedEnchants = 0
+        UpdateAura(button, value)
+    elseif attribute == "target-slot" and button.enchantIndex then
+        UpdateTempEnchant(button)
     end
 end
 
-local function UpdateIcon(self, updateSize)
-    local db = GW.settings.playerAuras[self.header.auraKey]
-    local width, height = db.IconSize, (db.KeepSizeRatio and db.IconSize) or db.IconHeight
-    if updateSize then
-        self:SetWidth(width)
-        self:SetHeight(height)
+local function OnEnter(button)
+    if not GameTooltip:IsForbidden() and button:IsVisible() then
+        GameTooltip:SetOwner(button, "ANCHOR_BOTTOMLEFT", -5, -5)
+        UpdateTooltip(button)
+        GameTooltip:Show()
     end
-    if db.keepSizeRatio then
-        self.status.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
+end
+
+local function UpdateIconSize(button, resize)
+    local db = GetSettings(button)
+    local width = db.IconSize
+    local height = db.KeepSizeRatio and width or db.IconHeight
+    if resize then
+        button:SetSize(width, height)
+    end
+    if db.KeepSizeRatio then
+        button.status.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
     else
-        local left, right, top, bottom = GW.CropRatio(width, height)
-        self.status.icon:SetTexCoord(left, right, top, bottom)
+        button.status.icon:SetTexCoord(GW.CropRatio(width, height))
     end
 end
 
+local function CreateZoomAnimation(button)
+    local group = button:CreateAnimationGroup()
+    local alpha = group:CreateAnimation("Alpha")
+    alpha:SetDuration(0.25)
+    alpha:SetFromAlpha(0.85)
+    alpha:SetToAlpha(1)
+    local scale = group:CreateAnimation("Scale")
+    scale:SetDuration(0.25)
+    scale:SetScaleFrom(2.5, 2.5)
+    scale:SetScaleTo(1, 1)
+    button.agZoomIn = group
+end
+
+-- OnLoad of GwAuraSecureTmpl, the secure header creates the buttons from it
 function GwAuraSecureTmpl_OnLoad(self)
     if self.gwInit then
         return
     end
-
+    self.gwInit = true
     self.header = self:GetParent()
-    self.name = self:GetName()
-
-    self.enchantIndex = tonumber(strmatch(self.name, "TempEnchant(%d)$"))
-    if self.enchantIndex then
-        self.header["enchant" .. self.enchantIndex] = self
-        self.header.enchantButtons[self.enchantIndex] = self
-    else
-        self.instant = true
-    end
+    self.enchantIndex = tonumber(strmatch(self:GetName(), "TempEnchant(%d)$"))
 
     self.cooldown:SetDrawBling(false)
     self.cooldown:SetDrawEdge(false)
-    self.cooldown:SetDrawSwipe(true)
-    self.cooldown:SetReverse(false)
     self.cooldown:SetHideCountdownNumbers(true)
+    CreateZoomAnimation(self)
+    ClearTimer(self)
+    UpdateIconSize(self)
 
-    self.SetCD = SetCD
-    self.SetCount = SetCount
-    self.SetIcon = SetIcon
-    self.GetFilter = GetFilter
-
-    self:SetScript("OnAttributeChanged", AuraOnAttributeChanged)
-
-    setLongCD(self) -- force font info to get set first time
-
-    -- create an animation group to "zoom in" a new aura
-    local duration = 0.25
-    local ag = self:CreateAnimationGroup()
-    self.agZoomIn = ag
-    local a1 = ag:CreateAnimation("alpha")
-    local a2 = ag:CreateAnimation("scale")
-
-    a1:SetOrder(1)
-    a1:SetDuration(duration)
-    a2:SetOrder(1)
-    a2:SetDuration(duration)
-
-    a1:SetFromAlpha(0.85)
-    a1:SetToAlpha(1.0)
-    a2:SetScaleFrom(2.5, 2.5)
-    a2:SetScaleTo(1.0, 1.0)
-
-    -- add mouseover handlers
-    self:SetScript("OnUpdate", AuraButton_OnUpdate)
-    self:SetScript("OnEnter", AuraOnEnter)
-    self:SetScript("OnShow", AuraOnShow)
-    self:SetScript("OnHide", AuraOnHide)
+    self:SetScript("OnAttributeChanged", OnAttributeChanged)
+    self:SetScript("OnUpdate", OnUpdate)
+    self:SetScript("OnEnter", OnEnter)
     self:SetScript("OnLeave", GameTooltip_Hide)
-
-    UpdateIcon(self)
-
-    self.gwInit = true
 end
 
--- shared sort presets (same setting values as the Retail container sorting) mapped
--- onto the SecureAuraHeader sortMethod/sortDirection attributes
-local SECURE_SORT_PRESETS = {
-    DEFAULT = { method = "INDEX", direction = "+" },
-    EXPIRATION_ASC = { method = "TIME", direction = "+" },
-    EXPIRATION_DESC = { method = "TIME", direction = "-" },
-    NAME_ASC = { method = "NAME", direction = "+" },
-    NAME_DESC = { method = "NAME", direction = "-" },
-}
-
 local function UpdateAuraHeader(header)
-    if not header then return end
+    if not header then
+        return
+    end
 
     local db = GW.settings.playerAuras[header.auraKey]
+    local grow = GW.GetAuraGrowDirection(db.GrowDirection)
     local width = db.IconSize
     local height = db.KeepSizeRatio and width or db.IconHeight
-    local grow_dir = db.GrowDirection
-    local maxWraps = db.MaxWraps
-    local horizontalSpacing = db.HorizontalSpacing
-    local verticalSpacing = db.VerticalSpacing
-    local wrapAfter = db.WrapAfter
-    if not wrapAfter or wrapAfter < 1 or wrapAfter > 20 then
-        wrapAfter = 7
-    end
-
-    local isColumnLayout = DIRECTION_IS_COLUMN_LAYOUT[grow_dir]
-    local minWidth = ((wrapAfter == 1 and 0 or horizontalSpacing) + width) * wrapAfter
-    local minHeight = height + 1
-    local xOffset = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] * (horizontalSpacing + width)
-    local yOffset = 0
-    local wrapXOffset = 0
-    local wrapYOffset = DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height)
-
-    if isColumnLayout then
-        minWidth = width + 1
-        minHeight = ((wrapAfter == 1 and 0 or verticalSpacing) + height) * wrapAfter
-        xOffset = 0
-        yOffset = DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height)
-        wrapXOffset = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] * (horizontalSpacing + width)
-        wrapYOffset = 0
-    end
-
-    Debug("settings", header.auraKey, grow_dir, wrapAfter, width, height)
+    local wrapAfter = (db.WrapAfter and db.WrapAfter >= 1 and db.WrapAfter <= 20) and db.WrapAfter or 7
+    local stepX = grow.x * (db.HorizontalSpacing + width)
+    local stepY = grow.y * (db.VerticalSpacing + height)
+    local sort = SORT[db.Sort] or SORT.DEFAULT
 
     header:SetAttribute("config-width", width)
     header:SetAttribute("config-height", height)
     header:SetAttribute("template", "GwAuraSecureTmpl")
     header:SetAttribute("weaponTemplate", header.filter == "HELPFUL" and "GwAuraSecureTmpl" or nil)
-    -- shared sort presets (same values as the Retail container sorting) mapped onto
-    -- the SecureAuraHeader attributes
-    local sort = SECURE_SORT_PRESETS[db.Sort] or SECURE_SORT_PRESETS.DEFAULT
     header:SetAttribute("sortMethod", sort.method)
     header:SetAttribute("sortDirection", sort.direction)
     header:SetAttribute("separateOwn", db.Seperate)
     header:SetAttribute("wrapAfter", wrapAfter)
-    header:SetAttribute("maxWraps", maxWraps)
-    header:SetAttribute("minWidth", minWidth)
-    header:SetAttribute("minHeight", minHeight)
-    header:SetAttribute("point", DIRECTION_TO_POINT[grow_dir])
-    header:SetAttribute("xOffset", xOffset)
-    header:SetAttribute("yOffset", yOffset)
-    header:SetAttribute("wrapXOffset", wrapXOffset)
-    header:SetAttribute("wrapYOffset", wrapYOffset)
-    header:SetAttribute("growDir", grow_dir)
-    header:SetAttribute("initialConfigFunction", AttributeInitialConfig)
+    header:SetAttribute("maxWraps", db.MaxWraps)
+    header:SetAttribute("point", grow.point)
+    -- rows step sideways and wrap up or down, columns the other way round
+    if grow.column then
+        header:SetAttribute("minWidth", width + 1)
+        header:SetAttribute("minHeight", ((wrapAfter == 1 and 0 or db.VerticalSpacing) + height) * wrapAfter)
+        header:SetAttribute("xOffset", 0)
+        header:SetAttribute("yOffset", stepY)
+        header:SetAttribute("wrapXOffset", stepX)
+        header:SetAttribute("wrapYOffset", 0)
+    else
+        header:SetAttribute("minWidth", ((wrapAfter == 1 and 0 or db.HorizontalSpacing) + width) * wrapAfter)
+        header:SetAttribute("minHeight", height + 1)
+        header:SetAttribute("xOffset", stepX)
+        header:SetAttribute("yOffset", 0)
+        header:SetAttribute("wrapXOffset", 0)
+        header:SetAttribute("wrapYOffset", stepY)
+    end
+    header:SetAttribute("initialConfigFunction", INITIAL_CONFIG_SNIPPET)
 
-    for index, child in next, {header:GetChildren()} do
-        UpdateIcon(child, true)
-
-        --icons arent being hidden when you reduce the amount of maximum buttons
-        if index > (maxWraps * wrapAfter) and child:IsShown() then
-            child:Hide()
+    -- the header does not hide the buttons beyond a smaller maximum on its own
+    local maxButtons = db.MaxWraps * wrapAfter
+    for index, button in ipairs({header:GetChildren()}) do
+        if button.gwInit then
+            UpdateIconSize(button, true)
+        end
+        if index > maxButtons and button:IsShown() then
+            button:Hide()
         end
     end
 
-    -- set anchoring
-    if header.filter == "HELPFUL" then
-        header:ClearAllPoints()
-        header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
+    -- the debuffs follow the buffs until they are moved on their own
+    header:ClearAllPoints()
+    if header.filter == "HARMFUL" and not header.isMoved then
+        header:SetPoint(grow.below, GW2UIPlayerBuffs, grow.below, 0, stepY)
     else
-        local anchor_hd
-        header:ClearAllPoints()
-        if not header.isMoved then
-            anchor_hd = DIRECTION_TO_DEBUFF_ANCHOR[grow_dir]
-            header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height))
-        else
-            header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
-        end
+        header:SetPoint(grow.point, header.gwMover, grow.point, 0, 0)
     end
 end
 GW.UpdateAuraHeader = UpdateAuraHeader
 
-local function newHeader(filter)
-    local name = filter == "HELPFUL" and "GW2UIPlayerBuffs" or "GW2UIPlayerDebuffs"
+local function CreateHeader(filter)
+    local isBuffs = filter == "HELPFUL"
+    local header = CreateFrame("Frame", isBuffs and "GW2UIPlayerBuffs" or "GW2UIPlayerDebuffs", UIParent, "SecureAuraHeaderTemplate")
+    header.filter = filter
+    header.auraKey = isBuffs and "buffs" or "debuffs"
+    header:SetClampedToScreen(true)
+    -- only the player and the vehicle matter, not every unit
+    header:UnregisterEvent("UNIT_AURA")
+    header:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
+    header:SetAttribute("unit", "player")
+    header:SetAttribute("filter", filter)
+    RegisterAttributeDriver(header, "unit", "[vehicleui] vehicle; player")
 
-    local h = CreateFrame("Frame", name, UIParent, "SecureAuraHeaderTemplate")
-    h:SetClampedToScreen(true)
-    h:UnregisterEvent("UNIT_AURA") -- only need player and vehicle, so we can reduce the calls
-    h:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
-    h.GetFilter = function(self) return self.filter end
-    h.GetAType = function(self) return self.filter == "HELPFUL" and 1 or 0 end
-    h.GetUnit = function(self) return self:GetAttribute("unit") end
+    local visibility = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+    SecureHandlerSetFrameRef(visibility, "AuraHeader", header)
+    visibility:SetAttribute("_onstate-customVisibility", VISIBILITY_SNIPPET)
+    RegisterStateDriver(visibility, "customVisibility", "[petbattle] 0; 1")
 
-    -- setup parameters for the header template
-    h:SetAttribute("unit", "player")
-    h:SetAttribute("filter", filter)
-    h.enchantButtons = {}
-    h.enchants = {}
-    h.spells = {}
-    h.filter = filter
-    h.auraKey = filter == "HELPFUL" and "buffs" or "debuffs"
+    if isBuffs then
+        header:SetAttribute("consolidateDuration", -1)
+        header:SetAttribute("consolidateTo", 0)
+        header:SetAttribute("includeWeapons", 1)
+        GW.RegisterMovableFrame(header, SHOW_BUFFS, "playerAuras.buffs", "Blizzard,Aura", {316, 100}, {GW.MoverOption.Scale}, true)
 
-    h.visibility = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
-    h.visibility:SetScript("OnUpdate", HeaderOnUpdate)
-    h.visibility:SetScript("OnEvent", HeaderOnEvent)
-    h.visibility.frame = h
-    h.name = name
-
-    if GW.TBC or GW.Wrath then
-        h.visibility:RegisterEvent("WEAPON_ENCHANT_CHANGED")
-    end
-
-    RegisterAttributeDriver(h, "unit", "[vehicleui] vehicle; player")
-    SecureHandlerSetFrameRef(h.visibility, "AuraHeader", h)
-    RegisterStateDriver(h.visibility, "customVisibility", "[petbattle] 0; 1")
-    h.visibility:SetAttribute("_onstate-customVisibility", AttributeCustomsVisibility)
-
-    if filter == "HELPFUL" then
-        h:SetAttribute("consolidateDuration", -1)
-        h:SetAttribute("consolidateTo", 0)
-        h:SetAttribute("includeWeapons", 1)
-
-        RegisterMovableFrame(h, SHOW_BUFFS, "playerAuras.buffs", "Blizzard,Aura", {316, 100}, {GW.MoverOption.Scale}, true)
+        -- renewed enchants right away where the client says so, the buttons also look every second
+        if C_EventUtils.IsEventValid("WEAPON_ENCHANT_CHANGED") then
+            visibility:RegisterEvent("WEAPON_ENCHANT_CHANGED")
+            visibility:SetScript("OnEvent", function()
+                for _, button in ipairs({header:GetChildren()}) do
+                    if button.enchantIndex and button:IsShown() then
+                        UpdateTempEnchant(button)
+                    end
+                end
+            end)
+        end
     else
-        RegisterMovableFrame(h, SHOW_DEBUFFS, "playerAuras.debuffs", "Blizzard,Aura", {316, 60}, {GW.MoverOption.Scale}, true)
+        GW.RegisterMovableFrame(header, SHOW_DEBUFFS, "playerAuras.debuffs", "Blizzard,Aura", {316, 60}, {GW.MoverOption.Scale}, true)
     end
 
-    UpdateAuraHeader(h)
+    -- keep the header on its mover once it was dragged
+    hooksecurefunc(header.gwMover, "StopMovingOrSizing", function()
+        if not InCombatLockdown() then
+            local point = GW.GetAuraGrowDirection(GW.settings.playerAuras[header.auraKey].GrowDirection).point
+            header:ClearAllPoints()
+            header:SetPoint(point, header.gwMover, point, 0, 0)
+        end
+    end)
 
-    return h
+    UpdateAuraHeader(header)
+    header:Show()
+    return header
 end
 
+function GW.LoadPlayerAuras(lm)
+    for _, blizzardFrame in pairs({BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs, DebuffFrame}) do
+        blizzardFrame:GwKill()
+    end
 
-local function loadAuras(lm)
-    -- create a new header for buffs
-    local hb = newHeader("HELPFUL")
-    hb:Show()
+    local buffs = CreateHeader("HELPFUL")
+    lm:RegisterBuffFrame(buffs)
+    lm:RegisterDebuffFrame(CreateHeader("HARMFUL"))
 
-    lm:RegisterBuffFrame(hb)
-    hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GW.settings.playerAuras[hb.auraKey].GrowDirection
-        local anchor_hb = DIRECTION_TO_POINT[grow_dir]
-
-        if not InCombatLockdown() then
-            hb:ClearAllPoints()
-            hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
-        end
-    end)
-
-    -- create a new header for debuffs
-    local hd = newHeader("HARMFUL")
-    hd:Show()
-    lm:RegisterDebuffFrame(hd)
-    hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GW.settings.playerAuras[hd.auraKey].GrowDirection
-        local anchor_hd = DIRECTION_TO_POINT[grow_dir]
-
-        if not InCombatLockdown() then
-            hd:ClearAllPoints()
-            hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
-        end
-    end)
-
-    -- Raise PetBattleFrame
     if PetBattleFrame then
-        PetBattleFrame:SetFrameLevel(hb:GetFrameLevel() + 5)
+        PetBattleFrame:SetFrameLevel(buffs:GetFrameLevel() + 5)
     end
 end
-
-local function LoadPlayerAuras(lm)
-    -- hide default buffs
-    BuffFrame:GwKill()
-    if TemporaryEnchantFrame then
-        TemporaryEnchantFrame:GwKill()
-    end
-    if ConsolidatedBuffs then
-        ConsolidatedBuffs:GwKill()
-    end
-    if DebuffFrame then
-        DebuffFrame:GwKill()
-    end
-
-    loadAuras(lm)
-end
-GW.LoadPlayerAuras = LoadPlayerAuras

@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="growDirections.lua"/>
     <Include file ="aurabar_legacy.xml"/>
     <Script file ="auras.lua"/>
     <Include file ="aurabar.xml"/>
