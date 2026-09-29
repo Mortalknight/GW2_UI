@@ -107,112 +107,103 @@ local function MutateInaccessableObject(frame, objType, func)
 end
 GW.MutateInaccessableObject = MutateInaccessableObject
 
-local NavBarCheck = {
-    EncounterJournal = function()
-        return GW.settings.skins.encounterJournal.enabled
-    end,
-    WorldMapFrame = function()
-        return GW.settings.skins.worldmap.enabled
-    end,
-}
+-- the breadcrumb bars of the encounter journal and the world map, where their skin is on
+local NAV_BAR_SKINS = {EncounterJournal = "encounterJournal", WorldMapFrame = "worldmap"}
 
-local function NavButtonXOffset(button, point, anchor, point2, _, yoffset, skip)
-    if skip then return end
-
-    button:SetPoint(point, anchor, point2, -1, yoffset, true)
+-- blizzard lets the crumbs overlap, ours sit a pixel apart; SetPoint is followed by a hook,
+-- moving them in blizzards place would taint
+local placing = false
+local function PlaceCrumb(button, point, anchor, relativePoint, _, y)
+    if placing then return end
+    placing = true
+    button:SetPoint(point, anchor, relativePoint, -1, y)
+    placing = false
 end
 
-local function NavBarPoint(button, _, anchor, _, _, _, skip)
-    if skip then return end
-
-    button:SetPoint("TOPLEFT", anchor, "TOPLEFT", 1, -47, true)
+local function PlaceNavBar(bar, _, anchor)
+    if placing then return end
+    placing = true
+    bar:SetPoint("TOPLEFT", anchor, "TOPLEFT", 1, -47)
+    placing = false
 end
 
-local function SkinNavBarButton(button, index)
-    if button and not button.gwSkinned then
-        button:GwStripTextures()
-        button:GetFontString():SetTextColor(1, 1, 1, 1)
-        button:GetFontString():SetShadowOffset(0, 0)
+local function SkinCrumb(button, index)
+    if button.gwSkinned then return end
+    button.gwSkinned = true
 
-        button.tex = button:CreateTexture(nil, "BACKGROUND")
-        button.tex:SetAllPoints(button)
-        button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
-        button.tex:SetAlpha(1)
+    button:GwStripTextures()
+    local text = button:GetFontString()
+    text:SetTextColor(1, 1, 1, 1)
+    text:SetShadowOffset(0, 0)
 
-        button.borderFrame = CreateFrame("Frame", nil, button, "GwLightButtonBorder")
+    button.tex = button:CreateTexture(nil, "BACKGROUND")
+    button.tex:SetAllPoints(button)
+    button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
+    button.borderFrame = CreateFrame("Frame", nil, button, "GwLightButtonBorder")
 
-        if button.MenuArrowButton then
-            button.MenuArrowButton:GwStripTextures()
-            if button.MenuArrowButton.Art then
-                button.MenuArrowButton.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                button.MenuArrowButton.Art:SetTexCoord(0, 1, 0, 1)
-                button.MenuArrowButton.Art:SetSize(16, 16)
-            end
+    local menuArrow = button.MenuArrowButton
+    if menuArrow then
+        menuArrow:GwStripTextures()
+        if menuArrow.Art then
+            menuArrow.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+            menuArrow.Art:SetTexCoord(0, 1, 0, 1)
+            menuArrow.Art:SetSize(16, 16)
         end
+    end
 
-        if index > 1 then
-            NavButtonXOffset(button, button:GetPoint())
-            hooksecurefunc(button, "SetPoint", NavButtonXOffset)
-        end
-
-        button.gwSkinned = true
+    -- the first crumb is the home button, it keeps its place
+    if index > 1 then
+        PlaceCrumb(button, button:GetPoint())
+        hooksecurefunc(button, "SetPoint", PlaceCrumb)
     end
 end
 
-local function HandleNavBarButtons(self, data, hookPoint)
-    local func = NavBarCheck[self:GetParent():GetName()]
-    if func and not func() then return end
+-- also called by NavBar_AddButton; skins every crumb not done yet, keepPosition moves the bar itself
+local function HandleNavBarButtons(bar, _, keepPosition)
+    local setting = NAV_BAR_SKINS[bar:GetParent():GetName()]
+    if setting and not GW.settings.skins[setting].enabled then return end
 
-    if not data then
-        for index, nav in next, self.navList do
-            SkinNavBarButton(nav, index)
-        end
-    else
-        local lastIndex = #self.navList
-        SkinNavBarButton(self.navList[lastIndex], lastIndex)
+    for index, button in ipairs(bar.navList) do
+        SkinCrumb(button, index)
     end
-
-    if hookPoint then
-        NavBarPoint(self, self:GetPoint())
-        hooksecurefunc(self, "SetPoint", NavBarPoint)
+    if keepPosition then
+        PlaceNavBar(bar, bar:GetPoint())
+        hooksecurefunc(bar, "SetPoint", PlaceNavBar)
     end
 end
 GW.HandleNavBarButtons = HandleNavBarButtons
 hooksecurefunc("NavBar_AddButton", HandleNavBarButtons)
 
-local function HandlePortraitFrame(frame, createBackdrop)
-    local name = frame and frame.GetName and frame:GetName()
-    local insetFrame = name and _G[name .. "Inset"] or frame.Inset
-    local portraitFrame = name and _G[name .. "Portrait"] or frame.Portrait or frame.portrait
-    local portraitFrameOverlay = name and _G[name .. "PortraitOverlay"] or frame.PortraitOverlay
-    local artFrameOverlay = name and _G[name .. "ArtOverlayFrame"] or frame.ArtOverlayFrame
+-- the art of PortraitFrameTemplate frames and the border pieces of their inset
+local PORTRAIT_ART = {"Portrait", "portrait", "PortraitOverlay", "ArtOverlayFrame"}
+local INSET_ART = {
+    "InsetBorderTop", "InsetBorderTopLeft", "InsetBorderTopRight", "InsetBorderBottom", "InsetBorderBottomLeft",
+    "InsetBorderBottomRight", "InsetBorderLeft", "InsetBorderRight", "Bg",
+}
 
+local function HandlePortraitFrame(frame, createBackdrop)
+    local name = frame:GetName()
     frame:GwStripTextures()
 
-    if portraitFrame then portraitFrame:SetAlpha(0) end
-    if portraitFrameOverlay then portraitFrameOverlay:SetAlpha(0) end
-    if artFrameOverlay then artFrameOverlay:SetAlpha(0) end
-
-    if insetFrame then
-        if insetFrame.InsetBorderTop then insetFrame.InsetBorderTop:Hide() end
-        if insetFrame.InsetBorderTopLeft then insetFrame.InsetBorderTopLeft:Hide() end
-        if insetFrame.InsetBorderTopRight then insetFrame.InsetBorderTopRight:Hide() end
-
-        if insetFrame.InsetBorderBottom then insetFrame.InsetBorderBottom:Hide() end
-        if insetFrame.InsetBorderBottomLeft then insetFrame.InsetBorderBottomLeft:Hide() end
-        if insetFrame.InsetBorderBottomRight then insetFrame.InsetBorderBottomRight:Hide() end
-
-        if insetFrame.InsetBorderLeft then insetFrame.InsetBorderLeft:Hide() end
-        if insetFrame.InsetBorderRight then insetFrame.InsetBorderRight:Hide() end
-
-        if insetFrame.Bg then insetFrame.Bg:Hide() end
+    for _, key in ipairs(PORTRAIT_ART) do
+        local art = frame[key] or name and _G[name .. key]
+        if art then
+            art:SetAlpha(0)
+        end
+    end
+    local inset = frame.Inset or name and _G[name .. "Inset"]
+    if inset then
+        for _, key in ipairs(INSET_ART) do
+            if inset[key] then
+                inset[key]:Hide()
+            end
+        end
     end
 
     if frame.CloseButton then
         frame.CloseButton:GwSkinButton(true)
         frame.CloseButton:SetSize(20, 20)
     end
-
     if createBackdrop and not frame.backdrop then
         frame:GwCreateBackdrop({
             edgeFile = "",
@@ -220,7 +211,6 @@ local function HandlePortraitFrame(frame, createBackdrop)
             edgeSize = 1
         }, true, 50, 50, nil, 25)
     end
-
 end
 GW.HandlePortraitFrame = HandlePortraitFrame
 
@@ -290,136 +280,98 @@ end
 GW.HandleIcon = HandleIcon
 
 do
-    local iconColors = {
-        ["auctionhouse-itemicon-border-gray"]		= Enum.ItemQuality.Poor,
-        ["auctionhouse-itemicon-border-white"]		= Enum.ItemQuality.Common,
-        ["auctionhouse-itemicon-border-green"]		= Enum.ItemQuality.Uncommon,
-        ["auctionhouse-itemicon-border-blue"]		= Enum.ItemQuality.Rare,
-        ["auctionhouse-itemicon-border-purple"]		= Enum.ItemQuality.Epic,
-        ["auctionhouse-itemicon-border-orange"]		= Enum.ItemQuality.Legendary,
-        ["auctionhouse-itemicon-border-artifact"]	= Enum.ItemQuality.Artifact,
-        ["auctionhouse-itemicon-border-account"]	= Enum.ItemQuality.Heirloom,
-
-        ["Professions-Slot-Frame"]					= Enum.ItemQuality.Common,
-        ["Professions-Slot-Frame-Green"]			= Enum.ItemQuality.Uncommon,
-        ["Professions-Slot-Frame-Blue"]				= Enum.ItemQuality.Rare,
-        ["Professions-Slot-Frame-Epic"]				= Enum.ItemQuality.Epic,
-        ["Professions-Slot-Frame-Legendary"]		= Enum.ItemQuality.Legendary
+    -- atlas borders tell the quality by their name, the others by their vertex color
+    local ATLAS_QUALITY = {
+        ["auctionhouse-itemicon-border-gray"] = Enum.ItemQuality.Poor,
+        ["auctionhouse-itemicon-border-white"] = Enum.ItemQuality.Common,
+        ["auctionhouse-itemicon-border-green"] = Enum.ItemQuality.Uncommon,
+        ["auctionhouse-itemicon-border-blue"] = Enum.ItemQuality.Rare,
+        ["auctionhouse-itemicon-border-purple"] = Enum.ItemQuality.Epic,
+        ["auctionhouse-itemicon-border-orange"] = Enum.ItemQuality.Legendary,
+        ["auctionhouse-itemicon-border-artifact"] = Enum.ItemQuality.Artifact,
+        ["auctionhouse-itemicon-border-account"] = Enum.ItemQuality.Heirloom,
+        ["Professions-Slot-Frame"] = Enum.ItemQuality.Common,
+        ["Professions-Slot-Frame-Green"] = Enum.ItemQuality.Uncommon,
+        ["Professions-Slot-Frame-Blue"] = Enum.ItemQuality.Rare,
+        ["Professions-Slot-Frame-Epic"] = Enum.ItemQuality.Epic,
+        ["Professions-Slot-Frame-Legendary"] = Enum.ItemQuality.Legendary,
     }
 
-    local function iconBorderColorAtlas(border, atlas)
-        local quality = iconColors[atlas]
-        if not quality then return end
+    -- the blizzard border stays hidden, our backdrop shows what it would; kept out of blizzards tables
+    local backdrops = setmetatable({}, {__mode = "k"})
+    local wantsShown = setmetatable({}, {__mode = "k"})
+    local hidingBorder -- our own Hide call, its hook must not count as blizzards
 
-        local color = GW.GetBagItemQualityColor(iconColors[atlas])
-
-        if border.customFunc then
-            local br, bg, bb = 1, 1, 1
-            border.customFunc(border, color.r, color.g, color.b, 1, br, bg, bb)
-        elseif border.customBackdrop then
-            border.customBackdrop:SetBackdropBorderColor(color.r, color.g, color.b)
-        end
-    end
-
-    local function iconBorderColorVertex(border, r, g, b, a)
-        local quality = iconColors[border:GetAtlas()]
-        if quality then return end
-
-        if border.customFunc then
-            local br, bg, bb = 1, 1, 1
-            border.customFunc(border, r, g, b, a, br, bg, bb)
-        elseif border.customBackdrop then
-            border.customBackdrop:SetBackdropBorderColor(r, g, b)
-        end
-    end
-
-    local function iconBorderHide(border, value)
-        if value == 0 then return end -- hiding blizz border
-
-        local br, bg, bb = 1, 1, 1
-        if border.customFunc then
-            local r, g, b, a = border:GetVertexColor()
-            border.customFunc(border, r, g, b, a, br, bg, bb)
-        elseif border.customBackdrop then
-            border.customBackdrop:SetBackdropBorderColor(br, bg, bb)
-        end
-    end
-
-    local function iconBorderShown(border, show)
-        if show then
-            border:Hide(0)
+    local function UpdateBackdropColor(border)
+        local backdrop = backdrops[border]
+        local quality = ATLAS_QUALITY[border:GetAtlas()]
+        if not wantsShown[border] then
+            backdrop:SetBackdropBorderColor(1, 1, 1)
+        elseif quality then
+            local color = GW.GetBagItemQualityColor(quality)
+            backdrop:SetBackdropBorderColor(color.r, color.g, color.b, 1)
         else
-            iconBorderHide(border)
+            backdrop:SetBackdropBorderColor(border:GetVertexColor())
         end
     end
 
-    local function iconBorderShow(border)
-        border:Hide(0)
+    local function SetWantsShown(border, shown)
+        wantsShown[border] = shown or nil
+        if shown then
+            hidingBorder = border
+            border:Hide()
+            hidingBorder = nil
+        end
+        UpdateBackdropColor(border)
     end
 
-    local function HandleIconBorder(border, backdrop, customFunc)
+    local function OnShow(border)
+        SetWantsShown(border, true)
+    end
+
+    local function OnHide(border)
+        if hidingBorder ~= border then
+            SetWantsShown(border, false)
+        end
+    end
+
+    -- backdrop: the parents backdrop by default
+    local function HandleIconBorder(border, backdrop)
         if not backdrop then
             local parent = border:GetParent()
             backdrop = parent.backdrop or parent
         end
-
-        if border.customBackdrop ~= backdrop then
-            border.customBackdrop = backdrop
+        local hooked = backdrops[border] ~= nil
+        backdrops[border] = backdrop
+        if not hooked then
+            hooksecurefunc(border, "Show", OnShow)
+            hooksecurefunc(border, "Hide", OnHide)
+            hooksecurefunc(border, "SetShown", SetWantsShown)
+            hooksecurefunc(border, "SetAtlas", UpdateBackdropColor)
+            hooksecurefunc(border, "SetVertexColor", UpdateBackdropColor)
         end
-
-        local r, g, b, a = border:GetVertexColor()
-        local quality = iconColors[border:GetAtlas()]
-        local atlas = quality and GW.GetBagItemQualityColor(quality)
-        if customFunc then
-            border.customFunc = customFunc
-            local br, bg, bb = 1, 1, 1
-            customFunc(border, r, g, b, a, br, bg, bb)
-        elseif atlas then
-            backdrop:SetBackdropBorderColor(atlas.r, atlas.g, atlas.b, 1)
-        elseif r then
-            backdrop:SetBackdropBorderColor(r, g, b, a)
-        else
-            local br, bg, bb = 1, 1, 1
-            backdrop:SetBackdropBorderColor(br, bg, bb)
-        end
-
-        if not border.IconBorderHooked then
-            border.IconBorderHooked = true
-            border:Hide()
-
-            hooksecurefunc(border, "SetAtlas", iconBorderColorAtlas)
-            hooksecurefunc(border, "SetVertexColor", iconBorderColorVertex)
-            hooksecurefunc(border, "Hide", iconBorderHide)
-            hooksecurefunc(border, "SetShown", iconBorderShown)
-            hooksecurefunc(border, "Show", iconBorderShow)
-
-        end
+        SetWantsShown(border, border:IsShown())
     end
     GW.HandleIconBorder = HandleIconBorder
 end
 
+-- offsets in whole screen pixels (GW.mult each): cut towards zero, but never below one pixel
 local function Scale(x)
     local m = GW.mult
     if m == 1 or x == 0 then
         return x
-    else
-        local y = m > 1 and m or -m
-        return x - x % (x < 0 and y or -y)
     end
+    local pixels = math.max(1, math.floor(math.abs(x) / m + 1e-6))
+    return (x < 0 and -pixels or pixels) * m
 end
 GW.Scale = Scale
 
-local function ReskinScrollBarArrow(frame, direction)
-    GW.HandleNextPrevButton(frame, direction)
-
-    if frame.Texture then
-        frame.Texture:SetAlpha(0)
-
-        if frame.Overlay then
-            frame.Overlay:SetAlpha(0)
+local function SkinScrollArrow(button, direction)
+    GW.HandleNextPrevButton(button, direction)
+    for _, key in ipairs({"Texture", "Overlay"}) do
+        if button[key] then
+            button[key]:SetAlpha(0)
         end
-    else
-        frame:GwStripTextures()
     end
 end
 
@@ -460,28 +412,26 @@ local function HandleScrollControls(self, specifiedScrollBar)
 end
 GW.HandleScrollControls = HandleScrollControls
 
-local function HandleTrimScrollBar(frame)
-    if frame.gwSkinned then return end
-    frame.gwSkinned = true
-    frame:GwStripTextures()
+-- blizzards trim scroll bars: our arrows, no track art, one stretched thumb texture
+local function HandleTrimScrollBar(bar)
+    if bar.gwSkinned then return end
+    bar.gwSkinned = true
 
-    ReskinScrollBarArrow(frame.Back, "up")
-    ReskinScrollBarArrow(frame.Forward, "down")
-
-    if frame.Background then
-        frame.Background:Hide()
+    bar:GwStripTextures()
+    SkinScrollArrow(bar.Back, "up")
+    SkinScrollArrow(bar.Forward, "down")
+    if bar.Background then
+        bar.Background:Hide()
+    end
+    if bar.Track then
+        bar.Track:DisableDrawLayer("ARTWORK")
     end
 
-    local track = frame.Track
-    if track then
-        track:DisableDrawLayer("ARTWORK")
-    end
-
-    local thumb = frame:GetThumb()
+    local thumb = bar:GetThumb()
     if thumb then
-        thumb.Begin:Hide()
-        thumb.End:Hide()
-        thumb.Middle:Hide()
+        for _, piece in ipairs({"Begin", "Middle", "End"}) do
+            thumb[piece]:Hide()
+        end
         thumb:DisableDrawLayer("BACKGROUND")
         thumb.gwTex = thumb:CreateTexture(nil, "ARTWORK")
         thumb.gwTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
@@ -513,102 +463,103 @@ function GW.SkinSlimScrollFrame(scrollFrame, parent)
     GW.SkinSlimScrollBar(scrollBar)
 end
 
-local function HandleItemButton(b, setInside)
-    if b.gwSkinned then return end
+local ITEM_ICON_KEYS = {"icon", "Icon", "IconTexture", "iconTexture"}
 
-    local name = b:GetName()
-    local icon = b.icon or b.Icon or b.IconTexture or b.iconTexture or (name and (_G[name .. "IconTexture"] or _G[name .. "Icon"]))
-    local texture = icon and icon.GetTexture and icon:GetTexture()
-
-    b:GwStripTextures()
-    b:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-    b:GwStyleButton()
-
-    if icon then
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-
-        if setInside then
-            icon:GwSetInside(b)
-        else
-            b.backdrop:GwSetOutside(icon, 1, 1)
-        end
-
-        icon:SetParent(b.backdrop)
-
-        if texture then
-            icon:SetTexture(texture)
+local function FindItemIcon(button)
+    for _, key in ipairs(ITEM_ICON_KEYS) do
+        if button[key] then
+            return button[key]
         end
     end
+    local name = button:GetName()
+    return name and (_G[name .. "IconTexture"] or _G[name .. "Icon"])
+end
 
-    b.gwSkinned = true
+-- our backdrop and hover; the icon cropped inside the button, or the backdrop laid around the icon
+local function HandleItemButton(button, setInside)
+    if button.gwSkinned then return end
+    button.gwSkinned = true
+
+    local icon = FindItemIcon(button)
+    -- stripping empties the icon as well, its texture comes back afterwards
+    local texture = icon and icon:GetTexture()
+    button:GwStripTextures()
+    button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    button:GwStyleButton()
+    if not icon then return end
+
+    icon:SetTexture(texture)
+    icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    if setInside then
+        icon:GwSetInside(button)
+    else
+        button.backdrop:GwSetOutside(icon, 1, 1)
+    end
 end
 GW.HandleItemButton = HandleItemButton
 
 do
-    local function handleButton(button, i, buttonNameTemplate)
-        local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"], nil
-        if icon then
-            icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-            icon:GwSetInside(button)
-            texture = icon:GetTexture()
-        end
+    local skinnedChoices = setmetatable({}, {__mode = "k"})
 
+    -- one icon of the selector grid; the grid reuses its buttons, each is skinned once
+    local function SkinIconChoice(button)
+        if skinnedChoices[button] then return end
+        skinnedChoices[button] = true
+
+        local icon = button.Icon
+        local texture = icon and icon:GetTexture()
         button:GwStripTextures()
         button:GwStyleButton(nil, true)
-
-        if texture then
+        -- a light grey frame, the icon sits a pixel inside it
+        button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
+        button.backdrop:SetBackdropBorderColor(0.5, 0.5, 0.5, 0.6)
+        if icon then
             icon:SetTexture(texture)
+            icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            icon:GwSetInside(button)
         end
     end
 
+    -- the icon picker of macros, equipment sets, bank tabs and our profiles
     local function HandleIconSelectionFrame(frame)
         if frame.gwSkinned then return end
+        frame.gwSkinned = true
 
         local borderBox = frame.BorderBox
-        local editBox = borderBox.IconSelectorEditBox
-        local cancel = frame.CancelButton or (borderBox and borderBox.CancelButton)
-        local okay = frame.OkayButton or (borderBox and borderBox.OkayButton)
-
         frame:GwStripTextures()
         frame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
         frame:SetHeight(frame:GetHeight() + 10)
         frame:EnableMouse(true)
+        borderBox:GwStripTextures()
 
-        if borderBox then
-            borderBox:GwStripTextures()
-
-            local dropdown = borderBox.IconTypeDropdown
-            if dropdown then
-                dropdown:GwHandleDropDownBox()
-            end
-
-            local button = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton
-            if button then
-                button:DisableDrawLayer("BACKGROUND")
-                GW.HandleItemButton(button, true)
-            end
+        if borderBox.IconTypeDropdown then
+            borderBox.IconTypeDropdown:GwHandleDropDownBox()
         end
-
-        cancel:ClearAllPoints()
-        cancel:SetPoint("BOTTOMRIGHT", frame, -4, 4)
-        cancel:GwSkinButton(false, true)
-
-        okay:ClearAllPoints()
-        okay:SetPoint("RIGHT", cancel, "LEFT", -10, 0)
-        okay:GwSkinButton(false, true)
-
+        local selected = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton
+        if selected then
+            selected:DisableDrawLayer("BACKGROUND")
+            HandleItemButton(selected, true)
+        end
+        local editBox = borderBox.IconSelectorEditBox
         if editBox then
             GW.SkinTextBox(editBox.IconSelectorPopupNameMiddle, editBox.IconSelectorPopupNameLeft, editBox.IconSelectorPopupNameRight, nil, nil, 5, 5)
         end
 
+        -- cancel in the corner, okay beside it
+        local cancel = frame.CancelButton or borderBox.CancelButton
+        local okay = frame.OkayButton or borderBox.OkayButton
+        cancel:ClearAllPoints()
+        cancel:SetPoint("BOTTOMRIGHT", frame, -4, 4)
+        cancel:GwSkinButton(false, true)
+        okay:ClearAllPoints()
+        okay:SetPoint("RIGHT", cancel, "LEFT", -10, 0)
+        okay:GwSkinButton(false, true)
+
         GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar)
         GW.HandleScrollControls(frame.IconSelector)
-
-        for _, button in next, {frame.IconSelector.ScrollBox.ScrollTarget:GetChildren()} do
-            handleButton(button)
-        end
-
-        frame.gwSkinned = true
+        local scrollBox = frame.IconSelector.ScrollBox
+        scrollBox:ForEachFrame(SkinIconChoice)
+        ScrollUtil.AddAcquiredFrameCallback(scrollBox, function(_, button) SkinIconChoice(button) end, frame)
     end
     GW.HandleIconSelectionFrame = HandleIconSelectionFrame
 end
@@ -747,27 +698,47 @@ local function HandleTabs(self, direction, textures, setDesaturated)
 end
 GW.HandleTabs = HandleTabs
 
-local function HandleRotateButton(btn)
-    if btn.gwSkinned then return end
+-- the rotate buttons of the classic model frames: the arrow cut out of blizzards round button art
+local ROTATE_ARROW_COORDS = {0.3, 0.69, 0.29, 0.65}
 
-    btn:GwSkinButton(false, true)
-    btn:SetSize(btn:GetWidth() - 14, btn:GetHeight() - 14)
+local function HandleRotateButton(button)
+    if button.gwSkinned then return end
+    button.gwSkinned = true
 
-    local normTex = btn:GetNormalTexture()
-    local pushTex = btn:GetPushedTexture()
-    local highlightTex = btn:GetHighlightTexture()
+    button:GwSkinButton(false, true)
+    button:SetSize(button:GetWidth() - 14, button:GetHeight() - 14)
 
-    normTex:GwSetInside()
-    normTex:SetTexCoord(0.3, 0.29, 0.3, 0.65, 0.69, 0.29, 0.69, 0.65)
-
-    pushTex:SetAllPoints(normTex)
-    pushTex:SetTexCoord(0.3, 0.29, 0.3, 0.65, 0.69, 0.29, 0.69, 0.65)
-
-    highlightTex:SetAllPoints(normTex)
-    highlightTex:SetColorTexture(1, 1, 1, 0.3)
-
+    local normal = button:GetNormalTexture()
+    normal:GwSetInside()
+    normal:SetTexCoord(unpack(ROTATE_ARROW_COORDS))
+    button:GetPushedTexture():SetAllPoints(normal)
+    button:GetPushedTexture():SetTexCoord(unpack(ROTATE_ARROW_COORDS))
+    button:GetHighlightTexture():SetAllPoints(normal)
+    button:GetHighlightTexture():SetColorTexture(1, 1, 1, 0.3)
 end
 GW.HandleRotateButton = HandleRotateButton
+
+-- plain text tabs: the active one white and underlined, the others grey, lighter on hover
+function GW.AddTextTabArt(tab)
+    tab.gwLabel = tab:CreateFontString(nil, "OVERLAY")
+    tab.gwLabel:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    tab.gwLabel:SetPoint("CENTER")
+
+    tab.gwLine = tab:CreateTexture(nil, "ARTWORK")
+    tab.gwLine:SetColorTexture(GW.Colors.TextColors.LightHeader:GetRGB())
+    tab.gwLine:SetHeight(2)
+    tab.gwLine:SetPoint("BOTTOMLEFT", tab, "BOTTOMLEFT", 4, 0)
+    tab.gwLine:SetPoint("BOTTOMRIGHT", tab, "BOTTOMRIGHT", -4, 0)
+end
+
+-- the tab takes the width of its text
+function GW.SetTextTab(tab, text, selected)
+    tab.gwLabel:SetText(text)
+    tab:SetWidth(tab.gwLabel:GetStringWidth() + 8)
+    local shade = selected and 1 or (tab:IsMouseOver() and 0.8 or 0.6)
+    tab.gwLabel:SetTextColor(shade, shade, shade)
+    tab.gwLine:SetShown(selected)
+end
 
 function GW.CreateDetailsBackgroundTexture(parent, sublevel)
     local tex = parent:CreateTexture(nil, "BACKGROUND", nil, sublevel or 7)

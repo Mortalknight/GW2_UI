@@ -478,28 +478,16 @@ end
 
 local function UpdateTabs(self)
     for _, tab in ipairs(self.tabs) do
-        local selected = tab.isPet == self.showPet
-        local shade = selected and 1 or (tab:IsMouseOver() and 0.8 or 0.6)
-        tab.Text:SetTextColor(shade, shade, shade)
-        tab.line:SetShown(selected)
+        GW.SetTextTab(tab, tab.text, tab.isPet == self.showPet)
     end
 end
 
--- plain text switches, the active one underlined
 local function CreateTab(self, text, isPet)
     local tab = CreateFrame("Button", nil, self)
     tab.isPet = isPet
-    tab.Text = tab:CreateFontString(nil, "OVERLAY")
-    tab.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    tab.Text:SetPoint("CENTER")
-    tab.Text:SetText(text)
-    tab:SetSize(tab.Text:GetStringWidth() + 8, 22)
-
-    tab.line = tab:CreateTexture(nil, "ARTWORK")
-    tab.line:SetColorTexture(GW.Colors.TextColors.LightHeader:GetRGB())
-    tab.line:SetHeight(2)
-    tab.line:SetPoint("BOTTOMLEFT", tab, "BOTTOMLEFT", 4, 0)
-    tab.line:SetPoint("BOTTOMRIGHT", tab, "BOTTOMRIGHT", -4, 0)
+    tab.text = text
+    tab:SetHeight(22)
+    GW.AddTextTabArt(tab)
 
     tab:SetScript("OnClick", function()
         self.showPet = isPet

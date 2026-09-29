@@ -1188,6 +1188,23 @@ local function SkinWardrobeSlotButton(button)
     UpdateSelection()
 end
 
+-- blizzards top tabs become our text tabs; the selected one is the one blizzard disables
+local function RefreshWardrobeTab(tab)
+    GW.SetTextTab(tab, tab.gwText, not tab:IsEnabled())
+end
+
+local function SkinWardrobeTab(tab)
+    if tab.gwLabel then return end
+    tab:GwStripTextures()
+    -- a click applies blizzards font objects again, only an empty text stays invisible
+    tab.gwText = tab:GetText()
+    tab:SetText("")
+    tab:SetHeight(22)
+    GW.AddTextTabArt(tab)
+    tab:HookScript("OnEnter", RefreshWardrobeTab)
+    tab:HookScript("OnLeave", RefreshWardrobeTab)
+end
+
 -- blizzard (and Extended Transmog Sets, which replaces SetTab and adds a third tab) re-anchor search box, filter,
 -- class dropdown and progress bar on every tab change; this runs after each of those and puts everything back.
 -- The class dropdown goes into the top left corner of the details background, centered on the slot row
@@ -1197,10 +1214,11 @@ local function LayoutWardrobeControls(frame)
     for i = 1, 10 do
         local tab = _G["WardrobeCollectionFrameTab" .. i]
         if not tab then break end
-        GW.HandleTabs(tab, "top")
+        SkinWardrobeTab(tab)
+        RefreshWardrobeTab(tab)
         tab:ClearAllPoints()
         if previous then
-            tab:SetPoint("LEFT", previous, "RIGHT", 0, 0)
+            tab:SetPoint("LEFT", previous, "RIGHT", 6, 0)
         else
             tab:SetPoint("TOPLEFT", frame, "TOPLEFT", 6, CONTROL_ROW_Y + 2)
         end
