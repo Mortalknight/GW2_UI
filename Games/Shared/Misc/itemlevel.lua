@@ -11,20 +11,15 @@ local GEAR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}
 local TWO_HANDED = {INVTYPE_2HWEAPON = true, INVTYPE_RANGED = true, INVTYPE_RANGEDRIGHT = true}
 local GetItemInfoInstant = C_Item.GetItemInfoInstant or GetItemInfoInstant
 
-function GW.PopulateUnitIlvlsCache(unitGUID, itemLevel, tooltip)
+-- the item levels of inspected players, for tooltips and unit frames
+function GW.PopulateUnitIlvlsCache(unitGUID, itemLevel)
     if not itemLevel then
         return
     end
-    local cached = GW.unitIlvlsCache[unitGUID]
-    if cached then
-        cached.time = GetTime()
-        cached.itemLevel = itemLevel
-    end
-    if tooltip then
-        GameTooltip.ItemLevelShown = true
-        GameTooltip:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", itemLevel, nil, nil, nil, 1, 1, 1)
-        GameTooltip:Show()
-    end
+    local cached = GW.unitIlvlsCache[unitGUID] or {}
+    GW.unitIlvlsCache[unitGUID] = cached
+    cached.time = GetTime()
+    cached.itemLevel = itemLevel
 end
 
 -- "Item Level 480 (489)": the number in brackets is the one that counts right now

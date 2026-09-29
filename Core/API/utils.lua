@@ -1232,26 +1232,6 @@ local function TextGradient(text, ...)
 end
 GW.TextGradient = TextGradient
 
-local function StatusBarColorGradient(bar, value, max, backdrop)
-    if not (bar and value) then return end
-
-    local current = (not max and value) or (value and max and max ~= 0 and value / max)
-    if not current then return end
-
-    local r, g, b = ColorGradient(current, 0.8, 0, 0, 0.8, 0.8, 0, 0, 0.8,  0)
-    bar:SetStatusBarColor(r, g, b)
-
-    if not backdrop then
-        backdrop = bar.backdrop
-    end
-
-    if backdrop then
-        backdrop:SetBackdropColor(r * 0.25, g * 0.25, b * 0.25)
-    end
-end
-GW.StatusBarColorGradient = StatusBarColorGradient
-
-
 local Fn = function (...) return not GW.Matches(...) end
 
 local function Tmp(...)

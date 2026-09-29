@@ -2,6 +2,7 @@
     <Include file ="Mixin\Load.xml"/>
     <Include file ="Immersive\Load.xml"/>
     <Include file ="Chat\Load.xml"/>
+    <Include file ="Tooltip\Load.xml"/>
     <Include file ="Objectives\Load.xml"/>
     <Include file ="Statusbar\Load.xml"/>
     <Include file ="Animation\Load.xml"/>

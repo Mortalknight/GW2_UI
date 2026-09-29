@@ -1,0 +1,19 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <!-- the unit lines in the order they show -->
+    <Script file ="units.lua"/>
+    <Script file ="unitTarget.lua"/>
+    <Script file ="unitRole.lua"/>
+    <Script file ="unitMythicScore.lua"/>
+    <Script file ="unitMount.lua"/>
+    <Script file ="unitItemLevel.lua"/>
+    <Script file ="healthBar.lua"/>
+    <Script file ="ids.lua"/>
+    <Script file ="auras.lua"/>
+    <Script file ="items.lua"/>
+    <Script file ="achievements.lua"/>
+    <Script file ="premadeGroups.lua"/>
+    <Script file ="anchor.lua"/>
+    <Script file ="combatHide.lua"/>
+    <!-- after the health bar, it sets the font of its text -->
+    <Script file ="style.lua"/>
+</Ui>
