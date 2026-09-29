@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="spam.lua"/>
+    <Script file ="urls.lua"/>
+    <Script file ="keywords.lua"/>
+    <Script file ="mentions.lua"/>
+    <Script file ="smileys.lua"/>
+    <Script file ="bnetColors.lua"/>
+    <Script file ="staff.lua"/>
+    <Script file ="roles.lua"/>
+    <Script file ="shortChannels.lua"/>
+    <Script file ="gw2Style.lua"/>
+    <Script file ="timestamps.lua"/>
+    <Script file ="copyLine.lua"/>
+    <Script file ="socialQueue.lua"/>
+    <Script file ="linkTooltips.lua"/>
+    <Script file ="scrolling.lua"/>
+    <Script file ="editBox.lua"/>
+    <Script file ="copyChat.lua"/>
+    <!-- the last one on the line stage -->
+    <Script file ="history.lua"/>
+</Ui>

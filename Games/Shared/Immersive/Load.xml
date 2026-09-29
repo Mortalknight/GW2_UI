@@ -2,7 +2,6 @@
     <Include file ="Skins\Load.xml"/>
     <Include file ="Questing\!Load.xml"/>
     <Script file ="tooltips.lua"/>
-    <Script file ="chatframe.lua"/>
     <Script file ="chatbubbles.lua"/>
     <Script file ="customClassColors.lua"/>
     <Include file ="hudart.xml"/>

@@ -1,0 +1,5 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="registry.lua"/>
+    <Include file ="Modules\Load.xml"/>
+    <Script file ="chatframe.lua"/>
+</Ui>

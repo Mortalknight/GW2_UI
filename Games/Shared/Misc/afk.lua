@@ -150,10 +150,6 @@ local function SetAFK(self, status)
         UpdateTimer(self)
         self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
 
-        self.chat:RegisterEvent("CHAT_MSG_WHISPER")
-        self.chat:RegisterEvent("CHAT_MSG_BN_WHISPER")
-        self.chat:RegisterEvent("CHAT_MSG_GUILD")
-
         self.isAFK = true
     elseif self.isAFK then
         UIParent:Show()
@@ -164,7 +160,6 @@ local function SetAFK(self, status)
 
         self.bottom.time:SetText("00:00")
 
-        self.chat:UnregisterAllEvents()
         self.chat:Clear()
         if GW.Retail and PVEFrame:IsShown() then
             PVEFrame_ToggleFrame()
@@ -227,58 +222,25 @@ local function Chat_OnMouseWheel(self, delta)
     end
 end
 
-local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, _, _, _, arg18)
-    local infoType = strsub(event, 10)
-    local info = ChatTypeInfo[infoType]
+-- whispers and guild chat, the way the chat windows show them; a line in several windows comes once
+local AFK_CHAT_TYPES = {WHISPER = true, BN_WHISPER = true, GUILD = true}
+local lastMirroredLine
 
-    local chatGroup = ChatFrameUtil.GetChatCategory(infoType)
-    local chatTarget
-    if chatGroup == "BN_CONVERSATION" then
-        chatTarget = tostring(arg8)
-    elseif chatGroup == "WHISPER" or chatGroup == "BN_WHISPER" then
-        chatTarget = (GW.NotSecretValue(arg2) and strsub(arg2, 1, 2) ~= "|K") and strupper(arg2) or arg2
+local function MirrorChatLine(_, text, r, g, b, infoID)
+    if GW.IsSecretValue(infoID) or not (AFKMode and AFKMode.isAFK) or text == lastMirroredLine then
+        return
     end
-
-    local playerLink
-    local linkTarget = chatTarget and (":"..chatTarget) or ""
-    if infoType ~= "BN_WHISPER" and infoType ~= "BN_CONVERSATION" then
-        playerLink = format("|Hplayer:%s:%s:%s%s|h", arg2, arg11, chatGroup, linkTarget)
-    else
-        playerLink = format("|HBNplayer:%s:%s:%s:%s%s|h", arg2, arg13, arg11, chatGroup, linkTarget)
+    local chatType = infoID and C_ChatInfo.GetChatTypeName(infoID)
+    if chatType and AFK_CHAT_TYPES[chatType] then
+        lastMirroredLine = text
+        AFKMode.chat:AddMessage(text, r, g, b)
     end
-
-    local isProtected = GW.ChatFunctions:IsMessageProtected(arg1)
-    if not isProtected then
-        arg1 = gsub(arg1, "%%", "%%%%")
-        arg1 = RemoveExtraSpaces(arg1)
-    end
-
-    local isMobile = arg14 and ChatFrameUtil.GetMobileEmbeddedTexture(info.r, info.g, info.b)
-    local message = format("%s%s", isMobile or "", arg1)
-
-    local discordInfo, isFromDiscord = GW.ChatFunctions:GetDiscordInfo(arg18)
-    if isFromDiscord then
-        message = ChatFrameUtil.FormatDiscordMessage(discordInfo, message)
-    end
-
-    local coloredName = (infoType == "BN_WHISPER" and GW.GetBNFriendColor(arg2, arg13)) or GW.ChatFunctions:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg18)
-    local senderLink = format("%s[%s]|h", playerLink, coloredName)
-    local success, msg = pcall(format, _G["CHAT_" .. infoType .. "_GET"] .. "%s", senderLink, message)
-    if not success then return end
-
-    if not isProtected and GW.settings.chat.shortChannelNames then
-        msg = msg:gsub("|Hchannel:(.-)|h%[(.-)%]|h", GW.ShortChannel)
-        msg = msg:gsub("^(.-|h) " .. CHAT_WHISPER_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
-        msg = msg:gsub("<" .. AFK .. ">", "[|cffFF0000" .. AFK .. "|r] ")
-        msg = msg:gsub("<" .. DND .. ">", "[|cffE7E716" .. DND .. "|r] ")
-        msg = msg:gsub("^%[" .. RAID_WARNING .. "%]", "[" .. L["RW"] .. "]")
-        msg = msg:gsub("%[BN_CONVERSATION:", "%[".."")
-    end
-
-    local accessID = GW.ChatFunctions:GetAccessID(chatGroup, chatTarget)
-    local typeID = GW.ChatFunctions:GetAccessID(infoType, chatTarget, arg12 or arg13)
-    self:AddMessage(msg, info.r, info.g, info.b, info.id, false, accessID, typeID)
 end
+
+GW.RegisterChatModule({
+    setting = function() return GW.settings.general.afkMode end,
+    onLine = MirrorChatLine,
+})
 
 local function ToggelAfkMode()
     if not AFKMode then return end
@@ -288,14 +250,11 @@ local function ToggelAfkMode()
         AFKMode:RegisterEvent("LFG_PROPOSAL_SHOW")
         AFKMode:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
         AFKMode:SetScript("OnEvent", AFKMode_OnEvent)
-        AFKMode.chat:SetScript("OnEvent", Chat_OnEvent)
-
         C_CVar.SetCVar("autoClearAFK", "1")
     else
         AFKMode:UnregisterAllEvents()
         AFKMode:SetScript("OnEvent", nil)
 
-        AFKMode.chat:SetScript("OnEvent", nil)
         AFKMode.chat:Clear()
         AFKMode.timer = CancelTimer(AFKMode.timer)
         AFKMode.animTimer = CancelTimer(AFKMode.animTimer)
@@ -344,7 +303,6 @@ local function LoadAFKAnimation()
     AFKMode.chat:SetScript("OnDragStart", AFKMode.chat.StartMoving)
     AFKMode.chat:SetScript("OnDragStop", AFKMode.chat.StopMovingOrSizing)
     AFKMode.chat:SetScript("OnMouseWheel", Chat_OnMouseWheel)
-    AFKMode.chat:SetScript("OnEvent", Chat_OnEvent)
 
     AFKMode.bottom = CreateFrame("Frame", nil, AFKMode, "BackdropTemplate")
     AFKMode.bottom:SetFrameLevel(0)
