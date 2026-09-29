@@ -125,39 +125,35 @@ local function CreateRaidControlFrame()
     local TextBox_OnEscapePressed = function(self)
         self:ClearFocus()
     end
-    local fnGMGIB_OnEditFocusGained = function(self)
-        local sT = self:GetText()
-        if sT == CALENDAR_PLAYER_NAME then
-            self:SetText("")
-            self:SetTextColor(1, 1, 1, 1)
+
+    local inviteBox = GwGroupManage.groupInviteBox
+    inviteBox.hint = inviteBox:CreateFontString(nil, "ARTWORK", "ChatFontNormal")
+    inviteBox.hint:SetPoint("LEFT", inviteBox, "LEFT", 0, 0)
+    inviteBox.hint:SetText(CALENDAR_PLAYER_NAME)
+    inviteBox.hint:SetTextColor(1, 1, 1, 0.5)
+    -- the hint over an empty box, the invite button only with a name in it
+    local function UpdateInviteHint(box)
+        local hasName = strtrim(box:GetText()) ~= ""
+        box.hint:SetShown(box:GetText() == "" and not box:HasFocus())
+        GwGroupManage.inviteToParty:SetEnabled(hasName)
+    end
+    local function InviteTypedName(box)
+        local name = strtrim(box:GetText())
+        if name ~= "" then
+            C_PartyInfo.InviteUnit(name)
         end
+        box:SetText("")
+        box:ClearFocus()
     end
-    local fnGMGIB_OnEditFocusLost = function(self)
-        local sT = self:GetText()
-        if sT == nil or sT == "" then
-            self:SetText(CALENDAR_PLAYER_NAME)
-            self:SetTextColor(1, 1, 1, 0.5)
-        end
-    end
-    local fnGMGIB_OnEnterPressed = function(self)
-        C_PartyInfo.InviteUnit(self:GetText())
-        self:SetText("")
-        self:ClearFocus()
-    end
-    GwGroupManage.groupInviteBox:SetScript("OnEscapePressed", TextBox_OnEscapePressed)
-    GwGroupManage.groupInviteBox:SetScript("OnEditFocusGained", fnGMGIB_OnEditFocusGained)
-    GwGroupManage.groupInviteBox:SetScript("OnEditFocusLost", fnGMGIB_OnEditFocusLost)
-    GwGroupManage.groupInviteBox:SetScript("OnEnterPressed", fnGMGIB_OnEnterPressed)
-    local sT = GwGroupManage.groupInviteBox:GetText()
-    if sT == nil or sT == "" then
-        GwGroupManage.groupInviteBox:SetText(CALENDAR_PLAYER_NAME)
-        GwGroupManage.groupInviteBox:SetTextColor(1, 1, 1, 0.5)
-    end
+    inviteBox:SetScript("OnEscapePressed", TextBox_OnEscapePressed)
+    inviteBox:SetScript("OnEditFocusGained", UpdateInviteHint)
+    inviteBox:SetScript("OnEditFocusLost", UpdateInviteHint)
+    inviteBox:SetScript("OnTextChanged", UpdateInviteHint)
+    inviteBox:SetScript("OnEnterPressed", InviteTypedName)
+    UpdateInviteHint(inviteBox)
 
     GwGroupManage.inviteToParty:SetScript("OnClick", function(self)
-        C_PartyInfo.InviteUnit(self:GetParent().groupInviteBox:GetText())
-        self:GetParent().groupInviteBox:SetText("")
-        self:GetParent().groupInviteBox:ClearFocus()
+        InviteTypedName(self:GetParent().groupInviteBox)
     end)
 
     GwGroupManage.groupLeaveButton:SetScript("OnClick", function()

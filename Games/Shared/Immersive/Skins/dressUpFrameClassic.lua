@@ -30,6 +30,20 @@ local function SkinRotateButtons(model)
     left:GetPushedTexture():SetTexCoord(0, 1, 0, 0, 1, 1, 1, 0)
 end
 
+-- the window has no mover of its own, dragging works on a strip over the header
+local function MakeMovable()
+    local mover = CreateFrame("Frame", nil, DressUpFrame)
+    mover:EnableMouse(true)
+    mover:SetPoint("BOTTOMLEFT", DressUpFrame, "TOPLEFT", 0, -20)
+    mover:SetPoint("BOTTOMRIGHT", DressUpFrame, "TOPRIGHT", 0, 20)
+    mover:SetHeight(30)
+    mover:RegisterForDrag("LeftButton")
+    mover:SetScript("OnDragStart", function(self) self:GetParent():StartMoving() end)
+    mover:SetScript("OnDragStop", function(self) self:GetParent():StopMovingOrSizing() end)
+    DressUpFrame:SetMovable(true)
+    DressUpFrame:SetClampedToScreen(true)
+end
+
 -- the small preview window of quest rewards and auctions
 local function SkinSideDressUpFrame()
     if not SideDressUpFrame then return end
@@ -69,9 +83,14 @@ local function LoadDressUpFrameSkin()
         GW.SetHeaderPortrait(DressUpFrame.gwHeader, "player")
     end)
 
-    if DressUpFrameDescriptionText then
-        DressUpFrameDescriptionText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        DressUpFrameDescriptionText:SetTextColor(0.8, 0.8, 0.8)
+    -- blizzard hangs the hint below the title, which now lives in our header; it goes above the model
+    local hint = DressUpFrameDescriptionText
+    if hint and DressUpModelFrame then
+        hint:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        hint:SetTextColor(0.8, 0.8, 0.8)
+        hint:ClearAllPoints()
+        hint:SetPoint("BOTTOM", DressUpModelFrame, "TOP", 0, 6)
+        hint:SetWidth(DressUpModelFrame:GetWidth())
     end
 
     DressUpFrameCloseButton:GwSkinButton(true)
@@ -86,6 +105,7 @@ local function LoadDressUpFrameSkin()
         SkinRotateButtons(model)
     end
 
+    MakeMovable()
     SkinSideDressUpFrame()
 end
 GW.LoadDressUpFrameSkin = LoadDressUpFrameSkin
