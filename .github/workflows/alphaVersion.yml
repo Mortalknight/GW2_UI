@@ -40,18 +40,6 @@ jobs:
             echo "Alpha version: ${alpha_version}"
             sed -i "s/@project-version@/${alpha_version}/g" GW2_UI.toc
 
-        - name: Optimize PNG assets
-          run: |
-            echo "Installiere pngquant..."
-            sudo apt-get update && sudo apt-get install -y pngquant
-
-            echo "Komprimiere PNG-Bilder (das kann einen Moment dauern)..."
-            # Sucht alle PNG-Dateien im Add-on und komprimiert sie direkt (überschreibt die Originale)
-            # --skip-if-larger sorgt dafür, dass Dateien nicht versehentlich größer werden
-            # --ext .png --force überschreibt die alten unkomprimierten Bilder
-            find . -name "*.png" -exec pngquant --quality=65-80 --skip-if-larger --ext .png --force {} \; || true
-            echo "Kompression abgeschlossen!"
-
         - uses: BigWigsMods/packager@master
           with:
             args: >-
