@@ -33,7 +33,7 @@ PDE.SetupTexture = SetupTexture
 
 local function SetItemButtonQuality(button, quality)
     local color = quality and GW.GetQualityColor(quality)
-    if color and quality >= Enum.ItemQuality.Common then
+    if color and quality >= Enum.ItemQuality.Poor then
         button.IconBorder:Show()
         button.IconBorder:SetVertexColor(color.r, color.g, color.b)
         if button.itemSetBorderIndicator then

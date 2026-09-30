@@ -474,7 +474,7 @@ local function PaperDollSlotButton_Update(self)
             local iLvl = C_Item.GetDetailedItemLevelInfo(itemLink)
             if iLvl then
                 local quality = GetInventoryItemQuality("player", slot)
-                if quality >= Enum.ItemQuality.Common then
+                if quality then
                     local r, g, b = C_Item.GetItemQualityColor(quality)
                     self.itemlevel:SetTextColor(r or 1, g or 1, b or 1, 1)
                 end
@@ -496,15 +496,13 @@ local function PaperDollSlotButton_Update(self)
 end
 
 function GwSetItemButtonQuality(button, quality)
-    if quality then
-        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-            button.IconBorder:Show();
-            button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b);
-        else
-            button.IconBorder:Hide();
-        end
+    -- grey items get a border too; blizzard's bag colors would make common items grey as well, ours are white
+    local color = quality and GW.GetQualityColor(quality)
+    if color then
+        button.IconBorder:Show()
+        button.IconBorder:SetVertexColor(color.r, color.g, color.b)
     else
-        button.IconBorder:Hide();
+        button.IconBorder:Hide()
     end
 end
 

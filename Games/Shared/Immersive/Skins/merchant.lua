@@ -64,8 +64,11 @@ end
 
 -- the junk button sits between the two repair buttons; without guild repair Blizzard puts the label behind them
 local function PlaceRepairButtons()
-    MerchantRepairText:ClearAllPoints()
-    MerchantRepairText:SetPoint("BOTTOMLEFT", MerchantFrame, "BOTTOMLEFT", 14, 69)
+    -- only the classic clients label the repair buttons
+    if MerchantRepairText then
+        MerchantRepairText:ClearAllPoints()
+        MerchantRepairText:SetPoint("BOTTOMLEFT", MerchantFrame, "BOTTOMLEFT", 14, 69)
+    end
     MerchantRepairAllButton:ClearAllPoints()
     MerchantRepairAllButton:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMLEFT", 90, 32)
     MerchantRepairItemButton:ClearAllPoints()
