@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="channelEvents.lua"/>
     <Script file ="spam.lua"/>
     <Script file ="urls.lua"/>
     <Script file ="keywords.lua"/>

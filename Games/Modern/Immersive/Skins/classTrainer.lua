@@ -67,7 +67,7 @@ local function SkinSkillRow(row)
     row.gwSelected = row:CreateTexture(nil, "ARTWORK", nil, 0)
     row.gwSelected:SetAllPoints(row)
     row.gwSelected:SetTexture(MENU_HOVER)
-    row.gwSelected:SetVertexColor(0.8, 0.8, 0.8, 1)
+    row.gwSelected:SetVertexColor(GW.Colors.SkinColors.ListSelected:GetRGBA())
     row.gwSelected:SetShown(row.selectedTex:IsShown())
     row.selectedTex:SetAlpha(0)
     hooksecurefunc(row.selectedTex, "Show", function()
@@ -83,10 +83,14 @@ local function SkinSkillRow(row)
     row.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     row.name:GwLockTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     row.subText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    row.subText:GwLockTextColor(1, 1, 1)
-    row.nameSubText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    row.nameSubText:GwLockTextColor(0.75, 0.75, 0.75)
-    row.alternateCost:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    row.subText:GwLockTextColor(GW.Colors.FallbackWhite:GetRGB())
+    if row.nameSubText then
+        row.nameSubText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        row.nameSubText:GwLockTextColor(GW.Colors.SkinColors.SubText:GetRGB())
+    end
+    if row.alternateCost then
+        row.alternateCost:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    end
     SkinMoneyFrame(row.money)
 end
 
@@ -126,15 +130,20 @@ local function ApplyClassTrainerSkin()
     ClassTrainerFrame.CloseButton:GwSkinButton(true, false)
     ClassTrainerFrame.CloseButton:SetSize(20, 20)
 
-    ClassTrainerFrame.TrainButton:GwSkinButton(false, true)
+    local trainButton = ClassTrainerFrame.TrainButton or ClassTrainerTrainButton
+    trainButton:GwSkinButton(false, true)
     ClassTrainerFrame.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 100)
     local moneyPanel = CreateFrame("Frame", nil, ClassTrainerFrame)
-    moneyPanel:SetFrameLevel(math.max(0, ClassTrainerFrame.money:GetFrameLevel() - 1))
+    local moneyFrame = ClassTrainerFrame.money or ClassTrainerFrameMoneyFrame
+    moneyPanel:SetFrameLevel(math.max(0, moneyFrame:GetFrameLevel() - 1))
     moneyPanel:SetPoint("TOPLEFT", ClassTrainerFrameMoneyBg, "TOPLEFT", 6, -2)
     moneyPanel:SetPoint("BOTTOMRIGHT", ClassTrainerFrameMoneyBg, "BOTTOMRIGHT", -6, 12)
     GW.AddDetailsBackground(moneyPanel)
-    SkinMoneyFrame(ClassTrainerFrame.money)
-    ClassTrainerFrame.trainingPoints.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    SkinMoneyFrame(moneyFrame)
+
+    if ClassTrainerFrame.trainingPoints then
+        ClassTrainerFrame.trainingPoints.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    end
 
     local bar = ClassTrainerStatusBar
     bar:GwStripTextures()
@@ -147,6 +156,8 @@ local function ApplyClassTrainerSkin()
     GW.HandleTrimScrollBar(ClassTrainerFrame.ScrollBar)
     GW.HandleScrollControls(ClassTrainerFrame)
     hooksecurefunc(ClassTrainerFrame.ScrollBox, "Update", SkinRows)
+
+    ClassTrainerFrame.ScrollBar:SetHideIfUnscrollable(true)
 
     SkinSkillRow(ClassTrainerFrame.skillStepButton)
     ClassTrainerFrame.skillStepButton.gwSkinned = true

@@ -1,5 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
+local addonName = ...
 local L = GW.L
 
 local MAX_LISTED = 30
@@ -15,6 +16,9 @@ local tooltipOwner
 local function GetFamily(name)
     return name:match("^([^_%-]+)[_%-]") or name
 end
+
+-- our own usage is shown apart from the ranking
+local OWN_FAMILY = GetFamily(addonName)
 
 local function BuildAddonList()
     local count = C_AddOns.GetNumAddOns()
@@ -39,17 +43,20 @@ local function FormatCPU(ms)
     return format("%d ms", ms)
 end
 
--- green for small users up to red for the biggest one in the list
+-- by the share of the whole addon usage: green for small users, yellow at half of this, red at it
+local RED_AT_SHARE = 0.5
+
 local function UsageColor(share)
-    local good, bad = GW.Colors.SkinColors.Positive, GW.Colors.SkinColors.Negative
-    return CreateColor(Lerp(good.r, bad.r, share), Lerp(good.g, bad.g, share), Lerp(good.b, bad.b, share))
+    local colors = GW.Colors.SkinColors
+    local good, middle, bad = colors.Positive, colors.QuestGold, colors.Negative
+    return CreateColor(GW.ColorGradient(share, good.r, good.g, good.b, middle.r, middle.g, middle.b, bad.r, bad.g, bad.b))
 end
 
 local function SortByUsage(a, b)
     return a.usage > b.usage
 end
 
--- loaded addons summed up per family, biggest first
+-- loaded addons summed up per family, biggest first; our own family is returned on its own
 local function CollectUsage(byCPU)
     local families, list = {}, {}
     local totalMemory, totalCPU = 0, 0
@@ -77,8 +84,12 @@ local function CollectUsage(byCPU)
     for _, family in ipairs(list) do
         family.usage = byCPU and family.cpu or family.memory
     end
+    local own = families[OWN_FAMILY]
+    if own then
+        tremove(list, tIndexOf(list, own))
+    end
     sort(list, SortByUsage)
-    return list, totalMemory, totalCPU
+    return list, totalMemory, totalCPU, own
 end
 
 local function AddInfoLine(label, value)
@@ -111,7 +122,7 @@ end
 
 local function AddAddonLines()
     local byCPU = cpuProfiling and not IsShiftKeyDown()
-    local list, totalMemory, totalCPU = CollectUsage(byCPU)
+    local list, totalMemory, totalCPU, own = CollectUsage(byCPU)
 
     AddInfoLine(L["AddOn Memory:"], FormatMemory(totalMemory))
     if cpuProfiling then
@@ -120,13 +131,21 @@ local function AddAddonLines()
     GameTooltip:AddLine(" ")
 
     local limit = IsAltKeyDown() and #list or min(#list, MAX_LISTED)
-    local biggest = list[1] and list[1].usage or 0
-    for i = 1, limit do
-        local family = list[i]
-        local color = UsageColor(biggest > 0 and family.usage / biggest or 0)
+    local total = byCPU and totalCPU or totalMemory
+    local function AddFamilyLine(family)
+        local color = UsageColor(total > 0 and family.usage / total / RED_AT_SHARE or 0)
         local value = byCPU and FormatCPU(family.cpu) or FormatMemory(family.memory)
         local title = family.parts > 1 and format("%s (%d)", family.title, family.parts) or family.title
         GameTooltip:AddDoubleLine(title, color:WrapTextInColorCode(value), GW.Colors.FallbackWhite:GetRGB())
+    end
+
+    -- our own line stands apart, so it does not read like the top of the ranking
+    if own then
+        AddFamilyLine(own)
+        GameTooltip:AddLine(" ")
+    end
+    for i = 1, limit do
+        AddFamilyLine(list[i])
     end
 
     if #list > limit then
