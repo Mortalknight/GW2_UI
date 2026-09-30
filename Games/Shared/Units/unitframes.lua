@@ -341,6 +341,19 @@ function GwUnitFrameMixin:UpdateHealthbarColor()
     end
 end
 
+-- our four prestige portrait arts follow the four art sets of blizzard's honor badges,
+-- which start at honor level 5, 25, 70 and 250
+local PRESTIGE_TIER_LEVELS = {5, 25, 70, 250}
+
+local function GetPrestigeBorder(honorLevel)
+    if GW.IsSecretValue(honorLevel) or not honorLevel then return end
+    for tier = #PRESTIGE_TIER_LEVELS, 1, -1 do
+        if honorLevel >= PRESTIGE_TIER_LEVELS[tier] then
+            return "prestige" .. tier
+        end
+    end
+end
+
 function GwUnitFrameMixin:SetUnitPortraitFrame()
     if not self.portrait or not self.background then return end
 
@@ -356,7 +369,12 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
         if unitLevel == -1 then border = "boss" end
     end
 
-    if not (GW.Classic or GW.TBC or GW.Wrath) and canInspect then
+    -- the own frame shows its honor tier with the pvp indicator option
+    if unit == "player" then
+        if UnitHonorLevel and GW.settings.unitframes.player.pvpIndicator then
+            border = GetPrestigeBorder(UnitHonorLevel(unit)) or border
+        end
+    elseif not (GW.Classic or GW.TBC or GW.Wrath) and canInspect then
         if self.showItemLevel == "ITEM_LEVEL" then
             local guid = UnitGUID(self.gwUnit)
             if GW.NotSecretValue(guid) and guid then
@@ -367,15 +385,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
             end
         elseif self.showItemLevel == "PVP_LEVEL" then
             local honorLevel = GW.Retail and UnitHonorLevel(unit) or 0
-            local prestigeLevel = 0
-            if GW.NotSecretValue(honorLevel) and honorLevel > 0 then
-                prestigeLevel = (honorLevel > 199 and 4) or (honorLevel > 99 and 3) or
-                                (honorLevel > 49 and 2) or (honorLevel > 9 and 1) or 0
-            end
-
-            if prestigeLevel > 0 and TARGET_FRAME_ART["prestige" .. prestigeLevel] then
-                border = "prestige" .. prestigeLevel
-            end
+            border = GetPrestigeBorder(honorLevel) or border
             txt = honorLevel
         end
     end
@@ -513,6 +523,12 @@ function GwUnitFrameMixin:UnitFrameData(lvl)
     end
 
     self:SetUnitPortrait()
+    self:SetUnitPortraitFrame()
+end
+
+function GwUnitFrameMixin:UpdatePvpIndicator()
+    self.pvp:SetShown(GW.settings.unitframes.player.pvpIndicator)
+    self:SelectPvp()
     self:SetUnitPortraitFrame()
 end
 

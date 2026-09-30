@@ -300,7 +300,14 @@ local function UpdateHonor(self)
     local color = STATUSBAR_COLORS.Honor
     self.ExpBar:SetStatusBarColor(color.r, color.g, color.b)
 
-    return true, valPrec, level, level + 1
+    -- the badges tell the rank: the current one at the left level, the next one where a new badge comes
+    local nextLevel = level + 1
+    local nextText = nextLevel
+    if GW.GetNextHonorBadgeLevel(level) == nextLevel then
+        nextText = nextLevel .. " " .. GW.GetHonorBadge(nextLevel, 20)
+    end
+    local badge = GW.GetHonorBadge(level, 20)
+    return true, valPrec, badge and (badge .. " " .. level) or level, nextText
 end
 
 local function UpdatePetXPClassic(self)

@@ -25,6 +25,8 @@ function GwPlayerUnitFrameMixin:OnEvent(event, ...)
         self.powerbar:UpdatePowerData()
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         self:SelectPvp()
+    elseif event == "HONOR_LEVEL_UPDATE" then
+        self:SetUnitPortraitFrame()
     elseif event == "RESURRECT_REQUEST" then
         PlaySound(SOUNDKIT.UI_70_BOOST_THANKSFORPLAYING_SMALLER, "Master")
     end
@@ -194,6 +196,9 @@ local function LoadPlayerFrame()
 
     if GW.isModern then
         frame:RegisterEvent("WAR_MODE_STATUS_UPDATE")
+    end
+    if C_EventUtils.IsEventValid("HONOR_LEVEL_UPDATE") then
+        frame:RegisterEvent("HONOR_LEVEL_UPDATE")
     end
 
     if GW.isModern or GW.Mists then

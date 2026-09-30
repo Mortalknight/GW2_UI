@@ -1115,6 +1115,27 @@ local function GetQualityColor(quality)
 end
 GW.GetQualityColor = GetQualityColor
 
+function GW.GetHonorBadge(honorLevel, size)
+    local info = C_PvP and C_PvP.GetHonorRewardInfo and C_PvP.GetHonorRewardInfo(honorLevel)
+    return info and info.badgeFileDataID and ("|T" .. info.badgeFileDataID .. ":" .. (size or 16) .. ":" .. (size or 16) .. "|t")
+end
+
+local nextBadgeLevels = {}
+function GW.GetNextHonorBadgeLevel(honorLevel)
+    if nextBadgeLevels[honorLevel] == nil then
+        local current = GW.GetHonorBadge(honorLevel)
+        nextBadgeLevels[honorLevel] = false
+        for level = honorLevel + 1, honorLevel + 100 do
+            local badge = GW.GetHonorBadge(level)
+            if badge and badge ~= current then
+                nextBadgeLevels[honorLevel] = level
+                break
+            end
+        end
+    end
+    return nextBadgeLevels[honorLevel] or nil
+end
+
 local function GetBagItemQualityColor(quality)
     if ColorManager then
         if quality == -1 then

@@ -679,6 +679,7 @@ L["System info"] = true
 L["%s will start in %s!"] = true
 L["Interval"] = true
 L["Next Event"] = true
+L["Next badge"] = true
 L["Community Feast"] = true
 L["Feast"] = true
 L["Cooking"] = true

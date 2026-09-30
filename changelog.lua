@@ -25,6 +25,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Player pet frame: options for the portrait and the happiness indicator]=]},
     {GW.Enum.ChangelogType.feature, [=[Upcoming spells are available on Classic, TBC, Wrath and Forever]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: the quest level is shown again]=]},
+    {GW.Enum.ChangelogType.feature, [=[Honor badges (Retail): the health globe tooltip shows the honor level with its badge, the progress and the level of the next badge, the honor bar shows the badges at its level numbers; with the pvp indicator option the player frame gets the prestige portrait art, the four prestige arts of player and target now start at honor level 5, 25, 70 and 250 like the art sets of Blizzard's badges]=]},
     {GW.Enum.ChangelogType.change, [=[Target and focus frames no longer play the show animation]=]},
     {GW.Enum.ChangelogType.feature, [=[Friends data text: game icons for every Blizzard game, the icon of the chat is used for games without an own icon]=]},
     {GW.Enum.ChangelogType.change, [=[System data text: the memory use of GW2 UI has its own line, colored by its share of the total memory]=]},

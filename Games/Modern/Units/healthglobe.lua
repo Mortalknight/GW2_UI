@@ -132,6 +132,17 @@ function GwHealthglobeMixin:OnEnter()
         end
     end
 
+    local honorLevel = UnitHonorLevel and UnitHonorLevel("player")
+    local badge = honorLevel and GW.GetHonorBadge(honorLevel, 0)
+    if badge then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddDoubleLine(badge .. " " .. HONOR_LEVEL_LABEL:format(honorLevel), GW.GetLocalizedNumber(UnitHonor("player")) .. " / " .. GW.GetLocalizedNumber(UnitHonorMax("player")), 1, 1, 1, 1, 1, 1)
+        local nextLevel = GW.GetNextHonorBadgeLevel(honorLevel)
+        if nextLevel then
+            GameTooltip:AddDoubleLine(GW.L["Next badge"], GW.GetHonorBadge(nextLevel, 0) .. " " .. HONOR_LEVEL_LABEL:format(nextLevel))
+        end
+    end
+
     if IsInRaid() then
         local groupNumber
         for i = 1, GetNumGroupMembers() do
