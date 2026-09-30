@@ -66,6 +66,8 @@ local function SetStorage(key, value)
     local s = EnsureCharScope()
     if not s then return end
     s[key] = value
+    -- shown on the characters page of the profiles
+    s.lastUpdate = time()
 end
 GW.SetStorage = SetStorage
 
@@ -134,6 +136,10 @@ GW.UpdateMoney = UpdateMoney
 ---------- CHAR DATA ----------
 local UpdateCharData = function ()
     SetStorage("name", select(2, GetCharKeys()))
+    -- forever files the storage under the ruleset, the realm names the character in the profile databases
+    SetStorage("realm", GW.myrealm)
+    -- lets the characters page of the profiles tell old characters apart
+    SetStorage("lastSeen", time())
     SetStorage("faction", GW.myfaction)
     SetStorage("class", GW.myclass)
     UpdateMoney()

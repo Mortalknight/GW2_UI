@@ -951,6 +951,17 @@ L["With this setting you can no longer move the minimap completely to the top or
 L["Layout with that name already exists"] = true
 L["Please enter a name."] = true
 L["Profile with that name already exists"] = true
+L["Characters"] = true
+L["This character"] = true
+L["Profile assignment"] = true
+L["Character settings"] = true
+L["Spec profiles"] = true
+L["Gold and character info"] = true
+L["Saved:"] = true
+L["Last seen:"] = true
+L["The shared profiles are kept."] = true
+L["Remove all GW2 UI data of this character?"] = true
+L["Everything GW2 UI keeps for each character: its profile, the gold for the money data text and more. Remove the characters you no longer play."] = true
 L["Wowhead URL"] = true
 L["Slash commands:"] = true
 L["  /gw2 settings       -> Open the settings window"] = true

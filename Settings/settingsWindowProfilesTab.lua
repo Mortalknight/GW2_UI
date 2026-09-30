@@ -257,7 +257,7 @@ end
 
 
 local function item_OnLeave(self)
-    if self:IsMouseOver() then return end
+    if self:IsMouseOver() or self.isSelected then return end
     if self.canActivate then
         self.activateButton:GetScript("OnLeave")(self.activateButton, true)
     end
@@ -440,6 +440,252 @@ local function collectAllIcons()
 end
 
 ------------------------------------------------------------
+-- Characters: what GW2 UI keeps per character, keyed "Name - Realm" like AceDB
+------------------------------------------------------------
+local CharacterWin
+local selectedCharacter
+
+-- the key of a storage entry; forever files them under the ruleset, the realm they remember is the one of AceDB
+local function StorageKey(storageRealm, name, data)
+    return name .. " - " .. (data.realm or storageRealm)
+end
+
+-- every character one of the databases, their namespaces (spec switch) or the character storage knows
+local function CollectCharacters()
+    local characters = {}
+    local function Add(key)
+        if not characters[key] then
+            local name, realm = key:match("^(.-) %- (.+)$")
+            characters[key] = {key = key, name = name or key, realm = realm or ""}
+        end
+        return characters[key]
+    end
+
+    for _, sv in ipairs({GW.globalSettings.sv, GW.charSettings.sv}) do
+        for key in pairs(sv.profileKeys or {}) do Add(key) end
+        for key in pairs(sv.char or {}) do Add(key) end
+        for _, namespace in pairs(sv.namespaces or {}) do
+            for key in pairs(namespace.char or {}) do Add(key) end
+        end
+    end
+    -- the private profiles are named after their character
+    for key in pairs(GW.charSettings.sv.profiles or {}) do
+        if key:find(" - ", 1, true) then Add(key) end
+    end
+    for key, profile in pairs(GW.globalSettings.sv.profileKeys or {}) do
+        Add(key).profile = profile
+    end
+    for realm, names in pairs(GW.global.chars) do
+        for name, data in pairs(names) do
+            local character = Add(StorageKey(realm, name, data))
+            character.class, character.money, character.lastSeen, character.lastUpdate = data.class, data.money, data.lastSeen, data.lastUpdate
+        end
+    end
+    return characters
+end
+
+-- the private profile of a character, as long as no other character uses it
+local function OwnPrivateProfile(key)
+    local privateSv = GW.charSettings.sv
+    local profile = privateSv.profileKeys and privateSv.profileKeys[key] or key
+    if not (privateSv.profiles and privateSv.profiles[profile]) then return end
+    for other, otherProfile in pairs(privateSv.profileKeys or {}) do
+        if other ~= key and otherProfile == profile then return end
+    end
+    return profile
+end
+
+-- what removing the character deletes, in the words of the page
+local function StoredData(character)
+    local key = character.key
+    local globalSv, privateSv = GW.globalSettings.sv, GW.charSettings.sv
+    local data = {}
+    if (globalSv.profileKeys and globalSv.profileKeys[key]) or (privateSv.profileKeys and privateSv.profileKeys[key]) then
+        data[#data + 1] = L["Profile assignment"]
+    end
+    if OwnPrivateProfile(key) or (globalSv.char and globalSv.char[key]) or (privateSv.char and privateSv.char[key]) then
+        data[#data + 1] = L["Character settings"]
+    end
+    local hasSpecProfiles = false
+    for _, sv in ipairs({globalSv, privateSv}) do
+        for _, namespace in pairs(sv.namespaces or {}) do
+            hasSpecProfiles = hasSpecProfiles or (namespace.char and namespace.char[key] ~= nil)
+        end
+    end
+    if hasSpecProfiles then
+        data[#data + 1] = L["Spec profiles"]
+    end
+    if character.money or character.class then
+        data[#data + 1] = L["Gold and character info"]
+    end
+    return data
+end
+
+local function ForgetCharacter(sv, key)
+    if sv.profileKeys then sv.profileKeys[key] = nil end
+    if sv.char then sv.char[key] = nil end
+    for _, namespace in pairs(sv.namespaces or {}) do
+        if namespace.profileKeys then namespace.profileKeys[key] = nil end
+        if namespace.char then namespace.char[key] = nil end
+    end
+end
+
+-- the shared profiles stay, only the character's own data goes
+local function DeleteCharacter(key)
+    local privateSv = GW.charSettings.sv
+    local privateProfile = OwnPrivateProfile(key)
+    ForgetCharacter(GW.globalSettings.sv, key)
+    ForgetCharacter(privateSv, key)
+    if privateProfile then
+        privateSv.profiles[privateProfile] = nil
+    end
+
+    for realm, names in pairs(GW.global.chars) do
+        for name, data in pairs(names) do
+            if StorageKey(realm, name, data) == key then
+                names[name] = nil
+            end
+        end
+        if not next(names) then
+            GW.global.chars[realm] = nil
+        end
+    end
+end
+
+local InitCharacterButton
+
+-- this character gets the card above the list, the others are listed by realm and name
+local function UpdateCharacterScrollBox()
+    local currentKey = GW.globalSettings.keys.char
+    local list = {}
+    for key, character in pairs(CollectCharacters()) do
+        if key == currentKey then
+            character.isCurrent = true
+            InitCharacterButton(CharacterWin:GetParent().current, {character = character, index = 1})
+        else
+            list[#list + 1] = character
+        end
+    end
+    sort(list, function(a, b)
+        if a.realm ~= b.realm then return a.realm < b.realm end
+        return a.name < b.name
+    end)
+
+    local dataProvider = CreateDataProvider()
+    for index, character in ipairs(list) do
+        dataProvider:Insert({character = character, index = index})
+    end
+    CharacterWin:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
+end
+
+local function characterDelete_OnClick(self)
+    local button = self:GetParent()
+    local key = button.characterKey
+    GW.ShowPopup({
+        text = L["Remove all GW2 UI data of this character?"] .. "\n\n'" .. key .. "'\n\n" .. table.concat(button.storedData, "\n") .. "\n\n" .. L["The shared profiles are kept."],
+        OnAccept = function()
+            DeleteCharacter(key)
+            selectedCharacter = nil
+            UpdateCharacterScrollBox()
+        end
+    })
+end
+
+-- a click keeps the row highlighted with its delete button, a second click releases it
+local function characterRow_OnClick(self)
+    selectedCharacter = selectedCharacter ~= self.characterKey and self.characterKey or nil
+    UpdateCharacterScrollBox()
+end
+
+function InitCharacterButton(button, elementData)
+    if not button.gwSkinned then
+        button:SetScript("OnEnter", item_OnEnter)
+        button:SetScript("OnLeave", item_OnLeave)
+        item_OnLoad(button)
+        button.delete:SetScript("OnClick", characterDelete_OnClick)
+        button:SetScript("OnClick", characterRow_OnClick)
+        button.activateButton.icon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
+        GW.AddListItemChildHoverTexture(button)
+        button.gwSkinned = true
+    end
+
+    local character = elementData.character
+    button.characterKey = character.key
+    button.canDelete = not character.isCurrent
+    button.activeProfile:SetShown(character.isCurrent)
+    -- zebra rows: the template's background and the one of the list hover helper
+    local zebra = elementData.index % 2 == 1
+    button.background:SetShown(zebra)
+    button.Background:SetShown(zebra)
+
+    button.isSelected = not character.isCurrent and character.key == selectedCharacter
+    button.gwSelected:SetShown(button.isSelected)
+    button.delete:SetShown(button.isSelected and button.canDelete)
+
+    local class = GW.CLASS_ICONS[character.class] and character.class or 0
+    GW.SetClassIcon(button.activateButton.icon, class)
+    local color = class ~= 0 and GW.GWGetClassColor(class, true, true) or GW.Colors.FallbackWhite
+    button.name:SetText(character.key)
+    button.name:SetTextColor(color.r, color.g, color.b)
+
+    -- profile and gold, what would be deleted, and when the character was last seen
+    local overview = {}
+    if character.profile then
+        overview[#overview + 1] = L["Current profile:"] .. " " .. character.profile
+    end
+    if character.money then
+        overview[#overview + 1] = MONEY .. ": " .. GW.FormatMoneyForChat(character.money, true)
+    end
+    button.storedData = StoredData(character)
+    local lines = {}
+    if #overview > 0 then
+        lines[1] = table.concat(overview, "   ")
+    end
+    lines[#lines + 1] = L["Saved:"] .. " " .. table.concat(button.storedData, ", ")
+    local times = {}
+    if character.isCurrent then
+        times[1] = L["This character"]
+    elseif character.lastSeen then
+        times[1] = L["Last seen:"] .. " " .. date(L["TimeStamp m/d/y h:m:s"], character.lastSeen)
+    end
+    if character.lastUpdate then
+        times[#times + 1] = L["Last updated: "] .. date(L["TimeStamp m/d/y h:m:s"], character.lastUpdate)
+    end
+    if #times > 0 then
+        lines[#lines + 1] = table.concat(times, "   ")
+    end
+    button.desc:SetText(table.concat(lines, "\n"))
+end
+
+-- the characters page takes the place of the profile list; the frames of that list keep their own visibility
+local PROFILE_PAGE_FRAMES = {"profileSpec", "resetToDefaultFrame", "ScrollBox"}
+
+local function ShowCharacterPage(panel, show)
+    for _, key in ipairs(PROFILE_PAGE_FRAMES) do
+        local frame = panel[key]
+        if show then
+            frame.gwShownOnProfilePage = frame:IsShown()
+            frame:Hide()
+        else
+            frame:SetShown(frame.gwShownOnProfilePage ~= false)
+        end
+    end
+    if show then
+        panel.ScrollBar:Hide()
+        UpdateCharacterScrollBox()
+    else
+        -- the scroll bar hides itself when there is nothing to scroll
+        panel.ScrollBar:Update()
+    end
+    panel.characters:SetShown(show)
+    panel.showsCharacters = show
+
+    panel.header:SetText(show and L["Characters"] or L["Profiles"])
+    panel.sub:SetText(show and L["Everything GW2 UI keeps for each character: its profile, the gold for the money data text and more. Remove the characters you no longer play."] or L["Profiles are an easy way to share your settings across characters and realms."])
+    panel.menu.characters:SetText(show and L["Profiles"] or L["Characters"])
+end
+
+------------------------------------------------------------
 -- Entry point
 ------------------------------------------------------------
 local function LoadSettingsProfileTab(container)
@@ -453,6 +699,7 @@ local function LoadSettingsProfileTab(container)
 
     GW.SettingsMenuButtonSetUp(settingsProfile.menu.newProfile, true)
     GW.SettingsMenuButtonSetUp(settingsProfile.menu.importProfile, false)
+    GW.SettingsMenuButtonSetUp(settingsProfile.menu.characters, true)
 
     -- List
     local view = CreateScrollBoxListLinearView()
@@ -465,6 +712,15 @@ local function LoadSettingsProfileTab(container)
     settingsProfile.ScrollBar:SetHideIfUnscrollable(true)
     ProfileWin = settingsProfile.ScrollBox
     UpdateScrollBox(ProfileWin)
+
+    -- characters page
+    local characterView = CreateScrollBoxListLinearView()
+    characterView:SetElementInitializer("GwProfileItemTmpl", InitCharacterButton)
+    ScrollUtil.InitScrollBoxListWithScrollBar(settingsProfile.characters.ScrollBox, settingsProfile.characters.ScrollBar, characterView)
+    GW.HandleTrimScrollBar(settingsProfile.characters.ScrollBar)
+    GW.HandleScrollControls(settingsProfile.characters)
+    settingsProfile.characters.ScrollBar:SetHideIfUnscrollable(true)
+    CharacterWin = settingsProfile.characters.ScrollBox
 
    -- Header/sub
     settingsProfile.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -533,6 +789,11 @@ local function LoadSettingsProfileTab(container)
             GW.Notice(L["Error importing profile: Invalid or corrupt string!"])
         end
     end
+
+    settingsProfile.menu.characters:SetText(L["Characters"])
+    settingsProfile.menu.characters:SetScript("OnClick", function()
+        ShowCharacterPage(settingsProfile, not settingsProfile.showsCharacters)
+    end)
 
     settingsProfile.menu.importProfile:SetText(L["Import Profile"])
     settingsProfile.menu.importProfile:SetScript("OnClick", function()

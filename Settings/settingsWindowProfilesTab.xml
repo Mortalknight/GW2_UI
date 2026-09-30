@@ -38,6 +38,11 @@
                             <Anchor point="TOPLEFT" relativeKey="$parent.welcomebtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
                     </Button>
+                    <Button parentKey="characters" inherits="GwSettingsOverviewMenuButton" text="Characters">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.importProfile" relativePoint="TOPLEFT" x="0" y="-36"/>
+                        </Anchors>
+                    </Button>
                 </Frames>
             </Frame>
 
@@ -140,6 +145,45 @@
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-8" y="0"/>
                 </Anchors>
             </EventFrame>
+
+            <!-- the characters page takes the place of the profile list -->
+            <Frame parentKey="characters" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-60"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                </Anchors>
+                <Frames>
+                    <!-- this character sits above the list like the default settings card on the profile page -->
+                    <Button parentKey="current" inherits="GwProfileItemTmpl">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="0"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
+                                    <Size x="585" y="2"></Size>
+                                    <TexCoords left="0" right="1" top="0" bottom="1"/>
+                                    <Anchors>
+                                        <Anchor point="BOTTOMLEFT" x="0" y="-5"/>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                    <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                        <Size x="595" y="490"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-73"></Anchor>
+                        </Anchors>
+                    </Frame>
+                    <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="-8" y="0"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-8" y="0"/>
+                        </Anchors>
+                    </EventFrame>
+                </Frames>
+            </Frame>
         </Frames>
     </Frame>
 
