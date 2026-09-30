@@ -593,20 +593,13 @@ end
 GW.CheckDependencies = CheckDependencies
 
 local function ColorPickerFrameCallback(restore, frame, buttonBackground)
-    if ColorPickerFrame.noColorCallback then return end
     local newR, newG, newB
     if restore then
-        -- The user bailed, we extract the old color from the table created by ShowColorPicker.
-        newR, newG, newB = unpack(restore)
+        -- the user cancelled, Blizzard hands back the values we opened with
+        newR, newG, newB = restore.r, restore.g, restore.b
     else
-        -- Something changed
-        if GW.Retail then
-            newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorRGB()
-        else
-            newR, newG, newB = ColorPickerFrame:GetColorRGB()
-        end
+        newR, newG, newB = ColorPickerFrame:GetColorRGB()
     end
-    -- Update our internal storage.
 
     local color = frame.get()
     local changed = color.r ~= newR or color.g ~= newG or color.b ~= newB
@@ -623,27 +616,40 @@ end
 
 local function ShowColorPicker(frame)
     local color = frame.get()
-    if GW.Retail then
-        ColorPickerFrame.Content.ColorPicker:SetColorRGB(color.r, color.g, color.b)
-    else
-        ColorPickerFrame:SetColorRGB(color.r, color.g, color.b)
-    end
-    ColorPickerFrame.hasOpacity = (color.a ~= nil)
-    ColorPickerFrame.opacity = color.a
-    ColorPickerFrame.previousValues = {color.r, color.g, color.b, color.a}
-    ColorPickerFrame.func = function() ColorPickerFrameCallback(nil, frame, frame.button.bg) end
-    ColorPickerFrame.opacityFunc = function() ColorPickerFrameCallback(nil, frame, frame.button.bg) end
-    ColorPickerFrame.cancelFunc = function(restore) ColorPickerFrameCallback(restore, frame, frame.button.bg) end
-    if GwColorPPDefault and frame.getDefault then
-        if not GwColorPPDefault.defaultColor then
-            GwColorPPDefault.defaultColor = {}
-        end
+    local timer
 
-        GwColorPPDefault.defaultColor = frame.getDefault()
+    local function Apply(restore)
+        ColorPickerFrameCallback(restore, frame, frame.button.bg)
     end
-    ColorPickerFrame:Show()
-    ColorPickerFrame:SetFrameStrata('FULLSCREEN_DIALOG')
-    ColorPickerFrame:SetClampedToScreen(true)
+
+    -- dragging fires every frame, live updates are bundled so heavy callbacks stay smooth
+    local function OnChanged()
+        if not timer then
+            timer = C_Timer.NewTimer(0.1, function()
+                timer = nil
+                Apply()
+            end)
+        end
+    end
+
+    local function OnCancel(restore)
+        if timer then
+            timer:Cancel()
+            timer = nil
+        end
+        Apply(restore)
+    end
+
+    ColorPickerFrame:SetupColorPickerAndShow({
+        r = color.r, g = color.g, b = color.b,
+        hasOpacity = color.a ~= nil,
+        opacity = color.a,
+        swatchFunc = OnChanged,
+        opacityFunc = OnChanged,
+        cancelFunc = OnCancel,
+        extraInfo = { gw2Default = frame.getDefault and frame.getDefault() },
+    })
+    ColorPickerFrame:SetFrameStrata("FULLSCREEN_DIALOG")
     ColorPickerFrame:Raise()
 end
 

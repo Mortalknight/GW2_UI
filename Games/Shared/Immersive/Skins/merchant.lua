@@ -1,29 +1,59 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function UpdateRepairButtons()
-    MerchantRepairAllButton:ClearAllPoints()
-    MerchantRepairAllButton:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMLEFT", 90, 32)
-    MerchantRepairItemButton:ClearAllPoints()
-    MerchantRepairItemButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", -5, 0)
-    -- to be sure
-    if MerchantSellAllJunkButton then
-        MerchantSellAllJunkButton:ClearAllPoints()
-        MerchantSellAllJunkButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", 117, 0)
-    end
+local ITEM_BORDER = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
+
+-- repair and junk buttons: the icon crop of their modern Icon, else of the classic region
+local REPAIR_BUTTONS = {
+    { name = "MerchantRepairItemButton", iconCoords = { 0.07, 0.93, 0.07, 0.93 }, classicCoords = { 0.04, 0.24, 0.06, 0.5 } },
+    { name = "MerchantGuildBankRepairButton", iconCoords = { 0.61, 0.82, 0.1, 0.52 }, classicCoords = { 0.04, 0.24, 0.06, 0.5 } },
+    { name = "MerchantRepairAllButton", iconCoords = { 0.07, 0.93, 0.07, 0.93 } },
+    { name = "MerchantSellAllJunkButton", iconCoords = { 0.07, 0.93, 0.07, 0.93 } },
+}
+
+local skinned = false
+local skinnedSlots = {}
+
+local function StyleItemIcon(icon)
+    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    icon:ClearAllPoints()
+    icon:SetPoint("TOPLEFT", 1, -1)
+    icon:SetPoint("BOTTOMRIGHT", -1, 1)
 end
 
-local function UpdateMerchantInfo()
-    for i = 1, MERCHANT_ITEMS_PER_PAGE do
-        local button = _G["MerchantItem" .. i .. "ItemButton"]
+-- the extended vendor adds slots later, so this is safe to call again
+local function SkinMerchantFrameItemButton(index)
+    local slot = _G["MerchantItem" .. index]
+    if skinnedSlots[slot] then return end
+    skinnedSlots[slot] = true
 
-        local money = _G["MerchantItem" .. i .. "MoneyFrame"]
+    slot:GwStripTextures(true)
+    slot:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 6, 6)
+    slot.backdrop:SetFrameLevel(slot:GetFrameLevel())
+
+    local button = _G["MerchantItem" .. index .. "ItemButton"]
+    button:GwStripTextures()
+    button:GwStyleButton()
+    button:SetPoint("TOPLEFT", slot, "TOPLEFT", 4, -4)
+    StyleItemIcon(button.icon)
+
+    button.IconBorder:SetTexture(ITEM_BORDER)
+    button.IconBorder:SetAllPoints(button)
+    GW.HandleIcon(button.icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+    GW.HandleIconBorder(button.IconBorder, button.icon.backdrop)
+end
+GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
+
+-- prices sit next to the item; a second currency follows the gold price
+local function PlacePrices()
+    for index = 1, MERCHANT_ITEMS_PER_PAGE do
+        local button = _G["MerchantItem" .. index .. "ItemButton"]
+        local money = _G["MerchantItem" .. index .. "MoneyFrame"]
+        local currency = _G["MerchantItem" .. index .. "AltCurrencyFrame"]
+
         money:ClearAllPoints()
         money:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, -3)
-
-        local currency = _G["MerchantItem" .. i .. "AltCurrencyFrame"]
         currency:ClearAllPoints()
-
         if button.price and button.extendedCost then
             currency:SetPoint("LEFT", money, "RIGHT", -8, 0)
         else
@@ -32,129 +62,77 @@ local function UpdateMerchantInfo()
     end
 end
 
-local function SkinMerchantFrameItemButton(i)
-    local button = _G["MerchantItem" .. i .. "ItemButton"]
-    local icon = button.icon
-    local iconBorder = button.IconBorder
-    local item = _G["MerchantItem" .. i]
-
-    item:GwStripTextures(true)
-    item:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 6, 6)
-    item.backdrop:SetFrameLevel(item:GetFrameLevel())
-
-    button:GwStripTextures()
-    button:GwStyleButton()
-    button:SetPoint("TOPLEFT", item, "TOPLEFT", 4, -4)
-
-    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    icon:ClearAllPoints()
-    icon:SetPoint("TOPLEFT", 1, -1)
-    icon:SetPoint("BOTTOMRIGHT", -1, 1)
-
-    iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    iconBorder:SetAllPoints(button)
-    iconBorder:SetParent(button)
-
-    GW.HandleIcon(icon, true, GW.BackdropTemplates.ColorableBorderOnly)
-    GW.HandleIconBorder(iconBorder, icon.backdrop)
-
-    _G["MerchantItem" .. i .. "MoneyFrame"]:ClearAllPoints()
-    _G["MerchantItem" .. i .. "MoneyFrame"]:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
-
-    item.isGw2Skinned = true
+-- the junk button sits between the two repair buttons
+local function PlaceRepairButtons()
+    MerchantRepairAllButton:ClearAllPoints()
+    MerchantRepairAllButton:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMLEFT", 90, 32)
+    MerchantRepairItemButton:ClearAllPoints()
+    MerchantRepairItemButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", -5, 0)
+    if MerchantSellAllJunkButton then
+        MerchantSellAllJunkButton:ClearAllPoints()
+        MerchantSellAllJunkButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", 117, 0)
+    end
 end
-GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
 
-local function LoadMerchantFrameSkin()
-    if not GW.settings.skins.merchant.enabled then return end
+-- item name and border in quality color, white up to common items
+local function ColorByQuality(item, name, backdrop)
+    local quality = item and C_Item.GetItemQualityByID(item)
+    local r, g, b = GW.Colors.FallbackWhite:GetRGB()
+    if quality and quality > Enum.ItemQuality.Common then
+        r, g, b = C_Item.GetItemQualityColor(quality)
+    end
+    backdrop:SetBackdropBorderColor(r, g, b)
+    if name then
+        name:SetTextColor(r, g, b)
+    end
+end
 
-    MerchantMoneyBg:GwStripTextures()
-    MerchantMoneyInset:GwStripTextures()
-    MerchantFrame:GwStripTextures()
-    MerchantFrame.NineSlice:Hide()
-    MerchantFrame.TopTileStreaks:Hide()
+-- Mists' merchant leaves names and borders uncolored
+local function ColorItemsByQuality()
+    local firstIndex = (MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE
+    for index = 1, min(MERCHANT_ITEMS_PER_PAGE, GetMerchantNumItems() - firstIndex) do
+        local button = _G["MerchantItem" .. index .. "ItemButton"]
+        ColorByQuality(button.link, _G["MerchantItem" .. index .. "Name"], button.icon.backdrop)
+    end
 
-    local headerText = MerchantFrameTitleText
+    local buybackName = GetBuybackItemInfo(GetNumBuybackItems())
+    ColorByQuality(buybackName, buybackName and MerchantBuyBackItemName, MerchantBuyBackItemItemButtonIconTexture.backdrop)
+    MerchantRepairText:SetPoint("BOTTOMLEFT", 14, 69)
+end
 
+local function OnMerchantInfoUpdate()
+    GW.SetHeaderPortrait(MerchantFrame.gwHeader, "NPC")
+    if GW.Mists then
+        ColorItemsByQuality()
+    end
+    PlacePrices()
+end
+
+local function SkinHeader()
+    -- the classic frame has no title key, its second font string is the title
+    local title = MerchantFrameTitleText
     if not GW.Retail then
-        local r = {MerchantFrame:GetRegions()}
-        local i = 1
-        for _,c in pairs(r) do
-            if c:GetObjectType() == "FontString" then
-                if i == 2 then headerText = c break end
-                i = i + 1
+        local found = 0
+        for _, region in ipairs({ MerchantFrame:GetRegions() }) do
+            if region:GetObjectType() == "FontString" then
+                found = found + 1
+                if found == 2 then
+                    title = region
+                    break
+                end
             end
         end
     end
 
-    GW.CreateFrameHeaderWithBody(MerchantFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png", {MerchantFrameInset, MerchantMoneyInset}, nil, false, true)
-    MerchantFrame.gwHeader.windowIcon:SetSize(48, 48)
-    MerchantFrame.gwHeader.windowIcon:ClearAllPoints()
-    MerchantFrame.gwHeader.windowIcon:SetPoint("CENTER", MerchantFrame.gwHeader, "BOTTOMLEFT", 6 + 24, 19)
-    headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    GW.CreateFrameHeaderWithBody(MerchantFrame, title, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png", { MerchantFrameInset, MerchantMoneyInset }, nil, false, true)
+    local icon = MerchantFrame.gwHeader.windowIcon
+    icon:SetSize(48, 48)
+    icon:ClearAllPoints()
+    icon:SetPoint("CENTER", MerchantFrame.gwHeader, "BOTTOMLEFT", 30, 19)
+    title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+end
 
-    MerchantFrameInset.NineSlice:Hide()
-
-    MerchantFrameCloseButton:GwSkinButton(true)
-    MerchantFrameCloseButton:SetSize(20, 20)
-    MerchantFrameCloseButton:SetPoint("TOPRIGHT", MerchantFrame, "TOPRIGHT", -10, -2)
-    MerchantFramePortrait:Hide()
-
-    hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
-        GW.SetHeaderPortrait(MerchantFrame.gwHeader, "NPC")
-        if GW.Mists then
-            local numMerchantItems = GetMerchantNumItems()
-            local index = (MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE
-            for i = 1, MERCHANT_ITEMS_PER_PAGE do
-                index = index + 1
-
-                if index <= numMerchantItems then
-                    local button = _G["MerchantItem" .. i .. "ItemButton"]
-                    local name = _G["MerchantItem" .. i .. "Name"]
-
-                    if button.link then
-                        local quality = C_Item.GetItemQualityByID(button.link)
-                        if quality and quality > 1 then
-                            local r, g, b = C_Item.GetItemQualityColor(quality)
-                            button.icon.backdrop:SetBackdropBorderColor(r, g, b)
-                            name:SetTextColor(r, g, b)
-                        else
-                            button.icon.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
-                            name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-                        end
-                    else
-                        button.icon.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
-                        name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-                    end
-                end
-
-                local itemName = GetBuybackItemInfo(GetNumBuybackItems())
-                if itemName then
-                    local quality = C_Item.GetItemQualityByID(itemName)
-                    if quality and quality > 1 then
-                        local r, g, b = C_Item.GetItemQualityColor(quality)
-                        MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(r, g, b)
-                        MerchantBuyBackItemName:SetTextColor(r, g, b)
-                    else
-                        MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
-                        MerchantBuyBackItemName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-                    end
-                else
-                    MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(GW.Colors.FallbackWhite:GetRGB())
-                end
-            end
-
-            MerchantRepairText:SetPoint('BOTTOMLEFT', 14, 69)
-        end
-    end)
-
-    hooksecurefunc(MerchantFrame, "SetWidth", function()
-        local w2, h2 = MerchantFrame:GetSize()
-        MerchantFrame.tex:SetSize(w2 + 50, h2 + 50)
-    end)
-
-    MerchantFrame:SetWidth(360)
-
+local function SkinBuyback()
     MerchantBuyBackItem:SetPoint("TOPLEFT", MerchantItem10, "BOTTOMLEFT", 0, -50)
     MerchantBuyBackItem:GwStripTextures(true)
     MerchantBuyBackItem:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 6, 6)
@@ -162,118 +140,118 @@ local function LoadMerchantFrameSkin()
     MerchantBuyBackItem.backdrop:SetPoint("TOPLEFT", -6, 6)
     MerchantBuyBackItem.backdrop:SetPoint("BOTTOMRIGHT", 6, -6)
 
-    if GW.Retail then
-        MerchantExtraCurrencyInset:GwStripTextures()
-        MerchantExtraCurrencyBg:GwStripTextures()
-        MerchantFrame.FilterDropdown:GwHandleDropDownBox()
-    end
-
-    MerchantItem1:SetPoint("TOPLEFT", MerchantFrame, "TOPLEFT", 24, -69)
-
-    GW.HandleTabs(MerchantFrameTab1)
-    GW.HandleTabs(MerchantFrameTab2)
-
-    MerchantFrameTab1:SetSize(80, 24)
-    MerchantFrameTab2:SetSize(80, 24)
-
-    MerchantFrameTab1:ClearAllPoints()
-    MerchantFrameTab1:SetPoint("TOPLEFT", MerchantFrame, "BOTTOMLEFT", 0, 0)
-
-    MerchantFrameTab2:ClearAllPoints()
-    MerchantFrameTab2:SetPoint("LEFT", MerchantFrameTab1, "RIGHT", 0, 0)
-
-    hooksecurefunc("PanelTemplates_SelectTab", function(tab)
-        local name = tab:GetName()
-        local text = tab.Text or _G[name .. "Text"]
-        text:SetPoint("CENTER", tab, "CENTER", (tab.deselectedTextX or 0), (tab.deselectedTextY or 2))
-    end)
-
-    for i = 1, MERCHANT_ITEMS_PER_PAGE do
-        if not _G["MerchantItem" .. i].isGw2Skinned then
-            SkinMerchantFrameItemButton(i)
-        end
-    end
-
-    MerchantBuyBackItemItemButton:GwStripTextures()
-
-    local backDrop = CreateFrame("Frame", nil, MerchantBuyBackItemItemButton, "GwActionButtonBackdropTmpl")
-    local backDropSize = 1
-    if MerchantBuyBackItemItemButton:GetWidth() > 40 then
-        backDropSize = 2
-    end
-
-    backDrop:SetPoint("TOPLEFT", MerchantBuyBackItemItemButton, "TOPLEFT", -backDropSize, backDropSize)
-    backDrop:SetPoint("BOTTOMRIGHT", MerchantBuyBackItemItemButton, "BOTTOMRIGHT", backDropSize, -backDropSize)
-    MerchantBuyBackItemItemButton.gwBackdrop = backDrop
-
+    local button = MerchantBuyBackItemItemButton
+    button:GwStripTextures()
+    local frameSize = button:GetWidth() > 40 and 2 or 1
+    local frame = CreateFrame("Frame", nil, button, "GwActionButtonBackdropTmpl")
+    frame:SetPoint("TOPLEFT", -frameSize, frameSize)
+    frame:SetPoint("BOTTOMRIGHT", frameSize, -frameSize)
+    button.gwBackdrop = frame
     if UndoFrame then
-        UndoFrame.Arrow:SetPoint("CENTER", MerchantBuyBackItemItemButton, "CENTER")
+        UndoFrame.Arrow:SetPoint("CENTER", button, "CENTER")
     end
 
-    MerchantBuyBackItemItemButton.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    MerchantBuyBackItemItemButton.IconBorder:SetAllPoints(MerchantBuyBackItemItemButton)
-    MerchantBuyBackItemItemButton.IconBorder:SetParent(MerchantBuyBackItemItemButton)
-    hooksecurefunc(MerchantBuyBackItemItemButton.IconBorder, "SetVertexColor", function(self)
-        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-    end)
+    -- Blizzard resets the border texture along with its quality color
+    button.IconBorder:SetTexture(ITEM_BORDER)
+    button.IconBorder:SetAllPoints(button)
+    hooksecurefunc(button.IconBorder, "SetVertexColor", function(border) border:SetTexture(ITEM_BORDER) end)
 
-    MerchantBuyBackItemItemButtonIconTexture:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    MerchantBuyBackItemItemButtonIconTexture:ClearAllPoints()
-    MerchantBuyBackItemItemButtonIconTexture:SetPoint("TOPLEFT", 1, -1)
-    MerchantBuyBackItemItemButtonIconTexture:SetPoint("BOTTOMRIGHT", -1, 1)
-
+    StyleItemIcon(MerchantBuyBackItemItemButtonIconTexture)
     if GW.Mists then
         GW.HandleIcon(MerchantBuyBackItemItemButtonIconTexture, true, GW.BackdropTemplates.ColorableBorderOnly)
-        GW.HandleIconBorder(MerchantBuyBackItemItemButton.IconBorder, MerchantBuyBackItemItemButtonIconTexture.backdrop)
+        GW.HandleIconBorder(button.IconBorder, MerchantBuyBackItemItemButtonIconTexture.backdrop)
     end
+end
 
-    MerchantRepairItemButton:GwSkinButton(false, false, true)
-    MerchantRepairItemButton:GetRegions():GwSetInside()
-    if MerchantRepairItemButton.Icon then
-        MerchantRepairItemButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    else
-        MerchantRepairItemButton:GetRegions():SetTexCoord(0.04, 0.24, 0.06, 0.5)
+local function SkinButtons()
+    for _, info in ipairs(REPAIR_BUTTONS) do
+        local button = _G[info.name]
+        if button then
+            button:GwSkinButton(false, false, true)
+            button:GetRegions():GwSetInside()
+            if button.Icon then
+                button.Icon:SetTexCoord(unpack(info.iconCoords))
+            elseif info.classicCoords then
+                button:GetRegions():SetTexCoord(unpack(info.classicCoords))
+            end
+        end
     end
-
-    MerchantGuildBankRepairButton:SetPoint("LEFT", MerchantRepairAllButton, "RIGHT", 5, 0)
-    MerchantGuildBankRepairButton:GwSkinButton(false, false, true)
-    MerchantGuildBankRepairButton:GetRegions():GwSetInside()
-    if MerchantGuildBankRepairButton.Icon then
-        MerchantGuildBankRepairButton.Icon:SetTexCoord(0.61, 0.82, 0.1, 0.52)
-    else
-        MerchantGuildBankRepairButton:GetRegions():SetTexCoord(0.04, 0.24, 0.06, 0.5)
-    end
-
-    MerchantRepairAllButton:GwSkinButton(false, false, true)
-    MerchantRepairAllButton:GetRegions():GwSetInside()
-    if MerchantRepairAllButton.Icon then
-        MerchantRepairAllButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    else
+    -- the classic repair all icon is a rotated quarter of the repair sheet
+    if not MerchantRepairAllButton.Icon then
         MerchantRepairAllIcon:SetTexCoord(0.34, 0.1, 0.34, 0.535, 0.535, 0.1, 0.535, 0.535)
     end
+    MerchantGuildBankRepairButton:SetPoint("LEFT", MerchantRepairAllButton, "RIGHT", 5, 0)
 
-    if MerchantSellAllJunkButton then
-        MerchantSellAllJunkButton:GwSkinButton(false, false, true)
-        MerchantSellAllJunkButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        MerchantSellAllJunkButton:GetRegions():GwSetInside()
-    end
-
-
-    for _, btn in next, {MerchantNextPageButton, MerchantPrevPageButton} do
-        GW.HandleNextPrevButton(btn, nil, true)
-        for _, c in pairs( {btn:GetRegions()} ) do
-            if c:GetObjectType() == "FontString" then
-                c:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    for _, button in ipairs({ MerchantNextPageButton, MerchantPrevPageButton }) do
+        GW.HandleNextPrevButton(button, nil, true)
+        for _, region in ipairs({ button:GetRegions() }) do
+            if region:GetObjectType() == "FontString" then
+                region:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
                 break
             end
         end
     end
     MerchantPageText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-
     MerchantNextPageButton:ClearAllPoints()
     MerchantNextPageButton:SetPoint("LEFT", MerchantPageText, "RIGHT", 100, 4)
 
-    hooksecurefunc("MerchantFrame_UpdateRepairButtons", UpdateRepairButtons)
-    hooksecurefunc("MerchantFrame_UpdateMerchantInfo", UpdateMerchantInfo)
+    MerchantFrameCloseButton:GwSkinButton(true)
+    MerchantFrameCloseButton:SetSize(20, 20)
+    MerchantFrameCloseButton:SetPoint("TOPRIGHT", MerchantFrame, "TOPRIGHT", -10, -2)
+end
+
+local function SkinTabs()
+    local previous
+    for _, tab in ipairs({ MerchantFrameTab1, MerchantFrameTab2 }) do
+        GW.HandleTabs(tab)
+        tab:SetSize(80, 24)
+        tab:ClearAllPoints()
+        if previous then
+            tab:SetPoint("LEFT", previous, "RIGHT", 0, 0)
+        else
+            tab:SetPoint("TOPLEFT", MerchantFrame, "BOTTOMLEFT", 0, 0)
+        end
+        previous = tab
+    end
+end
+
+local function LoadMerchantFrameSkin()
+    -- also runs after a profile switch, the skin can not be undone anyway
+    if skinned or not GW.settings.skins.merchant.enabled then return end
+    skinned = true
+
+    for _, region in ipairs({ MerchantMoneyBg, MerchantMoneyInset, MerchantFrame }) do
+        region:GwStripTextures()
+    end
+    MerchantFrame.NineSlice:Hide()
+    MerchantFrame.TopTileStreaks:Hide()
+    MerchantFrameInset.NineSlice:Hide()
+    MerchantFramePortrait:Hide()
+    if MerchantExtraCurrencyInset then
+        MerchantExtraCurrencyInset:GwStripTextures()
+        MerchantExtraCurrencyBg:GwStripTextures()
+    end
+    if MerchantFrame.FilterDropdown then
+        MerchantFrame.FilterDropdown:GwHandleDropDownBox()
+    end
+
+    SkinHeader()
+    -- the background follows the width the extended vendor sets
+    hooksecurefunc(MerchantFrame, "SetWidth", function()
+        local width, height = MerchantFrame:GetSize()
+        MerchantFrame.tex:SetSize(width + 50, height + 50)
+    end)
+    MerchantFrame:SetWidth(360)
+
+    MerchantItem1:SetPoint("TOPLEFT", MerchantFrame, "TOPLEFT", 24, -69)
+    for index = 1, MERCHANT_ITEMS_PER_PAGE do
+        SkinMerchantFrameItemButton(index)
+    end
+    SkinBuyback()
+    SkinButtons()
+    SkinTabs()
+
+    hooksecurefunc("MerchantFrame_UpdateMerchantInfo", OnMerchantInfoUpdate)
+    hooksecurefunc("MerchantFrame_UpdateRepairButtons", PlaceRepairButtons)
 end
 GW.LoadMerchantFrameSkin = LoadMerchantFrameSkin

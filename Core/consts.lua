@@ -188,86 +188,102 @@ if C_StringUtil and C_StringUtil.CreateNumericRuleFormatter then
     });
 end
 
--- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
--- Format: {class = {id = {r, g, b[, <spell-id-same-slot>]} ...}, ...}
+-- Buffs the group frame indicators can watch, per class. Each entry is a palette color and the
+-- spell ids it covers (on classic clients every rank is its own id); sameSlot lists more ids
+-- the same indicator also shows.
+local IC = GW.Colors.IndicatorColors
+
+local function Indicator(color, sameSlot)
+    return { color = color, sameSlot = sameSlot }
+end
+
+local function Indicators(entries)
+    local list = {}
+    for _, entry in ipairs(entries) do
+        for i = 2, #entry do
+            list[entry[i]] = Indicator(entry[1], entry.sameSlot)
+        end
+    end
+    return list
+end
 
 if GW.Retail then
     GW.AURAS_INDICATORS = {
-        EVOKER = {
+        EVOKER = Indicators({
             -- All
-            [381748]	= {0.17, 0.94, 0.75, {381732, 381741, 381746, 381749, 381750, 381751, 381752, 381753, 381754, 381756, 381757, 381758, 432652, 432658}}, -- Blessing of the Bronze
+            { IC.Cyan, 381748, sameSlot = { 381732, 381741, 381746, 381749, 381750, 381751, 381752, 381753, 381754, 381756, 381757, 381758, 432652, 432658 } }, -- Blessing of the Bronze
             -- Preservation
-            [355941]	= {0.33, 0.33, 0.77}, -- Dream Breath
-            [376788]	= {0.25, 0.25, 0.58}, -- Dream Breath (echo)
-            [363502]	= {0.33, 0.33, 0.70}, -- Dream Flight
-            [366155]	= {0.14, 1.00, 0.88}, -- Reversion
-            [367364]	= {0.09, 0.69, 0.61}, -- Reversion (echo)
-            [373267]	= {0.82, 0.29, 0.24}, -- Life Bind (Verdant Embrace)
-            [364343]	= {0.13, 0.87, 0.50}, -- Echo
+            { IC.Purple, 355941 }, -- Dream Breath
+            { IC.Purple, 376788 }, -- Dream Breath (echo)
+            { IC.Purple, 363502 }, -- Dream Flight
+            { IC.Cyan, 366155 }, -- Reversion
+            { IC.Teal, 367364 }, -- Reversion (echo)
+            { IC.Red, 373267 }, -- Life Bind (Verdant Embrace)
+            { IC.Mint, 364343 }, -- Echo
             -- Augmentation
-            [360827]	= {0.33, 0.33, 0.77}, -- Blistering Scales
-            [410089]	= {0.13, 0.87, 0.50}, -- Prescience
-            [395152]	= {0.98, 0.44, 0.00}, -- Ebon Might
-            [410263]	= {0.02, 0.78, 0.43}, -- Inferno's Blessing
-            [410686]	= {0.18, 0.84, 0.78}, -- Symbiotic Bloom
-            [413984]	= {0.09, 0.89, 0.86}, -- Shifting Sands
-            [369459]	= {0.59, 0.50, 0.75}, -- Source of Magic
-        },
-        PRIEST = {
+            { IC.Purple, 360827 }, -- Blistering Scales
+            { IC.Mint, 410089 }, -- Prescience
+            { IC.Orange, 395152 }, -- Ebon Might
+            { IC.Mint, 410263 }, -- Inferno's Blessing
+            { IC.Cyan, 410686 }, -- Symbiotic Bloom
+            { IC.Cyan, 413984 }, -- Shifting Sands
+            { IC.Grey, 369459 }, -- Source of Magic
+        }),
+        PRIEST = Indicators({
             -- All
-            [21562]		= {0.17, 0.94, 0.75}, -- Power Word: Fortitude
+            { IC.Cyan, 21562 }, -- Power Word: Fortitude
             -- Discipline
-            [194384]	= {1, 1, 0.66}, -- Atonement
-            [17]		= {0.7, 0.7, 0.7}, -- Power Word: Shield
-            [1253593]	= {0.71, 0.29, 0.38}, -- Void Shield
+            { IC.Yellow, 194384 }, -- Atonement
+            { IC.Grey, 17 }, -- Power Word: Shield
+            { IC.Red, 1253593 }, -- Void Shield
             -- Holy
-            [41635]		= {0.2, 0.7, 0.2}, -- Prayer of Mending
-            [139]		= {0.4, 0.7, 0.2}, -- Renew
-            [77489]		= {0.75, 1.00, 0.30}, -- Echo of Light
-        },
-        DRUID = {
+            { IC.Green, 41635 }, -- Prayer of Mending
+            { IC.Green, 139 }, -- Renew
+            { IC.Lime, 77489 }, -- Echo of Light
+        }),
+        DRUID = Indicators({
             -- All
-            [1126]		= {0.17, 0.94, 0.75}, -- Mark of the Wild
-            [474754]	= {0.59, 0.50, 0.75}, -- Symbiotic Relationship
+            { IC.Cyan, 1126 }, -- Mark of the Wild
+            { IC.Grey, 474754 }, -- Symbiotic Relationship
             -- Restoration
-            [774]		= {0.8, 0.4, 0.8}, -- Rejuvenation
-            [33763]		= {0.4, 0.8, 0.2}, -- Lifebloom
-            [48438]		= {0.8, 0.4, 0}, -- Wild Growth
-            [8936]		= {0.2, 0.8, 0.2}, -- Regrowth
-            [155777]	= {0.8, 0.4, 0.8}, -- Germination
-        },
-        PALADIN = {
+            { IC.Pink, 774 }, -- Rejuvenation
+            { IC.Green, 33763 }, -- Lifebloom
+            { IC.Orange, 48438 }, -- Wild Growth
+            { IC.Green, 8936 }, -- Regrowth
+            { IC.Pink, 155777 }, -- Germination
+        }),
+        PALADIN = Indicators({
             -- Holy
-            [53563]		= {0.7, 0.3, 0.7}, -- Beacon of Light
-            [156910]	= {0.7, 0.3, 0.7}, -- Beacon of Faith
-            [200025]	= {0.7, 0.3, 0.7}, -- Beacon of Virtue
-            [156322]	= {0.2, 0.8, 0.2}, -- Eternal Flame
-            [1244893]	= {0.06, 0.77, 0.34}, -- Beacon of the Savior
-        },
-        SHAMAN = {
+            { IC.Pink, 53563 }, -- Beacon of Light
+            { IC.Pink, 156910 }, -- Beacon of Faith
+            { IC.Pink, 200025 }, -- Beacon of Virtue
+            { IC.Green, 156322 }, -- Eternal Flame
+            { IC.Green, 1244893 }, -- Beacon of the Savior
+        }),
+        SHAMAN = Indicators({
             -- All
-            [462854]	= {0.17, 0.94, 0.75}, -- Skyfury
+            { IC.Cyan, 462854 }, -- Skyfury
             -- Restoration
-            [61295]		= {0.7, 0.3, 0.7}, -- Riptide
-            [974]		= {0.91, 0.80, 0.44}, -- Earth Shield
-            [383648]	= {0.91, 0.80, 0.44}, -- Earth Shield (Elemental Orbit)
-            [207400]	= {0.59, 0.23, 0.70}, -- Ancestral Vigor
-            [382024]	= {0.87, 0.98, 0.76}, -- Earthliving Weapon
-            [444490]	= {0.67, 1.00, 0.62}, -- Hydrobubble
-        },
-        MONK = {
+            { IC.Pink, 61295 }, -- Riptide
+            { IC.Yellow, 974 }, -- Earth Shield
+            { IC.Yellow, 383648 }, -- Earth Shield (Elemental Orbit)
+            { IC.Purple, 207400 }, -- Ancestral Vigor
+            { IC.Yellow, 382024 }, -- Earthliving Weapon
+            { IC.Yellow, 444490 }, -- Hydrobubble
+        }),
+        MONK = Indicators({
             -- Mistweaver
-            [115175]	= {0.6, 0.9, 0.9}, -- Soothing Mist
-            [119611]	= {0.3, 0.8, 0.6}, -- Renewing Mist
-            [450769]	= {0.3, 0.8, 0.6}, -- Aspect of Harmony (Modified version of Renewing Mist)
-            [124682]	= {0.8, 0.8, 0.25}, -- Enveloping Mist
-        },
-        MAGE = {
-            [1459]		= {0.17, 0.94, 0.75}, -- Arcane Intellect
-        },
-        WARRIOR = {
-            [6673]		= {0.17, 0.94, 0.75}, -- Battle Shout
-        },
+            { IC.Teal, 115175 }, -- Soothing Mist
+            { IC.Teal, 119611 }, -- Renewing Mist
+            { IC.Teal, 450769 }, -- Aspect of Harmony (Modified version of Renewing Mist)
+            { IC.Lime, 124682 }, -- Enveloping Mist
+        }),
+        MAGE = Indicators({
+            { IC.Cyan, 1459 }, -- Arcane Intellect
+        }),
+        WARRIOR = Indicators({
+            { IC.Cyan, 6673 }, -- Battle Shout
+        }),
         -- Not used for now
         WARLOCK = {},
         ROGUE = {},
@@ -277,477 +293,311 @@ if GW.Retail then
     }
 elseif GW.Classic then
     GW.AURAS_INDICATORS = {
-        PRIEST = {
-            [10937] =   {1, 1, 0.66},       -- Power Word: Fortitude Rank 5
-            [10938] =   {1, 1, 0.66},       -- Power Word: Fortitude Rank 6
-            [21564] =   {1, 1, 0.66},       -- Prayer of Fortitude Rank 2
-            [14819] =   {0.2, 0.7, 0.2},    -- Divine Spirit Rank 3
-            [27841] =   {0.2, 0.7, 0.2},    -- Divine Spirit Rank 4
-            [27581] =   {0.2, 0.7, 0.2},    -- Prayer of Spirit Rank 1
-            [10957] =   {0.7, 0.7, 0.7},    -- Shadow Protection Rank 2
-            [10958] =   {0.7, 0.7, 0.7},    -- Shadow Protection Rank 3
-            [27683] =   {0.7, 0.7, 0.7},    -- Prayer of Shadow Protection Rank 1
-            [10898] =   {0, 0, 1},          -- Power Word: Shield Rank 7
-            [10899] =   {0, 0, 1},          -- Power Word: Shield Rank 8
-            [10900] =   {0, 0, 1},          -- Power Word: Shield Rank 9
-            [10901] =   {0, 0, 1},          -- Power Word: Shield Rank 10
-            [10927] =   {0.33, 0.73, 0.75}, -- Renew Rank 7
-            [10928] =   {0.33, 0.73, 0.75}, -- Renew Rank 8
-            [10929] =   {0.33, 0.73, 0.75}, -- Renew Rank 9
-            [25315] =   {0.33, 0.73, 0.75}, -- Renew Rank 10
-        },
-        DRUID = {
-            [8907] =    {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 5
-            [9884] =    {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 6
-            [16878] =   {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 7
-            [21849] =   {0.8, 0.8, 0.8},    -- Gift of the Wild Rank 1
-            [21850] =   {0.2, 0.8, 0.8},    -- Gift of the Wild Rank 2
-            [8914] =    {0.4, 0.2, 0.8},    -- Thorns Rank 4
-            [9756] =    {0.4, 0.2, 0.8},    -- Thorns Rank 5
-            [9910] =    {0.4, 0.2, 0.8},    -- Thorns Rank 6
-            [9839] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 8
-            [9840] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 9
-            [9841] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 10
-            [25299] =   {0.83, 1, 0.25},    -- Rejuvenation Rank 11
-            [9856] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 7
-            [9857] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 8
-            [9858] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 9
-            [29166] =   {0.49, 0.6, 0.55},  -- Innervate
-        },
-        PALADIN = {
-            [1044] =    {0.89, 0.45, 0},    -- Blessing of Freedom
-            [6940] =    {0.89, 0.1, 1},     -- Blessing Sacrifice Rank 1
-            [20729] =   {0.89, 0.1, 1},     -- Blessing Sacrifice Rank 1
-            [19837] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 5
-            [19838] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 6
-            [25291] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 7
-            [19854] =   {0.2, 0.8, 0.2},    -- Blessing of Wisdom Rank 5
-            [25290] =   {0.2, 0.8, 0.2},    -- Blessing of Wisdom Rank 6
-            [25916] =   {0.2, 0.8, 0.2},    -- Greater Blessing of Might Rank 2
-            [25918] =   {0.2, 0.8, 0.2},    -- Greater Blessing of Wisdom Rank 2
-            [10293] =   {0.58, 1, 0.5},     -- Devotion Aura Rank 7
-            [19978] =   {0.17, 1, 0.75},    -- Blessing of Light Rank 2
-            [19979] =   {0.17, 1, 0.75},    -- Blessing of Light Rank 3
-            [5599] =    {0.17, 1, 0.75},    -- Blessing of Protection Rank 2
-            [10278] =   {0.17, 1, 0.75},    -- Blessing of Protection Rank 3
-            [19746] =   {0.83, 1, 0.07},    -- Concentration Aura
-        },
-        SHAMAN = {
-            [29203] =   {0.7, 0.3, 0.7},    -- Healing Way
-            [16237] =   {0.2, 0.2, 1},      -- Ancestral Fortitude
-            [25909] =   {0, 0, 0.5},        -- Tranquil Air
-            [10534] =   {0.05, 1, 0.5},     -- Fire Resistance Totem Rank 2
-            [10535] =   {0.05, 1, 0.5},     -- Fire Resistance Totem Rank 3
-            [10476] =   {0.54, 0.53, 0.79}, -- Frost Resistance Totem Rank 2
-            [10477] =   {0.54, 0.53, 0.79}, -- Frost Resistance Totem Rank 3
-            [10598] =   {0.33, 1, 0.2},     -- Nature Resistance Totem Rank 2
-            [10599] =   {0.33, 1, 0.2},     -- Nature Resistance Totem Rank 3
-            [10460] =   {0.67, 1, 0.5},     -- Healing Stream Totem Rank 4
-            [10461] =   {0.67, 1, 0.5},     -- Healing Stream Totem Rank 5
-            [17355] =   {0.67, 1, 0.8},     -- Mana Tide Totem Rank 2
-            [17360] =   {0.67, 1, 0.8},     -- Mana Tide Totem Rank 3
-            [10493] =   {0.67, 1, 0.8},     -- Mana Spring Totem Rank 3
-            [10494] =   {0.67, 1, 0.8},     -- Mana Spring Totem Rank 4
-            [10403] =   {0, 0, 0.26},       -- Stoneskin Totem Rank 4
-            [10404] =   {0, 0, 0.26},       -- Stoneskin Totem Rank 5
-            [10405] =   {0, 0, 0.26},       -- Stoneskin Totem Rank 6
-        },
+        PRIEST = Indicators({
+            { IC.Yellow, 10937 }, -- Power Word: Fortitude Rank 5
+            { IC.Yellow, 10938 }, -- Power Word: Fortitude Rank 6
+            { IC.Yellow, 21564 }, -- Prayer of Fortitude Rank 2
+            { IC.Green, 14819 }, -- Divine Spirit Rank 3
+            { IC.Green, 27841 }, -- Divine Spirit Rank 4
+            { IC.Green, 27581 }, -- Prayer of Spirit Rank 1
+            { IC.Grey, 10957 }, -- Shadow Protection Rank 2
+            { IC.Grey, 10958 }, -- Shadow Protection Rank 3
+            { IC.Grey, 27683 }, -- Prayer of Shadow Protection Rank 1
+            { IC.Blue, 10898 }, -- Power Word: Shield Rank 7
+            { IC.Blue, 10899 }, -- Power Word: Shield Rank 8
+            { IC.Blue, 10900 }, -- Power Word: Shield Rank 9
+            { IC.Blue, 10901 }, -- Power Word: Shield Rank 10
+            { IC.Teal, 10927 }, -- Renew Rank 7
+            { IC.Teal, 10928 }, -- Renew Rank 8
+            { IC.Teal, 10929 }, -- Renew Rank 9
+            { IC.Teal, 25315 }, -- Renew Rank 10
+        }),
+        DRUID = Indicators({
+            { IC.Teal, 8907 }, -- Mark of the Wild Rank 5
+            { IC.Teal, 9884 }, -- Mark of the Wild Rank 6
+            { IC.Teal, 16878 }, -- Mark of the Wild Rank 7
+            { IC.Grey, 21849 }, -- Gift of the Wild Rank 1
+            { IC.Teal, 21850 }, -- Gift of the Wild Rank 2
+            { IC.Purple, 8914 }, -- Thorns Rank 4
+            { IC.Purple, 9756 }, -- Thorns Rank 5
+            { IC.Purple, 9910 }, -- Thorns Rank 6
+            { IC.Lime, 9839 }, -- Rejuvenation Rank 8
+            { IC.Lime, 9840 }, -- Rejuvenation Rank 9
+            { IC.Lime, 9841 }, -- Rejuvenation Rank 10
+            { IC.Lime, 25299 }, -- Rejuvenation Rank 11
+            { IC.Teal, 9856 }, -- Regrowth  Rank 7
+            { IC.Teal, 9857 }, -- Regrowth  Rank 8
+            { IC.Teal, 9858 }, -- Regrowth  Rank 9
+            { IC.Grey, 29166 }, -- Innervate
+        }),
+        PALADIN = Indicators({
+            { IC.Orange, 1044 }, -- Blessing of Freedom
+            { IC.Pink, 6940, 20729 }, -- Blessing Sacrifice Rank 1
+            { IC.Green, 19837 }, -- Blessing of Might Rank 5
+            { IC.Green, 19838 }, -- Blessing of Might Rank 6
+            { IC.Green, 25291 }, -- Blessing of Might Rank 7
+            { IC.Green, 19854 }, -- Blessing of Wisdom Rank 5
+            { IC.Green, 25290 }, -- Blessing of Wisdom Rank 6
+            { IC.Green, 25916 }, -- Greater Blessing of Might Rank 2
+            { IC.Green, 25918 }, -- Greater Blessing of Wisdom Rank 2
+            { IC.Lime, 10293 }, -- Devotion Aura Rank 7
+            { IC.Mint, 19978 }, -- Blessing of Light Rank 2
+            { IC.Mint, 19979 }, -- Blessing of Light Rank 3
+            { IC.Mint, 5599 }, -- Blessing of Protection Rank 2
+            { IC.Mint, 10278 }, -- Blessing of Protection Rank 3
+            { IC.Lime, 19746 }, -- Concentration Aura
+        }),
+        SHAMAN = Indicators({
+            { IC.Pink, 29203 }, -- Healing Way
+            { IC.Blue, 16237 }, -- Ancestral Fortitude
+            { IC.Navy, 25909 }, -- Tranquil Air
+            { IC.Mint, 10534 }, -- Fire Resistance Totem Rank 2
+            { IC.Mint, 10535 }, -- Fire Resistance Totem Rank 3
+            { IC.Grey, 10476 }, -- Frost Resistance Totem Rank 2
+            { IC.Grey, 10477 }, -- Frost Resistance Totem Rank 3
+            { IC.Green, 10598 }, -- Nature Resistance Totem Rank 2
+            { IC.Green, 10599 }, -- Nature Resistance Totem Rank 3
+            { IC.Lime, 10460 }, -- Healing Stream Totem Rank 4
+            { IC.Lime, 10461 }, -- Healing Stream Totem Rank 5
+            { IC.Yellow, 17355 }, -- Mana Tide Totem Rank 2
+            { IC.Yellow, 17360 }, -- Mana Tide Totem Rank 3
+            { IC.Yellow, 10493 }, -- Mana Spring Totem Rank 3
+            { IC.Yellow, 10494 }, -- Mana Spring Totem Rank 4
+            { IC.Navy, 10403 }, -- Stoneskin Totem Rank 4
+            { IC.Navy, 10404 }, -- Stoneskin Totem Rank 5
+            { IC.Navy, 10405 }, -- Stoneskin Totem Rank 6
+        }),
         ROGUE = {}, --No buffs
-        WARRIOR = {
-            [11551] =   {0.2, 0.2, 1},      -- Battle Shout Rank 6
-            [25289] =   {0.2, 0.2, 1},      -- Battle Shout Rank 7
-        },
-        HUNTER = {
-            [19506] =   {0.89, 0.09, 0.05}, -- Trueshot Aura Rank 1
-            [20905] =   {0.89, 0.09, 0.05}, -- Trueshot Aura Rank 2
-            [20906] =   {0.89, 0.09, 0.05}, -- Trueshot Aura Rank 3
-        },
-        WARLOCK = {
-            [5597] =    {0.89, 0.09, 0.05}, -- Unending Breath
-            [6512] =    {0.2, 0.8, 0.2},    -- Detect Lesser Invisibility
-            [2970] =    {0.2, 0.8, 0.2},    -- Detect Invisibility
-            [11743] =   {0.2, 0.8, 0.2},    -- Detect Invisibility
-        },
-        MAGE = {
-            [10157] =   {0.89, 0.09, 0.05}, -- Arcane Intellect Rank 5
-            [27127] =   {0.89, 0.09, 0.05}, -- Arcane Brilliance Rank 2
-            [10174] =   {0.2, 0.8, 0.2},    -- Dampen Magic Rank 5
-            [10170] =   {0.2, 0.8, 0.2},    -- Amplify Magic Rank 4
-            [12438] =   {0, 0, 0.5},        -- Slow Fall
-        }
+        WARRIOR = Indicators({
+            { IC.Blue, 11551 }, -- Battle Shout Rank 6
+            { IC.Blue, 25289 }, -- Battle Shout Rank 7
+        }),
+        HUNTER = Indicators({
+            { IC.Red, 19506 }, -- Trueshot Aura Rank 1
+            { IC.Red, 20905 }, -- Trueshot Aura Rank 2
+            { IC.Red, 20906 }, -- Trueshot Aura Rank 3
+        }),
+        WARLOCK = Indicators({
+            { IC.Red, 5597 }, -- Unending Breath
+            { IC.Green, 6512 }, -- Detect Lesser Invisibility
+            { IC.Green, 2970, 11743 }, -- Detect Invisibility
+        }),
+        MAGE = Indicators({
+            { IC.Red, 10157 }, -- Arcane Intellect Rank 5
+            { IC.Red, 27127 }, -- Arcane Brilliance Rank 2
+            { IC.Green, 10174 }, -- Dampen Magic Rank 5
+            { IC.Green, 10170 }, -- Amplify Magic Rank 4
+            { IC.Navy, 12438 }, -- Slow Fall
+        })
     }
 
     if GW.ClassicSOD then
-        GW.AURAS_INDICATORS.DRUID[408120] = {0.38, 0.19, 0.43} -- Wild Growth
-        GW.AURAS_INDICATORS.MAGE[400735] = {0.38, 0.19, 0.43} -- Temporal Beacon
-        GW.AURAS_INDICATORS.PRIEST[401877] = {0.00, 0.00, 0.90} -- Prayer of Mending
-        GW.AURAS_INDICATORS.PRIEST[402004] =  {0.00, 0.00, 0.83} -- Pain Suppression
+        GW.AURAS_INDICATORS.DRUID[408120] = Indicator(IC.Navy) -- Wild Growth
+        GW.AURAS_INDICATORS.MAGE[400735] = Indicator(IC.Navy) -- Temporal Beacon
+        GW.AURAS_INDICATORS.PRIEST[401877] = Indicator(IC.Blue) -- Prayer of Mending
+        GW.AURAS_INDICATORS.PRIEST[402004] = Indicator(IC.Blue) -- Pain Suppression
     end
 elseif GW.Mists then
     GW.AURAS_INDICATORS = {
-        PRIEST = {
-            [17]	= {0.00, 0.00, 1.00}, -- Power Word: Shield
-            [139]	= {0.33, 0.73, 0.75}, -- Renew
-            [6788]	= {0.89, 0.1, 0.1}, -- Weakened Soul
-            [41635]	= {0.2, 0.7, 0.2}, -- Prayer of Mending
-            [10060] = {0.17, 1.00, 0.45}, -- Power Infusion
-            [47788] = {0.17, 1.00, 0.45}, -- Guardian Spirit
-            [33206] = {0.17, 1.00, 0.45}, -- Pain Suppression
-        },
-        DRUID = {
-            [467]	= {0.4, 0.2, 0.8}, -- Thorns
-            [774]	= {0.83, 1.00, 0.25}, -- Rejuvenation
-            [8936]	= {0.33, 0.73, 0.75}, -- Regrowth
-            [29166]	= {0.49, 0.60, 0.55}, -- Innervate
-            [33763]	= {0.33, 0.37, 0.47}, -- Lifebloom
-            [48438]	= {0.8, 0.4, 0}, -- Wild Growth
-        },
-        PALADIN = {
-            [1044]	= {0.89, 0.45, 0}, -- Hand of Freedom
-            [1038]	= {0.11, 1.00, 0.45}, -- Hand of Salvation
-            [6940]	= {0.89, 0.1, 0.1}, -- Hand of Sacrifice
-            [1022]	= {0.17, 1.00, 0.75}, -- Hand of Protection
-            [53563]	= {0.7, 0.3, 0.7}, -- Beacon of Light
-        },
-        SHAMAN = {
-            [16177]	= {0.2, 0.2, {116236, 16237}}, -- Ancestral Fortitude
-            [974]	= {0.08, 0.21, 0.43}, -- Earth Shield
-            [61295] = {0.7, 0.3, 0.7}, -- Riptide
-            [51945] = {0.7, 0.3, 0.7}, -- Earthliving
-        },
-        ROGUE = {
-            [57933] = {0.17, 1.00, 0.45}, -- Tricks of the Trade
-        },
-        WARRIOR = {
-            [3411]	= {0.2, 0.2, 1}, -- Intervene
-            [50720]	= {0.4, 0.2, 0.8}, -- Vigilance
-        },
-        HUNTER = {
-            [34477] = {0.17, 1.00, 0.45},-- Misdirection
-        },
-        WARLOCK = {
-            [5697]	= {0.89, 0.09, 0.05}, -- Unending Breath
-            [20707]	= {0.00, 0.00, 0.85}, -- Soulstone
-        },
-        MAGE = {
-            [130]	= {0.00, 0.00, 0.50}, -- Slow Fall
-            [54646] = {0.17, 1.00, 0.45}, -- Focus Magic
-        },
-        DEATHKNIGHT = {
-            [49016] = {0.17, 1.00, 0.45}, -- Unholy Frenzy
-        },
-        MONK = {
-            [119611] = { 0.8, 0.4, 0.8 },   -- Renewing Mist
-            [116849] = { 0.2, 0.8, 0.2 },   -- Life Cocoon
-            [124081] = { 0.7, 0.4, 0 },  -- Zen Sphere
-            [132120] = { 0.4, 0.8, 0.2 }, -- Enveloping Mist
-        },
+        PRIEST = Indicators({
+            { IC.Blue, 17 }, -- Power Word: Shield
+            { IC.Teal, 139 }, -- Renew
+            { IC.Red, 6788 }, -- Weakened Soul
+            { IC.Green, 41635 }, -- Prayer of Mending
+            { IC.Mint, 10060 }, -- Power Infusion
+            { IC.Mint, 47788 }, -- Guardian Spirit
+            { IC.Mint, 33206 }, -- Pain Suppression
+        }),
+        DRUID = Indicators({
+            { IC.Purple, 467 }, -- Thorns
+            { IC.Lime, 774 }, -- Rejuvenation
+            { IC.Teal, 8936 }, -- Regrowth
+            { IC.Grey, 29166 }, -- Innervate
+            { IC.Grey, 33763 }, -- Lifebloom
+            { IC.Orange, 48438 }, -- Wild Growth
+        }),
+        PALADIN = Indicators({
+            { IC.Orange, 1044 }, -- Hand of Freedom
+            { IC.Mint, 1038 }, -- Hand of Salvation
+            { IC.Red, 6940 }, -- Hand of Sacrifice
+            { IC.Mint, 1022 }, -- Hand of Protection
+            { IC.Pink, 53563 }, -- Beacon of Light
+        }),
+        SHAMAN = Indicators({
+            { IC.Blue, 16177, sameSlot = { 16236, 16237 } }, -- Ancestral Fortitude
+            { IC.Navy, 974 }, -- Earth Shield
+            { IC.Pink, 61295 }, -- Riptide
+            { IC.Pink, 51945 }, -- Earthliving
+        }),
+        ROGUE = Indicators({
+            { IC.Mint, 57933 }, -- Tricks of the Trade
+        }),
+        WARRIOR = Indicators({
+            { IC.Blue, 3411 }, -- Intervene
+            { IC.Purple, 50720 }, -- Vigilance
+        }),
+        HUNTER = Indicators({
+            { IC.Mint, 34477 }, -- Misdirection
+        }),
+        WARLOCK = Indicators({
+            { IC.Red, 5697 }, -- Unending Breath
+            { IC.Blue, 20707 }, -- Soulstone
+        }),
+        MAGE = Indicators({
+            { IC.Navy, 130 }, -- Slow Fall
+            { IC.Mint, 54646 }, -- Focus Magic
+        }),
+        DEATHKNIGHT = Indicators({
+            { IC.Mint, 49016 }, -- Unholy Frenzy
+        }),
+        MONK = Indicators({
+            { IC.Pink, 119611 }, -- Renewing Mist
+            { IC.Green, 116849 }, -- Life Cocoon
+            { IC.Orange, 124081 }, -- Zen Sphere
+            { IC.Green, 132120 }, -- Enveloping Mist
+        }),
     }
 elseif GW.TBC then
     GW.AURAS_INDICATORS = {
-        PRIEST = {
-            [1243]    = {1, 1, 0.66}, -- Power Word: Fortitude(Rank 1)
-            [1244]    = {1, 1, 0.66}, -- Power Word: Fortitude(Rank 2)
-            [1245]    = {1, 1, 0.66}, -- Power Word: Fortitude(Rank 3)
-            [2791]    = {1, 1, 0.66}, -- Power Word: Fortitude(Rank 4)
-            [10937]   = {1, 1, 0.66}, -- Power Word: Fortitude(Rank 5)
-            [10938]   = {1, 1, 0.66}, -- Power Word: Fortitude(Rank 6)
-            [25389]   = {1, 1, 0.66}, -- Power Word: Fortitude(Rank 7)
-            [21562]   = {1, 1, 0.66}, -- Prayer of Fortitude(Rank 1)
-            [21564]   = {1, 1, 0.66}, -- Prayer of Fortitude(Rank 2)
-            [25392]   = {1, 1, 0.66}, -- Prayer of Fortitude(Rank 3)
-            [14752]   = {0.2, 0.7, 0.2}, -- Divine Spirit(Rank 1)
-            [14818]   = {0.2, 0.7, 0.2}, -- Divine Spirit(Rank 2)
-            [14819]   = {0.2, 0.7, 0.2}, -- Divine Spirit(Rank 3)
-            [27841]   = {0.2, 0.7, 0.2}, -- Divine Spirit(Rank 4)
-            [25312]   = {0.2, 0.7, 0.2}, -- Divine Spirit(Rank 5)
-            [27681]   = {0.2, 0.7, 0.2}, -- Prayer of Spirit(Rank 1)
-            [32999]   = {0.2, 0.7, 0.2}, -- Prayer of Spirit(Rank 2)
-            [976]     = {0.7, 0.7, 0.7}, -- Shadow Protection(Rank 1)
-            [10957]   = {0.7, 0.7, 0.7}, -- Shadow Protection(Rank 2)
-            [10958]   = {0.7, 0.7, 0.7}, -- Shadow Protection(Rank 3)
-            [25433]   = {0.7, 0.7, 0.7}, -- Shadow Protection(Rank 4)
-            [27683]   = {0.7, 0.7, 0.7}, -- Prayer of Shadow Protection(Rank 1)
-            [39374]   = {0.7, 0.7, 0.7}, -- Prayer of Shadow Protection(Rank 2)
-            [17]      = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 1)
-            [592]     = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 2)
-            [600]     = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 3)
-            [3747]    = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 4)
-            [6065]    = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 5)
-            [6066]    = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 6)
-            [10898]   = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 7)
-            [10899]   = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 8)
-            [10900]   = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 9)
-            [10901]   = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 10)
-            [25217]   = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 11)
-            [25218]   = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 12)
-            [139]     = {0.33, 0.73, 0.75}, -- Renew(Rank 1)
-            [6074]    = {0.33, 0.73, 0.75}, -- Renew(Rank 2)
-            [6075]    = {0.33, 0.73, 0.75}, -- Renew(Rank 3)
-            [6076]    = {0.33, 0.73, 0.75}, -- Renew(Rank 4)
-            [6077]    = {0.33, 0.73, 0.75}, -- Renew(Rank 5)
-            [6078]    = {0.33, 0.73, 0.75}, -- Renew(Rank 6)
-            [10927]   = {0.33, 0.73, 0.75}, -- Renew(Rank 7)
-            [10928]   = {0.33, 0.73, 0.75}, -- Renew(Rank 8)
-            [10929]   = {0.33, 0.73, 0.75}, -- Renew(Rank 9)
-            [25315]   = {0.33, 0.73, 0.75}, -- Renew(Rank 10)
-            [25221]   = {0.33, 0.73, 0.75}, -- Renew(Rank 11)
-            [25222]   = {0.33, 0.73, 0.75}, -- Renew(Rank 12)
-        },
-        DRUID = {
-            [1126]    = {0.2, 0.8, 0.8}, -- Mark of the Wild(Rank 1)
-            [5232]    = {0.2, 0.8, 0.8}, -- Mark of the Wild(Rank 2)
-            [6756]    = {0.2, 0.8, 0.8}, -- Mark of the Wild(Rank 3)
-            [5234]    = {0.2, 0.8, 0.8}, -- Mark of the Wild(Rank 4)
-            [8907]    = {0.2, 0.8, 0.8}, -- Mark of the Wild(Rank 5)
-            [9884]    = {0.2, 0.8, 0.8}, -- Mark of the Wild(Rank 6)
-            [9885]    = {0.2, 0.8, 0.8}, -- Mark of the Wild(Rank 7)
-            [26990]   = {0.2, 0.8, 0.8}, -- Mark of the Wild(Rank 8)
-            [21849]   = {0.2, 0.8, 0.8}, -- Gift of the Wild(Rank 1)
-            [21850]   = {0.2, 0.8, 0.8}, -- Gift of the Wild(Rank 2)
-            [26991]   = {0.2, 0.8, 0.8}, -- Gift of the Wild(Rank 3)
-            [467]     = {0.4, 0.2, 0.8}, -- Thorns(Rank 1)
-            [782]     = {0.4, 0.2, 0.8}, -- Thorns(Rank 2)
-            [1075]    = {0.4, 0.2, 0.8}, -- Thorns(Rank 3)
-            [8914]    = {0.4, 0.2, 0.8}, -- Thorns(Rank 4)
-            [9756]    = {0.4, 0.2, 0.8}, -- Thorns(Rank 5)
-            [9910]    = {0.4, 0.2, 0.8}, -- Thorns(Rank 6)
-            [26992]   = {0.4, 0.2, 0.8}, -- Thorns(Rank 7)
-            [774]     = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 1)
-            [1058]    = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 2)
-            [1430]    = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 3)
-            [2090]    = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 4)
-            [2091]    = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 5)
-            [3627]    = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 6)
-            [8910]    = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 7)
-            [9839]    = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 8)
-            [9840]    = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 9)
-            [9841]    = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 10)
-            [25299]   = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 11)
-            [26981]   = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 12)
-            [26982]   = {0.83, 1.00, 0.25}, -- Rejuvenation(Rank 13)
-            [8936]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 1)
-            [8938]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 2)
-            [8939]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 3)
-            [8940]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 4)
-            [8941]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 5)
-            [9750]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 6)
-            [9856]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 7)
-            [9857]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 8)
-            [9858]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 9)
-            [26980]   = {0.33, 0.73, 0.75}, -- Regrowth(Rank 10)
-            [29166]   = {0.49, 0.60, 0.55}, -- Innervate
-            [33763]   = {0.33, 0.37, 0.47}, -- Lifebloom
-        },
-        PALADIN = {
-            [1044]    = {0.89, 0.45, 0}, -- Blessing of Freedom
-            [1038]    = {0.11, 1.00, 0.45}, --Blessing of Salvation
-            [6940]    = {0.89, 0.1, 0.1}, -- Blessing Sacrifice(Rank 1)
-            [20729]   = {0.89, 0.1, 0.1}, -- Blessing Sacrifice(Rank 2)
-            [27147]   = {0.89, 0.1, 0.1}, -- Blessing Sacrifice(Rank 3)
-            [27148]   = {0.89, 0.1, 0.1}, -- Blessing Sacrifice(Rank 4)
-            [19740]   = {0.2, 0.8, 0.2}, -- Blessing of Might(Rank 1)
-            [19834]   = {0.2, 0.8, 0.2}, -- Blessing of Might(Rank 2)
-            [19835]   = {0.2, 0.8, 0.2}, -- Blessing of Might(Rank 3)
-            [19836]   = {0.2, 0.8, 0.2}, -- Blessing of Might(Rank 4)
-            [19837]   = {0.2, 0.8, 0.2}, -- Blessing of Might(Rank 5)
-            [19838]   = {0.2, 0.8, 0.2}, -- Blessing of Might(Rank 6)
-            [25291]   = {0.2, 0.8, 0.2}, -- Blessing of Might(Rank 7)
-            [27140]   = {0.2, 0.8, 0.2}, -- Blessing of Might(Rank 8)
-            [19742]   = {0.2, 0.8, 0.2}, -- Blessing of Wisdom(Rank 1)
-            [19850]   = {0.2, 0.8, 0.2}, -- Blessing of Wisdom(Rank 2)
-            [19852]   = {0.2, 0.8, 0.2}, -- Blessing of Wisdom(Rank 3)
-            [19853]   = {0.2, 0.8, 0.2}, -- Blessing of Wisdom(Rank 4)
-            [19854]   = {0.2, 0.8, 0.2}, -- Blessing of Wisdom(Rank 5)
-            [25290]   = {0.2, 0.8, 0.2}, -- Blessing of Wisdom(Rank 6)
-            [27142]   = {0.2, 0.8, 0.2}, -- Blessing of Wisdom(Rank 7)
-            [25782]   = {0.2, 0.8, 0.2}, -- Greater Blessing of Might(Rank 1)
-            [25916]   = {0.2, 0.8, 0.2}, -- Greater Blessing of Might(Rank 2)
-            [27141]   = {0.2, 0.8, 0.2}, -- Greater Blessing of Might(Rank 3)
-            [25894]   = {0.2, 0.8, 0.2}, -- Greater Blessing of Wisdom(Rank 1)
-            [25918]   = {0.2, 0.8, 0.2}, -- Greater Blessing of Wisdom(Rank 2)
-            [27143]   = {0.2, 0.8, 0.2}, -- Greater Blessing of Wisdom(Rank 3)
-            [465]     = {0.58, 1.00, 0.50}, -- Devotion Aura(Rank 1)
-            [10290]   = {0.58, 1.00, 0.50}, -- Devotion Aura(Rank 2)
-            [643]     = {0.58, 1.00, 0.50}, -- Devotion Aura(Rank 3)
-            [10291]   = {0.58, 1.00, 0.50}, -- Devotion Aura(Rank 4)
-            [1032]    = {0.58, 1.00, 0.50}, -- Devotion Aura(Rank 5)
-            [10292]   = {0.58, 1.00, 0.50}, -- Devotion Aura(Rank 6)
-            [10293]   = {0.58, 1.00, 0.50}, -- Devotion Aura(Rank 7)
-            [27149]   = {0.58, 1.00, 0.50}, -- Devotion Aura(Rank 8)
-            [19977]   = {0.17, 1.00, 0.75}, -- Blessing of Light(Rank 1)
-            [19978]   = {0.17, 1.00, 0.75}, -- Blessing of Light(Rank 2)
-            [19979]   = {0.17, 1.00, 0.75}, -- Blessing of Light(Rank 3)
-            [27144]   = {0.17, 1.00, 0.75}, -- Blessing of Light(Rank 4)
-            [1022]    = {0.17, 1.00, 0.75}, -- Blessing of Protection(Rank 1)
-            [5599]    = {0.17, 1.00, 0.75}, -- Blessing of Protection(Rank 2)
-            [10278]   = {0.17, 1.00, 0.75}, -- Blessing of Protection(Rank 3)
-            [19746]   = {0.83, 1.00, 0.07}, -- Concentration Aura
-            [32223]   = {0.83, 1.00, 0.07}, -- Crusader Aura
-        },
-        SHAMAN = {
-            [29203]   = {0.7, 0.3, 0.7}, -- Healing Way
-            [16237]   = {0.2, 0.2, 1}, -- Ancestral Fortitude
-            [8185]    = {0.05, 1.00, 0.50}, -- Fire Resistance Totem(Rank 1)
-            [10534]   = {0.05, 1.00, 0.50}, -- Fire Resistance Totem(Rank 2)
-            [10535]   = {0.05, 1.00, 0.50}, -- Fire Resistance Totem(Rank 3)
-            [25563]   = {0.05, 1.00, 0.50}, -- Fire Resistance Totem(Rank 4)
-            [8182]    = {0.54, 0.53, 0.79}, -- Frost Resistance Totem(Rank 1)
-            [10476]   = {0.54, 0.53, 0.79}, -- Frost Resistance Totem(Rank 2)
-            [10477]   = {0.54, 0.53, 0.79}, -- Frost Resistance Totem(Rank 3)
-            [25560]   = {0.54, 0.53, 0.79}, -- Frost Resistance Totem(Rank 4)
-            [10596]   = {0.33, 1.00, 0.20}, -- Nature Resistance Totem(Rank 1)
-            [10598]   = {0.33, 1.00, 0.20}, -- Nature Resistance Totem(Rank 2)
-            [10599]   = {0.33, 1.00, 0.20}, -- Nature Resistance Totem(Rank 3)
-            [25574]   = {0.33, 1.00, 0.20}, -- Nature Resistance Totem(Rank 4)
-            [5672]    = {0.67, 1.00, 0.50}, -- Healing Stream Totem(Rank 1)
-            [6371]    = {0.67, 1.00, 0.50}, -- Healing Stream Totem(Rank 2)
-            [6372]    = {0.67, 1.00, 0.50}, -- Healing Stream Totem(Rank 3)
-            [10460]   = {0.67, 1.00, 0.50}, -- Healing Stream Totem(Rank 4)
-            [10461]   = {0.67, 1.00, 0.50}, -- Healing Stream Totem(Rank 5)
-            [25567]   = {0.67, 1.00, 0.50}, -- Healing Stream Totem(Rank 6)
-            [16191]   = {0.67, 1.00, 0.80}, -- Mana Tide Totem(Rank 1)
-            [17355]   = {0.67, 1.00, 0.80}, -- Mana Tide Totem(Rank 2)
-            [17360]   = {0.67, 1.00, 0.80}, -- Mana Tide Totem(Rank 3)
-            [5677]    = {0.67, 1.00, 0.80}, -- Mana Spring Totem(Rank 1)
-            [10491]   = {0.67, 1.00, 0.80}, -- Mana Spring Totem(Rank 2)
-            [10493]   = {0.67, 1.00, 0.80}, -- Mana Spring Totem(Rank 3)
-            [10494]   = {0.67, 1.00, 0.80}, -- Mana Spring Totem(Rank 4)
-            [25570]   = {0.67, 1.00, 0.80}, -- Mana Spring Totem(Rank 5)
-            [8072]    = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 1)
-            [8156]    = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 2)
-            [8157]    = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 3)
-            [10403]   = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 4)
-            [10404]   = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 5)
-            [10405]   = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 6)
-            [25508]   = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 7)
-            [25509]   = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 8)
-            [974]     = {0.08, 0.21, 0.43}, -- Earth Shield(Rank 1)
-            [32593]   = {0.08, 0.21, 0.43}, -- Earth Shield(Rank 2)
-            [32594]   = {0.08, 0.21, 0.43}, -- Earth Shield(Rank 3)
-        },
+        PRIEST = Indicators({
+            { IC.Yellow, 1243, 1244, 1245, 2791, 10937, 10938, 25389 }, -- Power Word: Fortitude
+            { IC.Yellow, 21562, 21564, 25392 }, -- Prayer of Fortitude
+            { IC.Green, 14752, 14818, 14819, 27841, 25312 }, -- Divine Spirit
+            { IC.Green, 27681, 32999 }, -- Prayer of Spirit
+            { IC.Grey, 976, 10957, 10958, 25433 }, -- Shadow Protection
+            { IC.Grey, 27683, 39374 }, -- Prayer of Shadow Protection
+            { IC.Blue, 17, 592, 600, 3747, 6065, 6066, 10898, 10899, 10900, 10901, 25217, 25218 }, -- Power Word: Shield
+            { IC.Teal, 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25315, 25221, 25222 }, -- Renew
+        }),
+        DRUID = Indicators({
+            { IC.Teal, 1126, 5232, 6756, 5234, 8907, 9884, 9885, 26990 }, -- Mark of the Wild
+            { IC.Teal, 21849, 21850, 26991 }, -- Gift of the Wild
+            { IC.Purple, 467, 782, 1075, 8914, 9756, 9910, 26992 }, -- Thorns
+            { IC.Lime, 774, 1058, 1430, 2090, 2091, 3627, 8910, 9839, 9840, 9841, 25299, 26981, 26982 }, -- Rejuvenation
+            { IC.Teal, 8936, 8938, 8939, 8940, 8941, 9750, 9856, 9857, 9858, 26980 }, -- Regrowth
+            { IC.Grey, 29166 }, -- Innervate
+            { IC.Grey, 33763 }, -- Lifebloom
+        }),
+        PALADIN = Indicators({
+            { IC.Orange, 1044 }, -- Blessing of Freedom
+            { IC.Mint, 1038 }, -- Blessing of Salvation
+            { IC.Red, 6940, 20729, 27147, 27148 }, -- Blessing Sacrifice
+            { IC.Green, 19740, 19834, 19835, 19836, 19837, 19838, 25291, 27140 }, -- Blessing of Might
+            { IC.Green, 19742, 19850, 19852, 19853, 19854, 25290, 27142 }, -- Blessing of Wisdom
+            { IC.Green, 25782, 25916, 27141 }, -- Greater Blessing of Might
+            { IC.Green, 25894, 25918, 27143 }, -- Greater Blessing of Wisdom
+            { IC.Lime, 465, 10290, 643, 10291, 1032, 10292, 10293, 27149 }, -- Devotion Aura
+            { IC.Mint, 19977, 19978, 19979, 27144 }, -- Blessing of Light
+            { IC.Mint, 1022, 5599, 10278 }, -- Blessing of Protection
+            { IC.Lime, 19746 }, -- Concentration Aura
+            { IC.Lime, 32223 }, -- Crusader Aura
+        }),
+        SHAMAN = Indicators({
+            { IC.Pink, 29203 }, -- Healing Way
+            { IC.Blue, 16237 }, -- Ancestral Fortitude
+            { IC.Mint, 8185, 10534, 10535, 25563 }, -- Fire Resistance Totem
+            { IC.Grey, 8182, 10476, 10477, 25560 }, -- Frost Resistance Totem
+            { IC.Green, 10596, 10598, 10599, 25574 }, -- Nature Resistance Totem
+            { IC.Lime, 5672, 6371, 6372, 10460, 10461, 25567 }, -- Healing Stream Totem
+            { IC.Yellow, 16191, 17355, 17360 }, -- Mana Tide Totem
+            { IC.Yellow, 5677, 10491, 10493, 10494, 25570 }, -- Mana Spring Totem
+            { IC.Navy, 8072, 8156, 8157, 10403, 10404, 10405, 25508, 25509 }, -- Stoneskin Totem
+            { IC.Navy, 974, 32593, 32594 }, -- Earth Shield
+        }),
         ROGUE = {}, --No buffs
-        WARRIOR = {
-            [6673]    = {0.2, 0.2, 1}, -- Battle Shout(Rank 1)
-            [5242]    = {0.2, 0.2, 1}, -- Battle Shout(Rank 2)
-            [6192]    = {0.2, 0.2, 1}, -- Battle Shout(Rank 3)
-            [11549]   = {0.2, 0.2, 1}, -- Battle Shout(Rank 4)
-            [11550]   = {0.2, 0.2, 1}, -- Battle Shout(Rank 5)
-            [11551]   = {0.2, 0.2, 1}, -- Battle Shout(Rank 6)
-            [25289]   = {0.2, 0.2, 1}, -- Battle Shout(Rank 7)
-            [2048]    = {0.2, 0.2, 1}, -- Battle Shout(Rank 8)
-            [469]     = {0.4, 0.2, 0.8}, -- Commanding Shout
-        },
-        HUNTER = {
-            [19506]   = {0.89, 0.09, 0.05}, -- Trueshot Aura (Rank 1)
-            [20905]   = {0.89, 0.09, 0.05}, -- Trueshot Aura (Rank 2)
-            [20906]   = {0.89, 0.09, 0.05}, -- Trueshot Aura (Rank 3)
-            [27066]   = {0.89, 0.09, 0.05}, -- Trueshot Aura (Rank 4)
-            [13159]   = {0.00, 0.00, 0.85}, -- Aspect of the Pack
-            [20043]   = {0.33, 0.93, 0.79}, -- Aspect of the Wild (Rank 1)
-            [20190]   = {0.33, 0.93, 0.79}, -- Aspect of the Wild (Rank 2)
-            [27045]   = {0.33, 0.93, 0.79}, -- Aspect of the Wild (Rank 3)
-        },
-        WARLOCK = {
-            [5597]    = {0.89, 0.09, 0.05}, -- Unending Breath
-            [6512]    = {0.2, 0.8, 0.2}, -- Detect Lesser Invisibility
-            [2970]    = {0.2, 0.8, 0.2}, -- Detect Invisibility
-            [11743]   = {0.2, 0.8, 0.2}, -- Detect Greater Invisibility
-        },
-        MAGE = {
-            [1459]    = {0.89, 0.09, 0.05}, -- Arcane Intellect(Rank 1)
-            [1460]    = {0.89, 0.09, 0.05}, -- Arcane Intellect(Rank 2)
-            [1461]    = {0.89, 0.09, 0.05}, -- Arcane Intellect(Rank 3)
-            [10156]   = {0.89, 0.09, 0.05}, -- Arcane Intellect(Rank 4)
-            [10157]   = {0.89, 0.09, 0.05}, -- Arcane Intellect(Rank 5)
-            [27126]   = {0.89, 0.09, 0.05}, -- Arcane Intellect(Rank 6)
-            [23028]   = {0.89, 0.09, 0.05}, -- Arcane Brilliance(Rank 1)
-            [27127]   = {0.89, 0.09, 0.05}, -- Arcane Brilliance(Rank 2)
-            [604]     = {0.2, 0.8, 0.2}, -- Dampen Magic(Rank 1)
-            [8450]    = {0.2, 0.8, 0.2}, -- Dampen Magic(Rank 2)
-            [8451]    = {0.2, 0.8, 0.2}, -- Dampen Magic(Rank 3)
-            [10173]   = {0.2, 0.8, 0.2}, -- Dampen Magic(Rank 4)
-            [10174]   = {0.2, 0.8, 0.2}, -- Dampen Magic(Rank 5)
-            [33944]   = {0.2, 0.8, 0.2}, -- Dampen Magic(Rank 6)
-            [1008]    = {0.2, 0.8, 0.2}, -- Amplify Magic(Rank 1)
-            [8455]    = {0.2, 0.8, 0.2}, -- Amplify Magic(Rank 2)
-            [10169]   = {0.2, 0.8, 0.2}, -- Amplify Magic(Rank 3)
-            [10170]   = {0.2, 0.8, 0.2}, -- Amplify Magic(Rank 4)
-            [27130]   = {0.2, 0.8, 0.2}, -- Amplify Magic(Rank 5)
-            [33946]   = {0.2, 0.8, 0.2}, -- Amplify Magic(Rank 6)
-            [130]     = {0.00, 0.00, 0.50}, -- Slow Fall
-        }
+        WARRIOR = Indicators({
+            { IC.Blue, 6673, 5242, 6192, 11549, 11550, 11551, 25289, 2048 }, -- Battle Shout
+            { IC.Purple, 469 }, -- Commanding Shout
+        }),
+        HUNTER = Indicators({
+            { IC.Red, 19506, 20905, 20906, 27066 }, -- Trueshot Aura
+            { IC.Blue, 13159 }, -- Aspect of the Pack
+            { IC.Cyan, 20043, 20190, 27045 }, -- Aspect of the Wild
+        }),
+        WARLOCK = Indicators({
+            { IC.Red, 5597 }, -- Unending Breath
+            { IC.Green, 6512 }, -- Detect Lesser Invisibility
+            { IC.Green, 2970 }, -- Detect Invisibility
+            { IC.Green, 11743 }, -- Detect Greater Invisibility
+        }),
+        MAGE = Indicators({
+            { IC.Red, 1459, 1460, 1461, 10156, 10157, 27126 }, -- Arcane Intellect
+            { IC.Red, 23028, 27127 }, -- Arcane Brilliance
+            { IC.Green, 604, 8450, 8451, 10173, 10174, 33944 }, -- Dampen Magic
+            { IC.Green, 1008, 8455, 10169, 10170, 27130, 33946 }, -- Amplify Magic
+            { IC.Navy, 130 }, -- Slow Fall
+        })
     }
 elseif GW.Wrath then
     GW.AURAS_INDICATORS = {
-        PRIEST = {
-            [1243]    = {1, 1, 0.66, {1244,1245,2791,10937,10938,25389,48161}}, -- Power Word: Fortitude
-            [21562]   = {1, 1, 0.66, {21564,25392,48162}}, -- Prayer of Fortitude
-            [14752]   = {0.2, 0.7, 0.2, {14818,14819,27841,25312,48073}}, -- Divine Spirit
-            [27681]   = {0.2, 0.7, 0.2, {32999,48074}}, -- Prayer of Spirit
-            [976]     = {0.7, 0.7, 0.7, {10957,10958,25433,48169}}, -- Shadow Protection
-            [27683]   = {0.7, 0.7, 0.7, {39374,48170}}, -- Prayer of Shadow Protection
-            [17]      = {0.00, 0.00, 1.00, {592,600,3747,6065,6066,10898,10899,10900,10901,25217,25218,48065,48066}}, -- Power Word: Shield
-            [139]     = {0.33, 0.73, 0.75, {6074,6075,6076,6077,6078,10927,10928,10929,25315,25221,25222,48067,48068}}, -- Renew
-            [6788]	  = {0.89, 0.1, 0.1}, -- Weakened Soul
-        },
-        DRUID = {
-            [1126]    = {0.2, 0.8, 0.8, {5232,6756,5234,8907,9884,9885,26990,48469,21849,21850,26991,48470}}, -- Mark of the Wild
-            [467]     = {0.4, 0.2, 0.8, {782,1075,8914,9756,9910,26992,53307}}, -- Thorns
-            [774]     = {0.83, 1.00, 0.25, {1058,1430,2090,2091,3627,8910,9839,9840,9841,25299,26981,26982,48440,48441}}, -- Rejuvenation
-            [8936]    = {0.33, 0.73, 0.75, {8938,8939,8940,8941,9750,9856,9857,9858,26980,48442,48443}}, -- Regrowth
-            [29166]   = {0.49, 0.60, 0.55}, -- Innervate
-            [33763]   = {0.33, 0.37, 0.47, {48450,48451}}, -- Lifebloom
-            [48438]	  = {0.8, 0.4, 0, {53248,53249,53251}}, -- Wild Growth
-        },
-        PALADIN = {
-            [1044]    = {0.89, 0.45, 0}, -- Blessing of Freedom
-            [1038]    = {0.11, 1.00, 0.45}, --Blessing of Salvation
-            [6940]    = {0.89, 0.1, 0.1}, -- Blessing Sacrifice(Rank 1)
-            [1022]    = {0.17, 1.00, 0.75, {5599,10278}}, -- Hand of Protection
-            [19740]   = {0.2, 0.8, 0.2, {19834,19835,19836,19837,19838,25291,27140,48931,48932,25782,25916,27141,48933,48934}}, -- Blessing of Might
-            [19742]   = {0.2, 0.8, 0.2, {19850,19852,19853,19854,25290,27142,48935,48936,25894,25918,27143,48937,48938}}, -- Blessing of Wisdom
-            [465]     = {0.58, 1.00, 0.50, {10290,643,10291,1032,10292,10293,27149,48941,48942}}, -- Devotion Aura
-            [19746]   = {0.83, 1.00, 0.07}, -- Concentration Aura
-            [32223]   = {0.83, 1.00, 0.07}, -- Crusader Aura
-            [53563]   = {0.7, 0.3, 0.7}, -- Beacon of Light
-            [53601]   = {0.4, 0.7, 0.2}, -- Sacred Shield
-        },
-        SHAMAN = {
-            [16177]	  = {0.2, 0.2, 1, {16236,16237}}, -- Ancestral Fortitude
-            [8185]	  = {0.05, 1.00, 0.50, {10534,10535,25563,58737,58739}}, -- Fire Resistance Totem
-            [8182]	  = {0.54, 0.53, 0.79, {10476,10477,25560,58741,58745}}, -- Frost Resistance Totem
-            [10596]	  = {0.33, 1.00, 0.20, {10598,10599,25574,58746,58749}}, -- Nature Resistance Totem
-            [5672]	  = {0.67, 1.00, 0.50, {6371,6372,10460,10461,25567,58755,58756,58757}}, -- Healing Stream Totem
-            [16191]	  = {0.67, 1.00, 0.80}, -- Mana Tide Totem
-            [5677]	  = {0.67, 1.00, 0.80, {10491,10493,10494,25569,58775,58776,58777}}, -- Mana Spring Totem
-            [8072]	  = {0.00, 0.00, 0.26, {8156,8157,10403,10404,10405,25506,25507,58752,58754}}, -- Stoneskin Totem
-            [974]	  = {0.08, 0.21, 0.43, {32593,32594,49283,49284}}, -- Earth Shield
-            [49284]   = {0.08, 0.21, 0.43}, -- Earth Shield(Rank 5)
-        },
+        PRIEST = Indicators({
+            { IC.Yellow, 1243, sameSlot = { 1244, 1245, 2791, 10937, 10938, 25389, 48161 } }, -- Power Word: Fortitude
+            { IC.Yellow, 21562, sameSlot = { 21564, 25392, 48162 } }, -- Prayer of Fortitude
+            { IC.Green, 14752, sameSlot = { 14818, 14819, 27841, 25312, 48073 } }, -- Divine Spirit
+            { IC.Green, 27681, sameSlot = { 32999, 48074 } }, -- Prayer of Spirit
+            { IC.Grey, 976, sameSlot = { 10957, 10958, 25433, 48169 } }, -- Shadow Protection
+            { IC.Grey, 27683, sameSlot = { 39374, 48170 } }, -- Prayer of Shadow Protection
+            { IC.Blue, 17, sameSlot = { 592, 600, 3747, 6065, 6066, 10898, 10899, 10900, 10901, 25217, 25218, 48065, 48066 } }, -- Power Word: Shield
+            { IC.Teal, 139, sameSlot = { 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25315, 25221, 25222, 48067, 48068 } }, -- Renew
+            { IC.Red, 6788 }, -- Weakened Soul
+        }),
+        DRUID = Indicators({
+            { IC.Teal, 1126, sameSlot = { 5232, 6756, 5234, 8907, 9884, 9885, 26990, 48469, 21849, 21850, 26991, 48470 } }, -- Mark of the Wild
+            { IC.Purple, 467, sameSlot = { 782, 1075, 8914, 9756, 9910, 26992, 53307 } }, -- Thorns
+            { IC.Lime, 774, sameSlot = { 1058, 1430, 2090, 2091, 3627, 8910, 9839, 9840, 9841, 25299, 26981, 26982, 48440, 48441 } }, -- Rejuvenation
+            { IC.Teal, 8936, sameSlot = { 8938, 8939, 8940, 8941, 9750, 9856, 9857, 9858, 26980, 48442, 48443 } }, -- Regrowth
+            { IC.Grey, 29166 }, -- Innervate
+            { IC.Grey, 33763, sameSlot = { 48450, 48451 } }, -- Lifebloom
+            { IC.Orange, 48438, sameSlot = { 53248, 53249, 53251 } }, -- Wild Growth
+        }),
+        PALADIN = Indicators({
+            { IC.Orange, 1044 }, -- Blessing of Freedom
+            { IC.Mint, 1038 }, -- Blessing of Salvation
+            { IC.Red, 6940 }, -- Blessing Sacrifice(Rank 1)
+            { IC.Mint, 1022, sameSlot = { 5599, 10278 } }, -- Hand of Protection
+            { IC.Green, 19740, sameSlot = { 19834, 19835, 19836, 19837, 19838, 25291, 27140, 48931, 48932, 25782, 25916, 27141, 48933, 48934 } }, -- Blessing of Might
+            { IC.Green, 19742, sameSlot = { 19850, 19852, 19853, 19854, 25290, 27142, 48935, 48936, 25894, 25918, 27143, 48937, 48938 } }, -- Blessing of Wisdom
+            { IC.Lime, 465, sameSlot = { 10290, 643, 10291, 1032, 10292, 10293, 27149, 48941, 48942 } }, -- Devotion Aura
+            { IC.Lime, 19746 }, -- Concentration Aura
+            { IC.Lime, 32223 }, -- Crusader Aura
+            { IC.Pink, 53563 }, -- Beacon of Light
+            { IC.Green, 53601 }, -- Sacred Shield
+        }),
+        SHAMAN = Indicators({
+            { IC.Blue, 16177, sameSlot = { 16236, 16237 } }, -- Ancestral Fortitude
+            { IC.Mint, 8185, sameSlot = { 10534, 10535, 25563, 58737, 58739 } }, -- Fire Resistance Totem
+            { IC.Grey, 8182, sameSlot = { 10476, 10477, 25560, 58741, 58745 } }, -- Frost Resistance Totem
+            { IC.Green, 10596, sameSlot = { 10598, 10599, 25574, 58746, 58749 } }, -- Nature Resistance Totem
+            { IC.Lime, 5672, sameSlot = { 6371, 6372, 10460, 10461, 25567, 58755, 58756, 58757 } }, -- Healing Stream Totem
+            { IC.Yellow, 16191 }, -- Mana Tide Totem
+            { IC.Yellow, 5677, sameSlot = { 10491, 10493, 10494, 25569, 58775, 58776, 58777 } }, -- Mana Spring Totem
+            { IC.Navy, 8072, sameSlot = { 8156, 8157, 10403, 10404, 10405, 25506, 25507, 58752, 58754 } }, -- Stoneskin Totem
+            { IC.Navy, 974, sameSlot = { 32593, 32594, 49283, 49284 } }, -- Earth Shield
+            { IC.Navy, 49284 }, -- Earth Shield(Rank 5)
+        }),
         ROGUE = {}, --No buffs
-        WARRIOR = {
-            [6673]    = {0.2, 0.2, 1, {5242,6192,11549,11550,11551,25289,2048,47436}}, -- Battle Shout
-            [469]    = {0.2, 0.8, 0.2, {47439,47440}}, -- Commanding Shout
-        },
-        HUNTER = {
-            [19506]   = {0.89, 0.09, 0.05}, -- Trueshot Aura
-            [13159]   = {0.00, 0.00, 0.85}, -- Aspect of the Pack
-            [20043]   = {0.33, 0.93, 0.79, {20190,27045,49071}}, -- Aspect of the Wild
-        },
-        WARLOCK = {
-            [5697]    = {0.89, 0.09, 0.05}, -- Unending Breath
-            [6512]    = {0.2, 0.8, 0.2}, -- Detect Lesser Invisibility
-        },
-        MAGE = {
-            [1459]    = {0.89, 0.09, 0.05, {1460,1461,10156,10157,27126,42995,61024,61316,23028,27127,43002}}, -- Arcane Intellect
-            [604]     = {0.2, 0.8, 0.2, {8450,8451,10173,10174,33944,43015}}, -- Dampen Magic
-            [1008]    = {0.2, 0.8, 0.2, {8455,10169,10170,27130,33946,43017}}, -- Amplify Magic
-            [130]     = {0.00, 0.00, 0.50}, -- Slow Fall
-        },
-        DEATHKNIGHT = {
+        WARRIOR = Indicators({
+            { IC.Blue, 6673, sameSlot = { 5242, 6192, 11549, 11550, 11551, 25289, 2048, 47436 } }, -- Battle Shout
+            { IC.Green, 469, sameSlot = { 47439, 47440 } }, -- Commanding Shout
+        }),
+        HUNTER = Indicators({
+            { IC.Red, 19506 }, -- Trueshot Aura
+            { IC.Blue, 13159 }, -- Aspect of the Pack
+            { IC.Cyan, 20043, sameSlot = { 20190, 27045, 49071 } }, -- Aspect of the Wild
+        }),
+        WARLOCK = Indicators({
+            { IC.Red, 5697 }, -- Unending Breath
+            { IC.Green, 6512 }, -- Detect Lesser Invisibility
+        }),
+        MAGE = Indicators({
+            { IC.Red, 1459, sameSlot = { 1460, 1461, 10156, 10157, 27126, 42995, 61024, 61316, 23028, 27127, 43002 } }, -- Arcane Intellect
+            { IC.Green, 604, sameSlot = { 8450, 8451, 10173, 10174, 33944, 43015 } }, -- Dampen Magic
+            { IC.Green, 1008, sameSlot = { 8455, 10169, 10170, 27130, 33946, 43017 } }, -- Amplify Magic
+            { IC.Navy, 130 }, -- Slow Fall
+        }),
+        DEATHKNIGHT = Indicators({
             -- TODO: Hysteria / Unholy Frenzy
-        }
+        })
     }
 elseif GW.Forever then
     GW.AURAS_INDICATORS = {}
@@ -788,81 +638,6 @@ end
 
 -- Show these auras only when they are missing
 GW.AURAS_MISSING = {}
-
-GW.BotList = {
-    [22700] = true,
-    [44389] = true,
-    [54711] = true,
-    [67826] = true,
-    [126459] = true,
-    [157066] = true,
-    [161414] = true,
-    [199109] = true,
-    [200061] = true,
-    [200204] = true,
-    [200205] = true,
-    [200210] = true,
-    [200211] = true,
-    [200212] = true,
-    [200214] = true,
-    [200215] = true,
-    [200216] = true,
-    [200217] = true,
-    [200218] = true,
-    [200219] = true,
-    [200220] = true,
-    [200221] = true,
-    [200222] = true,
-    [200223] = true,
-    [200225] = true,
-    [226241] = true,
-    [256230] = true,
-    [298926] = true,
-    [324029] = true,
-    [453942] = true,
-}
-
-GW.FeastList = {
-    [104958] = true,
-    [126492] = true,
-    [126494] = true,
-    [126495] = true,
-    [126496] = true,
-    [126497] = true,
-    [126498] = true,
-    [126499] = true,
-    [126500] = true,
-    [126501] = true,
-    [126502] = true,
-    [126503] = true,
-    [126504] = true,
-    [145166] = true,
-    [145169] = true,
-    [145196] = true,
-    [188036] = true,
-    [201351] = true,
-    [201352] = true,
-    [259409] = true,
-    [259410] = true,
-    [276972] = true,
-    [286050] = true,
-    [297048] = true,
-    [298861] = true,
-    [307157] = true,
-    [308458] = true,
-    [308462] = true,
-    [359336] = true,
-    [382423] = true,
-    [382427] = true,
-    [383063] = true,
-    [432877] = true,
-    [433292] = true,
-    [455960] = true,
-    [457285] = true,
-    [457302] = true,
-    [462212] = true,
-    [462213] = true,
-}
 
 GW.MagePortals = {
     -- Alliance

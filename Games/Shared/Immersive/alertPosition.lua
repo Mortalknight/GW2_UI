@@ -1,93 +1,74 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -5
+-- Alerts stack away from the screen edge their mover is closer to. Blizzard anchors them first,
+-- we re-anchor afterwards instead of replacing the AdjustAnchors methods of its alert systems.
 
-local function UpdateGroupLootContainer(self)
-    local lastIdx = nil
+local GROW_DOWN = { point = "TOP", relativePoint = "BOTTOM", y = -5 }
+local GROW_UP = { point = "BOTTOM", relativePoint = "TOP", y = 5 }
+local growth = GROW_DOWN
 
-    for i = 1, self.maxIndex do
-        local frame = self.rollFrames[i]
-        if frame then
+local function PlaceNext(frame, relative)
+    frame:ClearAllPoints()
+    frame:SetPoint(growth.point, relative, growth.relativePoint, 0, growth.y)
+    return frame
+end
+
+-- the three kinds of alert systems: a queue of pooled alerts, one alert frame or an anchor frame
+local function StackSubSystem(subSystem, relative)
+    if subSystem.alertFramePool then
+        for alert in subSystem.alertFramePool:EnumerateActive() do
+            relative = PlaceNext(alert, relative)
+        end
+        return relative
+    end
+
+    local frame = subSystem.anchorFrame or subSystem.alertFrame
+    if frame and frame:IsShown() then
+        return PlaceNext(frame, relative)
+    end
+    return relative
+end
+
+-- loot rolls hang below the offsetter, one under the other
+local function StackLootRolls(container)
+    local previous, lastIndex
+    for index = 1, container.maxIndex do
+        local frame = container.rollFrames[index]
+        if frame and frame ~= previous then
             frame:ClearAllPoints()
-
-            local prevFrame = self.rollFrames[i - 1]
-            if prevFrame and prevFrame ~= frame then
-                frame:SetPoint("TOP", prevFrame, "BOTTOM", 0, -5)
+            if previous then
+                frame:SetPoint("TOP", previous, "BOTTOM", 0, -5)
             else
                 frame:SetPoint("TOP", GwAlertFrameOffsetter, "TOP", 0, -5)
             end
-            lastIdx = i
+            previous, lastIndex = frame, index
         end
     end
 
-    if lastIdx then
-        self:SetHeight(self.reservedSize * lastIdx)
-        self:Show()
+    if lastIndex then
+        container:SetHeight(container.reservedSize * lastIndex)
+        container:Show()
     else
-        self:Hide()
+        container:Hide()
     end
 end
--- /run BonusRollFrame_StartBonusRoll(242969,'test',10,1220,1273,14)
 
-local function RePostAlertFrame()
-    local _, y = GW.AlertContainerFrame:GetCenter()
-    local screenHeight = UIParent:GetTop()
-    if y > (screenHeight / 2) then
-        POSITION = "TOP"
-        ANCHOR_POINT = "BOTTOM"
-        YOFFSET = -5
-    else
-        POSITION = "BOTTOM"
-        ANCHOR_POINT = "TOP"
-        YOFFSET = 5
-    end
+local function RestackAlerts()
+    local _, centerY = GW.AlertContainerFrame:GetCenter()
+    growth = centerY > UIParent:GetTop() / 2 and GROW_DOWN or GROW_UP
 
     AlertFrame:ClearAllPoints()
-    GroupLootContainer:ClearAllPoints()
-
     AlertFrame:SetAllPoints(GW.AlertContainerFrame)
+    local relative = AlertFrame
+    for _, subSystem in ipairs(AlertFrame.alertFrameSubSystems) do
+        relative = StackSubSystem(subSystem, relative)
+    end
 
+    GroupLootContainer:ClearAllPoints()
     GroupLootContainer:SetPoint("TOP", GwAlertFrameOffsetter, "BOTTOM", 0, -5)
     if GroupLootContainer:IsShown() then
-        UpdateGroupLootContainer(GroupLootContainer)
-    end
-end
-
-local function AdjustQueuedAnchors(self, relativeAlert)
-    for alertFrame in self.alertFramePool:EnumerateActive() do
-        alertFrame:ClearAllPoints()
-        alertFrame:SetPoint(POSITION, relativeAlert, ANCHOR_POINT, 0, YOFFSET)
-        relativeAlert = alertFrame
-    end
-    return relativeAlert
-end
-
-local function AdjustAnchors(self, relativeAlert)
-    if self.alertFrame:IsShown() then
-        self.alertFrame:ClearAllPoints()
-        self.alertFrame:SetPoint(POSITION, relativeAlert, ANCHOR_POINT, 0, YOFFSET)
-        return self.alertFrame
-    end
-    return relativeAlert
-end
-
-local function AdjustAnchorsNonAlert(self, relativeAlert)
-    if self.anchorFrame:IsShown() then
-        self.anchorFrame:ClearAllPoints()
-        self.anchorFrame:SetPoint(POSITION, relativeAlert, ANCHOR_POINT, 0, YOFFSET)
-        return self.anchorFrame
-    end
-    return relativeAlert
-end
-
-local function resetAlertSubSystemAdjustPositions(subSystem)
-    if subSystem.alertFramePool then --queued alert system
-        subSystem.AdjustAnchors = AdjustQueuedAnchors
-    elseif not subSystem.anchorFrame then --simple alert system
-        subSystem.AdjustAnchors = AdjustAnchors
-    elseif subSystem.anchorFrame then --anchor frame system
-        subSystem.AdjustAnchors = AdjustAnchorsNonAlert
+        StackLootRolls(GroupLootContainer)
     end
 end
 
@@ -95,18 +76,8 @@ local function SetupAlertFramePosition()
     if not GW.settings.notifications.enabled then return end
 
     GwAlertFrameOffsetter:SetHeight(205)
-    hooksecurefunc("GroupLootContainer_Update", UpdateGroupLootContainer)
-
-    -- override anchor function
-    for _, alertFrameSubSystem in ipairs(AlertFrame.alertFrameSubSystems) do
-        resetAlertSubSystemAdjustPositions(alertFrameSubSystem)
-    end
-
-    -- Catch all added alert System by other addins
-    hooksecurefunc(AlertFrame, "AddAlertFrameSubSystem", function(_, alertFrameSubSystem)
-        resetAlertSubSystemAdjustPositions(alertFrameSubSystem)
-    end)
-    -- setup AlertFrame and Bonus Roll Frame
-    hooksecurefunc(AlertFrame, "UpdateAnchors", RePostAlertFrame)
+    hooksecurefunc("GroupLootContainer_Update", StackLootRolls)
+    hooksecurefunc(AlertFrame, "UpdateAnchors", RestackAlerts)
 end
 GW.SetupAlertFramePosition = SetupAlertFramePosition
+-- test a bonus roll: /run BonusRollFrame_StartBonusRoll(242969,'test',10,1220,1273,14)

@@ -11,20 +11,24 @@ local INDICATOR_CONFIG = {
     RIGHT = { point = "RIGHT", x = -0.3, y = 0 },
 }
 
-local function BuildIndicatorSpellIndex(indicators)
-    local index = {}
-    for mainSpellId, data in pairs(indicators) do
-        local includedIds = data[4]
-        if includedIds then
-            for _, includedId in ipairs(includedIds) do
+-- per class list: the spell of every sameSlot id, kept here instead of inside the shared list
+local sameSlotIndexes = {}
+
+local function GetSameSlotIndex(indicators)
+    local index = sameSlotIndexes[indicators]
+    if not index then
+        index = {}
+        for mainSpellId, entry in pairs(indicators) do
+            for _, includedId in ipairs(entry.sameSlot or {}) do
                 index[includedId] = mainSpellId
             end
         end
+        sameSlotIndexes[indicators] = index
     end
     return index
 end
 
-local DEFAULT_INDICATOR_COLOR = { 1, 1, 1 }
+local DEFAULT_INDICATOR = { color = GW.Colors.FallbackWhite }
 
 local function GetIndicatorDataForSpellId(indicators, spellId)
     if indicators then
@@ -33,12 +37,8 @@ local function GetIndicatorDataForSpellId(indicators, spellId)
             return indicator, spellId
         end
 
-        -- Fallback: check includedIds lists via cached index for indirect matches
-        if not indicators.__includedIndex then
-            indicators.__includedIndex = BuildIndicatorSpellIndex(indicators)
-        end
-
-        local mainSpellId = indicators.__includedIndex[spellId]
+        -- other ranks or variants shown by the same indicator
+        local mainSpellId = GetSameSlotIndex(indicators)[spellId]
         if mainSpellId then
             return indicators[mainSpellId], mainSpellId
         end
@@ -47,7 +47,7 @@ local function GetIndicatorDataForSpellId(indicators, spellId)
     -- custom spell ids (entered via the settings popup) have no predefined entry:
     -- the spell acts as its own indicator with a neutral color — it only takes
     -- effect when the id is actually assigned to a position
-    return DEFAULT_INDICATOR_COLOR, spellId
+    return DEFAULT_INDICATOR, spellId
 end
 
 local function Construct_AuraIcon(self, button)
@@ -231,7 +231,7 @@ local function CheckForAuraIndicators(self, parent, isPlayerBuff, data, shouldDi
     for _, pos in ipairs(INDICATORS) do
         if raidIndicators[pos] == indicatorSpellId then
             local frame = self["indicator" .. pos]
-            local r, g, b = unpack(indicator)
+            local r, g, b = indicator.color:GetRGB()
 
             frame.isBar = pos == "BAR"
             frame.auraInstanceId = data.auraInstanceID
@@ -390,12 +390,11 @@ local function BuildIndicatorSpellList(spellId)
     local list = { [spellId] = true }
     local indicators = GW.AURAS_INDICATORS[GW.myclass]
     local predefined = indicators and indicators[spellId]
-    if predefined and predefined[4] then
-        for _, includedId in ipairs(predefined[4]) do
-            list[includedId] = true
-        end
+    for _, includedId in ipairs(predefined and predefined.sameSlot or {}) do
+        list[includedId] = true
     end
-    return list, predefined
+    -- custom spell ids have no color of their own
+    return list, predefined and predefined.color
 end
 
 local function CreateGridIndicatorTracker(frame, pos, spellList, indicatorColor)
@@ -477,10 +476,7 @@ local function CreateGridIndicatorTracker(frame, pos, spellList, indicatorColor)
 
             -- apply the current settings right away — the widgets only exist from the
             -- first button on, the settings updater can run before that
-            local r, g, b = 1, 1, 1
-            if colorState.color then
-                r, g, b = unpack(colorState.color)
-            end
+            local r, g, b = (colorState.color or GW.Colors.FallbackWhite):GetRGB()
             color:SetVertexColor(r, g, b)
             color:SetShown(not frame.showRaidIndicatorIcon)
             icon:SetShown(frame.showRaidIndicatorIcon and true or false)
@@ -575,10 +571,7 @@ local function UpdateGridIndicators(frame)
                 -- display modes; best effort — the widgets are button children and the
                 -- subtree can be access restricted while auras are secret. New buttons
                 -- apply the current settings themselves in createWidgets.
-                local r, g, b = 1, 1, 1
-                if tracker.gwIndicatorColor then
-                    r, g, b = unpack(tracker.gwIndicatorColor)
-                end
+                local r, g, b = (tracker.gwIndicatorColor or GW.Colors.FallbackWhite):GetRGB()
                 local modeSig = strjoin(":", tostring(frame.showRaidIndicatorIcon), tostring(frame.showRaidIndicatorTimer),
                     tostring(frame.showRaidIndicatorStacks), r, g, b)
                 if tracker.gwAppliedModeSig ~= modeSig then

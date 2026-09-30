@@ -2,19 +2,12 @@
 local GW = select(2, ...)
 local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
-local IsIn = GW.IsIn
 local lerp = GW.lerp
 
 local AFKMode
 
-local ignoreKeys = {
-    LALT = true,
-    LSHIFT = true,
-    RSHIFT = true,
-}
-local printKeys = {
-    PRINTSCREEN = true,
-}
+-- a modifier alone does not end the AFK screen
+local MODIFIER_KEYS = { LSHIFT = true, RSHIFT = true, LALT = true, RALT = true, LCTRL = true, RCTRL = true, LMETA = true, RMETA = true }
 
 -- the character greets (wave), plays a few random emotes with idle pauses in
 -- between and finally falls asleep; a key press restarts the cycle
@@ -48,6 +41,9 @@ local function UpdateTimer(self)
 end
 
 local LOGOUT_WARNING_TIME = 5 * 60
+
+local FACTION_LOGO = { size = 140, x = -20, y = -8, nameX = -10, nameY = -36 }
+local NEUTRAL_LOGO = { texture = "Panda", size = 90, x = 15, y = 10, nameX = 20, nameY = -5 }
 
 -- smooth fill with a spark on the edge; the color heats up from gold to red
 -- over the last 10 minutes, the final 5 minutes pulse. Only runs while the
@@ -114,13 +110,15 @@ local function SetAnimation(key)
         model.emoteCount = 0
     end
     model.curAnimation = usedKey
-    model.duration = options.duration
-    model.idleDuration = options.wait
-    model.startTime = GetTime()
-    model.isIdle = nil
-
     model:SetFacing(options.facing)
     model:SetAnimation(options.id)
+
+    -- after the animation the character stands idle until the next one
+    AFKMode.animTimer = CancelTimer(AFKMode.animTimer)
+    AFKMode.animTimer = C_Timer.NewTimer(options.duration, function()
+        model:SetAnimation(0)
+        AFKMode.animTimer = C_Timer.NewTimer(options.wait, function() SetAnimation() end)
+    end)
 
     if AFKMode.bottom.modelHolder then
         AFKMode.bottom.modelHolder:ClearAllPoints()
@@ -128,97 +126,111 @@ local function SetAnimation(key)
     end
 end
 
-local function SetAFK(self, status)
-    if status then
-        MoveViewLeftStart(0.035)
-        self:Show()
-        CloseAllWindows()
-        UIParent:Hide()
+local function ShowAFKScreen(self)
+    -- the camera slowly circles the character while everything else is hidden
+    MoveViewLeftStart(0.035)
+    self:Show()
+    CloseAllWindows()
+    UIParent:Hide()
 
-        if IsInGuild() then
-            local guildName, guildRankName = GetGuildInfo("player")
-            self.bottom.guild:SetFormattedText("<%s> [%s]", guildName, guildRankName)
-        else
-            self.bottom.guild:SetText(L["No Guild"])
-        end
+    local guildName, rankName = GetGuildInfo("player")
+    if guildName then
+        self.bottom.guild:SetFormattedText("<%s> [%s]", guildName, rankName)
+    else
+        self.bottom.guild:SetText(L["No Guild"])
+    end
 
-        SetAnimation("wave")
+    SetAnimation("wave")
+    self.startTime = GetTime()
+    self.bottom.logout:SetValue(0)
+    self.timer = CancelTimer(self.timer)
+    UpdateTimer(self)
+    self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
+    self.isAFK = true
+end
 
-        self.startTime = GetTime()
-        self.bottom.logout:SetValue(0)
-        self.timer = CancelTimer(self.timer)
-        UpdateTimer(self)
-        self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
+local function HideAFKScreen(self)
+    UIParent:Show()
+    self:Hide()
+    MoveViewLeftStop()
+    self.timer = CancelTimer(self.timer)
+    self.animTimer = CancelTimer(self.animTimer)
+    self.bottom.time:SetText("00:00")
+    self.chat:Clear()
 
-        self.isAFK = true
+    -- the group finder lays itself out wrong while UIParent was hidden, reopening fixes it
+    if PVEFrame and PVEFrame:IsShown() then
+        PVEFrame_ToggleFrame()
+        PVEFrame_ToggleFrame()
+    end
+    self.isAFK = false
+end
+
+local function CheckAFK(self)
+    if not GW.settings.general.afkMode or InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown() then
+        return
+    end
+    -- crafting keeps the player busy, look again later
+    if UnitCastingInfo("player") then
+        C_Timer.After(30, function() CheckAFK(self) end)
+        return
+    end
+
+    local inPetBattle = C_PetBattles and C_PetBattles.IsInBattle()
+    if GW.UnitIsAFK("player") and not inPetBattle then
+        ShowAFKScreen(self)
     elseif self.isAFK then
-        UIParent:Show()
-        self:Hide()
-        MoveViewLeftStop()
-        self.timer = CancelTimer(self.timer)
-        self.animTimer = CancelTimer(self.animTimer)
-
-        self.bottom.time:SetText("00:00")
-
-        self.chat:Clear()
-        if GW.Retail and PVEFrame:IsShown() then
-            PVEFrame_ToggleFrame()
-            PVEFrame_ToggleFrame()
-        end
-
-        self.isAFK = false
+        HideAFKScreen(self)
     end
 end
 
 local function AFKMode_OnEvent(self, event, arg1)
-    if event == "PLAYER_REGEN_ENABLED" then
-        self:UnregisterEvent(event)
-    elseif IsIn(event, "PLAYER_REGEN_DISABLED", "LFG_PROPOSAL_SHOW", "UPDATE_BATTLEFIELD_STATUS") then
-        if event ~= "UPDATE_BATTLEFIELD_STATUS" or (GetBattlefieldStatus(arg1) == "confirm") then
-            SetAFK(self, false)
+    if event == "PLAYER_FLAGS_CHANGED" then
+        if arg1 == "player" then
+            CheckAFK(self)
         end
-
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        -- the flag may have changed while we were fighting
+        self:UnregisterEvent(event)
+        CheckAFK(self)
+    elseif event ~= "UPDATE_BATTLEFIELD_STATUS" or GetBattlefieldStatus(arg1) == "confirm" then
+        -- combat, a group or a battleground invite need the normal UI
+        if self.isAFK then
+            HideAFKScreen(self)
+        end
         if event == "PLAYER_REGEN_DISABLED" then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
-        return
-    elseif not GW.settings.general.afkMode or (event == "PLAYER_FLAGS_CHANGED" and arg1 ~= "player") or (InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown()) then
-        return
-    elseif UnitCastingInfo("player") then
-        --Don't activate afk if player is crafting stuff, check back in 30 seconds
-        C_Timer.After(30, function() AFKMode_OnEvent(self) end)
-        return
     end
-
-    SetAFK(self, GW.UnitIsAFK("player") and not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()))
 end
 
 local function OnKeyDown(self, key)
-    if ignoreKeys[key] then return end
+    if MODIFIER_KEYS[key] then return end
 
-    if printKeys[key] then
+    -- follows the player's own screenshot binding
+    if GetBindingFromClick(key) == "SCREENSHOT" then
         Screenshot()
     elseif self.isAFK then
-        SetAFK(self, false)
-        if not self.nextCheck or GetTime() >= self.nextCheck then
-            self.nextCheck = GetTime() + 60
+        HideAFKScreen(self)
+        -- still AFK a minute later brings the screen back
+        if not self.recheckPending then
+            self.recheckPending = true
             C_Timer.After(60, function()
-                self.nextCheck = nil
-                AFKMode_OnEvent(self)
+                self.recheckPending = false
+                CheckAFK(self)
             end)
         end
     end
 end
 
-local function Chat_OnMouseWheel(self, delta)
-    if delta == 1 and IsShiftKeyDown() then
-        self:ScrollToTop()
-    elseif delta == -1 and IsShiftKeyDown() then
-        self:ScrollToBottom()
-    elseif delta == -1 then
-        self:ScrollDown()
+local function Chat_OnMouseWheel(chat, delta)
+    local up = delta > 0
+    if IsShiftKeyDown() then
+        if up then chat:ScrollToTop() else chat:ScrollToBottom() end
+    elseif up then
+        chat:ScrollUp()
     else
-        self:ScrollUp()
+        chat:ScrollDown()
     end
 end
 
@@ -311,20 +323,17 @@ local function LoadAFKAnimation()
     AFKMode.bottom:SetWidth(GetScreenWidth() + (GW.border * 2))
     AFKMode.bottom:SetHeight(GetScreenHeight() * (1.5 / 10))
 
-    local factionGroup, size, offsetX, offsetY, nameOffsetX, nameOffsetY = GW.myfaction, 140, -20, -8, -10, -36
-    if factionGroup == "Neutral" then
-        factionGroup, size, offsetX, offsetY, nameOffsetX, nameOffsetY = "Panda", 90, 15, 10, 20, -5
-    end
-
+    -- pandaren without a faction get the smaller panda logo, the name moves with it
+    local logo = GW.myfaction == "Neutral" and NEUTRAL_LOGO or FACTION_LOGO
     AFKMode.bottom.faction = AFKMode.bottom:CreateTexture(nil, "OVERLAY")
-    AFKMode.bottom.faction:SetPoint("BOTTOMLEFT", AFKMode.bottom, "BOTTOMLEFT", offsetX, offsetY)
-    AFKMode.bottom.faction:SetTexture("Interface/Timer/" .. factionGroup .. "-Logo")
-    AFKMode.bottom.faction:SetSize(size, size)
+    AFKMode.bottom.faction:SetPoint("BOTTOMLEFT", AFKMode.bottom, "BOTTOMLEFT", logo.x, logo.y)
+    AFKMode.bottom.faction:SetTexture("Interface/Timer/" .. (logo.texture or GW.myfaction) .. "-Logo")
+    AFKMode.bottom.faction:SetSize(logo.size, logo.size)
 
     AFKMode.bottom.name = AFKMode.bottom:CreateFontString(nil, "OVERLAY")
     AFKMode.bottom.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
     AFKMode.bottom.name:SetFormattedText("%s-%s", playerName, GW.myrealm)
-    AFKMode.bottom.name:SetPoint("TOPLEFT", AFKMode.bottom.faction, "TOPRIGHT", nameOffsetX, nameOffsetY)
+    AFKMode.bottom.name:SetPoint("TOPLEFT", AFKMode.bottom.faction, "TOPRIGHT", logo.nameX, logo.nameY)
     AFKMode.bottom.name:SetTextColor(classColor.r, classColor.g, classColor.b)
     GW.Gw2ClassColorRegister(nil, UpdateClasscolor)
 
@@ -381,22 +390,7 @@ local function LoadAFKAnimation()
     AFKMode.bottom.model:SetSize(GetScreenWidth() * 2, GetScreenHeight() * 2)
     AFKMode.bottom.model:SetCamDistanceScale(4.5)
     AFKMode.bottom.model:SetUnit("player")
-    AFKMode.bottom.model:SetScript("OnUpdate", function(self)
-        if self.isIdle then return end
-        local timePassed = GetTime() - self.startTime
-        if timePassed >= self.duration then
-            self:SetAnimation(0)
-            self.isIdle = true
-
-            AFKMode.animTimer = CancelTimer(AFKMode.animTimer)
-            AFKMode.animTimer = C_Timer.NewTimer(self.idleDuration, function() SetAnimation() end)
-        end
-    end)
 
     ToggelAfkMode()
-
-    if IsMacClient() then
-        printKeys[KEY_PRINTSCREEN_MAC] = true
-    end
 end
 GW.LoadAFKAnimation = LoadAFKAnimation

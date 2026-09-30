@@ -23,20 +23,68 @@ local function HandleSearchBarFrame(Frame)
 	Frame.FavoritesSearchButton:SetPoint("LEFT", 0, 0)
 end
 
+local ACTION_PRESSED = "Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png"
 
-local function SkinItemDisplay(frame)
-	local ItemDisplay = frame.ItemDisplay
-	ItemDisplay:GwStripTextures()
-	ItemDisplay:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-	ItemDisplay.backdrop:SetPoint("TOPLEFT", 3, -3)
-	ItemDisplay.backdrop:SetPoint("BOTTOMRIGHT", -3, 0)
+local function SetWhite(text)
+	if text then
+		text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+	end
+end
 
-	local ItemButton = ItemDisplay.ItemButton
-	ItemButton.CircleMask:Hide()
+-- Blizzard colors the refresh and favorite icons on hover, ours stay grey
+local function KeepDesaturated(icon, desaturated)
+	if not desaturated then
+		icon:SetDesaturated(true)
+	end
+end
 
-	GW.HandleIcon(ItemButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
-	GW.HandleIconBorder(ItemButton.IconBorder, ItemButton.Icon.backdrop)
-	ItemButton:GetHighlightTexture():Hide()
+local function SkinIconButton(button, size)
+	button:GwSkinButton(false, true)
+	if size then
+		button:SetSize(size, size)
+	end
+	button.Icon:SetDesaturated(true)
+	hooksecurefunc(button.Icon, "SetDesaturated", KeepDesaturated)
+end
+
+local function SkinMoneyBoxes(prefix, lastOffset)
+	for index, suffix in ipairs({ "Gold", "Silver" }) do
+		local name = prefix .. suffix
+		GW.SkinTextBox(_G[name .. "Middle"], _G[name .. "Left"], _G[name .. "Right"], nil, nil, nil, index == 2 and lastOffset or 0)
+	end
+end
+
+local function SkinMoneyInput(moneyInput)
+	for _, box in ipairs({ moneyInput.GoldBox, moneyInput.SilverBox }) do
+		GW.SkinTextBox(box.Middle, box.Left, box.Right)
+	end
+end
+
+-- the item shown above a panel: the buy panels show it, the sell panels take it as a drop slot
+local function SkinItemDisplay(display, isDropSlot)
+	display:GwStripTextures()
+	display:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+
+	local button = display.ItemButton
+	if isDropSlot then
+		if button.IconMask then
+			button.IconMask:Hide()
+		end
+		button.EmptyBackground:Hide()
+		button:SetPushedTexture(ACTION_PRESSED)
+		button.Highlight:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
+		button.Highlight:SetAllPoints(button.Icon)
+	else
+		display.backdrop:SetPoint("TOPLEFT", 3, -3)
+		display.backdrop:SetPoint("BOTTOMRIGHT", -3, 0)
+		button.CircleMask:Hide()
+		button:GetHighlightTexture():Hide()
+	end
+
+	GW.HandleIcon(button.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+	if button.IconBorder then
+		GW.HandleIconBorder(button.IconBorder, button.Icon.backdrop)
+	end
 end
 
 local function HandleTabs(arg1)
@@ -57,63 +105,44 @@ local function HandleTabs(arg1)
 	end
 end
 
-local function HandleSellFrame(frame)
-	local ItemDisplay = frame.ItemDisplay
-	ItemDisplay:GwStripTextures()
-	ItemDisplay:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+local function SkinSellFrame(frame)
+	SkinItemDisplay(frame.ItemDisplay, true)
 
-	local ItemButton = ItemDisplay.ItemButton
-	if ItemButton.IconMask then ItemButton.IconMask:Hide() end
-
-	ItemButton.EmptyBackground:Hide()
-	ItemButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
-	ItemButton.Highlight:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
-	ItemButton.Highlight:SetAllPoints(ItemButton.Icon)
-
-	GW.HandleIcon(ItemButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
-	GW.SkinTextBox(frame.QuantityInput.InputBox.Middle, frame.QuantityInput.InputBox.Left, frame.QuantityInput.InputBox.Right)
-	frame.QuantityInput.MaxButton:GwSkinButton(false, true)
-	GW.SkinTextBox(frame.PriceInput.MoneyInputFrame.GoldBox.Middle, frame.PriceInput.MoneyInputFrame.GoldBox.Left, frame.PriceInput.MoneyInputFrame.GoldBox.Right)
-	GW.SkinTextBox(frame.PriceInput.MoneyInputFrame.SilverBox.Middle, frame.PriceInput.MoneyInputFrame.SilverBox.Left, frame.PriceInput.MoneyInputFrame.SilverBox.Right)
-
-	if ItemButton.IconBorder then
-		GW.HandleIconBorder(ItemButton.IconBorder, ItemButton.Icon.backdrop)
-	end
-
+	local quantity = frame.QuantityInput
+	GW.SkinTextBox(quantity.InputBox.Middle, quantity.InputBox.Left, quantity.InputBox.Right)
+	quantity.MaxButton:GwSkinButton(false, true)
+	SetWhite(quantity.Label)
+	SkinMoneyInput(frame.PriceInput.MoneyInputFrame)
 	if frame.SecondaryPriceInput then
-		GW.SkinTextBox(frame.SecondaryPriceInput.MoneyInputFrame.GoldBox.Middle, frame.SecondaryPriceInput.MoneyInputFrame.GoldBox.Left, frame.SecondaryPriceInput.MoneyInputFrame.GoldBox.Right)
-		GW.SkinTextBox(frame.SecondaryPriceInput.MoneyInputFrame.SilverBox.Middle, frame.SecondaryPriceInput.MoneyInputFrame.SilverBox.Left, frame.SecondaryPriceInput.MoneyInputFrame.SilverBox.Right)
-		frame.SecondaryPriceInput.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+		SkinMoneyInput(frame.SecondaryPriceInput.MoneyInputFrame)
+		SetWhite(frame.SecondaryPriceInput.Label)
 	end
 
 	frame.Duration.Dropdown:GwHandleDropDownBox()
 	frame.PostButton:GwSkinButton(false, true)
-
 	frame.CreateAuctionLabel:Hide()
-
 	if frame.BuyoutModeCheckButton then
 		frame.BuyoutModeCheckButton:GwSkinCheckButton(false, 20)
-		frame.BuyoutModeCheckButton.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	end
-	if frame.QuantityInput then
-		frame.QuantityInput.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+		SetWhite(frame.BuyoutModeCheckButton.Text)
 	end
 
-	frame.PriceInput.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	hooksecurefunc(frame.PriceInput.Label, "SetTextColor", function(self, r, g, b) if r ~=1 or g ~= 1 or b ~= 1 then self:SetTextColor(GW.Colors.FallbackWhite:GetRGB()) end end)
-	frame.Duration.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	frame.Deposit.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	frame.TotalPrice.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+	for _, text in ipairs({ frame.PriceInput.Label, frame.Duration.Label, frame.Deposit.Label, frame.TotalPrice.Label }) do
+		SetWhite(text)
+	end
+	-- Blizzard tints the price label red for invalid prices
+	hooksecurefunc(frame.PriceInput.Label, "SetTextColor", function(label, r, g, b)
+		if r ~= 1 or g ~= 1 or b ~= 1 then
+			SetWhite(label)
+		end
+	end)
 end
 
-local function HandleAuctionButtons(button)
-	button:GwSkinButton(false, true)
-	button:SetSize(22, 22)
-	hooksecurefunc(button.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
-end
-
-local function HookItemListScrollBoxHover(scrollBox)
-	hooksecurefunc(scrollBox, "Update", GW.HandleItemListScrollBoxHover)
+local function SkinTokenSellFrame(frame)
+	SkinItemDisplay(frame.ItemDisplay, true)
+	frame.PostButton:GwSkinButton(false, true)
+	SkinIconButton(frame.DummyRefreshButton, 22)
+	frame.DummyItemList:GwStripTextures()
+	frame.DummyItemList:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
 end
 
 local function HandleSummaryIcons(frame)
@@ -137,57 +166,46 @@ local function HandleSummaryIcons(frame)
 	GW.HandleItemListScrollBoxHover(frame)
 end
 
-local function HandleTokenSellFrame(frame)
-	local ItemDisplay = frame.ItemDisplay
-	ItemDisplay:GwStripTextures()
-	ItemDisplay:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-
-	local ItemButton = ItemDisplay.ItemButton
-	if ItemButton.IconMask then ItemButton.IconMask:Hide() end
-
-	ItemButton.EmptyBackground:Hide()
-	ItemButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
-	ItemButton.Highlight:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
-	ItemButton.Highlight:SetAllPoints(ItemButton.Icon)
-
-	GW.HandleIcon(ItemButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
-
-	if ItemButton.IconBorder then
-		GW.HandleIconBorder(ItemButton.IconBorder, ItemButton.Icon.backdrop)
+-- options: headers (sortable columns), summary (icon list without columns),
+-- scrollBarInset {x, y} and smallRefresh for the 22px refresh buttons of the own auctions
+local function SkinList(list, options)
+	GW.HandleTrimScrollBar(list.ScrollBar)
+	GW.HandleScrollControls(list)
+	if options.scrollBarInset then
+		local x, y = unpack(options.scrollBarInset)
+		list.ScrollBar:ClearAllPoints()
+		list.ScrollBar:SetPoint("TOPRIGHT", list, -x, -y)
+		list.ScrollBar:SetPoint("BOTTOMRIGHT", list, -x, y)
 	end
 
-	frame.PostButton:GwSkinButton(false, true)
-	HandleAuctionButtons(frame.DummyRefreshButton)
+	if list.RefreshFrame then
+		SkinIconButton(list.RefreshFrame.RefreshButton, options.smallRefresh and 22)
+		SetWhite(list.RefreshFrame.TotalQuantity)
+	end
+	if list.LoadingSpinner then
+		SetWhite(list.LoadingSpinner.SearchingText)
+	end
 
-	frame.DummyItemList:GwStripTextures()
-	frame.DummyItemList:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+	if options.headers then
+		hooksecurefunc(list, "RefreshScrollFrame", GW.HandleSrollBoxHeaders)
+	end
+	if options.summary then
+		hooksecurefunc(list.ScrollBox, "Update", HandleSummaryIcons)
+	else
+		hooksecurefunc(list.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
+	end
 end
 
-local function HandleSellList(frame, hasHeader, fitScrollBar)
-	if frame.RefreshFrame then
-		HandleAuctionButtons(frame.RefreshFrame.RefreshButton)
-		frame.RefreshFrame.TotalQuantity:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	end
+-- the details background of wide lists starts 2px in, next to the categories
+local function FitListBackground(list)
+	list.tex:ClearAllPoints()
+	list.tex:SetPoint("TOPLEFT", list, "TOPLEFT", 2, 0)
+	list.tex:SetPoint("BOTTOMRIGHT", list, "BOTTOMRIGHT", 0, 0)
+end
 
-	GW.HandleTrimScrollBar(frame.ScrollBar)
-	GW.HandleScrollControls(frame)
-
-	if frame.LoadingSpinner then
-		frame.LoadingSpinner.SearchingText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	end
-
-	if fitScrollBar then
-		frame.ScrollBar:ClearAllPoints()
-		frame.ScrollBar:SetPoint("TOPRIGHT", frame, -6, -16)
-		frame.ScrollBar:SetPoint("BOTTOMRIGHT", frame, -6, 16)
-	end
-
-	if hasHeader then
-		hooksecurefunc(frame, "RefreshScrollFrame", GW.HandleSrollBoxHeaders)
-		HookItemListScrollBoxHover(frame.ScrollBox)
-	else
-		hooksecurefunc(frame.ScrollBox, "Update", HandleSummaryIcons)
-	end
+local function SkinDialog(frame)
+	frame:GwStripTextures()
+	frame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
 end
 
 local function ApplyAuctionHouseSkin()
@@ -353,217 +371,105 @@ local function ApplyAuctionHouseSkin()
 		end
 	end)
 
+	-- browse and buy (tab 1)
+	local browse = AuctionHouseFrame.BrowseResultsFrame
+	SkinList(browse.ItemList, { headers = true, scrollBarInset = { 6, 16 } })
+	FitListBackground(browse)
 
-	--Browse Frame
-	local Browse = AuctionHouseFrame.BrowseResultsFrame
-
-	local BrowseList = Browse.ItemList
-	hooksecurefunc(BrowseList, "RefreshScrollFrame", GW.HandleSrollBoxHeaders)
-	GW.HandleTrimScrollBar(BrowseList.ScrollBar)
-	GW.HandleScrollControls(BrowseList)
-	HookItemListScrollBoxHover(BrowseList.ScrollBox)
-	BrowseList.ScrollBar:ClearAllPoints()
-	BrowseList.ScrollBar:SetPoint("TOPRIGHT", BrowseList, -6, -16)
-	BrowseList.ScrollBar:SetPoint("BOTTOMRIGHT", BrowseList, -6, 16)
-	Browse.tex:ClearAllPoints()
-	Browse.tex:SetPoint("TOPLEFT", Browse, "TOPLEFT", 2, 0)
-	Browse.tex:SetPoint("BOTTOMRIGHT", Browse, "BOTTOMRIGHT", 0, 0)
-
-	BrowseList.LoadingSpinner.SearchingText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-
-	--BuyOut Frame
-	local CommoditiesBuyFrame = AuctionHouseFrame.CommoditiesBuyFrame
-	CommoditiesBuyFrame.BackButton:GwSkinButton(false, true)
-
-	local CommoditiesBuyList = AuctionHouseFrame.CommoditiesBuyFrame.ItemList
-	CommoditiesBuyList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
-	CommoditiesBuyList.RefreshFrame.RefreshButton.Icon:SetDesaturated(true)
-	hooksecurefunc(CommoditiesBuyList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end) --TODO
-	GW.HandleTrimScrollBar(CommoditiesBuyList.ScrollBar)
-	GW.HandleScrollControls(CommoditiesBuyList)
-	HookItemListScrollBoxHover(CommoditiesBuyList.ScrollBox)
-	CommoditiesBuyList.RefreshFrame.TotalQuantity:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	CommoditiesBuyList.LoadingSpinner.SearchingText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-
-	local BuyDisplay = AuctionHouseFrame.CommoditiesBuyFrame.BuyDisplay
-	GW.SkinTextBox(BuyDisplay.QuantityInput.InputBox.Middle, BuyDisplay.QuantityInput.InputBox.Left, BuyDisplay.QuantityInput.InputBox.Right)
-	BuyDisplay.BuyButton:GwSkinButton(false, true)
-
-	BuyDisplay.QuantityInput.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	BuyDisplay.UnitPrice.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	BuyDisplay.TotalPrice.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-
-	SkinItemDisplay(BuyDisplay)
-
-	--ItemBuyOut Frame
-	local ItemBuyFrame = AuctionHouseFrame.ItemBuyFrame
-	ItemBuyFrame.BackButton:GwSkinButton(false, true)
-	ItemBuyFrame.BuyoutFrame.BuyoutButton:GwSkinButton(false, true)
-
-	SkinItemDisplay(ItemBuyFrame)
-
-	local ItemBuyList = ItemBuyFrame.ItemList
-	GW.HandleTrimScrollBar(ItemBuyList.ScrollBar)
-	GW.HandleScrollControls(ItemBuyList)
-	HookItemListScrollBoxHover(ItemBuyList.ScrollBox)
-	ItemBuyList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
-	hooksecurefunc(ItemBuyList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end) --TODO
-	hooksecurefunc(ItemBuyList, "RefreshScrollFrame", GW.HandleSrollBoxHeaders)
-	ItemBuyList.RefreshFrame.TotalQuantity:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	ItemBuyList.LoadingSpinner.SearchingText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-
-	local EditBoxes = {
-		AuctionHouseFrameGold,
-		AuctionHouseFrameSilver,
-	}
-
-	for _, EditBox in pairs(EditBoxes) do
-		GW.SkinTextBox(_G[EditBox:GetName() .. "Middle"], _G[EditBox:GetName() .. "Left"], _G[EditBox:GetName() .. "Right"])
+	local commoditiesBuy = AuctionHouseFrame.CommoditiesBuyFrame
+	commoditiesBuy.BackButton:GwSkinButton(false, true)
+	SkinList(commoditiesBuy.ItemList, {})
+	local buyDisplay = commoditiesBuy.BuyDisplay
+	SkinItemDisplay(buyDisplay.ItemDisplay)
+	GW.SkinTextBox(buyDisplay.QuantityInput.InputBox.Middle, buyDisplay.QuantityInput.InputBox.Left, buyDisplay.QuantityInput.InputBox.Right)
+	buyDisplay.BuyButton:GwSkinButton(false, true)
+	for _, text in ipairs({ buyDisplay.QuantityInput.Label, buyDisplay.UnitPrice.Label, buyDisplay.TotalPrice.Label }) do
+		SetWhite(text)
 	end
 
-	ItemBuyFrame.BidFrame.BidButton:GwSkinButton(false, true)
-	ItemBuyFrame.BidFrame.BidButton:ClearAllPoints()
-	ItemBuyFrame.BidFrame.BidButton:SetPoint("LEFT", ItemBuyFrame.BidFrame.BidAmount, "RIGHT", 2, -2)
+	local itemBuy = AuctionHouseFrame.ItemBuyFrame
+	itemBuy.BackButton:GwSkinButton(false, true)
+	itemBuy.BuyoutFrame.BuyoutButton:GwSkinButton(false, true)
+	SkinItemDisplay(itemBuy.ItemDisplay)
+	SkinList(itemBuy.ItemList, { headers = true })
+	SkinMoneyBoxes("AuctionHouseFrame")
+	itemBuy.BidFrame.BidButton:GwSkinButton(false, true)
+	itemBuy.BidFrame.BidButton:ClearAllPoints()
+	itemBuy.BidFrame.BidButton:SetPoint("LEFT", itemBuy.BidFrame.BidAmount, "RIGHT", 2, -2)
 
-	--Item Sell Frame - TAB 2
-	local SellFrame = AuctionHouseFrame.ItemSellFrame
-	HandleSellFrame(SellFrame)
+	-- sell (tab 2)
+	SkinSellFrame(AuctionHouseFrame.ItemSellFrame)
+	SkinSellFrame(AuctionHouseFrame.CommoditiesSellFrame)
+	SkinTokenSellFrame(AuctionHouseFrame.WoWTokenSellFrame)
+	SkinList(AuctionHouseFrame.ItemSellList, { headers = true, scrollBarInset = { 6, 16 }, smallRefresh = true })
+	FitListBackground(AuctionHouseFrame.ItemSellList)
+	SkinList(AuctionHouseFrame.CommoditiesSellList, { headers = true, smallRefresh = true })
 
-	local ItemSellList = AuctionHouseFrame.ItemSellList
-	HandleSellList(ItemSellList, true, true)
-	ItemSellList.tex:ClearAllPoints()
-	ItemSellList.tex:SetPoint("TOPLEFT", ItemSellList, "TOPLEFT", 2, 0)
-	ItemSellList.tex:SetPoint("BOTTOMRIGHT", ItemSellList, "BOTTOMRIGHT", 0, 0)
-
-	local CommoditiesSellFrame = AuctionHouseFrame.CommoditiesSellFrame
-	HandleSellFrame(CommoditiesSellFrame)
-
-	local CommoditiesSellList = AuctionHouseFrame.CommoditiesSellList
-	HandleSellList(CommoditiesSellList, true)
-
-	local TokenSellFrame = AuctionHouseFrame.WoWTokenSellFrame
-	HandleTokenSellFrame(TokenSellFrame)
-
-	--Auctions Frame - TAB 3
-	SkinItemDisplay(AuctionHouseFrameAuctionsFrame)
-	AuctionHouseFrameAuctionsFrame.BuyoutFrame.BuyoutButton:GwSkinButton(false, true)
-
-	local CommoditiesList = AuctionHouseFrameAuctionsFrame.CommoditiesList
-	HandleSellList(CommoditiesList, true)
-	CommoditiesList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
-	hooksecurefunc(CommoditiesList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
-
-	local AuctionsList = AuctionHouseFrameAuctionsFrame.ItemList
-	HandleSellList(AuctionsList, true)
-	AuctionsList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
-	hooksecurefunc(AuctionsList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
-
-	local AuctionsFrameTabs = {
-		AuctionHouseFrameAuctionsFrameAuctionsTab,
-		AuctionHouseFrameAuctionsFrameBidsTab,
-	}
-
-	for _, tab in pairs(AuctionsFrameTabs) do
-		if tab then
-			GW.HandleTabs(tab, "top")
-		end
+	-- own auctions and bids (tab 3)
+	local auctions = AuctionHouseFrameAuctionsFrame
+	SkinItemDisplay(auctions.ItemDisplay)
+	auctions.BuyoutFrame.BuyoutButton:GwSkinButton(false, true)
+	auctions.BidFrame.BidButton:GwSkinButton(false, true)
+	auctions.CancelAuctionButton:GwSkinButton(false, true)
+	auctions.CancelAuctionButton:GwSkinNegativeButton()
+	SkinMoneyBoxes("AuctionHouseFrameAuctionsFrame", -5)
+	for _, tab in ipairs({ AuctionHouseFrameAuctionsFrameAuctionsTab, AuctionHouseFrameAuctionsFrameBidsTab }) do
+		GW.HandleTabs(tab, "top")
 	end
 
-	local SummaryList = AuctionHouseFrameAuctionsFrame.SummaryList
-	HandleSellList(SummaryList)
-	AuctionHouseFrameAuctionsFrame.CancelAuctionButton:GwSkinButton(false, true)
-	AuctionHouseFrameAuctionsFrame.CancelAuctionButton:GwSkinNegativeButton()
+	SkinList(auctions.CommoditiesList, { headers = true, smallRefresh = true })
+	SkinList(auctions.ItemList, { headers = true, smallRefresh = true })
+	SkinList(auctions.SummaryList, { summary = true, scrollBarInset = { 5, 20 }, smallRefresh = true })
+	for _, list in ipairs({ auctions.AllAuctionsList, auctions.BidsList }) do
+		SkinList(list, { headers = true, scrollBarInset = { 6, 16 }, smallRefresh = true })
+		FitListBackground(list)
+	end
+	-- Blizzard anchors the summary above the cancel button, which now sits below the list
+	auctions.SummaryList:SetPoint("BOTTOM", auctions, 0, 0)
+	auctions.CancelAuctionButton:ClearAllPoints()
+	auctions.CancelAuctionButton:SetPoint("TOPRIGHT", auctions.AllAuctionsList, "BOTTOMRIGHT", -6, 1)
 
-	SummaryList.ScrollBar:ClearAllPoints()
-	SummaryList.ScrollBar:SetPoint("TOPRIGHT", SummaryList, -5, -20)
-	SummaryList.ScrollBar:SetPoint("BOTTOMRIGHT", SummaryList, -5, 20)
+	-- WoW token
+	local tokenResults = AuctionHouseFrame.WoWTokenResults
+	tokenResults.Buyout:GwSkinButton(false, true)
+	GW.HandleTrimScrollBar(tokenResults.DummyScrollBar)
+	GW.HandleScrollControls(tokenResults, "DummyScrollBar")
+	SkinDialog(tokenResults.TokenDisplay)
+	local tokenButton = tokenResults.TokenDisplay.ItemButton
+	GW.HandleIcon(tokenButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+	tokenButton.Icon.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.TokenBorder:GetRGB())
+	tokenButton:GetHighlightTexture():Hide()
+	tokenButton.CircleMask:Hide()
+	tokenButton.IconBorder:SetAlpha(0)
 
-	local AllAuctionsList = AuctionHouseFrameAuctionsFrame.AllAuctionsList
-	HandleSellList(AllAuctionsList, true, true)
-	AllAuctionsList.tex:ClearAllPoints()
-	AllAuctionsList.tex:SetPoint("TOPLEFT", AllAuctionsList, "TOPLEFT", 2, 0)
-	AllAuctionsList.tex:SetPoint("BOTTOMRIGHT", AllAuctionsList, "BOTTOMRIGHT", 0, 0)
-	AllAuctionsList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
-	hooksecurefunc(AllAuctionsList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
-	AllAuctionsList.ResultsText:SetParent(AllAuctionsList.ScrollFrame)
-
-	SummaryList:SetPoint("BOTTOM", AuctionHouseFrameAuctionsFrame, 0, 0) -- normally this is anchored to the cancel button.. ? lol
-	AuctionHouseFrameAuctionsFrame.CancelAuctionButton:ClearAllPoints()
-	AuctionHouseFrameAuctionsFrame.CancelAuctionButton:SetPoint("TOPRIGHT", AllAuctionsList, "BOTTOMRIGHT", -6, 1)
-
-	local BidsList = AuctionHouseFrameAuctionsFrame.BidsList
-	HandleSellList(BidsList, true, true)
-	BidsList.tex:ClearAllPoints()
-	BidsList.tex:SetPoint("TOPLEFT", BidsList, "TOPLEFT", 2, 0)
-	BidsList.tex:SetPoint("BOTTOMRIGHT", BidsList, "BOTTOMRIGHT", 0, 0)
-	BidsList.ResultsText:SetParent(BidsList.ScrollFrame)
-	BidsList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
-	hooksecurefunc(BidsList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
-
-	EditBoxes = {
-		AuctionHouseFrameAuctionsFrameGold,
-		AuctionHouseFrameAuctionsFrameSilver,
-	}
-
-	for idx, EditBox in pairs(EditBoxes) do
-		GW.SkinTextBox(_G[EditBox:GetName() .. "Middle"], _G[EditBox:GetName() .. "Left"], _G[EditBox:GetName() .. "Right"], nil, nil, nil, (idx == 2 and -5 or 0))
+	local tutorial = tokenResults.GameTimeTutorial
+	tutorial.NineSlice:Hide()
+	tutorial.Bg:SetAlpha(0)
+	tutorial:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+	tutorial.CloseButton:GwSkinButton(true)
+	tutorial.RightDisplay.StoreButton:GwSkinButton(false, true)
+	for _, display in ipairs({ tutorial.LeftDisplay, tutorial.RightDisplay }) do
+		SetWhite(display.Label)
+		display.Tutorial1:SetTextColor(GW.Colors.SkinColors.Negative:GetRGB())
 	end
 
-	AuctionHouseFrameAuctionsFrame.BidFrame.BidButton:GwSkinButton(false, true)
-
-	--WoW Token Category
-	local TokenFrame = AuctionHouseFrame.WoWTokenResults
-	TokenFrame.Buyout:GwSkinButton(false, true)
-	GW.HandleTrimScrollBar(TokenFrame.DummyScrollBar)
-	GW.HandleScrollControls(TokenFrame, "DummyScrollBar")
-
-	local Token = TokenFrame.TokenDisplay
-	Token:GwStripTextures()
-	Token:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-
-	local ItemButton = Token.ItemButton
-	GW.HandleIcon(ItemButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
-	ItemButton.Icon.backdrop:SetBackdropBorderColor(0, .8, 1)
-	ItemButton:GetHighlightTexture():Hide()
-	ItemButton.CircleMask:Hide()
-	ItemButton.IconBorder:SetAlpha(0)
-
-	--WoW Token Tutorial Frame
-	local WowTokenGameTimeTutorial = AuctionHouseFrame.WoWTokenResults.GameTimeTutorial
-	WowTokenGameTimeTutorial.NineSlice:Hide()
-	WowTokenGameTimeTutorial:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-	WowTokenGameTimeTutorial.CloseButton:GwSkinButton(true)
-	WowTokenGameTimeTutorial.RightDisplay.StoreButton:GwSkinButton(false, true)
-	WowTokenGameTimeTutorial.Bg:SetAlpha(0)
-	WowTokenGameTimeTutorial.LeftDisplay.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	WowTokenGameTimeTutorial.LeftDisplay.Tutorial1:SetTextColor(1, 0, 0)
-	WowTokenGameTimeTutorial.RightDisplay.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-	WowTokenGameTimeTutorial.RightDisplay.Tutorial1:SetTextColor(1, 0, 0)
-
-	--Dialogs
-	AuctionHouseFrame.BuyDialog:GwStripTextures()
-	AuctionHouseFrame.BuyDialog:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+	-- dialogs
+	SkinDialog(AuctionHouseFrame.BuyDialog)
 	AuctionHouseFrame.BuyDialog.BuyNowButton:GwSkinButton(false, true)
 	AuctionHouseFrame.BuyDialog.CancelButton:GwSkinButton(false, true)
 
-	--Multisell
-	local multisellFrame = AuctionHouseMultisellProgressFrame
-	multisellFrame:GwStripTextures()
-	multisellFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-
-	local progressBar = multisellFrame.ProgressBar
+	local multisell = AuctionHouseMultisellProgressFrame
+	SkinDialog(multisell)
+	multisell.CancelButton:GwSkinButton(true)
+	local progressBar = multisell.ProgressBar
 	progressBar:GwStripTextures()
 	progressBar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 	progressBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white.png")
-
 	progressBar.Text:ClearAllPoints()
 	progressBar.Text:SetPoint("BOTTOM", progressBar, "TOP", 0, 5)
-
-	multisellFrame.CancelButton:GwSkinButton(true)
 	GW.HandleIcon(progressBar.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
 
-	-- make the frame movable
-    GW.MakeFrameMovable(AuctionHouseFrame, nil, "auctionHouse", true)
+	GW.MakeFrameMovable(AuctionHouseFrame, nil, "auctionHouse", true)
 end
 
 local function LoadAuctionHouseSkin()

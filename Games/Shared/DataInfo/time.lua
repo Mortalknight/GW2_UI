@@ -23,14 +23,15 @@ local function Time_OnEnter(self)
     local lockedInstances = {raids = {}, dungeons = {}}
 
     for i = 1, GetNumSavedInstances() do
-        local name, _, _, difficulty, locked, extended, _, isRaid = GetSavedInstanceInfo(i)
+        local name, _, _, difficulty, locked, extended, _, isRaid, _, _, _, _, _, mapID = GetSavedInstanceInfo(i)
         if locked or extended and name then
             local isLFR = (difficulty == 7 or difficulty == 17)
             local isHeroicOrMythicDungeon = (difficulty == 2 or difficulty == 23)
             local _, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficulty)
             local sortName = name .. (displayMythic and 4 or (isHeroic or displayHeroic) and 3 or isLFR and 1 or 2)
             local difficulty = (displayMythic and PLAYER_DIFFICULTY6 or (isHeroic or displayHeroic) and PLAYER_DIFFICULTY2 or isLFR and PLAYER_DIFFICULTY3 or PLAYER_DIFFICULTY1)
-            local buttonImg = GW.instanceIconByName[name] and format("|T%s:16:16:0:0:96:96:0:64:0:64|t ", GW.instanceIconByName[name]) or ""
+            local icon = GW.GetInstanceIcon(mapID)
+            local buttonImg = icon and format("|T%s:16:16:0:0:96:96:0:64:0:64|t ", icon) or ""
 
             if isRaid then
                 tinsert(lockedInstances.raids, {sortName, difficulty, buttonImg, {GetSavedInstanceInfo(i)}})

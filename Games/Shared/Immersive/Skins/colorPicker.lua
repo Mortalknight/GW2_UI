@@ -1,330 +1,327 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function alphaValue(num)
-    return num and floor(((1 - num) * 100) + .05) or 0
+-- Adds channel inputs, class/default colors and a copy slot to Blizzard's color picker.
+-- Only hooks are used, so Blizzard keeps calling the caller's swatch/opacity functions.
+-- Modern clients nest the picker in ColorPickerFrame.Content, classic clients use the frame itself.
+
+local parts
+local channelBoxes = {} -- R, G, B, A
+local tabOrder = {}
+local lastAlpha
+local copied
+
+local function GetParts()
+    local content = ColorPickerFrame.Content
+    if content then
+        local colorSelect = content.ColorPicker
+        return {
+            select = colorSelect,
+            hexBox = content.HexBox,
+            GetAlpha = function() return colorSelect:GetColorAlpha() end,
+            SetAlpha = function(a)
+                colorSelect:SetColorAlpha(a)
+                -- the modern alpha bar has no change script of its own
+                if ColorPickerFrame.opacityFunc then ColorPickerFrame.opacityFunc() end
+            end,
+        }
+    end
+
+    -- the classic slider stores transparency, its OnValueChanged calls opacityFunc
+    return {
+        select = ColorPickerFrame,
+        GetAlpha = function() return 1 - OpacitySliderFrame:GetValue() end,
+        SetAlpha = function(a) OpacitySliderFrame:SetValue(1 - a) end,
+    }
 end
 
-local function expandFromThree(r, g, b)
-    return strjoin("", r, r, g, g, b, b)
+local function ShowValue(box, value)
+    if not box:HasFocus() then
+        box:SetText(value)
+    end
 end
 
-local function extendToSix(str)
-    for _ = 1, 6 - strlen(str) do
-        str = str .. 0
+local function RefreshBoxes()
+    local r, g, b = parts.select:GetColorRGB()
+    ShowValue(channelBoxes[1], Round(r * 255))
+    ShowValue(channelBoxes[2], Round(g * 255))
+    ShowValue(channelBoxes[3], Round(b * 255))
+    if parts.ownHex then
+        ShowValue(parts.hexBox, CreateColor(r, g, b):GenerateHexColorNoAlpha())
     end
-    return str
+    lastAlpha = nil -- the alpha box refreshes itself on its next update
 end
 
-function GW.SkinAndEnhanceColorPicker()
-    if C_AddOns.IsAddOnLoaded("ColorPickerPlus") then return end
-
-    local delayWait, delayFunc = 0.15, nil
-
-    local function UpdateAlphaText(alpha)
-        if not alpha then
-            alpha = alphaValue(OpacitySliderFrame:GetValue())
-        end
-
-        ColorPPBoxA:SetText(alpha)
+local function TrackAlpha(box)
+    local alpha = parts.GetAlpha()
+    if alpha ~= lastAlpha then
+        lastAlpha = alpha
+        ShowValue(box, Round(alpha * 100))
     end
+end
 
-    local function GetHexColor(box)
-        local rgb, rgbSize = box:GetText(), box:GetNumLetters()
-        if rgbSize == 3 then
-            rgb = gsub(rgb, "(%x)(%x)(%x)$", expandFromThree)
-        elseif rgbSize < 6 then
-            rgb = gsub(rgb, "(.+)$", extendToSix)
-        end
-
-        local r = tonumber(strsub(rgb, 0, 2), 16) or 0
-        local g = tonumber(strsub(rgb, 3, 4), 16) or 0
-        local b = tonumber(strsub(rgb, 5, 6), 16) or 0
-
-        return r / 255, g / 255, b / 255
+local function SetPickerColor(r, g, b, a)
+    parts.select:SetColorRGB(r, g, b)
+    if a and ColorPickerFrame.hasOpacity then
+        parts.SetAlpha(a)
     end
+end
 
-    local function UpdateAlpha(tbox)
-        local num = tbox:GetNumber()
-        if num > 100 then
-            tbox:SetText(100)
-            num = 100
-        end
+local function ApplyChannel(box, userInput)
+    if not userInput then return end
 
-        OpacitySliderFrame:SetValue(1 - (num / 100))
-    end
-
-    local function ColorPPBoxA_SetFocus()
-        ColorPPBoxA:SetFocus()
-    end
-
-    local function ColorPPBoxR_SetFocus()
-        ColorPPBoxR:SetFocus()
-    end
-
-    local function UpdateColor()
-        local r, g, b = GetHexColor(ColorPPBoxH)
-        ColorPickerFrame:SetColorRGB(r, g, b)
-        ColorSwatch:SetColorTexture(r, g, b)
-    end
-
-    local function UpdateColorTexts(r, g, b, box)
-        if not (r and g and b) then
-            r, g, b = ColorPickerFrame:GetColorRGB()
-
-            if box then
-                if box == ColorPPBoxH then
-                    r, g, b = GetHexColor(box)
-                else
-                    local num = box:GetNumber()
-                    if num > 255 then
-                        num = 255
-                    end
-
-                    local c = num / 255
-                    if box == ColorPPBoxR then
-                        r = c
-                    elseif box == ColorPPBoxG then
-                        g = c
-                    elseif box == ColorPPBoxB then
-                        b = c
-                    end
-                end
-            end
-        end
-
-        r, g, b = r * 255, g * 255, b * 255
-
-        ColorPPBoxH:SetText(("%.2x%.2x%.2x"):format(r, g, b))
-        ColorPPBoxR:SetText(r)
-        ColorPPBoxG:SetText(g)
-        ColorPPBoxB:SetText(b)
-    end
-
-    local function delayCall()
-        if delayFunc then
-            delayFunc()
-            delayFunc = nil
-        end
-    end
-
-    local function onColorSelect(frame, r, g, b)
-        ColorSwatch:SetColorTexture(r, g, b)
-        UpdateColorTexts(r, g, b)
-
-        if r == 0 and g == 0 and b == 0 then
-            return
-        end
-
-        if not frame:IsVisible() then
-            delayCall()
-        elseif not delayFunc then
-            delayFunc = ColorPickerFrame.func
-            C_Timer.After(delayWait, function()
-                delayCall()
-            end)
-        end
-    end
-
-    local function onValueChanged(frame, value)
-        local alpha = alphaValue(value)
-        if frame.lastAlpha ~= alpha then
-            frame.lastAlpha = alpha
-
-            UpdateAlphaText(alpha)
-
-            if not ColorPickerFrame:IsVisible() then
-                delayCall()
-            else
-                local opacityFunc = ColorPickerFrame.opacityFunc
-                if delayFunc and delayFunc ~= opacityFunc then
-                    delayFunc = opacityFunc
-                elseif not delayFunc then
-                    delayFunc = opacityFunc
-                    C_Timer.After(delayWait, function()
-                        delayCall()
-                    end)
-                end
-            end
-        end
-    end
-
-    if C_AddOns.IsAddOnLoaded("ColorPickerPlus") then
+    local value = min(box:GetNumber(), box.maxValue) / box.maxValue
+    if box.channel == 4 then
+        parts.SetAlpha(value)
         return
     end
 
-    if not GW.Mists then
-        ColorPickerFrame.swatchFunc = GW.NoOp
-    end
-
-    ColorPickerFrame:SetClampedToScreen(true)
-    ColorPickerFrame:SetHeight(ColorPickerFrame:GetHeight() + 40)
-
-    local headerText
-    local regions = {ColorPickerFrame:GetRegions()}
-    for _, region in pairs(regions) do
-        if region:GetObjectType() == "FontString" then
-            headerText = region
-            break
-        end
-    end
-
-    GW.CreateFrameHeaderWithBody(ColorPickerFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon.png", nil, nil, nil, true)
-
-    ColorPickerFrame.TopEdge:Hide()
-    ColorPickerFrame.RightEdge:Hide()
-    ColorPickerFrame.BottomEdge:Hide()
-    ColorPickerFrame.LeftEdge:Hide()
-    ColorPickerFrame.BottomRightCorner:Hide()
-    ColorPickerFrame.BottomLeftCorner:Hide()
-    ColorPickerFrame.TopLeftCorner:Hide()
-    ColorPickerFrame.TopRightCorner:Hide()
-
-    ColorPickerFrameHeader:GwStripTextures()
-
-    ColorPickerCancelButton:ClearAllPoints()
-    ColorPickerOkayButton:ClearAllPoints()
-    ColorPickerCancelButton:SetPoint("BOTTOMRIGHT", ColorPickerFrame, "BOTTOMRIGHT", -6, 6)
-    ColorPickerCancelButton:SetPoint("BOTTOMLEFT", ColorPickerFrame, "BOTTOM", 0, 6)
-    ColorPickerOkayButton:SetPoint("BOTTOMLEFT", ColorPickerFrame, "BOTTOMLEFT", 6, 6)
-    ColorPickerOkayButton:SetPoint("RIGHT", ColorPickerCancelButton, "LEFT", -4, 0)
-    OpacitySliderFrame:GwSkinSliderFrame()
-    ColorPickerOkayButton:GwSkinButton(false, true)
-    ColorPickerCancelButton:GwSkinButton(false, true)
-
-    ColorPickerFrame:HookScript("OnShow", function(frame)
-        if frame.hasOpacity then
-            ColorPPBoxA:Show()
-            ColorPPBoxLabelA:Show()
-            ColorPPBoxH:SetScript("OnTabPressed", ColorPPBoxA_SetFocus)
-            UpdateAlphaText()
-            UpdateColorTexts()
-        else
-            ColorPPBoxA:Hide()
-            ColorPPBoxLabelA:Hide()
-            ColorPPBoxH:SetScript("OnTabPressed", ColorPPBoxR_SetFocus)
-            UpdateColorTexts()
-        end
-
-        OpacitySliderFrame:SetScript("OnValueChanged", onValueChanged)
-        frame:SetScript("OnColorSelect", onColorSelect)
-    end)
-
-    local classButton = CreateFrame("Button", "ColorPPClass", ColorPickerFrame, "GwStandardButton")
-    classButton:SetText(CLASS)
-    classButton:SetSize(80, 22)
-    classButton:SetPoint("TOPRIGHT", ColorPickerFrame, "TOPRIGHT", 0, 0)
-    classButton:SetScript("OnClick", function()
-        local color = GW.GWGetClassColor(GW.myclass, true)
-        ColorPickerFrame:SetColorRGB(color.r, color.g, color.b)
-        ColorSwatch:SetColorTexture(color.r, color.g, color.b)
-        if ColorPickerFrame.hasOpacity then
-            OpacitySliderFrame:SetValue(0)
-        end
-    end)
-
-    local boxes = {"R", "G", "B", "H", "A"}
-    for i = 1, #boxes do
-        local rgb = boxes[i]
-        local box = CreateFrame("EditBox", "ColorPPBox" .. rgb, ColorPickerFrame, "InputBoxTemplate")
-        box:SetPoint("TOP", "ColorPickerWheel", "BOTTOM", 0, -15)
-        box:SetFrameStrata("DIALOG")
-        box:SetAutoFocus(false)
-        box:SetTextInsets(0, 7, 0, 0)
-        box:SetJustifyH("RIGHT")
-        box:SetHeight(24)
-        box:SetID(i)
-        GW.SkinTextBox(box.Middle, box.Left, box.Right)
-
-        if i == 4 then
-            box:SetMaxLetters(6)
-            box:SetWidth(56)
-            box:SetNumeric(false)
-        else
-            box:SetMaxLetters(3)
-            box:SetWidth(40)
-            box:SetNumeric(true)
-        end
-
-        local label = box:CreateFontString("ColorPPBoxLabel" .. rgb, "ARTWORK", "GameFontNormalSmall")
-        label:SetPoint("RIGHT", "ColorPPBox" .. rgb, "LEFT", -5, 0)
-        label:SetText(i == 4 and "#" or rgb)
-        label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-
-        if i == 5 then
-            box:SetScript("OnKeyUp", function(eb, key)
-                local copyPaste = IsControlKeyDown() and key == "V"
-                if key == "BACKSPACE" or copyPaste or (strlen(key) == 1 and not IsModifierKeyDown()) then
-                    UpdateAlpha(eb)
-                elseif key == "ENTER" or key == "ESCAPE" then
-                    eb:ClearFocus()
-                    UpdateAlpha(eb)
-                end
-            end)
-        else
-            box:SetScript("OnKeyUp", function(eb, key)
-                local copyPaste = IsControlKeyDown() and key == "V"
-                if key == "BACKSPACE" or copyPaste or (strlen(key) == 1 and not IsModifierKeyDown()) then
-                    if i ~= 4 then
-                        UpdateColorTexts(nil, nil, nil, eb)
-                    end
-                    if i == 4 and eb:GetNumLetters() ~= 6 then
-                        return
-                    end
-                    UpdateColor()
-                elseif key == "ENTER" or key == "ESCAPE" then
-                    eb:ClearFocus()
-                    UpdateColorTexts(nil, nil, nil, eb)
-                    UpdateColor()
-                end
-            end)
-        end
-
-        box:SetScript("OnEditFocusGained", function(eb)
-            eb:SetCursorPosition(0)
-            eb:HighlightText()
-        end)
-        box:SetScript("OnEditFocusLost", function(eb)
-            eb:HighlightText(0, 0)
-        end)
-        box:Show()
-    end
-
-    local offsets
-    if GW.Mists then
-        offsets = {
-            hex = -15,
-            blue = -40,
-            green = -25,
-            red = -25
-        }
+    local r, g, b = parts.select:GetColorRGB()
+    if box.channel == 1 then
+        r = value
+    elseif box.channel == 2 then
+        g = value
     else
-        offsets = {
-            hex = -15,
-            blue = -15,
-            green = -15,
-            red = -15
-        }
+        b = value
+    end
+    parts.select:SetColorRGB(r, g, b)
+end
+
+local function ApplyHex(box, userInput)
+    local text = box:GetText()
+    if userInput and text:match("^%x%x%x%x%x%x$") then
+        parts.select:SetColorRGB(CreateColorFromRGBHexString(text):GetRGB())
+    end
+end
+
+local function FocusNext(current)
+    local index = tIndexOf(tabOrder, current) or 0
+    for step = 1, #tabOrder do
+        local box = tabOrder[(index + step - 1) % #tabOrder + 1]
+        if box:IsShown() then
+            box:SetFocus()
+            return
+        end
+    end
+end
+
+local function CreateInputBox(parent, label, width)
+    local box = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
+    box:SetSize(width, 22)
+    box:SetAutoFocus(false)
+    box:SetJustifyH("CENTER")
+    box:SetFontObject("GameFontNormalSmall")
+    box:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    GW.SkinTextBox(box.Middle, box.Left, box.Right)
+
+    box.label = box:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    box.label:SetPoint("RIGHT", box, "LEFT", -6, 0)
+    box.label:SetText(label)
+    box.label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+
+    box:SetScript("OnEnterPressed", box.ClearFocus)
+    box:SetScript("OnTabPressed", FocusNext)
+    -- shows the clamped value once typing is done
+    box:HookScript("OnEditFocusLost", RefreshBoxes)
+    return box
+end
+
+local function CreateChannelBox(parent, label, channel, maxValue)
+    local box = CreateInputBox(parent, label, 40)
+    box:SetNumeric(true)
+    box:SetMaxLetters(3)
+    box.channel, box.maxValue = channel, maxValue
+    box:SetScript("OnTextChanged", ApplyChannel)
+    return box
+end
+
+local function CreateButton(parent, text, onClick)
+    local button = CreateFrame("Button", nil, parent, "GwStandardButton")
+    button:SetHeight(22)
+    button:SetText(text)
+    button:SetScript("OnClick", onClick)
+    return button
+end
+
+local function GetDefaultColor()
+    -- our settings pass their default along, other callers never set this key
+    local info = ColorPickerFrame:GetExtraInfo()
+    return type(info) == "table" and info.gw2Default or nil
+end
+
+local function CreateTools(frame)
+    local tools = {}
+
+    tools.class = CreateButton(frame, CLASS, function()
+        local color = GW.GWGetClassColor(GW.myclass, true)
+        SetPickerColor(color.r, color.g, color.b)
+    end)
+
+    tools.default = CreateButton(frame, DEFAULT, function()
+        local color = GetDefaultColor()
+        if color then
+            SetPickerColor(color.r, color.g, color.b, color.a)
+        end
+    end)
+
+    tools.paste = CreateButton(frame, CALENDAR_PASTE_EVENT, function()
+        SetPickerColor(copied.r, copied.g, copied.b, copied.a)
+    end)
+    tools.paste:Disable()
+
+    -- a thin strip on top of the paste button shows what was copied
+    tools.copiedSwatch = frame:CreateTexture(nil, "ARTWORK")
+    tools.copiedSwatch:SetPoint("BOTTOMLEFT", tools.paste, "TOPLEFT", 0, 2)
+    tools.copiedSwatch:SetPoint("BOTTOMRIGHT", tools.paste, "TOPRIGHT", 0, 2)
+    tools.copiedSwatch:SetHeight(4)
+    tools.copiedSwatch:Hide()
+
+    tools.copy = CreateButton(frame, CALENDAR_COPY_EVENT, function()
+        local r, g, b = parts.select:GetColorRGB()
+        copied = { r = r, g = g, b = b, a = ColorPickerFrame.hasOpacity and parts.GetAlpha() or nil }
+        tools.copiedSwatch:SetColorTexture(r, g, b)
+        tools.copiedSwatch:Show()
+        tools.paste:Enable()
+    end)
+
+    return tools
+end
+
+local function PlaceInputRow(frame)
+    channelBoxes[1]:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 30, 40)
+    for i = 2, #channelBoxes do
+        channelBoxes[i]:SetPoint("LEFT", channelBoxes[i - 1], "RIGHT", 24, 0)
+    end
+    parts.hexBox:ClearAllPoints()
+    parts.hexBox:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -12, 40)
+end
+
+-- modern: swatches and tools as a column right of the picker
+local function LayoutModern(frame, tools)
+    local content = frame.Content
+    content.ColorSwatchCurrent:ClearAllPoints()
+    content.ColorSwatchCurrent:SetPoint("TOPRIGHT", content, "TOPRIGHT", -60, -40)
+    content.ColorSwatchCurrent:SetSize(48, 24)
+    content.ColorSwatchOriginal:ClearAllPoints()
+    content.ColorSwatchOriginal:SetPoint("LEFT", content.ColorSwatchCurrent, "RIGHT", 0, 0)
+    content.ColorSwatchOriginal:SetSize(48, 24)
+    -- the checkerboard is placed from the right edge, which moves with our width
+    content.AlphaBackground:SetAllPoints(content.ColorPicker.Alpha)
+
+    tools.copy:SetPoint("TOPLEFT", content.ColorSwatchCurrent, "BOTTOMLEFT", 0, -12)
+    tools.copy:SetWidth(47)
+    tools.paste:SetPoint("LEFT", tools.copy, "RIGHT", 2, 0)
+    tools.paste:SetWidth(47)
+    tools.class:SetPoint("TOPLEFT", tools.copy, "BOTTOMLEFT", 0, -6)
+    tools.class:SetWidth(96)
+    tools.default:SetPoint("TOPLEFT", tools.class, "BOTTOMLEFT", 0, -2)
+    tools.default:SetWidth(96)
+
+    parts.hexBox:SetSize(96, 22)
+    parts.hexBox.Hash:SetFontObject("GameFontNormalSmall")
+    parts.hexBox:SetFontObject("GameFontNormalSmall")
+    parts.hexBox:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    GW.SkinTextBox(parts.hexBox.Middle, parts.hexBox.Left, parts.hexBox.Right)
+end
+
+-- classic: the swatch and slider fill the right side, tools go into a row below the wheel
+local function LayoutClassic(frame, tools)
+    local previous
+    for _, button in ipairs({ tools.class, tools.default, tools.copy, tools.paste }) do
+        button:SetWidth(67)
+        if previous then
+            button:SetPoint("LEFT", previous, "RIGHT", 4, 0)
+        else
+            button:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 12, 70)
+        end
+        previous = button
     end
 
-    ColorPPBoxA:SetPoint("RIGHT", ColorPickerCancelButton, "RIGHT", 0, 20)
-    ColorPPBoxH:SetPoint("RIGHT", ColorPPBoxA, "LEFT", offsets.hex, 0)
-    ColorPPBoxB:SetPoint("RIGHT", ColorPPBoxH, "LEFT", offsets.blue, 0)
-    ColorPPBoxG:SetPoint("RIGHT", ColorPPBoxB, "LEFT", offsets.green, 0)
-    ColorPPBoxR:SetPoint("RIGHT", ColorPPBoxG, "LEFT", offsets.red, 0)
-
-    local mover = CreateFrame("Frame", nil, ColorPickerFrame)
-    mover:SetPoint("TOPLEFT", ColorPickerFrame, "TOP", -60, 0)
-    mover:SetPoint("BOTTOMRIGHT", ColorPickerFrame, "TOP", 60, -15)
-    mover:SetScript("OnMouseDown", function()
-        ColorPickerFrame:StartMoving()
-    end)
-    mover:SetScript("OnMouseUp", function()
-        ColorPickerFrame:StopMovingOrSizing()
-    end)
-    mover:EnableMouse(true)
-
-    ColorPickerFrame:SetUserPlaced(true)
-    ColorPickerFrame:EnableKeyboard(false)
-    ColorPickerFrame:SetClampedToScreen(true)
+    OpacitySliderFrame:GwSkinSliderFrame()
 end
+
+local function SkinFrame(frame)
+    if frame.Content then
+        frame.Border:Hide()
+        frame.Header:GwStripTextures()
+        GW.CreateFrameHeaderWithBody(frame, frame.Header.Text, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon.png")
+    else
+        frame:ClearBackdrop()
+        ColorPickerFrameHeader:Hide()
+        local title
+        for _, region in ipairs({ frame:GetRegions() }) do
+            if region:GetObjectType() == "FontString" then
+                title = region
+                break
+            end
+        end
+        GW.CreateFrameHeaderWithBody(frame, title, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon.png")
+    end
+
+    local okay = frame.Footer and frame.Footer.OkayButton or ColorPickerOkayButton
+    local cancel = frame.Footer and frame.Footer.CancelButton or ColorPickerCancelButton
+    okay:ClearAllPoints()
+    okay:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 12, 10)
+    okay:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -2, 10)
+    cancel:ClearAllPoints()
+    cancel:SetPoint("BOTTOMLEFT", frame, "BOTTOM", 2, 10)
+    cancel:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -12, 10)
+    okay:GwSkinButton(false, true)
+    cancel:GwSkinButton(false, true)
+
+    -- the whole GW header drags the window
+    local header = frame.gwHeader
+    header:EnableMouse(true)
+    header:SetScript("OnMouseDown", function() frame:StartMoving() end)
+    header:SetScript("OnMouseUp", function() frame:StopMovingOrSizing() end)
+
+    frame:SetClampedToScreen(true)
+    frame:SetUserPlaced(true)
+    -- keeps movement keys working while the picker is open
+    frame:EnableKeyboard(false)
+end
+
+local function SkinAndEnhanceColorPicker()
+    if C_AddOns.IsAddOnLoaded("ColorPickerPlus") then return end
+
+    local frame = ColorPickerFrame
+    parts = GetParts()
+    SkinFrame(frame)
+
+    for i, label in ipairs({ "R", "G", "B", "A" }) do
+        channelBoxes[i] = CreateChannelBox(frame, label, i, i == 4 and 100 or 255)
+        tabOrder[i] = channelBoxes[i]
+    end
+    channelBoxes[4]:SetScript("OnUpdate", TrackAlpha)
+
+    if not parts.hexBox then
+        parts.hexBox = CreateInputBox(frame, "#", 64)
+        parts.hexBox:SetMaxLetters(6)
+        parts.hexBox:SetScript("OnTextChanged", ApplyHex)
+        parts.ownHex = true
+    else
+        parts.hexBox:SetScript("OnTabPressed", FocusNext)
+    end
+    tinsert(tabOrder, parts.hexBox)
+
+    local tools = CreateTools(frame)
+    PlaceInputRow(frame)
+    if frame.Content then
+        LayoutModern(frame, tools)
+    else
+        LayoutClassic(frame, tools)
+    end
+    frame:SetHeight(frame:GetHeight() + (frame.Content and 40 or 70))
+
+    parts.select:HookScript("OnColorSelect", RefreshBoxes)
+    frame:HookScript("OnShow", function()
+        channelBoxes[4]:SetShown(frame.hasOpacity)
+        tools.default:SetEnabled(GetDefaultColor() ~= nil)
+        if frame.Content then
+            -- room for the tool column next to the widest picker
+            frame:SetWidth(frame.hasOpacity and 405 or 345)
+        end
+        RefreshBoxes()
+    end)
+end
+GW.SkinAndEnhanceColorPicker = SkinAndEnhanceColorPicker

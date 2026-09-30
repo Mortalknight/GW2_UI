@@ -756,7 +756,7 @@ end
 
 -- the mode buttons of the pvp tabs: a dark frame, our hover, and a light frame while selected
 local HOVER_TEXTURE = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
-local modeButtons = setmetatable({}, {__mode = "k"})
+local modeButtons = {}
 
 local function UpdateModeSelection(selected)
     local button = modeButtons[selected]

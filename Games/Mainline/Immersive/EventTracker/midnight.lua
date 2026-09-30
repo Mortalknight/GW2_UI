@@ -370,38 +370,23 @@ local function GetCursedSurgeEvents(args, now)
         end
     end
 
-    if activeEvent then
-        activeEvent.position = args.eventCoordinates[activeEvent.areaPoiID]
-    end
-    if nextEvent then
-        nextEvent.position = args.eventCoordinates[nextEvent.areaPoiID]
+    -- the key tells the alert whether it already announced this surge
+    for _, event in pairs({ active = activeEvent, next = nextEvent }) do
+        event.position = args.eventCoordinates[event.areaPoiID]
+        event.key = format("%s:%s", event.areaPoiID, event.startTime)
     end
 
     return activeEvent, nextEvent
 end
 
-local function ResetCursedSurgeState(self, args)
-    self.isRunning = false
-    self.isCompleted = false
-    self.timeLeft = 0
-    self.timeOver = 0
-    self.nextEventIndex = nil
-    self.nextEventTimestamp = nil
-    args.currentLocation = nil
-    args.nextLocation = nil
-    args.currentEvent = nil
-    args.nextEvent = nil
-end
+-- the scheduler answers with fresh tables of every event in the world, so it is only asked again
+-- after this many seconds or once the known start or end of a surge has passed
+local CURSED_SURGE_RESCAN_SECONDS = 30
 
--- replaces the fixed schedule of the loopTimer type; the scheduler scan runs once per second at
--- most, the ticker itself fires every 0.3s
-local function UpdateCursedSurges(self)
-    local args = self.args
-    local now = GetServerTime()
-    if args.lastScanTime == now then
-        return
-    end
-    args.lastScanTime = now
+local function ScanCursedSurges(args, now)
+    args.scanTime = now
+    args.currentEvent, args.nextEvent = nil, nil
+    args.currentLocation, args.nextLocation = nil, nil
 
     if C_EventScheduler.HasData then
         local success, hasData = pcall(C_EventScheduler.HasData)
@@ -410,36 +395,55 @@ local function UpdateCursedSurges(self)
                 args.schedulerRequestTime = now
                 pcall(C_EventScheduler.RequestEvents)
             end
-            ResetCursedSurgeState(self, args)
+            -- no data yet: look again soon instead of waiting for the full interval
+            args.scanTime = now - CURSED_SURGE_RESCAN_SECONDS + 5
             return
         end
     end
 
     local activeEvent, nextEvent = GetCursedSurgeEvents(args, now)
+    args.currentEvent, args.nextEvent = activeEvent, nextEvent
+    args.currentLocation = activeEvent and GetCursedSurgeName(activeEvent)
+    args.nextLocation = nextEvent and GetCursedSurgeName(nextEvent)
+end
+
+-- replaces the fixed schedule of the loopTimer type; runs from the 0.3s ticker, but only the
+-- time left is worked out on every call, from the surges found by the last scan
+local function UpdateCursedSurges(self)
+    local args = self.args
+    local now = GetServerTime()
+    if args.lastScanTime == now then
+        return
+    end
+    args.lastScanTime = now
+
+    local boundary = args.currentEvent and args.currentEvent.endTime or args.nextEvent and args.nextEvent.startTime
+    if not args.scanTime or now - args.scanTime >= CURSED_SURGE_RESCAN_SECONDS or (boundary and now >= boundary) then
+        ScanCursedSurges(args, now)
+    end
+
+    local activeEvent, nextEvent = args.currentEvent, args.nextEvent
     if activeEvent then
         self.isRunning = true
         self.isCompleted = false
         self.timeLeft = activeEvent.endTime - now
         self.timeOver = args.duration - self.timeLeft
-        self.nextEventIndex = format("%s:%s", activeEvent.areaPoiID, activeEvent.startTime)
+        self.nextEventIndex = activeEvent.key
         self.nextEventTimestamp = nextEvent and nextEvent.startTime
-        args.currentLocation = GetCursedSurgeName(activeEvent)
-        args.nextLocation = nextEvent and GetCursedSurgeName(nextEvent)
-        args.currentEvent = activeEvent
-        args.nextEvent = nextEvent
     elseif nextEvent then
         self.isRunning = false
         self.isCompleted = false
         self.timeLeft = nextEvent.startTime - now
         self.timeOver = 0
-        self.nextEventIndex = format("%s:%s", nextEvent.areaPoiID, nextEvent.startTime)
+        self.nextEventIndex = nextEvent.key
         self.nextEventTimestamp = nextEvent.startTime
-        args.currentLocation = nil
-        args.nextLocation = GetCursedSurgeName(nextEvent)
-        args.currentEvent = nil
-        args.nextEvent = nextEvent
     else
-        ResetCursedSurgeState(self, args)
+        self.isRunning = false
+        self.isCompleted = false
+        self.timeLeft = 0
+        self.timeOver = 0
+        self.nextEventIndex = nil
+        self.nextEventTimestamp = nil
     end
 end
 

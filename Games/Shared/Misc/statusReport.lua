@@ -1,276 +1,187 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function AreOtherAddOnsEnabled()
-    for i = 1, C_AddOns.GetNumAddOns() do
-        local name = C_AddOns.GetAddOnInfo(i)
-        if name ~= "GW2_UI"and C_AddOns.GetAddOnEnableState(name, GW.myname) == 2 then --Loaded or load on demand
-            return "|cffff0000Yes|r"
-        end
-    end
-    return "|cff4beb2cNo|r"
-end
+-- The report is read by us when helping users, so labels stay English and
+-- values use tokens/ids instead of localized names.
 
-local function CheckForPasteAddon()
+local function AnyAddOnEnabled(matches)
     for i = 1, C_AddOns.GetNumAddOns() do
         local name = C_AddOns.GetAddOnInfo(i)
-        if (name == "Paste" or name == "CopyPaste") and C_AddOns.GetAddOnEnableState(name, GW.myname) == 2 then --Loaded or load on demand
+        if matches(name) and C_AddOns.GetAddOnEnableState(name, GW.myname) == 2 then
             return true
         end
     end
     return false
 end
+
+local function AreOtherAddOnsEnabled()
+    return AnyAddOnEnabled(function(name) return name ~= "GW2_UI" end)
+end
+
+local function CheckForPasteAddon()
+    return AnyAddOnEnabled(function(name) return name == "Paste" or name == "CopyPaste" end)
+end
 GW.CheckForPasteAddon = CheckForPasteAddon
 
+local function YesNo(value)
+    return value and "Yes" or "No"
+end
+
 local function GetDisplayMode()
-    local window, maximize = GetCVar("gxWindow") == "1", GetCVar("gxMaximize") == "1"
-    return (window and maximize and "Windowed (Fullscreen)") or (window and "Windowed") or "Fullscreen"
-end
-
-local EnglishClassName = {
-    ["DEATHKNIGHT"] = "Death Knight",
-    ["DEMONHUNTER"] = "Demon Hunter",
-    ["DRUID"] = "Druid",
-    ["HUNTER"] = "Hunter",
-    ["MAGE"] = "Mage",
-    ["MONK"] = "Monk",
-    ["PALADIN"] = "Paladin",
-    ["PRIEST"] = "Priest",
-    ["ROGUE"] = "Rogue",
-    ["SHAMAN"] = "Shaman",
-    ["WARLOCK"] = "Warlock",
-    ["WARRIOR"] = "Warrior",
-    ["EVOKER"] = "Evoker",
-}
-
-local EnglishSpecName = {
-    [250] = "Blood",
-    [251] = "Frost",
-    [252] = "Unholy",
-    [102] = "Balance",
-    [103] = "Feral",
-    [104] = "Guardian",
-    [105] = "Restoration",
-    [253] = "Beast Mastery",
-    [254] = "Marksmanship",
-    [255] = "Survival",
-    [62] = "Arcane",
-    [63] = "Fire",
-    [64] = "Frost",
-    [268] = "Brewmaster",
-    [270] = "Mistweaver",
-    [269] = "Windwalker",
-    [65] = "Holy",
-    [66] = "Protection",
-    [70] = "Retribution",
-    [256] = "Discipline",
-    [257] = "Holy",
-    [258] = "Shadow",
-    [259] = "Assasination",
-    [260] = "Combat",
-    [261] = "Sublety",
-    [262] = "Elemental",
-    [263] = "Enhancement",
-    [264] = "Restoration",
-    [265] = "Affliction",
-    [266] = "Demonoligy",
-    [267] = "Destruction",
-    [71] = "Arms",
-    [72] = "Fury",
-    [73] = "Protection",
-    [577] = "Havoc",
-    [581] = "Vengeance",
-    [1480] = "Devourer",
-    [1467] = "Devastation",
-    [1468] = "Preservation",
-    [1473] = "Augmentation",
-}
-
-local function GetEnglishSpecName()
-    return EnglishSpecName[C_SpecializationInfo.GetSpecializationInfo(GW.myspec)] or "Unknown"
-end
-
-local function CreateContentLines(num, parent, anchorTo)
-    local content = CreateFrame("Frame", nil, parent)
-    content:SetSize(260, (num * 20) + ((num - 1) * 5))
-    content:SetPoint("TOP", anchorTo, "BOTTOM",0 , -5)
-
-    for i = 1, num do
-        local line = CreateFrame("Frame", nil, content)
-        line:SetSize(260, 20)
-
-        local text = line:CreateFontString(nil, "ARTWORK", "SystemFont_Outline")
-        text:SetAllPoints()
-        text:SetJustifyH("LEFT")
-        text:SetJustifyV("MIDDLE")
-        line.Text = text
-
-        local numLine = line
-        if i == 1 then
-            numLine:SetPoint("TOP", content, "TOP")
-        else
-            numLine:SetPoint("TOP", content["Line" .. (i - 1)], "BOTTOM", 0, -5)
-        end
-
-        content["Line" .. i] = numLine
+    if GetCVar("gxWindow") ~= "1" then
+        return "Fullscreen"
     end
-
-    return content
+    return GetCVar("gxMaximize") == "1" and "Windowed (Fullscreen)" or "Windowed"
 end
 
-local function CreateSection(width, height, parent, anchor1, anchorTo, anchor2, yOffset)
-    local section = CreateFrame("Frame", nil, parent)
-    section:SetSize(width, height)
-    section:SetPoint(anchor1, anchorTo, anchor2, 0, yOffset)
+local function GetSpecText()
+    if not (C_SpecializationInfo and GW.myspec) then
+        return UNKNOWN
+    end
+    local specID, specName = C_SpecializationInfo.GetSpecializationInfo(GW.myspec)
+    return specID and format("%s (%d)", specName, specID) or UNKNOWN
+end
 
-    local header = CreateFrame("Frame", nil, section)
-    header:SetSize(300, 30)
-    header:SetPoint("TOP", section)
-    section.Header = header
+-- every getter returns the text and optionally whether it points at a problem
+local SECTIONS = {
+    {
+        title = "AddOn Info",
+        rows = {
+            { "GW2 UI version", function() return GW.GetVersionString() end },
+            { "Other AddOns enabled", function() local on = AreOtherAddOnsEnabled() return YesNo(on), on end },
+            { "Paste AddOn enabled", function() local on = CheckForPasteAddon() return YesNo(on), on end },
+            { "Recommended scale", function() return GW.getBestPixelScale() end },
+            { "UI scale", function() return GW.scale, GW.scale ~= GW.getBestPixelScale() end },
+        },
+    },
+    {
+        title = "WoW Info",
+        rows = {
+            { "WoW version", function() return format("%s (build %s)", GW.wowpatch, GW.wowbuild) end },
+            { "Client language", function() return GW.mylocal end },
+            { "Display mode", GetDisplayMode },
+            { "Resolution", function() return GW.resolution end },
+            { "Mac client", function() return YesNo(IsMacClient()) end },
+        },
+    },
+    {
+        title = "Character Info",
+        rows = {
+            { "Faction", function() return GW.myfaction end },
+            { "Race", function() return GW.myrace end },
+            { "Class", function() return GW.myclass end },
+            { "Specialization", GetSpecText },
+            { "Level", function() return GW.mylevel end },
+            { "Zone", function() return GW.Libs.GW2Lib:GetPlayerLocationZoneText() or UNKNOWN end },
+        },
+    },
+}
 
-    local text = section.Header:CreateFontString(nil, "ARTWORK", "SystemFont_Outline")
-    text:SetPoint("TOP")
-    text:SetPoint("BOTTOM")
-    text:SetJustifyH("CENTER")
-    text:SetJustifyV("MIDDLE")
+local PADDING = 20
+local ROW_HEIGHT = 18
 
-    local font, fontHeight, fontFlags = text:GetFont()
-    text:SetFont(font, fontHeight * 1.3, fontFlags)
-    section.Header.Text = text
+local function CreateText(frame, template)
+    local text = frame:CreateFontString(nil, "ARTWORK", template)
+    text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    return text
+end
 
-    local leftDivider = section.Header:CreateTexture(nil, "ARTWORK")
-    leftDivider:SetHeight(2)
-    leftDivider:SetPoint("LEFT", section.Header, "LEFT", -10, 0)
-    leftDivider:SetPoint("RIGHT", section.Header.Text, "LEFT", 20, 0)
-    leftDivider:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
-    section.Header.LeftDivider = leftDivider
-
-    local rightDivider = section.Header:CreateTexture(nil, "ARTWORK")
-    rightDivider:SetHeight(2)
-    rightDivider:SetPoint("RIGHT", section.Header, "RIGHT", 10, 0)
-    rightDivider:SetPoint("LEFT", section.Header.Text, "RIGHT", -20, 0)
-    rightDivider:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
-    section.Header.RightDivider = rightDivider
-
-    return section
+local function CreateButton(frame, text, onClick)
+    local button = CreateFrame("Button", nil, frame, "GwStandardButton")
+    button:SetSize(120, 25)
+    button:SetText(text)
+    button:SetScript("OnClick", onClick)
+    return button
 end
 
 local function CreateStatusFrame()
-    local BackdropFrame = {
+    local frame = CreateFrame("Frame", "GWStatusFrame", UIParent)
+    frame:SetWidth(320)
+    frame:SetPoint("CENTER")
+    frame:SetFrameStrata("HIGH")
+    frame:SetMovable(true)
+    frame:GwCreateBackdrop({
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg.png",
         edgeFile = "",
         tile = false,
-        tileSize = 64,
         edgeSize = 32,
-        insets = {left = 2, right = 2, top = 2, bottom = 2}
-    }
-
-    --Main frame
-    local StatusFrame = CreateFrame("Frame", "GWStatusFrame", UIParent)
-    StatusFrame:SetSize(320, 720)
-    StatusFrame:SetPoint("CENTER", UIParent, "CENTER")
-    StatusFrame:SetFrameStrata("HIGH")
-    StatusFrame:GwCreateBackdrop(BackdropFrame)
-    StatusFrame:SetMovable(true)
-    StatusFrame:Hide()
-
-    --Title logo (drag to move frame)
-    local titleLogoFrame = CreateFrame("Frame", nil, StatusFrame, "TitleDragAreaTemplate")
-    titleLogoFrame:SetPoint("TOP", StatusFrame, "TOP")
-    titleLogoFrame:SetSize(240, 150)
-    StatusFrame.TitleLogoFrame = titleLogoFrame
-
-    local titleBrand = GW.CreateBrandLogo(titleLogoFrame, 128)
-    titleBrand:SetPoint("CENTER", titleLogoFrame, "CENTER")
-    titleLogoFrame.Texture = titleBrand.logo
-
-    --Sections
-    StatusFrame.Section1 = CreateSection(300, 150, StatusFrame, "TOP", StatusFrame, "TOP", -150)
-    StatusFrame.Section2 = CreateSection(300, 150, StatusFrame, "TOP", StatusFrame.Section1, "BOTTOM", 0)
-    StatusFrame.Section3 = CreateSection(300, 185, StatusFrame, "TOP", StatusFrame.Section2, "BOTTOM", 0)
-    StatusFrame.Section4 = CreateSection(300, 60, StatusFrame, "TOP", StatusFrame.Section3, "BOTTOM", 0)
-
-    --Section headers
-    StatusFrame.Section1.Header.Text:SetText(("AddOn Info|r"):gsub("*", GW.Gw2Color))
-    StatusFrame.Section2.Header.Text:SetText(("WoW Info|r"):gsub("*", GW.Gw2Color))
-    StatusFrame.Section3.Header.Text:SetText(("Character Info|r"):gsub("*", GW.Gw2Color))
-    StatusFrame.Section4.Header.Text:SetText(("Actions|r"):gsub("*", GW.Gw2Color))
-
-    --Section content
-    StatusFrame.Section1.Content = CreateContentLines(5, StatusFrame.Section1, StatusFrame.Section1.Header)
-    StatusFrame.Section2.Content = CreateContentLines(5, StatusFrame.Section2, StatusFrame.Section2.Header)
-    StatusFrame.Section3.Content = CreateContentLines(6, StatusFrame.Section3, StatusFrame.Section3.Header)
-    StatusFrame.Section4.Content = CreateFrame("Frame", nil, StatusFrame.Section4)
-    StatusFrame.Section4.Content:SetSize(240, 25)
-    StatusFrame.Section4.Content:SetPoint("TOP", StatusFrame.Section4.Header, "BOTTOM", 0, 0)
-
-    --Content lines
-    StatusFrame.Section1.Content.Line1.Text:SetFormattedText("GW2 UI version: |cff4beb2c%s|r", GW.GetVersionString())
-    StatusFrame.Section1.Content.Line2.Text:SetFormattedText("Other AddOns Enabled: |cff4beb2c%s|r", AreOtherAddOnsEnabled())
-    StatusFrame.Section1.Content.Line3.Text:SetFormattedText("Paste Addon Enabled: %s", CheckForPasteAddon() and "|cffff0000Yes|r" or "|cff4beb2cNo|r")
-    StatusFrame.Section1.Content.Line4.Text:SetFormattedText("Recommended Scale: |cff4beb2c%s|r", GW.getBestPixelScale())
-    StatusFrame.Section1.Content.Line5.Text:SetFormattedText("UI Scale Is: %s", GW.scale == GW.getBestPixelScale() and  format("|cff4beb2c%s|r", GW.scale) or format("|cffff0000%s|r", GW.scale))
-    StatusFrame.Section2.Content.Line1.Text:SetFormattedText("WoW version: |cff4beb2c%s (build %s)|r", GW.wowpatch, GW.wowbuild)
-    StatusFrame.Section2.Content.Line2.Text:SetFormattedText("Client Language: |cff4beb2c%s|r", GW.mylocal)
-    StatusFrame.Section2.Content.Line3.Text:SetFormattedText("Display Mode: |cff4beb2c%s|r", GetDisplayMode())
-    StatusFrame.Section2.Content.Line4.Text:SetFormattedText("Resolution: |cff4beb2c%s|r", GW.resolution)
-    StatusFrame.Section2.Content.Line5.Text:SetFormattedText("Using Mac Client: |cff4beb2c%s|r", (IsMacClient() == true and "Yes" or "No"))
-    StatusFrame.Section3.Content.Line1.Text:SetFormattedText("Faction: |cff4beb2c%s|r", GW.myfaction)
-    StatusFrame.Section3.Content.Line2.Text:SetFormattedText("Race: |cff4beb2c%s|r", GW.myrace)
-    StatusFrame.Section3.Content.Line3.Text:SetFormattedText("Class: |cff4beb2c%s|r", EnglishClassName[GW.myclass])
-    StatusFrame.Section3.Content.Line4.Text:SetFormattedText("Specialization: |cff4beb2c%s|r", GetEnglishSpecName())
-    StatusFrame.Section3.Content.Line5.Text:SetFormattedText("Level: |cff4beb2c%s|r", GW.mylevel)
-    StatusFrame.Section3.Content.Line6.Text:SetFormattedText("Zone: |cff4beb2c%s|r", GetRealZoneText() or "Unknown")
-
-    --Action button
-    StatusFrame.Section4.Content.Button1 = CreateFrame("Button", nil, StatusFrame.Section4.Content, "GwStandardButton")
-    StatusFrame.Section4.Content.Button1:SetSize(100, 25)
-    StatusFrame.Section4.Content.Button1:SetPoint("LEFT", StatusFrame.Section4.Content, "LEFT")
-    StatusFrame.Section4.Content.Button1:SetText(RELOADUI)
-    StatusFrame.Section4.Content.Button1:SetScript("OnClick", function()
-        C_UI.Reload()
-    end)
-    StatusFrame.Section4.Content.Button2 = CreateFrame("Button", nil, StatusFrame.Section4.Content, "GwStandardButton")
-    StatusFrame.Section4.Content.Button2:SetSize(100, 25)
-    StatusFrame.Section4.Content.Button2:SetPoint("RIGHT", StatusFrame.Section4.Content, "RIGHT")
-    StatusFrame.Section4.Content.Button2:SetText(CLOSE)
-    StatusFrame.Section4.Content.Button2:SetScript("OnClick", function()
-        HideUIPanel(StatusFrame)
-        GwSettingsWindow:Show()
-    end)
-
+        insets = { left = 2, right = 2, top = 2, bottom = 2 },
+    })
+    frame:Hide()
     tinsert(UISpecialFrames, "GWStatusFrame")
 
-    return StatusFrame
+    -- the logo area drags the window
+    local logoArea = CreateFrame("Frame", nil, frame, "TitleDragAreaTemplate")
+    logoArea:SetPoint("TOPLEFT")
+    logoArea:SetPoint("TOPRIGHT")
+    logoArea:SetHeight(140)
+    GW.CreateBrandLogo(logoArea, 128):SetPoint("CENTER")
+
+    frame.rows = {}
+    local y = -140
+    for _, section in ipairs(SECTIONS) do
+        local title = frame:CreateFontString(nil, "ARTWORK")
+        title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+        title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        title:SetPoint("TOPLEFT", PADDING, y)
+        title:SetText(section.title)
+
+        local separator = frame:CreateTexture(nil, "ARTWORK")
+        separator:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
+        separator:SetHeight(2)
+        separator:SetPoint("TOPLEFT", PADDING - 4, y - 20)
+        separator:SetPoint("TOPRIGHT", -PADDING + 4, y - 20)
+        y = y - 28
+
+        for _, row in ipairs(section.rows) do
+            local label = CreateText(frame, "SystemFont_Outline")
+            label:SetPoint("TOPLEFT", PADDING, y)
+            label:SetText(row[1])
+
+            local value = CreateText(frame, "SystemFont_Outline")
+            value:SetPoint("TOPRIGHT", -PADDING, y)
+            value:SetJustifyH("RIGHT")
+            frame.rows[#frame.rows + 1] = { value = value, get = row[2] }
+            y = y - ROW_HEIGHT
+        end
+        y = y - 14
+    end
+
+    local reload = CreateButton(frame, RELOADUI, function() C_UI.Reload() end)
+    reload:SetPoint("TOPLEFT", PADDING, y)
+    local close = CreateButton(frame, CLOSE, function()
+        HideUIPanel(frame)
+        GwSettingsWindow:Show()
+    end)
+    close:SetPoint("TOPRIGHT", -PADDING, y)
+
+    frame:SetHeight(-y + 25 + PADDING)
+    return frame
 end
 
-local function UpdateDynamicValues()
-    local StatusFrame = GW.StatusFrame
-
-    local Section1 = StatusFrame.Section1
-    Section1.Content.Line5.Text:SetFormattedText("UI Scale Is: %s", GW.scale == GW.getBestPixelScale() and  format("|cff4beb2c%s|r", GW.scale) or format("|cffff0000%s|r", GW.scale))
-
-    local Section2 = StatusFrame.Section2
-    Section2.Content.Line3.Text:SetFormattedText("Display Mode: |cff4beb2c%s|r", GetDisplayMode())
-    Section2.Content.Line4.Text:SetFormattedText("Resolution: |cff4beb2c%s|r", GW.resolution)
-
-    local Section3 = StatusFrame.Section3
-    Section3.Content.Line4.Text:SetFormattedText("Specialization: |cff4beb2c%s|r", GetEnglishSpecName())
-    Section3.Content.Line5.Text:SetFormattedText("Level: |cff4beb2c%s|r", GW.mylevel)
-    Section3.Content.Line6.Text:SetFormattedText("Zone: |cff4beb2c%s|r", GW.Libs.GW2Lib:GetPlayerLocationZoneText())
+local function RefreshValues(frame)
+    local colors = GW.Colors.SkinColors
+    for _, row in ipairs(frame.rows) do
+        local text, isProblem = row.get()
+        row.value:SetText(tostring(text))
+        if isProblem == nil then
+            row.value:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+        else
+            row.value:SetTextColor((isProblem and colors.Negative or colors.Positive):GetRGB())
+        end
+    end
 end
 
 local function ShowStatusReport()
-    if not GW.StatusFrame then
-        GW.StatusFrame = CreateStatusFrame()
-    end
+    GW.StatusFrame = GW.StatusFrame or CreateStatusFrame()
 
-    if not GW.StatusFrame:IsShown() then
-        UpdateDynamicValues()
-        GW.StatusFrame:Raise()
-        GW.StatusFrame:Show()
+    local frame = GW.StatusFrame
+    if frame:IsShown() then
+        frame:Hide()
     else
-        GW.StatusFrame:Hide()
+        RefreshValues(frame)
+        frame:Raise()
+        frame:Show()
     end
 end
 GW.ShowStatusReport = ShowStatusReport

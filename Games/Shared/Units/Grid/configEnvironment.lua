@@ -2,426 +2,324 @@
 local GW = select(2, ...)
 local GW_UF = GW.oUF
 
-local configEnv
-local originalEnvs = {}
-local overrideFuncs = {}
-local activeConfigHeaders = {}
-local configModeUnits = {}
+-- Config mode fills the group frames with made up members. The secure headers still
+-- decide which frames exist; our tags read fake unit data through a swapped environment.
 
-local eventFrame = CreateFrame("Frame")
-local NIL_ATTRIBUTE = {}
 local CONFIG_MODE_UNIT_PREFIX = "gw2config"
-local CONFIG_MODE_ROLES = {"TANK", "HEALER", "DAMAGER"}
-local CONFIG_MODE_POWER_TYPES = {"MANA", "RAGE", "FOCUS", "ENERGY", "RUNIC_POWER"}
+local CONFIG_MODE_ROLES = { "TANK", "HEALER", "DAMAGER" }
+local CONFIG_MODE_POWER_TYPES = { "MANA", "RAGE", "FOCUS", "ENERGY", "RUNIC_POWER" }
 
-local function GetConfigModeUnitData(unit)
-    return configModeUnits[unit]
-end
+-- header attributes that hide a group depending on party, raid or solo
+local VISIBILITY_ATTRIBUTES = { "showRaid", "showParty", "showSolo" }
+local NIL_ATTRIBUTE = {}
 
-local function GetConfigModeIndex(header, index)
-    local headerName = header:GetName()
-    local groupIndex = headerName and tonumber(strmatch(headerName, "Group(%d+)$")) or 1
+-- tags that show unit data and therefore run in the fake environment
+local FAKED_TAGS = {
+    "GW2_Grid:name", "GW2_Grid:leaderIcon", "GW2_Grid:assistIcon", "GW2_Grid:roleIcon",
+    "GW2_Grid:realmFlag", "GW2_Grid:mainTank", "GW2_Grid:healtValue",
+}
 
-    return ((groupIndex or 1) - 1) * 5 + index
-end
+-- unit functions the tags call, answered from the fake member when the unit is one of ours
+local FAKE_UNIT_API = {
+    UnitPower = function(data) return data.power end,
+    UnitPowerMax = function(data) return data.maxPower end,
+    UnitHealth = function(data) return data.health end,
+    UnitHealthMax = function(data) return data.maxHealth end,
+    UnitHealthMissing = function(data) return max(data.maxHealth - data.health, 0) end,
+    UnitHealthPercent = function(data) return data.maxHealth > 0 and data.health / data.maxHealth * 100 or 0 end,
+    UnitName = function(data) return data.name end,
+    UnitClass = function(data) return LOCALIZED_CLASS_NAMES_MALE[data.classToken], data.classToken end,
+    UnitGroupRolesAssigned = function(data) return data.role end,
+}
 
-local function GetConfigModeName(index)
-    if GW.CreditsList and #GW.CreditsList > 0 then
-        return GW.CreditsList[((index - 1) % #GW.CreditsList) + 1]
+local fakeEnv
+local savedEnvs = {}          -- tag function -> its real environment while config mode runs
+local configModeUnits = {}    -- fake unit token -> fake member
+local activeHeaders = {}
+local savedChildState = {}    -- forced child -> what we changed on it
+local savedAttributes = {}    -- group -> its visibility attributes before config mode
+local hookedGroups = {}
+local drivenVisibility = {}   -- header or group -> the visibility state we registered
+
+local function ForEachGroup(header, func)
+    for i = 1, header.numGroups do
+        local group = header.groups[i]
+        if group then
+            func(group, i)
+        end
     end
-
-    return "Test Name " .. index
 end
 
-local function GetConfigModeData(frame, header, index)
+local function ForEachChild(group, func, ...)
+    local index = 1
+    local child = group:GetAttribute("child" .. index)
+    while child do
+        func(child, index, ...)
+        index = index + 1
+        child = group:GetAttribute("child" .. index)
+    end
+end
+
+local function UpdateChild(child, group, groupName)
+    GW["UpdateGrid" .. group.profileName .. "Frame"](child, groupName)
+end
+
+-- a stable fake member per slot, spread over classes, roles and power types
+local function GetConfigModeData(frame, group, index)
     if frame.configModeData then
         return frame.configModeData
     end
 
-    local configIndex = GetConfigModeIndex(header, index)
-    local headerName = header:GetName() or header.groupName
-    local classIndex = ((configIndex - 1) % #CLASS_SORT_ORDER) + 1
-    local roleIndex = ((configIndex - 1) % #CONFIG_MODE_ROLES) + 1
-    local powerTypeIndex = ((configIndex - 1) % #CONFIG_MODE_POWER_TYPES) + 1
+    local groupNumber = tonumber(strmatch(group:GetName() or "", "Group(%d+)$")) or 1
+    local slot = (groupNumber - 1) * MEMBERS_PER_RAID_GROUP + index
+    local credits = GW.CreditsList
     local data = {
-        unit = CONFIG_MODE_UNIT_PREFIX .. ":" .. headerName .. ":" .. index,
-        name = GetConfigModeName(configIndex),
-        classToken = CLASS_SORT_ORDER[classIndex],
-        health = 35 + ((configIndex * 17) % 65),
+        unit = CONFIG_MODE_UNIT_PREFIX .. ":" .. (group:GetName() or group.groupName) .. ":" .. index,
+        name = credits and #credits > 0 and credits[(slot - 1) % #credits + 1] or ("Test Name " .. slot),
+        classToken = CLASS_SORT_ORDER[(slot - 1) % #CLASS_SORT_ORDER + 1],
+        role = CONFIG_MODE_ROLES[(slot - 1) % #CONFIG_MODE_ROLES + 1],
+        powerType = CONFIG_MODE_POWER_TYPES[(slot - 1) % #CONFIG_MODE_POWER_TYPES + 1],
+        health = 35 + (slot * 17) % 65,
         maxHealth = 100,
-        power = 20 + ((configIndex * 23) % 80),
+        power = 20 + (slot * 23) % 80,
         maxPower = 100,
-        role = CONFIG_MODE_ROLES[roleIndex],
-        powerType = CONFIG_MODE_POWER_TYPES[powerTypeIndex]
     }
 
     frame.configModeData = data
     configModeUnits[data.unit] = data
-
     return data
 end
 
-local function createConfigEnv()
-    if configEnv then return end
-    configEnv = setmetatable({
-        UnitPower = function (unit, displayType)
-            local data = GetConfigModeUnitData(unit)
-            if data then
-                return data.power
-            end
-            if unit:find("target") or unit:find("focus") then
-                return UnitPower(unit, displayType)
-            end
+local function CreateFakeEnv()
+    if fakeEnv then return end
 
-            return UnitPower(unit, displayType)
-        end,
-        UnitPowerMax = function(unit, displayType)
-            local data = GetConfigModeUnitData(unit)
+    local api = {}
+    for name, fake in pairs(FAKE_UNIT_API) do
+        api[name] = function(unit, ...)
+            local data = configModeUnits[unit]
             if data then
-                return data.maxPower
+                return fake(data)
             end
+            return _G[name](unit, ...)
+        end
+    end
+    -- the tags color with Hex, which takes a color table or r, g, b
+    api.Hex = function(r, g, b)
+        if type(r) == "table" then
+            if r.r then r, g, b = r.r, r.g, r.b else r, g, b = unpack(r) end
+        end
+        return format("|cff%02x%02x%02x", r * 255, g * 255, b * 255)
+    end
 
-            return UnitPowerMax(unit, displayType)
-        end,
-        UnitHealth = function(unit)
-            local data = GetConfigModeUnitData(unit)
-            if data then
-                return data.health
-            end
-            if unit:find("target") or unit:find("focus") then
-                return UnitHealth(unit)
-            end
-
-            return UnitHealth(unit)
-        end,
-        UnitHealthMax = function(unit)
-            local data = GetConfigModeUnitData(unit)
-            if data then
-                return data.maxHealth
-            end
-
-            return UnitHealthMax(unit)
-        end,
-        UnitHealthMissing = function(unit)
-            local data = GetConfigModeUnitData(unit)
-            if data then
-                return max(data.maxHealth - data.health, 0)
-            end
-
-            return UnitHealthMissing(unit)
-        end,
-        UnitHealthPercent = function(unit, usePredictedHealth, overrideHealthScale)
-            local data = GetConfigModeUnitData(unit)
-            if data then
-                return data.maxHealth > 0 and (data.health / data.maxHealth * 100) or 0
-            end
-
-            return UnitHealthPercent(unit, usePredictedHealth, overrideHealthScale)
-        end,
-        UnitName = function(unit)
-            local data = GetConfigModeUnitData(unit)
-            if data then
-                return data.name
-            end
-            if unit:find("target") or unit:find("focus") then
-                return UnitName(unit)
-            end
-
-            return UnitName(unit)
-        end,
-        UnitClass = function(unit)
-            local data = GetConfigModeUnitData(unit)
-            if data then
-                return LOCALIZED_CLASS_NAMES_MALE[data.classToken], data.classToken
-            end
-            if unit:find("target") or unit:find("focus") then
-                return UnitClass(unit)
-            end
-
-            return UnitClass(unit)
-        end,
-        UnitGroupRolesAssigned = function(unit)
-            local data = GetConfigModeUnitData(unit)
-            if data then
-                return data.role
-            end
-
-            return UnitGroupRolesAssigned(unit)
-        end,
-        Hex = function(r, g, b)
-            if type(r) == "table" then
-                if r.r then r, g, b = r.r, r.g, r.b else r, g, b = unpack(r) end
-            end
-            return format("|cff%02x%02x%02x", r*255, g*255, b*255)
-        end,
-    }, {
+    fakeEnv = setmetatable(api, {
         __index = _G,
         __newindex = function(_, key, value) _G[key] = value end,
     })
-
-    overrideFuncs["GW2_Grid:name"] = GW_UF.Tags.Methods["GW2_Grid:name"]
-    overrideFuncs["GW2_Grid:leaderIcon"] = GW_UF.Tags.Methods["GW2_Grid:leaderIcon"]
-    overrideFuncs["GW2_Grid:assistIcon"] = GW_UF.Tags.Methods["GW2_Grid:assistIcon"]
-    overrideFuncs["GW2_Grid:roleIcon"] = GW_UF.Tags.Methods["GW2_Grid:roleIcon"]
-    overrideFuncs["GW2_Grid:realmFlag"] = GW_UF.Tags.Methods["GW2_Grid:realmFlag"]
-    overrideFuncs["GW2_Grid:mainTank"] = GW_UF.Tags.Methods["GW2_Grid:mainTank"]
-    overrideFuncs["GW2_Grid:healtValue"] = GW_UF.Tags.Methods["GW2_Grid:healtValue"]
 end
 
-local forcedVisibilityAttributes = {
-    showRaid = true,
-    showParty = true,
-    showSolo = true
-}
-
-local canHidePlayer = {
-    party = true
-}
-
-local function HasActiveConfigHeader()
-    for header in pairs(activeConfigHeaders) do
+local function IsAnyHeaderInConfigMode()
+    for header in pairs(activeHeaders) do
         if header.forceShow then
             return true
         end
     end
-
     return false
 end
 
-local function EnableConfigEnvironment()
-    createConfigEnv()
-
-    for _, func in pairs(overrideFuncs) do
-        if type(func) == "function" and not originalEnvs[func] then
-            originalEnvs[func] = getfenv(func)
-            setfenv(func, configEnv)
+local function UseFakeEnv()
+    CreateFakeEnv()
+    for _, tag in ipairs(FAKED_TAGS) do
+        local method = GW_UF.Tags.Methods[tag]
+        if type(method) == "function" and not savedEnvs[method] then
+            savedEnvs[method] = getfenv(method)
+            setfenv(method, fakeEnv)
         end
     end
 end
 
-local function RestoreConfigEnvironment()
-    if HasActiveConfigHeader() then return end
-
-    for func, env in pairs(originalEnvs) do
-        setfenv(func, env)
-        originalEnvs[func] = nil
+local function RestoreRealEnv()
+    if IsAnyHeaderInConfigMode() then return end
+    for method, env in pairs(savedEnvs) do
+        setfenv(method, env)
+        savedEnvs[method] = nil
     end
 end
 
-local function StoreForcedAttributes(group)
-    if group.configModeAttributes then return end
-
-    group.configModeAttributes = {}
-    for key in pairs(forcedVisibilityAttributes) do
-        local value = group:GetAttribute(key)
-        group.configModeAttributes[key] = value == nil and NIL_ATTRIBUTE or value
+local function HideVisibilityAttributes(group)
+    if not savedAttributes[group] then
+        local saved = {}
+        for _, key in ipairs(VISIBILITY_ATTRIBUTES) do
+            local value = group:GetAttribute(key)
+            saved[key] = value == nil and NIL_ATTRIBUTE or value
+        end
+        savedAttributes[group] = saved
+    end
+    for _, key in ipairs(VISIBILITY_ATTRIBUTES) do
+        group:SetAttribute(key, nil)
     end
 end
 
-local function RestoreForcedAttributes(group)
-    local attributes = group.configModeAttributes
-    if not attributes then return end
-
-    for key in pairs(forcedVisibilityAttributes) do
-        local value = attributes[key]
-        group:SetAttribute(key, value == NIL_ATTRIBUTE and nil or value)
+local function RestoreVisibilityAttributes(group)
+    local saved = savedAttributes[group]
+    if not saved then return end
+    for _, key in ipairs(VISIBILITY_ATTRIBUTES) do
+        local value = saved[key]
+        group:SetAttribute(key, value ~= NIL_ATTRIBUTE and value or nil)
     end
-
-    group.configModeAttributes = nil
+    savedAttributes[group] = nil
 end
 
-local function ForceShow2(frame, header)
-    if InCombatLockdown() then return end
-    if not frame.isForced then
-        frame.oldUnit = frame.__unit
-        frame.oldRealUnit = frame.__realUnit
-        frame.oldNameOverrideUnit = frame.Name and frame.Name.overrideUnit
-        frame.oldHealthValueOverrideUnit = frame.HealthValueText and frame.HealthValueText.overrideUnit
-        frame.__unit = "player"
-        frame.isForced = true
-        frame.oldOnUpdate = frame:GetScript("OnUpdate")
+local function ForceChild(child, index, group, limit)
+    child:SetID(index)
+    -- the party header can hide the player: every limit-th slot stays empty then
+    if InCombatLockdown() or (limit and index % limit == 0) then return end
+
+    if not child.isForced then
+        savedChildState[child] = {
+            unit = child.__unit,
+            realUnit = child.__realUnit,
+            nameOverride = child.Name and child.Name.overrideUnit,
+            healthOverride = child.HealthValueText and child.HealthValueText.overrideUnit,
+            onUpdate = child:GetScript("OnUpdate"),
+        }
+        child.__unit = "player"
+        child.isForced = true
     end
 
-    local configModeData = GetConfigModeData(frame, header, frame:GetID())
-    frame.forceShowAuras = true
-    frame:SetScript("OnUpdate", nil)
-    frame:EnableMouse(false)
-    frame:Show()
+    local data = GetConfigModeData(child, group, index)
+    child.forceShowAuras = true
+    child:SetScript("OnUpdate", nil)
+    child:EnableMouse(false)
+    child:Show()
+    -- the second argument keeps the frame shown without a real unit
+    UnregisterUnitWatch(child)
+    RegisterUnitWatch(child, true)
 
-    UnregisterUnitWatch(frame)
-    RegisterUnitWatch(frame, true)
-
-    frame.__realUnit = configModeData.unit
-    frame.Name.overrideUnit = true
-    frame.HealthValueText.overrideUnit = true
-
-    GW["UpdateGrid" ..  header.profileName .. "Frame"](frame)
+    child.__realUnit = data.unit
+    child.Name.overrideUnit = true
+    child.HealthValueText.overrideUnit = true
+    UpdateChild(child, group)
 end
 
-local function ForceShow(frame, index, length, header)
-    frame:SetID(index)
+local function ReleaseChild(child, _, group)
+    if InCombatLockdown() or not child.isForced then return end
 
-    if not length or (index % length) > 0 then
-        ForceShow2(frame, header)
+    local saved = savedChildState[child] or {}
+    savedChildState[child] = nil
+    child.__unit = saved.unit or child.__unit
+    child.__realUnit = saved.realUnit
+    child.isForced = nil
+    child.forceShowAuras = nil
+    child:EnableMouse(true)
+
+    -- back to the state driver showing the frame only for real units
+    UnregisterUnitWatch(child)
+    RegisterUnitWatch(child)
+
+    if saved.onUpdate then
+        child:SetScript("OnUpdate", saved.onUpdate)
     end
+    child.Name.overrideUnit = saved.nameOverride
+    child.HealthValueText.overrideUnit = saved.healthOverride
+    UpdateChild(child, group)
 end
 
-local function ShowChildUnits(header)
-    header.isForced = true
-
-    local length -- Limit number of players shown, if Display Player option is disabled
-    if canHidePlayer[header.groupName] and GW.settings.groupFrames.party.showPlayer == false then
-        length = MAX_PARTY_MEMBERS + 1
+-- constructor.lua reads group.isForced while laying out the children
+local function ForceChildren(group)
+    group.isForced = true
+    local limit
+    if group.groupName == "party" and GW.settings.groupFrames.party.showPlayer == false then
+        limit = MAX_PARTY_MEMBERS + 1
     end
-
-    local idx = 1
-    local child = header:GetAttribute("child"..idx)
-    while child do
-        ForceShow(child, idx, length, header)
-        idx = idx + 1
-        child = header:GetAttribute("child"..idx)
-    end
+    ForEachChild(group, ForceChild, group, limit)
 end
 
-local function UnforceShow(frame, header)
-    if InCombatLockdown() then return end
-    if not frame.isForced then return end
-
-    frame.__unit = frame.oldUnit or frame.__unit
-    frame.__realUnit = frame.oldRealUnit
-    frame.oldUnit = nil
-    frame.oldRealUnit = nil
-    frame.isForced = nil
-    frame.forceShowAuras = nil
-    frame:EnableMouse(true)
-
-    -- Ask the SecureStateDriver to show/hide the frame for us
-    UnregisterUnitWatch(frame)
-    RegisterUnitWatch(frame)
-
-    if frame.oldOnUpdate then
-        frame:SetScript("OnUpdate", frame.oldOnUpdate)
-        frame.oldOnUpdate = nil
+-- a negative starting index makes the header create that many empty slots, which we fill:
+-- one for the tank list, a group of five, or every member slot the wide layout shows
+local function GetConfigStartingIndex(group)
+    if group.groupName == "maintank" then
+        return -1
     end
-    frame.Name.overrideUnit = frame.oldNameOverrideUnit
-    frame.HealthValueText.overrideUnit = frame.oldHealthValueOverrideUnit
-
-    frame.oldNameOverrideUnit = nil
-    frame.oldHealthValueOverrideUnit = nil
-
-    GW["UpdateGrid" ..  header.profileName .. "Frame"](frame)
+    local settings = GW.settings.groupFrames[group.groupName]
+    if not settings.wideSorting then
+        return -4
+    end
+    local slots = (group.numGroups or 1) * (settings.groupsPerColumn or 1) * MEMBERS_PER_RAID_GROUP
+    return -(min(slots, MAX_RAID_MEMBERS) + 1)
 end
 
-local function UnshowChildUnits(header)
-    header.isForced = nil
+-- the header rebuilds its children on attribute changes, fill them again afterwards
+local function OnGroupAttributeChanged(group)
+    if not group:IsShown() or not (group.forceShow or group:GetParent().forceShow) then return end
 
-    local idx = 1
-    local child = header:GetAttribute("child"..idx)
-    while child do
-        UnforceShow(child, header)
-        idx = idx + 1
-        child = header:GetAttribute("child"..idx)
+    local index = GetConfigStartingIndex(group)
+    if group:GetAttribute("startingIndex") ~= index then
+        group:SetAttribute("startingIndex", index)
+        ForceChildren(group)
     end
 end
 
-local function OnAttributeChanged(self, attr)
-    if not self:IsShown() or (not self:GetParent().forceShow and not self.forceShow) then return end
-
-    local isTank = self.groupName == "maintank"
-    local index = isTank and -1 or not GW.settings.groupFrames[self.groupName].wideSorting and -4 or -(min((self.numGroups or 1) * ((GW.settings.groupFrames[self.groupName].groupsPerColumn or 1) * 5), MAX_RAID_MEMBERS) + 1)
-    if self:GetAttribute("startingIndex") ~= index then
-        self:SetAttribute("startingIndex", index)
-        ShowChildUnits(self)
-    elseif isTank then -- for showing target frames
-        if attr == "startingindex" then
-            self.waitForTarget = nil
-        elseif self.waitForTarget and attr == "statehidden" then
-            ShowChildUnits(self)
-            self.waitForTarget = nil
+-- only children oUF has styled carry our elements (see constructor.lua)
+local function UpdateStyledChildren(header, group)
+    for _, child in ipairs({ group:GetChildren() }) do
+        if child.style then
+            UpdateChild(child, header, header.groupName)
         end
     end
 end
 
-local function HeaderForceShow(header, group, configMode)
+local function SetGroupConfigMode(header, group, enabled)
     group.forceShow = header.forceShow
     group.forceShowAuras = header.forceShowAuras
 
-    if not group.hasOnAttributeChanged then
-        group:HookScript("OnAttributeChanged", OnAttributeChanged)
-        group.hasOnAttributeChanged = true
+    if not hookedGroups[group] then
+        hookedGroups[group] = true
+        group:HookScript("OnAttributeChanged", OnGroupAttributeChanged)
     end
 
-
-    if configMode then
-        StoreForcedAttributes(group)
-        for key in pairs(forcedVisibilityAttributes) do
-            group:SetAttribute(key, nil)
-        end
-
+    if enabled then
+        HideVisibilityAttributes(group)
         if group:IsShown() then
-            OnAttributeChanged(group)
-        end
-
-        for _, child in ipairs({ group:GetChildren() }) do
-            -- only children oUF has styled carry our elements (see constructor.lua)
-            if child.style then
-                GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
-            end
+            OnGroupAttributeChanged(group)
         end
     else
-        RestoreForcedAttributes(group)
-
-        UnshowChildUnits(group)
+        RestoreVisibilityAttributes(group)
+        group.isForced = nil
+        ForEachChild(group, ReleaseChild, group)
         group:SetAttribute("startingIndex", 1)
+    end
+    UpdateStyledChildren(header, group)
+end
 
-        for _, child in ipairs({ group:GetChildren() }) do
-            -- only children oUF has styled carry our elements (see constructor.lua)
-            if child.style then
-                GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
-            end
-        end
+local function DriveVisibility(frame, state)
+    if drivenVisibility[frame] ~= state then
+        RegisterStateDriver(frame, "visibility", state)
+        drivenVisibility[frame] = state
     end
 end
 
-local function UpdateConfigGroupVisibility(header)
-    if header.configModeVisibility ~= "show" then
-        RegisterStateDriver(header, "visibility", "show")
-        header.configModeVisibility = "show"
-    end
-
-    for i = 1, header.numGroups do
-        local group = header.groups[i]
-        if group then
-            local visibility = header.numGroups > 1 and i > 1 and GW.settings.groupFrames[header.groupName].wideSorting and "hide" or "show"
-            if group.configModeVisibility ~= visibility then
-                RegisterStateDriver(group, "visibility", visibility)
-                group.configModeVisibility = visibility
-            end
-        end
-    end
+local function ApplyConfigVisibility(header)
+    DriveVisibility(header, "show")
+    -- wide sorting puts every member into the first group
+    local wideSorting = GW.settings.groupFrames[header.groupName].wideSorting
+    ForEachGroup(header, function(group, i)
+        DriveVisibility(group, (wideSorting and i > 1) and "hide" or "show")
+    end)
 end
 
-local function UpdateConfigFrameSizes(header)
-    local width = tonumber(GW.settings.groupFrames[header.groupName].width)
-    local height = tonumber(GW.settings.groupFrames[header.groupName].height)
+local function ApplyConfigFrameSizes(header)
+    local settings = GW.settings.groupFrames[header.groupName]
+    local width, height = tonumber(settings.width), tonumber(settings.height)
     if not width or not height then return end
 
-    for i = 1, header.numGroups do
-        local group = header.groups[i]
-        if group then
-            local idx = 1
-            local child = group:GetAttribute("child" .. idx)
-            while child do
-                if child.isForced then
-                    child.unitWidth = width
-                    child.unitHeight = height
-                    child:SetSize(width, height)
-                end
-                idx = idx + 1
-                child = group:GetAttribute("child" .. idx)
+    ForEachGroup(header, function(group)
+        ForEachChild(group, function(child)
+            if child.isForced then
+                child.unitWidth, child.unitHeight = width, height
+                child:SetSize(width, height)
             end
-        end
-    end
+        end)
+    end)
 end
 
 local function ToggleGridConfigurationMode(header, enabled)
@@ -433,78 +331,57 @@ local function ToggleGridConfigurationMode(header, enabled)
     header.isForced = enabled or nil
 
     if enabled then
-        activeConfigHeaders[header] = true
-        EnableConfigEnvironment()
+        activeHeaders[header] = true
+        UseFakeEnv()
+        ApplyConfigVisibility(header)
+        ForEachGroup(header, function(group) SetGroupConfigMode(header, group, true) end)
+        return
+    end
 
-        RegisterStateDriver(header, "visibility", "show")
-        header.configModeVisibility = "show"
-        for i = 1, header.numGroups do
-            local group = header.groups[i]
-            if group then
-                local visibility = header.numGroups > 1 and i > 1 and GW.settings.groupFrames[header.groupName].wideSorting and "hide" or "show"
-                RegisterStateDriver(group, "visibility", visibility)
-                group.configModeVisibility = visibility
+    activeHeaders[header] = nil
+    drivenVisibility[header] = nil
+    RestoreRealEnv()
+    ForEachGroup(header, function(group)
+        drivenVisibility[group] = nil
+        SetGroupConfigMode(header, group, false)
+    end)
 
-                HeaderForceShow(header, group, enabled)
-            end
-        end
-    else
-        activeConfigHeaders[header] = nil
-        header.configModeVisibility = nil
-        RestoreConfigEnvironment()
-
-        for i = 1, header.numGroups do
-            local group = header.groups[i]
-            if group then
-                group.configModeVisibility = nil
-                HeaderForceShow(header, group, enabled)
-            end
-        end
-
-        GW.UpdateGroupVisibility(header, header.groupName, GW.settings.groupFrames[header.groupName].enabled)
-
-        -- reset the stored dummy values
-        GW.UpdateGridSettings(header.groupName, nil, true)
-
-        local onEvent = header:GetScript("OnEvent")
-        if onEvent then
-            onEvent(header, "PLAYER_ENTERING_WORLD")
-        end
+    GW.UpdateGroupVisibility(header, header.groupName, GW.settings.groupFrames[header.groupName].enabled)
+    -- drops the fake values from the frames
+    GW.UpdateGridSettings(header.groupName, nil, true)
+    -- lets the header run its full update like after a loading screen
+    local onEvent = header:GetScript("OnEvent")
+    if onEvent then
+        onEvent(header, "PLAYER_ENTERING_WORLD")
     end
 end
 GW.ToggleGridConfigurationMode = ToggleGridConfigurationMode
 
 local function RefreshGridConfigurationMode(profile, updateChildren, skipHeaderUpdate)
     local header = type(profile) == "table" and profile or GW.GridGroupHeaders and GW.GridGroupHeaders[profile]
-    if header and header.forceShow then
-        if InCombatLockdown() then return end
+    if not (header and header.forceShow) or InCombatLockdown() then return end
 
-        if not skipHeaderUpdate then
-            header.forceConfigHeaderUpdate = updateChildren or nil
-            GW.UpdateGridHeader(header.groupName)
-            header.forceConfigHeaderUpdate = nil
-        end
+    if not skipHeaderUpdate then
+        header.forceConfigHeaderUpdate = updateChildren or nil
+        GW.UpdateGridHeader(header.groupName)
+        header.forceConfigHeaderUpdate = nil
+    end
 
-        UpdateConfigGroupVisibility(header)
-        UpdateConfigFrameSizes(header)
-
-        if updateChildren then
-            for i = 1, header.numGroups do
-                local group = header.groups[i]
-                if group then
-                    HeaderForceShow(header, group, true)
-                end
-            end
-        end
+    ApplyConfigVisibility(header)
+    ApplyConfigFrameSizes(header)
+    if updateChildren then
+        ForEachGroup(header, function(group) SetGroupConfigMode(header, group, true) end)
     end
 end
 GW.RefreshGridConfigurationMode = RefreshGridConfigurationMode
 
-eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-eventFrame:SetScript("OnEvent", function()
+-- secure frames can not change in combat, so config mode ends when a fight starts
+local combatWatcher = CreateFrame("Frame")
+combatWatcher:RegisterEvent("PLAYER_REGEN_DISABLED")
+combatWatcher:SetScript("OnEvent", function()
     for _, header in pairs(GW.GridGroupHeaders) do
-		if header.forceShow then
-			ToggleGridConfigurationMode(header)
-		end
-	end
+        if header.forceShow then
+            ToggleGridConfigurationMode(header)
+        end
+    end
 end)

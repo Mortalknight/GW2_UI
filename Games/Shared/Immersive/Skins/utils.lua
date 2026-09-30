@@ -303,9 +303,9 @@ do
     }
 
     -- the blizzard border stays hidden, our backdrop shows what it would; kept out of blizzards tables
-    local backdrops = setmetatable({}, {__mode = "k"})
-    local emptyColors = setmetatable({}, {__mode = "k"})
-    local wantsShown = setmetatable({}, {__mode = "k"})
+    local backdrops = {}
+    local emptyColors = {}
+    local wantsShown = {}
     local hidingBorder -- our own Hide call, its hook must not count as blizzards
 
     local function UpdateBackdropColor(border)
@@ -508,7 +508,7 @@ GW.HandleItemButton = HandleItemButton
 
 -- blizzard builds many windows from frame pools; func runs once for every frame a pool hands out
 do
-    local skinnedPoolFrames = setmetatable({}, {__mode = "k"})
+    local skinnedPoolFrames = {}
     function GW.SkinPoolFrames(pool, func)
         if not pool then return end
         for frame in pool:EnumerateActive() do
@@ -534,7 +534,7 @@ end
 
 -- the rows of a scroll box, the ones there now and every one it creates later; func runs once per row
 do
-    local skinnedRows = setmetatable({}, {__mode = "k"})
+    local skinnedRows = {}
     function GW.SkinScrollBoxFrames(scrollBox, func)
         local function SkinRow(row)
             if not skinnedRows[row] then
@@ -632,7 +632,7 @@ end
 
 -- old style tabs only learn their state through the global PanelTemplates functions; one hook each,
 -- the skinned tabs register their handler instead of hooking again for every tab
-local tabHandlers = {Select = setmetatable({}, {__mode = "k"}), Deselect = setmetatable({}, {__mode = "k"}), Resize = setmetatable({}, {__mode = "k"})}
+local tabHandlers = {Select = {}, Deselect = {}, Resize = {}}
 for state, handlers in pairs(tabHandlers) do
     hooksecurefunc(state == "Resize" and "PanelTemplates_TabResize" or "PanelTemplates_" .. state .. "Tab", function(tab)
         local handler = handlers[tab]
@@ -995,53 +995,6 @@ local function SkinSmallWindow(frame, title, icon, closeButton)
 end
 GW.SkinSmallWindow = SkinSmallWindow
 
-local function HandleListIcon(frame)
-    if not frame.tableBuilder then return end
-
-    for i = 1, 22 do
-        local row = frame.tableBuilder.rows[i]
-        if row then
-            for j = 1, 4 do
-                local cell = row.cells and row.cells[j]
-                if cell and cell.Icon then
-                    if not cell.gwSkinned then
-                        GW.HandleIcon(cell.Icon)
-
-                        if cell.IconBorder then
-                            cell.IconBorder:GwKill()
-                        end
-
-                        cell.gwSkinned = true
-                    end
-                end
-            end
-        end
-    end
-end
-
-local function HandleHeaders(frame)
-    local maxHeaders = frame.HeaderContainer:GetNumChildren()
-    for i, header in next, { frame.HeaderContainer:GetChildren() } do
-        if not header.gwSkinned then
-            header:DisableDrawLayer("BACKGROUND")
-
-            if not header.backdrop then
-                header:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
-                header.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
-            end
-
-            header.gwSkinned = true
-        end
-
-        if header.backdrop then
-            header.backdrop:SetPoint("BOTTOMRIGHT", i < maxHeaders and -5 or 0, -2)
-        end
-    end
-
-    HandleListIcon(frame)
-end
-GW.HandleSrollBoxHeaders = HandleHeaders
-
 local function HandleScrollFrameHeaderButton(button, isLastButton)
     if not button.gwSkinned then
         if button.DisableDrawLayer then
@@ -1062,6 +1015,36 @@ local function HandleScrollFrameHeaderButton(button, isLastButton)
     end
 end
 GW.HandleScrollFrameHeaderButton = HandleScrollFrameHeaderButton
+
+local skinnedCells = {}
+
+-- icons in the rows of table lists (auction house), without Blizzard's quality ring
+local function SkinTableIcons(list)
+    local builder = list.tableBuilder
+    if not builder then return end
+
+    for _, row in ipairs(builder.rows) do
+        for _, cell in ipairs(row.cells or {}) do
+            if cell.Icon and not skinnedCells[cell] then
+                skinnedCells[cell] = true
+                GW.HandleIcon(cell.Icon)
+                if cell.IconBorder then
+                    cell.IconBorder:GwKill()
+                end
+            end
+        end
+    end
+end
+
+-- column headers of table lists get our header frame; lists refill them on every refresh
+local function HandleListHeaders(list)
+    local headers = { list.HeaderContainer:GetChildren() }
+    for i, header in ipairs(headers) do
+        HandleScrollFrameHeaderButton(header, i == #headers)
+    end
+    SkinTableIcons(list)
+end
+GW.HandleSrollBoxHeaders = HandleListHeaders
 
 local function AddMouseMotionPropagationToChildFrames(self)
     for _, child in next, { self:GetChildren() } do
@@ -1310,6 +1293,78 @@ local function HandleItemReward(frame, isMap)
 end
 GW.HandleItemReward = HandleItemReward
 
+-- rewards sit in a grid; Blizzard's gaps are made for its wider buttons
+local function TightenRewardSpacing(button, isFirst)
+    local point, relativeTo, relativePoint, _, y = button:GetPoint()
+    if not (point and relativeTo and relativePoint) then return end
+
+    local x = 0
+    if not isFirst then
+        -- a new row starts below the first button, otherwise it follows on the right
+        if relativePoint == "BOTTOMLEFT" then
+            y = -4
+        else
+            x, y = 4, 0
+        end
+    end
+    button:SetPoint(point, relativeTo, relativePoint, x, y)
+end
+
+-- follower rewards: a square portrait with a quality frame instead of the round ring
+local followerFrames = {}
+local function SkinFollowerReward(reward)
+    local portrait = reward.PortraitFrame
+    local qualityFrame = followerFrames[reward]
+    if not qualityFrame then
+        reward:GwCreateBackdrop()
+        reward.backdrop:ClearAllPoints()
+        reward.backdrop:SetPoint("TOPLEFT", 40, -5)
+        reward.backdrop:SetPoint("BOTTOMRIGHT", 2, 5)
+        reward.BG:Hide()
+
+        portrait:ClearAllPoints()
+        portrait:SetPoint("RIGHT", reward.backdrop, "LEFT", -2, 0)
+        portrait.PortraitRing:Hide()
+        portrait.PortraitRingQuality:SetTexture()
+        portrait.LevelBorder:SetAlpha(0)
+        portrait.Portrait:SetTexCoord(0.2, 0.85, 0.2, 0.85)
+        portrait.Level:ClearAllPoints()
+        portrait.Level:SetPoint("BOTTOM", portrait, 0, 3)
+
+        qualityFrame = CreateFrame("Frame", nil, portrait, "BackdropTemplate")
+        qualityFrame:SetFrameLevel(portrait:GetFrameLevel() - 1)
+        qualityFrame:SetPoint("TOPLEFT", 2, -2)
+        qualityFrame:SetPoint("BOTTOMRIGHT", -2, 2)
+        followerFrames[reward] = qualityFrame
+    end
+    -- the hidden ring still carries the follower quality color
+    qualityFrame:SetBackdropBorderColor(portrait.PortraitRingQuality:GetVertexColor())
+end
+
+-- objective lines: the waypoint hint comes first, then every counted objective, done ones in green
+local function ColorObjectives()
+    local lines = QuestInfoObjectivesFrame.Objectives
+    local line = 0
+
+    local questID = C_QuestLog.GetSelectedQuest and C_QuestLog.GetSelectedQuest() or GetQuestID()
+    if C_QuestLog.GetNextWaypointText and C_QuestLog.GetNextWaypointText(questID) then
+        line = line + 1
+        lines[line]:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    end
+
+    for i = 1, GetNumQuestLeaderBoards() do
+        local _, objectiveType, isCompleted = GetQuestLogLeaderBoard(i)
+        -- spell and log objectives have no line of their own
+        if objectiveType ~= "spell" and objectiveType ~= "log" and line < MAX_OBJECTIVES then
+            line = line + 1
+            if lines[line] then
+                local color = isCompleted and GW.Colors.SkinColors.Positive or GW.Colors.FallbackWhite
+                lines[line]:SetTextColor(color:GetRGB())
+            end
+        end
+    end
+end
+
 local function QuestInfo_Display(template, parentFrame)
     if not GW.settings.skins.gossip.enabled and not GW.settings.immersiveQuesting.enabled and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
         return
@@ -1332,19 +1387,9 @@ local function QuestInfo_Display(template, parentFrame)
         questID = GetQuestID();
     end
 
-    for i, questItem in ipairs(fRwd.RewardButtons) do
-        local point, relativeTo, relativePoint, _, y = questItem:GetPoint()
-        if point and relativeTo and relativePoint then
-            if i == 1 then
-                questItem:SetPoint(point, relativeTo, relativePoint, 0, y)
-            elseif relativePoint == "BOTTOMLEFT" then
-                questItem:SetPoint(point, relativeTo, relativePoint, 0, -4)
-            else
-                questItem:SetPoint(point, relativeTo, relativePoint, 4, 0)
-            end
-        end
-
-        GW.HandleItemReward(questItem, isMapStyle)
+    for i, rewardButton in ipairs(fRwd.RewardButtons) do
+        TightenRewardSpacing(rewardButton, i == 1)
+        GW.HandleItemReward(rewardButton, isMapStyle)
     end
 
     local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
@@ -1357,36 +1402,7 @@ local function QuestInfo_Display(template, parentFrame)
         end
 
         for followerReward in fRwd.followerRewardPool:EnumerateActive() do
-            if not followerReward.gwSkinned then
-                followerReward:GwCreateBackdrop()
-                followerReward.backdrop:SetAllPoints(followerReward.BG)
-                followerReward.backdrop:SetPoint("TOPLEFT", 40, -5)
-                followerReward.backdrop:SetPoint("BOTTOMRIGHT", 2, 5)
-                followerReward.BG:Hide()
-
-                followerReward.PortraitFrame:ClearAllPoints()
-                followerReward.PortraitFrame:SetPoint("RIGHT", followerReward.backdrop, "LEFT", -2, 0)
-
-                followerReward.PortraitFrame.PortraitRing:Hide()
-                followerReward.PortraitFrame.PortraitRingQuality:SetTexture()
-                followerReward.PortraitFrame.LevelBorder:SetAlpha(0)
-                followerReward.PortraitFrame.Portrait:SetTexCoord(0.2, 0.85, 0.2, 0.85)
-
-                local level = followerReward.PortraitFrame.Level
-                level:ClearAllPoints()
-                level:SetPoint("BOTTOM", followerReward.PortraitFrame, 0, 3)
-
-                local squareBG = CreateFrame("Frame", nil, followerReward.PortraitFrame, "BackdropTemplate")
-                squareBG:SetFrameLevel(followerReward.PortraitFrame:GetFrameLevel()-1)
-                squareBG:SetPoint("TOPLEFT", 2, -2)
-                squareBG:SetPoint("BOTTOMRIGHT", -2, 2)
-                followerReward.PortraitFrame.squareBG = squareBG
-
-                followerReward.gwSkinned = true
-            end
-
-            local r, g, b = followerReward.PortraitFrame.PortraitRingQuality:GetVertexColor()
-            followerReward.PortraitFrame.squareBG:SetBackdropBorderColor(r, g, b)
+            SkinFollowerReward(followerReward)
         end
     end
 
@@ -1424,31 +1440,7 @@ local function QuestInfo_Display(template, parentFrame)
         fRwd.XPFrame.ReceiveText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
-    local objectives = _G.QuestInfoObjectivesFrame.Objectives
-    local index = 0
-
-    questID = GW.Retail and C_QuestLog.GetSelectedQuest() or GetQuestID()
-    local waypointText = GW.Retail and C_QuestLog.GetNextWaypointText(questID)
-    if waypointText then
-        index = index + 1
-        objectives[index]:SetTextColor(1, 0.93, 0.73)
-    end
-
-    for i = 1, GetNumQuestLeaderBoards() do
-        local _, objectiveType, isCompleted = GetQuestLogLeaderBoard(i)
-        if objectiveType ~= "spell" and objectiveType ~= "log" and index < _G.MAX_OBJECTIVES then
-            index = index + 1
-
-            local objective = objectives[index]
-            if objective then
-                if isCompleted then
-                    objective:SetTextColor(0.2, 1, 0.2)
-                else
-                    objective:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-                end
-            end
-        end
-    end
+    ColorObjectives()
 end
 GW.QuestInfo_Display = QuestInfo_Display
 

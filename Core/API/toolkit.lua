@@ -70,7 +70,7 @@ local function FindScrollPart(frame, keys, parentKey)
     return parent and parent[parentKey]
 end
 
-local killedRegions = setmetatable({}, {__mode = "k"})
+local killedRegions = {}
 
 local function StayHidden(region)
     region:Hide()

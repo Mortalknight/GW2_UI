@@ -94,7 +94,7 @@ local function raidInfoExtended_OnClick(self)
 end
 
 local function RaidInfo_InitButton(button, elementData)
-    local instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled
+    local instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled, instanceMapID
     if not button.gwSkinned then
         button.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         button.name:SetTextColor(1, 1, 1)
@@ -117,7 +117,7 @@ local function RaidInfo_InitButton(button, elementData)
     end
 
     if elementData.type == "SAVED_INSTANCE" then
-        instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled = GetSavedInstanceInfo(elementData.index)
+        instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled, instanceMapID = GetSavedInstanceInfo(elementData.index)
         button.instanceID = instanceID
         button.worldBossID = nil
         button.RaidInfoIdx = elementData.index
@@ -138,7 +138,7 @@ local function RaidInfo_InitButton(button, elementData)
     end
 
     -- set raidInfo values
-    button.icon:SetTexture(GW.instanceIconByName[instanceName] and GW.instanceIconByName[instanceName] or nil)
+    button.icon:SetTexture(GW.GetInstanceIcon(instanceMapID))
     button.icon:SetTexCoord(0, 0.75, 0, 0.75)
     if (button.extendedValue or button.locked) then
         button.reset:SetText(SecondsToTime(instanceReset, true, nil, 3))

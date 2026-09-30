@@ -1,111 +1,83 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local classic = { 2, 1, 3, 4 }
+-- the edge the first button sits at and the step towards the next one, per grow and sort setting
+local LAYOUTS = {
+    HORIZONTAL = { ASC = { "LEFT", 1, 0 }, DSC = { "RIGHT", -1, 0 } },
+    VERTICAL = { ASC = { "TOP", 0, -1 }, DSC = { "BOTTOM", 0, 1 } },
+}
 
 GwTotemBarMixin = {}
 
 function GwTotemBarMixin:UpdateVisibility()
-    if not self then return end
     RegisterStateDriver(self, "visibility", GW.settings.totemBar.enabled and "show" or "hide")
 end
 
-local function UpdateButton(button, totem)
-    if not (button and totem) then return end
-
-    local slot = (GW.Retail or GW.Mists) and totem.slot or totem
+-- Blizzard's totem button moves into ours: it stays invisible but keeps its
+-- tooltip and the right click that dismisses the totem.
+local function ShowTotem(button, totem)
+    local slot = totem.slot
     local _, _, startTime, duration, icon = GetTotemInfo(slot)
 
-    if startTime then
-        button.iconTexture:SetTexture(icon)
-        if GW.IsSecretValue(duration) then
-            button.cooldown:SetCooldownFromDurationObject(GetTotemDuration(slot))
-        elseif duration and duration > 0 then
-            button.cooldown:SetCooldown(startTime, duration)
-        else
-            button.cooldown:Clear()
-        end
-
-        if GW.Mists or GW.Retail then
-            if totem:GetParent() ~= button.holder then
-                totem:SetParent(button.holder)
-            end
-
-            totem:SetAllPoints(button.holder)
-        end
-    else
-        button.cooldown:Clear()
+    button.iconTexture:SetTexture(icon)
+    if GW.IsSecretValue(duration) then
+        button.cooldown:SetCooldownFromDurationObject(GetTotemDuration(slot))
+    elseif duration and duration > 0 then
+        button.cooldown:SetCooldown(startTime, duration)
     end
 
+    if totem:GetParent() ~= button.holder then
+        totem:SetParent(button.holder)
+        totem:ClearAllPoints()
+        totem:SetAllPoints(button.holder)
+    end
+
+    -- totems without a running timer are not worth a button
     button:SetShown(button.cooldown:IsShown())
 end
 
 function GwTotemBarMixin:Update()
-    local priority = STANDARD_TOTEM_PRIORITIES
+    for _, button in ipairs(self.buttons) do
+        button.cooldown:Clear()
+        button:Hide()
+    end
 
-    if GW.Retail or GW.Mists then
-        for _, button in ipairs(self) do
-            if button:IsShown() then
-                button:SetShown(false)
+    -- most clients pool their totem buttons, Wrath still has fixed ones
+    if TotemFrame.totemPool then
+        for totem in TotemFrame.totemPool:EnumerateActive() do
+            local button = self.buttons[totem.layoutIndex]
+            if button then
+                ShowTotem(button, totem)
             end
         end
-
-        for totem in TotemFrame.totemPool:EnumerateActive() do
-            UpdateButton(self[priority[totem.layoutIndex]], totem)
-        end
     else
-        for i = 1, MAX_TOTEMS do
-            UpdateButton(self[priority[i]], _G["TotemFrameTotem"..i] or classic[i])
+        for i, button in ipairs(self.buttons) do
+            local totem = _G["TotemFrameTotem" .. i]
+            if totem and totem.slot and totem.slot > 0 then
+                ShowTotem(button, totem)
+            end
         end
     end
 end
 
 function GwTotemBarMixin:PositionAndSizeUpdate()
-    local growDirection = GW.settings.totemBar.growDirection
-    local sortDirection = GW.settings.totemBar.sortDirection
-    local buttonSize = GW.settings.totemBar.buttonSize
-    local spacing = GW.settings.totemBar.spacing
+    local settings = GW.settings.totemBar
+    local size, spacing = settings.buttonSize, settings.spacing
+    local point, stepX, stepY = unpack(LAYOUTS[settings.growDirection][settings.sortDirection])
 
-    for i = 1, MAX_TOTEMS do
-        local button = self[i]
-        local prevButton = self[i - 1]
-
-        button:SetSize(buttonSize, buttonSize)
+    for i, button in ipairs(self.buttons) do
+        local offset = spacing + (i - 1) * (size + spacing)
+        button:SetSize(size, size)
         button:ClearAllPoints()
-        if growDirection == "HORIZONTAL" and sortDirection == "ASC" then
-            if i == 1 then
-                button:SetPoint("LEFT", self, "LEFT", spacing, 0)
-            else
-                button:SetPoint("LEFT", prevButton, "RIGHT", spacing, 0)
-            end
-        elseif growDirection == "HORIZONTAL" and sortDirection == "DSC" then
-            if i == 1 then
-                button:SetPoint("RIGHT", self, "RIGHT", -spacing, 0)
-            else
-                button:SetPoint("RIGHT", prevButton, "LEFT", -spacing, 0)
-            end
-        elseif growDirection == "VERTICAL" and sortDirection == "ASC" then
-            if i == 1 then
-                button:SetPoint("TOP", self, "TOP", 0, -spacing)
-            else
-                button:SetPoint("TOP", prevButton, "BOTTOM", 0, -spacing)
-            end
-        elseif growDirection == "VERTICAL" and sortDirection == "DSC" then
-            if i == 1 then
-                button:SetPoint("BOTTOM", self, "BOTTOM", 0, spacing)
-            else
-                button:SetPoint("BOTTOM", prevButton, "TOP", 0, spacing)
-            end
-        end
+        button:SetPoint(point, self, point, stepX * offset, stepY * offset)
     end
 
-    local size1, size2 = buttonSize * MAX_TOTEMS + (MAX_TOTEMS + 1) * spacing, buttonSize + spacing * 2
-    if growDirection == "HORIZONTAL" then
-        self:SetWidth(size1)
-        self:SetHeight(size2)
+    local length = #self.buttons * (size + spacing) + spacing
+    local thickness = size + spacing * 2
+    if settings.growDirection == "HORIZONTAL" then
+        self:SetSize(length, thickness)
     else
-        self:SetHeight(size1)
-        self:SetWidth(size2)
+        self:SetSize(thickness, length)
     end
     if self.gwMover then
         self.gwMover:SetSize(self:GetSize())
@@ -114,60 +86,55 @@ function GwTotemBarMixin:PositionAndSizeUpdate()
     self:Update()
 end
 
+local function CreateTotemButton(bar, index)
+    local button = CreateFrame("Button", nil, bar)
+    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
+    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+    button:Hide()
+
+    local backdrop = CreateFrame("Frame", nil, button, "GwActionButtonBackdropTmpl")
+    backdrop:SetPoint("TOPLEFT", -1, 1)
+    backdrop:SetPoint("BOTTOMRIGHT", 1, -1)
+
+    -- invisible home for Blizzard's totem button
+    button.holder = CreateFrame("Frame", nil, button)
+    button.holder:SetAllPoints()
+    button.holder:SetAlpha(0)
+
+    button.iconTexture = button:CreateTexture(nil, "ARTWORK")
+    button.iconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    button.iconTexture:SetPoint("TOPLEFT", GW.border, -GW.border)
+    button.iconTexture:SetPoint("BOTTOMRIGHT", -GW.border, GW.border)
+
+    button.cooldown = CreateFrame("Cooldown", "GwTotemBarTotem" .. index .. "Cooldown", button, "CooldownFrameTemplate")
+    button.cooldown:SetAllPoints(button.iconTexture)
+    button.cooldown:SetReverse(true)
+    button.cooldown:SetDrawEdge(false)
+    button.cooldown:SetHideCountdownNumbers(false)
+    -- modern cooldowns bring their own numbers
+    if not GW.isModern then
+        GW.RegisterCooldown(button.cooldown)
+    end
+
+    return button
+end
+
 function GW.CreateTotemBar()
-    local totemBar = CreateFrame("Frame", "GwTotemBar", UIParent)
-    Mixin(totemBar, GwTotemBarMixin)
-
+    local bar = Mixin(CreateFrame("Frame", "GwTotemBar", UIParent), GwTotemBarMixin)
+    bar.buttons = {}
     for i = 1, MAX_TOTEMS do
-        local button = CreateFrame("Button", totemBar:GetName() .. "Totem" .. i, totemBar)
-
-        button:SetID(i)
-        button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
-        button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
-        button:Hide()
-
-        local backDrop = CreateFrame("Frame", nil, button, "GwActionButtonBackdropTmpl")
-        local backDropSize = 1
-
-        backDrop:SetPoint("TOPLEFT", button, "TOPLEFT", -backDropSize, backDropSize)
-        backDrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", backDropSize, -backDropSize)
-
-        button.holder = CreateFrame("Frame", nil, button)
-        button.holder:SetAlpha(0)
-        button.holder:SetAllPoints()
-
-        button.iconTexture = button:CreateTexture(nil, "ARTWORK")
-        button.iconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        button.iconTexture:SetPoint("TOPLEFT", button, "TOPLEFT", GW.border, -GW.border)
-        button.iconTexture:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -GW.border, GW.border)
-
-        button.cooldown = CreateFrame("Cooldown", button:GetName() .. "Cooldown", button, "CooldownFrameTemplate")
-        button.cooldown:SetReverse(true)
-        button.cooldown:SetHideCountdownNumbers(false)
-        button.cooldown:SetDrawEdge(false)
-        button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", GW.border, -GW.border)
-        button.cooldown:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -GW.border, GW.border)
-
-        if not GW.Retail then
-            GW.RegisterCooldown(button.cooldown)
-        end
-
-        totemBar[i] = button
+        bar.buttons[i] = CreateTotemButton(bar, i)
     end
+    bar:PositionAndSizeUpdate()
 
-    totemBar:PositionAndSizeUpdate()
+    -- Blizzard rebuilds its buttons on spec and form changes, so follow its updates
+    hooksecurefunc(TotemFrame, "Update", function() bar:Update() end)
+    bar:RegisterEvent("PLAYER_TOTEM_UPDATE")
+    bar:RegisterEvent("PLAYER_ENTERING_WORLD")
+    bar:SetScript("OnEvent", bar.Update)
 
-    totemBar:RegisterEvent("PLAYER_TOTEM_UPDATE")
-    totemBar:RegisterEvent("PLAYER_ENTERING_WORLD")
-    if GW.Retail then
-        totemBar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    else
-        totemBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    end
-    totemBar:SetScript("OnEvent", totemBar.Update)
-
-    GW.RegisterMovableFrame(totemBar, GW.L["Class Totems"], "totemBar", "Blizzard,Widgets", nil, {GW.MoverOption.Scale})
-    totemBar:UpdateVisibility()
-    totemBar:ClearAllPoints()
-    totemBar:SetPoint("TOPLEFT", totemBar.gwMover)
+    GW.RegisterMovableFrame(bar, GW.L["Class Totems"], "totemBar", "Blizzard,Widgets", nil, { GW.MoverOption.Scale })
+    bar:UpdateVisibility()
+    bar:ClearAllPoints()
+    bar:SetPoint("TOPLEFT", bar.gwMover)
 end

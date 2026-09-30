@@ -1,136 +1,128 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local mostValue = {}
-local upgradeIconsByPawn = {}
+-- quarter of Pawn's arrow texture per advice result
+local PAWN_ARROWS = {
+    upgrade = { 0, 0.5, 0, 0.5 },
+    vendor = { 0, 0.5, 0.5, 1 },
+    trinket = { 0.5, 1, 0.5, 1 }, -- trinkets and relics
+}
 
-local function QuestXPPercent()
+local coinMarker
+local pawnArrows = {} -- per reward index
+
+-- appends the share of the current level, e.g. "1200 (+3.45%)"
+local function AppendXPShare(fontString, xp)
+    local text, levelXP = fontString:GetText(), UnitXPMax("player")
+    if text and xp and xp > 0 and levelXP > 0 then
+        local share = GW.Colors.SkinColors.Positive:WrapTextInColorCode(format("(+%.2f%%)", xp / levelXP * 100))
+        fontString:SetText(text .. " " .. share)
+    end
+end
+
+local function AddQuestXPShare()
     if not GW.settings.general.questXpPercent then return end
 
-    local _, unitXPMax = UnitXP("player"), UnitXPMax("player")
-    if QuestInfoFrame.questLog then
-        local selectedQuest = GW.Retail and C_QuestLog.GetSelectedQuest() or GetQuestID()
-        if C_QuestLog.ShouldShowQuestRewards(selectedQuest) then
-            local xp = GetQuestLogRewardXP()
-            if xp and xp > 0 then
-                local text = MapQuestInfoRewardsFrame.XPFrame.Name:GetText()
-                if text then MapQuestInfoRewardsFrame.XPFrame.Name:SetFormattedText("%s (|cff4beb2c+%.2f%%|r)", text, (xp / unitXPMax) * 100) end
+    if not QuestInfoFrame.questLog then
+        AppendXPShare(QuestInfoXPFrame.ValueText, GetRewardXP())
+        return
+    end
+
+    local questID = C_QuestLog.GetSelectedQuest and C_QuestLog.GetSelectedQuest() or GetQuestID()
+    if C_QuestLog.ShouldShowQuestRewards(questID) then
+        AppendXPShare(MapQuestInfoRewardsFrame.XPFrame.Name, GetQuestLogRewardXP())
+    end
+end
+
+local function ResetQuestRewardMarkers()
+    coinMarker:Hide()
+    for _, arrow in pairs(pawnArrows) do
+        arrow:Hide()
+    end
+end
+GW.ResetQuestRewardMostValueIcon = ResetQuestRewardMarkers
+
+-- the choice that sells for the most gold, nil when none has a sell price
+local function FindMostValuableChoice(numChoices)
+    local bestIndex, bestValue = nil, 0
+    for index = 1, numChoices do
+        local link = GetQuestItemLink("choice", index)
+        local _, _, amount = GetQuestItemInfo("choice", index)
+        local sellPrice = link and select(11, C_Item.GetItemInfo(link)) or 0
+        local value = sellPrice * (amount or 0)
+        if value > bestValue then
+            bestIndex, bestValue = index, value
+        end
+    end
+    return bestIndex
+end
+
+local function ShowPawnAdvice(numChoices)
+    if not (PawnGetItemData and PawnFindInterestingItems) then return end
+
+    local rewards = {}
+    for index = 1, numChoices do
+        local _, _, _, _, usable = GetQuestItemInfo("choice", index)
+        local item = PawnGetItemData(GetQuestItemLink("choice", index))
+        if item then
+            rewards[#rewards + 1] = { Item = item, RewardType = "choice", Usable = usable, Index = index }
+        end
+    end
+    -- Pawn writes its verdict into reward.Result
+    PawnFindInterestingItems(rewards)
+
+    for _, reward in ipairs(rewards) do
+        local coords = PAWN_ARROWS[reward.Result]
+        local button = coords and QuestInfo_GetRewardButton(QuestInfoFrame.rewardsFrame, reward.Index)
+        if button then
+            local arrow = pawnArrows[reward.Index]
+            if not arrow then
+                arrow = button:CreateTexture(nil, "OVERLAY", "PawnUI_QuestAdvisorTexture")
+                arrow:SetDrawLayer("OVERLAY", 7)
+                arrow:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
+                pawnArrows[reward.Index] = arrow
             end
-        end
-    else
-        local xp = GetRewardXP()
-        if xp and xp > 0 then
-            local text = QuestInfoXPFrame.ValueText:GetText()
-            if text then QuestInfoXPFrame.ValueText:SetFormattedText("%s (|cff4beb2c+%.2f%%|r)", text, (xp / unitXPMax) * 100) end
+            arrow:SetTexCoord(unpack(coords))
+            arrow:Show()
         end
     end
 end
 
-local function ResetQuestRewardMostValueIcon()
-    -- hide all old overlays
-    for i = 1, MAX_NUM_ITEMS do
-        if upgradeIconsByPawn[i] then upgradeIconsByPawn[i]:Hide() end
-    end
-
-    if mostValue then mostValue:Hide() end
-end
-GW.ResetQuestRewardMostValueIcon = ResetQuestRewardMostValueIcon
-
-local function QuestRewardMostValueIcon()
+local function MarkQuestRewards()
     if not GW.settings.general.questRewardMostValueIcon then return end
 
-    ResetQuestRewardMostValueIcon()
+    ResetQuestRewardMarkers()
+    local numChoices = GetNumQuestChoices()
+    if numChoices < 2 then return end
 
-    local firstItem = QuestInfoRewardsFrameQuestInfoItem1
-    if not firstItem then return end
-
-    local numQuestChoices = GetNumQuestChoices()
-    if numQuestChoices < 2 then return end
-
-    local questRewards = {}
-    local bestValue, bestItem = 0, 0
-    for i = 1, numQuestChoices do
-        local itemLink = GetQuestItemLink("choice", i)
-        local _, _, amount, _, usable = GetQuestItemInfo("choice", i)
-        local itemSellPrice = itemLink and select(11, C_Item.GetItemInfo(itemLink))
-        local item = PawnGetItemData and PawnGetItemData(itemLink)
-
-        if item then
-            tinsert(questRewards, { Item = item, RewardType = "choice", Usable = usable, Index = i })
-        end
-
-        if itemSellPrice and itemSellPrice > 0 then
-            local totalValue = (amount and amount > 0) and (itemSellPrice * amount) or 0
-            if totalValue > bestValue then
-                bestValue = totalValue
-                bestItem = i
-            end
-        end
+    local bestIndex = FindMostValuableChoice(numChoices)
+    local button = bestIndex and _G["QuestInfoRewardsFrameQuestInfoItem" .. bestIndex]
+    if button and button.type == "choice" then
+        coinMarker:ClearAllPoints()
+        coinMarker:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2)
+        coinMarker:Show()
     end
 
-    if bestItem then
-        local btn = _G["QuestInfoRewardsFrameQuestInfoItem" .. bestItem]
-        if btn and btn.type == "choice" then
-            mostValue:ClearAllPoints()
-            mostValue:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -2, -2)
-            mostValue:SetFrameStrata("HIGH")
-            mostValue:Show()
-        end
-    end
-
-    if PawnFindInterestingItems then PawnFindInterestingItems(questRewards) end
-
-    for _, reward in pairs(questRewards) do
-        local itemButton = QuestInfo_GetRewardButton(QuestInfoFrame.rewardsFrame, reward.Index)
-        if itemButton then
-            local overlay = upgradeIconsByPawn[reward.Index]
-            if not overlay then
-                overlay = itemButton:CreateTexture(nil, "OVERLAY", "PawnUI_QuestAdvisorTexture")
-                overlay:SetDrawLayer("OVERLAY", 7)
-
-                upgradeIconsByPawn[reward.Index] = overlay
-            end
-            if reward.Result == "upgrade" then
-                overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
-                overlay:SetTexCoord(0, .5, 0, .5)
-                overlay:Show()
-            elseif reward.Result == "vendor" then
-                overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
-                overlay:SetTexCoord(0, .5, .5, 1)
-                overlay:Show()
-            elseif reward.Result == "trinket" then -- trinkets or relics
-                overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
-                overlay:SetTexCoord(.5, 1, .5, 1)
-                overlay:Show()
-            end
-        end
-    end
+    ShowPawnAdvice(numChoices)
 end
 
 local function InitializeMiscFunctions()
-    local MiscFrame = CreateFrame("Frame")
+    coinMarker = CreateFrame("Frame", nil, QuestInfoRewardsFrame)
+    coinMarker:SetFrameStrata("HIGH")
+    coinMarker:SetSize(15, 15)
+    coinMarker:Hide()
 
-    mostValue = CreateFrame("Frame", "GW2UI_QuestRewardGoldIconFrame", QuestInfoRewardsFrame)
-    mostValue:SetFrameStrata("HIGH")
-    mostValue:SetSize(15, 15)
-    mostValue:Hide()
+    local coin = coinMarker:CreateTexture(nil, "OVERLAY")
+    coin:SetAllPoints()
+    coin:SetTexture("Interface/AddOns/GW2_UI/textures/icons/coins.png")
+    coin:SetTexCoord(0.33, 0.66, 0.022, 0.66)
 
-    mostValue.Icon = mostValue:CreateTexture(nil, "OVERLAY")
-    mostValue.Icon:SetAllPoints(mostValue)
-    mostValue.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/coins.png")
-    mostValue.Icon:SetTexCoord(0.33, 0.66, 0.022, 0.66)
+    hooksecurefunc(QuestFrameRewardPanel, "Hide", function() coinMarker:Hide() end)
 
-    hooksecurefunc(QuestFrameRewardPanel, "Hide", function()
-        if mostValue then
-            mostValue:Hide()
-        end
-    end)
+    local events = CreateFrame("Frame")
+    events:RegisterEvent("QUEST_COMPLETE")
+    events:SetScript("OnEvent", MarkQuestRewards)
 
-    MiscFrame:RegisterEvent("QUEST_COMPLETE") -- used for quest gold reward icon
-
-    MiscFrame:SetScript("OnEvent", QuestRewardMostValueIcon)
-
-    --Add (+X%) to quest rewards experience text
-    hooksecurefunc("QuestInfo_Display", QuestXPPercent)
+    hooksecurefunc("QuestInfo_Display", AddQuestXPShare)
 end
 GW.InitializeMiscFunctions = InitializeMiscFunctions

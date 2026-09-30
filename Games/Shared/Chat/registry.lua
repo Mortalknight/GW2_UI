@@ -191,6 +191,31 @@ function GW.SetupChatModulesForFrame(chatFrame)
     end
 end
 
+local function Pack(...)
+    return { n = select("#", ...), ... }
+end
+
+-- blizzard runs the message filters once for every chat window, before it checks whether the
+-- window shows that message; the modules only look at the message, so the first window works
+-- the result out and the others reuse it (arg11 is the unique line id of the message)
+local function CreateMessageFilter(module)
+    local lastEvent, lastLineID, lastResult
+    return function(chatFrame, event, ...)
+        if not IsEnabled(module) then
+            return
+        end
+        local lineID = select(11, ...)
+        if GW.IsSecretValue(lineID) or not lineID or lineID == 0 then
+            return module.onMessage(chatFrame, event, ...)
+        end
+        if lineID ~= lastLineID or event ~= lastEvent then
+            lastEvent, lastLineID = event, lineID
+            lastResult = Pack(module.onMessage(chatFrame, event, ...))
+        end
+        return unpack(lastResult, 1, lastResult.n)
+    end
+end
+
 local function OnSetItemRef(_, link, text, button, chatFrame)
     if GW.IsSecretValue(link) then
         return
@@ -204,7 +229,7 @@ end
 
 local function HookModule(module)
     if module.onMessage and module.events then
-        local filter = WhenEnabled(module, module.onMessage)
+        local filter = CreateMessageFilter(module)
         for _, event in ipairs(module.events) do
             AddMessageEventFilter(event, filter)
         end

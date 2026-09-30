@@ -10,7 +10,7 @@ local function FitSlotArt(frame)
     button:GetNormalTexture():GwSetInside()
     button:GetPushedTexture():SetColorTexture(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
 end
-local skinnedFlyoutButtons = setmetatable({}, {__mode = "k"})
+local skinnedFlyoutButtons = {}
 
 local function SkinFlyoutButton(button)
     button:GetNormalTexture():SetAlpha(0)

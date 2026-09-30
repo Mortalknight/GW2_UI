@@ -1,7 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file="worldmap.lua"/>
     <Script file="inspectFrame.lua"/>
-    <Script file="colorPicker.lua"/>
     <Script file="flightmap.lua"/>
     <Script file="barber.lua"/>
     <Script file="damageMeter.lua"/>

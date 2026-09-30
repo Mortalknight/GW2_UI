@@ -209,7 +209,7 @@ local function HookCollapseTexture(button)
 end
 
 -- era and tbc have fixed rows, wrath and mists the buttons of their hybrid list
-local skinnedTitles = setmetatable({}, {__mode = "k"})
+local skinnedTitles = {}
 local function SkinTitleButtons()
     local buttons = QuestLogListScrollFrame.buttons
     if not buttons then

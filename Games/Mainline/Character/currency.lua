@@ -123,7 +123,7 @@ end
 
 
 local function RaidInfo_InitButton(button, elementData)
-    local instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled
+    local instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled, instanceMapID
     if not button.gwSkinned then
         button.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         button.name:SetTextColor(1, 1, 1)
@@ -146,7 +146,7 @@ local function RaidInfo_InitButton(button, elementData)
     end
 
     if elementData.type == "SAVED_INSTANCE" then
-        instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled = GetSavedInstanceInfo(elementData.index)
+        instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled, instanceMapID = GetSavedInstanceInfo(elementData.index)
         button.instanceID = instanceID
         button.worldBossID = nil
         button.RaidInfoIdx = elementData.index
@@ -167,7 +167,7 @@ local function RaidInfo_InitButton(button, elementData)
     end
 
     -- set raidInfo values
-    button.icon:SetTexture(GW.instanceIconByName[instanceName] and GW.instanceIconByName[instanceName] or nil)
+    button.icon:SetTexture(GW.GetInstanceIcon(instanceMapID))
     button.icon:SetTexCoord(0, 0.75, 0, 0.75)
     if (button.extendedValue or button.locked) then
         button.reset:SetText(SecondsToTime(instanceReset, true, nil, 3))
@@ -218,47 +218,29 @@ local function menuItem_OnClick(self)
 end
 
 
-local oldAtlas = {
-    Options_ListExpand_Right = 1,
-    Options_ListExpand_Right_Expanded = 1
-}
+-- Blizzard's expand arrows are swapped for ours, any other atlas on the region stays
+local BLIZZARD_ARROWS = { Options_ListExpand_Right = true, Options_ListExpand_Right_Expanded = true }
+local ARROW_TEXTURE = "Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png"
 
-local function updateCollapse(texture, atlas)
-    if not atlas or oldAtlas[atlas] then
-        local parent = texture:GetParent()
-        if parent:IsCollapsed() then
-            if texture.SetTexture then
-                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:SetRotation(1.570796325)
-            else
-                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:GetNormalTexture():SetRotation(1.570796325)
-            end
-            if texture.GetPushedTexture then
-                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:GetPushedTexture():SetRotation(1.570796325)
-            end
-            if texture.GetHighlightTexture then
-                texture:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:GetHighlightTexture():SetRotation(1.570796325)
-            end
-        else
-            if texture.SetTexture then
-                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:SetRotation(0)
-            else
-                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:GetNormalTexture():SetRotation(0)
-            end
-            if texture.GetPushedTexture then
-                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:GetPushedTexture():SetRotation(0)
-            end
-            if texture.GetHighlightTexture then
-                texture:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:GetHighlightTexture():SetRotation(0)
-            end
-        end
+local function SetArrow(texture, rotation)
+    if texture then
+        texture:SetTexture(ARROW_TEXTURE)
+        texture:SetRotation(rotation)
+    end
+end
+
+-- the region is a texture or the collapse button of a header
+local function updateCollapse(region, atlas)
+    if atlas and not BLIZZARD_ARROWS[atlas] then return end
+
+    -- points right while collapsed, down while open
+    local rotation = region:GetParent():IsCollapsed() and math.pi / 2 or 0
+    if region.SetTexture then
+        SetArrow(region, rotation)
+    else
+        SetArrow(region:GetNormalTexture(), rotation)
+        SetArrow(region:GetPushedTexture(), rotation)
+        SetArrow(region:GetHighlightTexture(), rotation)
     end
 end
 

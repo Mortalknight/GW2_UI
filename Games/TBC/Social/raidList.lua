@@ -1,84 +1,79 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local  raidInit = false
+local ICON_PATH = "Interface/AddOns/GW2_UI/textures/party/"
+local RANK_ICONS = { [2] = "icon-groupleader.png", [1] = "icon-assist.png" }
+local ROLE_ICONS = { MAINTANK = "icon-maintank.png", MAINASSIST = "icon-mainassist.png" }
 
-local StripAllTextures = {
-    "RaidGroup1",
-    "RaidGroup2",
-    "RaidGroup3",
-    "RaidGroup4",
-    "RaidGroup5",
-    "RaidGroup6",
-    "RaidGroup7",
-    "RaidGroup8",
-}
+local raidSkinned = false
 
-local function LoadRaidFrame()
-    if raidInit then return end
+local function SetIcon(texture, file)
+    texture:SetTexture(file and (ICON_PATH .. file) or "")
+end
+
+local function UpdateMemberIcons()
+    for i = 1, MAX_RAID_GROUPS * MEMBERS_PER_RAID_GROUP do
+        local _, rank, _, _, _, _, _, _, _, role = GetRaidRosterInfo(i)
+        local prefix = "RaidGroupButton" .. i
+        -- secret values can not be used as table keys
+        SetIcon(_G[prefix .. "RankTexture"], GW.NotSecretValue(rank) and RANK_ICONS[rank])
+        SetIcon(_G[prefix .. "RoleTexture"], GW.NotSecretValue(role) and ROLE_ICONS[role])
+    end
+end
+
+local function SkinGroup(group, prefix)
+    group:SetSize(230, 120)
+    group:GwStripTextures()
+    local label = _G[prefix .. "Label"]
+    label:SetNormalFontObject("GameFontNormal")
+    label:SetHighlightFontObject("GameFontHighlight")
+
+    for slotIndex = 1, MEMBERS_PER_RAID_GROUP do
+        local slot = _G[prefix .. "Slot" .. slotIndex]
+        if slot then
+            slot:GwStripTextures()
+            slot:SetSize(220, 22)
+            slot:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+        end
+    end
+end
+
+local function SkinMemberButton(button, prefix)
+    button:SetSize(220, 22)
+    button:GwSkinButton(false, true, true)
+    button:GwStripTextures()
+    button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+
+    -- the class column is a font string on some clients and a button with text on others
+    local class = _G[prefix .. "Class"]
+    local columns = { { _G[prefix .. "Name"], 60 }, { _G[prefix .. "Level"], 37 }, { class, 80 } }
+    for _, column in ipairs(columns) do
+        local text = column[1].SetFont and column[1] or column[1].text
+        text:SetFont(UNIT_NAME_FONT, 10)
+        column[1]:SetSize(column[2], 19)
+    end
+end
+
+-- Blizzard_RaidUI loads on demand and its group buttons are protected
+local function SkinRaidGroups()
+    if raidSkinned then return end
     if InCombatLockdown() then
-        GW.CombatQueue:Queue(nil,  LoadRaidFrame)
+        GW.CombatQueue:Queue(nil, SkinRaidGroups)
         return
     end
-    raidInit = true
-    for _, object in pairs(StripAllTextures) do
-        local obj = _G[object]
-        if obj then
-            obj:SetSize(230, 120)
-            obj:GwStripTextures()
-            _G[object .. "Label"]:SetNormalFontObject("GameFontNormal")
-            _G[object .. "Label"]:SetHighlightFontObject("GameFontHighlight")
-            for j = 1, 5 do
-                local slot = _G[object .. "Slot" .. j]
-                if slot then
-                    slot:GwStripTextures()
-                    slot:SetSize(220, 22)
-                    slot:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-                end
-            end
+    raidSkinned = true
+
+    for groupIndex = 1, MAX_RAID_GROUPS do
+        local prefix = "RaidGroup" .. groupIndex
+        if _G[prefix] then
+            SkinGroup(_G[prefix], prefix)
         end
     end
-
-    for i = 1, _G.MAX_RAID_GROUPS * 5 do
-        _G["RaidGroupButton" .. i]:SetSize(220, 22)
-        _G["RaidGroupButton" .. i]:GwSkinButton(false, true, true)
-        _G["RaidGroupButton" .. i]:GwStripTextures()
-        _G["RaidGroupButton" .. i]:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-        _G["RaidGroupButton" .. i .. "Name"]:SetFont(UNIT_NAME_FONT, 10)
-        _G["RaidGroupButton" .. i .. "Level"]:SetFont(UNIT_NAME_FONT, 10)
-
-        if _G["RaidGroupButton" .. i .. "Class"].SetFont then
-            _G["RaidGroupButton" .. i .. "Class"]:SetFont(UNIT_NAME_FONT, 10)
-        else
-            _G["RaidGroupButton" .. i .. "Class"].text:SetFont(UNIT_NAME_FONT, 10)
-        end
-
-        _G["RaidGroupButton" .. i .. "Name"]:SetSize(60, 19)
-        _G["RaidGroupButton" .. i .. "Level"]:SetSize(37, 19)
-        _G["RaidGroupButton" .. i .. "Class"]:SetSize(80, 19)
+    for i = 1, MAX_RAID_GROUPS * MEMBERS_PER_RAID_GROUP do
+        SkinMemberButton(_G["RaidGroupButton" .. i], "RaidGroupButton" .. i)
     end
 
-    hooksecurefunc("RaidGroupFrame_Update", function()
-        for i = 1, MAX_RAID_GROUPS * 5 do
-            local _, rank, _, _, _, _, _, _, _, role = GetRaidRosterInfo(i)
-
-            if rank == 2 then
-                _G["RaidGroupButton" .. i .. "RankTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-groupleader.png")
-            elseif rank == 1 then
-                _G["RaidGroupButton" .. i .. "RankTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-assist.png")
-            else
-                _G["RaidGroupButton" .. i .. "RankTexture"]:SetTexture("")
-            end
-
-            if role == "MAINTANK" then
-                _G["RaidGroupButton" .. i .. "RoleTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-maintank.png")
-            elseif role == "MAINASSIST" then
-                _G["RaidGroupButton" .. i .. "RoleTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-mainassist.png")
-            else
-                _G["RaidGroupButton" .. i .. "RoleTexture"]:SetTexture("")
-            end
-        end
-    end)
+    hooksecurefunc("RaidGroupFrame_Update", UpdateMemberIcons)
 end
 
 function GW.SkinRaidList()
@@ -88,7 +83,7 @@ function GW.SkinRaidList()
         RaidFrameNotInRaid.ScrollingDescription:SetPoint("BOTTOMRIGHT", RaidFrameNotInRaid, "BOTTOMRIGHT", 0, 0)
         RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetJustifyH("CENTER")
         RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetJustifyV("TOP")
-        RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetTextColor(1, 1, 1)
+        RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     RaidFrameAllAssistCheckButton:ClearAllPoints()
@@ -128,5 +123,5 @@ function GW.SkinRaidList()
         end)
     end
 
-    hooksecurefunc("RaidFrame_LoadUI", LoadRaidFrame)
+    hooksecurefunc("RaidFrame_LoadUI", SkinRaidGroups)
 end

@@ -504,26 +504,6 @@ local function evPlayerLogin(self)
     end
     GW.LoadFonts()
 
-    if GW.Retail then
-        -- fetch data
-        -- Loop through the expansions to collect the textures
-        local numTiers = (EJ_GetNumTiers() or 0)
-        if numTiers > 0 then
-            local currentTier = EJ_GetCurrentTier()
-
-            for i = 1, numTiers do
-                EJ_SelectTier(i)
-                GW.GetInstanceImages(1, false)
-                GW.GetInstanceImages(1, true)
-            end
-
-            -- Set it back to the previous tier
-            if currentTier then
-                EJ_SelectTier(currentTier)
-            end
-        end
-    end
-
     -- Remove old debuffs from db
     GW.RemoveOldRaidDebuffsFormProfiles()
     GW.DisableBlizzardFrames()

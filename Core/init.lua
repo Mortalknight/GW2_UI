@@ -83,7 +83,6 @@ GW.BackdropTemplates = {}
 GW.AchievementFrameSkinFunction = {}
 GW.CreditsList = {}
 GW.texts = {}
-GW.instanceIconByName = {}
 GW.changelog = {}
 GW.Enum = {}
 GW.Colors = {}

@@ -78,7 +78,7 @@ end
 
 -- blizzards menu frames come from a pool and lose their art again on every open; the backdrop is
 -- created once per frame and kept here, not on the frame
-local menuBackdrops = setmetatable({}, {__mode = "k"})
+local menuBackdrops = {}
 
 local function SkinMenuFrame(menu)
     menu:GwStripTextures()

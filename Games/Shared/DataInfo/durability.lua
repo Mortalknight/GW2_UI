@@ -1,66 +1,68 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local totalDurability = 0
-local invDurability = {}
-local totalRepairCost
+-- worn items with durability, in slot order for the tooltip
+local itemSlots, itemPercents = {}, {}
+local lowestPercent = 100
 
-local slots = {
-    [1] = INVTYPE_HEAD,
-    [3] = INVTYPE_SHOULDER,
-    [5] = INVTYPE_CHEST,
-    [6] = INVTYPE_WAIST,
-    [7] = INVTYPE_LEGS,
-    [8] = INVTYPE_FEET,
-    [9] = INVTYPE_WRIST,
-    [10] = INVTYPE_HAND,
-    [16] = INVTYPE_WEAPONMAINHAND,
-    [17] = INVTYPE_WEAPONOFFHAND,
-    [18] = INVTYPE_RANGED,
-}
+-- the full tooltip data of an item is costly, so the cost is only asked for when the tooltip shows
+local function GetRepairCost(slot)
+    if C_TooltipInfo then
+        local data = C_TooltipInfo.GetInventoryItem("player", slot)
+        return data and data.repairCost or 0
+    end
+    -- clients without tooltip data return the cost from the scan tooltip
+    local _, _, cost = GW.ScanTooltip:SetInventoryItem("player", slot)
+    return cost or 0
+end
+
 local function DurabilityOnEvent(self, event)
-    totalDurability = 100
-    totalRepairCost = 0
+    wipe(itemSlots)
+    lowestPercent = 100
 
-    wipe(invDurability)
-
-    for idx in pairs(slots) do
-        local current, maximum = GetInventoryItemDurability(idx)
+    -- slots without durability (rings, trinkets, shirt, ...) simply return nil
+    for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
+        local current, maximum = GetInventoryItemDurability(slot)
         if current and maximum > 0 then
-            local perc, repairCost = (current / maximum) * 100
-            invDurability[idx] = perc
-
-            if perc < totalDurability then
-                totalDurability = perc
-            end
-            if GW.Retail then
-                local tooltipData = C_TooltipInfo.GetInventoryItem("player", idx)
-                repairCost = tooltipData and tooltipData.repairCost
-            else
-                _, _, repairCost = GW.ScanTooltip:SetInventoryItem("player", idx)
-            end
-
-            totalRepairCost = totalRepairCost + (repairCost or 0)
+            local percent = current / maximum * 100
+            itemSlots[#itemSlots + 1] = slot
+            itemPercents[slot] = percent
+            lowestPercent = min(lowestPercent, percent)
         end
     end
-    self.Value:SetFormattedText("%d%%", totalDurability)
 
-    GW.Debug("Durability update with event", event, "and durability of", totalDurability)
+    self.Value:SetFormattedText("%d%%", lowestPercent)
+    GW.Debug("Durability update with event", event, "and durability of", lowestPercent)
 end
 GW.DurabilityOnEvent = DurabilityOnEvent
 
 local function DurabilityTooltip(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    if self then
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    end
+    local white = GW.Colors.FallbackWhite
+    local repairCost = 0
     GameTooltip:ClearLines()
-    GameTooltip:AddLine(DURABILITY, 1, 1, 1)
+    GameTooltip:AddLine(DURABILITY, white.r, white.g, white.b)
 
-    for slot, durability in pairs(invDurability) do
-        GameTooltip:AddDoubleLine(format("|T%s:14:14:0:0:64:64:4:60:4:60|t %s", GetInventoryItemTexture("player", slot), GetInventoryItemLink("player", slot)), format("%d%%", durability), 1, 1, 1, GW.ColorGradient(durability * 0.01, 1, 0.1, 0.1, 1, 1, 0.1, 0.1, 1, 0.1))
+    for _, slot in ipairs(itemSlots) do
+        -- the item may have been unequipped since the last update
+        local texture, link = GetInventoryItemTexture("player", slot), GetInventoryItemLink("player", slot)
+        if texture and link then
+            local percent = itemPercents[slot]
+            if percent < 100 then
+                repairCost = repairCost + GetRepairCost(slot)
+            end
+            -- cropped so the icon border does not show
+            local icon = CreateTextureMarkup(texture, 64, 64, 14, 14, 0.08, 0.92, 0.08, 0.92)
+            GameTooltip:AddDoubleLine(icon .. " " .. link, format("%d%%", percent),
+                white.r, white.g, white.b, GW.ColorGradient(percent / 100, 1, 0.1, 0.1, 1, 1, 0.1, 0.1, 1, 0.1))
+        end
     end
 
-    if totalRepairCost > 0 then
+    if repairCost > 0 then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddDoubleLine(REPAIR_COST, GetMoneyString(totalRepairCost), 1, 1, 1, 1, 1, 1)
+        GameTooltip:AddDoubleLine(REPAIR_COST, GetMoneyString(repairCost), white.r, white.g, white.b, white.r, white.g, white.b)
     end
 
     GameTooltip:Show()

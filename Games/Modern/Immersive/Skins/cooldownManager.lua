@@ -70,8 +70,8 @@ local function SkinSettingItem(item)
     GW.HandleIcon(icon, true)
 end
 
-local skinnedHeaders = setmetatable({}, {__mode = "k"})
-local hookedItemPools = setmetatable({}, {__mode = "k"})
+local skinnedHeaders = {}
+local hookedItemPools = {}
 
 local function SkinCategories(content)
     if not content then return end
@@ -190,7 +190,7 @@ local ITEM_HOOKS = {
     end,
 }
 
-local hookedItems = setmetatable({}, {__mode = "k"})
+local hookedItems = {}
 
 local function SkinItemFrame(item)
     if item.Cooldown then

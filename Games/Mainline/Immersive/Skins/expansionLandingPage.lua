@@ -1,7 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local skinnedLists = setmetatable({}, {__mode = "k"})
+local skinnedLists = {}
 
 local function SkinFactionList(owner)
     local list = owner and owner.MajorFactionList
@@ -23,7 +23,7 @@ local function SkinCloseButton(button)
 end
 
 -- the overlay of the newest expansion; blizzard creates it when the page first needs it
-local skinnedOverlays = setmetatable({}, {__mode = "k"})
+local skinnedOverlays = {}
 local function SkinOverlays()
     for _, overlay in ipairs({ExpansionLandingPage.Overlay:GetChildren()}) do
         if not skinnedOverlays[overlay] then

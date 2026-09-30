@@ -157,7 +157,7 @@ local function SkinEventHeader(header)
     header.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
-local hookedEventBackgrounds = setmetatable({}, {__mode = "k"})
+local hookedEventBackgrounds = {}
 local function SkinOngoingEvent(event)
     if not hookedEventBackgrounds[event.Background] then
         hookedEventBackgrounds[event.Background] = true

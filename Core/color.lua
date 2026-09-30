@@ -46,6 +46,33 @@ GW.Colors.SkinColors = {
     Disabled = CreateColor(0.6, 0.6, 0.6), -- greyed out text, money that is missing
     Positive = CreateColor(0.3, 1, 0.3),
     Negative = CreateColor(1, 0.3, 0.3),
+    TokenBorder = CreateColor(0, 0.8, 1), -- the WoW token icon frame
+}
+
+-- the palette of the group frame aura indicators (Core/consts.lua), distinct tones so that
+-- several indicators of one class stay apart
+GW.Colors.IndicatorColors = {
+    Green = CreateColor(0.2, 0.8, 0.2),
+    Lime = CreateColor(0.78, 1, 0.25),
+    Mint = CreateColor(0.15, 1, 0.55),
+    Teal = CreateColor(0.3, 0.75, 0.75),
+    Cyan = CreateColor(0.2, 0.9, 0.95),
+    Blue = CreateColor(0.15, 0.3, 1),
+    Navy = CreateColor(0.05, 0.12, 0.45),
+    Purple = CreateColor(0.45, 0.25, 0.8),
+    Pink = CreateColor(0.85, 0.35, 0.85),
+    Red = CreateColor(0.9, 0.12, 0.08),
+    Orange = CreateColor(0.95, 0.5, 0.05),
+    Yellow = CreateColor(1, 0.95, 0.6),
+    Grey = CreateColor(0.65, 0.65, 0.65),
+}
+
+-- breath, fatigue and feign death bars, the tones Blizzard's classic timers use
+GW.Colors.MirrorTimerColors = {
+    EXHAUSTION = CreateColor(1, 0.9, 0),
+    BREATH = CreateColor(0, 0.5, 1),
+    DEATH = CreateColor(1, 0.7, 0),
+    FEIGNDEATH = CreateColor(1, 0.7, 0),
 }
 
 GW.Colors.PowerBarCustomColors = {

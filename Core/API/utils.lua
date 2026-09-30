@@ -349,13 +349,15 @@ local function GetScaledCursorDistance(left, top, scale)
 end
 GW.GetScaledCursorDistance = GetScaledCursorDistance
 
-GW.ShortPrefixValues = {}
+-- the units of the chosen prefix style (biggest first) and the decimals shown with them
+local shortUnits = {}
+local shortFormat = "%.1f"
 GW.ShortValueAbbreviationOptions = nil
 
 local RETAIL_SHORT_DECIMAL_MAX = 3
 
 local function BuildRetailShortValueOptions()
-    if not (GW.Retail and CreateAbbreviateConfig) then
+    if not (GW.isModern and CreateAbbreviateConfig) then
         GW.ShortValueAbbreviationOptions = nil
         return
     end
@@ -366,8 +368,8 @@ local function BuildRetailShortValueOptions()
     local fractionDivisor = 10 ^ decimal
     local breakpointData = {}
 
-    for i, style in ipairs(GW.ShortPrefixValues) do
-        local breakpoint, abbreviation = style[1], style[2]
+    for i, unit in ipairs(shortUnits) do
+        local breakpoint, abbreviation = unit[1], unit[2]
 
         breakpointData[i] = {
             breakpoint = breakpoint,
@@ -382,35 +384,25 @@ local function BuildRetailShortValueOptions()
 end
 
 local function BuildPrefixValues()
-    if next(GW.ShortPrefixValues) then wipe(GW.ShortPrefixValues) end
-
-    local prefixStyle = GW.ShortPrefixStyles[GW.settings.unitframes.shortValuePrefixStyle] or GW.ShortPrefixStyles.ENGLISH
-    GW.ShortPrefixValues = GW.CopyTable(prefixStyle)
-    local shortValueDec = format("%%.%df", GW.settings.unitframes.shortValueDecimals or 1)
-
-    for _, style in ipairs(GW.ShortPrefixValues) do
-        style[3] = shortValueDec
-    end
-
+    local settings = GW.settings.unitframes
+    shortUnits = GW.ShortPrefixStyles[settings.shortValuePrefixStyle] or GW.ShortPrefixStyles.ENGLISH
+    shortFormat = "%." .. (settings.shortValueDecimals or 1) .. "f"
     BuildRetailShortValueOptions()
 end
 GW.BuildPrefixValues = BuildPrefixValues
 
 local function ShortValue(value)
-    if GW.Retail then
+    -- retail values can be secret, only Blizzard's formatter may touch them
+    if GW.isModern then
         return AbbreviateNumbers(value, GW.ShortValueAbbreviationOptions)
     end
 
-    local abs_value = value<0 and -value or value
-    local values = GW.ShortPrefixValues
-
-    for i = 1, #values do
-        local arg1, arg2, arg3 = unpack(values[i])
-        if abs_value >= arg1 then
-            return GW.GetLocalizedNumber(format(arg3, value / arg1)) .. arg2
+    local size = abs(value)
+    for _, unit in ipairs(shortUnits) do
+        if size >= unit[1] then
+            return GW.GetLocalizedNumber(format(shortFormat, value / unit[1])) .. unit[2]
         end
     end
-
     return GW.GetLocalizedNumber(format("%.0f", value))
 end
 GW.ShortValue = ShortValue
@@ -483,12 +475,14 @@ function GW.GWGetClassColor(class, useClassColor, alwaysUseBlizzardColors)
 end
 
 
---RGB to Hex
+-- channels outside 0..1 count as full
+local function ToHexByte(channel)
+    return format("%02x", (channel >= 0 and channel <= 1 and channel or 1) * 255)
+end
+
+-- "|cffrrggbb" unless another header is given
 local function RGBToHex(r, g, b, header, ending)
-    r = r <= 1 and r >= 0 and r or 1
-    g = g <= 1 and g >= 0 and g or 1
-    b = b <= 1 and b >= 0 and b or 1
-    return format("%s%02x%02x%02x%s", header or "|cff", r * 255, g * 255, b * 255, ending or "")
+    return (header or "|cff") .. ToHexByte(r) .. ToHexByte(g) .. ToHexByte(b) .. (ending or "")
 end
 GW.RGBToHex = RGBToHex
 
@@ -740,27 +734,21 @@ end
 GW.Length = Length
 
 do
-    local splitTable = {}
+    -- the parts are reused between calls, callers asking for the table must not keep it
+    local parts = {}
     local function splitString(str, delim, returnTable)
+        wipe(parts)
         local start = 1
-        wipe(splitTable)
-
-        while true do
-            local pos = strfind(str, delim, start, true)
-            if not pos then
-                break
-            end
-            tinsert(splitTable, strsub(str, start, pos -1))
-            start = pos + strlen(delim)
-        end
-
-        tinsert(splitTable, strsub(str, start))
+        repeat
+            local first, last = strfind(str, delim, start, true)
+            parts[#parts + 1] = strsub(str, start, first and first - 1 or -1)
+            start = last and last + 1
+        until not first
 
         if returnTable then
-            return splitTable
-        else
-            return unpack(splitTable)
+            return parts
         end
+        return unpack(parts)
     end
     GW.splitString = splitString
 end
@@ -1148,48 +1136,23 @@ local function GetBagItemQualityColor(quality)
 end
 GW.GetBagItemQualityColor = GetBagItemQualityColor
 
+-- the ninth of the screen a frame's center is in, named like an anchor point
+local SCREEN_GRID = {
+    { "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT" },
+    { "LEFT", "CENTER", "RIGHT" },
+    { "TOPLEFT", "TOP", "TOPRIGHT" },
+}
 local function GetScreenQuadrant(frame)
     local x, y = frame:GetCenter()
-    local screenWidth = GetScreenWidth()
-    local screenHeight = GetScreenHeight()
-
     if not (x and y) then
         return "UNKNOWN"
     end
 
-    local point
-    if (x > (screenWidth / 3) and x < (screenWidth / 3) * 2) and y > (screenHeight / 3) * 2 then
-        point = "TOP"
-    elseif x < (screenWidth / 3) and y > (screenHeight / 3) * 2 then
-        point = "TOPLEFT"
-    elseif x > (screenWidth / 3) * 2 and y > (screenHeight / 3) * 2 then
-        point = "TOPRIGHT"
-    elseif (x > (screenWidth / 3) and x < (screenWidth / 3) * 2) and y < (screenHeight / 3) then
-        point = "BOTTOM"
-    elseif x < (screenWidth / 3) and y < (screenHeight / 3) then
-        point = "BOTTOMLEFT"
-    elseif x > (screenWidth / 3) * 2 and y < (screenHeight / 3) then
-        point = "BOTTOMRIGHT"
-    elseif x < (screenWidth / 3) and (y > (screenHeight / 3) and y < (screenHeight / 3) * 2) then
-        point = "LEFT"
-    elseif x > (screenWidth / 3) * 2 and y < (screenHeight / 3) * 2 and y > (screenHeight / 3) then
-        point = "RIGHT"
-    else
-        point = "CENTER"
-    end
-
-    return point
+    local column = min(3, max(1, floor(x / GetScreenWidth() * 3) + 1))
+    local row = min(3, max(1, floor(y / GetScreenHeight() * 3) + 1))
+    return SCREEN_GRID[row][column]
 end
 GW.GetScreenQuadrant = GetScreenQuadrant
-
-do
-    local a, d = "", {"|c[fF][fF]%x%x%x%x%x%x","|r","^%s+","%s+$","|[TA].-|[ta]"}
-    local function StripString(s, ignoreTextures)
-        for i = 1, #d - (ignoreTextures and 1 or 0) do s = gsub(s, d[i], a) end
-        return s
-    end
-    GW.StripString = StripString
-end
 
 local function ColorGradient(perc, ...)
     if perc >= 1 then
@@ -1490,30 +1453,18 @@ local function UpdateFontSettings()
 end
 GW.UpdateFontSettings = UpdateFontSettings
 
-local InstanceNameByID = {
-    -- List of not matching instanceID from EJ_GetInstanceByIndex and from GetInstanceInfo
-    [749] = C_Map.GetAreaInfo(3845) -- "The Eye" vs. "Tempest Keep"
-}
-
-if GW.mylocal == "deDE" then
-    InstanceNameByID[741] = "Geschmolzener Kern"        -- "Der Geschmolzene Kern"
-    InstanceNameByID[1023] = "Belagerung von Boralus"   -- "Die Belagerung von Boralus"
-    InstanceNameByID[1041] = "Königsruh"                -- "Die Königsruh"
-    InstanceNameByID[1021] = "Kronsteiganwesen"	        -- "Das Kronsteiganwesen"
-    InstanceNameByID[1186] = "Spitzen des Aufstiegs"    -- "Die Spitzen des Aufstiegs"
-    InstanceNameByID[1198] = "Angriff der Nokhud"		-- "Der Angriff der Nokhud"
-    InstanceNameByID[1203] = "Azurblaues Gewölbe"		-- "Das Azurblaube Gewölbe"
-    InstanceNameByID[758] = "Eiskronenzitadelle"	-- "Die Eiskronenzitadelle"
-end
-local function GetInstanceImages(index, raid)
-    local instanceID, name, _, _, buttonImage = EJ_GetInstanceByIndex(index, raid)
-    while instanceID do
-        GW.instanceIconByName[InstanceNameByID[instanceID] or name] = buttonImage
-        index = index + 1
-        instanceID, name, _, _, buttonImage = EJ_GetInstanceByIndex(index, raid)
+-- encounter journal art of a dungeon or raid by its game map id (the last return of GetSavedInstanceInfo)
+local instanceIcons = {}
+local function GetInstanceIcon(mapID)
+    if not mapID then return end
+    if not instanceIcons[mapID] and C_EncounterJournal and EJ_GetInstanceInfo then
+        local journalID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+        -- only hits are cached, the journal may not be ready on the first try
+        instanceIcons[mapID] = journalID and select(4, EJ_GetInstanceInfo(journalID)) or nil
     end
+    return instanceIcons[mapID]
 end
-GW.GetInstanceImages = GetInstanceImages
+GW.GetInstanceIcon = GetInstanceIcon
 
 local function BlizzardDropdownRadioButtonInitializer(button, description, menu, isSelected, data)
     if not isSelected and description.isSelected and type(description.isSelected) == "function" then

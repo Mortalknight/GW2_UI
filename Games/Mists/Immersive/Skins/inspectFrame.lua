@@ -4,169 +4,154 @@ local GW = select(2, ...)
 -- Window, header, tabs, paperdoll and model come from the shared base skin; what is left here are the panels
 -- mists brings on top: the talent tree with its specialisation and the glyph sockets.
 
-local passiveHighlight = "Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png"
-local activeHighlight = "Interface/AddOns/GW2_UI/textures/talents/active_highlight.png"
-local passiveOutline = "Interface/AddOns/GW2_UI/textures/talents/passive_outline.png"
-local activeOutline = "Interface/AddOns/GW2_UI/textures/talents/background_border.png"
+local TALENT_TEXTURES = {
+    passive = {
+        highlight = "Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png",
+        outline = "Interface/AddOns/GW2_UI/textures/talents/passive_outline.png",
+    },
+    active = {
+        highlight = "Interface/AddOns/GW2_UI/textures/talents/active_highlight.png",
+        outline = "Interface/AddOns/GW2_UI/textures/talents/background_border.png",
+    },
+}
 
-local function UpdateGlyph(frame)
+-- majors sit on the right column, minors on the left; offsets per glyph id
+local GLYPH_POINTS = { { 90, -10 }, { 15, 0 }, { 90, -100 }, { 15, -90 }, { 90, -190 }, { 15, -180 } }
+
+-- our art per Blizzard button, kept out of their frames
+local talentButtons = {}
+local glyphIcons = {}
+local glyphsSkinned = false
+
+local function UpdateGlyph(glyph)
     local talentGroup = PlayerTalentFrame and PlayerTalentFrame.talentGroup
-    local _, glyphType, _, _, iconFilename = GetGlyphSocketInfo(frame:GetID(), talentGroup, true, INSPECTED_UNIT)
+    local _, glyphType, _, _, iconFilename = GetGlyphSocketInfo(glyph:GetID(), talentGroup, true, INSPECTED_UNIT)
+    local icon = glyphIcons[glyph]
     if iconFilename then
-        SetPortraitToTexture(frame.texture, iconFilename)
+        SetPortraitToTexture(icon, iconFilename)
     else
-        frame.texture:SetTexture("Interface/AddOns/GW2_UI/textures/character/glyphs/237647.png")
+        icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/glyphs/237647.png")
     end
-    frame.ring:SetTexCoord(0, 1, 0, 1)
-    if glyphType == 1 then
-        frame.ring:SetSize(60, 60)
-    else
-        frame.ring:SetSize(50, 50)
-    end
+
+    -- Blizzard crops its ring atlas per type, ours is a whole texture
+    local ringSize = glyphType == 1 and 60 or 50
+    glyph.ring:SetTexCoord(0, 1, 0, 1)
+    glyph.ring:SetSize(ringSize, ringSize)
 end
 
 local function UpdateTalentButtons()
-    local talentInfoQuery = {
-        groupIndex = 1,
-        isInspect = false,
-        target = INSPECTED_UNIT
-    }
+    local query = { groupIndex = 1, isInspect = false, target = INSPECTED_UNIT }
+    for _, entry in ipairs(talentButtons) do
+        query.tier, query.column = entry.tier, entry.column
+        local info = C_SpecializationInfo.GetTalentInfo(query)
+        local art = IsPassiveSpell(info.spellID) and TALENT_TEXTURES.passive or TALENT_TEXTURES.active
+        local button = entry.button
+        local chosen = info.selected or button.available
 
-    for i = 1, 6 do
-        for j = 1, 3 do
-            local button = _G["InspectTalentFrameTalentRow" .. i .. "Talent" .. j]
-            if button then
-                talentInfoQuery.tier = i
-                talentInfoQuery.column = j
-                local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
-                local isPassive = IsPassiveSpell(talentInfo.spellID)
-                if isPassive then
-                    button.highlight:SetTexture(passiveHighlight)
-                    button.icon:AddMaskTexture(button.mask)
-                    button.outline:SetTexture(passiveOutline)
-                else
-                    button.highlight:SetTexture(activeHighlight)
-                    button.icon:RemoveMaskTexture(button.mask)
-                    button.outline:SetTexture(activeOutline)
-                end
-
-                button.icon:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
-                button:SetAlpha(1)
-                if talentInfo.selected or button.available then
-                    button.highlight:Show()
-                    button.icon:SetDesaturated(false)
-                else
-                    button.highlight:Hide()
-                    button.icon:SetDesaturated(true)
-                end
-            end
+        entry.highlight:SetTexture(art.highlight)
+        entry.highlight:SetShown(chosen)
+        entry.outline:SetTexture(art.outline)
+        -- passive talents get a round icon
+        if art == TALENT_TEXTURES.passive then
+            button.icon:AddMaskTexture(entry.mask)
+        else
+            button.icon:RemoveMaskTexture(entry.mask)
         end
+        button.icon:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
+        button.icon:SetDesaturated(not chosen)
+        button:SetAlpha(1)
     end
 end
 
+local function SkinTalentButton(button, tier, column)
+    button:GwStripTextures()
+    button:SetSize(30, 30)
+    button:GwStyleButton(nil, true)
+
+    local highlight = button:GetHighlightTexture()
+    highlight:GwSetInside(button.backdrop)
+    highlight:SetSize(30, 30)
+
+    local outline = button:CreateTexture(nil, "BACKGROUND")
+    outline:SetPoint("CENTER")
+    outline:SetSize(40, 40)
+
+    local mask = button:CreateMaskTexture()
+    mask:SetPoint("CENTER")
+    mask:SetSize(30, 30)
+    mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+
+    button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    button.icon:GwSetInside(button.backdrop)
+    button.icon:SetDrawLayer("ARTWORK", 2)
+
+    talentButtons[#talentButtons + 1] = { button = button, tier = tier, column = column, highlight = highlight, outline = outline, mask = mask }
+end
+
+local function SkinTalents()
+    local talents = InspectTalentFrame.InspectTalents
+    talents.tier1:SetPoint("TOPLEFT", 20, -142)
+
+    local tier = 1
+    while talents["tier" .. tier] do
+        local row = talents["tier" .. tier]
+        local column = 1
+        while row["talent" .. column] do
+            SkinTalentButton(row["talent" .. column], tier, column)
+            column = column + 1
+        end
+        tier = tier + 1
+    end
+
+    -- Blizzard refreshes the talents through this method once the inspect data arrives
+    hooksecurefunc(talents, "OnShow", UpdateTalentButtons)
+end
+
+-- Blizzard fills in name, icon and tooltip itself, only the looks change
 local function SkinSpec()
-    local InspectSpec = InspectTalentFrame.InspectSpec
-    InspectSpec:GwCreateBackdrop(GW.BackdropTemplates.Default)
-    InspectSpec.backdrop:SetPoint("TOPLEFT", 15, -13)
-    InspectSpec.backdrop:SetPoint("BOTTOMRIGHT", 20, 8)
-    InspectSpec:SetHitRectInsets(15, -13, 20, 8)
-    InspectSpec.backdrop:SetFrameLevel(InspectTalentFrame.InspectTalents:GetFrameLevel())
+    local spec = InspectTalentFrame.InspectSpec
+    spec:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    spec.backdrop:SetPoint("TOPLEFT", 15, -13)
+    spec.backdrop:SetPoint("BOTTOMRIGHT", 20, 8)
+    -- below the spec icon and texts
+    spec.backdrop:SetFrameLevel(max(0, spec:GetFrameLevel() - 1))
+    spec:SetHitRectInsets(15, -13, 20, 8)
 
-    InspectSpec.ring:SetTexture("")
-
-    InspectSpec.specIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    InspectSpec.specIcon.backdrop = CreateFrame("Frame", nil, InspectSpec)
-    InspectSpec.specIcon.backdrop:GwSetOutside(InspectSpec.specIcon)
-    InspectSpec.specIcon:SetParent(InspectSpec.specIcon.backdrop)
-
-    InspectSpec:HookScript("OnShow", function(frame)
-        frame.tooltip = nil
-
-        local spec = INSPECTED_UNIT and GetInspectSpecialization(INSPECTED_UNIT)
-        local _, _, desc, icon = GetSpecializationInfoByID(spec, UnitSex(INSPECTED_UNIT))
-        if icon and desc then
-            frame.tooltip = desc
-            frame.roleIcon:SetSize(20, 20)
-            frame.roleIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-            frame.roleName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-            frame.specIcon:SetTexture(icon)
-            frame.specName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        end
-
-        UpdateTalentButtons()
-    end)
+    spec.ring:SetTexture("")
+    spec.specIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    spec.roleIcon:SetSize(20, 20)
+    spec.specName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    spec.roleName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
-local function SkinTalentButtons()
-    for i = 1, 6 do
-        for j = 1, 3 do
-            local button = _G["InspectTalentFrameTalentRow" .. i .. "Talent" .. j]
-            if button then
-                button:GwStripTextures()
-                button:SetSize(30, 30)
-                button:GwStyleButton(nil, true)
-                button:GetHighlightTexture():GwSetInside(button.backdrop)
-                button.highlight = button:GetHighlightTexture()
-                button.highlight:SetSize(30, 30)
-
-                button.outline = button:CreateTexture(nil, "BACKGROUND")
-                button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border.png")
-                button.outline:SetSize(40, 40)
-                button.outline:SetPoint("CENTER", button, "CENTER", 0, 0)
-
-                button.mask = button:CreateMaskTexture()
-                button.mask:SetPoint("CENTER", button, "CENTER", 0, 0)
-                button.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-                button.mask:SetSize(30, 30)
-
-                if button.icon then
-                    button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-                    button.icon:GwSetInside(button.backdrop)
-                    button.icon:SetDrawLayer("ARTWORK", 2)
-                end
-            end
-        end
-    end
-end
-
--- the sockets only exist once the talent frame has been shown for the first time
+-- the sockets are filled once the talent frame shows for the first time
 local function SkinGlyphs(frame)
-    if frame.gwSkinned then return end
-    frame.gwSkinned = true
+    if glyphsSkinned then return end
+    glyphsSkinned = true
 
-    local InspectGlyphs = frame.InspectGlyphs
-    for i = 1, 6 do
-        local glyph = InspectGlyphs["Glyph" .. i]
-
+    for id, point in ipairs(GLYPH_POINTS) do
+        local glyph = frame.InspectGlyphs["Glyph" .. id]
+        local size = id % 2 == 1 and 30 or 50
+        glyph:SetSize(size, size)
+        glyph:SetPoint("TOPLEFT", point[1], point[2])
         glyph.highlight:SetTexture(nil)
         glyph.glyph:GwKill()
         glyph.ring:SetTexture("Interface/AddOns/GW2_UI/textures/character/glyphbgmajorequip.png")
-        glyph:SetSize(i % 2 == 1 and 30 or 50, i % 2 == 1 and 30 or 50)
 
-        if not glyph.texture then
-            glyph.texture = glyph:CreateTexture(nil, "OVERLAY", nil, 7)
-            glyph.texture:GwSetInside()
-
-            UpdateGlyph(glyph)
-            hooksecurefunc(glyph, "UpdateSlot", UpdateGlyph)
-        end
+        local icon = glyph:CreateTexture(nil, "OVERLAY", nil, 7)
+        icon:GwSetInside()
+        glyphIcons[glyph] = icon
+        UpdateGlyph(glyph)
+        hooksecurefunc(glyph, "UpdateSlot", UpdateGlyph)
     end
-
-    InspectGlyphs.Glyph1:SetPoint("TOPLEFT", 90, -10)
-    InspectGlyphs.Glyph2:SetPoint("TOPLEFT", 15, 0)
-    InspectGlyphs.Glyph3:SetPoint("TOPLEFT", 90, -100)
-    InspectGlyphs.Glyph4:SetPoint("TOPLEFT", 15, -90)
-    InspectGlyphs.Glyph5:SetPoint("TOPLEFT", 90, -190)
-    InspectGlyphs.Glyph6:SetPoint("TOPLEFT", 15, -180)
 end
 
 local function SkinInspectFrameOnLoad()
     if not GW.SkinInspectFrameBase() then return end
 
     InspectTalentFrame:GwStripTextures()
-    InspectTalentFrame.InspectTalents.tier1:SetPoint("TOPLEFT", 20, -142)
     SkinSpec()
-    SkinTalentButtons()
+    SkinTalents()
     InspectTalentFrame:HookScript("OnShow", SkinGlyphs)
 end
 
