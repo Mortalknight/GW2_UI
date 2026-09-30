@@ -32,6 +32,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.change, [=[Status report: cleaner layout, it lists the scale values with two decimals]=]},
     {GW.Enum.ChangelogType.bug, [=[Much lower memory churn: the event tracker, the chat filters and the durability data text no longer create garbage all the time]=]},
     {GW.Enum.ChangelogType.bug, [=[Hero panel: hovering a stat no longer shows the durability tooltip after stats were hidden or moved, and the durability value no longer overwrites another stat]=]},
+    {GW.Enum.ChangelogType.bug, [=[Bags: no more "This action has been blocked" when the bag is opened for the first time during combat, the item buttons are created before combat now]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix several taints, among them the spellbook and one in combat]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix combo points, the talent apply button, the alert system, the money data text and the party background of offline members]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix the raid control invite, the copy chat window, chat tab colors, the classic world map and mail on Mists]=]},

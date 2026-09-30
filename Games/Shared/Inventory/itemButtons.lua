@@ -218,6 +218,19 @@ local function UpdateOwnContainerItemButtons(cf, force)
 end
 GW.UpdateOwnContainerItemButtons = UpdateOwnContainerItemButtons
 
+-- item buttons created in combat get tainted clicks (a Blizzard restriction), so the missing ones
+-- are made up front; they stay hidden until the container is set up
+local function PrepareOwnContainerItemButtons(cf, bagID)
+    if not cf then
+        return
+    end
+    cf.gw_items = cf.gw_items or {}
+    for i = #cf.gw_items + 1, C_Container.GetContainerNumSlots(bagID) do
+        EnsureItemButton(cf, i):Hide()
+    end
+end
+GW.PrepareOwnContainerItemButtons = PrepareOwnContainerItemButtons
+
 -- (re)builds the own item buttons of one of our containers to match the bags current size.
 -- iconSize is only used for the initial skinning of newly created buttons. straightIDs assigns
 -- the slot ids in list order like the old bank frame buttons, without it the ids are assigned

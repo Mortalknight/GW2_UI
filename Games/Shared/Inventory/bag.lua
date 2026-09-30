@@ -1112,6 +1112,21 @@ local function LoadBag(helpers)
 
     -- setup initial events (more are added when open in bag_OnEvent)
     f:SetScript("OnEvent", bag_OnEvent)
+
+    -- the bag frame drops its events when closed, so the buttons are prepared by their own frame:
+    -- once after loading (the lockdown of a reload in combat only follows it) and at the start of
+    -- every fight for bags that grew since; without new slots that is just a size check per bag
+    local prepare = CreateFrame("Frame")
+    prepare:RegisterEvent("PLAYER_ENTERING_WORLD")
+    prepare:RegisterEvent("PLAYER_REGEN_DISABLED")
+    prepare:SetScript("OnEvent", function(self, event)
+        if event == "PLAYER_ENTERING_WORLD" then
+            self:UnregisterEvent(event)
+        end
+        for _, section in ipairs(BAG_SECTIONS) do
+            GW.PrepareOwnContainerItemButtons(f.ItemFrame.Containers[section.id], section.id)
+        end
+    end)
     hooksecurefunc("OpenBag", hookOpenBag)
     hooksecurefunc("CloseBag", hookCloseBag)
     hooksecurefunc("ToggleBag", hookToggleBag)
