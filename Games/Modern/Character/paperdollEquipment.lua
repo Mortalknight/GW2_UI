@@ -533,6 +533,10 @@ end
 ---------- stat tiles ----------
 
 local function Stat_OnEnter(self)
+    if self.stat == "DURABILITY" then
+        GW.DurabilityTooltip(self)
+        return
+    end
     if not self.tooltip then
         if self.onEnterFunc and not InCombatLockdown() then
             pcall(self.onEnterFunc, self)
@@ -601,7 +605,6 @@ function PDE.AddDurabilityTile(dressingRoom, entries)
     durabilityFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair.png")
     durabilityFrame.icon:SetTexCoord(0, 1, 0, 0.5)
     durabilityFrame.icon:SetDesaturated(true)
-    durabilityFrame:SetScript("OnEnter", GW.DurabilityTooltip)
     durabilityFrame:SetScript("OnEvent", GW.DurabilityOnEvent)
     durabilityFrame:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
     durabilityFrame:RegisterEvent("MERCHANT_SHOW")

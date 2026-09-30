@@ -198,7 +198,7 @@ local function StatOnEnter(self)
     GameTooltip:Show()
 end
 
-local function PaperDollGetStatListFrame(self, i, isPet, stat)
+local function PaperDollGetStatListFrame(self, i, isPet)
     local frameName = isPet and ("GwPaperDollPetStat" .. i) or ("GwPaperDollStat" .. i)
     local frame = _G[frameName]
     if frame then
@@ -206,14 +206,7 @@ local function PaperDollGetStatListFrame(self, i, isPet, stat)
     end
     frame = CreateFrame("Frame", frameName, self, "GwPaperDollStat")
 
-    if stat == "DURABILITY" then
-        frame:SetScript("OnEnter", GW.DurabilityTooltip)
-        frame:SetScript("OnEvent", GW.DurabilityOnEvent)
-        frame:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
-        frame:RegisterEvent("MERCHANT_SHOW")
-    else
-        frame:SetScript("OnEnter", StatOnEnter)
-    end
+    frame:SetScript("OnEnter", StatOnEnter)
     frame:SetScript("OnLeave", GameTooltip_Hide)
     frame.Value:SetFont(UNIT_NAME_FONT, 14, "")
     frame.Label:SetFont(UNIT_NAME_FONT, 1, "")
@@ -227,7 +220,7 @@ end
 local statTiles = {}
 
 local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
-    local statFrame = PaperDollGetStatListFrame(GwDressingRoom.stats, index, false, stat)
+    local statFrame = PaperDollGetStatListFrame(GwDressingRoom.stats, index, false)
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
@@ -237,7 +230,7 @@ local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y
     if stat == "DURABILITY" then
         statFrame.icon:SetSize(25, 25)
         statFrame.icon:SetPoint("LEFT", 5, 0)
-        GW.DurabilityOnEvent(statFrame, "ForceUpdate")
+        GW.WatchDurability(statFrame)
     else
         statFrame.icon:SetSize(35, 35)
         statFrame.icon:SetPoint("LEFT")

@@ -36,6 +36,20 @@ local function DurabilityOnEvent(self, event)
 end
 GW.DurabilityOnEvent = DurabilityOnEvent
 
+local watcher
+function GW.WatchDurability(tile)
+    if not watcher then
+        watcher = CreateFrame("Frame")
+        watcher:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
+        watcher:RegisterEvent("MERCHANT_SHOW")
+        watcher:SetScript("OnEvent", function(self, event)
+            DurabilityOnEvent(self.tile, event)
+        end)
+    end
+    watcher.tile = tile
+    DurabilityOnEvent(tile, "ForceUpdate")
+end
+
 local function DurabilityTooltip(self)
     if self then
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")

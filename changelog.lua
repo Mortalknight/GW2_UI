@@ -14,7 +14,27 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.0", {
-    {GW.Enum.ChangelogType.feature, [=[World of Warcraft: Forever]=]},
+    {GW.Enum.ChangelogType.feature, [=[Support for World of Warcraft: Forever, with its own hero panel (equipment, statistics, skills, professions, honor, pet and currency), bank, swing timer and skins for the auction house, professions, collections and the legacy system]=]},
+    {GW.Enum.ChangelogType.change, [=[One addon for every game version: the separate toc files are combined into one, retail and Forever share their code as the modern game version]=]},
+    {GW.Enum.ChangelogType.change, [=[Large parts of the code base are rewritten: skins, utilities, chat, tooltips, auras, data texts and settings helpers are cleaner, cheaper and share more code between the game versions]=]},
+    {GW.Enum.ChangelogType.feature, [=[New skins: class trainer, chat settings and chat frame, communities, item text (books and letters), battlefield map and cooldown manager on Forever, Auctionator addon skin; the mail skin option is available on Wrath]=]},
+    {GW.Enum.ChangelogType.change, [=[Updated skins: macros, flight map, merchant, inspect, dressing room and quest log on the classic clients, scroll bars of text windows hide when there is nothing to scroll]=]},
+    {GW.Enum.ChangelogType.change, [=[Chat: rebuilt as modules; every message runs through the filters only once instead of once per chat window, windows without channels no longer receive channel messages]=]},
+    {GW.Enum.ChangelogType.change, [=[Tooltips: rebuilt as modules, the mount a player rides is shown again where the game allows it]=]},
+    {GW.Enum.ChangelogType.change, [=[Auras: the aura bar is rewritten, new duration text]=]},
+    {GW.Enum.ChangelogType.feature, [=[Player pet frame: options for the portrait and the happiness indicator]=]},
+    {GW.Enum.ChangelogType.feature, [=[Upcoming spells are available on Classic, TBC, Wrath and Forever]=]},
+    {GW.Enum.ChangelogType.feature, [=[Quest tracker: the quest level is shown again]=]},
+    {GW.Enum.ChangelogType.change, [=[Target and focus frames no longer play the show animation]=]},
+    {GW.Enum.ChangelogType.feature, [=[Friends data text: game icons for every Blizzard game, the icon of the chat is used for games without an own icon]=]},
+    {GW.Enum.ChangelogType.change, [=[System data text: the memory use of GW2 UI has its own line, colored by its share of the total memory]=]},
+    {GW.Enum.ChangelogType.change, [=[Hero panel: grey items get a grey border, common items a white one on every game version]=]},
+    {GW.Enum.ChangelogType.change, [=[Status report: cleaner layout, it lists the scale values with two decimals]=]},
+    {GW.Enum.ChangelogType.bug, [=[Much lower memory churn: the event tracker, the chat filters and the durability data text no longer create garbage all the time]=]},
+    {GW.Enum.ChangelogType.bug, [=[Hero panel: hovering a stat no longer shows the durability tooltip after stats were hidden or moved, and the durability value no longer overwrites another stat]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fix several taints, among them the spellbook and one in combat]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fix combo points, the talent apply button, the alert system, the money data text and the party background of offline members]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fix the raid control invite, the copy chat window, chat tab colors, the classic world map and mail on Mists]=]},
 })
 
 addChange("11.2.1", {
