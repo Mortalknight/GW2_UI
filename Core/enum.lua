@@ -84,10 +84,9 @@ GW.Enum.ClassIndex = {
     Evoker = 13,
 }
 
--- The widgets a mover can register for the "Move HUD" panel. Strict: an unknown key is a typo and errors right away
--- instead of quietly leaving the option out.
-GW.Enum.MoverOptionType = setmetatable({
+-- The widgets a mover can register for the "Move HUD" panel
+GW.Enum.MoverOptionType = {
     Slider = 1,
     Checkbox = 2,
     Dropdown = 3,
-}, {__index = function(_, key) error(("unknown mover option type %q"):format(tostring(key)), 2) end})
+}

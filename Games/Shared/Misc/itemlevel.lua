@@ -3,6 +3,13 @@ local GW = select(2, ...)
 
 local LineType = Enum.TooltipDataLineType
 local ENCHANT_PATTERN = gsub(ENCHANTED_TOOLTIP_LINE, "%%s", "(.+)")
+local ITEM_LEVEL_PATTERN = gsub(ITEM_LEVEL, "%%d", "(%%d+)")
+-- what the typed lines of the tooltip data are about
+local KIND_BY_TYPE = LineType and {
+    [LineType.ItemLevel] = "itemLevel",
+    [LineType.ItemEnchantmentPermanent] = "enchant",
+    [LineType.GemSocket] = "gem",
+} or {}
 local EMPTY_SOCKET = "Interface\\ItemSocketingFrame\\UI-EmptySocket-%s"
 local SHORT_ENCHANT_LENGTH = 11
 local AVERAGE_SLOTS = 16
@@ -37,12 +44,42 @@ local function ReadEnchant(text)
     return colorStart .. name .. colorEnd .. icon, colorStart .. string.utf8sub(name, 1, SHORT_ENCHANT_LENGTH) .. colorEnd .. icon
 end
 
-local function GetTooltipData(unit, slot, itemLink)
-    if GW.NotSecretValue(itemLink) and itemLink and strfind(itemLink, "item", 1, true) then
-        return C_TooltipInfo.GetHyperlink(itemLink)
-    elseif slot then
-        return C_TooltipInfo.GetInventoryItem(unit, slot)
+-- clients without C_TooltipInfo read the scan tooltip, its lines get their kind from the text
+local function ScanTooltipData(unit, slot, itemLink)
+    local tooltip = GW.ScanTooltip
+    tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+    if itemLink then
+        tooltip:SetHyperlink(itemLink)
+    else
+        tooltip:SetInventoryItem(unit, slot)
     end
+
+    local lines = {}
+    for i = 1, tooltip:NumLines() do
+        local line = _G["GW2_UIScanTooltipTextLeft" .. i]
+        local text = line:GetText()
+        local kind = text and (strmatch(text, ITEM_LEVEL_PATTERN) and "itemLevel" or strmatch(text, ENCHANT_PATTERN) and "enchant")
+        lines[i] = {leftText = text, leftColor = CreateColor(line:GetTextColor()), kind = kind}
+    end
+    for i = 1, 10 do
+        local texture = _G["GW2_UIScanTooltipTexture" .. i]
+        if texture and texture:IsShown() then
+            lines[#lines + 1] = {leftText = "", kind = "gem", gemIcon = texture:GetTexture()}
+        end
+    end
+    tooltip:Hide()
+    return {lines = lines}
+end
+
+local function GetTooltipData(unit, slot, itemLink)
+    local isLink = GW.NotSecretValue(itemLink) and itemLink and strfind(itemLink, "item", 1, true)
+    if not (isLink or slot) then return end
+    if not C_TooltipInfo then
+        return ScanTooltipData(unit, slot, isLink and itemLink)
+    elseif isLink then
+        return C_TooltipInfo.GetHyperlink(itemLink)
+    end
+    return C_TooltipInfo.GetInventoryItem(unit, slot)
 end
 
 --[[
@@ -72,14 +109,15 @@ local function GetGearSlotInfo(unit, slot, itemLink)
     for _, line in ipairs(lines) do
         local text = line.leftText
         if GW.NotSecretValue(text) and text then
-            if line.type == LineType.ItemLevel then
+            local kind = line.kind or KIND_BY_TYPE[line.type]
+            if kind == "itemLevel" then
                 slotInfo.iLvl = ReadItemLevel(text)
-            elseif line.type == LineType.ItemEnchantmentPermanent then
+            elseif kind == "enchant" then
                 slotInfo.enchantText, slotInfo.enchantTextShort2 = ReadEnchant(text)
                 if line.leftColor then
                     slotInfo.enchantColors[1], slotInfo.enchantColors[2], slotInfo.enchantColors[3] = line.leftColor:GetRGB()
                 end
-            elseif line.type == LineType.GemSocket then
+            elseif kind == "gem" then
                 tinsert(slotInfo.gems, line.gemIcon or (line.socketType and format(EMPTY_SOCKET, line.socketType)))
             end
         end

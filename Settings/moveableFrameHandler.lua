@@ -164,9 +164,7 @@ local MoverOption = {
         end,
     },
 }
-GW.MoverOption = setmetatable(MoverOption, {__index = function(_, key)
-    error(("unknown mover option preset %q"):format(tostring(key)), 2)
-end})
+GW.MoverOption = MoverOption
 
 local OPTION_TEMPLATES = {
     [MoverOptionType.Slider] = "GwSmallSettingsSliderOption",
