@@ -10,6 +10,7 @@ env:
   # for github releases, this secret is automatically provided to the workflow
   GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
   CF_API_KEY: ${{ secrets.CF_API_KEY }}
+  WAGO_PROJECT_ID: "Mj6jXpGR"
 
 jobs:
   release: # "release" is a job, you can name it anything you want
@@ -44,3 +45,24 @@ jobs:
             args: >-
               -n
               {package-name}-${{ steps.alpha.outputs.alpha_version }}{nolib}{classic}:${{ steps.alpha.outputs.alpha_version }}{classic}{nolib}
+
+        - name: Upload Alpha to Wago
+          env:
+            WAGO_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+          run: |
+            # Sucht die vom Packager erstellte ZIP-Datei im .release-Ordner
+            ZIP_FILE=$(ls .release/*.zip | head -n 1)
+
+            if [ -z "$ZIP_FILE" ]; then
+              echo "Keine ZIP-Datei im .release-Ordner gefunden!" >&2
+              exit 1
+            fi
+
+            echo "Lade Datei hoch: $ZIP_FILE"
+
+            # Offizieller Wago Addons API-Endpunkt
+            curl -X POST "https://wago.io${{ env.WAGO_PROJECT_ID }}/version" \
+              -H "Authorization: Bearer $WAGO_TOKEN" \
+              -F "file=@$ZIP_FILE" \
+              -F "metadata={\"label\":\"${{ steps.alpha.outputs.alpha_version }}\",\"stability\":\"alpha\",\"changelog\":${{ steps.alpha.outputs.changelog_json }},\"gameStructure\":[\"retail\"]}"
+
