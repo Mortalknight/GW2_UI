@@ -61,7 +61,7 @@ jobs:
             echo "Lade Datei hoch: $ZIP_FILE"
 
             # Offizieller Wago Addons API-Endpunkt
-            curl -X POST "https://wago.io${{ env.WAGO_PROJECT_ID }}/version" \
+            curl -X POST "https://wago.io/${{ env.WAGO_PROJECT_ID }}/version" \
               -H "Authorization: Bearer $WAGO_TOKEN" \
               -F "file=@$ZIP_FILE" \
               -F "metadata={\"label\":\"${{ steps.alpha.outputs.alpha_version }}\",\"stability\":\"alpha\",\"changelog\":${{ steps.alpha.outputs.changelog_json }},\"gameStructure\":[\"retail\"]}"
