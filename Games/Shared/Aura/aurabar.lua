@@ -64,8 +64,8 @@ end
 local function ClearTimer(button)
     button.expiration = nil
     button.cooldown:Hide()
-    button.status.duration:SetText("")
     SetTimerLayout(button, false, button.stacks)
+    button.status.duration:SetText("")
 end
 
 local function ShowTimer(button, expiration, duration, noSwipe)

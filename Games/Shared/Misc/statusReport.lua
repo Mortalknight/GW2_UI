@@ -50,8 +50,8 @@ local SECTIONS = {
             { "GW2 UI version", function() return GW.GetVersionString() end },
             { "Other AddOns enabled", function() local on = AreOtherAddOnsEnabled() return YesNo(on), on end },
             { "Paste AddOn enabled", function() local on = CheckForPasteAddon() return YesNo(on), on end },
-            { "Recommended scale", function() return GW.getBestPixelScale() end },
-            { "UI scale", function() return GW.scale, GW.scale ~= GW.getBestPixelScale() end },
+            { "Recommended scale", function() return format("%.2f", GW.getBestPixelScale()) end },
+            { "UI scale", function() return format("%.2f", GW.scale), GW.scale ~= GW.getBestPixelScale() end },
         },
     },
     {
@@ -128,6 +128,7 @@ local function CreateStatusFrame()
 
         local separator = frame:CreateTexture(nil, "ARTWORK")
         separator:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
+        separator:SetTexCoord(0.5, 1, 0, 1)
         separator:SetHeight(2)
         separator:SetPoint("TOPLEFT", PADDING - 4, y - 20)
         separator:SetPoint("TOPRIGHT", -PADDING + 4, y - 20)

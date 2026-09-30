@@ -793,6 +793,28 @@ local function HandleRotateButton(button)
 end
 GW.HandleRotateButton = HandleRotateButton
 
+-- the rotate buttons of the classic model frames: blizzards refresh arrow, turned for the
+-- direction the button sits on, grey on a small GW box
+local REFRESH_ARROW = [[Interface\Buttons\UI-RefreshButton]]
+local REFRESH_ARROW_COORDS = {
+    left = {normal = {0, 1, 1, 1, 0, 0, 1, 0}, pushed = {1, 1, 1, 0, 0, 1, 0, 0}},
+    right = {normal = {0, 0, 1, 0, 0, 1, 1, 1}, pushed = {0, 1, 0, 0, 1, 1, 1, 0}},
+}
+
+function GW.HandleClassicRotateButton(button, side)
+    HandleRotateButton(button)
+    button:SetNormalTexture(REFRESH_ARROW)
+    button:SetPushedTexture(REFRESH_ARROW)
+    local coords = REFRESH_ARROW_COORDS[side]
+    for key, texture in pairs({normal = button:GetNormalTexture(), pushed = button:GetPushedTexture()}) do
+        texture:SetTexCoord(unpack(coords[key]))
+        texture:SetDesaturated(true)
+    end
+    if not button.backdrop then
+        button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    end
+end
+
 -- plain text tabs: the active one white and underlined, the others grey, lighter on hover
 function GW.AddTextTabArt(tab)
     tab.gwLabel = tab:CreateFontString(nil, "OVERLAY")

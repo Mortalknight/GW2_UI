@@ -16,6 +16,8 @@ local OBJECTIVE_DONE_COLOR = GW.Colors.SkinColors.QuestGold
 local OBJECTIVE_OPEN_COLOR = GW.Colors.SkinColors.ObjectiveOpen
 local ARROW_RIGHT = "Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right.png"
 local ARROW_DOWN = "Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png"
+local CHECKBOX = "Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png"
+local CHECKBOX_CHECKED = "Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png"
 local LIST_WIDTH = 303
 
 local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
@@ -306,6 +308,32 @@ local function LayoutSplitLog()
     end
 end
 
+-- "track quest" of the row log: a radio art blizzard tints green while quests are watched,
+-- our check box instead
+local function SkinTrackToggle()
+    if not QuestLogTrack or not QuestLogTrackTracking then return end
+
+    for _, region in ipairs({QuestLogTrack:GetRegions()}) do
+        if region:IsObjectType("Texture") then
+            region:SetAlpha(0)
+        end
+    end
+    local box = QuestLogTrack:CreateTexture(nil, "ARTWORK")
+    box:SetSize(16, 16)
+    box:SetPoint("LEFT", 2, 0)
+    QuestLogTrackTitle:ClearAllPoints()
+    QuestLogTrackTitle:SetPoint("LEFT", box, "RIGHT", 4, 0)
+    QuestLogTrackTitle:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    QuestLogTrackTitle:SetTextColor(TEXT_COLOR:GetRGB())
+
+    local function UpdateBox(_, r, g)
+        -- green while quests are watched, red otherwise
+        box:SetTexture(g > 0.5 and r < 0.5 and CHECKBOX_CHECKED or CHECKBOX)
+    end
+    hooksecurefunc(QuestLogTrackTracking, "SetVertexColor", UpdateBox)
+    UpdateBox(nil, QuestLogTrackTracking:GetVertexColor())
+end
+
 local function LayoutRowLog()
     QuestLogListScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 2)
     QuestLogDetailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 4)
@@ -337,7 +365,14 @@ local function LayoutRowLog()
         QuestLogCollapseAllButton:GwStripTextures()
         QuestLogCollapseAllButton:SetPoint("TOPLEFT", -45, 7)
         QuestLogCollapseAllButton:ClearHighlightTexture()
+        local text = QuestLogCollapseAllButton:GetFontString()
+        text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+        text:GwLockTextColor(HEADER_COLOR:GetRGB())
     end
+    SkinTrackToggle()
+
+    -- the details only show their scroll bar when the text is longer than the pane
+    QuestLogDetailScrollFrame.scrollBarHideable = 1
 end
 
 -- the npc model beside the log in our frames, the name above it and the text in a slim scroll frame

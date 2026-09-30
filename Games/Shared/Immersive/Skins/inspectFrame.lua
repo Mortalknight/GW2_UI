@@ -174,20 +174,12 @@ local function SkinModel()
 
     local left, right = InspectModelFrameRotateLeftButton, InspectModelFrameRotateRightButton
     if left then
-        GW.HandleRotateButton(left)
+        GW.HandleClassicRotateButton(left, "left")
         left:SetPoint("TOPLEFT", 3, -3)
-        left:SetNormalTexture([[Interface\Buttons\UI-RefreshButton]])
-        left:GetNormalTexture():SetTexCoord(0, 1, 1, 1, 0, 0, 1, 0)
-        left:SetPushedTexture([[Interface\Buttons\UI-RefreshButton]])
-        left:GetPushedTexture():SetTexCoord(1, 1, 1, 0, 0, 1, 0, 0)
     end
     if right then
-        GW.HandleRotateButton(right)
+        GW.HandleClassicRotateButton(right, "right")
         right:SetPoint("TOPLEFT", left or InspectModelFrame, left and "TOPRIGHT" or "TOPLEFT", 3, left and 0 or -3)
-        right:SetNormalTexture([[Interface\Buttons\UI-RefreshButton]])
-        right:GetNormalTexture():SetTexCoord(0, 0, 1, 0, 0, 1, 1, 1)
-        right:SetPushedTexture([[Interface\Buttons\UI-RefreshButton]])
-        right:GetPushedTexture():SetTexCoord(0, 1, 0, 0, 1, 1, 1, 0)
     end
 end
 

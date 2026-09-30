@@ -62,8 +62,10 @@ local function PlacePrices()
     end
 end
 
--- the junk button sits between the two repair buttons
+-- the junk button sits between the two repair buttons; without guild repair Blizzard puts the label behind them
 local function PlaceRepairButtons()
+    MerchantRepairText:ClearAllPoints()
+    MerchantRepairText:SetPoint("BOTTOMLEFT", MerchantFrame, "BOTTOMLEFT", 14, 69)
     MerchantRepairAllButton:ClearAllPoints()
     MerchantRepairAllButton:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMLEFT", 90, 32)
     MerchantRepairItemButton:ClearAllPoints()
@@ -97,7 +99,6 @@ local function ColorItemsByQuality()
 
     local buybackName = GetBuybackItemInfo(GetNumBuybackItems())
     ColorByQuality(buybackName, buybackName and MerchantBuyBackItemName, MerchantBuyBackItemItemButtonIconTexture.backdrop)
-    MerchantRepairText:SetPoint("BOTTOMLEFT", 14, 69)
 end
 
 local function OnMerchantInfoUpdate()

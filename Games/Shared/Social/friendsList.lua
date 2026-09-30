@@ -14,7 +14,7 @@ local delimiter = format("|cff%s | |r", "979fad")
 GW.friendsList = {}
 GW.friendsList.projectCodes = {
     ["ANBS"] = "Diablo Immortal",
-    ["Hero"] = "Heroes of the Storm",
+    ["HERO"] = "Heroes of the Storm",
     ["OSI"] = "Diablo II",
     ["S2"] = "StarCraft II",
     ["VIPR"] = "Call of Duty: Black Ops 4",
@@ -37,60 +37,78 @@ GW.friendsList.projectCodes = {
 
 GW.friendsList.clientData = {
     ["Diablo Immortal"] = {
+        icon = MediaPath .. "GameIcons/di.png",
         color = { r = 0.768, g = 0.121, b = 0.231 },
     },
     ["Heroes of the Storm"] = {
+        icon = MediaPath .. "GameIcons/heroes.png",
         color = { r = 0, g = 0.8, b = 1 },
     },
     ["Diablo II"] = {
+        icon = MediaPath .. "GameIcons/d2.png",
         color = { r = 0.768, g = 0.121, b = 0.231 },
     },
     ["StarCraft II"] = {
+        icon = MediaPath .. "GameIcons/sc2.png",
         color = { r = 0.749, g = 0.501, b = 0.878 },
     },
     ["Call of Duty: Black Ops 4"] = {
+        icon = MediaPath .. "GameIcons/cb4.png",
         color = { r = 0, g = 0.8, b = 0 },
     },
     ["WarCraft III"] = {
+        icon = MediaPath .. "GameIcons/wc3.png",
         color = { r = 0.796, g = 0.247, b = 0.145 },
     },
     ["Battle.net App"] = {
+        icon = MediaPath .. "GameIcons/App",
         color = { r = 0.509, g = 0.772, b = 1 },
     },
     ["Call of Duty: Vanguard"] = {
+        icon = MediaPath .. "GameIcons/codvanguard.png",
         color = { r = 0, g = 0.8, b = 0 },
     },
     ["Call of Duty: MW2 Campaign Remastered"] = {
+        icon = MediaPath .. "GameIcons/codmw2.png",
         color = { r = 0, g = 0.8, b = 0 },
     },
     ["Blizzard Arcade Collection"] = {
+        icon = MediaPath .. "GameIcons/arcade.png",
         color = { r = 0.509, g = 0.772, b = 1 },
     },
     ["Crash Bandicoot 4: It's About Time"] = {
         color = { r = 0.509, g = 0.772, b = 1 },
     },
     ["Hearthstone"] = {
+        icon = MediaPath .. "GameIcons/hearthstone.png",
         color = { r = 1, g = 0.694, b = 0 },
     },
     ["Call of Duty: Blac Ops Cold War"] = {
+        icon = MediaPath .. "GameIcons/codcw.png",
         color = { r = 0, g = 0.8, b = 0 },
     },
     ["Diablo III"] = {
+        icon = MediaPath .. "GameIcons/d3.png",
         color = { r = 0.768, g = 0.121, b = 0.231 },
     },
     ["Warcraft Arclight Rumble"] = {
+        icon = MediaPath .. "GameIcons/arclight.png",
         color = { r = 0.945, g = 0.757, b = 0.149 },
     },
     ["Call of Duty: Mordern Warfare II"] = {
+        icon = MediaPath .. "GameIcons/codmw.png",
         color = { r = 0, g = 0.8, b = 0 },
     },
     ["StarCraft"] = {
+        icon = MediaPath .. "GameIcons/sc.png",
         color = { r = 0.749, g = 0.501, b = 0.878 },
     },
     ["World of Warcraft"] = {
+        icon = MediaPath .. "GameIcons/wow.png",
         color = { r = 0.866, g = 0.690, b = 0.180 },
     },
     ["Overwatch"] = {
+        icon = MediaPath .. "GameIcons/overwatch.png",
         color = { r = 1, g = 1, b = 1 },
     },
 }
