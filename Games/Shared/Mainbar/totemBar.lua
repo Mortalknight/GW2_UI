@@ -14,9 +14,8 @@ function GwTotemBarMixin:UpdateVisibility()
 end
 
 -- Blizzard's totem button moves into ours: it stays invisible but keeps its
--- tooltip and the right click that dismisses the totem.
-local function ShowTotem(button, totem)
-    local slot = totem.slot
+-- tooltip and the right click that dismisses the totem. Era has no such button.
+local function ShowTotem(button, slot, totem)
     local _, _, startTime, duration, icon = GetTotemInfo(slot)
 
     button.iconTexture:SetTexture(icon)
@@ -26,7 +25,7 @@ local function ShowTotem(button, totem)
         button.cooldown:SetCooldown(startTime, duration)
     end
 
-    if totem:GetParent() ~= button.holder then
+    if totem and totem:GetParent() ~= button.holder then
         totem:SetParent(button.holder)
         totem:ClearAllPoints()
         totem:SetAllPoints(button.holder)
@@ -42,19 +41,23 @@ function GwTotemBarMixin:Update()
         button:Hide()
     end
 
-    -- most clients pool their totem buttons, Wrath still has fixed ones
-    if TotemFrame.totemPool then
+    -- most clients pool their totem buttons, Wrath still has fixed ones, Era has none
+    if not TotemFrame then
+        for slot, button in ipairs(self.buttons) do
+            ShowTotem(button, slot)
+        end
+    elseif TotemFrame.totemPool then
         for totem in TotemFrame.totemPool:EnumerateActive() do
             local button = self.buttons[totem.layoutIndex]
             if button then
-                ShowTotem(button, totem)
+                ShowTotem(button, totem.slot, totem)
             end
         end
     else
         for i, button in ipairs(self.buttons) do
             local totem = _G["TotemFrameTotem" .. i]
             if totem and totem.slot and totem.slot > 0 then
-                ShowTotem(button, totem)
+                ShowTotem(button, totem.slot, totem)
             end
         end
     end
@@ -128,7 +131,9 @@ function GW.CreateTotemBar()
     bar:PositionAndSizeUpdate()
 
     -- Blizzard rebuilds its buttons on spec and form changes, so follow its updates
-    hooksecurefunc(TotemFrame, "Update", function() bar:Update() end)
+    if TotemFrame then
+        hooksecurefunc(TotemFrame, "Update", function() bar:Update() end)
+    end
     bar:RegisterEvent("PLAYER_TOTEM_UPDATE")
     bar:RegisterEvent("PLAYER_ENTERING_WORLD")
     bar:SetScript("OnEvent", bar.Update)
