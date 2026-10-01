@@ -2,5 +2,6 @@
     <Script file ="toolkit.lua"/>
     <Script file ="utils.lua"/>
     <Script file ="api.lua"/>
+    <Script file ="dispel.lua"/>
     <Script file ="storage.lua"/>
 </Ui>

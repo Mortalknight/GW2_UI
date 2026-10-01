@@ -4,7 +4,7 @@ local GW = select(2, ...)
 -- the classic clients show the player auras through blizzards secure aura header
 if GW.isModern then return end
 
-local BadDispels = GW.Libs.Dispel:GetBadList()
+local BadDispels = GW.Dispel.BadDispels
 
 local SHORT_AURA_DURATION = 121 -- up to here an aura shows the cooldown swipe
 local NEW_AURA_WINDOW = 0.5
@@ -87,7 +87,7 @@ local function SetBorderColor(button, dispelType, spellID)
         color = GW.Colors.DebuffColors.Curse
     elseif button.header.filter == "HELPFUL" then
         color = GW.Colors.Fallback
-    elseif dispelType and BadDispels[spellID] and GW.Libs.Dispel:IsDispellableByMe(dispelType) then
+    elseif GW.Dispel.CanDispel(dispelType) and BadDispels[spellID] then
         color = GW.Colors.DebuffColors.BadDispel
     else
         color = GW.Colors.DebuffColors[dispelType] or GW.Colors.DebuffColors.None

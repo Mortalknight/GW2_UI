@@ -1,6 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
-local BadDispels = GW.Libs.Dispel:GetBadList()
+local BadDispels = GW.Dispel.BadDispels
 
 if GW.isModern then return end
 
@@ -242,7 +242,7 @@ local function updateAura(element, unit, data, position)
     end
 
     if data.isHarmfulAura then
-        if data.dispelName and BadDispels[data.spellId] and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+        if GW.Dispel.CanDispel(data.dispelName) and BadDispels[data.spellId] then
             data.dispelName = "BadDispel"
         end
 
@@ -268,11 +268,11 @@ local function updateAura(element, unit, data, position)
 
     elseif UnitIsFriend(unit, "player") and data.isHarmfulAura and button.typeAura == "smallbuff" then
         -- debuffs
-        if GW.ImportantRaidDebuff[data.spellId] and data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+        if GW.ImportantRaidDebuff[data.spellId] and GW.Dispel.CanDispel(data.dispelName) then
             size = size * GW.GetDebuffScaleBasedOnPrio()
         elseif GW.ImportantRaidDebuff[data.spellId] then
             size = size * tonumber(GW.settings.groupFrames.raidDebuffsScale)
-        elseif data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+        elseif GW.Dispel.CanDispel(data.dispelName) then
             size = size * tonumber(GW.settings.groupFrames.dispelDebuffsScale)
         end
     end
@@ -307,7 +307,7 @@ local function CheckFilter(data, filters)
         or (filters.notAuraCancelablePlayer and perma and player)
         or (filters.isAuraRaid and data.isAuraRaid and other)
         or (filters.isAuraRaidPlayer and data.isAuraRaid and player)
-        or (filters.isAuraRaidPlayerDispellable and data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName))
+        or (filters.isAuraRaidPlayerDispellable and GW.Dispel.CanDispel(data.dispelName))
 end
 
 local function FilterAura(element, unit, data)

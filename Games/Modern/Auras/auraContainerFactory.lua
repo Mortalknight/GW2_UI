@@ -55,7 +55,7 @@ local ADVANCED_FILTER_TOKENS = {
     { setting = "isAuraImportant",         token = "IMPORTANT" },
 }
 
--- "Dispellable" is not a field, it maps to dispel type candidates (LibDispel)
+-- "Dispellable" is not a field, it maps to dispel type candidates (GW.Dispel)
 local ADVANCED_CANDIDATE_FIELDS = {
     { setting = "isAuraStealable",         field = "isStealable" },
     { setting = "isAuraBoss",              field = "isBossAura" },
@@ -131,7 +131,7 @@ function GW.ComposeAuraGroupCandidates(group, selection, extra)
     absorb(selection)
 
     local dispellable = selection and selection.gwDispellable
-    local myTypes = GW.Libs.Dispel:GetMyDispelTypes()
+    local myTypes = GW.Dispel.GetMyTypes()
     if group.gwDispelRole == "include" then
         put("includeDispelTypes", dispellable == 1 and EMPTY_DISPEL_TYPES or myTypes)
     elseif group.gwDispelRole == "exclude" then
@@ -386,7 +386,7 @@ function GW.RefreshAllAuraContainers()
     end
 end
 
--- LibDispel's type table changes in place, invisible to the reference compares
+-- the dispel type table changes in place, invisible to the reference compares
 EventRegistry:RegisterCallback("GW2_UI.DispelTypesChanged", GW.RefreshAllAuraContainers, "GW2_UI")
 
 -- part of the button height, so the container's own size covers the text and frames can anchor below it

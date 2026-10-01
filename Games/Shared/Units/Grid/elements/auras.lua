@@ -1,6 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
-local BadDispels = GW.Libs.Dispel:GetBadList()
+local BadDispels = GW.Dispel.BadDispels
 local INDICATORS = GW.INDICATORS
 local INDICATOR_CONFIG = {
     TOPLEFT = { point = "TOPLEFT", x = 0.3, y = -0.3 },
@@ -87,7 +87,7 @@ local function PostUpdateButton(self, button, unit, data, position)
 
     if data.isHarmfulAura then
         local size = 16
-        local isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
+        local isDispellable = GW.Dispel.CanDispel(data.dispelName)
         local isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
         if isImportant and isDispellable then
             size = size * GW.GetDebuffScaleBasedOnPrio()
@@ -282,10 +282,10 @@ local function FilterAura(self, unit, data)
 
         return CheckForAuraIndicators(self, parent, isPlayerBuff, data, shouldDisplay)
     else
-        isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
+        isDispellable = GW.Dispel.CanDispel(data.dispelName)
         isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
 
-        if data.dispelName and BadDispels[data.spellId] and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+        if GW.Dispel.CanDispel(data.dispelName) and BadDispels[data.spellId] then
             data.dispelName = "BadDispel"
         end
 
