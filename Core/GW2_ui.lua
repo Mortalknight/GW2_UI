@@ -919,6 +919,7 @@ local function evLoadSkins()
         GW.LoadCommunitiesSkin()
         GW.LoadBattlefieldMapSkin()
         GW.LoadCooldownManagerSkin()
+        GW.LoadPlayerChoiceSkin()
         GW.LoadAuctionatorAddonSkin()
     end
 

@@ -1735,6 +1735,9 @@ GW.globalDefault = {
             barberShop = {
                 enabled = true,
             },
+            playerChoice = {
+                enabled = true,
+            },
             inspection = {
                 enabled = true,
             },

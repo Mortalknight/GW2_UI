@@ -1268,12 +1268,20 @@ local function HandleItemReward(frame, isMap)
 
     if frame.Icon then
         frame.Icon:SetDrawLayer("ARTWORK")
-        frame.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
         frame.Icon:SetAlpha(0.9)
-    end
-
-    if frame.IconBorder then
-        frame.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+        if not frame.Icon.backdrop then
+            GW.HandleIcon(frame.Icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
+            frame.Icon.backdrop:SetFrameLevel(frame:GetFrameLevel() + 1)
+            if frame.IconBorder then
+                GW.HandleIconBorder(frame.IconBorder, frame.Icon.backdrop)
+            end
+        end
+        if frame.IconOverlay then
+            frame.IconOverlay:SetAlpha(0)
+        end
+        if frame.IconOverlay2 then
+            frame.IconOverlay2:SetAlpha(0)
+        end
     end
 
     if frame.Count then
@@ -1295,10 +1303,6 @@ local function HandleItemReward(frame, isMap)
 
     if frame.Name then
         frame.Name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    end
-
-    if frame.IconOverlay then
-        frame.IconOverlay:SetAlpha(0)
     end
 
     if frame.CircleBackground then
@@ -1387,6 +1391,8 @@ local function ColorObjectives()
     end
 end
 
+local questInfoTextsSkinned = false
+
 local function QuestInfo_Display(template, parentFrame)
     if not GW.settings.skins.questLog.enabled and not GW.settings.immersiveQuesting.enabled and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
         return
@@ -1427,18 +1433,29 @@ local function QuestInfo_Display(template, parentFrame)
             SkinFollowerReward(followerReward)
         end
     end
+    if fRwd.reputationRewardPool then
+        for reputationReward in fRwd.reputationRewardPool:EnumerateActive() do
+            GW.HandleItemReward(reputationReward, isMapStyle)
+        end
+    end
 
-    _G.QuestInfoTitleHeader:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
-    _G.QuestInfoDescriptionHeader:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
-    _G.QuestInfoDescriptionText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    _G.QuestInfoObjectivesHeader:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
-    _G.QuestInfoObjectivesText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    _G.QuestInfoGroupSize:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    _G.QuestInfoRewardText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    _G.QuestInfoQuestType:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    if not questInfoTextsSkinned then
+        questInfoTextsSkinned = true
+        for _, header in pairs({_G.QuestInfoTitleHeader, _G.QuestInfoDescriptionHeader, _G.QuestInfoObjectivesHeader, fRwd.Header}) do
+            if header.GwSetFontTemplate then
+                header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+            end
+        end
+        for _, header in pairs({_G.QuestInfoTitleHeader, _G.QuestInfoDescriptionHeader, _G.QuestInfoObjectivesHeader}) do
+            header:GwLockTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        end
+        for _, text in pairs({_G.QuestInfoDescriptionText, _G.QuestInfoObjectivesText, _G.QuestInfoGroupSize, _G.QuestInfoRewardText,
+                _G.QuestInfoQuestType, fRwd.ItemChooseText, fRwd.ItemReceiveText, fRwd.PlayerTitleText, fRwd.SpellLearnText, fRwd.XPFrame.ReceiveText}) do
+            text:GwLockTextColor(GW.Colors.FallbackWhite:GetRGB())
+        end
+    end
+
     select(1, _G.QuestInfoItemHighlight:GetRegions()):SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/questitemhighlight.png")
-    fRwd.ItemChooseText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    fRwd.ItemReceiveText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     if GW.Retail then
         QuestMapFrame.DetailsFrame.BackFrame.AccountCompletedNotice.Text:SetTextColor(0, 0.9, 0.6)
     end
@@ -1447,19 +1464,7 @@ local function QuestInfo_Display(template, parentFrame)
         fRwd.Header:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         fRwd.Header:SetShadowColor(0, 0, 0, 1)
     elseif fRwd.Header.SetTextColor then
-        fRwd.Header:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
-    end
-
-    if fRwd.SpellLearnText then
-        fRwd.SpellLearnText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    end
-
-    if fRwd.PlayerTitleText then
-        fRwd.PlayerTitleText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    end
-
-    if fRwd.XPFrame.ReceiveText then
-        fRwd.XPFrame.ReceiveText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+        fRwd.Header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     end
 
     ColorObjectives()

@@ -17,6 +17,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Support for World of Warcraft: Forever, with its own hero panel (equipment, statistics, skills, professions, honor, pet and currency), bank, swing timer and skins for the auction house, professions, collections and the legacy system]=]},
     {GW.Enum.ChangelogType.change, [=[One addon for every game version: the separate toc files are combined into one, retail and Forever share their code as the modern game version]=]},
     {GW.Enum.ChangelogType.change, [=[Large parts of the code base are rewritten: skins, utilities, chat, tooltips, auras, data texts and settings helpers are cleaner, cheaper and share more code between the game versions]=]},
+    {GW.Enum.ChangelogType.feature, [=[New skin for the quest choice window (Retail and Forever): campaign and weekly choices with GW2 background, cards, fonts and buttons]=]},
     {GW.Enum.ChangelogType.feature, [=[New skins: class trainer, chat settings and chat frame, communities, item text (books and letters), battlefield map and cooldown manager on Forever, Auctionator addon skin; the mail skin option is available on Wrath]=]},
     {GW.Enum.ChangelogType.change, [=[Updated skins: macros, flight map, merchant, inspect, dressing room and quest log on the classic clients, scroll bars of text windows hide when there is nothing to scroll]=]},
     {GW.Enum.ChangelogType.change, [=[Chat: rebuilt as modules; every message runs through the filters only once instead of once per chat window, windows without channels no longer receive channel messages]=]},

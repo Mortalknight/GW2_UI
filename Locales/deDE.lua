@@ -235,6 +235,7 @@ L["G"] = true
 L["Gender"] = "Geschlecht"
 L["Gossip Frame"] = "Begrüßungsfenster"
 L["Quest Frame"] = "Questfenster"
+L["Quest Choice"] = "Questauswahl"
 L["Grays"] = "Müll"
 L["Greyed out"] = "Ausgegraut"
 L["Grid Size:"] = "Rastergröße:"
