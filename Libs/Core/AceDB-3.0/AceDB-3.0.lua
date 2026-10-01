@@ -41,7 +41,7 @@
 -- @class file
 -- @name AceDB-3.0.lua
 -- @release $Id$
-local ACEDB_MAJOR, ACEDB_MINOR = "AceDB-3.0", 37
+local ACEDB_MAJOR, ACEDB_MINOR = "AceDB-3.0", 39
 local AceDB = LibStub:NewLibrary(ACEDB_MAJOR, ACEDB_MINOR)
 
 if not AceDB then return end -- No upgrade needed
@@ -260,8 +260,7 @@ do
 	_, classKey = UnitClass("player")
 	_, raceKey = UnitRace("player")
 
-	local _, _, _, version = GetBuildInfo()
-	if version > 16000 and version < 20000 then
+	if RegionalUniqueNamesEnabled and RegionalUniqueNamesEnabled() then
 		if C_GameRules.IsGameRuleActive(Enum.GameRule.HardcoreRuleset) then
 			realmKey = "Hardcore"
 		elseif C_GameRules.IsGameRuleActive(Enum.GameRule.RPRuleset) then
@@ -272,7 +271,11 @@ do
 			realmKey = "PvE"
 		end
 		local name, surname = UnitNameUnmodified("player")
-		charKey = name .. " " .. tostring(surname) .. " - " .. realmKey
+		if surname then
+			charKey = name .. " " .. tostring(surname)
+		else
+			charKey = name
+		end
 	else
 		realmKey = GetRealmName()
 		charKey = UnitNameUnmodified("player") .. " - " .. realmKey

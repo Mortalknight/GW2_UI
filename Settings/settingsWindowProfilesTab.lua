@@ -445,9 +445,12 @@ end
 local CharacterWin
 local selectedCharacter
 
--- the key of a storage entry; forever files them under the ruleset, the realm they remember is the one of AceDB
-local function StorageKey(storageRealm, name, data)
-    return name .. " - " .. (data.realm or storageRealm)
+-- the AceDB key of a storage entry: clients without realms (forever) name a character without its realm
+local function StorageKey(storageRealm, name)
+    if RegionalUniqueNamesEnabled and RegionalUniqueNamesEnabled() then
+        return name
+    end
+    return name .. " - " .. storageRealm
 end
 
 -- every character one of the databases, their namespaces (spec switch) or the character storage knows
@@ -477,7 +480,7 @@ local function CollectCharacters()
     end
     for realm, names in pairs(GW.global.chars) do
         for name, data in pairs(names) do
-            local character = Add(StorageKey(realm, name, data))
+            local character = Add(StorageKey(realm, name))
             character.class, character.money, character.lastSeen, character.lastUpdate = data.class, data.money, data.lastSeen, data.lastUpdate
         end
     end
@@ -541,8 +544,8 @@ local function DeleteCharacter(key)
     end
 
     for realm, names in pairs(GW.global.chars) do
-        for name, data in pairs(names) do
-            if StorageKey(realm, name, data) == key then
+        for name in pairs(names) do
+            if StorageKey(realm, name) == key then
                 names[name] = nil
             end
         end

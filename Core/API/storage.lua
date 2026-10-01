@@ -3,7 +3,11 @@ local GW = select(2, ...)
 
 local charRealm, charName
 
-local function GetForeverRuleset()
+local function IsRealmless()
+    return RegionalUniqueNamesEnabled and RegionalUniqueNamesEnabled()
+end
+
+local function GetRuleset()
     if C_GameRules.IsGameRuleActive(Enum.GameRule.HardcoreRuleset) then
         return "Hardcore"
     elseif C_GameRules.IsGameRuleActive(Enum.GameRule.RPRuleset) then
@@ -16,11 +20,11 @@ end
 
 local function GetCharKeys()
     if not charName then
-        if GW.Forever then
+        if IsRealmless() then
             local name, surname = UnitNameUnmodified("player")
             if not name or name == UNKNOWNOBJECT then return end
-            charRealm = GetForeverRuleset()
-            charName = surname and surname ~= "" and format("%s %s", name, surname) or name
+            charRealm = GetRuleset()
+            charName = surname and (name .. " " .. surname) or name
         else
             local name = UnitName("player")
             if not name or name == UNKNOWNOBJECT then return end
@@ -136,8 +140,6 @@ GW.UpdateMoney = UpdateMoney
 ---------- CHAR DATA ----------
 local UpdateCharData = function ()
     SetStorage("name", select(2, GetCharKeys()))
-    -- forever files the storage under the ruleset, the realm names the character in the profile databases
-    SetStorage("realm", GW.myrealm)
     -- lets the characters page of the profiles tell old characters apart
     SetStorage("lastSeen", time())
     SetStorage("faction", GW.myfaction)
