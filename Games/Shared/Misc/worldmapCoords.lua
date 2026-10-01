@@ -4,6 +4,7 @@ local CoordsFrame
 local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")
 
 local function UpdateSettings()
+    if not CoordsFrame then return end
     -- set the position and toggle the frame
     local pos = GW.settings.worldmap.coords.position
     local xOff = GW.settings.worldmap.coords.offsetX
