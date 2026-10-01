@@ -1663,7 +1663,10 @@ local function ApplyLayoutChanges()
     if not layoutsUpdated then
         GW.Debug("edit mode layout was not re-applied by the client, applying it ourselves")
         EditModeManagerFrame:UpdateLayoutInfo(C_EditMode.GetLayouts())
-        ManageFramePositions()
+        local ManageFrames = ManageFramePositions or UIParent_ManageFramePositions
+        if ManageFrames then
+            ManageFrames()
+        end
     end
 end
 GW.ApplyLayoutChanges = ApplyLayoutChanges
