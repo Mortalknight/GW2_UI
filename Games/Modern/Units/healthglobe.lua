@@ -292,7 +292,7 @@ local function LoadHealthGlobe()
     hg.hpValues:SetIncomingHealOverflowPercent(1)
 
     -- position based on XP bar space and make it movable if your actionbars are off
-    if GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
+    if GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.ShouldBlockIncompatibleAddon("Actionbars") and not GW.IsGamepadInterface() then
         if GW.settings.hud.xpBar then
             hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
         else

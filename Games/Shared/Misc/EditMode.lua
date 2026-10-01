@@ -1,7 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local CheckActionBar = function() return (GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout) end
+local CheckActionBar = function() return (GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.IsGamepadInterface()) end
 local eventFrame = CreateFrame("Frame")
 local hideFrames = {}
 eventFrame.hideFrames = hideFrames

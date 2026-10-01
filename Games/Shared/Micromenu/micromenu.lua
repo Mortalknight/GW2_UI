@@ -1690,7 +1690,7 @@ end
 
 
 local function LoadMicroMenu()
-    if checkElvUI() or not GW.settings.micromenu.enabled then
+    if checkElvUI() or not GW.settings.micromenu.enabled or GW.IsGamepadInterface() then
         return
     end
 

@@ -163,7 +163,7 @@ local function DisableBlizzardFrames()
     local ourFocusTargetFrame = GW.settings.unitframes.focustarget.enabled
     local ourPlayerFrame = GW.settings.unitframes.healthGlobe.enabled
     local ourCastBar = GW.settings.castingbar.enabled
-    local ourActionbars = GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.ShouldBlockIncompatibleAddon("Actionbars")
+    local ourActionbars = GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.ShouldBlockIncompatibleAddon("Actionbars") and not GW.IsGamepadInterface()
     local ourInventory = GW.settings.bags.enabled
 
     if ourPartyFrames or ourRaidFrames then

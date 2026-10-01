@@ -810,8 +810,8 @@ local function evPlayerLoginLate()
     -- create new microbuttons
     GW.LoadMicroMenu()
 
-    -- create action bars
-    if GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
+    -- create action bars; the gamepad interface brings its own
+    if GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") and not GW.IsGamepadInterface() then
         if GW.isModern then
             if GW.settings.actionbars.barLayout then
                 GW.LoadActionBars(mainbarLM, false)

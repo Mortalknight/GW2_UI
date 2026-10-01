@@ -201,7 +201,7 @@ local function LoadHealthGlobe()
     hg.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
     -- position based on XP bar space and make it movable if your actionbars are off
-    if GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
+    if GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.ShouldBlockIncompatibleAddon("Actionbars") and not GW.IsGamepadInterface() then
         if GW.settings.hud.xpBar then
             hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
         else

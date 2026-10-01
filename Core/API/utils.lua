@@ -908,6 +908,11 @@ local function MixinHideDuringOverride(f)
 end
 GW.MixinHideDuringOverride = MixinHideDuringOverride
 
+-- forever's gamepad interface replaces the action bars and the micro menu; switching it reloads the ui
+function GW.IsGamepadInterface()
+    return InputUtil and InputUtil.IsGamepadUIEnabled and InputUtil.IsGamepadUIEnabled()
+end
+
 local function MixinHideDuringPetAndOverride(f)
     if not f then return end
     if f:IsProtected() then
