@@ -1423,9 +1423,17 @@ function GwObjectivesScenarioContainerMixin:InitModule()
         end)
 
         local lastMawCount = -1
+        local function HasMawAura()
+            local ok, _, slot = pcall(C_UnitAuras.GetAuraSlots, "player", "MAW", 1)
+            return not ok or slot ~= nil
+        end
         local mawWatcher = CreateFrame("Frame")
         mawWatcher:RegisterUnitEvent("UNIT_AURA", "player")
         mawWatcher:SetScript("OnEvent", function()
+            -- outside torghast there are almost never maw auras, the full read only runs when there are
+            if lastMawCount <= 0 and not IsInJailersTower() and not HasMawAura() then
+                return
+            end
             local collected = GW.CollectMawAuras()
             if not collected then
                 return -- failed read (secret state): keep the current display
