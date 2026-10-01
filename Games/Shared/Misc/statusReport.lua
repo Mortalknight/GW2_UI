@@ -72,7 +72,7 @@ local SECTIONS = {
             { "Class", function() return GW.myclass end },
             { "Specialization", GetSpecText },
             { "Level", function() return GW.mylevel end },
-            { "Zone", function() return GW.Libs.GW2Lib:GetPlayerLocationZoneText() or UNKNOWN end },
+            { "Zone", function() return GW.Location.GetZoneText() or UNKNOWN end },
         },
     },
 }

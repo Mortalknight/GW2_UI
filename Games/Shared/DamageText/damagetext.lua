@@ -594,9 +594,9 @@ end
 
 local function ToggleFormat(activate)
     if activate then
-        GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_DAMAGE", handleCombatLogEvent)
-        GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_MISSED", handleCombatLogEvent)
-        GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_HEAL", handleCombatLogEvent)
+        GW.CombatLog.Register(eventHandler, "_DAMAGE", handleCombatLogEvent)
+        GW.CombatLog.Register(eventHandler, "_MISSED", handleCombatLogEvent)
+        GW.CombatLog.Register(eventHandler, "_HEAL", handleCombatLogEvent)
 
 
         eventHandler:RegisterEvent("CVAR_UPDATE")
@@ -661,7 +661,7 @@ local function ToggleFormat(activate)
     else
         eventHandler:UnregisterAllEvents()
         eventHandler:SetScript("OnEvent", nil)
-        GW.Libs.GW2Lib:UnregisterAllCombatEvents(eventHandler)
+        GW.CombatLog.Unregister(eventHandler)
         wipe(unitToGuid)
         wipe(guidToUnit)
         ToggleMover(stackingContainer.gwMover, false)

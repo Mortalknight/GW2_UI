@@ -25,7 +25,7 @@ local function UpdateCoords()
         return
     end
 
-    local x, y, xT, yT = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    local x, y, xT, yT = GW.Location.GetCoords()
     if x and y then
         CoordsFrame.Coords:SetFormattedText("%s: %s/%s", PLAYER, GW.GetLocalizedNumber(xT or 0, 2), GW.GetLocalizedNumber(yT or 0, 2))
     else

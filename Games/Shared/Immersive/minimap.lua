@@ -151,7 +151,7 @@ end
 
 
 local function mapCoordsMiniMap_setCoords(self)
-    local x, y, xT, yT = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    local x, y, xT, yT = GW.Location.GetCoords()
     if x and y then
         self.Coords:SetText(GW.GetLocalizedNumber(xT, GW.settings.minimap.coords.precision) .. "/" .. GW.GetLocalizedNumber(yT, GW.settings.minimap.coords.precision))
     else

@@ -154,7 +154,6 @@ do
     AddLib("LSM", "LibSharedMedia-3.0", true)
     AddLib("AceLocale", "AceLocale-3.0", true)
     AddLib("LEMO", "LibEditModeOverride-1.0-GW2", true)
-    AddLib("GW2Lib", "LibGW2-1.0", true)
 end
 
 -- triger GetCurrentRegion() for LRI to unpack all data on startup

@@ -92,7 +92,7 @@ local function selectBg(self)
         left, right = formLeft, formRight
     end
 
-    if GW.Libs.GW2Lib:IsPlayerSkyRiding() then
+    if GW.Location.IsSkyriding() then
         right = TEXTURE_PATH .. "rightshadow-dragon.png"
         left = TEXTURE_PATH .. "leftshadow-dragon.png"
     end
@@ -527,7 +527,7 @@ local function LoadHudArt()
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)
     hud_OnEvent(hudArtFrame, "INIT")
 
-    EventRegistry:RegisterCallback("GW2_UI.PlayerSkyrindingStateChanged", function()
+    EventRegistry:RegisterCallback("GW2_UI.PlayerSkyridingStateChanged", function()
         selectBg(hudArtFrame)
     end, hudArtFrame)
 

@@ -56,8 +56,8 @@ end
 function GW.ToggleInterruptAnncouncement()
     local setting = GW.settings.chat.interruptAnnounce
     if setting and setting ~= "NONE" then
-        GW.Libs.GW2Lib:RegisterCombatEvent(frame, "_INTERRUPT", OnInterrupt)
+        GW.CombatLog.Register(frame, "_INTERRUPT", OnInterrupt)
     else
-        GW.Libs.GW2Lib:UnregisterCombatEvent(frame, "_INTERRUPT")
+        GW.CombatLog.Unregister(frame, "_INTERRUPT")
     end
 end

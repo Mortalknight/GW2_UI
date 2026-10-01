@@ -18,7 +18,7 @@ end
 
 -- Blizzard colors all rows in GuildStatus_Update, we only recolor online members
 local function UpdatePlayerRows()
-    local myZone = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+    local myZone = GW.Location.GetZoneText()
     for _, row in ipairs(playerRows) do
         local classFile, online, level, zone = GetMember(row)
         if classFile then

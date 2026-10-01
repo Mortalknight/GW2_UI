@@ -3,5 +3,7 @@
     <Script file ="utils.lua"/>
     <Script file ="api.lua"/>
     <Script file ="dispel.lua"/>
+    <Script file ="location.lua"/>
+    <Script file ="combatLog.lua"/>
     <Script file ="storage.lua"/>
 </Ui>

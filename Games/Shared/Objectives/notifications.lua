@@ -38,8 +38,8 @@ end
 
 local function _GetDistanceToClosestObjective(spawn, zone, name)
     -- main function for proximity
-    local mapId = GW.Libs.GW2Lib:GetPlayerLocationMapID()
-    if not GW.Libs.GW2Lib:GetPlayerLocationCoords() or not mapId then
+    local mapId = GW.Location.GetMapID()
+    if not GW.Location.GetCoords() or not mapId then
         return nil
     end
 
@@ -123,14 +123,14 @@ end
 
 
 local function getNearestQuestPOIRetail()
-    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
+    if not GW.Location.GetMapID() then
         return nil
     end
 
     local numTrackedQuests = C_QuestLog.GetNumQuestWatches()
     local numTrackedWQ = C_QuestLog.GetNumWorldQuestWatches()
     local numQuests = C_QuestLog.GetNumQuestLogEntries()
-    local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    local x, y = GW.Location.GetCoords()
     local poiX, poiY = nil, nil
 
     if (not x or not y) and (numTrackedQuests == 0 and numTrackedWQ == 0 and numQuests == 0) then
@@ -156,7 +156,7 @@ local function getNearestQuestPOIRetail()
             if onContinent and dist and dist <= minDistSqr then
                 minDistSqr, closestQuestID = dist, questID
             else
-                poiX, poiY = C_QuestLog.GetNextWaypointForMap(questID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
+                poiX, poiY = C_QuestLog.GetNextWaypointForMap(questID, GW.Location.GetMapID())
                 if poiX and poiY then
                     closestQuestID = questID
                 end
@@ -182,10 +182,10 @@ local function getNearestQuestPOIRetail()
     if not closestQuestID then return nil end
 
     if isWQ then
-        poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
+        poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.Location.GetMapID())
     else
         if not poiX then
-            local questsOnMap = C_QuestLog.GetQuestsOnMap(GW.Libs.GW2Lib:GetPlayerLocationMapID())
+            local questsOnMap = C_QuestLog.GetQuestsOnMap(GW.Location.GetMapID())
             for _, info in ipairs(questsOnMap or {}) do
                 if info.questID == closestQuestID then
                     poiX, poiY = info.x, info.y
@@ -193,7 +193,7 @@ local function getNearestQuestPOIRetail()
                 end
             end
             if not poiX then
-                poiX, poiY = C_QuestLog.GetNextWaypointForMap(closestQuestID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
+                poiX, poiY = C_QuestLog.GetNextWaypointForMap(closestQuestID, GW.Location.GetMapID())
             end
         end
     end
@@ -238,11 +238,11 @@ end
 
 
 local function getNearestQuestPOIClassic()
-    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() or not Questie or not Questie.started then
+    if not GW.Location.GetMapID() or not Questie or not Questie.started then
         return nil
     end
 
-    local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    local x, y = GW.Location.GetCoords()
 
     if (not x or not y) then
         return nil
@@ -272,7 +272,7 @@ local function getNearestQuestPOIClassic()
                 if shouldCheck then
                     local spawn, zone, name = QuestieLoader:ImportModule("DistanceUtils").GetNearestSpawnForQuest(questieQuest)
                     if spawn and zone and name then
-                        if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.Libs.GW2Lib:GetPlayerLocationMapID() then
+                        if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.Location.GetMapID() then
                             local distance = _GetDistanceToClosestObjective(spawn, zone, name)
                             if distance and distance < minDist then
                                 minDist = distance
@@ -310,12 +310,12 @@ end
 
 
 local function getNearestQuestPOIMists()
-    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
+    if not GW.Location.GetMapID() then
         return nil
     end
 
     local numQuests = GetNumQuestLogEntries()
-    local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    local x, y = GW.Location.GetCoords()
 
     if x == nil or y == nil or numQuests == 0 then
         return nil
@@ -360,7 +360,7 @@ local function getNearestQuestPOIMists()
 end
 
 local function getBodyPOI()
-    local mapID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
+    local mapID = GW.Location.GetMapID()
     if not mapID then
         return nil
     end
@@ -390,7 +390,7 @@ end
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
 local function updateRadar(self)
-    local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    local x, y = GW.Location.GetCoords()
     if not x or not y or not self.data.X then
         self:GetParent():RemoveNotificationById(self.dataIndex)
         return
@@ -771,7 +771,7 @@ end
 function GwObjectivesTrackerNotificationMixin:OnUpdate()
     local prevState = self.shouldDisplay
 
-    if GW.Libs.GW2Lib:GetPlayerLocationMapID() or GW.Libs.GW2Lib:GetPlayerInstanceMapID() then
+    if GW.Location.GetMapID() or GW.Location.GetInstanceMapID() then
         self:SetObjectiveNotification()
     end
 

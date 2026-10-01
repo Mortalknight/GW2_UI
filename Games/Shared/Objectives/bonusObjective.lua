@@ -185,7 +185,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
 
                 compassData.PROGRESS = 0
                 local objectiveProgress = 0
-                local playerMapID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
+                local playerMapID = GW.Location.GetMapID()
 
                 compassData.TYPE = GW.Enum.ObjectivesNotificationType.Event
                 compassData.ID = questID

@@ -106,7 +106,7 @@ end
 
 -- shift shows rank and notes instead of level and status
 local function AddMemberLines(members, showDetails)
-    local myZone = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+    local myZone = GW.Location.GetZoneText()
     for index, member in ipairs(members) do
         if index > MAX_MEMBERS_SHOWN then
             GameTooltip:AddLine(format("+%d %s ...", #members - MAX_MEMBERS_SHOWN, FRIENDS_LIST_ONLINE), NOTE_COLOR.r, NOTE_COLOR.g, NOTE_COLOR.b)

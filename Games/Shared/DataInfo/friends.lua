@@ -149,7 +149,7 @@ end
 -- all online friends by game: our own wow first, then other wow versions, other games and the app
 local function CollectSections(showDetails)
     local sections = {}
-    local myZone = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+    local myZone = GW.Location.GetZoneText()
 
     local ownWow = GetSection(sections, "WoW" .. WOW_PROJECT_ID, {clientProgram = BNET_CLIENT_WOW, wowProjectID = WOW_PROJECT_ID}, 1)
     for _, info in ipairs(GetOnlineFriends()) do

@@ -1173,7 +1173,7 @@ local function PrintVignetteToChat(vignetteGUID, vignetteInfo, mapID)
 end
 
 local function OnVignetteUpdated(self, vignetteGUID, onMinimap)
-    local mapID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
+    local mapID = GW.Location.GetMapID()
     if not onMinimap or VignetteExclusionMapIDs[mapID] then return end
     if IsInGroup() or IsInRaid() or IsPartyLFG() or C_PartyInfo.IsPartyWalkIn() then return end
 
@@ -1387,8 +1387,8 @@ function GW.LoadAlertSystem()
 
     if not GW.isModern and not GW.Wrath then
         container:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
-        GW.Libs.GW2Lib:RegisterCombatEvent(container, "SPELL_CAST_SUCCESS", CLEUHandling)
-        GW.Libs.GW2Lib:RegisterCombatEvent(container, "SPELL_CREATE", CLEUHandling)
+        GW.CombatLog.Register(container, "SPELL_CAST_SUCCESS", CLEUHandling)
+        GW.CombatLog.Register(container, "SPELL_CREATE", CLEUHandling)
     end
 
     container.lastMinimapRare = {time = 0, id = nil}

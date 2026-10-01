@@ -510,7 +510,7 @@ function GwDodgeBarMixin:UpdateSkyridingBarState(state, isLogin)
 end
 
 function GwDodgeBarMixin:SkyridingBarOnEvent(event, ...)
-    if event == "GW2_UI.PlayerSkyrindingStateChanged" then
+    if event == "GW2_UI.PlayerSkyridingStateChanged" then
         local state, isLogin = ...
         self:UpdateSkyridingBarState(state, isLogin)
     end
@@ -522,7 +522,7 @@ function GwDodgeBarMixin:ToggleSkyridingBar()
         self.skyridingBar:RegisterEvent("SPELL_UPDATE_CHARGES")
         self.skyridingBar:SetScript("OnEvent", self.skyridingBar.OnEvent)
 
-        EventRegistry:RegisterCallback("GW2_UI.PlayerSkyrindingStateChanged", function(_, ...)
+        EventRegistry:RegisterCallback("GW2_UI.PlayerSkyridingStateChanged", function(_, ...)
             self.skyridingBar:UpdateSkyridingBarState(...)
         end, self.skyridingBar)
 
@@ -546,12 +546,12 @@ function GwDodgeBarMixin:ToggleSkyridingBar()
             self.skyridingBar.arcfill.fillFractions:SetVertexColor(0.454, 0.85, 0.983, 1.0)
         end
 
-        self.skyridingBar:UpdateSkyridingBarState(GW.Libs.GW2Lib:IsPlayerSkyRiding())
+        self.skyridingBar:UpdateSkyridingBarState(GW.Location.IsSkyriding())
     else
         self.skyridingBar:UnregisterEvent("SPELL_UPDATE_CHARGES")
         self.skyridingBar:SetScript("OnEvent", nil)
 
-        EventRegistry:UnregisterCallback("GW2_UI.PlayerSkyrindingStateChanged", self.skyridingBar)
+        EventRegistry:UnregisterCallback("GW2_UI.PlayerSkyridingStateChanged", self.skyridingBar)
         self.skyridingBar:Hide()
     end
 end
