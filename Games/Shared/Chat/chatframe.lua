@@ -981,7 +981,7 @@ local function LoadChat()
         FCFTab_UpdateAlpha(frame)
         frame:SetTimeVisible(100)
         frame:SetFading(GW.settings.chat.fade)
-        frame:SetMaxLines(2500)
+        frame:SetMaxLines(500)
 
     end
 
