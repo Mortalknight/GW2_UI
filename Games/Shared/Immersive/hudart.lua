@@ -2,6 +2,13 @@
 local GW = select(2, ...)
 
 local TEXTURE_PATH = "Interface/AddOns/GW2_UI/textures/hud/"
+-- the art of every state, built once instead of on every check
+local LEFT, RIGHT = TEXTURE_PATH .. "leftshadow.png", TEXTURE_PATH .. "rightshadow.png"
+local LEFT_DEAD, RIGHT_DEAD = TEXTURE_PATH .. "leftshadow_dead.png", TEXTURE_PATH .. "rightshadow_dead.png"
+local LEFT_DRAGON, RIGHT_DRAGON = TEXTURE_PATH .. "leftshadow-dragon.png", TEXTURE_PATH .. "rightshadow-dragon.png"
+local LEFT_COMBAT, RIGHT_COMBAT = TEXTURE_PATH .. "leftshadowcombat.png", TEXTURE_PATH .. "rightshadowcombat.png"
+local LEFT_BEAR, RIGHT_BEAR = TEXTURE_PATH .. "leftshadow_bear.png", TEXTURE_PATH .. "rightshadow_bear.png"
+local LEFT_CAT, RIGHT_CAT = TEXTURE_PATH .. "leftshadow_cat.png", TEXTURE_PATH .. "rightshadow_cat.png"
 
 local actionHudPlayerAuras = {}
 local actionHudPlayerPetAuras = {}
@@ -67,9 +74,9 @@ local function GetDruidFormArt()
 
     local form = GetShapeshiftFormID()
     if form == BEAR_FORM then
-        return TEXTURE_PATH .. "leftshadow_bear.png", TEXTURE_PATH .. "rightshadow_bear.png"
+        return LEFT_BEAR, RIGHT_BEAR
     elseif form == CAT_FORM then
-        return TEXTURE_PATH .. "leftshadow_cat.png", TEXTURE_PATH .. "rightshadow_cat.png"
+        return LEFT_CAT, RIGHT_CAT
     end
 end
 
@@ -78,13 +85,11 @@ local function selectBg(self)
         return
     end
 
-    local right = TEXTURE_PATH .. "rightshadow.png"
-    local left = TEXTURE_PATH .. "leftshadow.png"
+    local right, left = RIGHT, LEFT
     local modelFX = nil
 
     if UnitIsDeadOrGhost("player") then
-        right = TEXTURE_PATH .. "rightshadow_dead.png"
-        left = TEXTURE_PATH .. "leftshadow_dead.png"
+        right, left = RIGHT_DEAD, LEFT_DEAD
     end
 
     local formLeft, formRight = GetDruidFormArt()
@@ -93,13 +98,11 @@ local function selectBg(self)
     end
 
     if GW.Location.IsSkyriding() then
-        right = TEXTURE_PATH .. "rightshadow-dragon.png"
-        left = TEXTURE_PATH .. "leftshadow-dragon.png"
+        right, left = RIGHT_DRAGON, LEFT_DRAGON
     end
 
     if UnitAffectingCombat("player") then
-        right = TEXTURE_PATH .. "rightshadowcombat.png"
-        left = TEXTURE_PATH .. "leftshadowcombat.png"
+        right, left = RIGHT_COMBAT, LEFT_COMBAT
 
         if formLeft then
             left, right = formLeft, formRight
@@ -117,11 +120,12 @@ local function selectBg(self)
                 end
             end
 
-            -- pet buffs
-            if not auraFound then
+            -- pet buffs, only for the classes that have pet art; the list ends at the first empty slot
+            if not auraFound and next(actionHudPlayerPetAuras) then
                 for i = 1, 40 do
                     local auraData = C_UnitAuras.GetBuffDataByIndex("pet", i)
-                    local petAura = auraData and actionHudPlayerPetAuras[auraData.spellId]
+                    if not auraData then break end
+                    local petAura = actionHudPlayerPetAuras[auraData.spellId]
                     if petAura and petAura.unit == "pet" then
                         right = petAura.right
                         left = petAura.left
@@ -458,7 +462,7 @@ local function CreateAuraArtContainers(self)
 end
 
 local function hud_OnEvent(self, event, ...)
-    if event == "UNIT_AURA" then
+    if event == "UNIT_AURA" or event == "UPDATE_SHAPESHIFT_FORM" or event == "PLAYER_DEAD" or event == "PLAYER_ALIVE" or event == "PLAYER_UNGHOST" then
         selectBg(self)
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         selectBg(self)
@@ -531,12 +535,21 @@ local function LoadHudArt()
         selectBg(hudArtFrame)
     end, hudArtFrame)
 
+    hudArtFrame:RegisterEvent("PLAYER_DEAD")
     hudArtFrame:RegisterEvent("PLAYER_ALIVE")
+    hudArtFrame:RegisterEvent("PLAYER_UNGHOST")
+    hudArtFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     hudArtFrame:RegisterUnitEvent("UNIT_HEALTH", "player")
     hudArtFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
-    hudArtFrame:RegisterUnitEvent("UNIT_AURA", "player")
+    if not GW.isModern then
+        if next(actionHudPlayerPetAuras) then
+            hudArtFrame:RegisterUnitEvent("UNIT_AURA", "player", "pet")
+        elseif next(actionHudPlayerAuras) then
+            hudArtFrame:RegisterUnitEvent("UNIT_AURA", "player")
+        end
+    end
     if GW.Classic then
         hudArtFrame:RegisterEvent("UNIT_HEALTH_FREQUENT")
     end
