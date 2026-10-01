@@ -333,7 +333,8 @@ local function LoadStaticPopupSkin()
         end
     end
 
-    hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
+    -- blizzard sets the icon and close button up again on every show, not while the popup is open
+    hooksecurefunc("StaticPopup_Show", gwSetStaticPopupSize)
 
     --Movie skip Frame
     hooksecurefunc("CinematicFrame_UpdateLettboxForAspectRatio", function(self)

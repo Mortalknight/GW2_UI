@@ -486,8 +486,6 @@ local function evPlayerEnteringWorld()
     commonEntering()
 
     GW:FixBlizzardIssues()
-
-    C_Timer.After(1, function() collectgarbage("collect") end)
 end
 
 
@@ -981,7 +979,7 @@ l:RegisterEvent("PLAYER_ENTERING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
 l:RegisterEvent("UI_SCALE_CHANGED")
 l:RegisterEvent("PLAYER_LEVEL_UP")
-l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+l:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 l:RegisterEvent("ADDON_LOADED")
 if GW.Retail then
     l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")

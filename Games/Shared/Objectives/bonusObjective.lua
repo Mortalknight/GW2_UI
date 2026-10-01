@@ -179,7 +179,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 block.questID = questID
                 block:UpdateFindGroupButton(questID, false)
 
-                GW.CombatQueue:Queue(nil, block.UpdateObjectiveActionButton, {block})
+                GW.CombatQueue:Queue("update_tracker_bonus_itembutton" .. blockIndex, block.UpdateObjectiveActionButton, {block})
 
                 foundEvent = true
 

@@ -313,7 +313,7 @@ end
 
 function GwPlayerPetFrameMixin:ToggleCombatFeedback()
     if GW.settings.unitframes.pet.floatingCombatText then
-        self:RegisterEvent("UNIT_COMBAT")
+        self:RegisterUnitEvent("UNIT_COMBAT", self.gwUnit)
         self:SetScript("OnUpdate", CombatFeedback_OnUpdate)
     else
         self:UnregisterEvent("UNIT_COMBAT")
@@ -506,7 +506,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("PLAYER_CONTROL_LOST")
     playerPetFrame:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
     playerPetFrame:RegisterEvent("SPELLS_CHANGED")
-    playerPetFrame:RegisterEvent("UNIT_FLAGS")
+    playerPetFrame:RegisterUnitEvent("UNIT_FLAGS", "pet")
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     playerPetFrame:RegisterEvent("PET_BAR_UPDATE_USABLE")
     playerPetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")

@@ -156,10 +156,20 @@ local function HandleStatusBar(self)
     StatusBar:GetStatusBarTexture():SetTexture("Interface/Addons/GW2_UI/textures/addonSkins/details_statusbar.png")
 end
 
+-- blizzard only resets the bar art when a row changes its style, so every row is hooked once
+local function SkinRow(row)
+    if row.gwSkinned then return end
+    HandleStatusBar(row)
+    if row.UpdateStyle then
+        hooksecurefunc(row, "UpdateStyle", HandleStatusBar)
+    end
+    row.gwSkinned = true
+end
+
 local function ScrollBoxUpdate(self)
     if not self.ForEachFrame then return end
 
-    self:ForEachFrame(HandleStatusBar)
+    self:ForEachFrame(SkinRow)
 end
 
 local function HandleScrollBoxes(window)

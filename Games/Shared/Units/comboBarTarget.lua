@@ -89,6 +89,20 @@ local function ComboFrame_UpdateMax(self)
 	ComboFrame_Update(self)
 end
 
+local function ToggleComboEvents(self, enable)
+    if enable then
+        self:RegisterEvent("PLAYER_TARGET_CHANGED")
+        self:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player", "vehicle")
+        self:RegisterUnitEvent("UNIT_MAXPOWER", "player", "vehicle")
+        self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    else
+        self:UnregisterEvent("PLAYER_TARGET_CHANGED")
+        self:UnregisterEvent("UNIT_POWER_FREQUENT")
+        self:UnregisterEvent("UNIT_MAXPOWER")
+        self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    end
+end
+
 local function comboBarOnEvent(self, event, ...)
     if event == "PLAYER_TARGET_CHANGED" then
 		ComboFrame_Update(self);
@@ -101,20 +115,14 @@ local function comboBarOnEvent(self, event, ...)
 		ComboFrame_UpdateMax(self)
 	elseif event == "UNIT_ENTERED_VEHICLE" then
         if not GW.settings.unitframes.target.hookComboPoints then
-            self:RegisterEvent("PLAYER_TARGET_CHANGED")
-            self:RegisterEvent("UNIT_POWER_FREQUENT")
-            self:RegisterEvent("UNIT_MAXPOWER")
-            self:RegisterEvent("PLAYER_ENTERING_WORLD")
+            ToggleComboEvents(self, true)
         end
 
 		self.unit = "vehicle"
 		ComboFrame_UpdateMax(self)
     elseif event == "UNIT_EXITED_VEHICLE" then
         if not GW.settings.unitframes.target.hookComboPoints then
-            self:UnregisterEvent("PLAYER_TARGET_CHANGED")
-            self:UnregisterEvent("UNIT_POWER_FREQUENT")
-            self:UnregisterEvent("UNIT_MAXPOWER")
-            self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+            ToggleComboEvents(self, false)
         end
 
 		self.unit = "player"
@@ -146,34 +154,28 @@ local function UpdateSettings(targetFrame)
     end
 
     if GW.settings.unitframes.target.hookComboPoints then
-        comboBar:RegisterEvent("PLAYER_TARGET_CHANGED")
-        comboBar:RegisterEvent("UNIT_POWER_FREQUENT")
-        comboBar:RegisterEvent("UNIT_MAXPOWER")
-        comboBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+        ToggleComboEvents(comboBar, true)
 
         ComboFrame_UpdateMax(comboBar)
     else
         -- only check vehicle stuff
         comboBar:Hide()
-        comboBar:UnregisterEvent("PLAYER_TARGET_CHANGED")
-        comboBar:UnregisterEvent("UNIT_POWER_FREQUENT")
-        comboBar:UnregisterEvent("UNIT_MAXPOWER")
-        comboBar:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        ToggleComboEvents(comboBar, false)
     end
 end
 GW.UpdateComboBarOnTargetFrame = UpdateSettings
 
+-- the target frame calls this on every settings change, the bar is only created once
 local function LoadComboBarOnTargetFrame(targetFrame)
-    comboBar = CreateFrame("Frame", nil, UIParent, "GWTargetClassPower")
-
-    comboBar.unit = "player"
-    comboBar.gwPower = 0
+    if not comboBar then
+        comboBar = CreateFrame("Frame", nil, UIParent, "GWTargetClassPower")
+        comboBar.unit = "player"
+        comboBar.gwPower = 0
+        comboBar:SetScript("OnEvent", comboBarOnEvent)
+        comboBar:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
+        comboBar:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
+    end
 
     UpdateSettings(targetFrame)
-
-    comboBar:SetScript("OnEvent", comboBarOnEvent)
-
-	comboBar:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
-	comboBar:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
 end
 GW.LoadComboBarOnTargetFrame = LoadComboBarOnTargetFrame

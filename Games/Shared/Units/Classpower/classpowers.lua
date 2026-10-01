@@ -287,7 +287,7 @@ local function LoadClassPowers()
     cpf.disc.bar.overlay:SetPosition(0, 0, 0)
 
     cpf.decay:SetScript("OnEvent", barChange_OnEvent)
-    cpf.decay:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    cpf.decay:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
     cpf.decay:RegisterEvent("PLAYER_ENTERING_WORLD")
     cpf.decay:RegisterEvent("CHARACTER_POINTS_CHANGED")
     cpf.decay:RegisterEvent("UPDATE_SHAPESHIFT_FORM")

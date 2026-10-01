@@ -86,7 +86,7 @@ function GwHealthglobeMixin:OnEvent(event)
         MixinHideDuringPetAndOverride(self)
         self:UpdateHealthData()
         self:SelectPvp()
-    elseif IsIn(event, "UNIT_HEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
+    elseif IsIn(event, "UNIT_HEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION", "UNIT_HEAL_ABSORB_AMOUNT_CHANGED", "UNIT_MAX_HEALTH_MODIFIERS_CHANGED") then
         self:UpdateHealthData()
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         self:SelectPvp()
@@ -361,7 +361,7 @@ local function LoadHealthGlobe()
         end
     end)
     hg:RegisterEvent("PLAYER_ENTERING_WORLD")
-    hg:RegisterEvent("PLAYER_FLAGS_CHANGED")
+    hg:RegisterUnitEvent("PLAYER_FLAGS_CHANGED", "player")
     hg:RegisterEvent("RESURRECT_REQUEST")
     hg:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")
     hg:RegisterUnitEvent("UNIT_HEALTH", "player")

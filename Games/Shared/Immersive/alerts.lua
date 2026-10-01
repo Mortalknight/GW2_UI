@@ -1371,7 +1371,7 @@ function GW.LoadAlertSystem()
     GW.RegisterMovableFrame(container, L["Alert Frames"], "notifications", "Blizzard,Widgets", {300, 5}, nil, nil, postDragFunction)
 
     container:RegisterEvent("PLAYER_LEVEL_UP")
-    container:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    container:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
     container:RegisterEvent("UPDATE_PENDING_MAIL")
     container:RegisterEvent("BAG_UPDATE_DELAYED")
     container:RegisterEvent("UPDATE_INVENTORY_DURABILITY")

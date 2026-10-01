@@ -96,7 +96,6 @@ end
 local isGliding = false
 local function Update(self, event, unit)
     if not self:IsVisible() then return end
-    if (event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_ENTERED_VEHICLE") and self.gwUnit ~= unit then return end
 
     local element = self.Fader
     if self.isForced or (not element or not element.count or element.count <= 0) then
@@ -140,6 +139,7 @@ local function Update(self, event, unit)
     end
 
     local currentHealth = UnitHealth(unit)
+    local endAlpha
     -- normal fader
     if (element.Casting and (UnitCastingInfo(unit) or UnitChannelInfo(unit))) or
         (element.Combat and UnitAffectingCombat(unit)) or
@@ -150,10 +150,14 @@ local function Update(self, event, unit)
         (element.Vehicle and (GW.Retail or GW.Mists) and UnitHasVehicleUI(unit)) or
         (element.Hover and GetMouseFocus(self, element))
     then
-        ToggleAlpha(self, element, element.MaxAlpha)
+        endAlpha = element.MaxAlpha
     else
-        ToggleAlpha(self, element, element.MinAlpha)
+        endAlpha = element.MinAlpha
     end
+
+    -- the polling of targettarget and focustarget only acts on a change
+    if event == "OnUpdate" and endAlpha == element.currentAlpha then return end
+    ToggleAlpha(self, element, endAlpha)
 end
 
 local function ForceUpdate(element, event)
@@ -279,7 +283,7 @@ local options = {
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
             self:RegisterEvent("PLAYER_REGEN_DISABLED")
             self:RegisterEvent("PLAYER_TARGET_CHANGED")
-            self:RegisterEvent("UNIT_FLAGS")
+            self:RegisterUnitEvent("UNIT_FLAGS", self.__owner.gwUnit)
         end,
         events = {"PLAYER_REGEN_ENABLED","PLAYER_REGEN_DISABLED","UNIT_FLAGS","PLAYER_TARGET_CHANGED"}
     },
@@ -330,7 +334,7 @@ if GW.Retail then
     tinsert(options.Casting.events, "UNIT_SPELLCAST_EMPOWER_STOP")
     options.DynamicFlight = {
         enable = function(self)
-            self:RegisterEvent("PLAYER_IS_GLIDING_CHANGED", Update, true)
+            self:RegisterEvent("PLAYER_IS_GLIDING_CHANGED")
         end,
         events = {"PLAYER_IS_GLIDING_CHANGED"}
     }
@@ -339,8 +343,8 @@ end
 if GW.Retail or GW.Mists then
     options.Vehicle = {
         enable = function(self)
-            self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update, true)
-            self:RegisterEvent("UNIT_EXITED_VEHICLE", Update, true)
+            self:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", self.__owner.gwUnit)
+            self:RegisterUnitEvent("UNIT_EXITED_VEHICLE", self.__owner.gwUnit)
         end,
         events = {"UNIT_ENTERED_VEHICLE","UNIT_EXITED_VEHICLE"}
     }
@@ -444,6 +448,15 @@ local function Enable(self)
 
     self.Fader:SetScript("OnEvent", function(_, event, ...) Update(self, event, ...) end)
     self.Fader.enabled = true
+
+    if not self.Fader.gwShowHooked then
+        self:HookScript("OnShow", function(frame)
+            if frame.Fader.enabled then
+                frame.Fader:ForceUpdate("OnShow")
+            end
+        end)
+        self.Fader.gwShowHooked = true
+    end
 end
 
 local function Disable(self)

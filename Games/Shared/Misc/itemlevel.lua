@@ -18,15 +18,20 @@ local GEAR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}
 local TWO_HANDED = {INVTYPE_2HWEAPON = true, INVTYPE_RANGED = true, INVTYPE_RANGEDRIGHT = true}
 local GetItemInfoInstant = C_Item.GetItemInfoInstant or GetItemInfoInstant
 
+local ILVL_CACHE_LIFETIME = 600
+
 -- the item levels of inspected players, for tooltips and unit frames
 function GW.PopulateUnitIlvlsCache(unitGUID, itemLevel)
     if GW.IsSecretValue(unitGUID) or not unitGUID or not itemLevel then
         return
     end
-    local cached = GW.unitIlvlsCache[unitGUID] or {}
-    GW.unitIlvlsCache[unitGUID] = cached
-    cached.time = GetTime()
-    cached.itemLevel = itemLevel
+    local now = GetTime()
+    for guid, entry in pairs(GW.unitIlvlsCache) do
+        if now - entry.time > ILVL_CACHE_LIFETIME then
+            GW.unitIlvlsCache[guid] = nil
+        end
+    end
+    GW.unitIlvlsCache[unitGUID] = {time = now, itemLevel = itemLevel}
 end
 
 -- "Item Level 480 (489)": the number in brackets is the one that counts right now

@@ -507,7 +507,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
 
     specSwitchHandler:RegisterEvent("PLAYER_ENTERING_WORLD") -- for start up
     if GW.Retail then
-        specSwitchHandler:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+        specSwitchHandler:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
     else
         -- dual spec: wrath and mists have it themselves, classic through LibDualSpec
         specSwitchHandler:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")

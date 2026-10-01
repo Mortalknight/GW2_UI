@@ -156,11 +156,18 @@ function GwDodgeBarMixin:UpdateRetailFill()
         end
         self:SetFill(durationObject)
         self:UpdateBarText(true, spellChargeInfo.currentCharges, self:SetCountdownBinding(durationObject))
+        if not spellChargeInfo.isActive and not self.gwArmPending then
+            self:UnregisterEvent("SPELL_UPDATE_CHARGES")
+            self:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
+        end
+        self.gwArmPending = nil
         return
     end
 
     if self.gwArmPending then
         self:ArmCooldownTimer()
+        self:UnregisterEvent("SPELL_UPDATE_CHARGES")
+        self:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
     elseif not self.gwTimerArmed then
         self:ShowReady()
     end

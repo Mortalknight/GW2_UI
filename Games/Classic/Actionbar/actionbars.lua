@@ -478,7 +478,7 @@ local function updateMainBar()
     eventFrame:RegisterEvent("PLAYER_LEVEL_UP")
     eventFrame:RegisterEvent("ACTION_RANGE_CHECK_UPDATE")
     -- add a reposition hook to spec switches
-    eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    eventFrame:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
     eventFrame:HookScript("OnEvent", main_OnEvent)
 
     -- disable default main action bar behaviors
@@ -600,7 +600,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     fmMultibar:SetSize(used_width, used_height)
 
     -- to keep actionbutton style after spec switch
-    fmMultibar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    fmMultibar:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
     fmMultibar:SetScript("OnEvent", function()
         for i = 1, 12 do
             setActionButtonStyle(buttonName .. i)

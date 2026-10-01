@@ -832,7 +832,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
             block:Hide()
         end
 
-        GW.CombatQueue:Queue(nil, block.UpdateObjectiveActionButton, {block})
+        GW.CombatQueue:Queue("update_tracker_scenario_itembutton", block.UpdateObjectiveActionButton, {block})
         if block.hasItem then
             block.fromContainerTopHeight = block.height
             GW.CombatQueue:Queue("update_tracker_scenario_itembutton_position", block.UpdateObjectiveActionButtonPosition, {block})
@@ -980,7 +980,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     --check for groupfinder button and add spells
     if GW.isModern then
         block:UpdateFindGroupButton(scenarioID, true)
-        GW.CombatQueue:Queue(nil, block.UpdateScenarioSpell, {block, allSpellInfo})
+        GW.CombatQueue:Queue("update_tracker_scenario_spell", block.UpdateScenarioSpell, {block, allSpellInfo})
     end
 
     local objectiveOptions = {

@@ -269,7 +269,7 @@ local function LoadHealthGlobe()
         end
     end)
     hg:RegisterEvent("PLAYER_ENTERING_WORLD")
-    hg:RegisterEvent("PLAYER_FLAGS_CHANGED")
+    hg:RegisterUnitEvent("PLAYER_FLAGS_CHANGED", "player")
     hg:RegisterEvent("RESURRECT_REQUEST")
     hg:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")
     hg:RegisterUnitEvent("UNIT_HEALTH", "player")

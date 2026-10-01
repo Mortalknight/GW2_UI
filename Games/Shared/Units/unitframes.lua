@@ -772,10 +772,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         if event == "PLAYER_TARGET_CHANGED" and self.gwUnit == "target" and UnitIsPlayer(self.gwUnit) and (self.showItemLevel == "PVP_LEVEL" or self.showItemLevel == "ITEM_LEVEL")
             and (not GW.Mists or (not InCombatLockdown() and CheckInteractDistance(self.gwUnit, 4))) and CanInspect(self.gwUnit) then
             local guid = UnitGUID(self.gwUnit)
-            if GW.NotSecretValue(guid) and guid and (not GW.unitIlvlsCache[guid] or (GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel == nil)) then
-                local _, englishClass = UnitClass(self.gwUnit)
-                local color = GWGetClassColor(englishClass, true)
-                GW.unitIlvlsCache[guid] = {unitColor = {color.r, color.g, color.b}}
+            if GW.NotSecretValue(guid) and guid and not GW.unitIlvlsCache[guid] then
                 self:RegisterEvent("INSPECT_READY")
                 NotifyInspect(self.gwUnit)
             end
@@ -799,6 +796,9 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         if IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_FOCUS_CHANGED") then
             self:UpdatePowerBar(true)
             if secondaryFrame then  secondaryFrame:UpdatePowerBar(true) end
+            if self.Fader and self.Fader.enabled then
+                self.Fader:ForceUpdate(event)
+            end
         else
             self:UpdatePowerBar()
             if secondaryFrame then secondaryFrame:UpdatePowerBar() end
@@ -1269,6 +1269,11 @@ function GwTargetUnitFrameMixin:OnUpdate(elapsed)
     self:UpdateHealthBar(true)
     self:UpdatePowerBar(true)
     self:StartCastbar()
+    -- targettarget and focustarget get no unit events, the fader follows the polling too
+    local fader = self.Fader
+    if fader and fader.enabled and fader.count and fader.count > 0 then
+        fader:ForceUpdate("OnUpdate")
+    end
 end
 
 function GwTargetUnitFrameMixin:ToggleSettings()

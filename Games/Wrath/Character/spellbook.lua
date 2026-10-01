@@ -594,7 +594,7 @@ local function LoadSpellBook(tabContainer)
 
     spellBook:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
 	spellBook:RegisterEvent("PLAYER_GUILD_UPDATE")
-	spellBook:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	spellBook:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
     spellBook:RegisterEvent("SPELLS_CHANGED")
     spellBook:RegisterEvent("SKILL_LINES_CHANGED")
     spellBook:RegisterEvent("PLAYER_LEVEL_UP")
