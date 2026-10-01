@@ -980,7 +980,7 @@ L["With this setting you can no longer move the minimap completely to the top or
 L["Layout with that name already exists"] = "Ein Layout mit diesem Namen existiert bereits."
 L["Please enter a name."] = "Bitte einen Namen eingeben."
 L["Profile with that name already exists"] = "Ein Profil mit diesem Namen existiert bereits."
-L["Characters"] = "Charaktere"
+L["Character data"] = "Charakterdaten"
 L["This character"] = "Dieser Charakter"
 L["Profile assignment"] = "Profilzuordnung"
 L["Character settings"] = "Charaktereinstellungen"

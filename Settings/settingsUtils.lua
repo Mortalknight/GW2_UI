@@ -82,7 +82,7 @@ local function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect)
                 ref[keys[#keys]] = value
             end
             GW.settings.profileChangedDate = date(L["TimeStamp m/d/y h:m:s"])
-            GW.RefreshProfileScrollBox(GW2ProfileSettingsView.ScrollBox)
+            GW.RefreshProfileScrollBox()
         end,
 
         getDefault = function(optionKey)

@@ -951,7 +951,7 @@ L["With this setting you can no longer move the minimap completely to the top or
 L["Layout with that name already exists"] = true
 L["Please enter a name."] = true
 L["Profile with that name already exists"] = true
-L["Characters"] = true
+L["Character data"] = true
 L["This character"] = true
 L["Profile assignment"] = true
 L["Character settings"] = true

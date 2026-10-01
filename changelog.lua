@@ -28,7 +28,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Honor badges (Retail): the health globe tooltip shows the honor level with its badge, the progress and the level of the next badge, the honor bar shows the badges at its level numbers; with the pvp indicator option the player frame gets the prestige portrait art, the four prestige arts of player and target now start at honor level 5, 25, 70 and 250 like the art sets of Blizzard's badges]=]},
     {GW.Enum.ChangelogType.change, [=[Target and focus frames no longer play the show animation]=]},
     {GW.Enum.ChangelogType.feature, [=[Friends data text: game icons for every Blizzard game, the icon of the chat is used for games without an own icon]=]},
-    {GW.Enum.ChangelogType.feature, [=[Profiles: new characters page that lists every character GW2 UI keeps data for, with its profile, gold, the kind of data saved and when it was last seen; the data of characters that no longer exist can be removed, the shared profiles stay]=]},
+    {GW.Enum.ChangelogType.feature, [=[Profiles: new character data page that lists every character GW2 UI keeps data for, with its profile, gold, the kind of data saved and when it was last seen; the data of characters that no longer exist can be removed, the shared profiles stay]=]},
     {GW.Enum.ChangelogType.change, [=[System data text: the memory use of GW2 UI has its own line, colored by its share of the total memory]=]},
     {GW.Enum.ChangelogType.change, [=[Hero panel: grey items get a grey border, common items a white one on every game version]=]},
     {GW.Enum.ChangelogType.change, [=[Status report: cleaner layout, it lists the scale values with two decimals]=]},

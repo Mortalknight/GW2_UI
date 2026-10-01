@@ -36,7 +36,7 @@ local function UpdateScrollBox(scrollBox)
 
     scrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
 end
-GW.RefreshProfileScrollBox = UpdateScrollBox
+GW.RefreshProfileScrollBox = function() UpdateScrollBox(ProfileWin) end
 
 ------------------------------------------------------------
 -- Profile ops
@@ -657,32 +657,12 @@ function InitCharacterButton(button, elementData)
     button.desc:SetText(table.concat(lines, "\n"))
 end
 
--- the characters page takes the place of the profile list; the frames of that list keep their own visibility
-local PROFILE_PAGE_FRAMES = {"profileSpec", "resetToDefaultFrame", "ScrollBox"}
-
-local function ShowCharacterPage(panel, show)
-    for _, key in ipairs(PROFILE_PAGE_FRAMES) do
-        local frame = panel[key]
-        if show then
-            frame.gwShownOnProfilePage = frame:IsShown()
-            frame:Hide()
-        else
-            frame:SetShown(frame.gwShownOnProfilePage ~= false)
-        end
+-- the tab shows one of its pages at a time, the menu marks it
+local function ShowPage(panel, page)
+    for _, other in ipairs({panel.profilesPage, panel.characterDataPage}) do
+        other:SetShown(other == page)
+        other.menuButton.activeTexture:SetShown(other == page)
     end
-    if show then
-        panel.ScrollBar:Hide()
-        UpdateCharacterScrollBox()
-    else
-        -- the scroll bar hides itself when there is nothing to scroll
-        panel.ScrollBar:Update()
-    end
-    panel.characters:SetShown(show)
-    panel.showsCharacters = show
-
-    panel.header:SetText(show and L["Characters"] or L["Profiles"])
-    panel.sub:SetText(show and L["Everything GW2 UI keeps for each character: its profile, the gold for the money data text and more. Remove the characters you no longer play."] or L["Profiles are an easy way to share your settings across characters and realms."])
-    panel.menu.characters:SetText(show and L["Profiles"] or L["Characters"])
 end
 
 ------------------------------------------------------------
@@ -697,63 +677,71 @@ local function LoadSettingsProfileTab(container)
 
     collectAllIcons()
 
+    GW.SettingsMenuButtonSetUp(settingsProfile.menu.profiles, true)
+    GW.SettingsMenuButtonSetUp(settingsProfile.menu.characterData, false)
     GW.SettingsMenuButtonSetUp(settingsProfile.menu.newProfile, true)
     GW.SettingsMenuButtonSetUp(settingsProfile.menu.importProfile, false)
-    GW.SettingsMenuButtonSetUp(settingsProfile.menu.characters, true)
 
     -- List
     local view = CreateScrollBoxListLinearView()
     view:SetElementInitializer("GwProfileItemTmpl", function(button, elementData)
         InitButton(button, elementData)
     end)
-    ScrollUtil.InitScrollBoxListWithScrollBar(settingsProfile.ScrollBox, settingsProfile.ScrollBar, view)
-    GW.HandleTrimScrollBar(settingsProfile.ScrollBar)
-    GW.HandleScrollControls(settingsProfile)
-    settingsProfile.ScrollBar:SetHideIfUnscrollable(true)
-    ProfileWin = settingsProfile.ScrollBox
+    local profilesPage = settingsProfile.profilesPage
+    ScrollUtil.InitScrollBoxListWithScrollBar(profilesPage.ScrollBox, profilesPage.ScrollBar, view)
+    GW.HandleTrimScrollBar(profilesPage.ScrollBar)
+    GW.HandleScrollControls(profilesPage)
+    profilesPage.ScrollBar:SetHideIfUnscrollable(true)
+    ProfileWin = profilesPage.ScrollBox
     UpdateScrollBox(ProfileWin)
 
-    -- characters page
+    -- character data page, filled whenever it is opened
+    local characterDataPage = settingsProfile.characterDataPage
     local characterView = CreateScrollBoxListLinearView()
     characterView:SetElementInitializer("GwProfileItemTmpl", InitCharacterButton)
-    ScrollUtil.InitScrollBoxListWithScrollBar(settingsProfile.characters.ScrollBox, settingsProfile.characters.ScrollBar, characterView)
-    GW.HandleTrimScrollBar(settingsProfile.characters.ScrollBar)
-    GW.HandleScrollControls(settingsProfile.characters)
-    settingsProfile.characters.ScrollBar:SetHideIfUnscrollable(true)
-    CharacterWin = settingsProfile.characters.ScrollBox
+    ScrollUtil.InitScrollBoxListWithScrollBar(characterDataPage.ScrollBox, characterDataPage.ScrollBar, characterView)
+    GW.HandleTrimScrollBar(characterDataPage.ScrollBar)
+    GW.HandleScrollControls(characterDataPage)
+    characterDataPage.ScrollBar:SetHideIfUnscrollable(true)
+    CharacterWin = characterDataPage.ScrollBox
+    characterDataPage:SetScript("OnShow", UpdateCharacterScrollBox)
 
-   -- Header/sub
-    settingsProfile.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    settingsProfile.header:SetText(L["Profiles"])
-    settingsProfile.sub:SetFont(UNIT_NAME_FONT, 12)
-    settingsProfile.sub:SetText(L["Profiles are an easy way to share your settings across characters and realms."])
+    -- Header/sub of both pages
+    for _, page in ipairs({profilesPage, characterDataPage}) do
+        page.header:SetFont(DAMAGE_TEXT_FONT, 20)
+        page.sub:SetFont(UNIT_NAME_FONT, 12)
+    end
+    profilesPage.header:SetText(L["Profiles"])
+    profilesPage.sub:SetText(L["Profiles are an easy way to share your settings across characters and realms."])
+    characterDataPage.header:SetText(L["Character data"])
+    characterDataPage.sub:SetText(L["Everything GW2 UI keeps for each character: its profile, the gold for the money data text and more. Remove the characters you no longer play."])
 
     -- Spec switch block
-    GW.InititateProfileSpecSwitchSettings(settingsProfile)
+    GW.InititateProfileSpecSwitchSettings(profilesPage)
 
     -- Reset to default card
-    settingsProfile.resetToDefaultFrame:SetScript("OnEnter", item_OnEnter)
-    settingsProfile.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)
-    item_OnLoad(settingsProfile.resetToDefaultFrame)
+    profilesPage.resetToDefaultFrame:SetScript("OnEnter", item_OnEnter)
+    profilesPage.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)
+    item_OnLoad(profilesPage.resetToDefaultFrame)
 
-    settingsProfile.resetToDefaultFrame.activateButton.icon:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png")
-    settingsProfile.resetToDefaultFrame.activateButton.icon:SetTexCoord(0, 1, 0, 1)
+    profilesPage.resetToDefaultFrame.activateButton.icon:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png")
+    profilesPage.resetToDefaultFrame.activateButton.icon:SetTexCoord(0, 1, 0, 1)
 
-    settingsProfile.resetToDefaultFrame.hasOptions = false
-    settingsProfile.resetToDefaultFrame.canDelete = false
-    settingsProfile.resetToDefaultFrame.canExport = false
-    settingsProfile.resetToDefaultFrame.canChangeIcon = false
-    settingsProfile.resetToDefaultFrame.canRename = false
-    settingsProfile.resetToDefaultFrame.canCopy = false
-    settingsProfile.resetToDefaultFrame.canActivate = false
-    settingsProfile.resetToDefaultFrame.background:SetTexCoord(0, 1, 0, 0.5)
+    profilesPage.resetToDefaultFrame.hasOptions = false
+    profilesPage.resetToDefaultFrame.canDelete = false
+    profilesPage.resetToDefaultFrame.canExport = false
+    profilesPage.resetToDefaultFrame.canChangeIcon = false
+    profilesPage.resetToDefaultFrame.canRename = false
+    profilesPage.resetToDefaultFrame.canCopy = false
+    profilesPage.resetToDefaultFrame.canActivate = false
+    profilesPage.resetToDefaultFrame.background:SetTexCoord(0, 1, 0, 0.5)
 
-    settingsProfile.resetToDefaultFrame.name:SetText(L["Default Settings"])
-    settingsProfile.resetToDefaultFrame.desc:SetText(L["Load the default addon settings to the current profile."])
-    settingsProfile.resetToDefaultFrame.defaultSettings:Show()
-    settingsProfile.resetToDefaultFrame.defaultSettings:SetText(L["Load"])
-    settingsProfile.resetToDefaultFrame.defaultSettings:GwSkinNegativeButton()
-    settingsProfile.resetToDefaultFrame.defaultSettings:SetScript("OnClick", function()
+    profilesPage.resetToDefaultFrame.name:SetText(L["Default Settings"])
+    profilesPage.resetToDefaultFrame.desc:SetText(L["Load the default addon settings to the current profile."])
+    profilesPage.resetToDefaultFrame.defaultSettings:Show()
+    profilesPage.resetToDefaultFrame.defaultSettings:SetText(L["Load"])
+    profilesPage.resetToDefaultFrame.defaultSettings:GwSkinNegativeButton()
+    profilesPage.resetToDefaultFrame.defaultSettings:SetScript("OnClick", function()
         GW.ShowPopup({
             text = L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
             OnAccept = function()
@@ -762,7 +750,7 @@ local function LoadSettingsProfileTab(container)
             end
         })
     end)
-    settingsProfile.resetToDefaultFrame:Show()
+    profilesPage.resetToDefaultFrame:Show()
 
     -- Menu buttons
     settingsProfile.menu.newProfile:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
@@ -790,10 +778,18 @@ local function LoadSettingsProfileTab(container)
         end
     end
 
-    settingsProfile.menu.characters:SetText(L["Characters"])
-    settingsProfile.menu.characters:SetScript("OnClick", function()
-        ShowCharacterPage(settingsProfile, not settingsProfile.showsCharacters)
+    -- the page entries of the menu
+    profilesPage.menuButton = settingsProfile.menu.profiles
+    characterDataPage.menuButton = settingsProfile.menu.characterData
+    profilesPage.menuButton:SetText(L["Profiles"])
+    profilesPage.menuButton:SetScript("OnClick", function()
+        ShowPage(settingsProfile, profilesPage)
     end)
+    characterDataPage.menuButton:SetText(L["Character data"])
+    characterDataPage.menuButton:SetScript("OnClick", function()
+        ShowPage(settingsProfile, characterDataPage)
+    end)
+    ShowPage(settingsProfile, profilesPage)
 
     settingsProfile.menu.importProfile:SetText(L["Import Profile"])
     settingsProfile.menu.importProfile:SetScript("OnClick", function()
