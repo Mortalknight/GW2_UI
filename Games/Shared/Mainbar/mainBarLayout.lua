@@ -233,9 +233,9 @@ local function LoadMainbarLayout()
 
     -- ONE fade callback for the whole manager - buffs and pet each registered their own
     -- identical one before, so every bar fade executed the snippet twice
-    GW.AddActionBarCallback(function()
+    EventRegistry:RegisterCallback("GW2_UI.ActionBarStateChanged", function()
         lm:onstate_None()
-    end)
+    end, lm)
 
     lm.layoutFrame = l
     return lm

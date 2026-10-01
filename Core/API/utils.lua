@@ -311,25 +311,14 @@ local function CountTable(T)
 end
 GW.CountTable = CountTable
 
-local function AddActionBarCallback(callback)
-    local callbacks = GW.ActionBarCallbacks
-    callbacks[#callbacks + 1] = callback
-end
-GW.AddActionBarCallback = AddActionBarCallback
-
-local function TriggerActionBarCallbacks()
-    for _, callback in ipairs(GW.ActionBarCallbacks) do
-        callback()
-    end
-end
-GW.TriggerActionBarCallbacks = TriggerActionBarCallbacks
-
 local function HookActionBarStateChanges()
     if GW.ActionBarStateChangesHooked then
         return
     end
 
-    hooksecurefunc("ValidateActionBarTransition", TriggerActionBarCallbacks)
+    hooksecurefunc("ValidateActionBarTransition", function()
+        EventRegistry:TriggerEvent("GW2_UI.ActionBarStateChanged")
+    end)
     GW.ActionBarStateChangesHooked = true
 end
 GW.HookActionBarStateChanges = HookActionBarStateChanges

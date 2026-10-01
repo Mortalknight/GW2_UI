@@ -10,7 +10,7 @@ local function fadeIn_OnFinished(self)
         bar.gw_Buttons[i].cooldown:SetDrawBling(true)
     end
     if bar.gw_StateTrigger then
-        GW.TriggerActionBarCallbacks()
+        EventRegistry:TriggerEvent("GW2_UI.ActionBarStateChanged")
     end
     bar:SetAlpha(1.0)
 end
@@ -29,7 +29,7 @@ local function actionBarFrameShow(f, instant)
         f:SetAttribute("gw_FadeShowing", true)
     end
     if f.gw_StateTrigger then
-        GW.TriggerActionBarCallbacks()
+        EventRegistry:TriggerEvent("GW2_UI.ActionBarStateChanged")
     end
 
     if instant then
@@ -42,7 +42,7 @@ end
 local function fadeOut_OnFinished(self)
     local bar = self:GetParent()
     if bar.gw_StateTrigger then
-        GW.TriggerActionBarCallbacks()
+        EventRegistry:TriggerEvent("GW2_UI.ActionBarStateChanged")
     end
     bar:SetAlpha(0.0)
 end
