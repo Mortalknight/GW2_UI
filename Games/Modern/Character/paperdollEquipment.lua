@@ -451,6 +451,7 @@ local function GrabDefaultSlots(slot, anchor, parent, size)
     slot:ClearAllPoints()
     slot:SetPoint(unpack(anchor))
     slot:SetParent(parent)
+    slot:SetFrameLevel(parent.model:GetFrameLevel() + 1)
     slot:SetSize(size, size)
     slot:GwStripTextures()
 

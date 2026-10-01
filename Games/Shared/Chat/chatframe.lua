@@ -578,6 +578,20 @@ local function EnforceTabSize(chatFrame)
     tab.Text:SetWidth(textWidth)
     tab:SetWidth(textWidth + CHAT_TAB_SIDES_PADDING + padding)
 end
+-- blizzard puts the left edge of the bar on the left edge of the jump to bottom button; ours is wider, so the bar
+-- moves over its middle. Called again whenever blizzard re-anchors the bar (resize, button shown or hidden)
+local function AlignScrollBar(chatFrame)
+    local scroll, button = chatFrame.ScrollBar, chatFrame.ScrollToBottomButton
+    if not (chatFrame.gwScrollBarSkinned and button:IsShown()) then return end
+    local inset = (button:GetWidth() - scroll:GetWidth()) / 2
+    -- the button does not start at the right edge of the frame, the top of the bar follows it
+    local buttonLeft, frameRight = button:GetLeft(), chatFrame:GetRight()
+    local shift = buttonLeft and frameRight and (buttonLeft - frameRight) or 0
+    scroll:ClearAllPoints()
+    scroll:SetPoint("TOPLEFT", chatFrame, "TOPRIGHT", shift + inset, 0)
+    scroll:SetPoint("BOTTOMLEFT", button, "TOPLEFT", inset, 2)
+end
+
 local function styleChatWindow(frame)
     local name = frame:GetName()
     GW.SetupChatModulesForFrame(frame)
@@ -689,6 +703,8 @@ local function styleChatWindow(frame)
     -- mainline only, the classic chat windows have no scroll bar
     if scroll then
         GW.SkinSlimScrollBar(scroll)
+        frame.gwScrollBarSkinned = true
+        AlignScrollBar(frame)
     end
 
     if not GW.isModern then
@@ -1083,6 +1099,9 @@ local function LoadChat()
         end
     end)
 
+    if FCF_UpdateScrollbarAnchors then
+        hooksecurefunc("FCF_UpdateScrollbarAnchors", AlignScrollBar)
+    end
     hooksecurefunc("FCF_FadeOutChatFrame", handleChatFrameFadeOut)
     hooksecurefunc("FCF_FadeInChatFrame", handleChatFrameFadeIn)
     hooksecurefunc("FCFTab_UpdateColors", setChatBackgroundColor)

@@ -269,6 +269,8 @@ local function SetupStatsScroll(stats)
     return stats.tiles
 end
 
+local AMMO_CLASSES = {HUNTER = true, ROGUE = true, WARRIOR = true}
+
 local function LoadPDBagList(fmMenu, parent)
     MirrorStatTooltipStrings()
 
@@ -292,7 +294,7 @@ local function LoadPDBagList(fmMenu, parent)
     fmGDR.stats:SetScript("OnEvent", stats_OnEvent)
     RegisterStatsEvents(fmGDR.stats)
 
-    CharacterAmmoSlot:SetShown(not hasRelicSlot)
+    CharacterAmmoSlot:SetShown(AMMO_CLASSES[GW.myclass] == true)
     PaperDollItemSlotButton_Update(CharacterRangedSlot)
 
     return fmGDR, fmGPDBIL
