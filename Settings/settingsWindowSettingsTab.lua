@@ -268,16 +268,6 @@ end
 -- =========================
 -- Registry + Search
 -- =========================
-local function CaptureWidgetAnchors(frame)
-    if not frame then return nil end
-    local info = { parent = frame:GetParent(), points = {}, size = { frame:GetSize() }, strata = frame:GetFrameStrata(), level = frame:GetFrameLevel() }
-    for i = 1, frame:GetNumPoints() do
-        local p, rel, rp, x, y = frame:GetPoint(i)
-        info.points[i] = { p, rel, rp, x, y }
-    end
-    return info
-end
-
 local function GetOrderedPanelBuckets()
     local R, out = GW.SettingsWidgetRegistry, {}
     for _, bucket in pairs(R.byPanel) do out[#out+1] = bucket end
@@ -285,50 +275,45 @@ local function GetOrderedPanelBuckets()
     return out
 end
 
-local function RegisterOptionWidget(widget, meta)
-    if not widget or widget.__gwRegEntry then return widget and widget.__gwRegEntry end
+-- the search works on the option data, so options are found before their widget is built
+local function RegisterOption(panel, opt)
+    if opt.__gwRegEntry then return opt.__gwRegEntry end
 
-    local panel = meta and (meta.panel or meta.parentPanel) or widget:GetParent()
-    local header = panel and panel.header and panel.header.GetText and panel.header:GetText() or ""
-
-    local bucket = GW.SettingsWidgetRegistry.byPanel[panel]
+    local R = GW.SettingsWidgetRegistry
+    local bucket = R.byPanel[panel]
     if not bucket then
-        GW.SettingsWidgetRegistry.panelCounter = GW.SettingsWidgetRegistry.panelCounter + 1
-        bucket = { entries = {}, panelIndex = GW.SettingsWidgetRegistry.panelCounter, header = header, panel = panel }
-        GW.SettingsWidgetRegistry.byPanel[panel] = bucket
+        R.panelCounter = R.panelCounter + 1
+        local header = panel.header and panel.header.GetText and panel.header:GetText() or ""
+        bucket = { entries = {}, panelIndex = R.panelCounter, header = header, panel = panel }
+        R.byPanel[panel] = bucket
     end
 
-    local title = meta and meta.title or widget.displayName
-
     local entry = {
-        widget      = widget,
+        opt         = opt,
+        widget      = opt.__widget,
         panel       = panel,
         panelIndex  = bucket.panelIndex,
         panelHeader = bucket.header,
         panelBreadcrumb = panel.breadcrumb and panel.breadcrumb:GetText() or "",
-        title      = title,
-        titleNorm  = Norm(title),
-        path       = meta and meta.path or widget.settingsPath,
-        pathNorm   = Norm(widget.settingsPath or ""),
-        groupHeaderNorm = Norm(widget.groupHeaderName or ""),
-        isNew      = title and title:find(GW.NewSign, 1, true) ~= nil,
-        type       = meta and meta.type or widget.optionType,
-        optionName = meta and meta.key  or widget.optionName,
-        desc       = meta and meta.desc or widget.desc,
-        descNorm   = Norm(meta and meta.desc or widget.desc or ""),
-        anchors    = CaptureWidgetAnchors(widget),
+        title       = opt.name,
+        titleNorm   = Norm(opt.name),
+        groupHeaderNorm = Norm(opt.groupHeaderName or ""),
+        isNew       = opt.name and opt.name:find(GW.NewSign, 1, true) ~= nil,
+        type        = opt.optionType,
+        optionName  = opt.optionName,
+        desc        = opt.desc,
+        descNorm    = Norm(opt.desc or ""),
     }
 
-    widget.__gwRegEntry = entry
-    table.insert(GW.SettingsWidgetRegistry.list, entry)
+    opt.__gwRegEntry = entry
+    table.insert(R.list, entry)
     table.insert(bucket.entries, entry)
-    entry.widgetIndex = #bucket.entries
 
     if entry.optionName then
-        local idx = GW.SettingsWidgetRegistry.byOptionName[entry.optionName]
+        local idx = R.byOptionName[entry.optionName]
         if not idx then
             idx = {}
-            GW.SettingsWidgetRegistry.byOptionName[entry.optionName] = idx
+            R.byOptionName[entry.optionName] = idx
         end
         table.insert(idx, entry)
     end
@@ -424,8 +409,9 @@ local function CreateOrGetOptionWidget(panel, opt)
     end
 
     opt.__widget = of
-
-    RegisterOptionWidget(of, { panel=panel, title=of.displayName, path=of.settingsPath, type=of.optionType, key=of.optionName, desc=of.desc })
+    RegisterOption(panel, opt).widget = of
+    -- built after the last dependency check, so it catches up on its own
+    GW.UpdateSettingsWidgetDependencies(of)
 
     return of
 end
@@ -543,10 +529,16 @@ local function BuildOptionsDataProvider(panel)
     local options = (panel and panel.gwOptions) or {}
     local rows = PackOptionsIntoRows(options)
 
+    -- only registered for the search, the widgets are built when their row shows; notes are
+    -- built right away, their row height is measured on the wrapped text
     for _, row in ipairs(rows) do
         for k=1,2 do
             local opt = row.cols and row.cols[k]
-            if opt then CreateOrGetOptionWidget(panel, opt) end
+            if opt and opt.optionType == "note" then
+                CreateOrGetOptionWidget(panel, opt)
+            elseif opt then
+                RegisterOption(panel, opt)
+            end
         end
     end
 
@@ -881,8 +873,7 @@ end
 local function BuildRowsFromEntries(entries)
     local rows, open = {}, nil
     for _, e in ipairs(entries) do
-        local w = e.widget
-        local full = (w and w.forceNewLine) == true
+        local full = ResolveForceNewLine(e.opt)
         if full then
             rows[#rows+1] = {kind="pair", left=e, right=nil}
             open = nil
@@ -951,8 +942,8 @@ local function InitSearchRow(row, item)
     SetRowSearchHighlightShown(row, true)
 
     local leftE, rightE = item.left, item.right
-    local leftW  = leftE  and leftE.widget  or nil
-    local rightW = rightE and rightE.widget or nil
+    local leftW  = leftE  and CreateOrGetOptionWidget(leftE.panel, leftE.opt) or nil
+    local rightW = rightE and CreateOrGetOptionWidget(rightE.panel, rightE.opt) or nil
 
     if row.leftAssigned and row.leftAssigned ~= leftW then
         row.leftAssigned:Hide(); row.leftAssigned:ClearAllPoints(); row.leftAssigned = nil
@@ -1207,16 +1198,27 @@ local function FindWidgetsByOption(settingName)
     return idx
 end
 
+-- the callers change the widget, so it is built if it does not exist yet
 local function FindWidgetByOption(settingName)
-    local matches = FindWidgetsByOption(settingName)
-    return (matches[1] and matches[1].widget) or nil
+    local entry = FindWidgetsByOption(settingName)[1]
+    return entry and CreateOrGetOptionWidget(entry.panel, entry.opt) or nil
 end
 GW.FindSettingsWidgetByOption = FindWidgetByOption
 
-local function GetAllSettingsWidgets()
+-- the widget if it is built, otherwise the option data it would be built from
+function GW.FindSettingsOption(settingName)
+    local entry = FindWidgetsByOption(settingName)[1]
+    return entry and (entry.widget or entry.opt) or nil
+end
+
+-- the built widgets; buildMissing builds the rest too
+local function GetAllSettingsWidgets(buildMissing)
     local out = {}
     for _, bucket in ipairs(GetOrderedPanelBuckets()) do
         for _, e in ipairs(bucket.entries) do
+            if buildMissing then
+                CreateOrGetOptionWidget(e.panel, e.opt)
+            end
             out[#out + 1] = e.widget
         end
     end
@@ -1319,12 +1321,13 @@ local function LoadSettingsTab(container)
             return DEFAULT_ROW_EXTENT
         end
 
+        -- the hits may not be built yet, the option data has what the height needs
         local extent = DEFAULT_ROW_EXTENT
-        if item.left and item.left.widget then
-            extent = math.max(extent, GetOptionRowExtent(item.left.widget))
+        if item.left then
+            extent = math.max(extent, GetOptionRowExtent(item.left.widget or item.left.opt))
         end
-        if item.right and item.right.widget then
-            extent = math.max(extent, GetOptionRowExtent(item.right.widget))
+        if item.right then
+            extent = math.max(extent, GetOptionRowExtent(item.right.widget or item.right.opt))
         end
 
         return extent

@@ -136,7 +136,8 @@ local function ResolveDependenceValue(settingName)
         return ok and value == true, virtual.label(), true
     end
 
-    local widget = GW.FindSettingsWidgetByOption(settingName)
+    -- the option data is enough, its widget may not be built yet
+    local widget = GW.FindSettingsOption(settingName)
     if not widget then
         return false, settingName, false
     end
@@ -146,56 +147,54 @@ local function ResolveDependenceValue(settingName)
         currentVal = false
     end
 
-    return currentVal, widget.displayName or settingName, true
+    return currentVal, widget.displayName or widget.name or settingName, true
 end
 
-local function AddDependenciesToOptionWidgetTooltip()
-    for _, of in pairs(GW.GetAllSettingsWidgets()) do
-        if of.dependence then
-            of.dependenciesInfo = {}
+local function AddDependenciesToOptionWidgetTooltip(of)
+    if of.dependence then
+        of.dependenciesInfo = {}
 
-            for settingName, expectedValue in pairs(of.dependence) do
-                local currentVal, displayName, exists = ResolveDependenceValue(settingName)
-                if exists then
-                    local settingsWidget = GW.FindSettingsWidgetByOption(settingName)
-                    local match = false
+        for settingName, expectedValue in pairs(of.dependence) do
+            local currentVal, displayName, exists = ResolveDependenceValue(settingName)
+            if exists then
+                local settingsWidget = GW.FindSettingsOption(settingName)
+                local match = false
 
-                    local expectedText
-                    if type(expectedValue) == "table" then
-                        local valuesList = {}
-                        for _, v in ipairs(expectedValue) do
-                            if currentVal == v then
-                                match = true
-                            end
-
-                            local display = tostring(v)
-
-                            if settingsWidget and settingsWidget.optionsList and settingsWidget.optionsNames then
-                                for i, real in ipairs(settingsWidget.optionsList) do
-                                    if real == v then
-                                        display = settingsWidget.optionsNames[i]
-                                        break
-                                    end
-                                end
-                            end
-
-                            table.insert(valuesList, display)
-                        end
-                        expectedText = table.concat(valuesList, ", ")
-                    else
-                        if currentVal == expectedValue then
+                local expectedText
+                if type(expectedValue) == "table" then
+                    local valuesList = {}
+                    for _, v in ipairs(expectedValue) do
+                        if currentVal == v then
                             match = true
                         end
-                        expectedText = L[tostring(expectedValue)]
+
+                        local display = tostring(v)
+
+                        if settingsWidget and settingsWidget.optionsList and settingsWidget.optionsNames then
+                            for i, real in ipairs(settingsWidget.optionsList) do
+                                if real == v then
+                                    display = settingsWidget.optionsNames[i]
+                                    break
+                                end
+                            end
+                        end
+
+                        table.insert(valuesList, display)
                     end
-
-                    local color = match and "|cff66cc66" or "|cffcc6666"  -- green or red
-                    expectedText = color .. expectedText .. "|r"
-
-                    -- virtual conditions have no widget and therefore no settings path
-                    local settingsPath = settingsWidget and settingsWidget.settingsPath or ""
-                    table.insert(of.dependenciesInfo, { name = string.format("|cffaaaaaa%s|r", settingsPath .. displayName), expected = expectedText })
+                    expectedText = table.concat(valuesList, ", ")
+                else
+                    if currentVal == expectedValue then
+                        match = true
+                    end
+                    expectedText = L[tostring(expectedValue)]
                 end
+
+                local color = match and "|cff66cc66" or "|cffcc6666"  -- green or red
+                expectedText = color .. expectedText .. "|r"
+
+                -- virtual conditions have no widget and therefore no settings path
+                local settingsPath = settingsWidget and settingsWidget.settingsPath or ""
+                table.insert(of.dependenciesInfo, { name = string.format("|cffaaaaaa%s|r", settingsPath .. displayName), expected = expectedText })
             end
         end
     end
@@ -468,9 +467,8 @@ function GwSettingsPanelMixin:AddOptionDropdown(name, desc, values)
     return opt
 end
 
-local function setDependenciesOption(type, settingName, SetEnable, deactivateColor, overrideColor)
-    local of = GW.FindSettingsWidgetByOption(settingName)
-    if not of then return end
+local function setDependenciesOption(of, SetEnable, deactivateColor, overrideColor)
+    local type = of.optionType
 
     local color = of.isMasterToggle and {GW.Colors.TextColors.LightHeader:GetRGB()} or {1, 1, 1}
     local inputColor, enabled = {0.82, 0.82, 0.82}, true
@@ -551,39 +549,46 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
     end
 end
 
-local function CheckDependencies()
-    for _, v in pairs(GW.GetAllSettingsWidgets()) do
-        if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
-            setDependenciesOption(v.optionType, v.optionName, false, v.isIncompatibleAddonLoaded, v.isIncompatibleAddonLoadedButOverride)
-        elseif v.dependence then
-            local allDepsMet = true
+-- one widget: its enabled state and the dependency lines of its tooltip
+local function UpdateWidgetDependencies(v)
+    if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+        setDependenciesOption(v, false, v.isIncompatibleAddonLoaded, v.isIncompatibleAddonLoadedButOverride)
+    elseif v.dependence then
+        local allDepsMet = true
 
-            for settingName, expectedValue in pairs(v.dependence) do
-                local currentVal = ResolveDependenceValue(settingName)
+        for settingName, expectedValue in pairs(v.dependence) do
+            local currentVal = ResolveDependenceValue(settingName)
 
-                if type(expectedValue) == "table" then
-                    local matched = false
-                    for _, val in ipairs(expectedValue) do
-                        if currentVal == val then
-                            matched = true
-                            break
-                        end
-                    end
-                    if not matched then
-                        allDepsMet = false
-                        break
-                    end
-                else
-                    if currentVal ~= expectedValue then
-                        allDepsMet = false
+            if type(expectedValue) == "table" then
+                local matched = false
+                for _, val in ipairs(expectedValue) do
+                    if currentVal == val then
+                        matched = true
                         break
                     end
                 end
+                if not matched then
+                    allDepsMet = false
+                    break
+                end
+            else
+                if currentVal ~= expectedValue then
+                    allDepsMet = false
+                    break
+                end
             end
-            setDependenciesOption(v.optionType, v.optionName, allDepsMet)
         end
+        setDependenciesOption(v, allDepsMet)
     end
-    AddDependenciesToOptionWidgetTooltip()
+    AddDependenciesToOptionWidgetTooltip(v)
+end
+-- widgets are built when they show, they catch up here
+GW.UpdateSettingsWidgetDependencies = UpdateWidgetDependencies
+
+local function CheckDependencies()
+    for _, v in pairs(GW.GetAllSettingsWidgets()) do
+        UpdateWidgetDependencies(v)
+    end
 
     -- notes gated by isVisible describe a state that may have just changed
     if GW.RefreshConditionalOptions then
@@ -686,7 +691,8 @@ GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
 local function RefreshSettingsAfterProfileSwitch()
     GW.disableGridUpdate = true
     GW.IsInProfileSwitch = true
-    for _, of in pairs(GW.GetAllSettingsWidgets()) do
+    -- the callbacks apply the new profile, so every widget has to exist here
+    for _, of in pairs(GW.GetAllSettingsWidgets(true)) do
         if of.optionType == "slider" then
             of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers))
             of.inputFrame.input:SetText(RoundDec(of.get(), of.decimalNumbers))
