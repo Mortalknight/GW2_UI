@@ -85,32 +85,6 @@ local function HideAzeriteOverlay(button)
         button.gwAzeriteHooked = true
     end
 end
-
--- Camelot builds the stat tooltip key from the localized stat name, which only resolves on English clients
-local STAT_TOOLTIP_KEYS = {
-    [LE_UNIT_STAT_STRENGTH or 1] = "STRENGTH",
-    [LE_UNIT_STAT_AGILITY or 2] = "AGILITY",
-    [LE_UNIT_STAT_STAMINA or 3] = "STAMINA",
-    [LE_UNIT_STAT_INTELLECT or 4] = "INTELLECT",
-    [LE_UNIT_STAT_SPIRIT or 5] = "SPIRIT",
-}
-
-local function MirrorStatTooltipStrings()
-    local _, classFileName = UnitClass("player")
-    for statIndex, englishName in pairs(STAT_TOOLTIP_KEYS) do
-        local localizedName = _G["SPELL_STAT" .. statIndex .. "_NAME"]
-        if localizedName then
-            for _, prefix in ipairs({strupper(classFileName), "DEFAULT"}) do
-                local localizedKey = prefix .. "_" .. strupper(localizedName) .. "_TOOLTIP"
-                local englishKey = prefix .. "_" .. englishName .. "_TOOLTIP"
-                if _G[localizedKey] == nil and _G[englishKey] then
-                    _G[localizedKey] = _G[englishKey]
-                end
-            end
-        end
-    end
-end
-
 ---------- stats ----------
 
 local function setStatIcon(self, stat)
@@ -272,8 +246,6 @@ end
 local AMMO_CLASSES = {HUNTER = true, ROGUE = true, WARRIOR = true}
 
 local function LoadPDBagList(fmMenu, parent)
-    MirrorStatTooltipStrings()
-
     -- paladins, shamans and druids carry a relic instead of a ranged weapon and have no ammo
     local hasRelicSlot = UnitHasRelicSlot("player")
     if hasRelicSlot then
@@ -295,6 +267,7 @@ local function LoadPDBagList(fmMenu, parent)
     RegisterStatsEvents(fmGDR.stats)
 
     CharacterAmmoSlot:SetShown(AMMO_CLASSES[GW.myclass] == true)
+    CharacterAmmoSlot:HookScript("OnShow", PaperDollItemSlotButton_Update)
     PaperDollItemSlotButton_Update(CharacterRangedSlot)
 
     return fmGDR, fmGPDBIL

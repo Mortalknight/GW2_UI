@@ -578,13 +578,11 @@ local function EnforceTabSize(chatFrame)
     tab.Text:SetWidth(textWidth)
     tab:SetWidth(textWidth + CHAT_TAB_SIDES_PADDING + padding)
 end
--- blizzard puts the left edge of the bar on the left edge of the jump to bottom button; ours is wider, so the bar
--- moves over its middle. Called again whenever blizzard re-anchors the bar (resize, button shown or hidden)
+
 local function AlignScrollBar(chatFrame)
     local scroll, button = chatFrame.ScrollBar, chatFrame.ScrollToBottomButton
     if not (chatFrame.gwScrollBarSkinned and button:IsShown()) then return end
     local inset = (button:GetWidth() - scroll:GetWidth()) / 2
-    -- the button does not start at the right edge of the frame, the top of the bar follows it
     local buttonLeft, frameRight = button:GetLeft(), chatFrame:GetRight()
     local shift = buttonLeft and frameRight and (buttonLeft - frameRight) or 0
     scroll:ClearAllPoints()
