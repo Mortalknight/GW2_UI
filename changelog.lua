@@ -32,6 +32,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.change, [=[System data text: the memory use of GW2 UI has its own line, colored by its share of the total memory]=]},
     {GW.Enum.ChangelogType.change, [=[Hero panel: grey items get a grey border, common items a white one on every game version]=]},
     {GW.Enum.ChangelogType.change, [=[Status report: cleaner layout, it lists the scale values with two decimals]=]},
+    {GW.Enum.ChangelogType.bug, [=[Quest frame skin: its option is shown on every game version, the skin no longer needs the gossip skin for readable texts and skinned reward icons]=]},
     {GW.Enum.ChangelogType.bug, [=[Much lower memory churn: the event tracker, the chat filters and the durability data text no longer create garbage all the time]=]},
     {GW.Enum.ChangelogType.bug, [=[Hero panel: hovering a stat no longer shows the durability tooltip after stats were hidden or moved, and the durability value no longer overwrites another stat]=]},
     {GW.Enum.ChangelogType.bug, [=[Bags: no more "This action has been blocked" when the bag is opened for the first time during combat, the item buttons are created before combat now]=]},

@@ -1388,7 +1388,7 @@ local function ColorObjectives()
 end
 
 local function QuestInfo_Display(template, parentFrame)
-    if not GW.settings.skins.gossip.enabled and not GW.settings.immersiveQuesting.enabled and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
+    if not GW.settings.skins.questLog.enabled and not GW.settings.immersiveQuesting.enabled and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
         return
     end
     local isMapStyle = false

@@ -41,7 +41,7 @@ local function LoadSkinsPanel(sWindow)
     general:AddOption(GW.NewSign .. SETTINGS_TITLE, nil, {getterSetter = "skins.blizzardOptions.enabled", callback = function() GW.ShowRlPopup = true end})
     general:AddOption(TIMEMANAGER_TITLE, nil, {getterSetter = "skins.timeManager.enabled", callback = function() GW.ShowRlPopup = true end})
 
-    gameFrames:AddOption(GW.Forever and L["Quest Frame"] or QUEST_LOG, nil, {getterSetter = "skins.questLog.enabled", callback = function() GW.ShowRlPopup = true end, hidden = GW.Retail})
+    gameFrames:AddOption(L["Quest Frame"], nil, {getterSetter = "skins.questLog.enabled", callback = function() GW.ShowRlPopup = true end})
     gameFrames:AddOption(COMMUNITIES_FRAME_TITLE, nil, {getterSetter = "skins.communities.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.isModern})
     gameFrames:AddOption(FLIGHT_MAP, nil, {getterSetter = "skins.flightMap.enabled", callback = function() GW.ShowRlPopup = true end})
     gameFrames:AddOption(LEGACY_BUTTON or "Legacy", nil, {getterSetter = "skins.legacySystem.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Forever})
