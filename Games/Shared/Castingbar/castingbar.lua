@@ -6,6 +6,16 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local animations = GW.animations
 local IsIn = GW.IsIn
 
+local castTimeFormatter
+if C_DurationUtil and C_DurationUtil.CreateDurationTextBinding and C_DurationUtil.CreateDuration
+    and C_StringUtil and C_StringUtil.CreateNumericRuleFormatter then
+    castTimeFormatter = C_StringUtil.CreateNumericRuleFormatter()
+    castTimeFormatter:SetBreakpoints({
+        { threshold = 0, format = "%.1fs", step = 0.1, rounding = Enum.NumericRuleFormatRounding.Nearest },
+        { threshold = 60, format = "%.0fm", components = { { div = 60, step = 1, rounding = Enum.NumericRuleFormatRounding.Up } } },
+    })
+end
+
 local CASTINGBAR_TEXTURES = {
     YELLOW = {
         NORMAL = "yellow-norm",
@@ -333,6 +343,17 @@ function GwCastingBarMixin:Init(unit, showTradeSkills)
     end
     self:SetAlpha(0)
 
+    if castTimeFormatter and not self.gwTimeBinding then
+        self.gwCastDuration = C_DurationUtil.CreateDuration()
+        self.gwTimeBinding = C_DurationUtil.CreateDurationTextBinding()
+        self.gwTimeBinding:SetFontString(self.time)
+        self.gwTimeBinding:SetFormatter(castTimeFormatter)
+        self.gwTimeBinding:SetUpdateInterval(0.1)
+        self.gwTimeBinding:SetExpiredText("")
+        self.gwTimeBinding:SetZeroDurationText("")
+        self.gwTimeBinding:Disable()
+    end
+
     if not self.gwStuckWatchdog then
         self.gwStuckWatchdog = C_Timer.NewTicker(0.5, function()
             local barUnit = self.unit or unit
@@ -394,6 +415,9 @@ function GwCastingBarMixin:SetValues(name, icon)
 end
 
 function GwCastingBarMixin:Reset()
+    if self.gwTimeBinding then
+        self.gwTimeBinding:Disable()
+    end
     if animations[self.animationName] then
         animations[self.animationName].completed = true
         animations[self.animationName].duration = 0
@@ -638,6 +662,14 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
         local barWidth = self:GetWidth()
         self.latency:SetWidth(math.max(0.0001, math.min(1, ((sqw + lagWorld) / (self.endTime - self.startTime)))) * barWidth)
 
+        local timeBinding = self.gwTimeBinding
+        if timeBinding and settings.showTimer then
+            self.gwCastDuration:SetTimeSpan(self.startTime, self.endTime)
+            timeBinding:SetDuration(self.gwCastDuration)
+            timeBinding:Enable()
+        end
+        self.gwTimeTenths = nil
+
         GW.AddToAnimation(
             self.animationName,
             0,
@@ -645,8 +677,14 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
             self.startTime,
             self.endTime - self.startTime,
             function(p)
-                if settings.showTimer then
-                    self.time:SetText(TimeCount(self.endTime - GetTime(), true))
+                -- without the engine binding the text only changes with the shown tenth of a second
+                if settings.showTimer and not timeBinding then
+                    local remaining = self.endTime - GetTime()
+                    local tenths = math.floor(remaining * 10 + 0.5)
+                    if tenths ~= self.gwTimeTenths then
+                        self.gwTimeTenths = tenths
+                        self.time:SetText(TimeCount(remaining, true))
+                    end
                 end
                 p = self.isChanneling and (1 - p) or p
                 self.progress:SetFillAmount(p)

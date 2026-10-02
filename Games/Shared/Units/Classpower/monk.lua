@@ -55,15 +55,15 @@ local function setStaggerBar()
 
         if auraData and auraData.expirationTime then
             fb.ironskin.expires = auraData.expirationTime
-            if fb.ironskin.ticker then
-                fb.ironskin.ticker:Cancel()
+            if not fb.ironskin.ticker then
+                fb.ironskin.ticker = C_Timer.NewTicker(0.05, function() ironSkin_OnUpdate(fb.ironskin) end)
             end
-            fb.ironskin.ticker = C_Timer.NewTicker(0.05, function() ironSkin_OnUpdate(fb.ironskin) end)
             fb.ironskin:Show()
             fb.ironskin.ironartwork:Show()
         else
             if fb.ironskin.ticker then
                 fb.ironskin.ticker:Cancel()
+                fb.ironskin.ticker = nil
             end
             fb.ironskin:Hide()
             fb.ironskin.ironartwork:Hide()
@@ -111,6 +111,7 @@ local function powerStagger(self, event, ...)
         fb.ironskin.ironartwork:Hide()
         if fb.ironskin.ticker then
             fb.ironskin.ticker:Cancel()
+            fb.ironskin.ticker = nil
         end
     end
 

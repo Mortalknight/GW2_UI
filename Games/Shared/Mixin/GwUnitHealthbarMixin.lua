@@ -7,6 +7,11 @@ GwUnitHealthbarMixin = {}
 local HEALTH_RETRY_INTERVAL = 0.1
 local HEALTH_RETRY_LIMIT = 10
 
+local function HealthTextOnUpdate(bar)
+    local frame = bar.gwHealthOwner
+    frame:UpdateHealthTextString(frame.gwHealthValue, bar:GetFillAmount(), frame.gwHealthMaxValue)
+end
+
 local function HasNoHealthData(unit, health, healthMax)
     if not unit or not UnitExists(unit) then return false end
     if healthMax <= 0 then return true end
@@ -118,8 +123,10 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
             self.healPrediction:SetFillAmount(predictionPrecentage)
         end
 
-        self.health.barOnUpdate = function()
-            self:UpdateHealthTextString(health, self.health:GetFillAmount(), healthMax) -- HealthMax is used in the overriden PartyFrame UpdateHealthTextString function
+        self.gwHealthValue, self.gwHealthMaxValue = health, healthMax
+        if not self.health.barOnUpdate then
+            self.health.gwHealthOwner = self
+            self.health.barOnUpdate = HealthTextOnUpdate
         end
 
         if forceUpdate then

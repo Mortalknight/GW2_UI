@@ -7,8 +7,13 @@ if GW.isModern then return end
 local function UpdateTooltip(self)
     if GameTooltip:IsForbidden() then return end
 
-    if self.index then
-        GameTooltip:SetUnitAura(self:GetParent().__owner.gwUnit, self.index, self.isHarmful and "HARMFUL" or "HELPFUL")
+    if self.auraInstanceID then
+        local unit = self:GetParent().__owner.gwUnit
+        if self.isHarmful then
+            GameTooltip:SetUnitDebuffByAuraInstanceID(unit, self.auraInstanceID)
+        else
+            GameTooltip:SetUnitBuffByAuraInstanceID(unit, self.auraInstanceID)
+        end
     end
 end
 
@@ -209,20 +214,6 @@ local function updateAura(element, unit, data, position)
     button.auraInstanceID = data.auraInstanceID
     button.hideDuration = element.hideDuration
     button.isHarmful = data.isHarmful
-    button.index = nil -- reset
-
-    --loop to get the index
-    for i = 1, 40 do
-        local auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, data.isHelpful and "HELPFUL" or "HARMFUL")
-        if auraData then
-            if auraData.auraInstanceID == data.auraInstanceID then
-                button.index = i
-                break
-            end
-        else
-            break
-        end
-    end
 
     if data.sourceUnit == "player" and (data.duration > 0 and data.duration < 120) then
         setAuraType(button, "bigBuff")
@@ -350,9 +341,10 @@ local function processData(unit, data, filter, newBuffAnimation)
     data.isHarmfulAura = filter:find("HARMFUL") and true
     data.isHelpfulAura = filter:find("HELPFUL") and true
 
-    data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CANCELABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CANCELABLE")
-    data.isAuraPlayer = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|PLAYER") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|PLAYER")
-    data.isAuraRaid = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|RAID") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|RAID")
+    local side = data.isHarmfulAura and "HARMFUL" or "HELPFUL"
+    data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, side .. "|CANCELABLE")
+    data.isAuraPlayer = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, side .. "|PLAYER")
+    data.isAuraRaid = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, side .. "|RAID")
 
     return data
 end
