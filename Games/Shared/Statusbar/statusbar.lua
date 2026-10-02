@@ -123,6 +123,8 @@ function GwAnimatedStatusBarMixin:SetFillAmount(value, forced)
             self.maskContainer:SetPoint("BOTTOM", self.internalBar, "BOTTOM", 0, currentSegmentPosition)
         elseif isReverseFill then
             self.maskContainer:SetPoint("RIGHT", self.internalBar, "RIGHT", -currentSegmentPosition, 0)
+            local edgeWidth = stretchMask and maskHeightValue or segmentSize
+            self.maskOverflow:SetWidth(max(0.01, totalWidth - currentSegmentPosition - edgeWidth + 3))
         else
             self.maskContainer:SetPoint("LEFT", self.internalBar, "LEFT", currentSegmentPosition, 0)
         end
@@ -215,8 +217,7 @@ local function SetReverseFill(self, reverse)
         maskOverflow:ClearAllPoints()
         maskOverflow:SetPoint("TOPRIGHT", self.maskContainer, "TOPLEFT", 0, 0)
         maskOverflow:SetPoint("BOTTOMRIGHT", self.maskContainer, "BOTTOMLEFT", 0, 0)
-        maskOverflow:SetPoint("TOPLEFT", self, "TOPLEFT", -3, 0)
-        maskOverflow:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", -3, 0)
+        maskOverflow:SetWidth(1)
 
         maskOverflow.mask:ClearAllPoints()
         maskOverflow.mask:SetPoint("TOPRIGHT", maskOverflow, "TOPRIGHT", 0, 0)
