@@ -317,15 +317,6 @@ local function RegisterStatsEvents(frame)
     local events = {
         "PLAYER_ENTERING_WORLD",
         "CHARACTER_POINTS_CHANGED",
-        "UNIT_MODEL_CHANGED",
-        "UNIT_LEVEL",
-        "UNIT_STATS",
-        "UNIT_RANGEDDAMAGE",
-        "UNIT_ATTACK_POWER",
-        "UNIT_RANGED_ATTACK_POWER",
-        "UNIT_ATTACK",
-        "UNIT_SPELL_HASTE",
-        "UNIT_RESISTANCES",
         "PLAYER_GUILD_UPDATE",
         "SKILL_LINES_CHANGED",
         "COMBAT_RATING_UPDATE",
@@ -334,7 +325,6 @@ local function RegisterStatsEvents(frame)
         "LIFESTEAL_UPDATE",
         "AVOIDANCE_UPDATE",
         "KNOWN_TITLES_UPDATE",
-        "UNIT_NAME_UPDATE",
         "PLAYER_TALENT_UPDATE",
         "BAG_UPDATE",
         "PLAYER_EQUIPMENT_CHANGED",
@@ -352,10 +342,11 @@ local function RegisterStatsEvents(frame)
     for _, event in ipairs(events) do
         frame:RegisterEvent(event)
     end
-    frame:RegisterUnitEvent("UNIT_DAMAGE", "player")
-    frame:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player")
-    frame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
-    frame:RegisterUnitEvent("UNIT_AURA", "player")
+    -- the unit events only for the player, they fire for every nameplate as well
+    for _, event in ipairs({"UNIT_MODEL_CHANGED", "UNIT_LEVEL", "UNIT_STATS", "UNIT_RANGEDDAMAGE", "UNIT_ATTACK_POWER", "UNIT_RANGED_ATTACK_POWER",
+            "UNIT_ATTACK", "UNIT_SPELL_HASTE", "UNIT_RESISTANCES", "UNIT_NAME_UPDATE", "UNIT_DAMAGE", "UNIT_ATTACK_SPEED", "UNIT_MAXHEALTH", "UNIT_AURA"}) do
+        frame:RegisterUnitEvent(event, "player")
+    end
 end
 
 local function CharacterSlots(dressingRoom)

@@ -191,21 +191,24 @@ local function stats_OnEvent(self, event, ...)
 end
 
 local STATS_EVENTS = {
-    "PLAYER_ENTERING_WORLD", "CHARACTER_POINTS_CHANGED", "UNIT_MODEL_CHANGED", "UNIT_LEVEL", "UNIT_STATS",
-    "UNIT_RANGEDDAMAGE", "UNIT_ATTACK_POWER", "UNIT_RANGED_ATTACK_POWER", "UNIT_ATTACK", "UNIT_SPELL_HASTE",
-    "UNIT_RESISTANCES", "UNIT_DEFENSE", "SKILL_LINES_CHANGED", "COMBAT_RATING_UPDATE", "UNIT_NAME_UPDATE",
+    "PLAYER_ENTERING_WORLD", "CHARACTER_POINTS_CHANGED", "SKILL_LINES_CHANGED", "COMBAT_RATING_UPDATE",
     "BAG_UPDATE", "PLAYER_EQUIPMENT_CHANGED", "PLAYERBANKSLOTS_CHANGED", "PLAYER_AVG_ITEM_LEVEL_UPDATE",
-    "PLAYER_DAMAGE_DONE_MODS", "SPELL_POWER_CHANGED", "UNIT_INVENTORY_CHANGED", "UPDATE_INVENTORY_ALERTS", "SPEED_UPDATE",
+    "PLAYER_DAMAGE_DONE_MODS", "SPELL_POWER_CHANGED", "UPDATE_INVENTORY_ALERTS", "SPEED_UPDATE",
+}
+-- only for the player, they fire for every nameplate as well
+local STATS_UNIT_EVENTS = {
+    "UNIT_MODEL_CHANGED", "UNIT_LEVEL", "UNIT_STATS", "UNIT_RANGEDDAMAGE", "UNIT_ATTACK_POWER", "UNIT_RANGED_ATTACK_POWER",
+    "UNIT_ATTACK", "UNIT_SPELL_HASTE", "UNIT_RESISTANCES", "UNIT_DEFENSE", "UNIT_NAME_UPDATE", "UNIT_INVENTORY_CHANGED",
+    "UNIT_DAMAGE", "UNIT_ATTACK_SPEED", "UNIT_MAXHEALTH", "UNIT_AURA",
 }
 
 local function RegisterStatsEvents(frame)
     for _, event in ipairs(STATS_EVENTS) do
         pcall(frame.RegisterEvent, frame, event)
     end
-    frame:RegisterUnitEvent("UNIT_DAMAGE", "player")
-    frame:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player")
-    frame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
-    frame:RegisterUnitEvent("UNIT_AURA", "player")
+    for _, event in ipairs(STATS_UNIT_EVENTS) do
+        pcall(frame.RegisterUnitEvent, frame, event, "player")
+    end
 end
 
 local function CharacterSlots(dressingRoom)

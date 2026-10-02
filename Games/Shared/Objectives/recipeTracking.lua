@@ -145,16 +145,17 @@ local function UntrackRecipeIfUnlearned()
     end
 end
 
+-- bags, currencies and mail only change reagent counts, without a tracked recipe there is nothing to count
+local function HasTrackedRecipes()
+    return #C_TradeSkillUI.GetRecipesTracked(IsRecrafting) > 0 or #C_TradeSkillUI.GetRecipesTracked(not IsRecrafting) > 0
+end
+
 function GwObjectivesRecipeContainerMixin:OnEvent(event, ...)
     if event == "TRACKED_RECIPE_UPDATE" then
         self:UpdateLayout()
-    elseif event == "CURRENCY_DISPLAY_UPDATE" then
-        self:UpdateLayout()
-    elseif event == "UPDATE_PENDING_MAIL" then
-        self:UpdateLayout()
     elseif event == "SKILL_LINES_CHANGED" then
         UntrackRecipeIfUnlearned()
-    elseif event == "BAG_UPDATE_DELAYED" then
+    elseif (event == "CURRENCY_DISPLAY_UPDATE" or event == "UPDATE_PENDING_MAIL" or event == "BAG_UPDATE_DELAYED") and HasTrackedRecipes() then
         self:UpdateLayout()
     end
 end

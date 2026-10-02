@@ -78,9 +78,13 @@ end
 
 -- the secure aura tooltips take no lines from addons, blizzard shows their ids through this cvar;
 -- the settings panel calls it too
+-- every modifier key press lands here, the cvar is only written when its value changes
 function GW.UpdateAuraTooltipIDCVar()
     if GW.isModern then
-        C_CVar.SetCVar("tooltipShowAuraSpellIDs", Tooltip.IsModifierDown() and "1" or "0")
+        local value = Tooltip.IsModifierDown() and "1" or "0"
+        if C_CVar.GetCVar("tooltipShowAuraSpellIDs") ~= value then
+            C_CVar.SetCVar("tooltipShowAuraSpellIDs", value)
+        end
     end
 end
 

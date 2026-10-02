@@ -71,35 +71,33 @@ if AchievementMicroButton_Update == nil then
     end
 end
 
-local function AddToAnimation(name, from, to, start, duration, method, easeing, onCompleteCallback, doCompleteOnOverider)
-    local newAnimation = true
-    if animations[name] then
-        newAnimation = (animations[name].start + animations[name].duration) > GetTime()
-    end
-    if not doCompleteOnOverider then
-        newAnimation = true
-    end
+local pendingAnimations = {}
+local animationsRunning = false
 
-    if not newAnimation then
-        animations[name].duration = duration
-        animations[name].to = to
-        animations[name].progress = 0
-        animations[name].method = method
-        animations[name].completed = false
-        animations[name].easeing = easeing
-        animations[name].onCompleteCallback = onCompleteCallback
-    else
-        animations[name] = {}
-        animations[name].start = start
-        animations[name].duration = duration
-        animations[name].from = from
-        animations[name].to = to
-        animations[name].progress = 0
-        animations[name].method = method
-        animations[name].completed = false
-        animations[name].easeing = easeing
-        animations[name].onCompleteCallback = onCompleteCallback
+local function AddToAnimation(name, from, to, start, duration, method, easeing, onCompleteCallback, doCompleteOnOverider)
+    local animation = animations[name] or pendingAnimations[name]
+    -- doCompleteOnOverider: an animation that already ran out keeps its start and from, so it completes on the new target
+    local keepStart = doCompleteOnOverider and animation and (animation.start + animation.duration) <= GetTime()
+
+    if not animation then
+        animation = {}
+        if animationsRunning then
+            pendingAnimations[name] = animation
+        else
+            animations[name] = animation
+        end
     end
+    if not keepStart then
+        animation.start = start
+        animation.from = from
+    end
+    animation.duration = duration
+    animation.to = to
+    animation.progress = 0
+    animation.method = method
+    animation.completed = false
+    animation.easeing = easeing
+    animation.onCompleteCallback = onCompleteCallback
 end
 GW.AddToAnimation = AddToAnimation
 
@@ -186,6 +184,7 @@ local function gw_OnUpdate(_, elapsed)
         local time = GetTime()
         local completedCount = 0
 
+        animationsRunning = true
         for name, animation in pairs(animations) do
             if animation.completed then
                 completedCount = completedCount + 1
@@ -193,6 +192,8 @@ local function gw_OnUpdate(_, elapsed)
             elseif time >= (animation.start + animation.duration) then
                 local t = animation.easeing and 1 or sin(pi * 0.5)
                 animation.progress = GW.lerp(animation.from, animation.to, t)
+                -- before the callbacks, a restart from them clears it again
+                animation.completed = true
 
                 if animation.method then
                     animation.method(animation.progress)
@@ -214,9 +215,19 @@ local function gw_OnUpdate(_, elapsed)
             end
         end
 
+        animationsRunning = false
+
+        -- only what is still done goes, a restarted animation stays
         for i = 1, completedCount do
-            animations[completedAnimations[i]] = nil
+            local name = completedAnimations[i]
+            if animations[name] and animations[name].completed then
+                animations[name] = nil
+            end
             completedAnimations[i] = nil
+        end
+        for name, animation in pairs(pendingAnimations) do
+            animations[name] = animation
+            pendingAnimations[name] = nil
         end
     end
 

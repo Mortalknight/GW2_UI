@@ -58,21 +58,13 @@ local function Create_Tags()
         local setting = stringtoboolean[...]
         if not setting then return "" end
 
-        local name, server = UnitName(unit)
-        if GW.IsSecretValue(name) then return "" end
-        if server and server ~= "" then
-            name = string.format('%s-%s', name, server)
-        end
-
-        for i = 1, GetNumGroupMembers() do
-            local raidName, _, _, _, _, _, _, _, _, role2 = GetRaidRosterInfo(i)
-            if( raidName == name ) then
-                if role2 == "MAINTANK" then
-                    return "|TInterface/AddOns/GW2_UI/textures/party/icon-maintank.png:15:15:0:-2|t "
-                elseif role2 == "MAINASSIST" then
-                    return "|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist.png:15:15:0:-1|t "
-                end
-            end
+        -- asks for the unit directly, the roster scan ran over the whole raid for every name
+        local isTank, isAssist = GetPartyAssignment("MAINTANK", unit), GetPartyAssignment("MAINASSIST", unit)
+        if GW.IsSecretValue(isTank) or GW.IsSecretValue(isAssist) then return "" end
+        if isTank then
+            return "|TInterface/AddOns/GW2_UI/textures/party/icon-maintank.png:15:15:0:-2|t "
+        elseif isAssist then
+            return "|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist.png:15:15:0:-1|t "
         end
     end)
 
