@@ -258,7 +258,7 @@ local function LoadTargetPanel(sWindow)
         getterSetter = "unitframes.pet.auraSort", callback = function() GwPlayerPetFrame:UpdateSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["unitframes.pet.enabled"] = true}, groupHeaderName = AURAS, hidden = not GW.Retail
     })
     pPlayerPet:AddGroupHeader(L["Fader"])
-    pPlayerPet:AddOptionDropdown(L["Fader"], nil, { getterSetter = "unitframes.pet.fader", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["unitframes.pet.enabled"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
+    pPlayerPet:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, { getterSetter = "unitframes.pet.fader", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["unitframes.pet.enabled"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
     pPlayerPet:AddOptionSlider(L["Smooth"], nil, { getterSetter = "unitframes.pet.fader.smooth", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["unitframes.pet.enabled"] = true}})
     pPlayerPet:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "unitframes.pet.fader.minAlpha", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["unitframes.pet.enabled"] = true}})
     pPlayerPet:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "unitframes.pet.fader.maxAlpha", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["unitframes.pet.enabled"] = true}})
@@ -324,7 +324,7 @@ local function LoadTargetPanel(sWindow)
 
 
     p_target:AddGroupHeader(L["Fader"])
-    p_target:AddOptionDropdown(L["Fader"], nil, { getterSetter = "unitframes.target.fader", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["unitframes.target.enabled"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
+    p_target:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, { getterSetter = "unitframes.target.fader", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["unitframes.target.enabled"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
     p_target:AddOptionSlider(L["Smooth"], nil, { getterSetter = "unitframes.target.fader.smooth", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["unitframes.target.enabled"] = true}})
     p_target:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "unitframes.target.fader.minAlpha", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["unitframes.target.enabled"] = true}})
     p_target:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "unitframes.target.fader.maxAlpha", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["unitframes.target.enabled"] = true}})
@@ -345,8 +345,8 @@ local function LoadTargetPanel(sWindow)
     pTargetOfTarget:AddOption(L["Show absorb bar"], nil, {getterSetter = "unitframes.targettarget.showAbsorbBar", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.target.enabled"] = true, ["unitframes.targettarget.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
 
     pTargetOfTarget:AddGroupHeader(L["Fader"])
-    pTargetOfTarget:AddOptionDropdown(L["Fader"], nil, {
-        getterSetter = "unitframes.targettarget.fader", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["unitframes.target.enabled"] = true, ["unitframes.targettarget.enabled"] = true}, checkbox = true, groupHeaderName = L["Fader"]
+    pTargetOfTarget:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, {
+        getterSetter = "unitframes.targettarget.fader", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["unitframes.target.enabled"] = true, ["unitframes.targettarget.enabled"] = true}, checkbox = true, groupHeaderName = L["Fader"]
     })
     pTargetOfTarget:AddOptionSlider(L["Smooth"], nil, { getterSetter = "unitframes.targettarget.fader.smooth", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["unitframes.target.enabled"] = true, ["unitframes.targettarget.enabled"] = true}})
     pTargetOfTarget:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "unitframes.targettarget.fader.minAlpha", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["unitframes.target.enabled"] = true, ["unitframes.targettarget.enabled"] = true}})
@@ -413,7 +413,7 @@ local function LoadTargetPanel(sWindow)
 
 
     p_focus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})
-    p_focus:AddOptionDropdown(L["Fader"], nil, { getterSetter = "unitframes.focus.fader", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["unitframes.focus.enabled"] = true}, checkbox = true, groupHeaderName = L["Fader"], hidden = GW.Classic})
+    p_focus:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, { getterSetter = "unitframes.focus.fader", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["unitframes.focus.enabled"] = true}, checkbox = true, groupHeaderName = L["Fader"], hidden = GW.Classic})
     p_focus:AddOptionSlider(L["Smooth"], nil, { getterSetter = "unitframes.focus.fader.smooth", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic})
     p_focus:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "unitframes.focus.fader.minAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic})
     p_focus:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "unitframes.focus.fader.maxAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic})
@@ -432,13 +432,13 @@ local function LoadTargetPanel(sWindow)
     pTargetOfFocus:AddOption(L["Show absorb bar"], nil, {getterSetter = "unitframes.focustarget.showAbsorbBar", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.focus.enabled"] = true, ["unitframes.focustarget.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
 
     pTargetOfFocus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})
-    pTargetOfFocus:AddOptionDropdown(L["Fader"], nil, {
+    pTargetOfFocus:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, {
         getterSetter = "unitframes.focustarget.fader",
         callback = function()
             GwFocusTargetUnitFrame:ToggleSettings()
         end,
-        optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"},
-        optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, UNIT_TARGET, L["Vehicle"], L["Unit Target"], L["Player Target"]},
+        optionsList = select(1, GW.GetFaderDropdownOptions()),
+        optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text",
         dependence = {["unitframes.focus.enabled"] = true, ["unitframes.focustarget.enabled"] = true},
         checkbox = true,
         groupHeaderName = L["Fader"],

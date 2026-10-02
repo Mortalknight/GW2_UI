@@ -359,6 +359,11 @@ if GW.Retail or GW.Mists then
     }
 end
 
+-- the settings only offer the options this client has
+function GW.IsFrameFaderOptionAvailable(option)
+    return options[option] ~= nil
+end
+
 local function CountOption(element, state, oldState)
     if state and not oldState then
         element.count = (element.count or 0) + 1

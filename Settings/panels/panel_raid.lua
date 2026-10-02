@@ -236,8 +236,8 @@ local function LoadRaid10Profile(panel)
     --fader
     raid10:AddGroupHeader(L["Fader"])
     raid10:AddOption(L["Range"], nil, {getterSetter = "groupFrames.raid10.faderRange", callback = function() GW.UpdateGridSettings("raid10") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, groupHeaderName = L["Fader"]})
-    raid10:AddOptionDropdown(L["Fader"], nil, {
-        getterSetter = "groupFrames.raid10.fader", callback = function() GW.UpdateGridSettings("raid10") end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true, ["groupFrames.raid10.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
+    raid10:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, {
+        getterSetter = "groupFrames.raid10.fader", callback = function() GW.UpdateGridSettings("raid10") end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true, ["groupFrames.raid10.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
     })
 
     raid10:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.raid10.fader.smooth", callback = function() UpdateGridSettingsThrottled("raid10") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}})
@@ -351,8 +351,8 @@ local function LoadRaid25Profile(panel)
     raid25:AddGroupHeader(L["Fader"])
     raid25:AddOption(L["Range"], nil, {getterSetter = "groupFrames.raid25.faderRange", callback = function() GW.UpdateGridSettings("raid25") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, groupHeaderName = L["Fader"]})
 
-    raid25:AddOptionDropdown(L["Fader"], nil, {
-        getterSetter = "groupFrames.raid25.fader", callback = function() GW.UpdateGridSettings("raid25") end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true, ["groupFrames.raid25.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
+    raid25:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, {
+        getterSetter = "groupFrames.raid25.fader", callback = function() GW.UpdateGridSettings("raid25") end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true, ["groupFrames.raid25.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
     })
     raid25:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.raid25.fader.smooth", callback = function() UpdateGridSettingsThrottled("raid25") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}})
     raid25:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raid25.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raid25") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}})
@@ -461,8 +461,8 @@ local function LoadRaid40Profile(panel)
     --fader
     raid40:AddGroupHeader(L["Fader"])
     raid40:AddOption(L["Range"], nil, {getterSetter = "groupFrames.raid40.faderRange", callback = function() GW.UpdateGridSettings("raid40") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, groupHeaderName = L["Fader"]})
-    raid40:AddOptionDropdown(L["Fader"], nil, {
-        getterSetter = "groupFrames.raid40.fader", callback = function() GW.UpdateGridSettings("raid40") end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true, ["groupFrames.raid40.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
+    raid40:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, {
+        getterSetter = "groupFrames.raid40.fader", callback = function() GW.UpdateGridSettings("raid40") end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true, ["groupFrames.raid40.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
     })
     raid40:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.raid40.fader.smooth", callback = function() UpdateGridSettingsThrottled("raid40") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true}})
     raid40:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raid40.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raid40") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true}})
@@ -570,11 +570,11 @@ local function LoadMaintankProfile(panel)
     --fader
     tank:AddGroupHeader(L["Fader"])
     tank:AddOption(L["Range"], nil, {getterSetter = "groupFrames.maintank.faderRange", callback = function() GW.UpdateGridSettings("maintank") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, groupHeaderName = L["Fader"]})
-    tank:AddOptionDropdown(L["Fader"], nil, {
+    tank:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, {
         getterSetter = "groupFrames.maintank.fader",
         callback = function() GW.UpdateGridSettings("maintank") end,
-        optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"},
-        optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]},
+        optionsList = select(1, GW.GetFaderDropdownOptions()),
+        optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text",
         dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true, ["groupFrames.maintank.faderRange"] = false},
         checkbox = true,
         groupHeaderName = L["Fader"]
@@ -670,8 +670,8 @@ local function LoadRaidPetProfile(panel)
     --fader
     p:AddGroupHeader(L["Fader"])
     p:AddOption(L["Range"], nil, {getterSetter = "groupFrames.raidPet.faderRange", callback = function() GW.UpdateGridSettings("raidPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}, groupHeaderName = L["Fader"]})
-    p:AddOptionDropdown(L["Fader"], nil, {
-        getterSetter = "groupFrames.raidPet.fader", callback = function() GW.UpdateGridSettings("raidPet") end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true, ["groupFrames.raidPet.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
+    p:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, {
+        getterSetter = "groupFrames.raidPet.fader", callback = function() GW.UpdateGridSettings("raidPet") end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true, ["groupFrames.raidPet.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
     })
     p:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.raidPet.fader.smooth", callback = function() UpdateGridSettingsThrottled("raidPet") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
     p:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raidPet.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raidPet") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
@@ -804,11 +804,11 @@ local function LoadPartyProfile(panel)
     --fader
     party:AddGroupHeader(L["Fader"])
     party:AddOption(L["Range"], nil, {getterSetter = "groupFrames.party.faderRange", callback = function() GW.UpdateGridSettings("party") end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, groupHeaderName = L["Fader"]})
-    party:AddOptionDropdown(L["Fader"], nil, {
+    party:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, {
         getterSetter = "groupFrames.party.fader",
         callback = function() GW.UpdateGridSettings("party") end,
-        optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"},
-        optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]},
+        optionsList = select(1, GW.GetFaderDropdownOptions()),
+        optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text",
         dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true, ["groupFrames.party.faderRange"] = false},
         checkbox = true,
         groupHeaderName = L["Fader"]
@@ -910,11 +910,11 @@ local function LoadPartyPetProfile(panel)
     --fader
     p:AddGroupHeader(L["Fader"])
     p:AddOption(L["Range"], nil, {getterSetter = "groupFrames.partyPet.faderRange", callback = function() GW.UpdateGridSettings("partyPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true}, groupHeaderName = L["Fader"]})
-    p:AddOptionDropdown(L["Fader"], nil, {
+    p:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, {
         getterSetter = "groupFrames.partyPet.fader",
         callback = function() GW.UpdateGridSettings("partyPet") end,
-        optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"},
-        optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]},
+        optionsList = select(1, GW.GetFaderDropdownOptions()),
+        optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text",
         dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true, ["groupFrames.partyPet.faderRange"] = false},
         checkbox = true,
         groupHeaderName = L["Fader"]
