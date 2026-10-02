@@ -204,6 +204,7 @@ function GwStanceBarMixin:UpdateKeybinds()
         if not button then break end
 
         button.HotKey:SetText(GetBindingKey("SHAPESHIFTBUTTON" .. i))
+        button.gw_HasAction = i <= GetNumShapeshiftForms()
         GW.UpdateHotkey(button)
         GW.FixHotKeyPosition(button, true)
     end
