@@ -101,8 +101,8 @@ function GwImmersiveQuestFrameMixin:questTextCompleted()
             self.container.acceptButton:SetText(CONTINUE)
             self.container.acceptButton:Show()
         else
-            local s = string.sub(self.questString[self.questStringInt], -1)
-            if s == "?" then
+            local lastLine = self.questString[self.questStringInt]
+            if lastLine and string.sub(lastLine, -1) == "?" then
                 self.container.playerModel:SetAction("no")
             end
             self.container.acceptButton:Hide()
