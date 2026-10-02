@@ -64,10 +64,19 @@ local function UpdateRange(self, unit)
 end
 
 local function ToggleAlpha(self, element, endAlpha)
+    if element.currentAlpha == endAlpha then
+        local running = GW.animations[element.gwAnimationName]
+        if running then
+            if running.to == endAlpha and not running.completed then return end
+        elseif math.abs(self:GetAlpha() - endAlpha) < 0.01 then
+            return
+        end
+    end
+
     element:ClearTimers()
 
     if element.Smooth then
-        GW.AddToAnimation(self:GetDebugName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
+        GW.AddToAnimation(element.gwAnimationName, self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
         if element.correspondingFrames then
             for _, frameName in ipairs(element.correspondingFrames) do
                 local frame = _G[frameName]
@@ -433,6 +442,7 @@ local function Enable(self)
         self.Fader = CreateFrame("Frame")
     end
     self.Fader.__owner = self
+    self.Fader.gwAnimationName = self:GetDebugName()
     self.Fader.ForceUpdate = ForceUpdate
     self.Fader.SetOption = SetOption
     self.Fader.AddCorrespondingFrames = AddCorrespondingFrames
