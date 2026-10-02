@@ -14,6 +14,8 @@ local function LoadSlashCommands()
             GW.Notice(L["  /gw2 mh             -> Activate Move HUD mode"])
             GW.Notice(L["  /gw2 reset profile  -> Reset the current profile to default settings"])
             GW.Notice(L["  /gw2 clear achievements  -> Untrack all earned achievements (Blizzard bug)"])
+            GW.Notice(L["  /gw2 error          -> Show the GW2 error log"])
+            GW.Notice(L["  /gw2 test error     -> Raise a test error to check the error log"])
         elseif msg == "settings" then
             if InCombatLockdown() then
                 GW.Notice(L["Settings are not available in combat!"])
@@ -55,6 +57,8 @@ local function LoadSlashCommands()
             )
         elseif msg == "error" then
             Gw2ErrorLog:Toggle()
+        elseif msg == "test error" then
+            GW.TestErrorHandler()
         elseif msg == "clear achievements" then
             local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
             local numAchievements = #trackedAchievements

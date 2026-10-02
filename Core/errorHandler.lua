@@ -17,27 +17,18 @@ local function CreateErrorLogWindow()
     frame:SetSize(700, 600)
     frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     frame:SetFrameStrata("DIALOG")
+    frame:Hide()
 
     tinsert(UISpecialFrames, "Gw2ErrorLog")
 
-    frame.bg = frame:CreateTexture(nil, "ARTWORK")
-    frame.bg:SetAllPoints()
-    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg.png")
-
-    frame.header = frame:CreateFontString(nil, "OVERLAY")
-    frame.header:SetFont(DAMAGE_TEXT_FONT, 28, "OUTLINE")
-    frame.header:SetTextColor(1, 0.95, 0.8, 1)
-    frame.header:SetPoint("TOP", frame, "TOP", 0, -20)
-    frame.header:SetText(GW.L["GW2 Error Log"])
-
-    frame.result = frame:CreateFontString(nil, "OVERLAY")
-    frame.result:SetFont(UNIT_NAME_FONT, 14, "")
-    frame.result:SetTextColor(0.9, 0.85, 0.7, 1)
-    frame.result:SetPoint("TOP", frame.subheader, "BOTTOM", 0, -40)
+    frame.info = frame:CreateFontString(nil, "OVERLAY")
+    frame.info:SetPoint("TOPLEFT", frame, "TOPLEFT", 20, -45)
+    frame.info:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -20, -45)
+    frame.info:SetJustifyH("LEFT")
 
     frame.scrollArea = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-    frame.scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -170)
-    frame.scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 40)
+    frame.scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -70)
+    frame.scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 15)
     frame.scrollArea:SetScript("OnSizeChanged", function(scroll)
         frame.editBox:SetWidth(scroll:GetWidth())
         frame.editBox:SetHeight(scroll:GetHeight())
@@ -59,27 +50,28 @@ local function CreateErrorLogWindow()
 
     frame.scrollArea:SetScrollChild(frame.editBox)
 
-    frame.editBox:SetScript("OnTextChanged", function(_, userInput)
-        if userInput then return end
-        local _, max = frame.scrollArea.ScrollBar:GetMinMaxValues()
-        for _ = 1, max do
-            ScrollFrameTemplate_OnMouseWheel(frame.scrollArea, -1)
-        end
-    end)
-
     return frame
 end
 
 function Gw2ErrorHandlerMixin:Toggle()
     if not self.Skinned then
-        self.scrollArea.ScrollBar:GwSkinScrollBar()
-        self.close = CreateFrame("Button", nil, self, "GwStandardButton")
-        self.close:SetPoint("BOTTOMRIGHT")
-        self.close:SetFrameLevel(self.close:GetFrameLevel() + 1)
-        self.close:EnableMouse(true)
-        self.close:SetSize(128, 28)
-        self.close:SetText(CLOSE)
+        GW.CreateFrameHeaderWithBody(self, GW.L["GW2 Error Log"], "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png")
+        local header = self.gwHeader
+        header:EnableMouse(true)
+        header:RegisterForDrag("LeftButton")
+        header:SetScript("OnDragStart", function() self:StartMoving() end)
+        header:SetScript("OnDragStop", function() self:StopMovingOrSizing() end)
+
+        self.close = CreateFrame("Button", nil, header, "UIPanelCloseButton")
+        self.close:GwSkinButton(true)
+        self.close:SetSize(20, 20)
+        self.close:ClearAllPoints()
+        self.close:SetPoint("TOPRIGHT", self, "TOPRIGHT", -10, -2)
         self.close:SetScript("OnClick", function() self:Hide() end)
+
+        self.info:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        self.info:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        self.scrollArea.ScrollBar:GwSkinScrollBar()
         self.Skinned = true
     end
 
@@ -90,6 +82,8 @@ function Gw2ErrorHandlerMixin:Toggle()
         local txt = ("Version: %s Date: %s Locale: %s Build %s %s"):format(GW.GetVersionString() or "?", date("%m/%d/%y %H:%M:%S") or "?", GW.mylocal or "?", GW.wowpatch, GW.wowbuild)
         txt = txt .. "\n" .. GW.Join("\n", self.log)
         self.editBox:SetText(txt)
+        self.info:SetText(format(GW.L["%d errors this session, Ctrl+C copies the marked log."], #self.log))
+        self.scrollArea:SetVerticalScroll(0)
         self.editBox:HighlightText()
         self.editBox:SetFocus()
         self:Show()
@@ -115,7 +109,7 @@ function Gw2ErrorHandlerMixin:HandleError(msg, stack, locals)
     stack = self:CleanFilePaths(stack)
 
     -- Just print the error message if HandleError or LogExport caused it
-    local filePattern = addonName .. "[\\/]" .. "core[\\/]" .. "errorHandler%.lua[^\n]*"
+    local filePattern = addonName .. "[\\/]" .. "[Cc]ore[\\/]" .. "errorHandler%.lua[^\n]*"
     if stack:match(filePattern .. "HandleError") then
         self.errors = math.huge
         GW.Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nThis is an error in the error-handling system itself. Please create a new ticket on Curse, Discord or GitHub, copy & paste the error message in there and add any additional info you might have. Thank you! =)")
@@ -127,10 +121,20 @@ function Gw2ErrorHandlerMixin:HandleError(msg, stack, locals)
             if match and not GW.StartsWith(match, "Libs") and not GW.StartsWith(match, "libs") then
                 self.errors = self.errors + 1
                 GW.Debug("ERROR", msg .. "\n" .. stack)
-                tinsert(self.log, ("[%s] |cffff0000[ERROR]|r: %s"):format(date("%H:%M:%S"), (msg .. "\n" .. stack) or "-"))
+                local entry = msg .. "\n" .. stack
+                if locals and locals ~= "" then
+                    local cleanLocals = self:CleanFilePaths(locals)
+                    if #cleanLocals > self.LOG_MAX_LOCALS_LENGTH then
+                        cleanLocals = cleanLocals:sub(1, self.LOG_MAX_LOCALS_LENGTH) .. "\n..."
+                    end
+                    entry = entry .. "\nLocals:\n" .. cleanLocals
+                end
+                tinsert(self.log, ("[%s] |cffff0000[ERROR]|r: %s"):format(date("%H:%M:%S"), entry))
                 while #self.log > self.maxEntries do
                     tremove(self.log, 1)
                 end
+                -- the micro menu shows an icon with the count, the first error flashes it
+                EventRegistry:TriggerEvent("GW2_UI.ErrorLogged", #self.log, self.errors == 1)
 
                 if self.errors == 1 then
                     GW.Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nPlease type in |cffbbbbbb/gw2 error|r, create a new ticket on Curse or GitHub, copy & paste the log in there and add any additional info you might have. Thank you! =)")
@@ -154,6 +158,7 @@ local function CreateErrorHandler()
     errorFrame.maxEntries = 500
     errorFrame.LOG_MAX_ERRORS = 10
     errorFrame.LOG_MAX_ERROR_RATE = 10
+    errorFrame.LOG_MAX_LOCALS_LENGTH = 800
     errorFrame.errorPrev = 0
     errorFrame.errorRate = 0
 
@@ -171,8 +176,8 @@ local function CreateErrorHandler()
             lvl = lvl or 1
 
             if errorFrame:ShouldHandleError() then
-                local stack = debugstack(2 + lvl)
-                local locals = not (InCombatLockdown() or UnitAffectingCombat("player")) and debuglocals(2 + lvl) or ""
+                local stack = debugstack(1 + lvl)
+                local locals = not (InCombatLockdown() or UnitAffectingCombat("player")) and debuglocals(1 + lvl) or ""
 
                 errorFrame:OnError(msg, stack, locals)
             end
@@ -183,3 +188,10 @@ local function CreateErrorHandler()
     end
 end
 GW.CreateErrorHandler = CreateErrorHandler
+
+function GW.TestErrorHandler()
+    C_Timer.After(0, function()
+        local testLocal = "this local shows up in the log"
+        error("GW2 test error, the error handler works: " .. testLocal)
+    end)
+end

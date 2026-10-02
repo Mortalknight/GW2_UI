@@ -547,6 +547,16 @@ local function disableMicroButton(btn, hideOnly)
 end
 
 
+local function errorIcon_OnEnter(self)
+    GameTooltip:ClearLines()
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip_SetTitle(GameTooltip, L["GW2 UI Errors"])
+    GameTooltip:AddLine(format(L["%d errors this session"], self.errorCount or 0), 1, 1, 1)
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(L["Click to open the error log"], 0.7, 0.7, 0.7)
+    GameTooltip:Show()
+end
+
 local function update_OnEnter(self)
     GameTooltip:ClearLines()
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -808,6 +818,7 @@ local SLOT_NAMES = {
     greatvault = function() return RATED_PVP_WEEKLY_VAULT end,
     eventtimer = function() return L["Event timer"] end,
     update = function() return L["GW2 UI Update"] end,
+    errors = function() return L["GW2 UI Errors"] end,
     mail = function() return MAIL_LABEL end,
     workorders = function() return MAILFRAME_CRAFTING_ORDERS_TOOLTIP_TITLE end,
     pvp = function() return PLAYER_V_PLAYER end,
@@ -836,6 +847,7 @@ local MICRO_BAR_LAYOUTS = {
         {key = "update", notification = true},
         {key = "mail", notification = true},
         {key = "workorders", notification = true},
+        {key = "errors", notification = true},
     },
     Forever = { -- blizzards camelot menu: the buttons behind game rules only while blizzard shows them
         {key = "character", available = BlizzardMenuRule},
@@ -855,6 +867,7 @@ local MICRO_BAR_LAYOUTS = {
         {key = "store", available = function(frame) return BlizzardMenuRule(frame) and not C_AddOns.IsAddOnLoaded("Dominos") end},
         {key = "update", notification = true},
         {key = "mail", notification = true},
+        {key = "errors", notification = true},
     },
     Mists = {
         {key = "character"},
@@ -873,6 +886,7 @@ local MICRO_BAR_LAYOUTS = {
         {key = "help"},
         {key = "update", notification = true},
         {key = "mail", notification = true},
+        {key = "errors", notification = true},
     },
     Wrath = {
         {key = "character"},
@@ -889,6 +903,7 @@ local MICRO_BAR_LAYOUTS = {
         {key = "help"},
         {key = "update", notification = true},
         {key = "mail", notification = true},
+        {key = "errors", notification = true},
     },
     Classic = { -- era and tbc
         {key = "character"},
@@ -902,6 +917,7 @@ local MICRO_BAR_LAYOUTS = {
         {key = "help"},
         {key = "update", notification = true},
         {key = "mail", notification = true},
+        {key = "errors", notification = true},
     },
 }
 local MICRO_BAR_LAYOUT = GW.Retail and MICRO_BAR_LAYOUTS.Retail or GW.Mists and MICRO_BAR_LAYOUTS.Mists or GW.Wrath and MICRO_BAR_LAYOUTS.Wrath or GW.Forever and MICRO_BAR_LAYOUTS.Forever or MICRO_BAR_LAYOUTS.Classic
@@ -1528,6 +1544,42 @@ local function SetupNotificationArea(mbf)
     end)
     SetSlotButton("mail", mailIcon)
     tinsert(mbf.notificationIcons, mailIcon)
+
+    -- error icon: shows once GW2 caught an error, with the count, and opens the error log
+    local errorIcon = CreateFrame("Button", "Gw2ErrorMicroMenuButton", mbf, "MainMenuBarMicroButton")
+    errorIcon.newbieText = nil
+    errorIcon.tooltipText = ""
+    errorIcon.textureName = "ErrorMicroButton"
+    reskinMicroButton(errorIcon, "ErrorMicroButton", mbf)
+    errorIcon:Hide()
+    errorIcon:HookScript("OnEnter", errorIcon_OnEnter)
+    errorIcon:HookScript("OnLeave", GameTooltip_Hide)
+    errorIcon:SetScript("OnClick", function() Gw2ErrorLog:Toggle() end)
+    errorIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
+    RegisterMicroMenuNotificationIcon(errorIcon)
+    SetSlotButton("errors", errorIcon)
+    tinsert(mbf.notificationIcons, errorIcon)
+    local function RefreshErrorIcon(flash)
+        local count = Gw2ErrorLog and #Gw2ErrorLog.log or 0
+        if count == 0 or not C_CVar.GetCVarBool("scriptErrors") then
+            errorIcon:Hide()
+            return
+        end
+        errorIcon.errorCount = count
+        errorIcon.GwNotify:Show()
+        errorIcon.GwNotifyText:SetText(count > 9 and count or count .. " ")
+        errorIcon.GwNotifyText:Show()
+        errorIcon:Show()
+        if flash then
+            PlayMicroMenuNotificationFlash(errorIcon)
+        end
+    end
+    EventRegistry:RegisterCallback("GW2_UI.ErrorLogged", function(_, _, isFirst) RefreshErrorIcon(isFirst) end, errorIcon)
+    -- the toggle in the settings and /console both change the cvar
+    errorIcon:RegisterEvent("CVAR_UPDATE")
+    errorIcon:SetScript("OnEvent", function() RefreshErrorIcon(false) end)
+    -- errors from before the micro menu existed (the handler starts with the addon)
+    RefreshErrorIcon(true)
 
     if GW.Retail then
         -- workorder icon
