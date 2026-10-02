@@ -352,6 +352,31 @@ local function CreateOption(optionType, panel, name, desc, values)
     return opt
 end
 
+-- what each fader option does, shown as the tooltip of its entry
+GW.FADER_DROPDOWN_DESC = L["The frame shows with Max Alpha while one of the selected conditions applies, otherwise it fades to Min Alpha."]
+
+function GW.GetFaderDropdownOptions(isPlayerFrame)
+    local entries = {
+        {"casting", L["Casting"], L["Shown while the unit is casting."]},
+        {"combat", COMBAT, L["Shown while the unit is in combat."]},
+        {"hover", L["Hover"], L["Shown while the mouse is over the frame."]},
+        {"dynamicflight", DYNAMIC_FLIGHT, L["Shown while you are not skyriding."], "DynamicFlight"},
+        {"vehicle", L["Vehicle"], L["Shown while the unit controls a vehicle."], "Vehicle"},
+        {"unittarget", L["Unit Target"], L["Shown while the unit has a target."]},
+        {"playertarget", isPlayerFrame and TARGET or L["Player Target"], L["Shown while you have a target."]},
+    }
+    local list, names, tooltips = {}, {}, {}
+    for _, entry in ipairs(entries) do
+        local faderOption = entry[4]
+        if (not faderOption or GW.IsFrameFaderOptionAvailable(faderOption)) and not (isPlayerFrame and entry[1] == "unittarget") then
+            tinsert(list, entry[1])
+            tinsert(names, entry[2])
+            tinsert(tooltips, entry[3])
+        end
+    end
+    return list, names, tooltips
+end
+
 GwSettingsPanelMixin = {}
 function GwSettingsPanelMixin:AddOption(name, desc, values)
     return CreateOption("boolean", self, name, desc, values)
@@ -461,6 +486,7 @@ function GwSettingsPanelMixin:AddOptionDropdown(name, desc, values)
         opt.desc = (opt.desc ~= "" and (opt.desc .. "\n\n") or "") .. L["Clicking an entry cycles through three states: off (ignored) - check (only auras with this property are shown) - red cross (auras with this property are hidden)."]
     end
     opt.tooltipType = values.tooltipType
+    opt.optionTooltips = values.optionTooltips
     opt.hasSound = values.hasSound
     opt.noNewLine = values.noNewLine
 
@@ -1777,6 +1803,11 @@ local function SettingsInitOptionWidget(of, v, panel)
                                     GameTooltip:SetSpellByID(option)
                                 end)
                             end
+                        elseif v.tooltipType == "text" and v.optionTooltips and v.optionTooltips[idx] then
+                            entryButton:SetTooltip(function(tooltip, elementDescription)
+                                GameTooltip:AddLine(v.optionsNames[idx], 1, 1, 1)
+                                GameTooltip:AddLine(v.optionTooltips[idx], nil, nil, nil, true)
+                            end)
                         elseif v.tooltipType == "encounter" then
                             entryButton:SetTooltip(function(tooltip, elementDescription)
                                 local name, desc = EJ_GetEncounterInfo(option)

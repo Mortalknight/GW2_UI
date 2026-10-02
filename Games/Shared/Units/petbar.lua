@@ -14,6 +14,7 @@ local petStateSprite = {
 }
 
 local function UpdatePetButtonHotkey(button)
+    button.gw_HasAction = GetPetActionInfo(button:GetID()) ~= nil
     GW.UpdateHotkey(button)
     GW.FixHotKeyPosition(button, false, true)
 end
@@ -538,7 +539,15 @@ local function LoadPetFrame(lm)
     PetActionBar:GwKillEditMode()
     PetActionBar:SetParent(GW.HiddenFrame)
 
-    hooksecurefunc(PetActionBar, "Update", function() playerPetFrame:Update() end)
+    hooksecurefunc(PetActionBar, "Update", function()
+        playerPetFrame:Update()
+        -- the pet abilities change with the pet, the labels of the used slots follow
+        if GW.settings.actionbars.buttonAssignmentsUsedOnly then
+            for _, button in ipairs(playerPetFrame.buttons) do
+                UpdatePetButtonHotkey(button)
+            end
+        end
+    end)
 
     -- era clients set the pet hotkeys through a global instead of a button method
     if PetActionButton_SetHotkeys then

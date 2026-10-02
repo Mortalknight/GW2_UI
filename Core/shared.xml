@@ -444,6 +444,9 @@
                         </Scripts>
                     </Button>
                 </Frames>
+                <Scripts>
+                    <OnEscapePressed>self:ClearFocus()</OnEscapePressed>
+                </Scripts>
             </EditBox>
         </Frames>
     </Frame>
