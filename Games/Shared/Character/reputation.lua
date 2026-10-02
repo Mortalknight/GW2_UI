@@ -48,6 +48,7 @@ end
 local sessionBaseline = {}
 
 local updatingSessionBaseline = false
+local lastNumFactions
 local function UpdateSessionBaseline(reset, expandHeaders)
     if updatingSessionBaseline then return end
     updatingSessionBaseline = true -- ExpandAllFactionHeaders fires UPDATE_FACTION synchronously
@@ -64,6 +65,7 @@ local function UpdateSessionBaseline(reset, expandHeaders)
             store[data.factionID] = GetFactionTotalStanding(data)
         end
     end
+    lastNumFactions = GetNumFactions()
     updatingSessionBaseline = false
 end
 
@@ -77,11 +79,15 @@ end
 local sessionTracker = CreateFrame("Frame")
 sessionTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 sessionTracker:RegisterEvent("UPDATE_FACTION")
-sessionTracker:SetScript("OnEvent", function(_, event)
+sessionTracker:SetScript("OnEvent", function(_, event, isLogin, isReload)
     if event == "PLAYER_ENTERING_WORLD" then
-        UpdateSessionBaseline(false, true)
-    else
-        UpdateSessionBaseline() -- picks up factions discovered since login, no header expanding here
+        -- the baseline is the state at login, a loading screen later changes nothing
+        if isLogin or isReload then
+            UpdateSessionBaseline(false, true)
+        end
+    elseif GetNumFactions() ~= lastNumFactions then
+        -- a rep gain changes no rows, only a new faction (or a header toggle) does; no header expanding here
+        UpdateSessionBaseline()
     end
 end)
 
@@ -1137,23 +1143,22 @@ function GW.LoadReputation(tabContainer)
     GW.HandleScrollControls(fmDetail)
     fmDetail.ScrollBar:SetHideIfUnscrollable(true)
 
-    isSearchResult = nil
-    local categories, details = CollectFactionData(true)
-    UpdateCategories(fmGPR.Categories, categories)
-    local firstCategory = fmGPR.Categories:FindElementData(1)
-    if firstCategory then
-        SetSelectedHeaderIndexRange(firstCategory.idx, firstCategory.idxLast)
-        _, details = CollectFactionData()
-    end
-    UpdateDetailsData(fmDetail.Details, details)
-
     ReputationFrame:UnregisterAllEvents()
 
+    local firstShow = true
     fmGPR:HookScript("OnShow", function(self)
         FrameUtil.RegisterFrameForEvents(self.Categories, ReputationFrameEvents)
         isSearchResult = nil
         local cat, detailsOnShow = CollectFactionData(true)
         UpdateCategories(fmGPR.Categories, cat)
+        if firstShow then
+            firstShow = false
+            local firstCategory = fmGPR.Categories:FindElementData(1)
+            if firstCategory then
+                SetSelectedHeaderIndexRange(firstCategory.idx, firstCategory.idxLast)
+                _, detailsOnShow = CollectFactionData()
+            end
+        end
         UpdateDetailsData(fmDetail.Details, detailsOnShow)
     end)
 

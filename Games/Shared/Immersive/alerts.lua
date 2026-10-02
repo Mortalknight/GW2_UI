@@ -1290,10 +1290,6 @@ end
 
 ---------- load ----------
 function GW.LoadAlertSystem()
-    if not AchievementFrame then
-        AchievementFrame_LoadUI()
-    end
-
     if GW.settings.skins.alertFrame.enabled then
         local systems = {
             {AchievementAlertSystem, skinAchievementAlert},
@@ -1397,8 +1393,5 @@ function GW.LoadAlertSystem()
 end
 
 function GW.LoadOurAlertSubSystem()
-    if not AchievementFrame then
-        AchievementFrame_LoadUI()
-    end
     GW.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
 end

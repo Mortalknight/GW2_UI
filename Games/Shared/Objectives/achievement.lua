@@ -156,6 +156,9 @@ function GwAchievementTrackerContainerMixin:BlockOnClick(mouseButton)
                     AttemptToOpenAchievement(self.id, true)
                     CloseDefaultWindow()
                 else
+                    if not AchievementFrame then
+                        AchievementFrame_LoadUI()
+                    end
                     AchievementFrame_ToggleAchievementFrame()
                     AchievementFrame_SelectAchievement(self.id)
                 end

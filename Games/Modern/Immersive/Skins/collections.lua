@@ -565,7 +565,7 @@ local function CreateAchievementStatus(journal, bar, categoryID, categoryName)
     end
     button:SetScript("OnClick", function(self)
         if Kiosk.IsEnabled() or not CanShowAchievementUI() then return end
-        if not AchievementFrame:IsShown() then
+        if not (AchievementFrame and AchievementFrame:IsShown()) then
             ToggleAchievementFrame()
         end
         AchievementFrame_UpdateAndSelectCategory(self.categoryID)
