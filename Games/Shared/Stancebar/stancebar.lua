@@ -152,22 +152,20 @@ function GwStanceBarMixin:PositionsAndSize()
     self:UpdateAlpha()
 end
 
-function GwStanceBarMixin:StyleStanceBarButtons()
+function GwStanceBarMixin:UpdateStanceButtonStates()
     local numForms = GetNumShapeshiftForms()
     local stance = GetShapeshiftForm()
-    local buttonSize = GW.settings.stanceBar.buttonSize
 
     for i = 1, NUM_STANCE_SLOTS do
         local button = self.buttons[i]
 
-        if i > numForms then
+        if i > numForms or not button then
             break
         else
             local texture, isActive, isCastable, spellID = GetShapeshiftFormInfo(i)
 
             button.icon:SetTexture((not isActive and spellID and C_Spell.GetSpellTexture(spellID)) or WispSplode)
             button.icon:GwSetInside()
-            button:SetSize(buttonSize, buttonSize)
             button.cooldown:SetAlpha(texture and 1 or 0)
             if isActive then
                 button:SetChecked(numForms == 1)
@@ -182,7 +180,19 @@ function GwStanceBarMixin:StyleStanceBarButtons()
             else
                 button.icon:SetVertexColor(0.3, 0.3, 0.3)
             end
+        end
+    end
+end
 
+function GwStanceBarMixin:StyleStanceBarButtons()
+    local numForms = GetNumShapeshiftForms()
+    local buttonSize = GW.settings.stanceBar.buttonSize
+
+    self:UpdateStanceButtonStates()
+    for i = 1, math.min(numForms, NUM_STANCE_SLOTS) do
+        local button = self.buttons[i]
+        if button then
+            button:SetSize(buttonSize, buttonSize)
             GW.setActionButtonStyle(button:GetName(), true ,true)
         end
     end
@@ -233,20 +243,37 @@ function GwStanceBarMixin:AdjustMaxStanceButtons()
     self:UpdateVisibility()
 end
 
-function GwStanceBarMixin:OnEvent( event)
+local function AdjustStanceButtons(self)
+    self.container:SetShown(GW.settings.stanceBar.containerState == "open" and true or false)
+    self:AdjustMaxStanceButtons()
+    NeedAdjustMaxStanceButtons = false
+    NeedStanceButtonStyling = false -- the adjust styles the buttons as well
+end
+
+-- what touches the secure buttons waits for the end of combat, the other events are handled right away
+function GwStanceBarMixin:OnEvent(event)
     local inCombat = InCombatLockdown()
 
-    if (event == "PLAYER_ENTERING_WORLD" or event == "UPDATE_SHAPESHIFT_FORMS") or NeedAdjustMaxStanceButtons then
+    if event == "PLAYER_REGEN_ENABLED" then
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        if NeedAdjustMaxStanceButtons then
+            AdjustStanceButtons(self)
+        elseif NeedStanceButtonStyling then
+            self:StyleStanceBarButtons()
+            NeedStanceButtonStyling = false
+        end
+    elseif event == "PLAYER_ENTERING_WORLD" or event == "UPDATE_SHAPESHIFT_FORMS" then
         if inCombat then
             NeedAdjustMaxStanceButtons = true
+            self:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
-            self.container:SetShown(GW.settings.stanceBar.containerState == "open" and true or false)
-            self:AdjustMaxStanceButtons()
-            NeedAdjustMaxStanceButtons = false
+            AdjustStanceButtons(self)
         end
-    elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "UPDATE_SHAPESHIFT_USABLE" or event == "ACTIONBAR_PAGE_CHANGED" or NeedStanceButtonStyling then
+    elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "UPDATE_SHAPESHIFT_USABLE" or event == "ACTIONBAR_PAGE_CHANGED" then
         if inCombat then
+            self:UpdateStanceButtonStates()
             NeedStanceButtonStyling = true
+            self:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
             self:StyleStanceBarButtons()
             NeedStanceButtonStyling = false
@@ -255,13 +282,6 @@ function GwStanceBarMixin:OnEvent( event)
         self:UpdateCooldown()
     elseif event == "UPDATE_BINDINGS" then
         self:UpdateKeybinds()
-    end
-
-    if inCombat then
-        self:RegisterEvent("PLAYER_REGEN_ENABLED")
-        return
-    elseif event == "PLAYER_REGEN_ENABLED" then
-        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
 end
 
