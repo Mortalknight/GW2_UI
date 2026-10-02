@@ -108,7 +108,7 @@ local function UpdateVisibility(self, inCombat)
     local shouldBeVisible = self.shouldShowBar and (not self.onlyShowInCombat or inCombat)
     local targetAlpha = shouldBeVisible and 1 or 0
 
-    if self.shouldShowBar and GW.settings.unitframes.player.enabled and GwPlayerUnitFrame.Fader and GwPlayerUnitFrame.Fader:IsEnabled() then
+    if self.shouldShowBar and GW.settings.unitframes.player.enabled and GwPlayerUnitFrame and GwPlayerUnitFrame.Fader and GwPlayerUnitFrame.Fader:IsEnabled() then
         targetAlpha = GwPlayerUnitFrame.Fader.currentAlpha
     end
 
@@ -475,6 +475,25 @@ local function BuildTrackerBarWidgets(button, texture, sparkTexture, withCounter
     return widgets
 end
 
+-- the extra mana bar only shows while the main bar is not the mana one
+local function UpdateManaBarVisibility(self)
+    self.gwManaVisibilityPending = nil
+    if GwPlayerPowerBar and GwPlayerPowerBar.powerType == 0 then
+        self.exbar:Hide()
+        self.exbar.decay:Hide()
+        self.exbarSecret:Hide()
+    else
+        if self.barType == "mana" then
+            if GW.isModern then
+                self.exbarSecret:Show()
+            else
+                self.exbar:Show()
+                self.exbar.decay:Show()
+            end
+        end
+    end
+end
+
 -- MANA (multi class use)
 local function powerMana(self, event, ...)
     local ptype = select(2, ...)
@@ -485,22 +504,13 @@ local function powerMana(self, event, ...)
             self.exbar:UpdatePowerData(0, ptype)
         end
 
-        C_Timer.After(0.12, function()
-            if GwPlayerPowerBar and GwPlayerPowerBar.powerType == 0 then
-                self.exbar:Hide()
-                self.exbar.decay:Hide()
-                self.exbarSecret:Hide()
-            else
-                if self.barType == "mana" then
-                    if GW.isModern then
-                        self.exbarSecret:Show()
-                    else
-                        self.exbar:Show()
-                        self.exbar.decay:Show()
-                    end
-                end
-            end
-        end)
+        -- every mana tick lands here, one check at a time is enough and its function is built once;
+        -- an init (form or spec change) always gets its own delayed check, the main bar switches first
+        if event == "CLASS_POWER_INIT" or not self.gwManaVisibilityPending then
+            self.gwManaVisibilityPending = true
+            self.gwUpdateManaBarVisibility = self.gwUpdateManaBarVisibility or function() UpdateManaBarVisibility(self) end
+            C_Timer.After(0.12, self.gwUpdateManaBarVisibility)
+        end
     end
 end
 
