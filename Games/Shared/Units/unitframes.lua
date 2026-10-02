@@ -1050,11 +1050,12 @@ function GwUnitFrameMixin:ToggleSettings()
     end
     self.healthbarBackground:SetSize(self.healthContainer:GetWidth(), self.healthContainer:GetHeight())
 
+    local textOffset = GW.settings.unitframes[self.gwUnit].healthBarTextOffset
     self.healthString:ClearAllPoints()
     if self.frameInvert then
-        self.healthString:SetPoint("RIGHT", self.health, "RIGHT", GW.settings.unitframes[self.gwUnit].healthBarTextOffset.x, GW.settings.unitframes[self.gwUnit].healthBarTextOffset.y)
+        self.healthString:SetPoint("RIGHT", self.health, "RIGHT", -textOffset.x, textOffset.y)
     else
-        self.healthString:SetPoint("LEFT", self.health, "LEFT", GW.settings.unitframes[self.gwUnit].healthBarTextOffset.x, GW.settings.unitframes[self.gwUnit].healthBarTextOffset.y)
+        self.healthString:SetPoint("LEFT", self.health, "LEFT", textOffset.x, textOffset.y)
     end
     self.nameString:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width - 15)
 
