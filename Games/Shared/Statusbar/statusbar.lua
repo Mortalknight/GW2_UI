@@ -218,7 +218,6 @@ local function SetReverseFill(self, reverse)
         maskOverflow:SetPoint("TOPLEFT", self, "TOPLEFT", -3, 0)
         maskOverflow:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", -3, 0)
 
-        maskOverflow.mask:SetRotation(3.14159)
         maskOverflow.mask:ClearAllPoints()
         maskOverflow.mask:SetPoint("TOPRIGHT", maskOverflow, "TOPRIGHT", 0, 0)
         maskOverflow.mask:SetPoint("BOTTOMLEFT", maskOverflow, "BOTTOMLEFT", 0, 0)
