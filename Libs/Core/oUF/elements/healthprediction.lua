@@ -213,7 +213,7 @@ local function shouldUpdateSize(self)
 	if(not self.Health) then return end
 
 	local isHoriz = self.Health:GetOrientation() == 'HORIZONTAL'
-	local newSize = self.Health[isHoriz and 'GetWidth' or 'GetHeight'](self.Health)
+	local newSize = math.floor((self.Health[isHoriz and 'GetWidth' or 'GetHeight'](self.Health) + 0.005) * 100) / 100
 	if(isHoriz ~= self.HealthPrediction.isHoriz or newSize ~= self.HealthPrediction.size) then
 		self.HealthPrediction.isHoriz = isHoriz
 		self.HealthPrediction.size = newSize

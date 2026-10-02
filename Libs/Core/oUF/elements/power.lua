@@ -161,7 +161,11 @@ local function UpdateColor(self, event, unit)
 		or (element.colorClassNPC and not isPlayer)
 		or (element.colorClassPet and UnitPlayerControlled(unit) and not isPlayer) then
 		local _, class = UnitClass(unit)
-		color = ns.NotSecretValue(class) and self.colors.class[class] or nil
+		if ns.NotSecretValue(class) then
+			color = self.colors.class[class]
+		elseif C_ClassColor and C_ClassColor.GetClassColor then
+			color = C_ClassColor.GetClassColor(class)
+		end
 	elseif(element.colorSelection and unitSelectionType(unit, element.considerSelectionInCombatHostile)) then
 		color = self.colors.selection[unitSelectionType(unit, element.considerSelectionInCombatHostile)]
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
@@ -452,7 +456,9 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_POWER_BAR_SHOW', Path)
 		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
 		self:UnregisterEvent('UNIT_POWER_UPDATE', Path)
-		self:UnregisterEvent('UNIT_CONNECTION', ColorPath)
+		self:UnregisterEvent('UNIT_CONNECTION', Path)
+		self:UnregisterEvent('PARTY_MEMBER_ENABLE', Path)
+		self:UnregisterEvent('PARTY_MEMBER_DISABLE', Path)
 		self:UnregisterEvent('UNIT_FACTION', ColorPath)
 		self:UnregisterEvent('UNIT_FLAGS', ColorPath)
 		self:UnregisterEvent('UNIT_THREAT_LIST_UPDATE', ColorPath)

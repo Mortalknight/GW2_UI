@@ -154,11 +154,15 @@ local function Enable(self, unit)
 		element.notReadyTexture = element.notReadyTexture or READY_CHECK_NOT_READY_TEXTURE
 		element.waitingTexture = element.waitingTexture or READY_CHECK_WAITING_TEXTURE
 
-		local AnimationGroup = element:CreateAnimationGroup()
-		AnimationGroup:SetScript('OnFinished', OnFinished)
-		element.Animation = AnimationGroup
+		local AnimationGroup = element.Animation
+		if(not AnimationGroup) then
+			AnimationGroup = element:CreateAnimationGroup()
+			AnimationGroup:SetScript('OnFinished', OnFinished)
+			element.Animation = AnimationGroup
+			AnimationGroup.Alpha = AnimationGroup:CreateAnimation('Alpha')
+		end
 
-		local Animation = AnimationGroup:CreateAnimation('Alpha')
+		local Animation = AnimationGroup.Alpha
 		Animation:SetFromAlpha(1)
 		Animation:SetToAlpha(0)
 		Animation:SetDuration(element.fadeTime or 1.5)

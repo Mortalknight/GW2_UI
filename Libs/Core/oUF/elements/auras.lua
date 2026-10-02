@@ -916,12 +916,12 @@ local function Enable(self)
             buffs.tooltipAnchor = buffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
             buffs.needFullUpdate = true
 
-            if(not auras.dispelColorCurve and C_CurveUtil) then
-				auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
-				auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
+            if(not buffs.dispelColorCurve and C_CurveUtil) then
+				buffs.dispelColorCurve = C_CurveUtil.CreateColorCurve()
+				buffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 				for _, dispelIndex in next, oUF.Enum.DispelType do
 					if(self.colors.dispel[dispelIndex]) then
-						auras.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
+						buffs.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
 					end
 				end
 			end
