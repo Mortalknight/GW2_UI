@@ -128,7 +128,7 @@ local function LoadPlayerFrame()
 
     Mixin(frame, GwPlayerUnitFrameMixin)
 
-    if GW.Retail then
+    if GW.isModern then
         frame.powerbar.spark:ClearAllPoints()
         frame.powerbar.spark:SetPoint("RIGHT", frame.powerbar:GetStatusBarTexture(), "RIGHT", 0, 0)
     end
