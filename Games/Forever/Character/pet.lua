@@ -51,12 +51,15 @@ local function GetPetStatTile(stats, index)
 end
 
 local function UpdatePetStats(stats)
+    local damageModifier = select(7, UnitDamage("pet"))
+    local hasDamageData = GW.NotSecretValue(damageModifier) and damageModifier and damageModifier ~= 0
+
     local index = 0
     for _, category in ipairs(PAPERDOLL_STATCATEGORIES) do
         if category.unit == "pet" then
             for _, stat in ipairs(category.stats) do
                 local info = PAPERDOLL_STATINFO[stat.stat]
-                if info and (not stat.showFunc or stat.showFunc()) then
+                if info and (not stat.showFunc or stat.showFunc()) and (stat.stat ~= "MAINHAND_DAMAGE" or hasDamageData) then
                     local tile = GetPetStatTile(stats, index + 1)
                     tile.unit = "pet"
                     tile.tooltip, tile.tooltip2, tile.onEnterFunc = nil, nil, nil
@@ -149,19 +152,20 @@ end
 local function petStats_OnEvent(self, event, ...)
     if InCombatLockdown() then
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
-        self.prevEvent = event
         return
-    end
-    if event == "PLAYER_REGEN_ENABLED" then
-        event = self.prevEvent
-        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
 
     local unit = ...
-    if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or event == "PET_UI_CLOSE" or (event == "UNIT_PET" and unit == "player") then
+    if event == "PLAYER_REGEN_ENABLED" then
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        UpdatePetMenuState(self.petMenu)
+    elseif event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or event == "PET_UI_CLOSE" or (event == "UNIT_PET" and unit == "player") then
         UpdatePetMenuState(self.petMenu)
     end
-    UpdatePetPanel(self:GetParent())
+    local dressingRoom = self:GetParent()
+    if dressingRoom:IsVisible() then
+        UpdatePetPanel(dressingRoom)
+    end
 end
 
 function GW.SetupPetMenuButton(petMenu)
@@ -203,6 +207,18 @@ function GW.LoadPetPanel(tabContainer, fmMenu)
 
     dressingRoom.stats.petMenu = fmMenu.petMenu
     dressingRoom.stats:SetScript("OnEvent", petStats_OnEvent)
+    dressingRoom.stats:RegisterEvent("PET_UI_UPDATE")
+    dressingRoom.stats:RegisterEvent("PET_BAR_UPDATE")
+    dressingRoom.stats:RegisterEvent("PET_UI_CLOSE")
+    dressingRoom.stats:RegisterUnitEvent("UNIT_PET", "player")
+    dressingRoom.stats:RegisterUnitEvent("UNIT_DAMAGE", "pet")
+    dressingRoom:HookScript("OnShow", function(self)
+        if InCombatLockdown() then
+            self.stats:RegisterEvent("PLAYER_REGEN_ENABLED")
+        else
+            UpdatePetPanel(self)
+        end
+    end)
 
     fmMenu:SetupBackButton(dressingRoom.backButton, CHARACTER .. ": " .. PET)
     UpdatePetPanel(dressingRoom)
