@@ -1561,15 +1561,24 @@ local function SetupNotificationArea(mbf)
     tinsert(mbf.notificationIcons, errorIcon)
     local function RefreshErrorIcon(flash)
         local count = Gw2ErrorLog and #Gw2ErrorLog.log or 0
-        if count == 0 or not C_CVar.GetCVarBool("scriptErrors") then
-            errorIcon:Hide()
+        local shouldShow = count > 0 and C_CVar.GetCVarBool("scriptErrors")
+        if InCombatLockdown() and errorIcon:IsProtected() and shouldShow ~= errorIcon:IsShown() then
+            GW.CombatQueue:Queue("GwErrorMicroMenuButton", RefreshErrorIcon, {flash})
+            return
+        end
+        if not shouldShow then
+            if errorIcon:IsShown() then
+                errorIcon:Hide()
+            end
             return
         end
         errorIcon.errorCount = count
         errorIcon.GwNotify:Show()
         errorIcon.GwNotifyText:SetText(count > 9 and count or count .. " ")
         errorIcon.GwNotifyText:Show()
-        errorIcon:Show()
+        if not errorIcon:IsShown() then
+            errorIcon:Show()
+        end
         if flash then
             PlayMicroMenuNotificationFlash(errorIcon)
         end
