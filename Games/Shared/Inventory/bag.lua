@@ -489,13 +489,16 @@ end
 
 -- toggles the keyring bag and brings its button and header in line with the new state;
 -- shared by the keyring button and its bag header, which both offer the toggle
+-- the player opening or closing the keyring; blizzard plays these sounds from its own keyring frame
 local function setKeyringOpen(f, open)
     f.ItemFrame.Containers[KEYRING_CONTAINER].shouldShow = open
     if open then
         OpenBag(KEYRING_CONTAINER)
+        PlaySound(SOUNDKIT.KEY_RING_OPEN)
     else
         CloseBag(KEYRING_CONTAINER)
         rescanBagContainers(f)
+        PlaySound(SOUNDKIT.KEY_RING_CLOSE)
     end
     updateKeyringButtonState()
 end
