@@ -656,8 +656,15 @@ end
 
 local LAYOUT_ACHIEVEMENT = 2416
 
+local function LoadAchievementUI()
+    if not AchievementFrame and AchievementFrame_LoadUI then
+        AchievementFrame_LoadUI()
+    end
+end
+
 local function SetUpAlertLayout(frame)
     if GetAchievementInfo(LAYOUT_ACHIEVEMENT) then
+        LoadAchievementUI()
         AchievementAlertFrame_SetUp(frame, LAYOUT_ACHIEVEMENT, true)
         return
     end
@@ -1012,7 +1019,7 @@ local function WithItem(itemID, callback)
 end
 
 local BLIZZARD_PREVIEWS = {
-    {"achievement", ACHIEVEMENT_UNLOCKED, "AchievementAlertSystem", function() AchievementAlertSystem:AddAlert(6) end},
+    {"achievement", ACHIEVEMENT_UNLOCKED, "AchievementAlertSystem", function() LoadAchievementUI(); AchievementAlertSystem:AddAlert(6) end},
     {"criteria", ACHIEVEMENT_PROGRESSED, "CriteriaAlertSystem", function() CriteriaAlertSystem:AddAlert(6, (select(2, GetAchievementInfo(6)))) end},
     {"loot", LOOT, "LootAlertSystem", function() WithItem(50818, function(link) LootAlertSystem:AddAlert(link, 1, nil, nil, nil, false, false, nil, false, false) end) end},
     {"lootUpgrade", ITEM_UPGRADE, "LootUpgradeAlertSystem", function() WithItem(50818, function(link) LootUpgradeAlertSystem:AddAlert(link, 1, nil, Enum.ItemQuality.Rare) end) end},
