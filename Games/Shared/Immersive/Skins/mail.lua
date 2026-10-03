@@ -141,7 +141,11 @@ local function SkinOpenMailFrame()
     OpenMailReplyButton:GwSkinButton(false, true)
     OpenMailReplyButton:SetPoint("RIGHT", OpenMailDeleteButton, "LEFT", -5, 0)
     OpenMailReplyButton:SetScript("OnClick", function(self)
-        OpenMail_Reply()
+        if OpenMail_Reply then
+            OpenMail_Reply()
+        else
+            self:Reply()
+        end
         SwitchToComposeView(self)
     end)
 
@@ -243,7 +247,9 @@ local function SkinSendMailFrame()
     SkinMoneyFrame()
     SendMailMoneyText:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
 
-    -- configure location of SendMail Frame
+    -- configure location of SendMail Frame; forever spans it over the mail frame instead of giving
+    -- it a size, a single anchor would leave it at 0x0, so it gets the size of the other clients
+    SendMailFrame:SetSize(384, 512)
     SendMailFrame:ClearAllPoints()
     SendMailFrame:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", 46, 20)
     SendMailFrame:SetParent(MailFrame)
@@ -447,7 +453,9 @@ local function LoadMailSkin()
     MailFrame.footer:SetPoint("TOPRIGHT", MailFrame, "BOTTOMRIGHT", 0, 5)
     MailFrame.footer:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagfooter.png")
 
-    InboxFrame:SetWidth(leftPaneWidth)
+    InboxFrame:ClearAllPoints()
+    InboxFrame:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 0, 0)
+    InboxFrame:SetSize(leftPaneWidth, 512)
 
     _G.AutoCompleteBox:GwStripTextures()
     _G.AutoCompleteBox:GwCreateBackdrop(GW.BackdropTemplates.Default)
