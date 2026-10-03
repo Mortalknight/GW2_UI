@@ -3,12 +3,46 @@ local GW = select(2, ...)
 
 local TEXTURE_PATH = "Interface/AddOns/GW2_UI/textures/hud/"
 -- the art of every state, built once instead of on every check
-local LEFT, RIGHT = TEXTURE_PATH .. "leftshadow.png", TEXTURE_PATH .. "rightshadow.png"
-local LEFT_DEAD, RIGHT_DEAD = TEXTURE_PATH .. "leftshadow_dead.png", TEXTURE_PATH .. "rightshadow_dead.png"
-local LEFT_DRAGON, RIGHT_DRAGON = TEXTURE_PATH .. "leftshadow-dragon.png", TEXTURE_PATH .. "rightshadow-dragon.png"
-local LEFT_COMBAT, RIGHT_COMBAT = TEXTURE_PATH .. "leftshadowcombat.png", TEXTURE_PATH .. "rightshadowcombat.png"
-local LEFT_BEAR, RIGHT_BEAR = TEXTURE_PATH .. "leftshadow_bear.png", TEXTURE_PATH .. "rightshadow_bear.png"
-local LEFT_CAT, RIGHT_CAT = TEXTURE_PATH .. "leftshadow_cat.png", TEXTURE_PATH .. "rightshadow_cat.png"
+
+local HUD_BACKGROUND_ARTS = {
+    {key = "DEFAULT", name = DEFAULT, file = "shadow"},
+    {key = "COMBAT", name = COMBAT, file = "shadowcombat"},
+    {key = "HOLY", name = GW.L["Holy"], file = "shadow_holy"},
+    {key = "FROST", name = GW.L["Frost"], file = "shadow_frost"},
+    {key = "UNHOLY", name = GW.L["Unholy"], file = "shadow_unholy"},
+    {key = "FIRE", name = GW.L["Fire"], file = "shadow_shaman_fire"},
+    {key = "STORM", name = GW.L["Storm"], file = "shadow_shaman_storm"},
+    {key = "FEL", name = GW.L["Fel"], file = "shadow_metamorph"},
+    {key = "LUNAR", name = GW.L["Lunar"], left = "left_lunareclipse", right = "right_lunareclipse"},
+    {key = "SOLAR", name = GW.L["Solar"], left = "left_solareclips", right = "right_solareclips"},
+    {key = "DRAGON", name = GW.L["Skyriding"], file = "shadow-dragon"},
+    {key = "WATER", name = GW.L["Water"], file = "shadowswim"},
+    {key = "DEAD", file = "shadow_dead", hidden = true},
+    {key = "BEAR", file = "shadow_bear", hidden = true},
+    {key = "CAT", file = "shadow_cat", hidden = true},
+}
+local hudBackgroundArtByKey = {}
+for _, art in ipairs(HUD_BACKGROUND_ARTS) do
+    art.leftTexture = TEXTURE_PATH .. (art.left or ("left" .. art.file)) .. ".png"
+    art.rightTexture = TEXTURE_PATH .. (art.right or ("right" .. art.file)) .. ".png"
+    hudBackgroundArtByKey[art.key] = art
+end
+
+function GW.GetHudBackgroundArtOptions()
+    local keys, names = {}, {}
+    for _, art in ipairs(HUD_BACKGROUND_ARTS) do
+        if not art.hidden then
+            tinsert(keys, art.key)
+            tinsert(names, art.name)
+        end
+    end
+    return keys, names
+end
+
+local function GetArt(key, fallbackKey)
+    local art = hudBackgroundArtByKey[key] or hudBackgroundArtByKey[fallbackKey]
+    return art.leftTexture, art.rightTexture
+end
 
 local actionHudPlayerAuras = {}
 local actionHudPlayerPetAuras = {}
@@ -74,9 +108,9 @@ local function GetDruidFormArt()
 
     local form = GetShapeshiftFormID()
     if form == BEAR_FORM then
-        return LEFT_BEAR, RIGHT_BEAR
+        return GetArt("BEAR")
     elseif form == CAT_FORM then
-        return LEFT_CAT, RIGHT_CAT
+        return GetArt("CAT")
     end
 end
 
@@ -85,11 +119,11 @@ local function selectBg(self)
         return
     end
 
-    local right, left = RIGHT, LEFT
+    local left, right = GetArt(GW.settings.hud.backgroundArt, "DEFAULT")
     local modelFX = nil
 
     if UnitIsDeadOrGhost("player") then
-        right, left = RIGHT_DEAD, LEFT_DEAD
+        left, right = GetArt("DEAD")
     end
 
     local formLeft, formRight = GetDruidFormArt()
@@ -98,11 +132,11 @@ local function selectBg(self)
     end
 
     if GW.Location.IsSkyriding() then
-        right, left = RIGHT_DRAGON, LEFT_DRAGON
+        left, right = GetArt("DRAGON")
     end
 
     if UnitAffectingCombat("player") then
-        right, left = RIGHT_COMBAT, LEFT_COMBAT
+        left, right = GetArt(GW.settings.hud.backgroundArtCombat, "COMBAT")
 
         if formLeft then
             left, right = formLeft, formRight
@@ -150,8 +184,9 @@ local function selectBg(self)
         self.actionBarHud.Left:SetTexture(left)
 
         GW.AddToAnimation("DynamicHud", 0, 1, GetTime(), 0.2, function(prog)
-            self.actionBarHud.Right:SetAlpha(prog)
-            self.actionBarHud.Left:SetAlpha(prog)
+            local alpha = prog * GW.settings.hud.backgroundAlpha
+            self.actionBarHud.Right:SetAlpha(alpha)
+            self.actionBarHud.Left:SetAlpha(alpha)
         end)
     end
 end
@@ -501,6 +536,20 @@ local function ToggleHudBackground()
 end
 GW.ToggleHudBackground = ToggleHudBackground
 
+function GW.UpdateHudBackgroundArt()
+    if Gw2_HudBackgroud then
+        selectBg(Gw2_HudBackgroud)
+    end
+end
+
+function GW.UpdateHudBackgroundAlpha()
+    if Gw2_HudBackgroud then
+        local alpha = GW.settings.hud.backgroundAlpha
+        Gw2_HudBackgroud.actionBarHud.Left:SetAlpha(alpha)
+        Gw2_HudBackgroud.actionBarHud.Right:SetAlpha(alpha)
+    end
+end
+
 local function LoadHudArt()
     local hudArtFrame = CreateFrame("Frame", "Gw2_HudBackgroud", UIParent, "GwHudArtFrame")
     if not (GW.Classic or GW.TBC or GW.Wrath) then
@@ -526,6 +575,7 @@ local function LoadHudArt()
     end
 
     ToggleHudBackground()
+    GW.UpdateHudBackgroundAlpha()
     GW.RegisterScaleFrame(hudArtFrame.actionBarHud)
 
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)

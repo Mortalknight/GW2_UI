@@ -296,6 +296,9 @@ GW.globalDefault = {
             xpBar = true,
             background = true,
             dynamicBackground = true,
+            backgroundArt = "DEFAULT",
+            backgroundArtCombat = "COMBAT",
+            backgroundAlpha = 1,
             fadeGroupManageButton = false,
         },
 

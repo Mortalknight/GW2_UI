@@ -26,6 +26,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Player pet frame: options for the portrait and the happiness indicator]=]},
     {GW.Enum.ChangelogType.feature, [=[Upcoming spells are available on Classic, TBC, Wrath and Forever]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: the quest level is shown again]=]},
+    {GW.Enum.ChangelogType.feature, [=[Dynamic HUD: the background behind the action bars can be chosen for in and out of combat in the HUD settings, death, forms, skyriding and class effects keep their own background; a new slider sets its opacity]=]},
     {GW.Enum.ChangelogType.feature, [=[Honor badges (Retail): the health globe tooltip shows the honor level with its badge, the progress and the level of the next badge, the honor bar shows the badges at its level numbers; with the pvp indicator option the player frame gets the prestige portrait art, the four prestige arts of player and target now start at honor level 5, 25, 70 and 250 like the art sets of Blizzard's badges]=]},
     {GW.Enum.ChangelogType.change, [=[Forever: with the gamepad interface GW2 UI leaves the action bars and the micro menu to Blizzard's gamepad bars]=]},
     {GW.Enum.ChangelogType.change, [=[Target and focus frames no longer play the show animation]=]},
