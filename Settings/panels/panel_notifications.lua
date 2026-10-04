@@ -77,14 +77,17 @@ local function LoadNotificationsPanel(sWindow)
     p:AddOption(BATTLEGROUND_HOLIDAY, nil, {getterSetter = "notifications.callToArms.enabled", previewFunc = GW.AlertPreviews.CALL_TO_ARMS, dependence = {["notifications.enabled"] = true}})
     p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.callToArms.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.callToArms.enabled"] = true}, hasSound = true, noNewLine = true})
 
-    p:AddOption(L["Mage Table"], nil, {getterSetter = "notifications.mageTable.enabled", previewFunc = GW.AlertPreviews.MAGE_TABLE, dependence = {["notifications.enabled"] = true}, hidden = GW.Retail})
-    p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.mageTable.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.mageTable.enabled"] = true}, hasSound = true, noNewLine = true, hidden = GW.Retail})
+    local showMageTable = not GW.Retail and C_Spell.DoesSpellExist(190336)
+    local showRitual = not GW.Retail and C_Spell.DoesSpellExist(698)
+    local showSoulwell = not GW.Retail and C_Spell.DoesSpellExist(29893)
+    p:AddOption(L["Mage Table"], nil, {getterSetter = "notifications.mageTable.enabled", previewFunc = GW.AlertPreviews.MAGE_TABLE, dependence = {["notifications.enabled"] = true}, hidden = not showMageTable})
+    p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.mageTable.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.mageTable.enabled"] = true}, hasSound = true, noNewLine = true, hidden = not showMageTable})
 
-    p:AddOption(L["Ritual of Summoning"], nil, {getterSetter = "notifications.ritualOfSummoning.enabled", previewFunc = GW.AlertPreviews.RITUAL_OF_SUMMONING, dependence = {["notifications.enabled"] = true}, hidden = GW.Retail})
-    p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.ritualOfSummoning.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.ritualOfSummoning.enabled"] = true}, hasSound = true, noNewLine = true, hidden = GW.Retail})
+    p:AddOption(L["Ritual of Summoning"], nil, {getterSetter = "notifications.ritualOfSummoning.enabled", previewFunc = GW.AlertPreviews.RITUAL_OF_SUMMONING, dependence = {["notifications.enabled"] = true}, hidden = not showRitual})
+    p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.ritualOfSummoning.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.ritualOfSummoning.enabled"] = true}, hasSound = true, noNewLine = true, hidden = not showRitual})
 
-    p:AddOption(L["Soulwell"], nil, {getterSetter = "notifications.soulwell.enabled", previewFunc = GW.AlertPreviews.SPOULWELL, dependence = {["notifications.enabled"] = true}, hidden = GW.Retail})
-    p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.soulwell.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.soulwell.enabled"] = true}, hasSound = true, noNewLine = true, hidden = GW.Retail})
+    p:AddOption(L["Soulwell"], nil, {getterSetter = "notifications.soulwell.enabled", previewFunc = GW.AlertPreviews.SPOULWELL, dependence = {["notifications.enabled"] = true}, hidden = not showSoulwell})
+    p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.soulwell.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.soulwell.enabled"] = true}, hasSound = true, noNewLine = true, hidden = not showSoulwell})
 
     p:AddOption(L["Mage portal"], nil, {getterSetter = "notifications.magePortal.enabled", previewFunc = GW.AlertPreviews.MAGE_PORTAL, dependence = {["notifications.enabled"] = true}, hidden = GW.Retail})
     p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.magePortal.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.magePortal.enabled"] = true}, hasSound = true, noNewLine = true, hidden = GW.Retail})

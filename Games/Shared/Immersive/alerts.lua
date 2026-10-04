@@ -654,30 +654,13 @@ local function GW2_UIAlertFrame_OnIconEnter(self)
     GameTooltip:Show()
 end
 
-local LAYOUT_ACHIEVEMENT = 2416
-
 local function LoadAchievementUI()
     if not AchievementFrame and AchievementFrame_LoadUI then
         AchievementFrame_LoadUI()
     end
 end
 
-local function SetUpAlertLayout(frame)
-    if GetAchievementInfo(LAYOUT_ACHIEVEMENT) then
-        LoadAchievementUI()
-        AchievementAlertFrame_SetUp(frame, LAYOUT_ACHIEVEMENT, true)
-        return
-    end
-    frame:SetHeight(101)
-    frame.Icon:SetPoint("TOPLEFT", -4, -15)
-    frame.Unlocked:SetPoint("TOP", 27, -23)
-    frame.Shield.Points:Hide()
-    frame.Shield.Icon:Hide()
-    frame.GuildName:Hide()
-end
-
 local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID, targetName, vignetteID)
-    SetUpAlertLayout(frame)
     frame.Name:SetFormattedText(name)
     frame.Unlocked:SetFormattedText(toptext or "")
     SetTexts(frame.Unlocked, frame.Name)
@@ -706,11 +689,6 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
         frame:SetAttribute("macrotext", "/target " .. targetName)
     end
 
-    frame.Background:SetTexture()
-    Kill(frame.OldAchievement, frame.glow, frame.shine, frame.GuildBanner, frame.GuildBorder, frame.Icon.Overlay)
-
-    frame.Icon.Texture:ClearAllPoints()
-    frame.Icon.Texture:SetPoint("LEFT", frame, 7, 0)
     if icon and C_Texture.GetAtlasInfo(icon) then
         frame.Icon.Texture:SetAtlas(icon)
     else
@@ -962,6 +940,7 @@ end
 -- group member spells worth a toast; classic clients only, retail hides the caster behind secret values
 local function ShowGroupSpellAlert(spellID, text, notification)
     local spellInfo = C_Spell.GetSpellInfo(spellID)
+    if not spellInfo then return end
     GW.AlertSystem:AddAlert(text, nil, spellInfo.name, false, spellInfo.iconID, false)
     PlayAlertSound(notification)
 end
