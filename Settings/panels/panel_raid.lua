@@ -99,6 +99,8 @@ local function LoadGeneralGridSettings(panel)
     general:AddOption(ENABLE, RAID_FRAMES_SUBTEXT, {getterSetter = "groupFrames.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
 
     general:AddOptionSlider(L["Name Update Rate"], L["Maximum tick rate allowed for name updates per second."], { getterSetter = "groupFrames.tagUpdateRate", callback = function(value) GW.oUF.Tags:SetEventUpdateTimer(value) end, min = 0.05, max = 0.5, decimalNumbers = 2, step = 0.01})
+    general:AddOptionDropdown(L["Show Role Bar"], L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."], { getterSetter = "roleBar.mode", callback = GW.UpdateRaidCounterVisibility, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["Raid Only"], L["Party / Raid"]}})
+    general:AddOption(L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], {getterSetter = "hud.fadeGroupManageButton", callback = GW.ToggleRaidControllFrame, dependence = {["unitframes.party.enabled"] = true}})
 
     return general
 end
@@ -950,8 +952,12 @@ local function LoadRaidPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
     local profilePanles = {LoadGeneralGridSettings(p), LoadRaid40Profile(p), LoadRaid25Profile(p), LoadRaid10Profile(p), LoadRaidPetProfile(p), LoadMaintankProfile(p), LoadPartyProfile(p), LoadPartyPetProfile(p)}
 
+    local auras, indicators = GW.LoadGroupAuraPanels(p)
+
     sWindow:AddSettingsPanel(p, L["Group Frames"], L["Edit the party and raid options to suit your needs."], {
         {name = GENERAL, frame = profilePanles[1]},
+        {name = L["Auras"], frame = auras},
+        {name = L["Raid Indicators"], frame = indicators},
         {name = RAID..": 40", frame = profilePanles[2]},
         {name = RAID..": 25", frame = profilePanles[3]},
         {name = RAID..": 10", frame = profilePanles[4]},

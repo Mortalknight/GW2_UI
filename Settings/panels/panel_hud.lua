@@ -56,19 +56,6 @@ local function LoadHudPanel(sWindow)
     microBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     microBar.breadcrumb:SetText(L["Micro Bar"])
 
-    local chatBubbles = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
-    chatBubbles.panelId = "hud_chatbubbles"
-    chatBubbles.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    chatBubbles.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    chatBubbles.header:SetText(UIOPTIONS_MENU)
-    chatBubbles.sub:SetFont(UNIT_NAME_FONT, 12)
-    chatBubbles.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    chatBubbles.sub:SetText(L["Edit chat bubble settings."])
-    chatBubbles.header:SetWidth(chatBubbles.header:GetStringWidth())
-    chatBubbles.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
-    chatBubbles.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    chatBubbles.breadcrumb:SetText(CHAT_BUBBLES_TEXT)
-
     local minimap = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     minimap.panelId = "hud_minimap"
     minimap.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -138,28 +125,13 @@ local function LoadHudPanel(sWindow)
 
     --GENERAL
     general:AddOption(XPBAR_LABEL, nil, {getterSetter = "hud.xpBar", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
+    general:AddOption(BATTLEGROUND .. " HUD", nil, {getterSetter = "general.battlegroundHud", callback = function() GW.ShowRlPopup = true end, hidden = not GW.isModern})
     general:AddOption(L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], {getterSetter = "hud.background", callback = GW.ToggleHudBackground})
     general:AddOption(L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], {getterSetter = "hud.dynamicBackground", dependence = {["hud.background"] = true}})
-    general:AddOptionDropdown(L["HUD background out of combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArt", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true, ["hud.dynamicBackground"] = true}})
-    general:AddOptionDropdown(L["HUD background in combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArtCombat", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true, ["hud.dynamicBackground"] = true}})
+    general:AddOptionDropdown(L["HUD background out of combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArt", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true}})
+    general:AddOptionDropdown(L["HUD background in combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArtCombat", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true}})
     general:AddOptionSlider(L["HUD background opacity"], nil, {getterSetter = "hud.backgroundAlpha", callback = GW.UpdateHudBackgroundAlpha, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.05, dependence = {["hud.background"] = true}})
-    general:AddOption(L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], {getterSetter = "general.questRewardMostValueIcon", callback = GW.ResetQuestRewardMostValueIcon})
-    general:AddOption(L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], {getterSetter = "general.questXpPercent"})
     general:AddOption(L["Toggle the borders around the screen"], nil, {getterSetter = "hud.screenBorder", callback = GW.ToggleHudBackground})
-    general:AddOption(L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], {getterSetter = "hud.fadeGroupManageButton", callback = GW.ToggleRaidControllFrame, dependence = {["unitframes.party.enabled"] = true}})
-    general:AddOption(L["Pixel Perfect Mode"], L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."], {getterSetter = "general.pixelPerfection", callback = function() C_CVar.SetCVar("useUiScale", "0") GW.PixelPerfection() end})
-    general:AddOptionSlider(L["HUD Scale"], L["Change the HUD size."], { getterSetter = "hud.scale", callback = function() GW.UpdateHudScale(); GW.ShowRlPopup = true end, isPercent = true, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01})
-    general:AddOptionButton(L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], {callback =
-        function()
-            local scale = GW.settings.hud.scale
-            for _, mf in pairs(GW.scaleableFrames) do
-                mf.parent:SetScale(scale)
-                mf:SetScale(scale)
-                GW.GetSetting(mf.setting).scale = scale
-            end
-        end})
-    general:AddOptionDropdown(L["Show Role Bar"], L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."], { getterSetter = "roleBar.mode", callback = GW.UpdateRaidCounterVisibility, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["Raid Only"], L["Party / Raid"]}})
-    general:AddOptionSlider(L["Talking Head Scale"], nil, { getterSetter = "skins.talkingHead.scale", callback = GW.ScaleTalkingHeadFrame, isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["skins.talkingHead.enabled"] = true}, hidden = not GW.Retail})
 
     -- MICRO BAR
     microBar:AddOption(ENABLE, L["Micro Bar"], {getterSetter = "micromenu.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
@@ -256,10 +228,6 @@ local function LoadHudPanel(sWindow)
         callback = GW.ToggleMicroMenuNotificationIconAnimation,
         dependence = {["micromenu.enabled"] = true}
     })
-
-    -- CHAT BUBBLES
-    chatBubbles:AddOption(ENABLE, L["Replace the default UI chat bubbles. (Only in not protected areas)"], {getterSetter = "chat.bubbles.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    chatBubbles:AddOptionSlider(GW.NewSign .. L["Chatbubble Scale"], nil, { getterSetter = "chat.bubbles.scale", isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["chat.bubbles.enabled"] = true}})
 
     --MINIMAP
     minimap:AddOption(ENABLE, L["Use the GW2 UI Minimap frame."], {getterSetter = "minimap.enabled", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Minimap", isMasterToggle = true})
@@ -451,7 +419,6 @@ local function LoadHudPanel(sWindow)
     local panels = {
         {name = GENERAL, frame = general},
         {name = L["Micro Bar"], frame = microBar},
-        {name = CHAT_BUBBLES_TEXT, frame = chatBubbles},
         {name = MINIMAP_LABEL, frame = minimap},
         {name = WORLDMAP_BUTTON, frame = worldmap},
     }

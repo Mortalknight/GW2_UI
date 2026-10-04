@@ -73,19 +73,6 @@ local function LoadPlayerPanel(sWindow)
     classpower.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     classpower.breadcrumb:SetText(L["Class Power"])
 
-    local totemBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
-    totemBar.panelId = "player_totem"
-    totemBar.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    totemBar.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    totemBar.header:SetText(PLAYER)
-    totemBar.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    totemBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    totemBar.sub:SetText(L["Edit the totem bar settings."])
-    totemBar.header:SetWidth(totemBar.header:GetStringWidth())
-    totemBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
-    totemBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    totemBar.breadcrumb:SetText(L["Totem Bar"])
-
     p_player:AddOption(ENABLE, L["Enable the health bar replacement."], {getterSetter = "unitframes.healthGlobe.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
     p_player:AddOption(L["Power Bar"], L["Replace the default mana/power bar."], {getterSetter = "powerBar.enabled", callback = function() if GwPlayerPowerBar then GwPlayerPowerBar:ToggleBar(); GW.ClassPowers.UpdateExtraManabar() end end, isMasterToggle = true})
     p_player:AddOption(L["Player frame in target frame style"], nil, {getterSetter = "unitframes.player.enabled", callback = function() GW.ShowRlPopup = true end, dependence = {["unitframes.healthGlobe.enabled"] = true}})
@@ -282,32 +269,6 @@ local function LoadPlayerPanel(sWindow)
     classpower:AddOption(L["Show Energy/Mana Ticker only in combat"], nil, {getterSetter = "unitframes.player.energyManaTickHideOutOfCombat", callback = GW.Update5SrHot,  dependence = {["powerBar.enabled"] = true, ["unitframes.player.energyManaTick"] = true}, hidden = GW.Retail or GW.Mists})
     classpower:AddOption(L["Show an additional resource bar"], nil, {getterSetter = "unitframes.player.showResourceBar", callback = function() GwPlayerPowerBar:ToggleBar(); GW.ClassPowers.UpdateExtraManabar() end, dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true, ["powerBar.enabled"] = true}})
 
-
-    --TOTEMBAR
-    totemBar:AddOption(ENABLE, nil, { getterSetter = "totemBar.enabled", isMasterToggle = true, callback = function() if GwTotemBar then GwTotemBar:UpdateVisibility() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}, incompatibleAddons = "Actionbars"})
-    totemBar:AddOptionDropdown(L["Sorting"], nil, { getterSetter = "totemBar.sortDirection", callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end, optionsList = {"ASC", "DSC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true}, incompatibleAddons = "Actionbars"})
-    totemBar:AddOptionDropdown(L["Growth Direction"], nil, { getterSetter = "totemBar.growDirection", callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end, optionsList = {"HORIZONTAL", "VERTICAL"}, optionNames = {L["Horizontal"], L["Vertical"]}, dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true}, incompatibleAddons = "Actionbars"})
-    totemBar:AddOptionSlider(L["Button Spacing"], nil, {
-        getterSetter = "totemBar.spacing",
-        callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end,
-        min = 0,
-        max = 10,
-        decimalNumbers = 0,
-        step = 1,
-        dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true},
-        incompatibleAddons = "Actionbars"
-    })
-    totemBar:AddOptionSlider(L["Button Size"], nil, {
-        getterSetter = "totemBar.buttonSize",
-        callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end,
-        min = 20,
-        max = 60,
-        decimalNumbers = 0,
-        step = 1,
-        dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true},
-        incompatibleAddons = "Actionbars"
-    })
-
-    sWindow:AddSettingsPanel(p, PLAYER, L["Modify the player frame settings."], {{name = GENERAL, frame = p_player}, {name = L["Cast Bar"], frame = castbar}, {name = L["Auras"], frame = p_player_aura}, {name = L["Fader"], frame = fader}, {name = L["Class Power"], frame = classpower}, {name = L["Totem Bar"], frame = totemBar},})
+    sWindow:AddSettingsPanel(p, PLAYER, L["Modify the player frame settings."], {{name = GENERAL, frame = p_player}, {name = L["Cast Bar"], frame = castbar}, {name = L["Auras"], frame = p_player_aura}, {name = L["Fader"], frame = fader}, {name = L["Class Power"], frame = classpower},})
 end
 GW.LoadPlayerPanel = LoadPlayerPanel

@@ -65,6 +65,19 @@ local function LoadGeneralPanel(sWindow)
     general:AddOption(L["Sell junk automatically"], L["Automatically sell poor quality items when visiting a merchant."], {getterSetter = "bags.vendorGrays", callback = GW.SetupVendorJunk})
     general:AddOptionSlider(L["Extended Vendor"], L["The number of pages shown in the merchant frame. Set 1 to disable."], { getterSetter = "bags.extendedVendorPages", callback = function() GW.ShowRlPopup = true end, min = 1, max = 6, decimalNumbers = 0, step = 1})
 
+    general:AddGroupHeader(L["Scale"])
+    general:AddOption(L["Pixel Perfect Mode"], L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."], {getterSetter = "general.pixelPerfection", callback = function() C_CVar.SetCVar("useUiScale", "0") GW.PixelPerfection() end})
+    general:AddOptionSlider(L["HUD Scale"], L["Change the HUD size."], { getterSetter = "hud.scale", callback = function() GW.UpdateHudScale(); GW.ShowRlPopup = true end, isPercent = true, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01})
+    general:AddOptionButton(L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], {callback =
+        function()
+            local scale = GW.settings.hud.scale
+            for _, mf in pairs(GW.scaleableFrames) do
+                mf.parent:SetScale(scale)
+                mf:SetScale(scale)
+                GW.GetSetting(mf.setting).scale = scale
+            end
+        end})
+
     classcolors:AddOption(L["Blizzard Class Colors"], nil, {getterSetter = "general.blizzardClassColors", callback = function(value)
         for i = 1, HIGHEST_CLASS_ID do
             local classInfo = C_CreatureInfo.GetClassInfo(i)

@@ -59,6 +59,19 @@ local function LoadActionbarPanel(sWindow)
     stanceBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     stanceBar.breadcrumb:SetText(HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"])
 
+    local totemBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    totemBar.panelId = "actionbar_totem"
+    totemBar.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    totemBar.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    totemBar.header:SetText(BINDING_HEADER_ACTIONBAR)
+    totemBar.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    totemBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    totemBar.sub:SetText(L["Edit the totem bar settings."])
+    totemBar.header:SetWidth(totemBar.header:GetStringWidth())
+    totemBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    totemBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    totemBar.breadcrumb:SetText(L["Totem Bar"])
+
     -- GENERAL
     general:AddOption(ENABLE, L["Use the GW2 UI improved action bars."], {getterSetter = "actionbars.enabled", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Actionbars", isMasterToggle = true})
     general:AddOption(L["Automatic Bar Layout"], L["Enable or disable the automatic layout management of the primary action bars and associated frames (pet, buffs); required for auto bar fading and some other features"], { getterSetter = "actionbars.barLayout", callback = function() GW.ShowRlPopup = true end, dependence = {["actionbars.enabled"] = true}, incompatibleAddons = "Actionbars", hidden = not GW.isModern, group = "autoLayout"})
@@ -191,6 +204,31 @@ local function LoadActionbarPanel(sWindow)
     stanceBar:AddOptionSlider(L["Alpha"], nil, {getterSetter = "stanceBar.alpha", callback = function() if GwStanceBar then GwStanceBar:UpdateAlpha() end end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.05, dependence = stanceBarDependence, incompatibleAddons = "Actionbars", group = "barVisibility"})
     stanceBar:AddOption(L["Only on Mouse Over"], nil, {getterSetter = "stanceBar.mouseOver", callback = function() if GwStanceBar then GwStanceBar:UpdateAlpha() end end, dependence = stanceBarDependence, incompatibleAddons = "Actionbars", group = "barVisibility"})
 
-    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, ACTIONBARS_SUBTEXT, {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars},  {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}})
+    --TOTEMBAR
+    totemBar:AddOption(ENABLE, nil, { getterSetter = "totemBar.enabled", isMasterToggle = true, callback = function() if GwTotemBar then GwTotemBar:UpdateVisibility() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}, incompatibleAddons = "Actionbars"})
+    totemBar:AddOptionDropdown(L["Sorting"], nil, { getterSetter = "totemBar.sortDirection", callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end, optionsList = {"ASC", "DSC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true}, incompatibleAddons = "Actionbars"})
+    totemBar:AddOptionDropdown(L["Growth Direction"], nil, { getterSetter = "totemBar.growDirection", callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end, optionsList = {"HORIZONTAL", "VERTICAL"}, optionNames = {L["Horizontal"], L["Vertical"]}, dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true}, incompatibleAddons = "Actionbars"})
+    totemBar:AddOptionSlider(L["Button Spacing"], nil, {
+        getterSetter = "totemBar.spacing",
+        callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end,
+        min = 0,
+        max = 10,
+        decimalNumbers = 0,
+        step = 1,
+        dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true},
+        incompatibleAddons = "Actionbars"
+    })
+    totemBar:AddOptionSlider(L["Button Size"], nil, {
+        getterSetter = "totemBar.buttonSize",
+        callback = function() if GwTotemBar then GwTotemBar:PositionAndSizeUpdate() end end,
+        min = 20,
+        max = 60,
+        decimalNumbers = 0,
+        step = 1,
+        dependence = {["unitframes.healthGlobe.enabled"] = true, ["totemBar.enabled"] = true},
+        incompatibleAddons = "Actionbars"
+    })
+
+    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, ACTIONBARS_SUBTEXT, {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars},  {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}, {name = L["Totem Bar"], frame = totemBar}})
 end
 GW.LoadActionbarPanel = LoadActionbarPanel

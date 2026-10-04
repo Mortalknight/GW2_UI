@@ -2,27 +2,25 @@
 local GW = select(2, ...)
 local L = GW.L
 
-local function LoadAurasPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
-
+local function LoadGroupAuraPanels(p)
     local p_auras = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     p_auras.panelId = "auras_general"
     p_auras.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_auras.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    p_auras.header:SetText(L["Unitframes Auras"])
+    p_auras.header:SetText(L["Group Frames"])
     p_auras.sub:SetFont(UNIT_NAME_FONT, 12)
     p_auras.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_auras.sub:SetText(L["Edit general unitframe aura settings."])
     p_auras.header:SetWidth(p_auras.header:GetStringWidth())
     p_auras.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     p_auras.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    p_auras.breadcrumb:SetText(GENERAL)
+    p_auras.breadcrumb:SetText(L["Auras"])
 
     local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     p_indicator.panelId = "auras_indicators"
     p_indicator.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_indicator.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    p_indicator.header:SetText(L["Unitframes Auras"])
+    p_indicator.header:SetText(L["Group Frames"])
     p_indicator.sub:SetFont(UNIT_NAME_FONT, 12)
     p_indicator.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_indicator.sub:SetText(L["Edit raid aura indicators."])
@@ -30,11 +28,6 @@ local function LoadAurasPanel(sWindow)
     p_indicator.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     p_indicator.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     p_indicator.breadcrumb:SetText(L["Raid Indicators"])
-
-    local panels = {
-        {name = GENERAL, frame = p_auras},
-        {name = L["Raid Indicators"], frame = p_indicator}
-    }
 
     -- the ignored auras moved to per grid spell id lists on the grid settings pages
     -- (panel_raid, CreateAuraFilterSection) — for every game version
@@ -196,6 +189,6 @@ local function LoadAurasPanel(sWindow)
         end)
     end
 
-    sWindow:AddSettingsPanel(p, L["Unitframes Auras"], L["Edit general unitframe aura settings and special grid settings."], panels)
+    return p_auras, p_indicator
 end
-GW.LoadAurasPanel = LoadAurasPanel
+GW.LoadGroupAuraPanels = LoadGroupAuraPanels
