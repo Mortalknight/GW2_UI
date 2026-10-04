@@ -101,8 +101,8 @@ do -- Expansions
     GW.Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
     GW.Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
     GW.Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
-    GW.Forever = GW.wowToc >= 16000 and GW.wowToc < 20000
-    GW.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and not GW.Forever
+    GW.Forever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
+    GW.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
     GW.isModern = GW.Retail or GW.Forever
 
     local season = C_Seasons and C_Seasons.GetActiveSeason()
