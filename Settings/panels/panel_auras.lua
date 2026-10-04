@@ -65,8 +65,8 @@ local function LoadAurasPanel(sWindow)
         if GW.RefreshAllAuraContainers then
             GW.RefreshAllAuraContainers()
         end
-    end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, group = "importantDebuffs"})
-    p_auras:AddOptionSlider(L["Set dispellable debuff scale"], nil, { getterSetter = "groupFrames.dispelDebuffsScale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, group = "debuffScalePrio"})
+    end, isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, group = "importantDebuffs"})
+    p_auras:AddOptionSlider(L["Set dispellable debuff scale"], nil, { getterSetter = "groupFrames.dispelDebuffsScale", callback = function() GW.UpdateGridSettings("ALL", false) end, isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, group = "debuffScalePrio"})
     p_auras:AddOptionDropdown(L["Important & dispellable debuff scale priority"], L["If both scales could apply to a debuff, which one should be used"], { getterSetter = "groupFrames.debuffScalePriority", optionsList = {"DISPELL", "IMPORTANT", "OFF"}, optionNames = {L["Dispell > Important"], L["Important > Dispell"], OFF}, group = "debuffScalePrio"})
 
     -- indicators

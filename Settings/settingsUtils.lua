@@ -3,6 +3,13 @@ local GW = select(2, ...)
 local L = GW.L
 local RoundDec = GW.RoundDec
 
+local function FormatSliderValue(of, value)
+    if of.isPercent then
+        return RoundDec(value * 100, max(of.decimalNumbers - 2, 0)) .. "%"
+    end
+    return RoundDec(value, of.decimalNumbers)
+end
+
 -- =========================
 -- Settings preview tracking: only one preview is active at a time, and the
 -- active one closes with the settings window / on tab switch
@@ -411,6 +418,7 @@ function GwSettingsPanelMixin:AddOptionSlider(name, desc, values)
     opt.min = values.min
     opt.max = values.max
     opt.decimalNumbers = values.decimalNumbers or 0
+    opt.isPercent = values.isPercent
     opt.step = values.step
 
     return opt
@@ -697,7 +705,7 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting, toDe
     end
     if of.optionType == "slider" then
         of.slider:SetValue(RoundDec(value, of.decimalNumbers))
-        of.inputFrame.input:SetText(RoundDec(value, of.decimalNumbers))
+        of.inputFrame.input:SetText(FormatSliderValue(of, value))
     elseif of.optionType == "boolean" then
         of.checkbutton:SetChecked(value)
     elseif of.optionType == "text" then
@@ -721,7 +729,7 @@ local function RefreshSettingsAfterProfileSwitch()
     for _, of in pairs(GW.GetAllSettingsWidgets(true)) do
         if of.optionType == "slider" then
             of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers))
-            of.inputFrame.input:SetText(RoundDec(of.get(), of.decimalNumbers))
+            of.inputFrame.input:SetText(FormatSliderValue(of, of.get()))
             if of.callback then
                 of.callback()
             end
@@ -1951,8 +1959,8 @@ local function SettingsInitOptionWidget(of, v, panel)
         GW.AddSliderValueFill(of.slider)
         of.slider:SetMinMaxValues(v.min, v.max)
         of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers))
-        of.slider.sliderMinText:SetText(RoundDec(v.min, of.decimalNumbers))
-        of.slider.sliderMaxText:SetText(RoundDec(v.max, of.decimalNumbers))
+        of.slider.sliderMinText:SetText(FormatSliderValue(of, v.min))
+        of.slider.sliderMaxText:SetText(FormatSliderValue(of, v.max))
         if v.step then of.slider:SetValueStep(v.step) end
         of.slider:SetObeyStepOnDrag(true)
         of.slider:SetScript("OnValueChanged", function(self)
@@ -1965,31 +1973,34 @@ local function SettingsInitOptionWidget(of, v, panel)
             local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
             of.set(tonumber(roundValue))
-            self:GetParent().inputFrame.input:SetText(roundValue)
+            self:GetParent().inputFrame.input:SetText(FormatSliderValue(of, roundValue))
             if v.callback then
                 v.callback(tonumber(roundValue))
             end
         end)
-        of.inputFrame.input:SetText(RoundDec(of.get(), of.decimalNumbers))
+        of.inputFrame.input:SetText(FormatSliderValue(of, of.get()))
         of.inputFrame.input:SetScript("OnEnterPressed", function(self)
             if ShouldHandleIncompatibility(v) then
                 if not HandleIncompatibility(v, nil, not v.isIncompatibleAddonLoadedButOverride) then
-                    self:SetText(RoundDec(of.get(), of.decimalNumbers))
+                    self:SetText(FormatSliderValue(of, of.get()))
                     return
                 end
             end
 
-            local roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
+            local number = tonumber((self:GetText():gsub("%%", "")))
+            if not number then
+                number = v.min
+            elseif of.isPercent then
+                number = number / 100
+            end
+            local roundValue = Clamp(RoundDec(number, of.decimalNumbers), v.min, v.max)
             self:ClearFocus()
-            if tonumber(roundValue) > v.max then self:SetText(v.max) end
-            if tonumber(roundValue) < v.min then self:SetText(v.min) end
-            roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
             if v.step and v.step > 0 then
                 local min_value = v.min or 0
-                roundValue = floor((roundValue - min_value) / v.step + 0.5) * v.step + min_value
+                roundValue = RoundDec(floor((roundValue - min_value) / v.step + 0.5) * v.step + min_value, of.decimalNumbers)
             end
             self:GetParent():GetParent().slider:SetValue(roundValue)
-            self:SetText(roundValue)
+            self:SetText(FormatSliderValue(of, roundValue))
 
             of.set(tonumber(roundValue))
             if v.callback then

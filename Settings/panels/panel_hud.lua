@@ -142,13 +142,13 @@ local function LoadHudPanel(sWindow)
     general:AddOption(L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], {getterSetter = "hud.dynamicBackground", dependence = {["hud.background"] = true}})
     general:AddOptionDropdown(L["HUD background out of combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArt", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true, ["hud.dynamicBackground"] = true}})
     general:AddOptionDropdown(L["HUD background in combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArtCombat", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true, ["hud.dynamicBackground"] = true}})
-    general:AddOptionSlider(L["HUD background opacity"], nil, {getterSetter = "hud.backgroundAlpha", callback = GW.UpdateHudBackgroundAlpha, min = 0, max = 1, decimalNumbers = 2, step = 0.05, dependence = {["hud.background"] = true}})
+    general:AddOptionSlider(L["HUD background opacity"], nil, {getterSetter = "hud.backgroundAlpha", callback = GW.UpdateHudBackgroundAlpha, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.05, dependence = {["hud.background"] = true}})
     general:AddOption(L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], {getterSetter = "general.questRewardMostValueIcon", callback = GW.ResetQuestRewardMostValueIcon})
     general:AddOption(L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], {getterSetter = "general.questXpPercent"})
     general:AddOption(L["Toggle the borders around the screen"], nil, {getterSetter = "hud.screenBorder", callback = GW.ToggleHudBackground})
     general:AddOption(L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], {getterSetter = "hud.fadeGroupManageButton", callback = GW.ToggleRaidControllFrame, dependence = {["unitframes.party.enabled"] = true}})
     general:AddOption(L["Pixel Perfect Mode"], L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."], {getterSetter = "general.pixelPerfection", callback = function() C_CVar.SetCVar("useUiScale", "0") GW.PixelPerfection() end})
-    general:AddOptionSlider(L["HUD Scale"], L["Change the HUD size."], { getterSetter = "hud.scale", callback = function() GW.UpdateHudScale(); GW.ShowRlPopup = true end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01})
+    general:AddOptionSlider(L["HUD Scale"], L["Change the HUD size."], { getterSetter = "hud.scale", callback = function() GW.UpdateHudScale(); GW.ShowRlPopup = true end, isPercent = true, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01})
     general:AddOptionButton(L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], {callback =
         function()
             local scale = GW.settings.hud.scale
@@ -159,7 +159,7 @@ local function LoadHudPanel(sWindow)
             end
         end})
     general:AddOptionDropdown(L["Show Role Bar"], L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."], { getterSetter = "roleBar.mode", callback = GW.UpdateRaidCounterVisibility, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["Raid Only"], L["Party / Raid"]}})
-    general:AddOptionSlider(L["Talking Head Scale"], nil, { getterSetter = "skins.talkingHead.scale", callback = GW.ScaleTalkingHeadFrame, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["skins.talkingHead.enabled"] = true}, hidden = not GW.Retail})
+    general:AddOptionSlider(L["Talking Head Scale"], nil, { getterSetter = "skins.talkingHead.scale", callback = GW.ScaleTalkingHeadFrame, isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["skins.talkingHead.enabled"] = true}, hidden = not GW.Retail})
 
     -- MICRO BAR
     microBar:AddOption(ENABLE, L["Micro Bar"], {getterSetter = "micromenu.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
@@ -259,7 +259,7 @@ local function LoadHudPanel(sWindow)
 
     -- CHAT BUBBLES
     chatBubbles:AddOption(ENABLE, L["Replace the default UI chat bubbles. (Only in not protected areas)"], {getterSetter = "chat.bubbles.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    chatBubbles:AddOptionSlider(GW.NewSign .. L["Chatbubble Scale"], nil, { getterSetter = "chat.bubbles.scale", min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["chat.bubbles.enabled"] = true}})
+    chatBubbles:AddOptionSlider(GW.NewSign .. L["Chatbubble Scale"], nil, { getterSetter = "chat.bubbles.scale", isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["chat.bubbles.enabled"] = true}})
 
     --MINIMAP
     minimap:AddOption(ENABLE, L["Use the GW2 UI Minimap frame."], {getterSetter = "minimap.enabled", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Minimap", isMasterToggle = true})
@@ -269,7 +269,7 @@ local function LoadHudPanel(sWindow)
     minimap:AddOption(L["Disable FPS tooltip"], nil, {getterSetter = "minimap.fpsTooltipDisabled", dependence = {["minimap.enabled"] = true, ["minimap.fps"] = true}, incompatibleAddons = "Minimap"})
     minimap:AddOption(L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], {getterSetter = "minimap.coords.enabled", callback = GW.ToogleMinimapCoordsLable, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap"})
     minimap:AddOptionDropdown(L["Minimap details"], L["Always show Minimap details."], { getterSetter = "minimap.alwaysShowHoverDetails", callback = GW.SetMinimapHover, checkbox = true, optionsList = {"CLOCK", "ZONE", "COORDS"}, optionNames = {TIMEMANAGER_TITLE, ZONE, L["Coordinates"]}, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap"})
-    minimap:AddOptionSlider(L["Minimap Scale"], L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes, Group members"], { getterSetter = "minimap.scale", callback = function() GW.UpdateMinimapSize() end, min = 0.1, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["minimap.enabled"] = true}})
+    minimap:AddOptionSlider(L["Minimap Scale"], L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes, Group members"], { getterSetter = "minimap.scale", callback = function() GW.UpdateMinimapSize() end, isPercent = true, min = 0.1, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["minimap.enabled"] = true}})
     minimap:AddOptionSlider(L["Reset Zoom"], L["Reset Minimap Zoom to default value. Set 0 to disable it"], { getterSetter = "minimap.resetZoom", min = 0, max = 15, decimalNumbers = 0, step = 1, dependence = {["minimap.enabled"] = true}})
     minimap:AddOptionSlider(L["Minimap Size"], L["Change the Minimap size."], { getterSetter = "minimap.size", callback = function() GW.UpdateMinimapSize() end, min = 160, max = 420, decimalNumbers = 0, step = 1, dependence = {["minimap.enabled"] = true}})
     minimap:AddOptionSlider(GW.NewSign .. L["Height Percentage"], nil, { getterSetter = "minimap.heightPercentage", callback = function() GW.UpdateMinimapSize() end, min = 1, max = 100, decimalNumbers = 0, step = 1, dependence = {["minimap.enabled"] = true, ["minimap.keepSizeRatio"] = false}})
@@ -441,12 +441,12 @@ local function LoadHudPanel(sWindow)
     -- Immersive questing
     questing:AddOption(ENABLE, L["Enable the immersive questing view."], {getterSetter = "immersiveQuesting.enabled", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "ImmersiveQuesting", isMasterToggle = true})
     questing:AddOption(L["Lock Frame"], L["Prevents the Immersive Questing window from being moved from its current position."], {getterSetter = "immersiveQuesting.lockFrame", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:applyLockFrame() end end, dependence = {["immersiveQuesting.enabled"] = true}})
-    questing:AddOptionSlider(L["Scale"], L["Adjusts the size of the Immersive Questing window."], { getterSetter = "immersiveQuesting.scale", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:UiScaleChanged() end end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.05, dependence = {["immersiveQuesting.enabled"] = true}})
+    questing:AddOptionSlider(L["Scale"], L["Adjusts the size of the Immersive Questing window."], { getterSetter = "immersiveQuesting.scale", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:UiScaleChanged() end end, isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.05, dependence = {["immersiveQuesting.enabled"] = true}})
     questing:AddOptionDropdown(L["Title Style"], L["Adjusts the style of the title bar."], { getterSetter = "immersiveQuesting.titleStyle", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:applyTitleStyle() end end, optionsList = {"DEFAULT", "THIN", "TRANSPARENT"}, optionNames = {DEFAULT, L["Thin"], L["Transparent"]}, dependence = {["immersiveQuesting.enabled"] = true}})
     questing:AddOption(L["Left-Click to Accept/Complete"], L["Determines if left-clicking anywhere in the Immersive Questing window counts the same as clicking on the Accept and Complete Quest buttons."], {getterSetter = "immersiveQuesting.clickAccept", dependence = {["immersiveQuesting.enabled"] = true}})
     questing:AddOption(L["Head Slot Behavior"], L["Determines the default head slot visibility behavior."], {getterSetter = "immersiveQuesting.showHelmet", dependence = {["immersiveQuesting.enabled"] = true}})
     questing:AddOptionDropdown(L["Weapon Behavior"], L["Determines the default weapon visibility behavior."], { getterSetter = "immersiveQuesting.weaponMode", optionsList = {"STOW", "DRAW", "HIDE"}, optionNames = {L["Stow"], L["Draw"], HIDE}, dependence = {["immersiveQuesting.enabled"] = true}})
-    questing:AddOptionSlider(L["Scale Player Model"], L["Adjusts the size of the player model for the current character."], { getterSetter = "immersiveQuesting.playerScale", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:UiScaleChanged() end end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.05, dependence = {["immersiveQuesting.enabled"] = true}})
+    questing:AddOptionSlider(L["Scale Player Model"], L["Adjusts the size of the player model for the current character."], { getterSetter = "immersiveQuesting.playerScale", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:UiScaleChanged() end end, isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.05, dependence = {["immersiveQuesting.enabled"] = true}})
 
     local panels = {
         {name = GENERAL, frame = general},

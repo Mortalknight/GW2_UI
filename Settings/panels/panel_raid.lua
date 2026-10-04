@@ -241,8 +241,8 @@ local function LoadRaid10Profile(panel)
     })
 
     raid10:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.raid10.fader.smooth", callback = function() UpdateGridSettingsThrottled("raid10") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}})
-    raid10:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raid10.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raid10") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}})
-    raid10:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.raid10.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("raid10") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}})
+    raid10:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raid10.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raid10") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}})
+    raid10:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.raid10.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("raid10") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}})
 
     -- Size and Positions
     raid10:AddGroupHeader( L["Size and Positions"])
@@ -355,8 +355,8 @@ local function LoadRaid25Profile(panel)
         getterSetter = "groupFrames.raid25.fader", callback = function() GW.UpdateGridSettings("raid25") end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true, ["groupFrames.raid25.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
     })
     raid25:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.raid25.fader.smooth", callback = function() UpdateGridSettingsThrottled("raid25") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}})
-    raid25:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raid25.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raid25") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}})
-    raid25:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.raid25.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("raid25") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}})
+    raid25:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raid25.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raid25") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}})
+    raid25:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.raid25.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("raid25") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}})
 
     -- Size and Positions
     raid25:AddGroupHeader( L["Size and Positions"])
@@ -465,8 +465,8 @@ local function LoadRaid40Profile(panel)
         getterSetter = "groupFrames.raid40.fader", callback = function() GW.UpdateGridSettings("raid40") end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true, ["groupFrames.raid40.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
     })
     raid40:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.raid40.fader.smooth", callback = function() UpdateGridSettingsThrottled("raid40") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true}})
-    raid40:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raid40.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raid40") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true}})
-    raid40:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.raid40.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("raid40") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true}})
+    raid40:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raid40.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raid40") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true}})
+    raid40:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.raid40.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("raid40") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true}})
 
     -- Size and Positions
     raid40:AddGroupHeader(L["Size and Positions"])
@@ -580,8 +580,8 @@ local function LoadMaintankProfile(panel)
         groupHeaderName = L["Fader"]
     })
     tank:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.maintank.fader.smooth", callback = function() UpdateGridSettingsThrottled("maintank") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}})
-    tank:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.maintank.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("maintank") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}})
-    tank:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.maintank.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("maintank") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}})
+    tank:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.maintank.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("maintank") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}})
+    tank:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.maintank.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("maintank") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}})
 
     -- Size and Positions
     tank:AddGroupHeader( L["Size and Positions"])
@@ -674,8 +674,8 @@ local function LoadRaidPetProfile(panel)
         getterSetter = "groupFrames.raidPet.fader", callback = function() GW.UpdateGridSettings("raidPet") end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true, ["groupFrames.raidPet.faderRange"] = false}, checkbox = true, groupHeaderName = L["Fader"]
     })
     p:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.raidPet.fader.smooth", callback = function() UpdateGridSettingsThrottled("raidPet") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
-    p:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raidPet.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raidPet") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
-    p:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.raidPet.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("raidPet") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
+    p:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.raidPet.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("raidPet") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
+    p:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.raidPet.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("raidPet") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
 
     -- Size and Positions
     p:AddGroupHeader( L["Size and Positions"])
@@ -814,8 +814,8 @@ local function LoadPartyProfile(panel)
         groupHeaderName = L["Fader"]
     })
     party:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.party.fader.smooth", callback = function() UpdateGridSettingsThrottled("party") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}})
-    party:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.party.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("party") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}})
-    party:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.party.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("party") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}})
+    party:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.party.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("party") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}})
+    party:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.party.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("party") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}})
 
     -- Size and Positions
     party:AddGroupHeader(L["Size and Positions"])
@@ -920,8 +920,8 @@ local function LoadPartyPetProfile(panel)
         groupHeaderName = L["Fader"]
     })
     p:AddOptionSlider(L["Smooth"], nil, { getterSetter = "groupFrames.partyPet.fader.smooth", callback = function() UpdateGridSettingsThrottled("partyPet") end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true}})
-    p:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.partyPet.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("partyPet") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true}})
-    p:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.partyPet.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("partyPet") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true}})
+    p:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "groupFrames.partyPet.fader.minAlpha", callback = function() UpdateGridSettingsThrottled("partyPet") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true}})
+    p:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "groupFrames.partyPet.fader.maxAlpha", callback = function() UpdateGridSettingsThrottled("partyPet") end, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true}})
 
     -- Size and Positions
     p:AddGroupHeader( L["Size and Positions"])
