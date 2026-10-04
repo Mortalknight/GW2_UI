@@ -149,6 +149,7 @@ local function SkinMainMenu()
 
         settingsButton.layoutIndex = lastLayoutIndex + 1
         settingsButton.topPadding = 20
+        GW.UpdateGameMenuNewLabel(settingsButton)
     end)
 
     -- re-apply the button sizes that were skipped while in combat

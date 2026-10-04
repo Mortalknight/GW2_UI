@@ -290,11 +290,28 @@ local function WrapReloadTracking(opt)
     end
 end
 
+-- keys of options this client or character does not show, the first run marks them as seen too
+GW.HiddenSettingKeys = {}
+
 local function CreateOption(optionType, panel, name, desc, values)
     if not panel then return end
     values = values or {}
 
+    -- a hand set marker only seeds the first run of the automatic new marker
+    local legacyNew = false
+    if type(name) == "string" then
+        local s, e = name:find(GW.NewSign, 1, true)
+        if s then
+            legacyNew = true
+            name = name:sub(1, s - 1) .. name:sub(e + 1)
+        end
+    end
+    local seenKey = values.getterSetter or (optionType .. ":" .. tostring(name))
+
     if values.hidden == true then
+        if not legacyNew then
+            GW.HiddenSettingKeys[seenKey] = true
+        end
         return nil
     end
 
@@ -303,6 +320,8 @@ local function CreateOption(optionType, panel, name, desc, values)
     local opt = {
         name = name,
         desc = desc or "",
+        seenKey = seenKey,
+        legacyNew = legacyNew,
         optionName = values.getterSetter, -- forbidden for addons
         optionType = optionType,
         callback = values.callback,

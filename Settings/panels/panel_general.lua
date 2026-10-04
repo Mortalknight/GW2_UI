@@ -50,7 +50,7 @@ local function LoadGeneralPanel(sWindow)
     general:AddOptionDropdown(L["Shorten value prefix style"], nil, { getterSetter = "unitframes.shortValuePrefixStyle", callback = GW.BuildPrefixValues, optionsList = {"TCHINESE", "CHINESE", "ENGLISH", "GERMAN", "KOREAN", "METRIC"}, optionNames = {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"}})
     general:AddOptionDropdown(L["Number format"], L["Will be used for the most numbers"] .. (GW.Retail and L[" For Retail: Not used for secret numbers."] or ""), { getterSetter = "general.numberFormat", optionsList = {"POINT", "COMMA"}, optionNames = {"1,000,000.00", "1.000.000,00"}})
     general:AddOption(L["AFK Mode"], L["When you go AFK, display the AFK screen."], {getterSetter = "general.afkMode", callback = GW.ToggelAfkMode})
-    general:AddOption(L["Show Lua errors"], L["Shows Blizzard's error window for every Lua error and the GW2 error icon in the micro menu."] .. (BugGrabber and ("\n\n" .. L["BugSack is loaded and collects the errors anyway."]) or ""), {
+    general:AddOption(GW.NewSign .. L["Show Lua errors"], L["Shows Blizzard's error window for every Lua error and the GW2 error icon in the micro menu."] .. (BugGrabber and ("\n\n" .. L["BugSack is loaded and collects the errors anyway."]) or ""), {
         getter = function() return C_CVar.GetCVarBool("scriptErrors") end,
         setter = function(value) C_CVar.SetCVar("scriptErrors", value and "1" or "0") end,
         getDefault = function() return false end,

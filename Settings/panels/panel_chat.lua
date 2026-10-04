@@ -67,7 +67,7 @@ local function LoadChatPanel(sWindow)
     general:AddOptionColorPicker(L["Keyword highlight color"], nil, { getterSetter = "CHAT_KEYWORDS_ALERT_COLOR", dependence = {["chat.enabled"] = true}, isPrivateSetting = true})
 
     chatBubbles:AddOption(ENABLE, L["Replace the default UI chat bubbles. (Only in not protected areas)"], {getterSetter = "chat.bubbles.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    chatBubbles:AddOptionSlider(GW.NewSign .. L["Chatbubble Scale"], nil, { getterSetter = "chat.bubbles.scale", isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["chat.bubbles.enabled"] = true}})
+    chatBubbles:AddOptionSlider(L["Chatbubble Scale"], nil, { getterSetter = "chat.bubbles.scale", isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["chat.bubbles.enabled"] = true}})
 
     sWindow:AddSettingsPanel(p, CHAT, L["Edit chat settings."], {{name = GENERAL, frame = general}, {name = CHAT_BUBBLES_TEXT, frame = chatBubbles}})
 end

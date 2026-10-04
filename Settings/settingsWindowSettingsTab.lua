@@ -8,7 +8,7 @@ local settingsMenuFrame
 local currentPanelIndex
 local searchPanel
 local searchEdit
-local DEFAULT_SETTINGS_PANEL_ID = "interface_features"
+local DEFAULT_SETTINGS_PANEL_ID = "general_general"
 
 local ROW_PAD_X = 8
 local ROW_PAD_Y = 8
@@ -266,6 +266,98 @@ local function SetupMasterToggleStyle(of)
 end
 
 -- =========================
+-- New marker: an option is new until its page was open once
+-- =========================
+local NEVER_NEW = {header = true, subHeader = true, note = true}
+
+local function IsNewOption(opt)
+    local seen = GW.global and GW.global.seenSettings
+    return seen ~= nil and not NEVER_NEW[opt.optionType] and not seen[opt.seenKey]
+end
+
+local function PanelHasNewOptions(panel)
+    for _, opt in ipairs((panel and panel.gwOptions) or {}) do
+        if IsNewOption(opt) then return true end
+    end
+    return false
+end
+
+local function MenuEntryHasNewOptions(ed)
+    if ed.isSubCat then
+        return PanelHasNewOptions(ed.itemData.frame)
+    end
+    if not ed.itemData.hasSubFrames then
+        return PanelHasNewOptions(ed.itemData.basePanel)
+    end
+    for _, sub in ipairs(ed.itemData.subFrameData) do
+        if PanelHasNewOptions(sub.frame) then return true end
+    end
+    return false
+end
+
+local function SetOptionTitle(of)
+    of.title:SetText((IsNewOption(of) and GW.NewSign or "") .. (of.displayName or ""))
+end
+
+local function ForEachMenuPanel(func)
+    for _, item in ipairs(menuItems) do
+        for _, sub in ipairs(item.hasSubFrames and item.subFrameData or {{frame = item.basePanel}}) do
+            func(sub.frame)
+        end
+    end
+end
+
+-- the first run knows every option, except the ones marked by hand as new in this version
+local function SeedSeenSettings()
+    if not GW.global or GW.global.seenSettings then return end
+    local seen = CopyTable(GW.HiddenSettingKeys)
+    GW.global.seenSettings = seen
+    ForEachMenuPanel(function(panel)
+        for _, opt in ipairs(panel.gwOptions or {}) do
+            if not opt.legacyNew then
+                seen[opt.seenKey] = true
+            end
+            -- the first rows of every page are built before this
+            if opt.__widget then
+                SetOptionTitle(opt.__widget)
+            end
+        end
+    end)
+end
+
+-- leaving a page marks its options as seen
+local function MarkPanelSeen(panel)
+    local seen = GW.global and GW.global.seenSettings
+    if not seen then return end
+    local changed = false
+    for _, opt in ipairs(panel.gwOptions or {}) do
+        if IsNewOption(opt) then
+            seen[opt.seenKey] = true
+            changed = true
+            if opt.__widget then
+                SetOptionTitle(opt.__widget)
+            end
+        end
+    end
+    if changed then
+        settingsMenuFrame.ScrollBox:Rebuild(ScrollBoxConstants.RetainScrollPosition)
+    end
+end
+
+function GW.UpdateGameMenuNewLabel(button)
+    if not button.gwNewLabel then
+        button.gwNewLabel = CreateFrame("Frame", nil, button, "NewFeatureLabelTemplate")
+        button.gwNewLabel:SetScale(0.8)
+        button.gwNewLabel:SetPoint("CENTER", button:GetFontString(), "LEFT", -18, 7)
+    end
+    local hasNew = false
+    ForEachMenuPanel(function(panel)
+        hasNew = hasNew or PanelHasNewOptions(panel)
+    end)
+    button.gwNewLabel:SetShown(hasNew)
+end
+
+-- =========================
 -- Registry + Search
 -- =========================
 local function GetOrderedPanelBuckets()
@@ -298,7 +390,6 @@ local function RegisterOption(panel, opt)
         title       = opt.name,
         titleNorm   = Norm(opt.name),
         groupHeaderNorm = Norm(opt.groupHeaderName or ""),
-        isNew       = opt.name and opt.name:find(GW.NewSign, 1, true) ~= nil,
         type        = opt.optionType,
         optionName  = opt.optionName,
         desc        = opt.desc,
@@ -333,7 +424,7 @@ local function SearchWidgetsByText(query)
         local hits = {}
         for _, e in ipairs(bucket.entries) do
             if searchNew then
-                if e.isNew then
+                if IsNewOption(e.opt) then
                     hits[#hits+1] = e
                 end
             elseif e.titleNorm:find(q, 1, true) or e.groupHeaderNorm:find(q, 1, true) or e.descNorm:find(q, 1, true) then
@@ -388,7 +479,7 @@ local function CreateOrGetOptionWidget(panel, opt)
     -- Basistitle (falls vorhanden im Template)
     of.title:SetFont(DAMAGE_TEXT_FONT, 12)
     of.title:SetShadowColor(0, 0, 0, 1)
-    of.title:SetText(of.displayName or "")
+    SetOptionTitle(of)
     if of.isMasterToggle then
         of.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     else
@@ -808,6 +899,7 @@ function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc
     if subFrameData and #subFrameData > 0 then
         for _, sub in ipairs(subFrameData) do
             InitOptionPanel(sub.frame)
+            sub.frame:HookScript("OnHide", MarkPanelSeen)
             if sub == item.generalSub then
                 -- opened through the category row itself, so the category name is the
                 -- page title - drop the redundant "General" context line
@@ -820,6 +912,7 @@ function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc
         basePanel.scroll:Hide()
     else
         InitOptionPanel(basePanel)
+        basePanel:HookScript("OnHide", MarkPanelSeen)
         LayoutPanelHeader(basePanel)
     end
 
@@ -1113,6 +1206,11 @@ local function InitMenuButton(button, elementData)
         button.activeBar:SetColorTexture(GW.Colors.Accent:GetRGB())
         button.activeBar:Hide()
 
+        button.newIcon = button:CreateTexture(nil, "OVERLAY")
+        button.newIcon:SetTexture("Interface/OptionsFrame/UI-OptionsFrame-NewFeatureIcon")
+        button.newIcon:SetSize(14, 14)
+        button.newIcon:SetPoint("RIGHT", -8, 0)
+
         button:HookScript("OnEnter", function(self)
             if self.gwTooltipDesc then
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -1176,6 +1274,7 @@ local function InitMenuButton(button, elementData)
     button:EnableMouse(not hidden)
     button:SetAlpha(hidden and 0 or 1)
     button:SetHeight(hidden and 0 or (elementData.isSubCat and MENU_SUB_ROW_HEIGHT or MENU_MAIN_ROW_HEIGHT))
+    button.newIcon:SetShown(not hidden and MenuEntryHasNewOptions(elementData))
 
     if not elementData.isSubCat and elementData.itemData.hasSubFrames then
         if elementData.itemData.isExpanded and not button.rotationDone then
@@ -1254,6 +1353,7 @@ local function LoadSettingsTab(container)
     GW.LoadNotificationsPanel(settingsTab)
     GW.LoadSkinsPanel(settingsTab)
     GW.LoadFontsPanel(settingsTab)
+    SeedSeenSettings()
 
     -- Menü ScrollBox
     local view = CreateScrollBoxListLinearView()

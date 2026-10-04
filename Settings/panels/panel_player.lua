@@ -100,8 +100,8 @@ local function LoadPlayerPanel(sWindow)
     p_player:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "unitframes.player.healthBarTexture", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
 
     p_player:AddGroupHeader(L["Dodge Bar"])
-    p_player:AddOption(GW.NewSign .. L["Show Dodge Bar"], nil, {getterSetter = "hud.dodgeBar.enabled", callback = function() if GwDodgeBar then GwDodgeBar:ToggleDodgeBar(); GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}})
-    p_player:AddOption(GW.NewSign .. L["Show Dodge Bar Cooldown Text"], L["Show the remaining cooldown of the tracked ability on the dodge bar."], {getterSetter = "hud.dodgeBar.cooldownText", callback = function() if GwDodgeBar then GwDodgeBar:SetupBar() end end, dependence = {["unitframes.healthGlobe.enabled"] = true, ["hud.dodgeBar.enabled"] = true}})
+    p_player:AddOption(L["Show Dodge Bar"], nil, {getterSetter = "hud.dodgeBar.enabled", callback = function() if GwDodgeBar then GwDodgeBar:ToggleDodgeBar(); GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}})
+    p_player:AddOption(L["Show Dodge Bar Cooldown Text"], L["Show the remaining cooldown of the tracked ability on the dodge bar."], {getterSetter = "hud.dodgeBar.cooldownText", callback = function() if GwDodgeBar then GwDodgeBar:SetupBar() end end, dependence = {["unitframes.healthGlobe.enabled"] = true, ["hud.dodgeBar.enabled"] = true}})
 
     p_player:AddOptionSpellInput(L["Dodge Bar Ability"], L["Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."], { getterSetter = "PLAYER_TRACKED_DODGEBAR_SPELL_ID", callback = function()
             if GwDodgeBar then
@@ -109,19 +109,19 @@ local function LoadPlayerPanel(sWindow)
                 GwDodgeBar:SetupBar()
             end
         end, dependence = {["unitframes.healthGlobe.enabled"] = true, ["hud.dodgeBar.enabled"] = true}, isPrivateSetting = true})
-    p_player:AddOption(GW.NewSign .. L["Show Skyriding Bar"], nil, {getterSetter = "hud.skyridingBar", callback = function() if GwDodgeBar then GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}, hidden = not GW.Retail})
+    p_player:AddOption(L["Show Skyriding Bar"], nil, {getterSetter = "hud.skyridingBar", callback = function() if GwDodgeBar then GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}, hidden = not GW.Retail})
 
     p_player:AddGroupHeader(L["Size"])
     p_player:AddOptionSlider(L["Scale"], nil, { getterSetter = "unitframes.player.scale", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, isPercent = true, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
 
-    p_player:AddOptionSlider(GW.NewSign .. L["Bar Width"], nil, { getterSetter = "unitframes.player.healthBarSize.width", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 150, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
-    p_player:AddOptionSlider(GW.NewSign .. L["Healthbar Height"], nil, { getterSetter = "unitframes.player.healthBarSize.height", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
-    p_player:AddOptionSlider(GW.NewSign .. L["Healthbar Text X-Offset"], nil, { getterSetter = "unitframes.player.healthBarTextOffset.x", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
-    p_player:AddOptionSlider(GW.NewSign .. L["Healthbar Text Y-Offset"], nil, { getterSetter = "unitframes.player.healthBarTextOffset.y", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
+    p_player:AddOptionSlider(L["Bar Width"], nil, { getterSetter = "unitframes.player.healthBarSize.width", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 150, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
+    p_player:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "unitframes.player.healthBarSize.height", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
+    p_player:AddOptionSlider(L["Healthbar Text X-Offset"], nil, { getterSetter = "unitframes.player.healthBarTextOffset.x", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
+    p_player:AddOptionSlider(L["Healthbar Text Y-Offset"], nil, { getterSetter = "unitframes.player.healthBarTextOffset.y", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
 
-    p_player:AddOptionSlider(GW.NewSign .. L["Powerbar Height"], nil, { getterSetter = "unitframes.player.powerBarSize.height", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
-    p_player:AddOptionSlider(GW.NewSign .. L["Powerbar Text X-Offset"], nil, { getterSetter = "unitframes.player.powerBarTextOffset.x", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
-    p_player:AddOptionSlider(GW.NewSign .. L["Powerbar Text Y-Offset"], nil, { getterSetter = "unitframes.player.powerBarTextOffset.y", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
+    p_player:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "unitframes.player.powerBarSize.height", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
+    p_player:AddOptionSlider(L["Powerbar Text X-Offset"], nil, { getterSetter = "unitframes.player.powerBarTextOffset.x", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
+    p_player:AddOptionSlider(L["Powerbar Text Y-Offset"], nil, { getterSetter = "unitframes.player.powerBarTextOffset.y", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
 
 
     -- CAST BAR
@@ -129,27 +129,27 @@ local function LoadPlayerPanel(sWindow)
     castbar:AddOption(L["Ticks"], L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."], {getterSetter = "castingbar.ticks", dependence = {["castingbar.enabled"] = true}})
 
     castbar:AddGroupHeader(DISPLAY)
-    castbar:AddOption(GW.NewSign .. L["Spell Name"], L["Shows the name of the spell being cast above the bar."], {getterSetter = "castingbar.showName", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = DISPLAY, dependence = {["castingbar.enabled"] = true}})
-    castbar:AddOption(GW.NewSign .. L["Cast Timer"], L["Shows the remaining cast time above the bar."], {getterSetter = "castingbar.showTimer", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = DISPLAY, dependence = {["castingbar.enabled"] = true}})
-    castbar:AddOption(GW.NewSign .. L["Latency"], L["Marks the part of the cast that is lost to your latency at the end of the bar."], {getterSetter = "castingbar.showLatency", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = DISPLAY, dependence = {["castingbar.enabled"] = true}})
+    castbar:AddOption(L["Spell Name"], L["Shows the name of the spell being cast above the bar."], {getterSetter = "castingbar.showName", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = DISPLAY, dependence = {["castingbar.enabled"] = true}})
+    castbar:AddOption(L["Cast Timer"], L["Shows the remaining cast time above the bar."], {getterSetter = "castingbar.showTimer", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = DISPLAY, dependence = {["castingbar.enabled"] = true}})
+    castbar:AddOption(L["Latency"], L["Marks the part of the cast that is lost to your latency at the end of the bar."], {getterSetter = "castingbar.showLatency", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = DISPLAY, dependence = {["castingbar.enabled"] = true}})
     castbar:AddOption(L["Show spell queue window on castingbar"], nil, {getterSetter = "castingbar.spellQueueWindow", callback = function() GW.UpdateCastingBarSettings() end, groupHeaderName = DISPLAY, dependence = {["castingbar.enabled"] = true, ["castingbar.showLatency"] = true}})
-    castbar:AddOptionDropdown(GW.NewSign .. L["Spell Icon"], L["Which side of the casting bar the spell icon sits on."], {getterSetter = "castingbar.iconPosition", callback = function() GW.UpdateCastingBarLayout() end, optionsList = {"LEFT", "RIGHT", "HIDE"}, optionNames = {L["Left"], L["Right"], HIDE}, groupHeaderName = DISPLAY, dependence = {["castingbar.enabled"] = true}})
+    castbar:AddOptionDropdown(L["Spell Icon"], L["Which side of the casting bar the spell icon sits on."], {getterSetter = "castingbar.iconPosition", callback = function() GW.UpdateCastingBarLayout() end, optionsList = {"LEFT", "RIGHT", "HIDE"}, optionNames = {L["Left"], L["Right"], HIDE}, groupHeaderName = DISPLAY, dependence = {["castingbar.enabled"] = true}})
 
     castbar:AddGroupHeader(L["Size"])
-    castbar:AddOptionSlider(GW.NewSign .. L["Width"], nil, {getterSetter = "castingbar.width", callback = function() GW.UpdateCastingBarLayout() end, min = 100, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["castingbar.enabled"] = true}})
-    castbar:AddOptionSlider(GW.NewSign .. L["Height"], nil, {getterSetter = "castingbar.height", callback = function() GW.UpdateCastingBarLayout() end, min = 6, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["castingbar.enabled"] = true}})
+    castbar:AddOptionSlider(L["Width"], nil, {getterSetter = "castingbar.width", callback = function() GW.UpdateCastingBarLayout() end, min = 100, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["castingbar.enabled"] = true}})
+    castbar:AddOptionSlider(L["Height"], nil, {getterSetter = "castingbar.height", callback = function() GW.UpdateCastingBarLayout() end, min = 6, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["castingbar.enabled"] = true}})
 
     castbar:AddGroupHeader(COLOR)
-    castbar:AddOption(GW.NewSign .. L["Custom Colors"], L["Use your own casting bar colors instead of the default textures."], {getterSetter = "castingbar.customColors", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true}})
-    castbar:AddOptionColorPicker(GW.NewSign .. L["Casting"], nil, {getterSetter = "castingbar.colors.cast", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true, ["castingbar.customColors"] = true}})
-    castbar:AddOptionColorPicker(GW.NewSign .. L["Channeling"], nil, {getterSetter = "castingbar.colors.channel", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true, ["castingbar.customColors"] = true}})
-    castbar:AddOptionColorPicker(GW.NewSign .. L["Empowered"], nil, {getterSetter = "castingbar.colors.empower", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true, ["castingbar.customColors"] = true}, hidden = not GW.Retail})
-    castbar:AddOptionColorPicker(GW.NewSign .. INTERRUPTED, nil, {getterSetter = "castingbar.colors.interrupted", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true, ["castingbar.customColors"] = true}})
+    castbar:AddOption(L["Custom Colors"], L["Use your own casting bar colors instead of the default textures."], {getterSetter = "castingbar.customColors", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true}})
+    castbar:AddOptionColorPicker(L["Casting"], nil, {getterSetter = "castingbar.colors.cast", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true, ["castingbar.customColors"] = true}})
+    castbar:AddOptionColorPicker(L["Channeling"], nil, {getterSetter = "castingbar.colors.channel", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true, ["castingbar.customColors"] = true}})
+    castbar:AddOptionColorPicker(L["Empowered"], nil, {getterSetter = "castingbar.colors.empower", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true, ["castingbar.customColors"] = true}, hidden = not GW.Retail})
+    castbar:AddOptionColorPicker(INTERRUPTED, nil, {getterSetter = "castingbar.colors.interrupted", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = COLOR, dependence = {["castingbar.enabled"] = true, ["castingbar.customColors"] = true}})
 
     castbar:AddGroupHeader(L["Feedback"])
-    castbar:AddOption(GW.NewSign .. L["Empowered Stage Colors"], L["Brightens the casting bar with every empower stage you hold and shows the stage on the bar."], {getterSetter = "castingbar.colors.empowerStages", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = L["Feedback"], dependence = {["castingbar.enabled"] = true}, hidden = not GW.Retail})
-    castbar:AddOption(GW.NewSign .. L["Shake On Interrupt"], L["Shakes the casting bar when your cast was interrupted or failed."], {getterSetter = "castingbar.interruptShake", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = L["Feedback"], dependence = {["castingbar.enabled"] = true}})
-    castbar:AddOption(GW.NewSign .. L["Sound On Interrupt"], L["Plays a sound when your cast was interrupted or failed."], {getterSetter = "castingbar.interruptSound", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = L["Feedback"], dependence = {["castingbar.enabled"] = true}})
+    castbar:AddOption(L["Empowered Stage Colors"], L["Brightens the casting bar with every empower stage you hold and shows the stage on the bar."], {getterSetter = "castingbar.colors.empowerStages", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = L["Feedback"], dependence = {["castingbar.enabled"] = true}, hidden = not GW.Retail})
+    castbar:AddOption(L["Shake On Interrupt"], L["Shakes the casting bar when your cast was interrupted or failed."], {getterSetter = "castingbar.interruptShake", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = L["Feedback"], dependence = {["castingbar.enabled"] = true}})
+    castbar:AddOption(L["Sound On Interrupt"], L["Plays a sound when your cast was interrupted or failed."], {getterSetter = "castingbar.interruptSound", callback = function() GW.UpdateCastingBarLayout() end, groupHeaderName = L["Feedback"], dependence = {["castingbar.enabled"] = true}})
 
     -- AURAS
     p_player_aura:AddOption(ENABLE, L["Move and resize the player auras."], {getterSetter = "playerAuras.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
@@ -157,8 +157,8 @@ local function LoadPlayerPanel(sWindow)
         GW.UpdateAuraHeader(GW2UIPlayerBuffs)
         GW.UpdateAuraHeader(GW2UIPlayerDebuffs)
     end, dependence = {["playerAuras.enabled"] = true}, hidden = not GW.Retail})
-    p_player_aura:AddOption(GW.NewSign .. L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "playerAuras.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["playerAuras.enabled"] = true}, hidden = not GW.Retail})
-    p_player_aura:AddOptionDropdown(GW.NewSign .. L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "playerAuras.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["playerAuras.enabled"] = true}, hidden = not GW.Retail})
+    p_player_aura:AddOption(L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "playerAuras.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["playerAuras.enabled"] = true}, hidden = not GW.Retail})
+    p_player_aura:AddOptionDropdown(L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "playerAuras.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["playerAuras.enabled"] = true}, hidden = not GW.Retail})
     p_player_aura:AddGroupHeader(L["Buffs"])
     p_player_aura:AddOptionDropdown(L["Player Buff Growth Direction"], nil, { getterSetter = "playerAuras.buffs.GrowDirection", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, optionsList = auraGrowthOptions, optionNames = auraGrowthOptionNames, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"]})
     p_player_aura:AddOptionDropdown(L["Aura Sorting"], L["Set the sorting order of the auras."], { getterSetter = "playerAuras.buffs.Sort", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["playerAuras.enabled"] = true}, groupHeaderName = L["Buffs"]})
@@ -198,8 +198,8 @@ local function LoadPlayerPanel(sWindow)
 
     -- Classpower
     classpower:AddOption(ENABLE, L["Enable the alternate class powers."], {getterSetter = "classpower.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    classpower:AddOption(GW.NewSign .. L["Show value on bar"], nil, {getterSetter = "classpower.showValue", callback = function() GW.ClassPowers.UpdateSettings(GwPlayerClassPower); GwPlayerPowerBar:ToggleSettings(); if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["classpower.enabled"] = true}})
-    classpower:AddOptionDropdown(GW.NewSign .. L["Class power anchor"], L["Controls how the class power bar is anchored to its mover."], {
+    classpower:AddOption(L["Show value on bar"], nil, {getterSetter = "classpower.showValue", callback = function() GW.ClassPowers.UpdateSettings(GwPlayerClassPower); GwPlayerPowerBar:ToggleSettings(); if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["classpower.enabled"] = true}})
+    classpower:AddOptionDropdown(L["Class power anchor"], L["Controls how the class power bar is anchored to its mover."], {
         getterSetter = "classpower.anchorMode",
         callback = function()
             if GwPlayerClassPower then
@@ -213,7 +213,7 @@ local function LoadPlayerPanel(sWindow)
         optionNames = {DEFAULT, L["Center"], L["Left"], L["Right"]},
         dependence = {["classpower.enabled"] = true},
     })
-    classpower:AddOptionDropdown(GW.NewSign .. L["Custom resource bar side"], L["Choose which side optional custom resource bars are placed on. Auto flips by class power anchor mode."], {
+    classpower:AddOptionDropdown(L["Custom resource bar side"], L["Choose which side optional custom resource bars are placed on. Auto flips by class power anchor mode."], {
         getterSetter = "classpower.customResourceBarSide",
         callback = function()
             if GwPlayerClassPower then
@@ -224,7 +224,7 @@ local function LoadPlayerPanel(sWindow)
         optionNames = {L["Auto"], L["Left"], L["Right"]},
         dependence = {["classpower.enabled"] = true},
     })
-    classpower:AddOptionSlider(GW.NewSign .. L["Class power anchor X offset"], L["Fine-tunes the horizontal position of the class power anchor."], {
+    classpower:AddOptionSlider(L["Class power anchor X offset"], L["Fine-tunes the horizontal position of the class power anchor."], {
         getterSetter = "classpower.anchorOffsetX",
         callback = function()
             if GwPlayerClassPower then
@@ -237,7 +237,7 @@ local function LoadPlayerPanel(sWindow)
         step = 1,
         dependence = {["classpower.enabled"] = true},
     })
-    classpower:AddOptionSlider(GW.NewSign .. L["Class power anchor Y offset"], L["Fine-tunes the vertical position of the class power anchor."], {
+    classpower:AddOptionSlider(L["Class power anchor Y offset"], L["Fine-tunes the vertical position of the class power anchor."], {
         getterSetter = "classpower.anchorOffsetY",
         callback = function()
             if GwPlayerClassPower then
@@ -250,7 +250,7 @@ local function LoadPlayerPanel(sWindow)
         step = 1,
         dependence = {["classpower.enabled"] = true},
     })
-    classpower:AddOptionSlider(GW.NewSign .. L["Custom resource bar gap"], L["Controls spacing between class power and optional custom resource bars."], {
+    classpower:AddOptionSlider(L["Custom resource bar gap"], L["Controls spacing between class power and optional custom resource bars."], {
         getterSetter = "classpower.customResourceBarGap",
         callback = function()
             if GwPlayerClassPower then

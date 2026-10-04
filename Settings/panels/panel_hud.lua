@@ -128,9 +128,9 @@ local function LoadHudPanel(sWindow)
     general:AddOption(BATTLEGROUND .. " HUD", nil, {getterSetter = "general.battlegroundHud", callback = function() GW.ShowRlPopup = true end, hidden = not GW.isModern})
     general:AddOption(L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], {getterSetter = "hud.background", callback = GW.ToggleHudBackground})
     general:AddOption(L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], {getterSetter = "hud.dynamicBackground", dependence = {["hud.background"] = true}})
-    general:AddOptionDropdown(L["HUD background out of combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArt", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true}})
-    general:AddOptionDropdown(L["HUD background in combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArtCombat", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true}})
-    general:AddOptionSlider(L["HUD background opacity"], nil, {getterSetter = "hud.backgroundAlpha", callback = GW.UpdateHudBackgroundAlpha, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.05, dependence = {["hud.background"] = true}})
+    general:AddOptionDropdown(GW.NewSign .. L["HUD background out of combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArt", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true}})
+    general:AddOptionDropdown(GW.NewSign .. L["HUD background in combat"], L["Death, forms, skyriding and class effects keep their own background."], {getterSetter = "hud.backgroundArtCombat", callback = GW.UpdateHudBackgroundArt, optionsList = select(1, GW.GetHudBackgroundArtOptions()), optionNames = select(2, GW.GetHudBackgroundArtOptions()), dependence = {["hud.background"] = true}})
+    general:AddOptionSlider(GW.NewSign .. L["HUD background opacity"], nil, {getterSetter = "hud.backgroundAlpha", callback = GW.UpdateHudBackgroundAlpha, isPercent = true, min = 0, max = 1, decimalNumbers = 2, step = 0.05, dependence = {["hud.background"] = true}})
     general:AddOption(L["Toggle the borders around the screen"], nil, {getterSetter = "hud.screenBorder", callback = GW.ToggleHudBackground})
 
     -- MICRO BAR
@@ -150,12 +150,12 @@ local function LoadHudPanel(sWindow)
         end,
         dependence = {["micromenu.enabled"] = true}
     })
-    microBar:AddOption(GW.NewSign .. L["Show Background"], nil, {
+    microBar:AddOption(L["Show Background"], nil, {
         getterSetter = "micromenu.showBackground",
         callback = function() GW.UpdateMicroBarOrientation() end,
         dependence = {["micromenu.enabled"] = true}
     })
-    microBar:AddOptionDropdown(GW.NewSign .. L["Orientation"], nil, {
+    microBar:AddOptionDropdown(L["Orientation"], nil, {
         getterSetter = "micromenu.orientation",
         callback = function()
             GW.UpdateMicroBarOrientation()
@@ -180,7 +180,7 @@ local function LoadHudPanel(sWindow)
         tinsert(microBarSlotKeys, slot.key)
         tinsert(microBarSlotNames, GW.GetMicroBarSlotName(slot.key))
     end
-    microBar:AddOptionSortableList(GW.NewSign .. L["Micro bar buttons"], L["Set the order of the micro bar buttons, uncheck a button to hide it."], {
+    microBar:AddOptionSortableList(L["Micro bar buttons"], L["Set the order of the micro bar buttons, uncheck a button to hide it."], {
         getterSetter = "micromenu.buttonOrder",
         callback = function()
             if GW.LayoutMicroButtons then
@@ -219,7 +219,7 @@ local function LoadHudPanel(sWindow)
         forceNewLine = true,
         dependence = {["micromenu.enabled"] = true}
     })
-    microBar:AddOption(GW.NewSign .. L["Show update notifications"], L["Chat notice and flashing icon when a group or guild member runs a newer GW2 UI version. The update icon itself stays visible."], {
+    microBar:AddOption(L["Show update notifications"], L["Chat notice and flashing icon when a group or guild member runs a newer GW2 UI version. The update icon itself stays visible."], {
         getterSetter = "micromenu.updateNotification",
         dependence = {["micromenu.enabled"] = true}
     })
@@ -240,8 +240,8 @@ local function LoadHudPanel(sWindow)
     minimap:AddOptionSlider(L["Minimap Scale"], L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes, Group members"], { getterSetter = "minimap.scale", callback = function() GW.UpdateMinimapSize() end, isPercent = true, min = 0.1, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["minimap.enabled"] = true}})
     minimap:AddOptionSlider(L["Reset Zoom"], L["Reset Minimap Zoom to default value. Set 0 to disable it"], { getterSetter = "minimap.resetZoom", min = 0, max = 15, decimalNumbers = 0, step = 1, dependence = {["minimap.enabled"] = true}})
     minimap:AddOptionSlider(L["Minimap Size"], L["Change the Minimap size."], { getterSetter = "minimap.size", callback = function() GW.UpdateMinimapSize() end, min = 160, max = 420, decimalNumbers = 0, step = 1, dependence = {["minimap.enabled"] = true}})
-    minimap:AddOptionSlider(GW.NewSign .. L["Height Percentage"], nil, { getterSetter = "minimap.heightPercentage", callback = function() GW.UpdateMinimapSize() end, min = 1, max = 100, decimalNumbers = 0, step = 1, dependence = {["minimap.enabled"] = true, ["minimap.keepSizeRatio"] = false}})
-    minimap:AddOption(GW.NewSign .. L["Keep Size Ratio"], L["With this setting you can no longer move the minimap completely to the top or bottom of the screen. This is not allowed by Blizzard."], {getterSetter = "minimap.keepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("minimap.size"); widget.title:SetText(value == true and L["Minimap Size"] or L["Width"]); GW.UpdateMinimapSize() end, dependence = {["minimap.enabled"] = true}})
+    minimap:AddOptionSlider(L["Height Percentage"], nil, { getterSetter = "minimap.heightPercentage", callback = function() GW.UpdateMinimapSize() end, min = 1, max = 100, decimalNumbers = 0, step = 1, dependence = {["minimap.enabled"] = true, ["minimap.keepSizeRatio"] = false}})
+    minimap:AddOption(L["Keep Size Ratio"], L["With this setting you can no longer move the minimap completely to the top or bottom of the screen. This is not allowed by Blizzard."], {getterSetter = "minimap.keepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("minimap.size"); widget.title:SetText(value == true and L["Minimap Size"] or L["Width"]); GW.UpdateMinimapSize() end, dependence = {["minimap.enabled"] = true}})
 
     --WORLDMAP
     -- world map coordinates
