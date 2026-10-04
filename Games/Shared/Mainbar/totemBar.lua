@@ -19,9 +19,12 @@ local function ShowTotem(button, slot, totem)
     local _, _, startTime, duration, icon = GetTotemInfo(slot)
 
     button.iconTexture:SetTexture(icon)
-    if GW.IsSecretValue(duration) then
-        button.cooldown:SetCooldownFromDurationObject(GetTotemDuration(slot))
-    elseif duration and duration > 0 then
+    if GetTotemDuration then
+        local durationObject = GetTotemDuration(slot)
+        if durationObject then
+            button.cooldown:SetCooldownFromDurationObject(durationObject)
+        end
+    elseif duration > 0 then
         button.cooldown:SetCooldown(startTime, duration)
     end
 
@@ -31,8 +34,13 @@ local function ShowTotem(button, slot, totem)
         totem:SetAllPoints(button.holder)
     end
 
-    -- totems without a running timer are not worth a button
-    button:SetShown(button.cooldown:IsShown())
+    -- totems without a running timer are not worth a button; Blizzard's button
+    -- knows that even when the duration is secret
+    if totem then
+        button:SetShown(totem:IsShown())
+    else
+        button:SetShown(duration > 0)
+    end
 end
 
 function GwTotemBarMixin:Update()
@@ -130,13 +138,13 @@ function GW.CreateTotemBar()
     end
     bar:PositionAndSizeUpdate()
 
-    -- Blizzard rebuilds its buttons on spec and form changes, so follow its updates
     if TotemFrame then
         hooksecurefunc(TotemFrame, "Update", function() bar:Update() end)
+    else
+        bar:RegisterEvent("PLAYER_TOTEM_UPDATE")
+        bar:RegisterEvent("PLAYER_ENTERING_WORLD")
+        bar:SetScript("OnEvent", bar.Update)
     end
-    bar:RegisterEvent("PLAYER_TOTEM_UPDATE")
-    bar:RegisterEvent("PLAYER_ENTERING_WORLD")
-    bar:SetScript("OnEvent", bar.Update)
 
     GW.RegisterMovableFrame(bar, GW.L["Class Totems"], "totemBar", "Blizzard,Widgets", nil, { GW.MoverOption.Scale })
     bar:UpdateVisibility()
