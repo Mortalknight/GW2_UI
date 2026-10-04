@@ -10,8 +10,8 @@ local GetInventorySlotInfo = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlo
 -- the keyring exists on the classic flavors and on forever, the reagent bag on retail and
 -- forever - forever is the one flavor that has both. The reagent bag is a real container
 -- right behind the bags, the keyring has its own (negative) container id
-local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath or GW.Forever
-local HAS_REAGENT_BAG = GW.isModern
+local HAS_KEYRING = (C_ActionBar and C_ActionBar.ShouldShowKeyring and C_ActionBar.ShouldShowKeyring()) or (IsKeyRingEnabled and IsKeyRingEnabled()) or false
+local HAS_REAGENT_BAG = (Constants.InventoryConstants and Constants.InventoryConstants.NumReagentBagSlots or 0) > 0
 local KEYRING_CONTAINER = (Enum.BagIndex and Enum.BagIndex.Keyring) or KEYRING_CONTAINER or -2
 local REAGENT_CONTAINER = (Enum.BagIndex and Enum.BagIndex.ReagentBag) or (NUM_BAG_SLOTS + 1)
 -- the last container id of the contiguous held bag range (backpack, bags, reagent bag)
