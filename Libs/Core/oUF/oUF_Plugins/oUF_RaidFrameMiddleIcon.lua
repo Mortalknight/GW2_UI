@@ -4,62 +4,59 @@ local oUF = ns.oUF
 
 local GetRaidTargetIndex = GetRaidTargetIndex
 
+local CLASS_ICONS = "Interface/AddOns/GW2_UI/textures/party/classicons.png"
+
+-- Prio: disconnect, death, target marker, class icon (only without class colors)
+local function GetState(self)
+    local unit = self.__unit
+    if not UnitIsConnected(unit) then
+        return "disconnect"
+    elseif UnitIsDeadOrGhost(unit) then
+        return "dead"
+    elseif self.showTargetmarker and GetRaidTargetIndex(unit) then
+        return GetRaidTargetIndex(unit)
+    elseif not self.useClassColor and not self.hideClassIcon then
+        return "class" .. (select(3, UnitClass(unit)) or 0)
+    end
+    return "none"
+end
+
 local function Update(self)
-	local element = self.MiddleIcon
-    local shouldShowIcon = false
+    local element = self.MiddleIcon
+    local state = GetState(self)
 
-    -- Prio list
-    -- disconnect
-    -- Deadth icon
-    -- target marker
-    -- Class icon if not classcolor
+    -- runs on every health tick, so only touch the textures when something changed
+    if state ~= element.gwState then
+        element.gwState = state
 
-    -- always in white
-    self.Name:SetTextColor(1, 1, 1)
-    self.HealthValueText:SetTextColor(1, 1, 1)
+        local isDead = state == "dead"
+        local gb = isDead and 0 or 1
+        self.Name:SetTextColor(1, gb, gb)
+        self.HealthValueText:SetTextColor(1, gb, gb)
 
-    -- disconnect
-    if not UnitIsConnected(self.__unit) then
-        element:SetTexture("Interface/CharacterFrame/Disconnect-Icon")
-        element:SetTexCoord(unpack(ns.TexCoords))
-
-        shouldShowIcon = true
-    elseif UnitIsDeadOrGhost(self.__unit) then -- deathicon
-        if self.useClassColor then
-            element:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
-        end
-        ns.SetDeadIcon(element)
-        self.Name:SetTextColor(255, 0, 0)
-        self.HealthValueText:SetTextColor(255, 0, 0)
-
-        shouldShowIcon = true
-    elseif self.showTargetmarker and GetRaidTargetIndex(self.__unit) then -- targetmarker
-        local index = GetRaidTargetIndex(self.__unit)
-        if index then
+        if state == "disconnect" then
+            element:SetTexture("Interface/CharacterFrame/Disconnect-Icon")
+            element:SetTexCoord(unpack(ns.TexCoords))
+        elseif isDead then
+            element:SetTexture(CLASS_ICONS)
+            ns.SetDeadIcon(element)
+        elseif type(state) == "number" then
             element:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcons")
-            SetRaidTargetIconTexture(element, index)
-
-            shouldShowIcon = true
+            SetRaidTargetIconTexture(element, state)
+        elseif state ~= "none" then
+            element:SetTexture(CLASS_ICONS)
+            ns.SetClassIcon(element, select(3, UnitClass(self.__unit)))
         end
-    elseif not self.useClassColor and not self.hideClassIcon then -- class icon only if option is active
-
-        local _, _, classIndex = UnitClass(self.__unit)
-        element:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
-        ns.SetClassIcon(element, classIndex)
-
-        shouldShowIcon = true
     end
 
-    if not self.readyCheckInProgress and not self.summonInProgress and not self.resurrectionInProgress then
-        element:SetShown(shouldShowIcon)
-    else
-        element:Hide()
-    end
+    local shouldShowIcon = state ~= "none"
+    element:SetShown(shouldShowIcon and not self.readyCheckInProgress and not self.summonInProgress and not self.resurrectionInProgress)
     self._middleIconIsShown = shouldShowIcon
 end
 
 local function ForceUpdate(element)
 	if(not element.__owner.__unit) then return end
+	element.gwState = nil
 	return Update(element.__owner)
 end
 
@@ -74,10 +71,10 @@ local function Enable(self)
         self:RegisterEvent("PLAYER_FLAGS_CHANGED", Update)
         self:RegisterEvent("RAID_TARGET_UPDATE", Update, true)
         self:RegisterEvent("UPDATE_INSTANCE_INFO", Update, true)
-        self:RegisterEvent("UNIT_HEALTH", Update)
-
         if oUF.isClassic then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Update)
+        else
+            self:RegisterEvent("UNIT_HEALTH", Update)
 		end
 
         return true
@@ -92,10 +89,11 @@ local function Disable(self)
         self:UnregisterEvent("PLAYER_FLAGS_CHANGED", Update)
         self:UnregisterEvent("RAID_TARGET_UPDATE", Update, true)
         self:UnregisterEvent("UPDATE_INSTANCE_INFO", Update, true)
-        self:UnregisterEvent("UNIT_HEALTH", Update)
 
         if oUF.isClassic then
 			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Update)
+        else
+            self:UnregisterEvent("UNIT_HEALTH", Update)
 		end
 
         self.MiddleIcon:Hide()

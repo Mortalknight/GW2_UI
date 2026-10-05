@@ -162,7 +162,7 @@ local function InititateProfileSpecSwitchSettings(panel)
                     points[highPointsSpentIndex] = GREEN_FONT_COLOR:WrapTextInColorCode(points[highPointsSpentIndex])
                 end
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(("|cffffffff%s / %s / %s|r"):format(unpack(points)))
+                GameTooltip:SetText(("|cffffffff%s / %s / %s|r"):format(unpack(points)), 1, 1, 1)
                 GameTooltip:Show()
             end)
            dropDown:SetScript("OnLeave", GameTooltip_Hide)
