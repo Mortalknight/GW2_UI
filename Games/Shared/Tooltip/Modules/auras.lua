@@ -18,7 +18,7 @@ local function AddAuraInfo(tooltip, aura)
         if caster then
             local _, class = UnitClass(caster)
             local color = GW.GWGetClassColor(class, GW.settings.tooltip.unit.classColor)
-            tooltip:AddDoubleLine(Tooltip.FormatID(aura.spellId), color:WrapTextInColorCode(UnitName(caster) or UNKNOWN))
+            tooltip:AddDoubleLine(Tooltip.FormatID(aura.spellId), color:WrapTextInColorCode(GW.GetUnitDisplayName(caster) or UNKNOWN))
         else
             tooltip:AddLine(Tooltip.FormatID(aura.spellId))
         end

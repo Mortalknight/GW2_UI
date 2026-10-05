@@ -52,7 +52,7 @@ function GwObjectivesUnitFrameMixin:UpdatePower()
 end
 
 function GwObjectivesUnitFrameMixin:UpdateName()
-    local name = UnitName(self.gwUnit)
+    local name = GW.GetUnitDisplayName(self.gwUnit)
     self.name:SetText(name)
 
     if GW.isModern then return end -- guid is secret

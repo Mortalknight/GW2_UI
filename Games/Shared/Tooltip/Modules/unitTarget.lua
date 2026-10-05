@@ -24,7 +24,7 @@ local function AddTarget(tooltip, unit)
         local reaction = UnitReaction(target, "player")
         color = GW.NotSecretValue(reaction) and GW.Colors.FactionBarColors[reaction] or RAID_CLASS_COLORS.PRIEST
     end
-    tooltip:AddDoubleLine(TARGET .. ":", color:WrapTextInColorCode(UnitName(target) or UNKNOWN))
+    tooltip:AddDoubleLine(TARGET .. ":", color:WrapTextInColorCode(GW.GetUnitDisplayName(target) or UNKNOWN))
 end
 
 -- the group members who have the unit targeted
@@ -39,7 +39,7 @@ local function AddTargetedBy(tooltip, unit)
         local targetsUnit = GW.UnitNotUnit(member, "player") and GW.UnitIsUnit(member .. "target", unit)
         if GW.NotSecretValue(targetsUnit) and targetsUnit then
             -- names can be secret, those only concatenate
-            local name = GetClassColor(member):WrapTextInColorCode(UnitName(member) or UNKNOWN)
+            local name = GetClassColor(member):WrapTextInColorCode(GW.GetUnitDisplayName(member) or UNKNOWN)
             names = count == 0 and name or names .. ", " .. name
             count = count + 1
         end

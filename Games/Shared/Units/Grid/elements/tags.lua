@@ -12,7 +12,7 @@ end
 
 local function Create_Tags()
     AddTag("GW2_Grid:name", "UNIT_NAME_UPDATE", function(unit, realunit)
-        return UnitName(realunit or unit)
+        return GW.GetUnitDisplayName(realunit or unit)
     end)
 
     AddTag("GW2_Grid:leaderIcon", "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)

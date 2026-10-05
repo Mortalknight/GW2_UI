@@ -491,7 +491,7 @@ end
 
 function GwUnitFrameMixin:UnitFrameData(lvl)
     local level = lvl or UnitLevel(self.gwUnit)
-    local name = UnitName(self.gwUnit)
+    local name = GW.GetUnitDisplayName(self.gwUnit)
     local isLeader = UnitIsGroupLeader(self.gwUnit)
     local isSecret = GW.IsSecretValue(isLeader)
 

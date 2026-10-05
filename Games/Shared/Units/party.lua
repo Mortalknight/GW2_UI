@@ -457,7 +457,7 @@ end
 
 function GwPartyFrameMixin:SetUnitName()
     local role = UnitGroupRolesAssigned(self.gwUnit)
-    local nameString = UnitName(self.gwUnit) or UNKNOWNOBJECT
+    local nameString = GW.GetUnitDisplayName(self.gwUnit) or UNKNOWNOBJECT
     local isLeader = UnitIsGroupLeader(self.gwUnit)
     local isSecret = GW.IsSecretValue(isLeader)
 

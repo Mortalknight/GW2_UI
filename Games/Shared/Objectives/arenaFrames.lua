@@ -22,7 +22,7 @@ GwArenaFrameMixin = CreateFromMixins(GwObjectivesUnitFrameMixin)
 function GwArenaFrameMixin:UpdateName()
     local inArena = C_PvP.GetZonePVPInfo()
     local inBG = UnitInBattleground("player")
-    local name = UnitName(self.gwUnit) or UNKNOWNOBJECT
+    local name = GW.GetUnitDisplayName(self.gwUnit) or UNKNOWNOBJECT
     local nameString = UNKNOWNOBJECT
 
     if inArena == "arena" then
