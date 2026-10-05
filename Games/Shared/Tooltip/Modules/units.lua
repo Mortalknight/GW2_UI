@@ -77,13 +77,13 @@ local function GetPlayerName(unit)
     local settings = GW.settings.tooltip.unit
     local name, realm = UnitName(unit)
     local title = settings.playerTitles and UnitPVPName(unit)
-    if title and title ~= "" then
+    local useTitle = title and title ~= ""
+    if useTitle then
         name = title
-        realm = GW.Forever and nil or realm
     end
     if GW.Forever then
-        -- the realm of forever characters is their surname
-        return realm and name .. " " .. realm or name
+        -- the realm of forever characters is their surname, the title already contains it
+        return (realm and not useTitle) and name .. " " .. realm or name
     elseif realm and realm ~= "" then
         if IsShiftKeyDown() or settings.realmAlways then
             return name .. "-" .. realm
@@ -103,7 +103,7 @@ local function SetGuildLine(tooltip, unit, levelLine)
     if GW.IsSecretValue(guildName) or not guildName then
         return
     end
-    if guildRealm and IsShiftKeyDown() then
+    if not GW.Forever and guildRealm and IsShiftKeyDown() then
         guildName = guildName .. "-" .. guildRealm
     end
     local text = GUILD_COLOR .. "<" .. guildName .. ">|r"
