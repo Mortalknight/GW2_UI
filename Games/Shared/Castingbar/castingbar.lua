@@ -303,7 +303,7 @@ end
 
 function GwCastingBarMixin:AddInterruptFeedback()
     if settings.interruptSound then
-        PlaySound(SOUNDKIT.IG_QUEST_FAILED)
+        PlaySound(SOUNDKIT.LFG_DENIED)
     end
 
     local base = self.gwBasePoint
