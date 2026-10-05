@@ -33,6 +33,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Tooltips: enemy forces a mob gives in Mythic+, optional best Mythic+ run under the rating and an optional border in the item quality color]=]},
     {GW.Enum.ChangelogType.feature, [=[Notifications: a toast when a currency reaches 90% of its weekly or total cap]=]},
     {GW.Enum.ChangelogType.feature, [=[Group loot: own loot roll bars with timer, item level and the roll buttons, test them with /gw2 test lootroll]=]},
+    {GW.Enum.ChangelogType.feature, [=[Skin for the chat channels window on all clients]=]},
     {GW.Enum.ChangelogType.feature, [=[Micro bar: right click on the talent button switches specialization, loot specialization and loadout]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: a group info bar below the Mythic+ timer and during raid bosses shows the death counter, the shared battle res charges with the time to the next charge and bloodlust or sated, test it with /gw2 test mythicplus]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: boss times per character in the boss list, Mythic+ split times since the key started (plus enemy forces and the final time), fight times in dungeons and raids, each compared to your best time; optional chat line per boss; all times in a new "Boss times" page in the currency tab]=]},
