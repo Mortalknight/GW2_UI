@@ -939,8 +939,8 @@ local function evLoadSkins()
     if not (GW.Classic or GW.TBC) then
         GW.MakeAltPowerBarMovable()
         GW.LoadLFGSkins()
-        GW.LoadMailSkin()
     end
+    GW.LoadMailSkin()
 
     GW.LoadQuestTimersSkin()
     GW.LoadInspectFrameSkin()
