@@ -68,7 +68,7 @@ local function LoadNotificationsPanel(sWindow)
     p:AddOption(L["Bags full"], nil, {getterSetter = "notifications.bagsFull.enabled", previewFunc = GW.AlertPreviews.BAGS_FULL, dependence = {["notifications.enabled"] = true}})
     p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.bagsFull.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.bagsFull.enabled"] = true}, hasSound = true, noNewLine = true})
 
-    p:AddOption(L["Currency cap"], L["A toast when a currency reaches 90% of its weekly or total cap."], {getterSetter = "notifications.currencyCap.enabled", previewFunc = GW.AlertPreviews.CURRENCY_CAP, dependence = {["notifications.enabled"] = true}, hidden = not (C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo)})
+    p:AddOption(GW.NewSign .. L["Currency cap"], L["A toast when a currency reaches 90% of its weekly or total cap."], {getterSetter = "notifications.currencyCap.enabled", previewFunc = GW.AlertPreviews.CURRENCY_CAP, dependence = {["notifications.enabled"] = true}, hidden = not (C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo)})
     p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.currencyCap.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.currencyCap.enabled"] = true}, hasSound = true, noNewLine = true, hidden = not (C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo)})
 
     p:AddOption(RATED_PVP_WEEKLY_VAULT, nil, {getterSetter = "notifications.greatVault.enabled", previewFunc = GW.AlertPreviews.GREAT_VAULT, dependence = {["notifications.enabled"] = true}, hidden = not GW.Retail})
