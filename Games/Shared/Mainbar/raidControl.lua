@@ -4,6 +4,10 @@ local L = GW.L
 
 local created = false
 
+local LeaveParty = C_PartyInfo and C_PartyInfo.LeaveParty or LeaveParty
+local ConvertToParty = C_PartyInfo and C_PartyInfo.ConvertToParty or ConvertToParty
+local ConvertToRaid = C_PartyInfo and C_PartyInfo.ConvertToRaid or ConvertToRaid
+
 local function fnGMIG_OnEvent(self)
     local activ = (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) or (IsInGroup() and not IsInRaid())
 
@@ -157,16 +161,12 @@ local function CreateRaidControlFrame()
     end)
 
     GwGroupManage.groupLeaveButton:SetScript("OnClick", function()
-        if GW.Retail then
-            C_PartyInfo.LeaveParty()
-        else
-            LeaveParty()
-        end
+        LeaveParty()
     end)
 
     local fnGGRC_OnClick = function()
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        if GW.Retail and InCombatLockdown() then return end
+        if GW.isModern and InCombatLockdown() then return end
         DoReadyCheck()
     end
     GwGroupManage.inGroup.readyCheck:SetScript("OnClick", fnGGRC_OnClick)
@@ -181,7 +181,7 @@ local function CreateRaidControlFrame()
         if IsControlKeyDown() and button == "LeftButton" and C_AddOns.IsAddOnLoaded("DBM-Core") then
             SlashCmdList.DEADLYBOSSMODSPULL(GW.settings.groupFrames.pullTimerSeconds)
         else
-            if GW.Retail and InCombatLockdown() then return end
+            if GW.isModern and InCombatLockdown() then return end
             C_PartyInfo.DoCountdown(GW.settings.groupFrames.pullTimerSeconds)
         end
     end
@@ -215,19 +215,11 @@ local function CreateRaidControlFrame()
     GwGroupManage.inGroup.roleCheck:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
 
     local fnGGMC_OnClick = function()
-        if GW.Retail then
-            if InCombatLockdown() then return end
-            if IsInRaid() then
-                C_PartyInfo.ConvertToParty()
-            else
-                C_PartyInfo.ConvertToRaid()
-            end
+        if GW.isModern and InCombatLockdown() then return end
+        if IsInRaid() then
+            ConvertToParty()
         else
-            if IsInRaid() then
-                ConvertToParty()
-            else
-                ConvertToRaid()
-            end
+            ConvertToRaid()
         end
     end
     GwGroupManage.inGroup.convert:SetScript("OnClick", fnGGMC_OnClick)
@@ -262,11 +254,13 @@ local function CreateRaidControlFrame()
 
         f:ClearAllPoints()
         f:SetPoint("TOPLEFT", GwGroupManage.inGroup, "TOPLEFT", x, y)
-        f:SetNormalTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
+        f:SetNormalTexture("Interface/TargetingFrame/UI-RaidTargetingIcons")
+        SetRaidTargetIconTexture(f:GetNormalTexture(), i)
         f:SetScript("OnClick", function()
-            if GW.Retail then return end -- Secret TODO after blizzard fix
             PlaySound(1115)
-            SetRaidTargetIcon("target", i)
+            -- blizzards SetRaidTargetIcon compares the secret current index, a second click only clears it when readable
+            local current = GetRaidTargetIndex("target")
+            SetRaidTarget("target", GW.NotSecretValue(current) and current == i and 0 or i)
         end)
 
         x = x + 44
