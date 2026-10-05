@@ -3,7 +3,6 @@ local GW = select(2, ...)
 
 -- trade window: only art and fonts, the trade and cancel buttons keep blizzards scripts;
 -- the gold input is a forbidden frame, it keeps blizzards look
-local WINDOW_ICON = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon.png"
 local INSETS = {"TradePlayerItemsInset", "TradeRecipientItemsInset", "TradePlayerEnchantInset", "TradeRecipientEnchantInset", "TradePlayerInputMoneyInset", "TradeRecipientMoneyInset"}
 local HIGHLIGHTS = {"TradeHighlightPlayer", "TradeHighlightRecipient", "TradeHighlightPlayerEnchant", "TradeHighlightRecipientEnchant"}
 local HIDDEN_ART = {"TradeFramePlayerPortrait", "TradeFrameRecipientPortrait", "TradeRecipientPortraitFrame", "TradeRecipientMoneyBg"}
@@ -18,7 +17,7 @@ local function SkinTradeItem(prefix)
     button:GwStyleButton()
     icon:GwSetInside(button)
     GW.HandleIcon(icon, true, GW.BackdropTemplates.ColorableBorderOnly)
-    GW.HandleIconBorder(button.IconBorder, icon.backdrop)
+    GW.HandleIconBorder(button.IconBorder, icon.backdrop, GW.Colors.SkinColors.IconBorder)
 end
 
 local function ApplyTradeSkin()
@@ -26,6 +25,7 @@ local function ApplyTradeSkin()
     GW.HandlePortraitFrameArt(TradeFrame)
     if TradeFrame.RecipientOverlay then
         TradeFrame.RecipientOverlay:GwStripTextures()
+        TradeFrame.RecipientOverlay.portrait:SetAlpha(0)
     end
     for _, name in ipairs(HIDDEN_ART) do
         if _G[name] then
@@ -33,7 +33,11 @@ local function ApplyTradeSkin()
         end
     end
 
-    GW.SkinSmallWindow(TradeFrame, TRADE, WINDOW_ICON, TradeFrame.CloseButton or TradeFrameCloseButton)
+    GW.SkinSmallWindow(TradeFrame, TRADE, nil, TradeFrame.CloseButton or TradeFrameCloseButton)
+    -- our own portrait in the header, the partner is named above their column
+    local icon = TradeFrame.gwHeader.windowIcon
+    icon:SetSize(48, 48)
+    TradeFrame:HookScript("OnShow", function() SetPortraitTexture(icon, "player") end)
 
     for _, name in ipairs(INSETS) do
         local inset = _G[name]
@@ -57,10 +61,20 @@ local function ApplyTradeSkin()
         end
     end
 
-    TradeFramePlayerNameText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    TradeFrameRecipientNameText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    -- the names sit in the header by default, they move above their money row
+    for nameText, inset in pairs({[TradeFramePlayerNameText] = TradePlayerInputMoneyInset, [TradeFrameRecipientNameText] = TradeRecipientMoneyInset}) do
+        nameText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        nameText:SetJustifyH("LEFT")
+        nameText:ClearAllPoints()
+        nameText:SetPoint("BOTTOMLEFT", inset, "TOPLEFT", 2, 6)
+        nameText:SetPoint("BOTTOMRIGHT", inset, "TOPRIGHT", -2, 6)
+    end
+
     TradeFrameTradeButton:GwSkinButton(false, true)
     TradeFrameCancelButton:GwSkinButton(false, true)
+    -- blizzard gives the cancel button its own button text, the template text is not the one shown
+    TradeFrameCancelButton:GetFontString():SetTextColor(GW.Colors.Fallback:GetRGB())
+    TradeFrameCancelButton:GetFontString():SetShadowOffset(0, 0)
 end
 
 local function LoadTradeSkin()
