@@ -1760,6 +1760,9 @@ GW.globalDefault = {
             macro = {
                 enabled = true,
             },
+            trade = {
+                enabled = true,
+            },
             barberShop = {
                 enabled = true,
             },

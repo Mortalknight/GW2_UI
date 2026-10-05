@@ -245,7 +245,11 @@ end
 local function SkinChat(chat)
     SkinInset(chat.InsetFrame)
     GW.AddDetailsBackground(chat, -DETAILS_OFFSET, DETAILS_OFFSET)
-    SkinScroll(chat)
+    GW.SkinSlimScrollBar(chat.ScrollBar)
+    -- blizzard anchors the bar only in its maximize callback, its button is hidden by us
+    chat.ScrollBar:ClearAllPoints()
+    chat.ScrollBar:SetPoint("TOPLEFT", chat.MessageFrame, "TOPRIGHT", 6, -4)
+    chat.ScrollBar:SetPoint("BOTTOMLEFT", chat.MessageFrame, "BOTTOMRIGHT", 6, 5)
 
     CommunitiesFrame.StreamDropdown:ClearAllPoints()
     CommunitiesFrame.StreamDropdown:SetPoint("BOTTOMLEFT", chat, "TOPLEFT", -DETAILS_OFFSET - 3, DETAILS_OFFSET + 2)
