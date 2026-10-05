@@ -11,6 +11,7 @@
     <Script file ="recipeTracking.lua"/>
     <Script file ="scenario.lua"/>
     <Script file ="groupInfoBar.lua"/>
+    <Script file ="encounterTimes.lua"/>
     <Script file ="minimapButtons.lua"/>
     <Script file ="notifications.lua"/>
     <Script file ="achievement.lua"/>

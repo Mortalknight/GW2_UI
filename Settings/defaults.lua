@@ -1432,6 +1432,12 @@ GW.globalDefault = {
         },
 
         objectives = {
+            encounterTimes = {
+                mythicPlus = true,
+                dungeon = true,
+                raid = true,
+                chat = false,
+            },
             enabled = true,
             pos = {
                 point = "TOPRIGHT",

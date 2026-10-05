@@ -1003,6 +1003,9 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     AddScenarioMawBuffsObjective(block)
     AddScenarioSpellRowsObjective(block, self)
 
+    for _, row in ipairs(block.objectiveBlocks) do
+        GW.SetObjectiveTimeText(row, nil)
+    end
     for criteriaIndex = 1, numCriteria do
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
         if scenarioCriteriaInfo then
@@ -1021,6 +1024,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
             objectiveOptions.qty = scenarioCriteriaInfo.quantity
             objectiveOptions.isMythicKeystone = isMythicKeystone
             block:AddObjective(GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress), objectiveOptions)
+            GW.SetObjectiveTimeText(block.objectiveBlocks[block.numObjectives], GW.GetEncounterTimeText(scenarioCriteriaInfo))
             if scenarioCriteriaInfo.duration > 0 and scenarioCriteriaInfo.elapsed <= scenarioCriteriaInfo.duration then
                 block:AddObjective(TIME_REMAINING, {isQuest = false, qty = nil, totalqty = nil, timerShown = true, duration = scenarioCriteriaInfo.duration, startTime = GetTime() - scenarioCriteriaInfo.elapsed})
             end
@@ -1066,7 +1070,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
                 quantity = math.min(1, widgetInfo.barValue / widgetInfo.barMax) * 100
             end
             block:AddObjective(widgetInfo.text or "", { finished = false, objectiveType = objectiveType, qty = quantity, totalqty = widgetInfo.barMax, firstObjectivesYValue = block.gwFirstRowYOffset })
-            local objectiveBlock = block:GetObjectiveBlock(block.numObjectives)
+            local objectiveBlock = block.objectiveBlocks[block.numObjectives]
             UpdateStatusBarPartitions(objectiveBlock.StatusBar, widgetInfo)
         end
     end

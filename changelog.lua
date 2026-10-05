@@ -35,6 +35,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Group loot: own loot roll bars with timer, item level and the roll buttons, test them with /gw2 test lootroll]=]},
     {GW.Enum.ChangelogType.feature, [=[Micro bar: right click on the talent button switches specialization, loot specialization and loadout]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: a group info bar below the Mythic+ timer and during raid bosses shows the death counter, the shared battle res charges with the time to the next charge and bloodlust or sated, test it with /gw2 test mythicplus]=]},
+    {GW.Enum.ChangelogType.feature, [=[Quest tracker: boss times per character in the boss list, Mythic+ split times since the key started (plus enemy forces and the final time), fight times in dungeons and raids, each compared to your best time; optional chat line per boss]=]},
     {GW.Enum.ChangelogType.feature, [=[Honor badges (Retail): the health globe tooltip shows the honor level with its badge, the progress and the level of the next badge, the honor bar shows the badges at its level numbers; with the pvp indicator option the player frame gets the prestige portrait art, the four prestige arts of player and target now start at honor level 5, 25, 70 and 250 like the art sets of Blizzard's badges]=]},
     {GW.Enum.ChangelogType.change, [=[Forever: with the gamepad interface GW2 UI leaves the action bars and the micro menu to Blizzard's gamepad bars]=]},
     {GW.Enum.ChangelogType.change, [=[Target and focus frames no longer play the show animation]=]},

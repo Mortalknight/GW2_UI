@@ -113,6 +113,12 @@ local function LoadObjectivesPanel(sWindow)
         hidden = GW.Classic or GW.TBC
     })
 
+    p:AddGroupHeader(L["Boss times"])
+    p:AddOption(L["Mythic+ split times"], L["Shows when each boss died since the key started, compared to your best time on this key level."], {getterSetter = "objectives.encounterTimes.mythicPlus", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not (C_ChallengeMode and C_ChallengeMode.GetActiveKeystoneInfo)})
+    p:AddOption(L["Dungeon fight times"], L["Shows how long each boss fight took, compared to your best time on this difficulty."], {getterSetter = "objectives.encounterTimes.dungeon", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
+    p:AddOption(L["Raid fight times"], L["Shows how long each boss fight took, compared to your best time on this difficulty."], {getterSetter = "objectives.encounterTimes.raid", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
+    p:AddOption(L["Boss times in chat"], L["Posts the time of each defeated boss in the chat."], {getterSetter = "objectives.encounterTimes.chat"})
+
     p:AddGroupHeader(L["Quest Frame"])
     p:AddOption(L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], {getterSetter = "general.questXpPercent"})
     p:AddOption(L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], {getterSetter = "general.questRewardMostValueIcon", callback = GW.ResetQuestRewardMostValueIcon})
