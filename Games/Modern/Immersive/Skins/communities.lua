@@ -663,6 +663,30 @@ local function SkinDialogLabels(labels)
     end
 end
 
+-- forever only: guild language and region, with blizzards old dropdown template
+local function SkinLegacyDropdown(dropdown)
+    dropdown.Left:SetAlpha(0)
+    dropdown.Middle:SetAlpha(0)
+    dropdown.Right:SetAlpha(0)
+    dropdown:GwCreateBackdrop(GW.BackdropTemplates.DopwDown)
+    dropdown.backdrop:SetBackdropColor(0, 0, 0)
+    dropdown.backdrop:ClearAllPoints()
+    dropdown.backdrop:SetPoint("TOPLEFT", dropdown, "TOPLEFT", 18, -4)
+    dropdown.backdrop:SetPoint("BOTTOMRIGHT", dropdown.Button, "BOTTOMRIGHT", 2, -2)
+    GW.HandleNextPrevButton(dropdown.Button, "down")
+    dropdown.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+end
+
+local function SkinPreferredPlaySettings(frame)
+    GW.AddDetailsBackground(frame)
+    SkinPanelTitle(frame.Title)
+    SkinDialogLabels({frame.LocaleLabel, frame.DatacenterLabel})
+    SkinLegacyDropdown(frame.LocaleDropdown)
+    SkinLegacyDropdown(frame.DatacenterDropdown)
+    frame.LocaleApplyButton:GwSkinButton(false, true)
+    frame.DatacenterApplyButton:GwSkinButton(false, true)
+end
+
 local function SkinEditStreamDialog(dialog)
     dialog.BG:Hide()
 
@@ -1186,6 +1210,9 @@ local function SkinCommunitiesFrame()
     SkinMemberList(CommunitiesFrame.MemberList)
     SkinChat(CommunitiesFrame.Chat)
     SkinGuildPanels()
+    if CommunitiesFrame.GuildPreferredPlaySettingsFrame then
+        SkinPreferredPlaySettings(CommunitiesFrame.GuildPreferredPlaySettingsFrame)
+    end
     SkinGuildDialogs()
     SkinGuildMemberDetail(CommunitiesFrame.GuildMemberDetailFrame)
     SkinCommunitiesSettings(CommunitiesSettingsDialog)
