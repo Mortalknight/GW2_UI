@@ -1010,14 +1010,15 @@ local function skinAchievementCompareSummaryStatusBar(self,isPlayer)
     self:SetPoint("BOTTOMLEFT",10,0)
     self:SetPoint("BOTTOMRIGHT",-10,0)
 
-    if not spark then
+    if not self.spark then
         self.spark = self:CreateTexture(nil, "OVERLAY", nil, 7)
         self.spark:ClearAllPoints();
         self.spark:SetPoint("RIGHT",fill,"RIGHT", 0,0)
         self.spark:SetSize(10,fill:GetHeight())
         self.spark:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white.png")
     end
-    local color = isPlayer and GW.Colors.ClassColors[GW.myclass] or GW.Colors.ClassColors[select(2, UnitClass("Target"))]
+    local targetClass = not isPlayer and select(2, UnitClass("target"))
+    local color = isPlayer and GW.Colors.ClassColors[GW.myclass] or (GW.NotSecretValue(targetClass) and targetClass and GW.Colors.ClassColors[targetClass])
     if color and color.r then
         self:SetStatusBarColor(color.r,color.g,color.b,1)
     end
