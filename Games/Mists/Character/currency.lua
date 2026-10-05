@@ -324,7 +324,17 @@ local function LoadCurrency(tabContainer)
     item:SetPoint("TOPLEFT", fmMenu.items.currency, "BOTTOMLEFT")
     fmMenu.items.raidinfo = item
 
+    item = CreateFrame("Button", nil, fmMenu, "GwCharacterPanelMenuButtonTemplate")
+    item.ToggleMe = GW.CreateBossTimesPage(curwin_outer)
+    item:SetScript("OnClick", menuItem_OnClick)
+    item:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
+    item:SetText(GW.L["Boss times"])
+    item:ClearAllPoints()
+    item:SetPoint("TOPLEFT", fmMenu.items.raidinfo, "BOTTOMLEFT")
+    fmMenu.items.bossTimes = item
+
     GW.CharacterMenuButton_OnLoad(fmMenu.items.currency, false)
     GW.CharacterMenuButton_OnLoad(fmMenu.items.raidinfo, true)
+    GW.CharacterMenuButton_OnLoad(fmMenu.items.bossTimes, false)
 end
 GW.LoadCurrency = LoadCurrency

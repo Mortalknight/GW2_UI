@@ -18,13 +18,19 @@ local CHAT_TEXT = {
 
 local run = {times = {}, fightStart = {}}
 
-local function FormatTime(seconds)
-    seconds = math.floor(seconds + 0.5)
-    if seconds >= 3600 then
-        return format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60)
+-- precise adds hundredths, only for fight and completion times, the key timer has whole seconds
+local function FormatTime(seconds, precise)
+    local units = math.floor(seconds * (precise and 100 or 1) + 0.5)
+    local whole = precise and math.floor(units / 100) or units
+    local text
+    if whole >= 3600 then
+        text = format("%d:%02d:%02d", whole / 3600, (whole % 3600) / 60, whole % 60)
+    else
+        text = format("%02d:%02d", whole / 60, whole % 60)
     end
-    return format("%02d:%02d", seconds / 60, seconds % 60)
+    return precise and format("%s.%02d", text, units % 100) or text
 end
+GW.FormatEncounterTime = FormatTime
 
 local function FormatEntry(entry)
     local text = COLOR_TIME:WrapTextInColorCode(FormatTime(entry.time))
@@ -81,10 +87,13 @@ function GW.RefreshEncounterTimes()
     if GwQuesttrackerContainerScenario then
         GwQuesttrackerContainerScenario:QueueUpdateLayout()
     end
+    if GW.UpdateBossTimesPage then
+        GW.UpdateBossTimesPage()
+    end
 end
 
--- per value: best time and its date, last time and the number of kills; returns the best before this one
-local function StoreTime(id, seconds)
+-- per value: name, best time and its date, last time and the number of kills; returns the best before this one
+local function StoreTime(id, seconds, name)
     GW.private.encounterTimes = GW.private.encounterTimes or {}
     local store = GW.private.encounterTimes[run.key] or {}
     GW.private.encounterTimes[run.key] = store
@@ -94,6 +103,8 @@ local function StoreTime(id, seconds)
         data = {best = data, kills = 0}
         store[id] = data
     end
+    data.name = name or data.name
+    data.firstDate = data.firstDate or time()
     local previousBest = data.best
     if not previousBest or seconds < previousBest then
         data.best = seconds
@@ -105,14 +116,15 @@ local function StoreTime(id, seconds)
 end
 
 local function PostToChat(entry, chatType)
-    local text = CHAT_TEXT[chatType]:format(entry.name, COLOR_HIGHLIGHT:WrapTextInColorCode(FormatTime(entry.time)))
+    local precise = chatType == "fight" or chatType == "total"
+    local text = CHAT_TEXT[chatType]:format(entry.name, COLOR_HIGHLIGHT:WrapTextInColorCode(FormatTime(entry.time, precise)))
     if not entry.best then
         local firstText = (chatType == "fight" or chatType == "split") and L["First kill on %s!"] or L["First time on %s!"]
         text = text .. " " .. firstText:format(COLOR_HIGHLIGHT:WrapTextInColorCode(run.difficulty or ""))
     elseif entry.time < entry.best then
-        text = text .. " " .. L["New best time, %s faster!"]:format(COLOR_FASTER:WrapTextInColorCode(FormatTime(entry.best - entry.time)))
+        text = text .. " " .. L["New best time, %s faster!"]:format(COLOR_FASTER:WrapTextInColorCode(FormatTime(entry.best - entry.time, precise)))
     elseif entry.time > entry.best then
-        text = text .. " " .. L["%s slower than your best time of %s."]:format(COLOR_SLOWER:WrapTextInColorCode(FormatTime(entry.time - entry.best)), COLOR_HIGHLIGHT:WrapTextInColorCode(FormatTime(entry.best)))
+        text = text .. " " .. L["%s slower than your best time of %s."]:format(COLOR_SLOWER:WrapTextInColorCode(FormatTime(entry.time - entry.best, precise)), COLOR_HIGHLIGHT:WrapTextInColorCode(FormatTime(entry.best, precise)))
     else
         text = text .. " " .. L["Same time as your best."]
     end
@@ -121,7 +133,7 @@ end
 
 local function Record(id, seconds, label, chatType, creatureIDs)
     if not seconds then return end
-    local entry = {time = seconds, best = StoreTime(id, seconds), name = label, creatureIDs = creatureIDs}
+    local entry = {time = seconds, best = StoreTime(id, seconds, label), name = label, creatureIDs = creatureIDs}
     run.times[id] = entry
 
     if GW.settings.objectives.encounterTimes.chat then
@@ -176,7 +188,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
         if run.kind == "mplus" then
             -- the fight time is only stored for later stats, the split is what the tracker shows
             if fightTime then
-                StoreTime("fight:" .. encounterID, fightTime)
+                StoreTime("fight:" .. encounterID, fightTime, encounterName)
             end
             Record(encounterID, GetKeyElapsed(), encounterName, "split", creatureIDs)
         else

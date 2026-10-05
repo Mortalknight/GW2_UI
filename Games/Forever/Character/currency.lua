@@ -521,6 +521,7 @@ local function LoadCurrency(tabContainer)
     end
     local item = AddItem("currency", CURRENCY, curwin_outer.Currency, nil, false)
     item = AddItem("currencyTransferHistory", CURRENCY_TRANSFER_LOG_TITLE, curHistroyWin, item, true)
-    AddItem("raidinfo", RAID_INFORMATION, curwin_outer.RaidLocks, item, false, "GwRaidInfoFrame")
+    item = AddItem("raidinfo", RAID_INFORMATION, curwin_outer.RaidLocks, item, false, "GwRaidInfoFrame")
+    AddItem("bossTimes", GW.L["Boss times"], GW.CreateBossTimesPage(curwin_outer), item, true)
 end
 GW.LoadCurrency = LoadCurrency
