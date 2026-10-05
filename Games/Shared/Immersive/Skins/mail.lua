@@ -271,11 +271,20 @@ local function SkinSendMailFrame()
     SendMailMoneyFrame:ClearAllPoints()
     SendMailMoneyFrame:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -40, 15)
 
+    -- forever places the postage at the right edge and the money to send below the attachments,
+    -- in our sized send frame both go where retail and mists have them
+    SendMailCostMoneyFrame:ClearAllPoints()
+    SendMailCostMoneyFrame:SetPoint("TOPRIGHT", SendMailFrame, "TOPRIGHT", -50, -34)
+    SendMailMoneyButton:ClearAllPoints()
+    SendMailMoneyButton:SetPoint("BOTTOMLEFT", SendMailFrame, "BOTTOMLEFT", 15, 125)
+
     GW.SkinTextBox(SendMailNameEditBoxMiddle, SendMailNameEditBoxLeft, SendMailNameEditBoxRight, nil, nil, 5)
     GW.SkinTextBox(SendMailSubjectEditBoxMiddle, SendMailSubjectEditBoxLeft, SendMailSubjectEditBoxRight, nil, nil, 5)
     GW.SkinTextBox(SendMailMoneyGoldMiddle, SendMailMoneyGoldLeft, SendMailMoneyGoldRight, nil, nil, 5)
-    GW.SkinTextBox(SendMailMoneySilverMiddle, SendMailMoneySilverLeft, SendMailMoneySilverRight, nil, nil, 5, -12)
-    GW.SkinTextBox(SendMailMoneyCopperMiddle, SendMailMoneyCopperLeft, SendMailMoneyCopperRight, nil, nil, 5, -12)
+    -- the classic coins hang right of the box, the newer template draws them inside
+    local coinOffset = not SendMailMoneySilver.coinAtlas and -12 or nil
+    GW.SkinTextBox(SendMailMoneySilverMiddle, SendMailMoneySilverLeft, SendMailMoneySilverRight, nil, nil, 5, coinOffset)
+    GW.SkinTextBox(SendMailMoneyCopperMiddle, SendMailMoneyCopperLeft, SendMailMoneyCopperRight, nil, nil, 5, coinOffset)
 
     --reposition buttons
     SendMailMailButton:ClearAllPoints()
@@ -373,6 +382,33 @@ local function ClearMailTextures()
         end)
     end
     MailFrameTab1:Hide()
+end
+
+-- forever lays the attachments out 88 lower and without a right margin, blizzard sets them on every
+-- update; in our send frame they go where retail has them, above the money
+local FOREVER_ROW_OFFSET = 88
+local RETAIL_RIGHT_MARGIN = 46
+
+local function GetAttachmentColumns(rightMargin)
+    local columns = ATTACHMENTS_PER_ROW_SEND
+    local iconWidth = SendMailAttachment1:GetWidth() + 2
+    local area = SendMailFrame:GetWidth() - 14 - rightMargin
+    local gap = math.floor((area - iconWidth * columns) / (columns - 1))
+    local indent = 14 + math.floor((area - iconWidth * columns - gap * (columns - 1)) / 2)
+    return indent, iconWidth + gap - 2
+end
+
+local function PlaceForeverAttachments()
+    local foreverIndent, foreverStep = GetAttachmentColumns(0)
+    local retailIndent, retailStep = GetAttachmentColumns(RETAIL_RIGHT_MARGIN)
+    for i = 1, ATTACHMENTS_MAX_SEND do
+        local button = _G["SendMailAttachment" .. i]
+        if button:IsShown() then
+            local point, relativeTo, relativePoint, x, y = button:GetPoint()
+            local column = math.floor((x - foreverIndent) / foreverStep + 0.5)
+            button:SetPoint(point, relativeTo, relativePoint, retailIndent + retailStep * column, y + FOREVER_ROW_OFFSET)
+        end
+    end
 end
 
 local function LoadMailSkin()
@@ -557,6 +593,9 @@ local function LoadMailSkin()
 
     -- Hook's
     hooksecurefunc("SendMailFrame_Update", SkinMailFrameSendItems)
+    if GW.Forever then
+        hooksecurefunc("SendMailFrame_Update", PlaceForeverAttachments)
+    end
 
     -- hook inbox buttons to close the compose view if we want to look at a message and it's open
     AddOnClickHandlers()

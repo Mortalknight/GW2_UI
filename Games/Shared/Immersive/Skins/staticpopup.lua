@@ -294,8 +294,10 @@ local function LoadStaticPopupSkin()
         StaticPopup.Dropdown:GwHandleDropDownBox()
 
         GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameGoldMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameGoldLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameGoldRight"], nil, nil, 5)
-        GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameSilverMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameSilverLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameSilverRight"], nil, nil, 5, -10)
-        GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameCopperMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperRight"], nil, nil, 5, -10)
+        -- the classic coins hang right of the box, the newer template draws them inside
+        local coinOffset = not _G["StaticPopup" .. i .. "MoneyInputFrameSilver"].coinAtlas and -10 or nil
+        GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameSilverMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameSilverLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameSilverRight"], nil, nil, 5, coinOffset)
+        GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameCopperMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperRight"], nil, nil, 5, coinOffset)
 
         local editbox = StaticPopup.editBox or StaticPopup.EditBox
         if editbox.NineSlice then
