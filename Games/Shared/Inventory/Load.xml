@@ -5,6 +5,7 @@
     <Script file ="itemButtons.lua"/>
     <Script file ="inventory.lua"/>
     <Script file ="bag.lua"/>
+    <Script file ="bindType.lua"/>
     <Script file ="bank.lua"/>
     <Script file ="addins.lua"/>
     <Script file ="autoSell.lua"/>

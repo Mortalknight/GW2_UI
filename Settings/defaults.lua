@@ -192,6 +192,14 @@ GW.globalDefault = {
             pixelPerfection = false,
             afkMode = true,
             autoRepair = "NONE",
+            autoAcceptResurrect = false,
+            autoConfirmSummon = false,
+            autoAcceptInvite = false,
+            autoSetRole = false,
+            autoTrackReputation = false,
+            autoFillDelete = false,
+            fastLoot = false,
+            hideErrorsInCombat = false,
             questRewardMostValueIcon = true,
             questXpPercent = true,
             blizzardClassColors = false,
@@ -341,6 +349,7 @@ GW.globalDefault = {
                 },
                 countIncludeReagents = true,
                 countIncludeWarband = true,
+                qualityBorder = false,
             },
             unit = {
                 mount = true,
@@ -352,6 +361,8 @@ GW.globalDefault = {
                 classColor = true,
                 gender = false,
                 dungeonScore = true,
+                dungeonBestRun = false,
+                enemyForces = true,
                 keystoneInfo = true,
                 premadeGroupInfo = true,
             },
@@ -510,6 +521,7 @@ GW.globalDefault = {
                 junkDesaturate = false,
                 equipmentSetIcon = false,
                 markUnusable = false,
+                showBindType = false,
             },
             professionBagColor = true,
             professionBagQualityColor = false,
@@ -1534,6 +1546,10 @@ GW.globalDefault = {
                 enabled = true,
                 sound = "None",
             },
+            currencyCap = {
+                enabled = true,
+                sound = "None",
+            },
             greatVault = {
                 enabled = true,
                 sound = "None",
@@ -1691,6 +1707,9 @@ GW.globalDefault = {
                 enabled = true,
             },
             staticPopup = {
+                enabled = true,
+            },
+            lootRoll = {
                 enabled = true,
             },
             deathRecap = {

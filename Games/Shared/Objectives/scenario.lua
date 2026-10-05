@@ -802,6 +802,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     if timerBlock.timer:IsShown() then
         block.height = timerBlock.height
     end
+    block.height = block.height + self.groupInfoBar:GetLayoutHeight()
 
     block.numObjectives = 0
     block.questLogIndex = 0
@@ -1141,22 +1142,15 @@ end
 
 function GwQuesttrackerScenarioBlockMixin:UpdateDeathCounter()
     if not GW.Retail then return end
-    local count, timeLost = C_ChallengeMode.GetDeathCount()
-    self.deathcounter.count = count
-    self.deathcounter.timeLost = timeLost
-    if timeLost and timeLost > 0 and count and count > 0 then
-        self.deathcounter.counterlabel:SetText(count)
-        self.deathcounter:Show()
-    else
-        self.deathcounter:Hide()
-    end
+    self.container.groupInfoBar:SetDeaths(C_ChallengeMode.GetDeathCount())
 end
 
 function GwQuesttrackerScenarioBlockMixin:TimerStop()
     self:SetScript("OnUpdate", nil)
     self.timer:Hide()
     self.chestoverlay:Hide()
-    self.deathcounter:Hide()
+    self.gwChallengeMode = false
+    self.container.groupInfoBar:SetDeaths(nil)
 end
 
 local function GetChallengeModeMapID()
@@ -1188,7 +1182,7 @@ local function GetChallengeModeTimeData(mapID)
     return times[1], times[2], times[3]
 end
 
-local function SetupChallengeModeTimer(self, timerID, timeLimit, time2, time3)
+local function SetupChallengeModeTimer(self, getElapsedTime, timeLimit, time2, time3)
     self.chestoverlay:Show()
     self.timer:SetMinMaxValues(0, timeLimit)
     self.cmTimerThrottle = 0
@@ -1201,7 +1195,7 @@ local function SetupChallengeModeTimer(self, timerID, timeLimit, time2, time3)
         end
         self.cmTimerThrottle = 0
 
-        local _, elapsedTime = GetWorldElapsedTime(timerID)
+        local elapsedTime = getElapsedTime()
         self.timer:SetValue(math.max(0, timeLimit - elapsedTime))
         self.chestoverlay.chest2:SetShown(elapsedTime < time2)
         self.chestoverlay.chest3:SetShown(elapsedTime < time3)
@@ -1234,6 +1228,8 @@ local function SetupChallengeModeTimer(self, timerID, timeLimit, time2, time3)
     self.height = self.height + 50
     self:UpdateAffixes()
     self:UpdateDeathCounter()
+    self.gwChallengeMode = true
+    self.container.groupInfoBar:UpdateState()
 end
 
 local function SetupProvingGroundTimer(self, timerID, duration)
@@ -1257,21 +1253,8 @@ end
 
 function GwQuesttrackerScenarioBlockMixin:TimerUpdate(...)
     self.height = 1
-    local fake = false
-    if fake then
-        self.timer:Show()
-        self.needToShowTimer = true
-        self.height = self.height + 50
-        self:UpdateAffixes({146})
-        self:UpdateDeathCounter()
-        self.chestoverlay:Show()
-        self.chestoverlay.chest2:Show()
-        self.chestoverlay.chest3:Show()
-        self.chestoverlay.timerStringChest3:Show()
-        self.chestoverlay.timerStringChest2:Show()
-
-        return
-    end
+    self.gwTest = nil
+    self.container.groupInfoBar:SetTest(false)
 
     for i = 1, select("#", ...) do
         local timerID = select(i, ...)
@@ -1280,7 +1263,7 @@ function GwQuesttrackerScenarioBlockMixin:TimerUpdate(...)
             local mapID = GetChallengeModeMapID()
             local timeLimit, time2, time3 = GetChallengeModeTimeData(mapID)
             if timeLimit and time2 and time3 then
-                SetupChallengeModeTimer(self, timerID, timeLimit, time2, time3)
+                SetupChallengeModeTimer(self, function() return select(2, GetWorldElapsedTime(timerID)) end, timeLimit, time2, time3)
                 return
             end
         elseif wtype == Enum.WorldElapsedTimerTypes.ProvingGround then
@@ -1294,7 +1277,8 @@ function GwQuesttrackerScenarioBlockMixin:TimerUpdate(...)
 
     self.timer:Hide()
     self.chestoverlay:Hide()
-    self.deathcounter:Hide()
+    self.gwChallengeMode = false
+    self.container.groupInfoBar:SetDeaths(nil)
     self:SetScript("OnUpdate", nil)
     self.needToShowTimer = false
 
@@ -1471,8 +1455,6 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.timerBlock.chestoverlay.timerStringChest2:SetPoint("RIGHT", self.timerBlock.chestoverlay.chest2, "LEFT", -2, -6)
     self.timerBlock.chestoverlay.timerStringChest3:SetPoint("RIGHT", self.timerBlock.chestoverlay.chest3, "LEFT", -2, -6)
 
-    self.timerBlock.deathcounter.counterlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW", -2)
-    self.timerBlock.deathcounter.counterlabel:SetTextColor(1, 1, 1)
     self.timerBlock.score.scoreString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
 
     for _, v in ipairs(self.timerBlock.affixeFrame.affixes) do
@@ -1490,13 +1472,6 @@ function GwObjectivesScenarioContainerMixin:InitModule()
         v:SetScript("OnLeave", GameTooltip_Hide)
     end
 
-    self.timerBlock.deathcounter:SetScript("OnEnter", function(deathCounterBlock)
-            GameTooltip:SetOwner(deathCounterBlock, "ANCHOR_LEFT")
-            GameTooltip:SetText(CHALLENGE_MODE_DEATH_COUNT_TITLE:format(deathCounterBlock.count), 1, 1, 1)
-            GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(SecondsToClock(deathCounterBlock.timeLost)))
-            GameTooltip:Show()
-        end)
-    self.timerBlock.deathcounter:SetScript("OnLeave", GameTooltip_Hide)
 
     self.timerBlock:SetParent(self)
     self.timerBlock:ClearAllPoints()
@@ -1525,7 +1500,8 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     end
 
     self.block:ClearAllPoints()
-    self.block:SetPoint("TOPRIGHT", self.timerBlock, "BOTTOMRIGHT", 0, 0)
+    self.groupInfoBar = GW.CreateGroupInfoBar(self)
+    self.block:SetPoint("TOPRIGHT", self.groupInfoBar, "BOTTOMRIGHT", 0, 0)
     self.block.Header:SetText("")
     self.block.delvesFrame:ClearAllPoints()
     self.block.delvesFrame:SetPoint("TOPRIGHT", GwObjectivesNotification, "BOTTOMRIGHT", 0, 35)
@@ -1560,4 +1536,27 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     C_Timer.After(0.8, function() self:QueueUpdateLayout() end)
 
     self.timerBlock:TimerBlockOnEvent()
+end
+
+-- /gw2 test mythicplus: a 30 minute key with three affixes and three deaths, the next call ends it
+local TEST_AFFIXES = {9, 10, 152}
+function GW.TestMythicPlusTimer()
+    local timerBlock = GwQuestTrackerTimer
+    if not timerBlock then return end
+    if timerBlock.gwTest then
+        timerBlock.gwTest = nil
+        timerBlock:TimerBlockOnEvent()
+        return
+    end
+
+    timerBlock.gwTest = true
+    timerBlock.height = 1
+    local startTime = GetTime()
+    local timeLimit = 1800
+    SetupChallengeModeTimer(timerBlock, function() return GetTime() - startTime end, timeLimit, timeLimit * TIME_FOR_2, timeLimit * TIME_FOR_3)
+    timerBlock:UpdateAffixes(TEST_AFFIXES)
+    timerBlock.container.groupInfoBar:SetDeaths(3, 15)
+    timerBlock.container.groupInfoBar:SetTest(true)
+    timerBlock:SetHeight(timerBlock.height)
+    timerBlock.container:QueueUpdateLayout()
 end

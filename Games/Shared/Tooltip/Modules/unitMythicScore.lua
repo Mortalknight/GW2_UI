@@ -16,6 +16,20 @@ local function AddMythicScore(tooltip, data)
     if GW.NotSecretValue(score) and score and score > 0 then
         local color = C_ChallengeMode.GetDungeonScoreRarityColor(score) or HIGHLIGHT_FONT_COLOR
         tooltip:AddDoubleLine(SCORE_LABEL, GW.GetLocalizedNumber(score), nil, nil, nil, color:GetRGB())
+
+        if GW.settings.tooltip.unit.dungeonBestRun and summary and summary.runs then
+            local bestRun, dungeonName = 0, ""
+            for _, run in ipairs(summary.runs) do
+                local level = GW.NotSecretValue(run.finishedSuccess) and run.finishedSuccess and run.bestRunLevel
+                if GW.NotSecretValue(level) and level and level > bestRun then
+                    bestRun = level
+                    dungeonName = run.challengeModeID and C_ChallengeMode.GetMapUIInfo(run.challengeModeID) or ""
+                end
+            end
+            if bestRun > 0 then
+                tooltip:AddDoubleLine(LFG_LIST_BEST_RUN, "+" .. bestRun .. " " .. dungeonName, nil, nil, nil, color:GetRGB())
+            end
+        end
     end
 end
 

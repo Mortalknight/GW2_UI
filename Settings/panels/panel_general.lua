@@ -55,15 +55,26 @@ local function LoadGeneralPanel(sWindow)
         setter = function(value) C_CVar.SetCVar("scriptErrors", value and "1" or "0") end,
         getDefault = function() return false end,
     })
+    general:AddOption(L["Hide error messages in combat"], L["Hides messages like 'Not enough rage' while in combat."], {getterSetter = "general.hideErrorsInCombat"})
     general:AddOption(CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, {getterSetter = "general.dynamicCam",
         callback = function(value)
             C_CVar.SetCVar("test_cameraDynamicPitch", value and "1" or "0")
             C_CVar.SetCVar("cameraKeepCharacterCentered", value and "0" or "1")
             C_CVar.SetCVar("cameraReduceUnexpectedMovement", value and "0" or "1")
         end, incompatibleAddons = "DynamicCam"})
+
+    general:AddOptionSlider(L["Extended Vendor"], L["The number of pages shown in the merchant frame. Set 1 to disable."], { getterSetter = "bags.extendedVendorPages", callback = function() GW.ShowRlPopup = true end, min = 1, max = 6, decimalNumbers = 0, step = 1})
+
+    general:AddGroupHeader(L["Automation"])
     general:AddOptionDropdown(L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], { getterSetter = "general.autoRepair", optionsList = {"NONE", "PLAYER", "GUILD"}, optionNames = {NONE_KEY, PLAYER, GUILD}})
     general:AddOption(L["Sell junk automatically"], L["Automatically sell poor quality items when visiting a merchant."], {getterSetter = "bags.vendorGrays", callback = GW.SetupVendorJunk})
-    general:AddOptionSlider(L["Extended Vendor"], L["The number of pages shown in the merchant frame. Set 1 to disable."], { getterSetter = "bags.extendedVendorPages", callback = function() GW.ShowRlPopup = true end, min = 1, max = 6, decimalNumbers = 0, step = 1})
+    general:AddOption(L["Accept resurrections"], L["Accepts resurrections automatically, but not during a boss fight."], {getterSetter = "general.autoAcceptResurrect"})
+    general:AddOption(L["Confirm summons"], L["Confirms summons automatically, after combat if needed."], {getterSetter = "general.autoConfirmSummon"})
+    general:AddOption(L["Accept group invites"], L["Accepts group invites from friends and guild members, not while you are queued."], {getterSetter = "general.autoAcceptInvite"})
+    general:AddOption(L["Set role from specialization"], L["Sets your group role to the role of your current specialization."], {getterSetter = "general.autoSetRole"})
+    general:AddOption(L["Track reputation automatically"], L["Watches the faction you just gained reputation with."], {getterSetter = "general.autoTrackReputation"})
+    general:AddOption(L["Fill in delete confirmation"], L["Fills in the confirmation word when deleting a valuable item."], {getterSetter = "general.autoFillDelete"})
+    general:AddOption(L["Fast loot"], L["Loots all items at once when auto loot is active."], {getterSetter = "general.fastLoot"})
 
     general:AddGroupHeader(L["Scale"])
     general:AddOption(L["Pixel Perfect Mode"], L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."], {getterSetter = "general.pixelPerfection", callback = function() C_CVar.SetCVar("useUiScale", "0") GW.PixelPerfection() end})

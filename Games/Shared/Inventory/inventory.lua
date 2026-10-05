@@ -564,6 +564,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
             button.gwEquipSetIconBorder:Hide()
         end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
+        if button.gwBindType then button.gwBindType:SetText("") end
         if button.itemlevel then
             button.itemlevel:SetText("")
             button.__gwLastItemLink = nil

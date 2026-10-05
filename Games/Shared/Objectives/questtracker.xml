@@ -804,32 +804,6 @@
                     </Layer>
                 </Layers>
             </Frame>
-            <Button hidden="true" frameLevel="5" virtual="true" parentKey="deathcounter">
-                <Size x="30" y="15"></Size>
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.timer" relativePoint="RIGHT" x="-35" y="-14" />
-                </Anchors>
-                <Layers>
-                    <Layer Level="ARTWORK">
-                    </Layer>
-                    <Layer Level="BACKGROUND">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icons\icon-dead.png">
-                            <Size x="15" y="15"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="RIGHT" x="0" y="0"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                    <Layer Level="OVERLAY">
-                        <FontString text="TEST" parentKey="counterlabel" justifyH="RIGHT" justifyV="MIDDLE">
-                            <Size x="30" y="15"></Size>
-                            <Anchors>
-                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Button>
         </Frames>
     </Frame>
 

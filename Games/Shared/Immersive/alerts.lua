@@ -932,6 +932,11 @@ local function ShowBagsFullAlert()
     PlayAlertSound(GW.settings.notifications.bagsFull)
 end
 
+local function ShowCurrencyCapAlert(name, icon, current, cap)
+    GW.AlertSystem:AddAlert(format("%s (%s / %s)", name, BreakUpLargeNumbers(current), BreakUpLargeNumbers(cap)), nil, L["Currency cap"], false, icon, false)
+    PlayAlertSound(GW.settings.notifications.currencyCap)
+end
+
 local function ShowVaultAlert()
     GW.AlertSystem:AddAlert(MYTHIC_PLUS_COLLECT_GREAT_VAULT, nil, RATED_PVP_WEEKLY_VAULT, WeeklyRewards_ShowUI, "greatVault-whole-normal", false)
     PlayAlertSound(GW.settings.notifications.greatVault)
@@ -977,6 +982,7 @@ GW.AlertPreviews = {
     end,
     CALL_TO_ARMS = function() ShowCallToArmsAlert(ColorRole("TANK", true) .. " " .. ColorRole("HEALER", true) .. " " .. ColorRole("DAMAGER", true)) end,
     BAGS_FULL = ShowBagsFullAlert,
+    CURRENCY_CAP = function() ShowCurrencyCapAlert(HONOR, "Interface/Icons/INV_Misc_Coin_02", 900, 1000) end,
     GREAT_VAULT = ShowVaultAlert,
     MAGE_TABLE = function() ShowGroupSpellAlert(190336, format(L["%s created a table of Conjured Refreshments."], PlayerName()), GW.settings.notifications.mageTable) end,
     RITUAL_OF_SUMMONING = function() ShowGroupSpellAlert(698, format(L["%s is performing a Ritual of Summoning."], PlayerName()), GW.settings.notifications.ritualOfSummoning) end,
@@ -1220,6 +1226,29 @@ local function OnBagUpdate()
     end
 end
 
+-- one toast per currency once it reaches 90% of its weekly or total cap
+local CURRENCY_CAP_SHARE = 0.9
+local notifiedCurrencies = {}
+local function OnCurrencyUpdate(silent, currencyID)
+    local info = currencyID and C_CurrencyInfo.GetCurrencyInfo(currencyID)
+    if not info then return end
+
+    local cap, current
+    if info.canEarnPerWeek and (info.maxWeeklyQuantity or 0) > 0 then
+        cap, current = info.maxWeeklyQuantity, info.quantityEarnedThisWeek
+    elseif (info.maxQuantity or 0) > 0 then
+        cap, current = info.maxQuantity, info.useTotalEarnedForMaxQty and info.totalEarned or info.quantity
+    end
+    if not cap or not current or current < cap * CURRENCY_CAP_SHARE then
+        notifiedCurrencies[currencyID] = nil
+    elseif not notifiedCurrencies[currencyID] then
+        notifiedCurrencies[currencyID] = true
+        if not silent then
+            ShowCurrencyCapAlert(info.name, info.iconFileID, current, cap)
+        end
+    end
+end
+
 local function OnWeeklyRewardsUpdate()
     local available = C_WeeklyRewards.HasAvailableRewards()
     if hasVaultRewards == available then return end
@@ -1246,6 +1275,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         end)
     elseif event == "BAG_UPDATE_DELAYED" and settings.notifications.bagsFull.enabled then
         OnBagUpdate()
+    elseif event == "CURRENCY_DISPLAY_UPDATE" and settings.notifications.currencyCap.enabled then
+        OnCurrencyUpdate(self.ignoreCurrencies, ...)
     elseif event == "WEEKLY_REWARDS_UPDATE" and settings.notifications.greatVault.enabled then
         OnWeeklyRewardsUpdate()
     elseif event == "UPDATE_PENDING_MAIL" and settings.notifications.newMail.enabled then
@@ -1268,7 +1299,11 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         C_Timer.After(7, function() AlertContainerFrameOnEvent(self, "CALENDAR_UPDATE_PENDING_INVITES") end)
         -- the login fires LEARNED_SPELL_IN_SKILL_LINE for spells the character already knows
         self.ignoreNewSpells = true
-        C_Timer.After(3, function() self.ignoreNewSpells = false end)
+        self.ignoreCurrencies = true
+        C_Timer.After(3, function()
+            self.ignoreNewSpells = false
+            self.ignoreCurrencies = false
+        end)
     elseif event == "LFG_UPDATE_RANDOM_INFO" and settings.notifications.callToArms.enabled then
         OnRandomDungeonInfo()
     end
@@ -1362,6 +1397,9 @@ function GW.LoadAlertSystem()
     container:RegisterEvent("CALENDAR_UPDATE_GUILD_EVENTS")
     container:RegisterEvent("PLAYER_ENTERING_WORLD")
     container:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
+    if C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo then
+        container:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    end
     if GW.isModern then
         container:RegisterEvent("VIGNETTE_MINIMAP_UPDATED")
         container:RegisterEvent("WEEKLY_REWARDS_UPDATE")

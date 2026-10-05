@@ -16,6 +16,8 @@ local function LoadSlashCommands()
             GW.Notice(L["  /gw2 clear achievements  -> Untrack all earned achievements (Blizzard bug)"])
             GW.Notice(L["  /gw2 error          -> Show the GW2 error log"])
             GW.Notice(L["  /gw2 test error     -> Raise a test error to check the error log"])
+            GW.Notice(L["  /gw2 test lootroll  -> Show test loot roll bars"])
+            GW.Notice(L["  /gw2 test mythicplus -> Toggle a test Mythic+ timer in the quest tracker"])
         elseif msg == "settings" then
             if InCombatLockdown() then
                 GW.Notice(L["Settings are not available in combat!"])
@@ -59,6 +61,10 @@ local function LoadSlashCommands()
             Gw2ErrorLog:Toggle()
         elseif msg == "test error" then
             GW.TestErrorHandler()
+        elseif msg == "test lootroll" then
+            GW.TestLootRolls()
+        elseif msg == "test mythicplus" then
+            if GW.TestMythicPlusTimer then GW.TestMythicPlusTimer() end
         elseif msg == "clear achievements" then
             local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
             local numAchievements = #trackedAchievements
