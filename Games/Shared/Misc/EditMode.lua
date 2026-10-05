@@ -152,11 +152,15 @@ local function HandleBlizzardEditMode()
         FixTargetAndFocusReset()
     end
 
-    local dialog = EditModeUnsavedChangesDialog
-    dialog.ProceedButton:SetScript("OnClick", OnProceed)
-    dialog.SaveAndProceedButton:SetScript("OnClick", OnSaveProceed)
+    -- our close lets the edit mode end in combat, but with secret values blizzards exit must run
+    -- untainted, else the compact unit frames compare secret health colors
+    if not issecretvalue then
+        local dialog = EditModeUnsavedChangesDialog
+        dialog.ProceedButton:SetScript("OnClick", OnProceed)
+        dialog.SaveAndProceedButton:SetScript("OnClick", OnSaveProceed)
 
-    EditModeManagerFrame.onCloseCallback = OnClose
+        EditModeManagerFrame.onCloseCallback = OnClose
+    end
 
     hooksecurefunc(GameMenuFrame, "Layout", function()
         for button in GameMenuFrame.buttonPool:EnumerateActive() do
