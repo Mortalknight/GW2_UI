@@ -51,6 +51,13 @@ GW.Colors.SkinColors = {
     TokenBorder = CreateColor(0, 0.8, 1), -- the WoW token icon frame
 }
 
+-- the coin amounts of our bag money
+GW.Colors.MoneyColors = {
+    Gold = CreateColor(221 / 255, 187 / 255, 68 / 255),
+    Silver = CreateColor(170 / 255, 170 / 255, 170 / 255),
+    Copper = CreateColor(177 / 255, 97 / 255, 34 / 255),
+}
+
 -- the palette of the group frame aura indicators (Core/consts.lua), distinct tones so that
 -- several indicators of one class stay apart
 GW.Colors.IndicatorColors = {

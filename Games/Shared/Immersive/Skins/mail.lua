@@ -79,14 +79,9 @@ end
 
 local function SkinMoneyFrame()
     -- setup money frame
-    SendMailMoneyFrameCopperButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    SendMailMoneyFrameCopperButtonText:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-
-    SendMailMoneyFrameSilverButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    SendMailMoneyFrameSilverButtonText:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-
-    SendMailMoneyFrameGoldButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    SendMailMoneyFrameGoldButtonText:SetTextColor(221 / 255, 187 / 255, 68 / 255)
+    GW.StyleMoneyText(SendMailMoneyFrameCopperButtonText, "Copper")
+    GW.StyleMoneyText(SendMailMoneyFrameSilverButtonText, "Silver")
+    GW.StyleMoneyText(SendMailMoneyFrameGoldButtonText, "Gold")
 end
 
 local function SkinPager()

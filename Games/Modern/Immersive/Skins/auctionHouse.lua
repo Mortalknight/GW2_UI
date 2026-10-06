@@ -4,8 +4,8 @@ local GW = select(2, ...)
 GW.ActionHouseTabsAdded = 0
 
 local function HandleSearchBarFrame(Frame)
-	Frame.FilterButton:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
-	Frame.FilterButton:SetSize(155, 23)
+	Frame.FilterButton:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, Frame.FilterButton:GetWidth())
+	Frame.FilterButton:SetHeight(23)
 	Frame.FilterButton.ClearFiltersButton:GwSkinButton(true)
 	Frame.FilterButton:ClearAllPoints()
 	Frame.FilterButton:SetPoint("LEFT", Frame.SearchBox, "RIGHT", 5, 2)
@@ -47,15 +47,36 @@ local function SkinIconButton(button, size)
 	hooksecurefunc(button.Icon, "SetDesaturated", KeepDesaturated)
 end
 
-local function SkinMoneyBoxes(prefix, lastOffset)
-	for index, suffix in ipairs({ "Gold", "Silver" }) do
-		local name = prefix .. suffix
-		GW.SkinTextBox(_G[name .. "Middle"], _G[name .. "Left"], _G[name .. "Right"], nil, nil, nil, index == 2 and lastOffset or 0)
+-- the bid input of both bid frames is globally named "BidAmount" twice, so it goes by its keys.
+-- blizzards box art goes, our text box builds its own with all four edges
+local function SkinBidAmount(bidAmount)
+	for _, box in ipairs({ bidAmount.gold, bidAmount.silver, bidAmount.copper }) do
+		for _, region in ipairs({ box:GetRegions() }) do
+			if region:IsObjectType("Texture") and region ~= box.texture then
+				region:SetAlpha(0)
+			end
+		end
+		GW.SkinTextBox(nil, nil, nil, nil, nil, nil, nil, nil, box)
 	end
 end
 
+-- right to left: buyout, bid next to it, the bid boxes before that. blizzards boxes are wider than
+-- their frame, so they are measured: three boxes with 10 between them, copper only when shown
+local function LayoutBidRow(bidFrame, buyoutButton)
+	local bidAmount = bidFrame.BidAmount
+	local width = bidAmount.gold:GetWidth() + 10 + bidAmount.silver:GetWidth()
+	if bidAmount.copper:IsShown() then
+		width = width + 10 + bidAmount.copper:GetWidth()
+	end
+	bidFrame.BidButton:ClearAllPoints()
+	bidFrame.BidButton:SetPoint("RIGHT", buyoutButton, "LEFT", -2, 0)
+	bidAmount:ClearAllPoints()
+	bidAmount:SetPoint("LEFT", bidFrame.BidButton, "LEFT", -(width + 6), 0)
+end
+
 local function SkinMoneyInput(moneyInput)
-	for _, box in ipairs({ moneyInput.GoldBox, moneyInput.SilverBox }) do
+	-- retail hides the copper box for auctions, forever shows it
+	for _, box in ipairs({ moneyInput.GoldBox, moneyInput.SilverBox, moneyInput.CopperBox }) do
 		GW.SkinTextBox(box.Middle, box.Left, box.Right)
 	end
 end
@@ -105,6 +126,20 @@ local function HandleTabs(arg1)
 	end
 end
 
+-- blizzard colors the price labels yellow, or red when the buyout is not above the bid; the red stays
+local function KeepPriceLabelWhite(priceInput, color)
+	if color ~= RED_FONT_COLOR then
+		SetWhite(priceInput.Label)
+		SetWhite(priceInput.LabelTitle)
+	end
+end
+
+local function SkinPriceInput(priceInput)
+	SkinMoneyInput(priceInput.MoneyInputFrame)
+	KeepPriceLabelWhite(priceInput)
+	hooksecurefunc(priceInput, "SetLabelColor", KeepPriceLabelWhite)
+end
+
 local function SkinSellFrame(frame)
 	SkinItemDisplay(frame.ItemDisplay, true)
 
@@ -112,10 +147,9 @@ local function SkinSellFrame(frame)
 	GW.SkinTextBox(quantity.InputBox.Middle, quantity.InputBox.Left, quantity.InputBox.Right)
 	quantity.MaxButton:GwSkinButton(false, true)
 	SetWhite(quantity.Label)
-	SkinMoneyInput(frame.PriceInput.MoneyInputFrame)
+	SkinPriceInput(frame.PriceInput)
 	if frame.SecondaryPriceInput then
-		SkinMoneyInput(frame.SecondaryPriceInput.MoneyInputFrame)
-		SetWhite(frame.SecondaryPriceInput.Label)
+		SkinPriceInput(frame.SecondaryPriceInput)
 	end
 
 	frame.Duration.Dropdown:GwHandleDropDownBox()
@@ -124,6 +158,9 @@ local function SkinSellFrame(frame)
 	if frame.BuyoutModeCheckButton then
 		frame.BuyoutModeCheckButton:GwSkinCheckButton(false, 20)
 		SetWhite(frame.BuyoutModeCheckButton.Text)
+		-- blizzards template pulls the label 2px into the box, our check runs out of it
+		frame.BuyoutModeCheckButton.Text:ClearAllPoints()
+		frame.BuyoutModeCheckButton.Text:SetPoint("LEFT", frame.BuyoutModeCheckButton, "RIGHT", 6, 0)
 	end
 
 	for _, text in ipairs({ frame.PriceInput.Label, frame.Duration.Label, frame.Deposit.Label, frame.TotalPrice.Label }) do
@@ -170,6 +207,7 @@ end
 -- scrollBarInset {x, y} and smallRefresh for the 22px refresh buttons of the own auctions
 local function SkinList(list, options)
 	GW.HandleTrimScrollBar(list.ScrollBar)
+	list.ScrollBar:SetHideIfUnscrollable(true)
 	GW.HandleScrollControls(list)
 	if options.scrollBarInset then
 		local x, y = unpack(options.scrollBarInset)
@@ -181,6 +219,10 @@ local function SkinList(list, options)
 	if list.RefreshFrame then
 		SkinIconButton(list.RefreshFrame.RefreshButton, options.smallRefresh and 22)
 		SetWhite(list.RefreshFrame.TotalQuantity)
+	end
+	-- the hint and the no results text, blizzard only changes its text
+	if list.ResultsText then
+		list.ResultsText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 	end
 	if list.LoadingSpinner then
 		SetWhite(list.LoadingSpinner.SearchingText)
@@ -270,10 +312,39 @@ local function ApplyAuctionHouseSkin()
 	HandleSearchBarFrame(AuctionHouseFrame.SearchBar)
 	AuctionHouseFrame.MoneyFrameBorder:GwStripTextures()
 	AuctionHouseFrame.MoneyFrameInset:GwStripTextures()
+	-- our gold sits in the bottom of the left panel of each page, in the font and coin colors of our bags;
+	-- blizzard may set its price font again, so the look is kept by a hook
+	local money = AuctionHouseFrame.MoneyFrameBorder.MoneyFrame
+	local function PlaceMoney()
+		local anchor = AuctionHouseFrame.CategoriesList
+		for _, panel in ipairs({ AuctionHouseFrameAuctionsFrame.SummaryList, AuctionHouseFrame.ItemSellFrame, AuctionHouseFrame.CommoditiesSellFrame }) do
+			if panel:IsVisible() then
+				anchor = panel
+				break
+			end
+		end
+		money:ClearAllPoints()
+		money:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", -8, 10)
+	end
+	hooksecurefunc(AuctionHouseFrame, "SetDisplayMode", PlaceMoney)
+	PlaceMoney()
+	for key, coin in pairs({ GoldDisplay = "Gold", SilverDisplay = "Silver", CopperDisplay = "Copper" }) do
+		local display = money[key]
+		local function StyleCoin()
+			GW.StyleMoneyText(display.Text, coin)
+			display:UpdateWidth()
+		end
+		StyleCoin()
+		hooksecurefunc(display, "SetFontObject", StyleCoin)
+	end
 
 	--Categorie List
 	local Categories = AuctionHouseFrame.CategoriesList
 	Categories.NineSlice:GwSetInside(Categories)
+	-- the lists keep their size (the results hang on their bottom), their scroll areas make room for the gold
+	Categories.ScrollBox:SetPoint("BOTTOMRIGHT", Categories, "BOTTOMRIGHT", -25, 32)
+	local summaryList = AuctionHouseFrameAuctionsFrame.SummaryList
+	summaryList.ScrollBox:SetPoint("BOTTOMRIGHT", summaryList, "BOTTOMRIGHT", -27, 32)
 	GW.HandleTrimScrollBar(Categories.ScrollBar)
 	GW.HandleScrollControls(Categories)
 
@@ -392,10 +463,9 @@ local function ApplyAuctionHouseSkin()
 	itemBuy.BuyoutFrame.BuyoutButton:GwSkinButton(false, true)
 	SkinItemDisplay(itemBuy.ItemDisplay)
 	SkinList(itemBuy.ItemList, { headers = true })
-	SkinMoneyBoxes("AuctionHouseFrame")
+	SkinBidAmount(itemBuy.BidFrame.BidAmount)
 	itemBuy.BidFrame.BidButton:GwSkinButton(false, true)
-	itemBuy.BidFrame.BidButton:ClearAllPoints()
-	itemBuy.BidFrame.BidButton:SetPoint("LEFT", itemBuy.BidFrame.BidAmount, "RIGHT", 2, -2)
+	LayoutBidRow(itemBuy.BidFrame, itemBuy.BuyoutFrame.BuyoutButton)
 
 	-- sell (tab 2)
 	SkinSellFrame(AuctionHouseFrame.ItemSellFrame)
@@ -412,7 +482,8 @@ local function ApplyAuctionHouseSkin()
 	auctions.BidFrame.BidButton:GwSkinButton(false, true)
 	auctions.CancelAuctionButton:GwSkinButton(false, true)
 	auctions.CancelAuctionButton:GwSkinNegativeButton()
-	SkinMoneyBoxes("AuctionHouseFrameAuctionsFrame", -5)
+	SkinBidAmount(auctions.BidFrame.BidAmount)
+	LayoutBidRow(auctions.BidFrame, auctions.BuyoutFrame.BuyoutButton)
 	for _, tab in ipairs({ AuctionHouseFrameAuctionsFrameAuctionsTab, AuctionHouseFrameAuctionsFrameBidsTab }) do
 		GW.HandleTabs(tab, "top")
 	end
@@ -420,6 +491,7 @@ local function ApplyAuctionHouseSkin()
 	SkinList(auctions.CommoditiesList, { headers = true, smallRefresh = true })
 	SkinList(auctions.ItemList, { headers = true, smallRefresh = true })
 	SkinList(auctions.SummaryList, { summary = true, scrollBarInset = { 5, 20 }, smallRefresh = true })
+	auctions.SummaryList.ScrollBar:SetPoint("BOTTOMRIGHT", auctions.SummaryList, -5, 36)
 	for _, list in ipairs({ auctions.AllAuctionsList, auctions.BidsList }) do
 		SkinList(list, { headers = true, scrollBarInset = { 6, 16 }, smallRefresh = true })
 		FitListBackground(list)
@@ -434,6 +506,7 @@ local function ApplyAuctionHouseSkin()
 	tokenResults.Buyout:GwSkinButton(false, true)
 	GW.HandleTrimScrollBar(tokenResults.DummyScrollBar)
 	GW.HandleScrollControls(tokenResults, "DummyScrollBar")
+	tokenResults.DummyScrollBar:SetHideIfUnscrollable(true)
 	SkinDialog(tokenResults.TokenDisplay)
 	local tokenButton = tokenResults.TokenDisplay.ItemButton
 	GW.HandleIcon(tokenButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)

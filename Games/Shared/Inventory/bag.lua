@@ -1276,12 +1276,9 @@ local function LoadBag(helpers)
     end)
 
     -- setup money frame
-    for _, frameName in ipairs({"bronze", "silver", "gold"}) do
-        f[frameName]:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    end
-    f.bronze:SetTextColor(177/255, 97/255, 34/255)
-    f.silver:SetTextColor(170/255, 170/255, 170/255)
-    f.gold:SetTextColor(221/255, 187/255, 68/255)
+    GW.StyleMoneyText(f.bronze, "Copper", GW.Enum.TextSizeType.Small)
+    GW.StyleMoneyText(f.silver, "Silver", GW.Enum.TextSizeType.Small)
+    GW.StyleMoneyText(f.gold, "Gold", GW.Enum.TextSizeType.Small)
 
     -- money frame tooltip
     f.moneyFrame:SetScript("OnEnter", GW.Money_OnEnter)

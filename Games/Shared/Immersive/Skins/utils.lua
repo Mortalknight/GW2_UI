@@ -92,6 +92,12 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
 end
 GW.SkinTextBox = SkinTextBox
 
+-- a coin amount in the font and color of our bag money; coin is "Gold", "Silver" or "Copper"
+function GW.StyleMoneyText(text, coin, sizeType)
+    text:GwSetFontTemplate(UNIT_NAME_FONT, sizeType or GW.Enum.TextSizeType.Normal)
+    text:SetTextColor(GW.Colors.MoneyColors[coin]:GetRGB())
+end
+
 local function MutateInaccessableObject(frame, objType, func)
     local r = {frame:GetRegions()}
 

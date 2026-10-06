@@ -99,7 +99,7 @@ local function MarkQuestRewards()
     local button = bestIndex and _G["QuestInfoRewardsFrameQuestInfoItem" .. bestIndex]
     if button and button.type == "choice" then
         coinMarker:ClearAllPoints()
-        coinMarker:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2)
+        coinMarker:SetPoint("BOTTOMRIGHT", button.Icon, "BOTTOMRIGHT", -1, 1)
         coinMarker:Show()
     end
 

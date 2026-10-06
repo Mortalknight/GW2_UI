@@ -416,12 +416,10 @@ local function LoadBank(helpers)
     f.BankPanel.LockPrompt:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     -- setup money frame
-    f.BankPanel.MoneyFrame.MoneyDisplay.CopperButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    f.BankPanel.MoneyFrame.MoneyDisplay.CopperButton.Text:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.BankPanel.MoneyFrame.MoneyDisplay.SilverButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    f.BankPanel.MoneyFrame.MoneyDisplay.SilverButton.Text:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.BankPanel.MoneyFrame.MoneyDisplay.GoldButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    f.BankPanel.MoneyFrame.MoneyDisplay.GoldButton.Text:SetTextColor(221 / 255, 187 / 255, 68 / 255)
+    local moneyDisplay = f.BankPanel.MoneyFrame.MoneyDisplay
+    GW.StyleMoneyText(moneyDisplay.CopperButton.Text, "Copper", GW.Enum.TextSizeType.Small)
+    GW.StyleMoneyText(moneyDisplay.SilverButton.Text, "Silver", GW.Enum.TextSizeType.Small)
+    GW.StyleMoneyText(moneyDisplay.GoldButton.Text, "Gold", GW.Enum.TextSizeType.Small)
 
     --sort popup
     BankCleanUpConfirmationPopup:GwStripTextures()
