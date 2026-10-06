@@ -141,16 +141,34 @@ end
 
 local function buttonHighlightTexture(frame, texture) if texture ~= nil then frame:SetHighlightTexture(nil) end end
 
+-- radio buttons get the ring and dot of our menus, check buttons the box
+local CHECK_ART = {
+    normal = "Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png",
+    checked = "Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png",
+    disabled = "Interface/AddOns/GW2_UI/textures/uistuff/checkbox-disabled.png",
+}
+local RADIO_ART = {
+    normal = "Interface/AddOns/GW2_UI/textures/uistuff/radio-unselected.png",
+    checked = "Interface/AddOns/GW2_UI/textures/uistuff/radio-selected.png",
+    disabled = "Interface/AddOns/GW2_UI/textures/uistuff/radio-unselected.png",
+}
+
 local function GwSkinCheckButton(button, isRadio, size, artOnly)
     if button.gwSkinned then return end
     if size and not artOnly then
         button:SetSize(size, size)
     end
-    if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png") end
-    if button.SetCheckedTexture then button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png") end
-    if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png") end
-    if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png") end
-    if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png") end
+    local art = isRadio and RADIO_ART or CHECK_ART
+    if button.SetNormalTexture then button:SetNormalTexture(art.normal) end
+    if button.SetCheckedTexture then button:SetCheckedTexture(art.checked) end
+    if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture(art.checked) end
+    if button.SetPushedTexture then button:SetPushedTexture(art.normal) end
+    if button.SetDisabledTexture then button:SetDisabledTexture(art.disabled) end
+    -- a disabled but checked button keeps its mark, only dimmed
+    local disabledChecked = button.GetDisabledCheckedTexture and button:GetDisabledCheckedTexture()
+    if disabledChecked then
+        disabledChecked:SetVertexColor(GW.Colors.SkinColors.Disabled:GetRGB())
+    end
 
     if isRadio then
         local Check = button:GetCheckedTexture()
@@ -160,7 +178,10 @@ local function GwSkinCheckButton(button, isRadio, size, artOnly)
         if Normal then Normal:SetTexCoord(0, 1, 0, 1) end
 
         local Disabled = button:GetDisabledTexture()
-        if Disabled then Disabled:SetTexCoord(0, 1, 0, 1) end
+        if Disabled then
+            Disabled:SetTexCoord(0, 1, 0, 1)
+            Disabled:SetVertexColor(GW.Colors.SkinColors.Disabled:GetRGB())
+        end
 
         hooksecurefunc(button, "SetHighlightTexture", buttonHighlightTexture)
     end

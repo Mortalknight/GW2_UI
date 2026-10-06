@@ -333,6 +333,15 @@ local function SetItemButtonQualityForBags(button, quality)
 end
 GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 
+-- item slots outside the bags (mail, guild bank) frame common items white, blizzards bag color for them is grey
+local function SetItemSlotQuality(button, quality)
+    SetItemButtonQualityForBags(button, quality)
+    if quality == (LE_ITEM_QUALITY_COMMON or Enum.ItemQuality.Common) then
+        button.IconBorder:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
+    end
+end
+GW.SetItemSlotQuality = SetItemSlotQuality
+
 -- flavor extras can decorate every item button after the shared quality skin ran
 -- (e.g. the equipment set name on mists), registered at file scope from the flavors
 local itemButtonDecorators = {}
@@ -1109,5 +1118,6 @@ local function LoadInventory()
 
     bag_resize = GW.LoadBag(helpers)
     bank_resize = GW.LoadBank(helpers)
+    GW.LoadGuildBank()
 end
 GW.LoadInventory = LoadInventory

@@ -197,30 +197,43 @@ local function setFontColorToWhite(self)
     self:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
 end
 
+local BAG_TEXTURES = "Interface/AddOns/GW2_UI/textures/bag/"
+
+-- the attachment slots in the look of our bag slots: backdrop, a grey frame when empty, the quality frame with an item
+local function SkinSendAttachment(button)
+    button.gwSkinned = true
+    local slotBackground = button:GetRegions()
+    slotBackground:SetTexture(BAG_TEXTURES .. "bagitembackdrop.png")
+    slotBackground:ClearAllPoints()
+    slotBackground:SetAllPoints(button)
+
+    local emptyBorder = button:CreateTexture(nil, "BORDER")
+    emptyBorder:SetTexture(BAG_TEXTURES .. "bagitemborder.png")
+    emptyBorder:SetVertexColor(GW.Colors.SkinColors.IconBorder:GetRGB())
+    emptyBorder:SetAllPoints(button)
+
+    button.IconBorder:ClearAllPoints()
+    button.IconBorder:SetAllPoints(button)
+    button:SetHighlightTexture(BAG_TEXTURES .. "bagitemborder.png", "ADD")
+    button:GetHighlightTexture():SetAlpha(0.33)
+
+    button.Count:ClearAllPoints()
+    button.Count:SetPoint("TOPRIGHT", button, "TOPRIGHT", 0, -3)
+    button.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
+end
+
+-- blizzard sets the icon as normal texture and recolors the border on every update
 local function SkinMailFrameSendItems()
-    for i = 1, _G.ATTACHMENTS_MAX_SEND do
-        local b = _G["SendMailAttachment" .. i]
-        if b then
-            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
-            local r = { b:GetRegions() }
-            local ii = 1
-            for _, c in pairs(r) do
-                if c:GetObjectType() == "Texture" then
-                    if ii == 1 then
-                        c:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop.png")
-                        c:SetSize(b:GetSize())
-                    end
-                    ii = ii + 1
-                end
-            end
+    for i = 1, ATTACHMENTS_MAX_SEND do
+        local button = _G["SendMailAttachment" .. i]
+        if not button.gwSkinned then
+            SkinSendAttachment(button)
         end
-
-        local t = b:GetNormalTexture()
-        if t then t:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
-
-        b.IconBorder:ClearAllPoints()
-        b.IconBorder:SetPoint("TOPLEFT", b, "TOPLEFT", -2, 2)
-        b.IconBorder:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 2, -2)
+        local icon = button:GetNormalTexture()
+        if icon then
+            icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        end
+        GW.SetItemSlotQuality(button, select(5, GetSendMailItem(i)))
     end
 end
 
@@ -246,6 +259,8 @@ local function SkinSendMailFrame()
 
     SkinMoneyFrame()
     SendMailMoneyText:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
+    SendMailSendMoneyButton:GwSkinCheckButton(true, 15)
+    SendMailCODButton:GwSkinCheckButton(true, 15)
 
     -- configure location of SendMail Frame; forever spans it over the mail frame instead of giving
     -- it a size, a single anchor would leave it at 0x0, so it gets the size of the other clients

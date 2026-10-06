@@ -30,6 +30,7 @@ local function LoadSlashCommands()
             GW.settings.bags.bank.pos = nil
             GW.settings.windows.character.pos = nil
             GW.settings.skins.mail.pos = nil
+            GW.settings.skins.guildBank.pos = nil
             C_UI.Reload()
         elseif msg == "status" then
             GW.ShowStatusReport()

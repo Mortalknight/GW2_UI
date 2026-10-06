@@ -7,6 +7,7 @@
     <Script file ="bag.lua"/>
     <Script file ="bindType.lua"/>
     <Script file ="bank.lua"/>
+    <Script file ="guildBank.lua"/>
     <Script file ="addins.lua"/>
     <Script file ="autoSell.lua"/>
 </Ui>

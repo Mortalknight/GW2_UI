@@ -1700,6 +1700,14 @@ GW.globalDefault = {
             adventureMap = {
                 enabled = true,
             },
+            guildBank = {
+                pos = {
+                    point = "TOPLEFT",
+                    relativePoint = "TOPLEFT",
+                    xOfs = 60,
+                    yOfs = -60,
+                },
+            },
             achievement = {
                 enabled = true,
                 pos = {
