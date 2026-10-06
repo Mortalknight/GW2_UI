@@ -107,6 +107,13 @@ local function SkinRows(scrollBox)
     end)
 end
 
+local function SkinTrainAllButton()
+    local button = _G.LeaPlusGlobalTrainAllButton
+    if button then
+        button:GwSkinButton(false, true)
+    end
+end
+
 local function ApplyClassTrainerSkin()
     if not GW.settings.skins.classTrainer.enabled then return end
 
@@ -132,6 +139,8 @@ local function ApplyClassTrainerSkin()
 
     local trainButton = ClassTrainerFrame.TrainButton or ClassTrainerTrainButton
     trainButton:GwSkinButton(false, true)
+    SkinTrainAllButton()
+    ClassTrainerFrame:HookScript("OnShow", SkinTrainAllButton)
     ClassTrainerFrame.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 100)
     local moneyPanel = CreateFrame("Frame", nil, ClassTrainerFrame)
     local moneyFrame = ClassTrainerFrame.money or ClassTrainerFrameMoneyFrame
