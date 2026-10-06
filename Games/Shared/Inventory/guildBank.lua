@@ -175,6 +175,9 @@ local function SkinScrollFrames()
         content:SetPoint("TOPLEFT", area, "TOPLEFT", 8, -8)
         content:SetPoint("BOTTOMRIGHT", area, "BOTTOMRIGHT", -20, 8)
     end
+    GuildBankInfoScrollFrame:SetPoint("BOTTOMRIGHT", area, "BOTTOMRIGHT", -20, 36)
+    GuildBankInfoSaveButton:ClearAllPoints()
+    GuildBankInfoSaveButton:SetPoint("BOTTOMLEFT", area, "BOTTOMLEFT", 8, 8)
 
     GuildBankInfoScrollFrame:GwStripTextures()
     GW.SkinSlimScrollFrame(GuildBankInfoScrollFrame)
