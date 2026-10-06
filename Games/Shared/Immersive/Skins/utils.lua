@@ -593,6 +593,7 @@ do
             icon:GwSetInside(button)
         end
     end
+    GW.SkinIconChoice = SkinIconChoice
 
     -- the icon picker of macros, equipment sets, bank tabs and our profiles
     local function HandleIconSelectionFrame(frame)

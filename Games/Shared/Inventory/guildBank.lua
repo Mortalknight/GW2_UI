@@ -90,11 +90,10 @@ local function SkinSlot(button)
 end
 
 -- the logs and the tab info lie on a details background, so does the bank view without slots
--- (no right to view the tab). the money log title only repeats the footer tab, it gets hidden.
--- only retail colors the slots itself, the classic clients fetch the quality but never show it
+-- (no right to view the tab). only retail colors the slots itself, the classic clients fetch the
+-- quality but never show it
 local function UpdateBankView(frame)
     frame.gwDetailsBackground:SetShown(frame.mode ~= "bank" or not frame.Columns[1]:IsShown())
-    frame.TabTitle:SetAlpha(frame.mode == "moneylog" and 0 or 1)
     if frame.mode ~= "bank" then return end
     local tab = GetCurrentGuildBankTab()
     for columnIndex, column in ipairs(frame.Columns) do
@@ -168,6 +167,15 @@ local function SkinScrollFrames()
         GuildBankTransactionsScrollFrame:GwSkinScrollFrame()
     end
 
+    -- blizzard places the log and the info text at fixed spots under its own header, they move into
+    -- the details background; the classic scroll frame of the log only carries its scroll bar
+    local area = GuildBankFrame.gwDetailsBackground
+    for _, content in ipairs({GuildBankFrame.Log.MessageFrame, GuildBankInfoScrollFrame, GuildBankTransactionsScrollFrame}) do
+        content:ClearAllPoints()
+        content:SetPoint("TOPLEFT", area, "TOPLEFT", 8, -8)
+        content:SetPoint("BOTTOMRIGHT", area, "BOTTOMRIGHT", -20, 8)
+    end
+
     GuildBankInfoScrollFrame:GwStripTextures()
     GW.SkinSlimScrollFrame(GuildBankInfoScrollFrame)
     GuildBankTabInfoEditBox:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
@@ -194,6 +202,21 @@ local function SkinTopRow()
     title:SetPoint("TOPLEFT", GuildBankFrame, "TOPLEFT", 8, -12)
     title:SetJustifyH("LEFT")
     title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+
+    -- the withdrawals left for today share the bottom row with the money limit, on its right; the row
+    -- gets a details strip as wide as the content above, like a status line
+    local statusLine = GW.CreateDetailsBackgroundTexture(GuildBankFrame)
+    statusLine:SetPoint("TOPLEFT", GuildBankFrame.gwDetailsBackground, "BOTTOMLEFT", 0, -4)
+    statusLine:SetPoint("TOPRIGHT", GuildBankFrame.gwDetailsBackground, "BOTTOMRIGHT", 0, -4)
+    statusLine:SetHeight(21)
+    GuildBankFrame.LimitLabel:ClearAllPoints()
+    GuildBankFrame.LimitLabel:SetPoint("RIGHT", statusLine, "RIGHT", -8, 0)
+    GuildBankFrame.LimitLabel:SetJustifyH("RIGHT")
+    GuildBankMoneyLimitLabel:ClearAllPoints()
+    GuildBankMoneyLimitLabel:SetPoint("LEFT", statusLine, "LEFT", 8, 0)
+    for _, label in ipairs({GuildBankFrame.LimitLabel, GuildBankMoneyLimitLabel, GuildBankMoneyUnlimitedLabel}) do
+        label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    end
 
     if GuildItemSearchBox then
         GW.SkinBagSearchBox(GuildItemSearchBox)
@@ -263,15 +286,47 @@ local function SkinTexts()
     end
 end
 
+-- the classic clients keep the old tab icon dialog: blizzards macro popup art, an icon grid built on first show
+local function SkinLegacyIconPopup(popup)
+    if popup.gwSkinned then return end
+    popup.gwSkinned = true
+
+    popup:GwStripTextures()
+    if popup.BG then
+        popup.BG:Hide()
+    end
+    -- the border art sits on an unkeyed child named BorderBox, its two labels stay
+    for _, child in ipairs({popup:GetChildren()}) do
+        if child:GetName() == "BorderBox" then
+            child:GwStripTextures()
+        end
+    end
+    popup:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+
+    GW.SkinTextBox(GuildBankPopupNameMiddle, GuildBankPopupNameLeft, GuildBankPopupNameRight, nil, nil, 5, 5)
+    popup.OkayButton:GwSkinButton(false, true)
+    popup.CancelButton:GwSkinButton(false, true)
+
+    popup.ScrollFrame:GwStripTextures()
+    popup.ScrollFrame.ScrollBar:GwSkinScrollBar()
+    popup.ScrollFrame:GwSkinScrollFrame()
+
+    local index, button = 1, GuildBankPopupButton1
+    while button do
+        GW.SkinIconChoice(button)
+        index = index + 1
+        button = _G["GuildBankPopupButton" .. index]
+    end
+end
+
 local function SkinButtons()
     local buttons = {GuildBankFrame.DepositButton, GuildBankFrame.WithdrawButton, GuildBankFrame.BuyInfo.PurchaseButton, GuildBankInfoSaveButton}
     for _, button in ipairs(buttons) do
         button:GwSkinButton(false, true)
     end
-    -- retail and forever have the new icon picker, the classic one keeps blizzards look
-    -- its icon list fills on the first show, so the skin waits for that like the macro popup
-    if GuildBankPopupFrame and GuildBankPopupFrame.IconSelector then
-        GuildBankPopupFrame:HookScript("OnShow", GW.HandleIconSelectionFrame)
+    -- the tab icon dialog fills its icons on the first show, so both versions are skinned then
+    if GuildBankPopupFrame then
+        GuildBankPopupFrame:HookScript("OnShow", GuildBankPopupFrame.IconSelector and GW.HandleIconSelectionFrame or SkinLegacyIconPopup)
     end
 end
 
