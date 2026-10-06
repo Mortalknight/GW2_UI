@@ -43,14 +43,20 @@ local function SortGroups(a, b)
     return a.value > b.value
 end
 
-local function BuildDataProvider()
+local function Matches(text, search)
+    return search == "" or text:lower():find(search, 1, true) ~= nil
+end
+
+local function BuildDataProvider(search, filter)
     local groups = {}
     for key, store in pairs(GW.private.encounterTimes or {}) do
         local kind, name, difficulty, value = GetGroupInfo(key)
-        if KIND_ORDER[kind] then
+        if KIND_ORDER[kind] and (not filter or filter == kind) then
             local group = {key = key, kind = kind, name = name, difficulty = difficulty, value = value or 0, bosses = {}}
+            local groupMatches = Matches(name .. " " .. difficulty, search)
             for id, data in pairs(store) do
-                if type(data) == "table" and data.best and not (type(id) == "string" and id:find("^fight:")) then
+                if type(data) == "table" and data.best and not (type(id) == "string" and id:find("^fight:"))
+                    and (groupMatches or Matches(GetBossName(id, data), search)) then
                     tinsert(group.bosses, {id = id, data = data, fight = store["fight:" .. tostring(id)], precise = kind ~= "mplus" or id == "total"})
                 end
             end
@@ -65,7 +71,7 @@ local function BuildDataProvider()
     local dataProvider = CreateDataProvider()
     for _, group in ipairs(groups) do
         dataProvider:Insert({header = true, group = group})
-        if expanded[group.key] then
+        if expanded[group.key] or search ~= "" then
             for index, boss in ipairs(group.bosses) do
                 dataProvider:Insert({boss = boss, index = index})
             end
@@ -75,7 +81,7 @@ local function BuildDataProvider()
 end
 
 local function Row_OnClick(self)
-    if self.elementData.header then
+    if self.elementData.header and page.searchText == "" then
         local key = self.elementData.group.key
         expanded[key] = not expanded[key]
         GW.UpdateBossTimesPage()
@@ -140,7 +146,7 @@ local function InitRow(row, elementData)
 
     if isHeader then
         local group = elementData.group
-        row.arrow:SetRotation(expanded[group.key] and 0 or math.pi / 2)
+        row.arrow:SetRotation((expanded[group.key] or page.searchText ~= "") and 0 or math.pi / 2)
         row.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         row.name:SetText(group.name .. " " .. GW.Colors.SkinColors.SubText:WrapTextInColorCode(group.difficulty))
         row.best:SetText(GW.Colors.SkinColors.SubText:WrapTextInColorCode(L["Best"]))
@@ -160,9 +166,70 @@ end
 
 function GW.UpdateBossTimesPage()
     if not (page and page:IsShown()) then return end
-    local dataProvider, numGroups = BuildDataProvider()
+    page.searchText = strtrim(page.search:GetText()):lower()
+    local dataProvider, numGroups = BuildDataProvider(page.searchText, page.filter)
     page.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
+    local hasTimes = next(GW.private.encounterTimes or {}) ~= nil
+    page.empty:SetText(hasTimes and L["No matching boss times."] or L["No boss times yet."])
     page.empty:SetShown(numGroups == 0)
+end
+
+local function UpdateTabs()
+    for _, tab in ipairs(page.tabs) do
+        GW.SetTextTab(tab, tab.text, tab.kind == page.filter)
+    end
+end
+
+local function CreateFilterTabs()
+    page.tabs = {}
+    local filters = {{false, ALL}, {"raid", RAIDS}, {"party", DUNGEONS}}
+    if C_ChallengeMode and C_ChallengeMode.GetMapUIInfo then
+        tinsert(filters, 2, {"mplus", PLAYER_DIFFICULTY_MYTHIC_PLUS})
+    end
+    for i = #filters, 1, -1 do
+        local tab = CreateFrame("Button", nil, page)
+        tab.kind, tab.text = filters[i][1], filters[i][2]
+        tab:SetHeight(22)
+        GW.AddTextTabArt(tab)
+        tab:SetScript("OnClick", function()
+            page.filter = tab.kind
+            UpdateTabs()
+            GW.UpdateBossTimesPage()
+        end)
+        tab:SetScript("OnEnter", UpdateTabs)
+        tab:SetScript("OnLeave", UpdateTabs)
+        if i == #filters then
+            tab:SetPoint("TOPRIGHT", -22, -10)
+        else
+            tab:SetPoint("RIGHT", page.tabs[i + 1], "LEFT", -6, 0)
+        end
+        page.tabs[i] = tab
+    end
+    page.filter = false
+    UpdateTabs()
+end
+
+local function CreateSearch()
+    local search = CreateFrame("EditBox", nil, page, "GwSearchBoxTemplate")
+    search:SetHeight(22)
+    search:SetPoint("TOPLEFT", 10, -10)
+    search:SetPoint("RIGHT", page.tabs[1], "LEFT", -10, 0)
+    search.Instructions:SetTextColor(0.5, 0.5, 0.5)
+    search.Instructions:SetText(SEARCH .. "...")
+    search:HookScript("OnTextChanged", function(self)
+        self.clearButton:SetShown(self:GetText() ~= "")
+        GW.UpdateBossTimesPage()
+    end)
+    search:SetScript("OnEscapePressed", function(self)
+        self:SetText("")
+        self:ClearFocus()
+    end)
+    search:SetScript("OnEnterPressed", EditBox_ClearFocus)
+    search.clearButton:SetScript("OnClick", function(self)
+        self:GetParent():SetText("")
+        self:GetParent():ClearFocus()
+    end)
+    page.search = search
 end
 
 function GW.CreateBossTimesPage(parent)
@@ -170,9 +237,13 @@ function GW.CreateBossTimesPage(parent)
     page:SetSize(580, 576)
     page:SetPoint("TOPLEFT", -2, -10)
     page:Hide()
+    page.searchText = ""
+
+    CreateFilterTabs()
+    CreateSearch()
 
     page.ScrollBox = CreateFrame("Frame", nil, page, "WowScrollBoxList")
-    page.ScrollBox:SetPoint("TOPLEFT", 4, -10)
+    page.ScrollBox:SetPoint("TOPLEFT", 4, -42)
     page.ScrollBox:SetPoint("BOTTOMRIGHT", -22, 0)
     page.ScrollBar = CreateFrame("EventFrame", nil, page, "MinimalScrollBar")
     page.ScrollBar:SetPoint("TOPLEFT", page.ScrollBox, "TOPRIGHT", 4, 0)
@@ -190,8 +261,7 @@ function GW.CreateBossTimesPage(parent)
 
     page.empty = page:CreateFontString(nil, "OVERLAY")
     page.empty:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    page.empty:SetPoint("TOP", 0, -40)
-    page.empty:SetText(L["No boss times yet."])
+    page.empty:SetPoint("TOP", 0, -72)
 
     page:SetScript("OnShow", GW.UpdateBossTimesPage)
     return page

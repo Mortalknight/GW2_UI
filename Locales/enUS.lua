@@ -1221,4 +1221,5 @@ L["Last"] = true
 L["Total"] = true
 L["Fight duration"] = true
 L["No boss times yet."] = true
+L["No matching boss times."] = true
 L["Kills"] = true

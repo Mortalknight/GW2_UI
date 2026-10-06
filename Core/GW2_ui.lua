@@ -816,6 +816,7 @@ local function evPlayerLoginLate()
     end
 
     GW.LoadChat()
+    GW.LoadFriendsButton()
 
     -- create new microbuttons
     GW.LoadMicroMenu()

@@ -188,48 +188,56 @@ local function CollectSections(showDetails)
     return sections
 end
 
--- the micro button tooltip first, the online friends below it; shift adds what the others are doing
-local function Friends_OnEnter(self)
-    Social.StartMicroButtonTooltip(self)
-
+local function AddFriendLines()
     local numBNet, numBNetOnline = BNGetNumFriends()
     local numOnline = C_FriendList.GetNumOnlineFriends() + numBNetOnline
-    if numOnline > 0 then
-        local r, g, b = GW.Colors.TextColors.LightHeader:GetRGB()
-        GameTooltip:AddLine(" ")
-        GameTooltip:AddDoubleLine(FRIENDS_LIST, format("%s: %d/%d", FRIENDS_LIST_ONLINE, numOnline, C_FriendList.GetNumFriends() + numBNet), r, g, b, r, g, b)
+    if numOnline == 0 then
+        return
+    end
+    local r, g, b = GW.Colors.TextColors.LightHeader:GetRGB()
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddDoubleLine(FRIENDS_LIST, format("%s: %d/%d", FRIENDS_LIST_ONLINE, numOnline, C_FriendList.GetNumFriends() + numBNet), r, g, b, r, g, b)
 
-        for _, section in ipairs(CollectSections(IsShiftKeyDown())) do
-            if #section.lines > 0 then
-                table.sort(section.lines, SortLines)
-                GameTooltip:AddLine(" ")
-                GameTooltip:AddLine(section.title, r, g, b)
-                for _, line in ipairs(section.lines) do
-                    GameTooltip:AddDoubleLine(line.text, line.account, line.color.r, line.color.g, line.color.b, ACCOUNT_COLOR:GetRGB())
-                    if line.place and line.place ~= "" then
-                        GameTooltip:AddLine("   " .. line.place, line.placeColor:GetRGB())
-                    end
+    for _, section in ipairs(CollectSections(IsShiftKeyDown())) do
+        if #section.lines > 0 then
+            table.sort(section.lines, SortLines)
+            GameTooltip:AddLine(" ")
+            GameTooltip:AddLine(section.title, r, g, b)
+            for _, line in ipairs(section.lines) do
+                GameTooltip:AddDoubleLine(line.text, line.account, line.color.r, line.color.g, line.color.b, ACCOUNT_COLOR:GetRGB())
+                if line.place and line.place ~= "" then
+                    GameTooltip:AddLine("   " .. line.place, line.placeColor:GetRGB())
                 end
             end
         end
     end
+end
 
+local function InKeybindMode()
+    return KeybindFrames_InQuickKeybindMode and KeybindFrames_InQuickKeybindMode()
+end
+
+local function Friends_OnEnter(self)
+    if not self:IsEnabled() or InKeybindMode() then
+        return
+    end
+    local owner = GameTooltip:GetOwner()
+    if not (self.Toast and owner == self.Toast and GameTooltip:IsShown()) then
+        owner = self
+        GameTooltip:Hide()
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:ClearLines()
+        GameTooltip_SetTitle(GameTooltip, MicroButtonTooltipText(SOCIAL_BUTTON, "TOGGLESOCIAL"))
+    end
+    AddFriendLines()
     GameTooltip:Show()
     -- new lines and the protected account names have their final size a frame later
     C_Timer.After(0, function()
-        if GameTooltip:GetOwner() == self then
+        if GameTooltip:GetOwner() == owner then
             GameTooltip:Show()
         end
     end)
 end
-GW.Friends_OnEnter = Friends_OnEnter
-
-local function Friends_OnEvent(self, event, key)
-    if event == "MODIFIER_STATE_CHANGED" and key:find("SHIFT") and GW.DoesAncestryIncludeAny(self, GetMouseFoci()) then
-        Friends_OnEnter(self)
-    end
-end
-GW.Friends_OnEvent = Friends_OnEvent
 
 -- afk and dnd are toggles: sending the active one again clears it
 local function SetChatStatus(status)
@@ -289,9 +297,29 @@ local function BuildMenu(_, root)
     end
 end
 
-local function Friends_OnClick(self, button)
-    if button == "RightButton" then
+local function Friends_OnMouseUp(self, button)
+    if button == "RightButton" and self:IsMouseOver() and not InKeybindMode() then
         MenuUtil.CreateContextMenu(self, BuildMenu)
     end
 end
-GW.Friends_OnClick = Friends_OnClick
+
+local function LoadFriendsButton()
+    local button = QuickJoinToastButton or FriendsMicroButton
+    if not button then
+        return
+    end
+    -- retail opens the friends list on any click, the right click belongs to our menu
+    button:RegisterForClicks("LeftButtonUp")
+    button:HookScript("OnEnter", Friends_OnEnter)
+    button:HookScript("OnMouseUp", Friends_OnMouseUp)
+
+    local watcher = CreateFrame("Frame")
+    watcher:RegisterEvent("MODIFIER_STATE_CHANGED")
+    watcher:SetScript("OnEvent", function(_, _, key)
+        if key:find("SHIFT") and GW.DoesAncestryIncludeAny(button, GetMouseFoci()) and button.OnEnter then
+            button:OnEnter()
+            Friends_OnEnter(button)
+        end
+    end)
+end
+GW.LoadFriendsButton = LoadFriendsButton

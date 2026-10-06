@@ -1158,7 +1158,6 @@ local function setupMicroButtons(mbf)
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         cref.textureName = "CharacterMicroButton"
         reskinMicroButton(cref, "CharacterMicroButton", mbf, true)
-        cref:RegisterForClicks("AnyUp")
         cref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         cref:SetAttribute(
             "_onclick",
@@ -1173,12 +1172,14 @@ local function setupMicroButtons(mbf)
         if GW.isModern then
             cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
             cref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(cref); GameTooltip:Hide() end)
+        else
+            cref:HookScript("OnEnter", function(self)
+                if GW.EnsureMicroMenuTooltip(self) then
+                    GameTooltip:Show()
+                end
+            end)
+            cref:HookScript("OnLeave", GameTooltip_Hide)
         end
-        cref:HookScript("OnEnter", GW.Friends_OnEnter)
-        cref:HookScript("OnLeave", GameTooltip_Hide)
-        cref:HookScript("OnEvent", GW.Friends_OnEvent)
-        cref:HookScript("OnClick", GW.Friends_OnClick)
-        cref:RegisterEvent("MODIFIER_STATE_CHANGED")
     else
         cref = CharacterMicroButton
         if MicroButtonPortrait then
