@@ -1105,13 +1105,7 @@ local function HideAllPanelsForSearch()
     end
 end
 
-local function SearchClear(edit, sp)
-    edit:SetText(SEARCH)
-    edit:ClearFocus()
-    edit:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-    edit:ClearFocus()
-    edit.clearButton:Hide()
-
+local function LeaveSearch(sp)
     SEARCH_ACTIVE = false
     ReturnMatchesToHome(sp, true)
 
@@ -1135,6 +1129,16 @@ local function SearchClear(edit, sp)
     end
 end
 
+local function SearchClear(edit, sp)
+    edit:SetText(SEARCH)
+    edit:ClearFocus()
+    edit:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+    edit.clearButton:Hide()
+    if SEARCH_ACTIVE or sp:IsShown() then
+        LeaveSearch(sp)
+    end
+end
+
 local function CloseSearch()
     if SEARCH_ACTIVE and searchEdit and searchPanel then
         SearchClear(searchEdit, searchPanel)
@@ -1142,16 +1146,15 @@ local function CloseSearch()
 end
 
 local function SearchUpdate(sp, query)
-    ReturnMatchesToHome(sp, false)
-
+    -- an emptied search box (still focused) goes back to the page like escape does
     if not query or query == "" or query == SEARCH then
-        local empty = CreateDataProvider()
-        sp.scroll.ScrollBox:SetDataProvider(empty, ScrollBoxConstants.RetainScrollPosition)
-        if sp.sub then sp.sub:Show() end
-        sp:Hide()
-        SEARCH_ACTIVE = false
+        if SEARCH_ACTIVE then
+            LeaveSearch(sp)
+        end
         return
     end
+
+    ReturnMatchesToHome(sp, false)
 
     SEARCH_ACTIVE = true
 
