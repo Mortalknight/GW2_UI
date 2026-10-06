@@ -922,9 +922,9 @@ GW.globalDefault = {
             pet = {
                 enabled = true,
                 pos = {
-                    point = "BOTTOMRIGHT",
+                    point = "BOTTOMLEFT",
                     relativePoint = "BOTTOM",
-                    xOfs = -57,
+                    xOfs = -373,
                     yOfs = 120,
                     hasMoved = false,
                 },
