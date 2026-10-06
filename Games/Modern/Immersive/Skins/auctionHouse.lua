@@ -316,15 +316,14 @@ local function ApplyAuctionHouseSkin()
 	-- blizzard may set its price font again, so the look is kept by a hook
 	local money = AuctionHouseFrame.MoneyFrameBorder.MoneyFrame
 	local function PlaceMoney()
-		local anchor = AuctionHouseFrame.CategoriesList
-		for _, panel in ipairs({ AuctionHouseFrameAuctionsFrame.SummaryList, AuctionHouseFrame.ItemSellFrame, AuctionHouseFrame.CommoditiesSellFrame }) do
+		money:ClearAllPoints()
+		for _, panel in ipairs({ AuctionHouseFrame.CategoriesList, AuctionHouseFrameAuctionsFrame.SummaryList, AuctionHouseFrame.ItemSellFrame, AuctionHouseFrame.CommoditiesSellFrame }) do
 			if panel:IsVisible() then
-				anchor = panel
-				break
+				money:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -8, 10)
+				return
 			end
 		end
-		money:ClearAllPoints()
-		money:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", -8, 10)
+		money:SetPoint("RIGHT", AuctionHouseFrame.MoneyFrameBorder, "RIGHT", -6, 0)
 	end
 	hooksecurefunc(AuctionHouseFrame, "SetDisplayMode", PlaceMoney)
 	PlaceMoney()
