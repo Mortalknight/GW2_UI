@@ -244,6 +244,8 @@ function GwPlayerPetFrameMixin:TogglePortraitSide()
             self.happiness:SetPoint("CENTER", self.portraitBackground, "BOTTOMRIGHT", -7, 8)
         end
     end
+
+    self:SetHitRectInsets(0, position == "HIDE" and self:GetWidth() - self.Background:GetWidth() or 0, 0, 0)
 end
 
 function GwPlayerPetFrameMixin:ToggleAuraPosition()
