@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="GwManageGroupButtonTmpl" enableMouse="true" topLevel="true" frameStrata="LOW" virtual="true" inherits="SecureHandlerClickTemplate">
+    <Button name="GwManageGroupButtonTmpl" enableMouse="true" topLevel="true" frameStrata="HIGH" virtual="true" inherits="SecureHandlerClickTemplate">
         <Size x="50" y="38"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-60"></Anchor>
