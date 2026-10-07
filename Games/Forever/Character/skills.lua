@@ -53,7 +53,10 @@ end
 local function GetSkillInfo(index)
     local info = C_SkillInfo.GetSkillLineInfo(index)
     if info and info.skillID == DEFENSE_SKILL_ID then
-        info.modifier = select(2, UnitDefenseSkill("player"))
+        local modifier = select(2, UnitDefenseSkill("player"))
+        if GW.NotSecretValue(modifier) then
+            info.modifier = modifier
+        end
     end
     return info
 end
