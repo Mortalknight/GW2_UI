@@ -170,16 +170,6 @@ local function BagSlot_Pickup(self)
     end
 end
 
-local function BagSlot_OnClick(self, button)
-    if button ~= "LeftButton" then return end
-    if IsTabPurchased(self.tabIndex) then
-        BagSlot_Pickup(self)
-    elseif IsNextPurchasableTab(self.tabIndex) then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
-        StaticPopup_Show("CONFIRM_BUY_BANK_TAB", nil, nil, {bankType = BANK_TYPE})
-    end
-end
-
 local function BagSlot_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     if not (self.gwHasBag and GameTooltip:SetBagItem(BAG_SLOT_CONTAINER, self.tabIndex)) then
@@ -213,7 +203,7 @@ local function CreateBagBar(itemFrame)
         b.tabIndex = tabIndex
         b:RegisterForClicks("LeftButtonUp")
         b:RegisterForDrag("LeftButton")
-        b:SetScript("OnClick", BagSlot_OnClick)
+        b:SetScript("OnClick", BagSlot_Pickup)
         b:SetScript("OnDragStart", BagSlot_Pickup)
         b:SetScript("OnReceiveDrag", BagSlot_Pickup)
         b:SetScript("OnEnter", BagSlot_OnEnter)
@@ -222,11 +212,21 @@ local function CreateBagBar(itemFrame)
         itemFrame.bags[tabIndex] = b
     end
 
+    -- buying a tab is protected: blizzards purchase button lies on the next tab and opens the confirmation from secure code
+    local purchase = CreateFrame("Button", nil, itemFrame, "BankPanelPurchaseButtonScriptTemplate")
+    purchase:SetAttribute("overrideBankType", BANK_TYPE)
+    purchase:SetScript("OnEnter", function(self) BagSlot_OnEnter(self.slot) end)
+    purchase:SetScript("OnLeave", GameTooltip_Hide)
+    purchase:Hide()
+    itemFrame.purchaseButton = purchase
+
     SetBagBarOrder(itemFrame)
 end
 
 local function UpdateBagBar(itemFrame)
     local maxTabs = C_Bank.FetchMaxNumBankTabs(BANK_TYPE)
+    local purchase = itemFrame.purchaseButton
+    purchase.slot = nil
     for tabIndex = 2, NUM_TABS do
         local b = itemFrame.bags[tabIndex]
         b:SetShown(tabIndex <= maxTabs)
@@ -252,11 +252,18 @@ local function UpdateBagBar(itemFrame)
             b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon.png")
             b.icon:SetTexCoord(0.2, 0.8, 0.2, 0.8)
             b.tooltipText = BANK_BAG_PURCHASE
+            purchase.slot = b
         else
             b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock.png")
             b.icon:SetTexCoord(0.15, 0.85, 0.07, 0.85)
             b.tooltipText = GUILDBANK_TAB_LOCKED
         end
+    end
+
+    purchase:SetShown(purchase.slot ~= nil)
+    if purchase.slot then
+        purchase:SetAllPoints(purchase.slot)
+        purchase:SetFrameLevel(purchase.slot:GetFrameLevel() + 5)
     end
 end
 
