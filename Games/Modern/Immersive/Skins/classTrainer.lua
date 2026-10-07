@@ -131,7 +131,8 @@ local function ApplyClassTrainerSkin()
     ClassTrainerFrame.gwHeader.windowIcon:ClearAllPoints()
     ClassTrainerFrame.gwHeader.windowIcon:SetPoint("CENTER", ClassTrainerFrame.gwHeader, "BOTTOMLEFT", 30, 19)
     ClassTrainerFrame:HookScript("OnShow", function(self)
-        GW.SetHeaderPortrait(self.gwHeader, "npc")
+        local isPetTrainer = C_Trainer.GetTrainerType and Enum.TrainerType and C_Trainer.GetTrainerType() == Enum.TrainerType.Pet
+        GW.SetHeaderPortrait(self.gwHeader, isPetTrainer and "pet" or "npc")
     end)
 
     ClassTrainerFrame.CloseButton:GwSkinButton(true, false)
@@ -152,6 +153,7 @@ local function ApplyClassTrainerSkin()
 
     if ClassTrainerFrame.trainingPoints then
         ClassTrainerFrame.trainingPoints.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        ClassTrainerFrame.trainingPoints.text:GwLockTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     end
 
     local bar = ClassTrainerStatusBar
