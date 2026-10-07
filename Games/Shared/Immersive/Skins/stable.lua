@@ -264,12 +264,12 @@ end
 
 -- the art fills the upper 72% of its texture; cut to the shape of the model area, the forest on the right stays
 local PET_BG_HEIGHT = 0.72
-local function FitPetBackground(modelScene)
-    local width, height = modelScene:GetSize()
+local function FitPetBackground(texture, frame)
+    local width, height = frame:GetSize()
     if height <= 0 then return end
     local ratio = width / height
     local texWidth = math.min(1, PET_BG_HEIGHT * ratio)
-    modelScene.Background:SetTexCoord(1 - texWidth, 1, 0, texWidth / ratio)
+    texture:SetTexCoord(1 - texWidth, 1, 0, texWidth / ratio)
 end
 
 -- our happiness icons, the same as on the pet frame
@@ -322,23 +322,41 @@ local function SkinSlotLabels(button)
     end
 end
 
+-- name and level of the pet are the title, the loyalty the line below (wrath has none)
+local function SkinPetHeader(frame)
+    SkinWindow(frame, PetStableLevelText)
+    local header = frame.gwHeader
+    PetStableLevelText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+    PetStableLevelText:ClearAllPoints()
+    PetStableLevelText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 20)
+    if PetStableLoyaltyText then
+        PetStableLoyaltyText:SetParent(header)
+        PetStableLoyaltyText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        PetStableLoyaltyText:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
+        PetStableLoyaltyText:ClearAllPoints()
+        PetStableLoyaltyText:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 64, 17)
+    end
+end
+
+-- slot labels, the cost of the next slot and the money of the player
+local function SkinSlotsAndMoney()
+    SkinSlotLabels(PetStableCurrentPet)
+    SkinSlotLabels(PetStableStabledPet1)
+    PetStableCostLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    PetStableCostLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    PetStableCostMoneyFrame:ClearAllPoints()
+    PetStableCostMoneyFrame:SetPoint("LEFT", PetStableCostLabel, "RIGHT", 6, 0)
+    SkinMoneyFrame(PetStableCostMoneyFrame)
+    SkinMoneyFrame(PetStableMoneyFrame)
+end
+
 local function SkinForeverStable()
     local frame = PetStableFrame
     GW.HandlePortraitFrame(frame)
     GW.HandlePortraitFrameArt(frame)
     frame.TitleContainer:Hide()
 
-    -- name, level and loyalty of the pet go into the header, the loyalty level right of them
-    SkinWindow(frame, PetStableLevelText)
-    local header = frame.gwHeader
-    PetStableLevelText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-    PetStableLevelText:ClearAllPoints()
-    PetStableLevelText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 20)
-    PetStableLoyaltyText:SetParent(header)
-    PetStableLoyaltyText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    PetStableLoyaltyText:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
-    PetStableLoyaltyText:ClearAllPoints()
-    PetStableLoyaltyText:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 64, 17)
+    SkinPetHeader(frame)
 
     -- forever pets have no specialization, so blizzard shows no art of its own; ours from the pet panel of the hero window
     local modelScene = frame.modelScene
@@ -349,8 +367,8 @@ local function SkinForeverStable()
     modelScene:ClearAllPoints()
     modelScene:SetPoint("TOPLEFT", frame, "TOPLEFT", 7, -42)
     modelScene:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 140)
-    modelScene:HookScript("OnSizeChanged", FitPetBackground)
-    FitPetBackground(modelScene)
+    modelScene:HookScript("OnSizeChanged", function(self) FitPetBackground(self.Background, self) end)
+    FitPetBackground(modelScene.Background, modelScene)
     GW.HandleModelSceneControlFrame(modelScene.ControlFrame)
     -- the happiness icon moved between builds, on the window or on the model
     local diet = frame.diet or modelScene.diet
@@ -366,14 +384,7 @@ local function SkinForeverStable()
 
     SkinSlot(PetStableCurrentPet)
     SkinSlots("PetStableStabledPet")
-    SkinSlotLabels(PetStableCurrentPet)
-    SkinSlotLabels(PetStableStabledPet1)
-    PetStableCostLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    PetStableCostLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    PetStableCostMoneyFrame:ClearAllPoints()
-    PetStableCostMoneyFrame:SetPoint("LEFT", PetStableCostLabel, "RIGHT", 6, 0)
-    SkinMoneyFrame(PetStableCostMoneyFrame)
-    SkinMoneyFrame(PetStableMoneyFrame)
+    SkinSlotsAndMoney()
 
     frame.purchaseButton:GwSkinButton(false, true)
     frame.purchaseButton:ClearAllPoints()
@@ -396,12 +407,46 @@ local function SkinMistsStable()
     SkinSlots("PetStableStabledPet")
 end
 
+-- blizzard shows a fixed happy face, ours tells the happiness of the current pet
+local GetPetHappiness = C_PetInfo and C_PetInfo.GetPetHappiness or GetPetHappiness
+local function UpdateClassicHappiness()
+    local texture = PetStablePetInfo:GetRegions()
+    local happiness = GetPetHappiness and GetPetHappiness()
+    texture:SetShown(happiness ~= nil)
+    if happiness then
+        texture:SetTexture(HAPPINESS)
+        texture:SetTexCoord(GW.getSprite(HAPPINESS_SPRITE, happiness, 1))
+    end
+end
+
+-- a framed area with our pet art over the width of the window like on Forever, the model fills it
+local function AddPetBackground(frame, model)
+    local background = CreateFrame("Frame", nil, frame)
+    background:SetPoint("TOPLEFT", frame, "TOPLEFT", 17, -50)
+    background:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -41, 222)
+    local level = model:GetFrameLevel()
+    background:SetFrameLevel(level)
+    model:SetFrameLevel(level + 1)
+    model:ClearAllPoints()
+    model:SetPoint("TOPLEFT", background, "TOPLEFT", 1, -1)
+    model:SetPoint("BOTTOMRIGHT", background, "BOTTOMRIGHT", -1, 1)
+    background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
+    background.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGBA())
+    local texture = background:CreateTexture(nil, "BACKGROUND")
+    texture:SetAllPoints()
+    texture:SetTexture(PET_BG)
+    background:SetScript("OnSizeChanged", function(self) FitPetBackground(texture, self) end)
+    FitPetBackground(texture, background)
+end
+
 -- the old window draws a frame in its art, our window covers what lies inside it
 local function SkinClassicStable()
     local frame = PetStableFrame
     frame:GwStripTextures()
     PetStableFramePortrait:Hide()
-    SkinWindow(frame, PetStableTitleLabel)
+    PetStableTitleLabel:Hide()
+
+    SkinPetHeader(frame)
     frame.gwHeader:ClearAllPoints()
     frame.gwHeader:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 10, -43)
     frame.gwHeader:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -34, -43)
@@ -411,14 +456,29 @@ local function SkinClassicStable()
     PetStableFrameCloseButton:SetSize(20, 20)
     PetStableFrameCloseButton:ClearAllPoints()
     PetStableFrameCloseButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -39, -16)
-    PetStablePurchaseButton:GwSkinButton(false, true)
 
     -- the button named right sits on the left and turns the model to the left
     GW.HandleClassicRotateButton(PetStableModelRotateRightButton, "left")
     GW.HandleClassicRotateButton(PetStableModelRotateLeftButton, "right")
+    AddPetBackground(frame, PetStableModel)
+    -- rotate buttons and happiness in one row inside the frame
+    PetStableModelRotateRightButton:ClearAllPoints()
+    PetStableModelRotateRightButton:SetPoint("TOPLEFT", PetStableModel, "TOPLEFT", 6, -6)
+    PetStablePetInfo:ClearAllPoints()
+    PetStablePetInfo:SetPoint("LEFT", PetStableModelRotateLeftButton, "RIGHT", 6, 0)
+    hooksecurefunc("PetStable_Update", UpdateClassicHappiness)
+    UpdateClassicHappiness()
 
     SkinSlot(PetStableCurrentPet)
     SkinSlots("PetStableStabledPet")
+    SkinSlotsAndMoney()
+
+    PetStablePurchaseButton:GwSkinButton(false, true)
+    PetStablePurchaseButton:ClearAllPoints()
+    PetStablePurchaseButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -44, 104)
+    -- blizzard keeps 13px right of the copper, the coins end with the button
+    PetStableMoneyFrame:ClearAllPoints()
+    PetStableMoneyFrame:SetPoint("TOPRIGHT", PetStablePurchaseButton, "BOTTOMRIGHT", 13, -6)
 end
 
 local function LoadStableSkin()
