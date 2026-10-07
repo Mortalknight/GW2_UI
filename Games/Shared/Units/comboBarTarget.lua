@@ -6,6 +6,7 @@ local comboBar
 local function ComboFrame_Update(self)
     -- druids only have a max in cat form, it changes without an event of its own
     local maxComboPoints = UnitPowerMax(self.unit, Enum.PowerType.ComboPoints)
+    local comboPoints = GetComboPoints(self.unit, "target")
     if maxComboPoints ~= self.maxComboPoints then
         self.maxComboPoints = maxComboPoints
         for i = 1, 9 do
@@ -13,8 +14,6 @@ local function ComboFrame_Update(self)
             self["combo" .. i]:Hide()
         end
     end
-
-    local comboPoints = GetComboPoints(self.unit, "target")
 
     if comboPoints > 0 and UnitExists("target") then
         if not self:IsShown() then
@@ -97,15 +96,12 @@ local function ToggleComboEvents(self, enable)
 end
 
 local function comboBarOnEvent(self, event, ...)
-    if event == "PLAYER_TARGET_CHANGED" then
-		ComboFrame_Update(self);
-	elseif event == "UNIT_POWER_FREQUENT" then
-		local unit = ...
-		if unit == self.unit then
+    if event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_ENTERING_WORLD" then
+		ComboFrame_Update(self)
+	elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
+		if ... == self.unit then
 			ComboFrame_Update(self)
 		end
-	elseif event == "UNIT_MAXPOWER" or event == "PLAYER_ENTERING_WORLD" then
-		ComboFrame_Update(self)
 	elseif event == "UNIT_ENTERED_VEHICLE" then
         if not GW.settings.unitframes.target.hookComboPoints then
             ToggleComboEvents(self, true)
