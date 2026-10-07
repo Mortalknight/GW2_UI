@@ -25,7 +25,7 @@ local function RAFRewards()
     end
 end
 
-function GW.SkinRecruitAFriendList()
+function GW.SkinSocialUIRecruitAFriendList()
     -- 12.1: the RAF list is a SocialUI view, only the two dialogs are still global frames
     local RecruitAFriend = SocialUIFrame.RecruitAFriendFrame
     if not RecruitAFriend then return end

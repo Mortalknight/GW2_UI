@@ -22,7 +22,7 @@ local function SkinRaidInfoSideWindow()
     hooksecurefunc(RaidInfoFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 end
 
-function GW.SkinRaidList()
+function GW.SkinSocialUIRaidList()
     -- 12.1: the raid tab is a SocialUI view (RaidFrameSocialTemplate)
     local RaidView = SocialUIFrame.RaidFrame
     if not RaidView then return end

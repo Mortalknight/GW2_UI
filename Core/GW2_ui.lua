@@ -691,7 +691,10 @@ local function evPlayerLogin(self)
 
     GW.LoadCharacter()
 
-    if GW.isModern or GW.TBC then
+    -- blizzards new social window replaces the friends frame where the server turns it on, like blizzard we ask the same
+    if SocialUIControl and SocialUIControl.IsEnabled() then
+        GW.LoadSocialUIFrame()
+    elseif GW.isModern or GW.TBC then
         GW.LoadSocialFrame()
     end
 

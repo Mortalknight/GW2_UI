@@ -62,22 +62,24 @@ local function HandleTabs(self)
     end
 end
 
-function GW.LoadSocialFrame()
+function GW.LoadSocialUIFrame()
     if not GW.settings.windows.social.enabled then return end
 
     GW.HandlePortraitFrame(SocialUIFrame)
     SocialUIFrameCloseButton:SetPoint("TOPRIGHT", -5, -2)
 
-    GW.CreateFrameHeaderWithBody(SocialUIFrame, SocialUIFrameTitleText, "Interface/AddOns/GW2_UI/textures/social/social-windowheader.png", {
-        SocialUIFrame.FriendsList.ScrollBox,
-        SocialUIFrame.IgnoreListFrame.ScrollBox,
-        SocialUIFrame.RecentAlliesList.ScrollBox,
-        SocialUIFrame.QuickJoinFrame.ScrollBox,
-        SocialUIFrame.FriendRequestsList.ScrollBox,
-        SocialUIFrame.RecruitList and SocialUIFrame.RecruitList.ScrollBox or nil,
-        SocialUIFrame.RaidFrame
-        }
-        , nil, true, true)
+    -- not every client has every list, Forever for example has no quick join
+    local detailBackgrounds = {}
+    for _, key in ipairs({"FriendsList", "IgnoreListFrame", "RecentAlliesList", "QuickJoinFrame", "FriendRequestsList", "RecruitList"}) do
+        local list = SocialUIFrame[key]
+        if list and list.ScrollBox then
+            tinsert(detailBackgrounds, list.ScrollBox)
+        end
+    end
+    if SocialUIFrame.RaidFrame then
+        tinsert(detailBackgrounds, SocialUIFrame.RaidFrame)
+    end
+    GW.CreateFrameHeaderWithBody(SocialUIFrame, SocialUIFrameTitleText, "Interface/AddOns/GW2_UI/textures/social/social-windowheader.png", detailBackgrounds, nil, true, true)
 
     HandleTabs(SocialUIFrame)
     hooksecurefunc(SocialUIFrame, "RefreshTabs", HandleTabs)
@@ -171,12 +173,12 @@ function GW.LoadSocialFrame()
         GW.settings.windows.social.pos = pos
     end)
 
-    GW.SkinFriendList()
+    GW.SkinSocialUIFriendList()
     GW.SkinSocialContactsView(SocialUIFrame.FriendRequestsList)
-    GW.SkinIgnoreList()
-    GW.SkinRecentAlliesList()
-    GW.SkinRecruitAFriendList()
-    GW.SkinWhoList()
-    GW.SkinRaidList()
-    GW.SkinQuickJoinList()
+    GW.SkinSocialUIIgnoreList()
+    GW.SkinSocialUIRecentAlliesList()
+    GW.SkinSocialUIRecruitAFriendList()
+    GW.SkinSocialUIWhoList()
+    GW.SkinSocialUIRaidList()
+    GW.SkinSocialUIQuickJoinList()
 end

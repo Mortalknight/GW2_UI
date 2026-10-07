@@ -28,7 +28,7 @@ local function HookTabCounters()
     end
 end
 
-function GW.SkinQuickJoinList()
+function GW.SkinSocialUIQuickJoinList()
     local QuickJoinFrame = SocialUIFrame.QuickJoinFrame
     if not QuickJoinFrame then return end
 

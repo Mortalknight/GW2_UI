@@ -55,7 +55,7 @@ local function UpdateRecentAllyCardContent(card)
     end
 end
 
-function GW.SkinRecentAlliesList()
+function GW.SkinSocialUIRecentAlliesList()
     local RecentAlliesList = SocialUIFrame.RecentAlliesList
     if not RecentAlliesList then return end
 

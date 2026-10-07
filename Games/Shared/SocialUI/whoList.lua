@@ -21,7 +21,7 @@ local function SkinLegacyFriendsFrame()
     end
     FriendsFrameCloseButton:SetPoint("TOPRIGHT", -5, -2)
 
-    GW.CreateFrameHeaderWithBody(FriendsFrame, FriendsFrameTitleText, "Interface/AddOns/GW2_UI/textures/social/social-windowheader.png", {WhoFrame.ScrollBox}, nil, true, true)
+    GW.CreateFrameHeaderWithBody(FriendsFrame, FriendsFrameTitleText, "Interface/AddOns/GW2_UI/textures/social/social-windowheader.png", WhoFrame and {WhoFrame.ScrollBox} or {}, nil, true, true)
     FriendsFrame.gwHeader.windowIcon:ClearAllPoints()
     FriendsFrame.gwHeader.windowIcon:SetPoint("CENTER", FriendsFrame.gwHeader, "BOTTOMLEFT", -26, 35)
     FriendsFrameTitleText:ClearAllPoints()
@@ -46,8 +46,10 @@ local function SkinLegacyFriendsFrame()
     end
 end
 
-function GW.SkinWhoList()
+-- Forever keeps the old window without the who list
+function GW.SkinSocialUIWhoList()
     SkinLegacyFriendsFrame()
+    if not WhoFrame then return end
 
     WhoFrameTotals:SetTextColor(1, 1, 1)
     WhoFrameListInset:SetAlpha(0)

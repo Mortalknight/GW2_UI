@@ -1,7 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 
-function GW.SkinIgnoreList()
+function GW.SkinSocialUIIgnoreList()
     local IgnoreFrame = SocialUIFrame.IgnoreListFrame
     if not IgnoreFrame then return end
 

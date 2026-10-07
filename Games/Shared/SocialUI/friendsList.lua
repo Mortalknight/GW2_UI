@@ -1,168 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local WOW_PROJECT_BURNING_CRUSADE_CLASSIC = 5
-local WOW_PROJECT_CLASSIC = 2
-local WOW_PROJECT_MAINLINE = WOW_PROJECT_MAINLINE
-local WOW_PROJECT_WRATH_CLASSIC = 11
-local WOW_PROJECT_CATACLYSM_CLASSIC = 14
-local WOW_PROJECT_MISTS_CLASSIC = 19
-
-local MediaPath = "Interface/AddOns/GW2_UI/Textures/social/"
-
-GW.friendsList = {}
-GW.friendsList.delimiter = format("|cff%s | |r", "979fad")
-GW.friendsList.projectCodes = {
-    ["ANBS"] = "Diablo Immortal",
-    ["Hero"] = "Heroes of the Storm",
-    ["OSI"] = "Diablo II",
-    ["S2"] = "StarCraft II",
-    ["VIPR"] = "Call of Duty: Black Ops 4",
-    ["W3"] = "WarCraft III",
-    ["APP"] = "Battle.net App",
-    ["FORE"] = "Call of Duty: Vanguard",
-    ["LAZR"] = "Call of Duty: MW2 Campaign Remastered",
-    ["RTRO"] = "Blizzard Arcade Collection",
-    ["WLBY"] = "Crash Bandicoot 4: It's About Time",
-    ["WTCG"] = "Hearthstone",
-    ["ZEUS"] = "Call of Duty: Blac Ops Cold War",
-    ["D3"] = "Diablo III",
-    ["GRY"] = "Warcraft Arclight Rumble",
-    ["ODIN"] = "Call of Duty: Mordern Warfare II",
-    ["S1"] = "StarCraft",
-    ["WOW"] = "World of Warcraft",
-    ["PRO"] = "Overwatch",
-    ["PRO-ZHCN"] = "Overwatch",
-}
-
-GW.friendsList.clientData = {
-    ["Diablo Immortal"] = {
-        color = { r = 0.768, g = 0.121, b = 0.231 },
-    },
-    ["Heroes of the Storm"] = {
-        color = { r = 0, g = 0.8, b = 1 },
-    },
-    ["Diablo II"] = {
-        color = { r = 0.768, g = 0.121, b = 0.231 },
-    },
-    ["StarCraft II"] = {
-        color = { r = 0.749, g = 0.501, b = 0.878 },
-    },
-    ["Call of Duty: Black Ops 4"] = {
-        color = { r = 0, g = 0.8, b = 0 },
-    },
-    ["WarCraft III"] = {
-        color = { r = 0.796, g = 0.247, b = 0.145 },
-    },
-    ["Battle.net App"] = {
-        color = { r = 0.509, g = 0.772, b = 1 },
-    },
-    ["Call of Duty: Vanguard"] = {
-        color = { r = 0, g = 0.8, b = 0 },
-    },
-    ["Call of Duty: MW2 Campaign Remastered"] = {
-        color = { r = 0, g = 0.8, b = 0 },
-    },
-    ["Blizzard Arcade Collection"] = {
-        color = { r = 0.509, g = 0.772, b = 1 },
-    },
-    ["Crash Bandicoot 4: It's About Time"] = {
-        color = { r = 0.509, g = 0.772, b = 1 },
-    },
-    ["Hearthstone"] = {
-        color = { r = 1, g = 0.694, b = 0 },
-    },
-    ["Call of Duty: Blac Ops Cold War"] = {
-        color = { r = 0, g = 0.8, b = 0 },
-    },
-    ["Diablo III"] = {
-        color = { r = 0.768, g = 0.121, b = 0.231 },
-    },
-    ["Warcraft Arclight Rumble"] = {
-        color = { r = 0.945, g = 0.757, b = 0.149 },
-    },
-    ["Call of Duty: Mordern Warfare II"] = {
-        color = { r = 0, g = 0.8, b = 0 },
-    },
-    ["StarCraft"] = {
-        color = { r = 0.749, g = 0.501, b = 0.878 },
-    },
-    ["World of Warcraft"] = {
-        color = { r = 0.866, g = 0.690, b = 0.180 },
-    },
-    ["Overwatch"] = {
-        color = { r = 1, g = 1, b = 1 },
-    },
-}
-
-GW.friendsList.timerunningSeasonIcon = {
-    [2] = MediaPath .. "GameIcons/WOW_LEG",
-}
-
-GW.friendsList.expansionData = {
-    [WOW_PROJECT_MAINLINE] = {
-        name = "Retail",
-        suffix = nil,
-        maxLevel = (GetMaxLevelForPlayerExpansion and GetMaxLevelForPlayerExpansion() or GetMaxPlayerLevel()),
-        icon = MediaPath .. "GameIcons/WOW_Retail",
-    },
-    [WOW_PROJECT_CLASSIC] = {
-        name = "Classic",
-        suffix = "Classic",
-        maxLevel = 60,
-        icon = MediaPath .. "GameIcons/WOW_Classic",
-    },
-    [WOW_PROJECT_BURNING_CRUSADE_CLASSIC] = {
-        name = "TBC",
-        suffix = "TBC",
-        maxLevel = 70,
-        icon = MediaPath .. "GameIcons/WOW_TBC",
-    },
-    [WOW_PROJECT_WRATH_CLASSIC] = {
-        name = "WotLK",
-        suffix = "WotLK",
-        maxLevel = 80,
-        icon = MediaPath .. "GameIcons/WOW_WotLK",
-    },
-    [WOW_PROJECT_CATACLYSM_CLASSIC] = {
-        name = "Cata",
-        suffix = "Cata",
-        maxLevel = 85,
-        icon = MediaPath .. "GameIcons/WOW_Cata",
-    },
-    [WOW_PROJECT_MISTS_CLASSIC] = {
-        name = "MoP",
-        suffix = "MoP",
-        maxLevel = 90,
-        icon = MediaPath .. "GameIcons/WOW_MoP",
-    },
-}
-
-GW.friendsList.factionIcons = {
-    ["Alliance"] = MediaPath .. "GameIcons/Alliance",
-    ["Horde"] = MediaPath .. "GameIcons/Horde",
-}
-
-GW.friendsList.statusIcons = {
-    default = {
-        Online = FRIENDS_TEXTURE_ONLINE,
-        Offline = FRIENDS_TEXTURE_OFFLINE,
-        DND = FRIENDS_TEXTURE_DND,
-        AFK = FRIENDS_TEXTURE_AFK,
-    },
-    square = {
-        Online = MediaPath .. "StatusIcons/Square/Online",
-        Offline = MediaPath .. "StatusIcons/Square/Offline",
-        DND = MediaPath .. "StatusIcons/Square/DND",
-        AFK = MediaPath .. "StatusIcons/Square/AFK",
-    },
-    color = {
-        Online  = { Color = {0.243, 0.57, 1} },
-        Offline = { Color = {0.486, 0.518, 0.541} },
-        DND     = { Color = {1, 0, 0} },
-        AFK     = { Color = {1, 1, 0} },
-    },
-}
+-- the client data, icons and colors of the friends come from Social/friendsList.lua
 
 -- Collapsible list headers (SocialUIScrollableHeaderTemplate) in the currency frame look:
 -- pill texture removed, GW backdrop + separator, arrow instead of plus/minus
@@ -415,7 +254,7 @@ local function UpdateFriendCardContent(card)
     end
 end
 
-function GW.SkinFriendList()
+function GW.SkinSocialUIFriendList()
     local FriendsList = SocialUIFrame.FriendsList
     local BattleNetBar = SocialUIFrame.BattleNetBar
     local BNetBar = BattleNetBar.ControlsContainer
@@ -487,9 +326,5 @@ function GW.SkinFriendList()
     broadcastFrame.CancelButton:GwSkinButton(false, true)
     broadcastFrame.CancelButton:GwSkinNegativeButton()
 
-    AddFriendFrame:GwStripTextures()
-    AddFriendFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-    AddFriendEntryFrameAcceptButton:GwSkinButton(false, true)
-    AddFriendEntryFrameCancelButton:GwSkinNegativeButton(false, true)
-    GW.SkinTextBox(_G["AddFriendNameEditBoxMiddle"], _G["AddFriendNameEditBoxLeft"], _G["AddFriendNameEditBoxRight"])
+    GW.SkinAddFriendFrame()
 end

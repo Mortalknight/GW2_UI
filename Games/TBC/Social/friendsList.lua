@@ -497,11 +497,7 @@ function GW.SkinFriendList()
         FriendsFrameBattlenetFrameScrollFrame.CancelButton:GwSkinButton(false, true)
     end
 
-    AddFriendFrame:GwStripTextures()
-    AddFriendFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-    AddFriendEntryFrameAcceptButton:GwSkinButton(false, true)
-    AddFriendEntryFrameCancelButton:GwSkinButton(false, true)
-    GW.SkinTextBox(_G["AddFriendNameEditBoxMiddle"], _G["AddFriendNameEditBoxLeft"], _G["AddFriendNameEditBoxRight"])
+    GW.SkinAddFriendFrame()
     FriendsFrameBattlenetFrame.UnavailableInfoFrame:ClearAllPoints()
     FriendsFrameBattlenetFrame.UnavailableInfoFrame:SetPoint("TOPLEFT", FriendsFrame.gwHeader, "TOPRIGHT", 1, -18)
 end

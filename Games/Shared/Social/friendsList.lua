@@ -12,6 +12,7 @@ local MediaPath = "Interface/AddOns/GW2_UI/Textures/social/"
 local delimiter = format("|cff%s | |r", "979fad")
 
 GW.friendsList = {}
+GW.friendsList.delimiter = delimiter
 GW.friendsList.projectCodes = {
     ["ANBS"] = "Diablo Immortal",
     ["HERO"] = "Heroes of the Storm",
@@ -498,11 +499,38 @@ function GW.SkinFriendList()
         FriendsFrameBattlenetFrameScrollFrame.CancelButton:GwSkinButton(false, true)
     end
 
-    AddFriendFrame:GwStripTextures()
-    AddFriendFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-    AddFriendEntryFrameAcceptButton:GwSkinButton(false, true)
-    AddFriendEntryFrameCancelButton:GwSkinButton(false, true)
-    GW.SkinTextBox(_G["AddFriendNameEditBoxMiddle"], _G["AddFriendNameEditBoxLeft"], _G["AddFriendNameEditBoxRight"])
+    GW.SkinAddFriendFrame()
     FriendsFrameBattlenetFrame.UnavailableInfoFrame:ClearAllPoints()
     FriendsFrameBattlenetFrame.UnavailableInfoFrame:SetPoint("TOPLEFT", FriendsFrame.gwHeader, "TOPRIGHT", 1, -18)
+end
+
+local function SkinCloseButton(frame)
+    local button = frame.CloseButton
+    if not button then return end
+    button:GwSkinButton(true)
+    button:SetSize(20, 20)
+    button:ClearAllPoints()
+    button:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
+end
+
+-- the add friend window of every social skin; the close and info buttons and the info window came with newer clients
+function GW.SkinAddFriendFrame()
+    AddFriendFrame:GwStripTextures()
+    AddFriendFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    SkinCloseButton(AddFriendFrame)
+    if AddFriendEntryFrameInfoButton then
+        GW.SkinHelpIconButton(AddFriendEntryFrameInfoButton, 24)
+    end
+    if AddFriendInfoFrame then
+        AddFriendInfoFrame:GwStripTextures()
+        AddFriendInfoFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+        SkinCloseButton(AddFriendInfoFrame)
+        if AddFriendInfoFrame.OkayButton then
+            AddFriendInfoFrame.OkayButton:GwSkinButton(false, true)
+        end
+    end
+    AddFriendEntryFrameAcceptButton:GwSkinButton(false, true)
+    AddFriendEntryFrameCancelButton:GwSkinButton(false, true)
+    AddFriendEntryFrameCancelButton:GwSkinNegativeButton()
+    GW.SkinTextBox(_G["AddFriendNameEditBoxMiddle"], _G["AddFriendNameEditBoxLeft"], _G["AddFriendNameEditBoxRight"])
 end
