@@ -45,8 +45,9 @@ end
 -- key, kind and the difficulty shown in the chat ("Normal", "+12")
 local function GetRunKey(instanceMapID)
     if C_ChallengeMode and C_ChallengeMode.IsChallengeModeActive and C_ChallengeMode.IsChallengeModeActive() then
-        local level = C_ChallengeMode.GetActiveKeystoneInfo()
-        return "mplus:" .. C_ChallengeMode.GetActiveChallengeMapID() .. ":" .. level, "mplus", "+" .. level
+       local level = C_ChallengeMode.GetActiveKeystoneInfo and C_ChallengeMode.GetActiveKeystoneInfo() or 0
+        local label = level > 0 and "+" .. level or GetDifficultyInfo(select(3, GetInstanceInfo()))
+        return "mplus:" .. C_ChallengeMode.GetActiveChallengeMapID() .. ":" .. level, "mplus", label
     end
     -- a completed key stays the run until the instance is left
     if run.kind == "mplus" and run.instanceMapID == instanceMapID then
@@ -200,7 +201,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
         local info = C_ChallengeMode.GetChallengeCompletionInfo()
         if info and info.time and info.time > 0 and not info.practiceRun then
             local name = C_ChallengeMode.GetMapUIInfo(info.mapChallengeModeID) or ""
-            Record("total", info.time / 1000, name .. " +" .. info.level, "total")
+            Record("total", info.time / 1000, name .. (info.level > 0 and " +" .. info.level or ""), "total")
         end
     end
 end)

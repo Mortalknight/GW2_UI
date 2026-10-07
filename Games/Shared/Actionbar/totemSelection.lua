@@ -10,7 +10,7 @@ local ARROW_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up.png"
 local holder
 local anchoring = false
 local skinned = {}
-local defaultBorderColor
+local elementBorders = {}
 
 local function GetElementColor(slot)
     local colors = GW.Colors.TotemColors
@@ -19,13 +19,13 @@ local function GetElementColor(slot)
 end
 
 local function SetBorderColor(button, color)
-    local backdrop = skinned[button]
-    if not (backdrop and backdrop ~= true) then
+    local border = elementBorders[button]
+    if not border then
         return
     end
-    local r, g, b, a = (color or defaultBorderColor):GetRGBA()
-    for i = 1, 4 do
-        backdrop["border" .. i]:SetVertexColor(r, g, b, a)
+    border:SetShown(color ~= nil)
+    if color then
+        border:SetBackdropBorderColor(color:GetRGB())
     end
 end
 
@@ -43,10 +43,19 @@ local function SkinButton(button, icon, noBackdrop)
     if button.overlayTex then
         button.overlayTex:SetAlpha(0)
     end
+    -- blizzards template insets the cooldown into the icon, like our action bars it covers the whole button
+    if button.cooldown then
+        button.cooldown:ClearAllPoints()
+        button.cooldown:SetAllPoints(button)
+    end
     button:SetPushedTexture(PUSHED_TEXTURE)
     button:SetHighlightTexture(HIGHLIGHT_TEXTURE)
     if button.SetCheckedTexture then
         button:SetCheckedTexture(HIGHLIGHT_TEXTURE)
+    end
+    -- the action buttons come with atlas textures, their coords would cut a piece out of ours
+    for _, texture in ipairs({button:GetPushedTexture(), button:GetHighlightTexture(), button.GetCheckedTexture and button:GetCheckedTexture()}) do
+        texture:SetTexCoord(0, 1, 0, 1)
     end
 
     skinned[button] = true
@@ -55,20 +64,32 @@ local function SkinButton(button, icon, noBackdrop)
         backdrop:SetPoint("TOPLEFT", -1, 1)
         backdrop:SetPoint("BOTTOMRIGHT", 1, -1)
         backdrop:SetFrameLevel(math.max(button:GetFrameLevel() - 1, 0))
-        defaultBorderColor = defaultBorderColor or CreateColor(backdrop.border1:GetVertexColor())
-        skinned[button] = backdrop
+
+        -- the borders of the backdrop are black art that does not take a color, the element gets a border of its own
+        local border = CreateFrame("Frame", nil, button, "BackdropTemplate")
+        border:SetBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
+        border:SetAllPoints(backdrop)
+        border:SetFrameLevel(button:GetFrameLevel() + 5)
+        border:Hide()
+        elementBorders[button] = border
     end
 end
 
 -- the open and close buttons of the flyout show an arrow of ours instead of blizzards colored one
+-- the hover is the same arrow, added on top
 local function SkinArrowButton(button, rotate)
     button.normalTexture:SetAlpha(0)
     local arrow = button:CreateTexture(nil, "OVERLAY")
     arrow:SetTexture(ARROW_TEXTURE)
-    arrow:SetSize(16, 16)
-    arrow:SetPoint("CENTER")
-    if rotate then
-        arrow:SetRotation(math.pi)
+    button:SetHighlightTexture(ARROW_TEXTURE, "ADD")
+    for _, texture in ipairs({arrow, button:GetHighlightTexture()}) do
+        texture:SetTexCoord(0, 1, 0, 1)
+        texture:ClearAllPoints()
+        texture:SetSize(16, 16)
+        texture:SetPoint("CENTER")
+        if rotate then
+            texture:SetRotation(math.pi)
+        end
     end
 end
 

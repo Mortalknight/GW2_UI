@@ -18,7 +18,8 @@ local function GetGroupInfo(key)
     local kind, mapID, value = strsplit(":", key)
     mapID, value = tonumber(mapID), tonumber(value)
     if kind == "mplus" then
-        return kind, C_ChallengeMode.GetMapUIInfo(mapID) or UNKNOWN, "+" .. value, value
+        local difficulty = value > 0 and "+" .. value or GetDifficultyInfo(DifficultyUtil.ID.DungeonChallenge) or ""
+        return kind, C_ChallengeMode.GetMapUIInfo(mapID) or UNKNOWN, difficulty, value
     end
     return kind, GetRealZoneText(mapID) or UNKNOWN, GetDifficultyInfo(value) or "", value
 end
@@ -183,8 +184,9 @@ end
 local function CreateFilterTabs()
     page.tabs = {}
     local filters = {{false, ALL}, {"raid", RAIDS}, {"party", DUNGEONS}}
-    if C_ChallengeMode and C_ChallengeMode.GetMapUIInfo then
-        tinsert(filters, 2, {"mplus", PLAYER_DIFFICULTY_MYTHIC_PLUS})
+    -- retail has keystones, mists its challenge modes; the other modern clients know the api without either
+    if GW.Retail or GW.Mists then
+        tinsert(filters, 2, {"mplus", GW.Retail and PLAYER_DIFFICULTY_MYTHIC_PLUS or CHALLENGES})
     end
     for i = #filters, 1, -1 do
         local tab = CreateFrame("Button", nil, page)

@@ -1782,6 +1782,9 @@ GW.globalDefault = {
             trade = {
                 enabled = true,
             },
+            stable = {
+                enabled = true,
+            },
             barberShop = {
                 enabled = true,
             },

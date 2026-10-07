@@ -18,6 +18,7 @@
     <Script file="chatConfig.lua"/>
     <Script file="channels.lua"/>
     <Script file="trade.lua"/>
+    <Script file="stable.lua"/>
     <Script file="lfg_popup_frames.lua"/>
     <Script file="mail.lua"/>
     <Script file="merchant.lua"/>
