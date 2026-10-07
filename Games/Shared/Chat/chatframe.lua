@@ -899,8 +899,38 @@ local function UpdateSettings()
 end
 GW.UpdateChatSettings = UpdateSettings
 
+-- blizzard offers only a few chat font sizes; its list must not be replaced, that taints the whole tab menu
+local EXTRA_CHAT_FONT_SIZES = {6, 7, 8, 9, 10, 11, 13, 15, 17, 19}
+local function AddChatFontSizes(owner, rootDescription)
+    local fontSizeMenu
+    for _, description in rootDescription:EnumerateElementDescriptions() do
+        if MenuUtil.GetElementText(description) == FONT_SIZE then
+            fontSizeMenu = description
+            break
+        end
+    end
+    local chatFrame = fontSizeMenu and FCF_GetChatFrameByID(owner:GetID())
+    if not chatFrame then return end
+
+    local _, fontHeight = chatFrame:GetFont()
+    local current = floor(fontHeight + 0.5)
+    local function IsSelected(height) return height == current end
+    local function SetSelected(height) FCF_SetChatWindowFontSize(nil, chatFrame, height) end
+
+    for _, height in ipairs(EXTRA_CHAT_FONT_SIZES) do
+        local index = 1
+        for _, description in fontSizeMenu:EnumerateElementDescriptions() do
+            if (description:GetData() or 0) < height then
+                index = index + 1
+            end
+        end
+        fontSizeMenu:Insert(MenuUtil.CreateRadio(format(FONT_SIZE_TEMPLATE, height), IsSelected, SetSelected, height), index)
+    end
+end
+
 local function LoadChat()
     DelayGuildMOTD()
+    Menu.ModifyMenu("MENU_FCF_TAB", AddChatFontSizes)
 
     if not GW.settings.chat.enabled or GW.ShouldBlockIncompatibleAddon("Chat") then return end
     local eventFrame = CreateFrame("Frame")

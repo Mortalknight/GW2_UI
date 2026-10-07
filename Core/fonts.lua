@@ -92,10 +92,6 @@ local function LoadFonts()
     DAMAGE_TEXT_FONT = addonFontHeader
     STANDARD_TEXT_FONT = normal
 
-    -- default values
-    UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT = 14
-    CHAT_FONT_HEIGHTS = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }
-
     setFont(ChatFontNormal, narrow, nil, nil, 0.75, -0.75, 1)
     setFont(NumberFontNormal, narrow, 14, "", 1.25, -1.25, 1)
     setFont(SystemFont_Tiny, normal)

@@ -114,6 +114,30 @@ local function SkinSubmenuArrow(entry)
     end
 end
 
+-- the boxes of checkbox and radio entries; blizzard draws them from atlases, the modern clients put the tick
+-- on a second texture that only exists while the entry is selected
+local function SkinSelection(frame, selectedTexture, unselectedTexture)
+    local box = frame.leftTexture1
+    if not box then return end
+    local tick = frame.leftTexture2
+    local atlas = box:GetAtlas()
+    local selected = tick ~= nil or (atlas ~= nil and atlas:find("yellow") ~= nil)
+    box:SetTexture(selected and selectedTexture or unselectedTexture)
+    box:SetTexCoord(0, 1, 0, 1)
+    box:SetSize(14, 14)
+    if tick then
+        tick:SetTexture(nil)
+    end
+end
+
+local function SkinCheckbox(_, frame)
+    SkinSelection(frame, "Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png", "Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
+end
+
+local function SkinRadio(_, frame)
+    SkinSelection(frame, "Interface/AddOns/GW2_UI/textures/uistuff/radio-selected.png", "Interface/AddOns/GW2_UI/textures/uistuff/radio-unselected.png")
+end
+
 local function LoadDropDownSkin()
     if not GW.settings.skins.dropdown.enabled then return end
 
@@ -126,5 +150,7 @@ local function LoadDropDownSkin()
         hooksecurefunc(manager, "OpenContextMenu", SkinOpenedMenu)
     end
     hooksecurefunc(MenuVariants, "CreateSubmenuArrow", SkinSubmenuArrow)
+    hooksecurefunc(MenuVariants, "CreateCheckbox", SkinCheckbox)
+    hooksecurefunc(MenuVariants, "CreateRadio", SkinRadio)
 end
 GW.LoadDropDownSkin = LoadDropDownSkin
