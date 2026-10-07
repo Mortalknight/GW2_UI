@@ -5,11 +5,13 @@ local GW = select(2, ...)
 -- Mists (paged PetStableFrame) and Era, TBC and Wrath (the old PetStableFrame with its big art)
 local MENU_BG = "Interface/AddOns/GW2_UI/textures/character/menu-bg.png"
 local MENU_HOVER = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
+local ROW_BG = "Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png"
 local ARROW = "Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png"
 local STATUSBAR = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png"
 local CHECKED = "Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png"
 local HAPPINESS = "Interface/AddOns/GW2_UI/textures/character/pet-happiness.png"
 local PET_BG = "Interface/AddOns/GW2_UI/textures/character/windowbg-pet.png"
+local RENAME = "Interface/AddOns/GW2_UI/textures/uistuff/rename-quill.png"
 local HAPPINESS_SPRITE = {width = 512, height = 128, colums = 4, rows = 1}
 
 local function GetTitle(frame)
@@ -88,32 +90,105 @@ local function SkinCategoryRow(row)
     row.Label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     row.Label:GwLockTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
+    -- blizzard sets the icon before the row reaches us, so the current state is turned once by hand
+    local function SetArrow(icon, atlas)
+        icon:SetTexture(ARROW)
+        icon:SetRotation(atlas and atlas:find("expand") and math.pi / 2 or 0)
+    end
     row.CollapseIcon:SetSize(16, 16)
-    hooksecurefunc(row.CollapseIcon, "SetAtlas", function(self, atlas)
-        self:SetTexture(ARROW)
-        self:SetRotation(atlas and atlas:find("expand") and math.pi / 2 or 0)
-    end)
+    SetArrow(row.CollapseIcon, row.CollapseIcon:GetAtlas())
+    hooksecurefunc(row.CollapseIcon, "SetAtlas", SetArrow)
+end
+
+local specIcons = {}
+local petIcons = {}
+
+-- pet specializations came with wrath, the classic clients have no names for them
+local specIconByName
+local function GetSpecIcon(specialization)
+    if not specIconByName and STABLE_PET_SPEC_CUNNING then
+        specIconByName = {
+            [STABLE_PET_SPEC_CUNNING] = "cunning-icon-small",
+            [STABLE_PET_SPEC_FEROCITY] = "ferocity-icon-small",
+            [STABLE_PET_SPEC_TENACITY] = "tenacity-icon-small",
+        }
+    end
+    return specialization and specIconByName and specIconByName[specialization]
 end
 
 local function SkinPetRow(row)
+    -- blizzards art is larger than the row and overlaps the next one, ours fits the row
     row.Background:SetAlpha(0)
+    row.Selected:ClearAllPoints()
+    row.Selected:SetAllPoints()
+    row.Highlight:ClearAllPoints()
+    row.Highlight:SetAllPoints()
+    local background = row:CreateTexture(nil, "BACKGROUND", nil, -1)
+    background:SetAllPoints()
+    background:SetTexture(ROW_BG)
+    background:SetVertexColor(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
+
+    -- a square portrait like our other lists instead of the round one with its ring, the favorite mark stays
+    row.Portrait.Icon:SetAlpha(0)
+    row.Portrait.Border:SetAlpha(0)
+    local petIcon = row:CreateTexture(nil, "ARTWORK")
+    petIcon:SetSize(40, 40)
+    petIcon:SetPoint("LEFT", 8, 0)
+    GW.HandleIcon(petIcon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
+    petIcon.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
+    petIcons[row] = petIcon
+    row.Portrait.FavoriteIcon:ClearAllPoints()
+    row.Portrait.FavoriteIcon:SetPoint("CENTER", petIcon, "TOPLEFT", 2, -2)
+    row.Portrait.FavoriteIcon:SetSize(24, 24)
+    row.Name:ClearAllPoints()
+    row.Name:SetPoint("BOTTOMLEFT", petIcon, "RIGHT", 10, 1)
+
+    -- blizzards list art carried the specialization, the icon stays on its own
+    local specIcon = row:CreateTexture(nil, "ARTWORK")
+    specIcon:SetSize(24, 24)
+    specIcon:SetPoint("RIGHT", -12, 0)
+    specIcons[row] = specIcon
+
+    row.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    row.Type:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    row.Type:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
+end
+
+-- blizzard sets the selected and hover art for the specialization every time a row is filled
+local function UpdatePetRow(row)
     row.Selected:SetTexture(MENU_HOVER)
     row.Selected:SetVertexColor(GW.Colors.SkinColors.ListSelected:GetRGBA())
     row.Highlight:SetTexture(MENU_HOVER)
     row.Highlight:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
-    row.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    row.Type:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+
+    -- the list is a tree for its categories, the pet data sits in the node
+    local node = row:GetElementData()
+    local data = node and node.GetData and node:GetData() or node
+    -- blizzard renders the portrait round, the square inside the circle is cut out and mirrored like blizzards
+    if data and data.displayID then
+        SetPortraitTextureFromCreatureDisplayID(petIcons[row], data.displayID)
+        petIcons[row]:SetTexCoord(0.85, 0.15, 0.15, 0.85)
+    end
+    local atlas = data and GetSpecIcon(data.specialization)
+    specIcons[row]:SetShown(atlas ~= nil)
+    if atlas then
+        specIcons[row]:SetAtlas(atlas)
+    end
 end
 
 local skinnedRows = {}
 local function SkinRows(scrollBox)
     scrollBox:ForEachFrame(function(row)
-        if skinnedRows[row] then return end
-        skinnedRows[row] = true
-        if row.CollapseIcon then
-            SkinCategoryRow(row)
-        elseif row.Selected then
-            SkinPetRow(row)
+        if not skinnedRows[row] then
+            skinnedRows[row] = row.CollapseIcon and "category" or "pet"
+            if row.CollapseIcon then
+                SkinCategoryRow(row)
+            else
+                SkinPetRow(row)
+            end
+        end
+        if skinnedRows[row] == "pet" then
+            UpdatePetRow(row)
         end
     end)
 end
@@ -138,26 +213,47 @@ local function SkinRetailStable()
     local modelScene = frame.PetModelScene
     modelScene.Inset:SetAlpha(0)
     GW.HandleModelSceneControlFrame(modelScene.ControlFrame)
-    modelScene.PetInfo.Specialization:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+    local petInfo = modelScene.PetInfo
+    petInfo.Specialization:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+    petInfo.NameBox.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader)
+    petInfo.NameBox.Name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    local editButton = petInfo.NameBox.EditButton
+    editButton:SetNormalTexture(RENAME)
+    editButton:SetHighlightTexture(RENAME, "ADD")
+    editButton:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
+    editButton:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
     hooksecurefunc(modelScene.AbilitiesList, "Layout", SkinAbilities)
 
     local list = frame.StabledPetList
     list.Backgroud:Hide()
     SkinInset(list.Inset)
-    list.ListName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader)
+    -- the list title on the left above the list, the counter right next to it
+    list.ListName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     list.ListName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    -- the counter is a small inset of its own, its paw icon stays
-    for _, key in ipairs({"BorderTopLeft", "BorderTopRight", "BorderBottomLeft", "BorderBottomRight", "BorderLeftMiddle", "BorderRightMiddle"}) do
-        list.ListCounter[key]:Hide()
+    list.ListName:SetShadowOffset(0, 0)
+    list.ListName:SetJustifyH("LEFT")
+    list.ListName:SetWidth(0)
+    list.ListName:ClearAllPoints()
+    list.ListName:SetPoint("BOTTOMLEFT", list, "TOPLEFT", 12, 10)
+    -- the counter is a small inset of its own, everything but its paw icon goes
+    for _, region in ipairs({list.ListCounter:GetRegions()}) do
+        if region:GetObjectType() == "Texture" and region:GetAtlas() ~= "paw-icon" then
+            region:SetAlpha(0)
+        end
     end
+    list.ListCounter:ClearAllPoints()
+    list.ListCounter:SetPoint("LEFT", list.ListName, "RIGHT", 12, 0)
     GW.HandleTrimScrollBar(list.ScrollBar)
     GW.HandleScrollControls(list)
     list.ScrollBar:SetHideIfUnscrollable(true)
     hooksecurefunc(list.ScrollBox, "Update", SkinRows)
 
     local filterBar = list.FilterBar
+    -- our dropdown is wider than blizzards, both share the width of the list
     GW.SkinBagSearchBox(filterBar.SearchBox)
-    filterBar.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+    filterBar.SearchBox:SetWidth(160)
+    filterBar.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 100)
+    filterBar.FilterDropdown:SetHeight(filterBar.SearchBox.Middle:GetHeight())
 
     local activeList = frame.ActivePetList
     activeList.ActivePetListBG:SetAlpha(0)
