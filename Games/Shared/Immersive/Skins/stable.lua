@@ -12,10 +12,12 @@ local CHECKED = "Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.p
 local HAPPINESS = "Interface/AddOns/GW2_UI/textures/character/pet-happiness.png"
 local PET_BG = "Interface/AddOns/GW2_UI/textures/character/windowbg-pet.png"
 local RENAME = "Interface/AddOns/GW2_UI/textures/uistuff/rename-quill.png"
+local LOCK = "Interface/AddOns/GW2_UI/textures/talents/spell-lock.png"
 local HAPPINESS_SPRITE = {width = 512, height = 128, colums = 4, rows = 1}
 
+-- blizzard writes the title through GetTitleText, older templates only have the named font string
 local function GetTitle(frame)
-    return frame.TitleContainer and frame.TitleContainer.TitleText or frame.TitleText or _G[frame:GetName() .. "TitleText"]
+    return frame.GetTitleText and frame:GetTitleText() or frame.TitleText or _G[frame:GetName() .. "TitleText"]
 end
 
 -- header with the stable master as portrait, like blizzard the player when there is none
@@ -392,6 +394,23 @@ local function SkinForeverStable()
     PetStableMoneyFrame.Border:SetAlpha(0)
 end
 
+-- our pet art in a frame behind the model, like the pet panel of the hero window
+local function AddPetBackground(model)
+    local background = CreateFrame("Frame", nil, model:GetParent())
+    background:SetPoint("TOPLEFT", model, "TOPLEFT", -1, 1)
+    background:SetPoint("BOTTOMRIGHT", model, "BOTTOMRIGHT", 1, -1)
+    local level = model:GetFrameLevel()
+    background:SetFrameLevel(level)
+    model:SetFrameLevel(level + 1)
+    background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
+    background.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGBA())
+    local texture = background:CreateTexture(nil, "BACKGROUND")
+    texture:SetAllPoints()
+    texture:SetTexture(PET_BG)
+    background:SetScript("OnSizeChanged", function(self) FitPetBackground(texture, self) end)
+    FitPetBackground(texture, background)
+end
+
 local function SkinMistsStable()
     local frame = PetStableFrame
     SkinTemplateWindow(frame)
@@ -401,10 +420,43 @@ local function SkinMistsStable()
     SkinInset(PetStableLeftInset)
     SkinInset(PetStableBottomInset)
     GW.HandleModelSceneControlFrame(PetStableModelScene.ControlFrame)
+    AddPetBackground(PetStableModelScene)
     GW.HandleIcon(PetStableSelectedPetIcon, true)
+    PetStableNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+    PetStableNameText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+
+    -- the diet icon is a piece of blizzards stable art, ours is a food icon in the frame of our icons
+    PetStableDietTexture:SetTexture(132165)
+    GW.HandleIcon(PetStableDietTexture, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
+    PetStableDietTexture.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
 
     SkinSlots("PetStableActivePet")
     SkinSlots("PetStableStabledPet")
+    GW.HandleNextPrevButton(PetStablePrevPageButton, "left")
+    GW.HandleNextPrevButton(PetStableNextPageButton, "right")
+    -- the page text sits between the arrows, blizzards 80px are too narrow for our font
+    PetStableCurrentPage:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    PetStableCurrentPage:SetWordWrap(false)
+    PetStablePrevPageButton:ClearAllPoints()
+    PetStablePrevPageButton:SetPoint("BOTTOMRIGHT", PetStableBottomInset, "BOTTOM", -70, 9)
+    PetStableNextPageButton:ClearAllPoints()
+    PetStableNextPageButton:SetPoint("BOTTOMLEFT", PetStableBottomInset, "BOTTOM", 70, 9)
+
+    -- our lock in the middle of a locked slot instead of blizzards gold one in its corner
+    local i = 1
+    while _G["PetStableActivePet" .. i] do
+        local lock = _G["PetStableActivePet" .. i .. "LockIconIcon"]
+        if lock then
+            lock:SetTexture(LOCK)
+            lock:SetTexCoord(0, 1, 0, 1)
+            lock:SetSize(24, 24)
+            lock:ClearAllPoints()
+            lock:SetPoint("CENTER")
+        end
+        i = i + 1
+    end
+    PetStableActivePetsLabel:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+    PetStableActivePetsLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 end
 
 -- blizzard shows a fixed happy face, ours tells the happiness of the current pet
@@ -417,26 +469,6 @@ local function UpdateClassicHappiness()
         texture:SetTexture(HAPPINESS)
         texture:SetTexCoord(GW.getSprite(HAPPINESS_SPRITE, happiness, 1))
     end
-end
-
--- a framed area with our pet art over the width of the window like on Forever, the model fills it
-local function AddPetBackground(frame, model)
-    local background = CreateFrame("Frame", nil, frame)
-    background:SetPoint("TOPLEFT", frame, "TOPLEFT", 17, -50)
-    background:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -41, 222)
-    local level = model:GetFrameLevel()
-    background:SetFrameLevel(level)
-    model:SetFrameLevel(level + 1)
-    model:ClearAllPoints()
-    model:SetPoint("TOPLEFT", background, "TOPLEFT", 1, -1)
-    model:SetPoint("BOTTOMRIGHT", background, "BOTTOMRIGHT", -1, 1)
-    background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
-    background.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGBA())
-    local texture = background:CreateTexture(nil, "BACKGROUND")
-    texture:SetAllPoints()
-    texture:SetTexture(PET_BG)
-    background:SetScript("OnSizeChanged", function(self) FitPetBackground(texture, self) end)
-    FitPetBackground(texture, background)
 end
 
 -- the old window draws a frame in its art, our window covers what lies inside it
@@ -460,7 +492,11 @@ local function SkinClassicStable()
     -- the button named right sits on the left and turns the model to the left
     GW.HandleClassicRotateButton(PetStableModelRotateRightButton, "left")
     GW.HandleClassicRotateButton(PetStableModelRotateLeftButton, "right")
-    AddPetBackground(frame, PetStableModel)
+    -- the model fills an area over the width of the window like on Forever
+    PetStableModel:ClearAllPoints()
+    PetStableModel:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -51)
+    PetStableModel:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -42, 223)
+    AddPetBackground(PetStableModel)
     -- rotate buttons and happiness in one row inside the frame
     PetStableModelRotateRightButton:ClearAllPoints()
     PetStableModelRotateRightButton:SetPoint("TOPLEFT", PetStableModel, "TOPLEFT", 6, -6)
