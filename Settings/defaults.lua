@@ -550,6 +550,17 @@ GW.globalDefault = {
             containerState = "close",
         },
 
+        totemSelection = {
+            pos = {
+                point = "BOTTOMLEFT",
+                relativePoint = "BOTTOM",
+                xOfs = -373,
+                yOfs = 212,
+                hasMoved = false,
+            },
+            scale = 1,
+        },
+
         totemBar = {
             enabled = true,
             pos = {

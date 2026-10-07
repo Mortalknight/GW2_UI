@@ -839,6 +839,7 @@ local function evPlayerLoginLate()
                 GW.ExtraAB_BossAB_Setup()
             end
         end
+        GW.LoadTotemSelectionBar()
     end
 
     if not GW.isModern then

@@ -2,4 +2,5 @@
     <Script file ="buttonText.lua"/>
     <Script file ="fader.lua"/>
     <Script file ="flyout.lua"/>
+    <Script file ="totemSelection.lua"/>
 </Ui>

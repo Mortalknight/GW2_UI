@@ -13,6 +13,16 @@ function GwTotemBarMixin:UpdateVisibility()
     RegisterStateDriver(self, "visibility", GW.settings.totemBar.enabled and "show" or "hide")
 end
 
+local hookedTotems = {}
+
+local function TotemOnEnter(totem)
+    totem:GetParent():GetParent():LockHighlight()
+end
+
+local function TotemOnLeave(totem)
+    totem:GetParent():GetParent():UnlockHighlight()
+end
+
 -- Blizzard's totem button moves into ours: it stays invisible but keeps its
 -- tooltip and the right click that dismisses the totem. Era has no such button.
 local function ShowTotem(button, slot, totem)
@@ -28,24 +38,35 @@ local function ShowTotem(button, slot, totem)
         button.cooldown:SetCooldown(startTime, duration)
     end
 
-    if totem and totem:GetParent() ~= button.holder then
-        totem:SetParent(button.holder)
-        totem:ClearAllPoints()
-        totem:SetAllPoints(button.holder)
+    if not totem then
+        button:SetShown(duration > 0)
+        return
     end
+
+    if not hookedTotems[totem] then
+        hookedTotems[totem] = true
+        totem:HookScript("OnEnter", TotemOnEnter)
+        totem:HookScript("OnLeave", TotemOnLeave)
+    end
+    if totem:GetParent() ~= button.holder then
+        totem:SetParent(button.holder)
+    end
+    -- Blizzard's pool clears the anchors on every update, also when the button comes back to the same place
+    totem:ClearAllPoints()
+    totem:SetAllPoints(button.holder)
 
     -- totems without a running timer are not worth a button; Blizzard's button
     -- knows that even when the duration is secret
-    if totem then
-        button:SetShown(totem:IsShown())
-    else
-        button:SetShown(duration > 0)
+    button:SetShown(totem:IsShown())
+    if totem:IsMouseOver() then
+        button:LockHighlight()
     end
 end
 
 function GwTotemBarMixin:Update()
     for _, button in ipairs(self.buttons) do
         button.cooldown:Clear()
+        button:UnlockHighlight()
         button:Hide()
     end
 
@@ -99,8 +120,8 @@ end
 
 local function CreateTotemButton(bar, index)
     local button = CreateFrame("Button", nil, bar)
-    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
     button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+    button:EnableMouse(false)
     button:Hide()
 
     local backdrop = CreateFrame("Frame", nil, button, "GwActionButtonBackdropTmpl")

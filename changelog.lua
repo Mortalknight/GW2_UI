@@ -35,6 +35,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Group loot: own loot roll bars with timer, item level and the roll buttons, test them with /gw2 test lootroll]=]},
     {GW.Enum.ChangelogType.feature, [=[Skin for the chat channels window on all clients]=]},
     {GW.Enum.ChangelogType.feature, [=[Skin for the trade window]=]},
+    {GW.Enum.ChangelogType.feature, [=[Shaman totem bar (totem selection) on Forever, Mists, TBC and Wrath: our button look with element colored borders and a mover of its own]=]},
     {GW.Enum.ChangelogType.feature, [=[Inventory: the guild bank in the look of our bank, movable, with the bank tabs on the side panel and the views as tabs in the footer]=]},
     {GW.Enum.ChangelogType.feature, [=[Mail skin now on all clients, attachment slots like our bag slots with quality frames]=]},
     {GW.Enum.ChangelogType.feature, [=[Micro bar: right click on the talent button switches specialization, loot specialization and loadout]=]},

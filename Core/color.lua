@@ -212,3 +212,10 @@ GW.Colors.GemTypeInfoColors = {
 	PunchcardYellow	= CreateColor(0.97, 0.82, 0.29),
 	PunchcardBlue	= CreateColor(0.47, 0.67, 1.00),
 }
+
+GW.Colors.TotemColors = {
+    Earth = CreateColor(0.23, 0.45, 0.13),
+    Fire = CreateColor(0.58, 0.23, 0.10),
+    Water = CreateColor(0.19, 0.48, 0.60),
+    Air = CreateColor(0.42, 0.18, 0.74),
+}
