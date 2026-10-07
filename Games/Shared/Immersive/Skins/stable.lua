@@ -8,12 +8,15 @@ local MENU_HOVER = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
 local ARROW = "Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png"
 local STATUSBAR = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png"
 local CHECKED = "Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png"
+local HAPPINESS = "Interface/AddOns/GW2_UI/textures/character/pet-happiness.png"
+local PET_BG = "Interface/AddOns/GW2_UI/textures/character/windowbg-pet.png"
+local HAPPINESS_SPRITE = {width = 512, height = 128, colums = 4, rows = 1}
 
 local function GetTitle(frame)
     return frame.TitleContainer and frame.TitleContainer.TitleText or frame.TitleText or _G[frame:GetName() .. "TitleText"]
 end
 
--- header with the stable master as portrait
+-- header with the stable master as portrait, like blizzard the player when there is none
 local function SkinWindow(frame, title)
     GW.CreateFrameHeaderWithBody(frame, title, nil, nil, nil, nil, true)
     title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
@@ -22,7 +25,7 @@ local function SkinWindow(frame, title)
     frame.gwHeader.windowIcon:ClearAllPoints()
     frame.gwHeader.windowIcon:SetPoint("CENTER", frame.gwHeader, "BOTTOMLEFT", 30, 19)
     frame:HookScript("OnShow", function(self)
-        GW.SetHeaderPortrait(self.gwHeader, "npc")
+        GW.SetHeaderPortrait(self.gwHeader, UnitExists("npc") and "npc" or "player")
     end)
 end
 
@@ -48,6 +51,8 @@ end
 
 local function SkinSlot(button)
     GW.HandleItemButton(button, true)
+    button.backdrop:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+    button.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
     -- mists marks the selected pet with a texture of its own
     if button.Checked then
         button.Checked:SetTexture(CHECKED)
@@ -161,19 +166,122 @@ local function SkinRetailStable()
     activeList.ListName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 end
 
+-- the art fills the upper 72% of its texture; cut to the shape of the model area, the forest on the right stays
+local PET_BG_HEIGHT = 0.72
+local function FitPetBackground(modelScene)
+    local width, height = modelScene:GetSize()
+    if height <= 0 then return end
+    local ratio = width / height
+    local texWidth = math.min(1, PET_BG_HEIGHT * ratio)
+    modelScene.Background:SetTexCoord(1 - texWidth, 1, 0, texWidth / ratio)
+end
+
+-- our happiness icons, the same as on the pet frame
+local function UpdateHappinessIcon(diet)
+    local happiness = diet.GetHappinessStats and diet:GetHappinessStats()
+    if happiness and diet.Texture then
+        diet.Texture:SetTexture(HAPPINESS)
+        diet.Texture:SetTexCoord(GW.getSprite(HAPPINESS_SPRITE, happiness, 1))
+    end
+end
+
+-- coin texts in our font and money colors
+local function SkinMoneyFrame(money)
+    local name = money:GetName()
+    for _, coin in ipairs({"Gold", "Silver", "Copper"}) do
+        local text = _G[name .. coin .. "ButtonText"]
+        if text then
+            GW.StyleMoneyText(text, coin)
+        end
+    end
+end
+
+-- a small square badge like the happiness icon instead of the boss ring
+local function SkinLoyaltyLevel(loyalty, anchor)
+    for _, region in ipairs({loyalty:GetRegions()}) do
+        if region:GetObjectType() == "Texture" then
+            region:SetAlpha(0)
+        end
+    end
+    loyalty:SetSize(anchor:GetHeight(), anchor:GetHeight())
+    loyalty:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+    loyalty.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
+    loyalty.levelText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    loyalty.levelText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    loyalty:ClearAllPoints()
+    loyalty:SetPoint("TOPLEFT", anchor, "TOPRIGHT", 6, 0)
+end
+
+local function SetLabelColor(text)
+    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+end
+
+-- the labels above the slots are font strings of the first two slots
+local function SkinSlotLabels(button)
+    for _, region in ipairs({button:GetRegions()}) do
+        if region:GetObjectType() == "FontString" then
+            SetLabelColor(region)
+        end
+    end
+end
+
 local function SkinForeverStable()
     local frame = PetStableFrame
-    SkinTemplateWindow(frame)
-    frame.purchaseButton:GwSkinButton(false, true)
+    GW.HandlePortraitFrame(frame)
+    GW.HandlePortraitFrameArt(frame)
+    frame.TitleContainer:Hide()
 
+    -- name, level and loyalty of the pet go into the header, the loyalty level right of them
+    SkinWindow(frame, PetStableLevelText)
+    local header = frame.gwHeader
+    PetStableLevelText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+    PetStableLevelText:ClearAllPoints()
+    PetStableLevelText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 20)
+    PetStableLoyaltyText:SetParent(header)
+    PetStableLoyaltyText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    PetStableLoyaltyText:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
+    PetStableLoyaltyText:ClearAllPoints()
+    PetStableLoyaltyText:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 64, 17)
+
+    -- forever pets have no specialization, so blizzard shows no art of its own; ours from the pet panel of the hero window
     local modelScene = frame.modelScene
     modelScene.Inset:SetAlpha(0)
+    modelScene.Background:SetTexture(PET_BG)
+    modelScene.Background:SetAlpha(1)
+    -- blizzard keeps room above the model for the title, that now sits in the header
+    modelScene:ClearAllPoints()
+    modelScene:SetPoint("TOPLEFT", frame, "TOPLEFT", 7, -42)
+    modelScene:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 140)
+    modelScene:HookScript("OnSizeChanged", FitPetBackground)
+    FitPetBackground(modelScene)
     GW.HandleModelSceneControlFrame(modelScene.ControlFrame)
+    -- the happiness icon moved between builds, on the window or on the model
+    local diet = frame.diet or modelScene.diet
+    if diet and diet.UpdateHappiness then
+        hooksecurefunc(diet, "UpdateHappiness", UpdateHappinessIcon)
+        UpdateHappinessIcon(diet)
+        -- both values of the pet together in the corner of the model
+        SkinLoyaltyLevel(frame.loyaltyLevel, diet)
+        frame.loyaltyLevel:SetFrameLevel(diet:GetFrameLevel())
+    end
     SkinStatusBar(frame.expBar.StatusBar)
     frame.expBar.overlay:GwStripTextures()
 
     SkinSlot(PetStableCurrentPet)
     SkinSlots("PetStableStabledPet")
+    SkinSlotLabels(PetStableCurrentPet)
+    SkinSlotLabels(PetStableStabledPet1)
+    PetStableCostLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    PetStableCostLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    PetStableCostMoneyFrame:ClearAllPoints()
+    PetStableCostMoneyFrame:SetPoint("LEFT", PetStableCostLabel, "RIGHT", 6, 0)
+    SkinMoneyFrame(PetStableCostMoneyFrame)
+    SkinMoneyFrame(PetStableMoneyFrame)
+
+    frame.purchaseButton:GwSkinButton(false, true)
+    frame.purchaseButton:ClearAllPoints()
+    frame.purchaseButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 30)
     PetStableMoneyFrame.Border:SetAlpha(0)
 end
 
