@@ -485,7 +485,7 @@ function GwQuestLogMixin:BlockOnClick(button)
                 end
             end
 
-            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() QuestLogFrame:Show()
+            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() ShowUIPanel(QuestLogFrame)
                 QuestLog_SetSelection(self.questLogIndex)
                 QuestLog_Update()
             end)
@@ -534,7 +534,7 @@ function GwQuestLogMixin:BlockOnClick(button)
             ShowQuestComplete(self.questLogIndex)
             WatchFrameAutoQuest_ClearPopUp(self.questID)
         else
-            QuestLogFrame:Show()
+            ShowUIPanel(QuestLogFrame)
             QuestLog_SetSelection(self.questLogIndex)
             QuestLog_Update()
         end

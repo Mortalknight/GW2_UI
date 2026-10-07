@@ -488,7 +488,7 @@ function GwQuestLogMixin:BlockOnClick(button)
 
             rootDescription:CreateButton(COMMUNITIES_INVITE_MANAGER_LINK_TO_CHAT, function() LinkQuestIntoChat(self.title, self.questID) end)
             rootDescription:CreateButton(GW.L["Wowhead URL"], function() StaticPopup_Show("QUESTIE_WOWHEAD_URL", self.questID, self.title) end)
-            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() QuestLogFrame:Show()
+            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() ShowUIPanel(QuestLogFrame)
                 QuestLog_SetSelection(self.questLogIndex)
                 QuestLog_Update()
             end)
@@ -527,9 +527,9 @@ function GwQuestLogMixin:BlockOnClick(button)
     if button ~= "RightButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         if QuestLogFrame:IsShown() and QuestLogFrame.selectedButtonID == self.questLogIndex then
-            QuestLogFrame:Hide()
+            HideUIPanel(QuestLogFrame)
         else
-            QuestLogFrame:Show()
+            ShowUIPanel(QuestLogFrame)
             QuestLog_SetSelection(self.questLogIndex)
             QuestLog_Update()
         end

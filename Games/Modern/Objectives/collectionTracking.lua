@@ -206,7 +206,7 @@ function GwObjectivesCollectionContainerMixin:BlockOnClick(button)
                     AchievementFrame_LoadUI()
                 end
                 AchievementFrame_ToggleAchievementFrame()
-                AchievementFrame_SelectAchievement(targetID)
+                AchievementFrame_SelectAchievement(self.targetID)
             elseif self.targetType == Enum.ContentTrackingTargetType.Profession then
                 AdventureObjectiveTrackerMixin:ClickProfessionTarget(self.targetID)
             else
