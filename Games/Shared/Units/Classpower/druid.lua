@@ -5,6 +5,10 @@ local CP = GW.ClassPowers
 -- DRUID (combo/mana per form, eclipse on Mists)
 if GW.myClassID ~= GW.Enum.ClassIndex.Druid then return end
 
+-- forever only knows the newer names
+local CAT = CAT_FORM or DRUID_CAT_FORM
+local BEAR = BEAR_FORM or DRUID_BEAR_FORM
+
 local function powerEclipsOnUpdate(self)
     local pwrMax = UnitPowerMax(self.unit, Enum.PowerType.Balance)
     local pwr = UnitPower(self.unit, Enum.PowerType.Balance)
@@ -140,12 +144,17 @@ local function setDruid(f)
         elseif form == MOONKIN_FORM then           --Moonkin
             barType = "eclips"
         end
-    elseif GW.Classic or GW.TBC or GW.Wrath then
-        if form == CAT_FORM then                   -- cat
+    elseif GW.Classic or GW.TBC or GW.Wrath or GW.Forever then
+        if form == CAT then                   -- cat
             barType = "combo|little_mana"
-        elseif form == BEAR_FORM or form == 8 then --bear
+        elseif form == BEAR or form == 8 then --bear
             barType = "little_mana"
         end
+    end
+
+    -- the target frame shows the combo points then
+    if barType == "combo|little_mana" and GW.settings.unitframes.target.hookComboPoints then
+        barType = "little_mana"
     end
 
     if barType == "combo" then

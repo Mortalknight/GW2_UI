@@ -4,10 +4,15 @@ local GW = select(2, ...)
 local comboBar
 
 local function ComboFrame_Update(self)
-    if not self.maxComboPoints then
-		-- This can happen if we are showing combo points on the player frame (which doesn't use ComboFrame) and we exit a vehicle.
-		return
-	end
+    -- druids only have a max in cat form, it changes without an event of its own
+    local maxComboPoints = UnitPowerMax(self.unit, Enum.PowerType.ComboPoints)
+    if maxComboPoints ~= self.maxComboPoints then
+        self.maxComboPoints = maxComboPoints
+        for i = 1, 9 do
+            self["runeTex" .. i]:SetShown(i <= maxComboPoints)
+            self["combo" .. i]:Hide()
+        end
+    end
 
     local comboPoints = GetComboPoints(self.unit, "target")
 
@@ -77,18 +82,6 @@ local function ComboFrame_Update(self)
     end
 end
 
-local function ComboFrame_UpdateMax(self)
-	self.maxComboPoints = UnitPowerMax(self.unit, Enum.PowerType.ComboPoints)
-
-	-- First hide all combo points
-	for i = 1, 9 do
-        self["runeTex" .. i]:SetShown(i <= self.maxComboPoints)
-        self["combo" .. i]:Hide()
-    end
-
-	ComboFrame_Update(self)
-end
-
 local function ToggleComboEvents(self, enable)
     if enable then
         self:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -112,21 +105,21 @@ local function comboBarOnEvent(self, event, ...)
 			ComboFrame_Update(self)
 		end
 	elseif event == "UNIT_MAXPOWER" or event == "PLAYER_ENTERING_WORLD" then
-		ComboFrame_UpdateMax(self)
+		ComboFrame_Update(self)
 	elseif event == "UNIT_ENTERED_VEHICLE" then
         if not GW.settings.unitframes.target.hookComboPoints then
             ToggleComboEvents(self, true)
         end
 
 		self.unit = "vehicle"
-		ComboFrame_UpdateMax(self)
+		ComboFrame_Update(self)
     elseif event == "UNIT_EXITED_VEHICLE" then
         if not GW.settings.unitframes.target.hookComboPoints then
             ToggleComboEvents(self, false)
         end
 
 		self.unit = "player"
-		ComboFrame_UpdateMax(self)
+		ComboFrame_Update(self)
 	end
 end
 
@@ -156,7 +149,7 @@ local function UpdateSettings(targetFrame)
     if GW.settings.unitframes.target.hookComboPoints then
         ToggleComboEvents(comboBar, true)
 
-        ComboFrame_UpdateMax(comboBar)
+        ComboFrame_Update(comboBar)
     else
         -- only check vehicle stuff
         comboBar:Hide()
