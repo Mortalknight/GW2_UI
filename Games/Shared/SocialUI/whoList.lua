@@ -82,22 +82,7 @@ function GW.SkinSocialUIWhoList()
         GW.HandleScrollFrameHeaderButton(frame)
     end
 
-    WhoFrameDropdown:GwStripTextures()
-    WhoFrameDropdown.Arrow:ClearAllPoints()
-    WhoFrameDropdown.Arrow:SetPoint("RIGHT", WhoFrameDropdown, "RIGHT", -5, -3)
-    WhoFrameDropdown.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    WhoFrameDropdown.Text:SetShadowOffset(0, 0)
-    WhoFrameDropdown.Text:SetTextColor(1, 1, 1)
-    WhoFrameDropdown.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
-    WhoFrameDropdown:HookScript("OnClick", function(self)
-        self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
-    end)
-    WhoFrameDropdown:HookScript("OnMouseDown", function(self)
-        self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
-    end)
-    if WhoFrameDropdown.Background then
-        WhoFrameDropdown.Background:Hide()
-    end
+    GW.SkinWhoFrameDropdown()
 
     WhoFrameColumnHeader1:SetPoint("BOTTOMLEFT", WhoFrameListInset, "TOPLEFT", 5, 0)
     WhoFrameWhoButton:GwSkinButton(false, true)

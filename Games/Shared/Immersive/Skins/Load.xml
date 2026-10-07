@@ -28,6 +28,7 @@
     <Script file="addonManager.lua"/>
     <Script file="inspectFrame.lua"/>
     <Script file="dressUpFrameClassic.lua"/>
+    <Script file="classTrainerClassic.lua"/>
     <Script file="questTimers.lua"/>
     <Script file="flightmapClassic.lua"/>
     <Script file="macro.lua"/>

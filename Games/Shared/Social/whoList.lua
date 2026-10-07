@@ -12,6 +12,33 @@ local function ReskinWhoFrameButton(button)
     end
 end
 
+function GW.SkinWhoFrameDropdown()
+    -- blizzard lets the dropdown hang out of the header on the left
+    local dropdown = WhoFrameDropdown
+    dropdown:GwStripTextures()
+    dropdown:ClearAllPoints()
+    dropdown:SetPoint("TOPLEFT", WhoFrameColumnHeader2, "TOPLEFT", 0, 0)
+    dropdown:SetPoint("BOTTOMRIGHT", WhoFrameColumnHeader2, "BOTTOMRIGHT", -5, 0)
+    dropdown.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    dropdown.Text:SetShadowOffset(0, 0)
+    dropdown.Text:SetTextColor(1, 1, 1)
+    dropdown.Text:SetJustifyH("LEFT")
+    dropdown.Text:ClearAllPoints()
+    dropdown.Text:SetPoint("LEFT", dropdown, "LEFT", 8, 0)
+    dropdown.Text:SetPoint("RIGHT", dropdown.Arrow, "LEFT", -2, 0)
+    local function SkinArrow()
+        dropdown.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
+        dropdown.Arrow:SetSize(16, 16)
+        dropdown.Arrow:ClearAllPoints()
+        dropdown.Arrow:SetPoint("RIGHT", dropdown, "RIGHT", -5, 0)
+    end
+    SkinArrow()
+    hooksecurefunc(dropdown, "OnButtonStateChanged", SkinArrow)
+    if dropdown.Background then
+        dropdown.Background:Hide()
+    end
+end
+
 function GW.SkinWhoList()
     if GW.Forever then return end
     WhoFrameTotals:SetTextColor(1, 1, 1)
@@ -57,6 +84,12 @@ function GW.SkinWhoList()
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
                 c:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+                -- the button sets its own font again when its state changes
+                local fontObject = c:GetFontObject()
+                if fontObject then
+                    frame:SetNormalFontObject(fontObject)
+                    frame:SetHighlightFontObject(fontObject)
+                end
             end
         end
     end
@@ -65,22 +98,7 @@ function GW.SkinWhoList()
         GW.HandleScrollFrameHeaderButton(object)
     end
 
-    WhoFrameDropdown:GwStripTextures()
-    WhoFrameDropdown.Arrow:ClearAllPoints()
-    WhoFrameDropdown.Arrow:SetPoint("RIGHT", WhoFrameDropdown, "RIGHT", -5, -3)
-    WhoFrameDropdown.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    WhoFrameDropdown.Text:SetShadowOffset(0, 0)
-    WhoFrameDropdown.Text:SetTextColor(1, 1, 1)
-    WhoFrameDropdown.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
-    WhoFrameDropdown:HookScript("OnClick", function(self)
-        self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
-    end)
-    WhoFrameDropdown:HookScript("OnMouseDown", function(self)
-        self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
-    end)
-    if WhoFrameDropdown.Background then
-        WhoFrameDropdown.Background:Hide()
-    end
+    GW.SkinWhoFrameDropdown()
 
     WhoFrameColumnHeader1:SetPoint("BOTTOMLEFT", WhoFrameListInset, "TOPLEFT", 5, 0)
     WhoFrameWhoButton:GwSkinButton(false, true)

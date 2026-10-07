@@ -174,12 +174,15 @@ function GwDodgeBarMixin:UpdateRetailFill()
 end
 --- end
 
-function GwDodgeBarMixin:OnFinished()
+function GwDodgeBarMixin:OnFinished(refilled)
     -- on finishing refill, unregister any event notifications until next spellcast
     -- also force bar to "full" state just in case weirdness happened somewhere
     self:UnregisterEvent("SPELL_UPDATE_CHARGES")
     self:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
-    FrameFlash(self.arcfill.spark, 0.2)
+    -- only a bar that just filled up flashes, the setup runs on many spell and form events
+    if refilled then
+        FrameFlash(self.arcfill.spark, 0.2)
+    end
     self.arcfill.fill:SetRotation(FULL_IN_RAD)
 
     if self.cooldownText then
@@ -192,8 +195,9 @@ function GwDodgeBarMixin:UpdateAnim(start, duration, charges, maxCharges)
     local af = self.arcfill
     local ag = af.gwAnimGroup
     if charges == maxCharges then
-        if ag:IsPlaying() then ag:Stop() end
-        self:OnFinished()
+        local refilled = ag:IsPlaying()
+        if refilled then ag:Stop() end
+        self:OnFinished(refilled)
         return
     end
 
@@ -735,6 +739,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
         local a2 = ag:CreateAnimation("rotation")
         a1:SetOrder(1)
         a2:SetOrder(2)
+        ag:SetScript("OnFinished", function() fmdb:OnFinished(true) end)
         af.gwAnimGroup = ag
         af.gwAnimDrain = a1
         af.gwAnimFill = a2

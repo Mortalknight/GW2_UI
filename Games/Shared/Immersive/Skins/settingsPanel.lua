@@ -168,9 +168,18 @@ local function SkinDropdownControl(control)
         dropdown:GwHandleDropDownBox(nil, nil, nil, dropdown:GetWidth())
         if dropdown.Background then dropdown.Background:SetAlpha(0) end
         if dropdown.Arrow then dropdown.Arrow:SetAlpha(0) end
+        local function AnchorText(self)
+            self.Text:ClearAllPoints()
+            self.Text:SetPoint("LEFT", 13, 0)
+            self.Text:SetPoint("RIGHT", -20, 0)
+        end
+        AnchorText(dropdown)
         hooksecurefunc(dropdown, "OnButtonStateChanged", function(self)
             if self:IsEnabled() then
                 self.Text:SetTextColor(unpack(DROPDOWN_TEXT_COLOR))
+            end
+            if not (self.IsDown and self:IsDown()) then
+                AnchorText(self)
             end
         end)
     end
@@ -265,6 +274,11 @@ local function SkinBindingButton(button)
     if text then
         text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+        local fontObject = text:GetFontObject()
+        if fontObject then
+            button:SetNormalFontObject(fontObject)
+            button:SetHighlightFontObject(fontObject)
+        end
     end
     if button.SetSelected then
         hooksecurefunc(button, "SetSelected", function(self, selected)

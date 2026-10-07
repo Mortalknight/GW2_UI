@@ -209,6 +209,7 @@ local function HookCollapseTexture(button)
         normal:SetSize(16, 16)
     end
 end
+GW.HookClassicCollapseTexture = HookCollapseTexture
 
 -- era and tbc have fixed rows, wrath and mists the buttons of their hybrid list
 local skinnedTitles = {}
