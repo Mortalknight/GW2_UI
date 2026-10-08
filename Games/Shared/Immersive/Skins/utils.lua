@@ -447,10 +447,12 @@ local function HandleTrimScrollBar(bar)
             thumb[piece]:Hide()
         end
         thumb:DisableDrawLayer("BACKGROUND")
+        -- blizzards scroll code reads the thumb size, set by us it would taint it; only our texture gets the width
         thumb.gwTex = thumb:CreateTexture(nil, "ARTWORK")
         thumb.gwTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
-        thumb.gwTex:SetAllPoints(thumb)
-        thumb:SetWidth(12)
+        thumb.gwTex:SetPoint("TOPLEFT")
+        thumb.gwTex:SetPoint("BOTTOMLEFT")
+        thumb.gwTex:SetWidth(12)
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
@@ -460,7 +462,7 @@ function GW.SkinSlimScrollBar(scrollBar)
     scrollBar:SetHideIfUnscrollable(true)
     scrollBar:SetWidth(6)
     local thumb = scrollBar:GetThumb()
-    thumb:SetWidth(4)
+    thumb.gwTex:SetWidth(4)
     thumb.gwTex:SetVertexColor(1, 1, 1, 0.45)
 end
 

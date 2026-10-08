@@ -501,7 +501,7 @@ local function SkinCraftingPage(page)
     GW.HandleTrimScrollBar(list.ScrollBar)
     GW.HandleScrollControls(list)
     list.ScrollBar:SetWidth(4)
-    list.ScrollBar:GetThumb():SetWidth(4)
+    list.ScrollBar:GetThumb().gwTex:SetWidth(4)
     hooksecurefunc(list.ScrollBox, "Update", UpdateRecipeListSkins)
     -- own updater frame, HookScript installs nothing on a frame without an OnUpdate handler
     local hoverUpdater = CreateFrame("Frame", nil, list.ScrollBox)
