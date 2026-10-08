@@ -1,5 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file ="EditMode.lua"/>
     <Script file ="raidMarkerCircle.lua"/>
     <Script file ="worldmapCoords.lua"/>
     <Script file ="extendVendor.lua"/>

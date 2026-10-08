@@ -1726,6 +1726,27 @@ local function AddGw2Layout(init)
 end
 GW.AddGw2Layout = AddGw2Layout
 
+-- applies our layout once on load, AddGw2Layout waits for the lib itself; the edit mode stays with
+-- blizzard, our code there would only taint it
+local function ApplyEditModeLayout()
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("GwApplyEditModeLayout", ApplyEditModeLayout)
+        return
+    end
+    AddGw2Layout(true)
+
+    if MirrorTimerContainer then
+        MirrorTimerContainer:Show()
+    end
+end
+
+local function LoadEditModeLayout()
+    if GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.IsGamepadInterface() then
+        C_Timer.After(0, ApplyEditModeLayout)
+    end
+end
+GW.LoadEditModeLayout = LoadEditModeLayout
+
 local function MakeActionbuttonsVisible()
     if not GW.Libs.LEMO:IsReady() then
         GW.Notice("LEMO not ready, cannot make action buttons visible")

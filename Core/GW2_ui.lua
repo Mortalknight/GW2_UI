@@ -848,7 +848,7 @@ local function evPlayerLoginLate()
     if not GW.isModern then
         GW.SecureGameMenuLogoutButtons()
     end
-    GW.HandleBlizzardEditMode()
+    GW.LoadEditModeLayout()
 
     -- scale the frames created in this stage too
     GW.UpdateHudScale()
