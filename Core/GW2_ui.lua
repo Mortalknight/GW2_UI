@@ -846,7 +846,7 @@ local function evPlayerLoginLate()
     end
 
     if not GW.isModern then
-        GW.SecureGameMenuLogoutButtons()
+        --GW.SecureGameMenuLogoutButtons()
     end
     GW.LoadEditModeLayout()
 

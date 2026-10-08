@@ -217,6 +217,10 @@ local function StoreGameMenuButton()
 end
 GW.StoreGameMenuButton = StoreGameMenuButton
 
+-- Our layout apply taints what the game menu reads while wiring its buttons, so logout and exit get secure
+-- /logout and /quit overlays. Those stay out of the game menu and leave its buttons before a fight: a
+-- protected frame inside or anchored to it would lock the menu layout in combat. In combat the two buttons
+-- are blizzards own again.
 local function SecureGameMenuLogoutButtons()
     local overlays = {}
 
@@ -225,7 +229,7 @@ local function SecureGameMenuLogoutButtons()
             return overlays[key]
         end
 
-        local overlay = CreateFrame("Button", "GwGameMenuSecure" .. key .. "Button", GameMenuFrame, "SecureActionButtonTemplate")
+        local overlay = CreateFrame("Button", "GwGameMenuSecure" .. key .. "Button", UIParent, "SecureActionButtonTemplate")
         overlay:SetAttribute("type", "macro")
         overlay:SetAttribute("macrotext", macroText)
         overlay:RegisterForClicks("AnyUp", "AnyDown") -- the secure handler picks the one matching the ActionButtonUseKeyDown cvar
@@ -256,13 +260,21 @@ local function SecureGameMenuLogoutButtons()
         return overlay
     end
 
-    hooksecurefunc(GameMenuFrame, "InitButtons", function(self)
-        if not self.buttonPool or InCombatLockdown() then -- secure frames can not be moved in combat, overlays keep their last position
+    local function ReleaseOverlays()
+        for _, overlay in pairs(overlays) do
+            overlay:Hide()
+            overlay:ClearAllPoints()
+            overlay.menuButton = nil
+        end
+    end
+
+    local function PlaceOverlays(menu)
+        if not menu.buttonPool or InCombatLockdown() then
             return
         end
 
-        local logoutText = self.GetLogoutText and self:GetLogoutText() or LOGOUT
-        for button in self.buttonPool:EnumerateActive() do
+        local logoutText = menu.GetLogoutText and menu:GetLogoutText() or LOGOUT
+        for button in menu.buttonPool:EnumerateActive() do
             local text = button:GetText()
             local overlay
             if text == logoutText then
@@ -275,9 +287,29 @@ local function SecureGameMenuLogoutButtons()
                 overlay.menuButton = button
                 overlay:ClearAllPoints()
                 overlay:SetAllPoints(button)
+                overlay:SetFrameStrata(menu:GetFrameStrata())
                 overlay:SetFrameLevel(button:GetFrameLevel() + 1)
                 overlay:SetShown(button:IsEnabled())
             end
+        end
+    end
+
+    hooksecurefunc(GameMenuFrame, "InitButtons", PlaceOverlays)
+    GameMenuFrame:HookScript("OnHide", function()
+        if not InCombatLockdown() then
+            ReleaseOverlays()
+        end
+    end)
+
+    -- the regen disabled event still allows it, the overlays leave the menu before the lockdown
+    local combatWatcher = CreateFrame("Frame")
+    combatWatcher:RegisterEvent("PLAYER_REGEN_DISABLED")
+    combatWatcher:RegisterEvent("PLAYER_REGEN_ENABLED")
+    combatWatcher:SetScript("OnEvent", function(_, event)
+        if event == "PLAYER_REGEN_DISABLED" then
+            ReleaseOverlays()
+        elseif GameMenuFrame:IsShown() then
+            PlaceOverlays(GameMenuFrame)
         end
     end)
 end
