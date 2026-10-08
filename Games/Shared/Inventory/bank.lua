@@ -6,14 +6,6 @@ local inv
 
 local GetInventorySlotInfo = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlotInfo or GetInventorySlotInfo
 
-local function openAllBankBags()
-    for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-        if not IsBagOpen(i) then
-            OpenBag(i)
-        end
-    end
-end
-
 -- sets the bank header names in separate bags mode: custom name, bag item name or the bank default
 local function setBankHeaders(frame)
     for i = 1, NUM_BANKBAGSLOTS do
@@ -215,14 +207,9 @@ end
 
 
 local function bag_OnClick(self, button)
-    -- on left click, test if this is a purchase slot and do purchase confirm,
-    -- otherwise ensure that the bag stays open despite default toggle behavior
+    -- on left click, test if this is a purchase slot and do purchase confirm
     if button == "LeftButton" then
-        if self.gwHasBag then
-            if not IsBagOpen(self:GetBagID()) then
-                OpenBag(self:GetBagID())
-            end
-        elseif self.tooltipText == BANK_BAG_PURCHASE then
+        if not self.gwHasBag and self.tooltipText == BANK_BAG_PURCHASE then
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
             -- the confirm dialogs money frame reads BankFrame.nextSlotCost, which
             -- Blizzards (now inert) bank frame no longer maintains — set it here
@@ -310,9 +297,6 @@ local function updateBagBar(f)
         b.icon:SetDesaturated(false)
         if bag_tex ~= nil then
             b.gwHasBag = true
-            if not IsBagOpen(bag_id) then
-                OpenBag(bag_id) -- default open valid bank bags immediately
-            end
             b.icon:SetTexture(bag_tex)
             if IsInventoryItemLocked(inv_id) then
                 b.icon:SetDesaturated(true)
@@ -376,7 +360,8 @@ local function bank_OnShow(self)
     self:RegisterEvent("BAG_UPDATE_COOLDOWN")
     self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
 
-    OpenAllBags(self)
+    -- blizzards inert bank frame no longer opens the bags with the bank
+    GwBagFrame:Show()
     updateBagBar(self.ItemFrame)
     rescanBankContainers(self)
 end
@@ -400,7 +385,6 @@ local function bank_OnEvent(self, event, ...)
         local slot = select(1, ...)
         if slot > NUM_BANKGENERIC_SLOTS then
             -- a bank bag was un/equipped
-            openAllBankBags()
             updateBagBar(self.ItemFrame)
             rescanBankContainers(self)
         else
@@ -603,25 +587,6 @@ local function LoadBank(helpers)
         cf.shouldShow = true
         f.ItemFrame.Containers[bag_id] = cf
     end
-
-    -- anytime a ContainerFrame is populated with a bank bagId, we rescan our buttons
-    hooksecurefunc("ContainerFrame_GenerateFrame", function(_, _, id)
-        if id > NUM_BAG_SLOTS and id <= NUM_BAG_SLOTS + NUM_BANKBAGSLOTS then
-            rescanBankContainers(f)
-        end
-    end)
-
-    -- don't let anyone close bank bags while the bank is open
-    hooksecurefunc("ToggleAllBags", function()
-        if GwBankFrame:IsShown() then
-            openAllBankBags()
-        end
-    end)
-    hooksecurefunc("ToggleBackpack", function()
-        if GwBankFrame:IsShown() then
-            openAllBankBags()
-        end
-    end)
 
     -- create our bank bag slots
     createBagBar(f.ItemFrame)

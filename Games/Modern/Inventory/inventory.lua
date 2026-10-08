@@ -220,18 +220,15 @@ local function bag_OnMouseDown(self, button)
 
     local bag_id = self:GetBagID()
     if self.gwHasBag or bag_id == BACKPACK_CONTAINER then
-        local cf = GW.GetBagContainerFrame(bag_id)
-        if cf then
-            MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-                rootDescription:SetMinimumWidth(1)
-                if not (ContainerFrame_IsHeldBag(bag_id) or ContainerFrame_IsBankTab(bag_id)) then
-                    return
-                end
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:SetMinimumWidth(1)
+            if not (ContainerFrame_IsHeldBag(bag_id) or ContainerFrame_IsBankTab(bag_id)) then
+                return
+            end
 
-                AddButtons_BagFilters(rootDescription, bag_id);
-                AddButtons_BagCleanup(rootDescription, bag_id);
-            end)
-        end
+            AddButtons_BagFilters(rootDescription, bag_id);
+            AddButtons_BagCleanup(rootDescription, bag_id);
+        end)
     end
 end
 

@@ -223,7 +223,6 @@ local function OnShow(self)
     BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
     BankPanel.AutoSortButton:Hide()
 
-    OpenAllBags(self.BankPanel)
     self.BankPanel:FetchPurchasedBankTabData()
     UpdateBankItemButtons(self.BankPanel)
     RefreshBankTabs(self.BankPanel)
@@ -237,7 +236,6 @@ local function OnHide(self)
     self:UnregisterAllEvents()
     self:RegisterEvent("BANKFRAME_OPENED")
     self:RegisterEvent("BANKFRAME_CLOSED")
-    CloseAllBags(self.BankPanel)
     C_Bank.CloseBankFrame()
 end
 

@@ -243,21 +243,6 @@ local function updateItemVisuals(b, overrideIconSize)
 end
 GW.UpdateBagItemButtonVisuals = updateItemVisuals
 
-local function getContainerFrame(bag_id)
-    -- ContainerFrame assignment is not guaranteed; only safe approach is to
-    -- search every ContainerFrame and check its ID for a match.
-    for i = 1, NUM_CONTAINER_FRAMES do
-        local cf = _G["ContainerFrame" .. i]
-        if cf and cf:GetID() == bag_id then
-            return cf
-        end
-    end
-
-    return nil
-end
--- flavor files need this at file scope, where the helpers table does not exist yet
-GW.GetBagContainerFrame = getContainerFrame
-
 
 local function reskinItemButtons()
     -- our own bag and bank item buttons with their separate size settings; hidden ones only
@@ -280,18 +265,29 @@ end
 
 
 -- makes a blizzard frame inert: no scripts, no events, no points - blizzards code can
--- still show/hide it (IsBagOpen stays truthful since it only checks frame visibility),
--- but the frame never renders or updates anything
-local function disableBlizzardFrame(frame, noRight)
+-- still show/hide it, but the frame never renders or updates anything
+local function disableBlizzardFrame(frame, offscreen)
     frame:SetScript("OnShow", nil)
     frame:SetScript("OnHide", nil)
     frame:UnregisterAllEvents()
-    frame:ClearAllPoints()
-    if noRight then
-        -- blizzards GetContainerScale chokes on a frame without points
-        frame.GetRight = function() return 0 end
+    if offscreen then
+        -- blizzard still reads its position while it is shown (UpdateContainerFrameAnchors), so it waits
+        -- off screen; a GetRight of our own would taint blizzards bag code
+        local moving = false
+        local function MoveOffscreen()
+            if moving then return end
+            moving = true
+            frame:ClearAllPoints()
+            frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+            moving = false
+        end
+        frame:SetClampedToScreen(false)
+        MoveOffscreen()
+        hooksecurefunc(frame, "SetPoint", MoveOffscreen)
+    else
+        frame:ClearAllPoints()
+        hooksecurefunc(frame, "SetPoint", frame.ClearAllPoints)
     end
-    hooksecurefunc(frame, "SetPoint", frame.ClearAllPoints)
 end
 
 local function disableBlizzardContainers()
@@ -859,12 +855,9 @@ local function bag_OnMouseDown(self, button)
     end
 
     local bag_id = self:GetID() - CharacterBag0Slot:GetID() + 1
-    local cf = getContainerFrame(bag_id)
-    if cf then
-        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-            AddButtons_BagFilters(rootDescription, bag_id)
-        end)
-    end
+    MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+        AddButtons_BagFilters(rootDescription, bag_id)
+    end)
 end
 GW.BagSlotOnMouseDown = bag_OnMouseDown
 

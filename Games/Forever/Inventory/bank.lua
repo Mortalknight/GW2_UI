@@ -304,7 +304,6 @@ local function Bank_OnShow(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
     FrameUtil.RegisterFrameForEvents(self, BANK_EVENTS)
     HideBlizzardBankFrame()
-    OpenAllBags(self)
     UpdateBagBar(self.ItemFrame)
     RescanBankContainers(self)
 end
@@ -312,7 +311,6 @@ end
 local function Bank_OnHide(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
     FrameUtil.UnregisterFrameForEvents(self, BANK_EVENTS)
-    CloseAllBags(self)
     C_Bank.CloseBankFrame()
 end
 

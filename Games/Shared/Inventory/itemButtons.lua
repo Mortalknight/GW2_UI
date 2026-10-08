@@ -245,11 +245,11 @@ local function SetupOwnContainerItemButtons(cf, bagID, iconSize, straightIDs, op
         cf.gw_items = {}
     end
 
-    -- the keyring only shows while its bag is open, like the old take logic
+    -- the keyring only shows while it is open in our bag
     local numSlots = 0
     if bagID ~= KEYRING_CONTAINER then
         numSlots = C_Container.GetContainerNumSlots(bagID)
-    elseif IsBagOpen(KEYRING_CONTAINER) then
+    elseif cf.shouldShow then
         numSlots = GetKeyRingSize and GetKeyRingSize() or C_Container.GetContainerNumSlots(bagID)
     end
     local bagFamily = select(2, C_Container.GetContainerNumFreeSlots(bagID))

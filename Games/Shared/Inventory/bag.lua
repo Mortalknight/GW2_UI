@@ -38,6 +38,12 @@ local function isOwnBagID(id)
     return (id >= BACKPACK_CONTAINER and id <= LAST_HELD_BAG) or (HAS_KEYRING and id == KEYRING_CONTAINER)
 end
 
+-- the keyring container knows whether it is open, blizzards keyring frame is never opened
+local function isKeyringOpen()
+    local cf = GwBagFrame and GwBagFrame.ItemFrame.Containers[KEYRING_CONTAINER]
+    return cf and cf.shouldShow or false
+end
+
 --[[
     Flavor modules.
 
@@ -375,7 +381,7 @@ local function layoutStateChanged(f)
     local idx = 1
 
     local flags = (sep and 1 or 0) + (compact and 2 or 0)
-        + ((HAS_KEYRING and IsBagOpen(KEYRING_CONTAINER)) and 4 or 0)
+        + ((HAS_KEYRING and isKeyringOpen()) and 4 or 0)
     if lastLayoutState[idx] ~= flags then
         changed, lastLayoutState[idx] = true, flags
     end
@@ -436,10 +442,6 @@ end
 -- rescan bag ItemButtons; without dirtyBags every container is rescanned, with it only the
 -- ones a BAG_UPDATE named - a looted or used item touches one bag, not all of them
 local function rescanBagContainers(f, dirtyBags)
-    if f.gw_suppressRescan then
-        -- a batch of bags is being opened, whoever opens them rescans once at the end
-        return
-    end
     if not dirtyBags then
         -- the callers of the full rescan are the structural ones (open, bag un/equipped,
         -- keyring toggled): those also change things the layout fingerprint cannot see, like
@@ -455,18 +457,10 @@ local function rescanBagContainers(f, dirtyBags)
 end
 
 
+-- a held item goes into the clicked bag; the slot does not toggle anything, all bags show in ours
 local function bag_OnClick(self, button)
-    -- on left click, ensure that the bag stays open despite default toggle behavior;
-    -- on retail a held item is put into the bag first
     if button == "LeftButton" then
-        if GW.isModern then
-            local hadItem = PutItemInBag(self:GetID())
-            if not hadItem and self.gwHasBag and not IsBagOpen(self:GetBagID()) then
-                OpenBag(self:GetBagID())
-            end
-        elseif self.gwHasBag and not IsBagOpen(self:GetID() - CharacterBag0Slot:GetID() + 1) then
-            OpenBag(self:GetID() - CharacterBag0Slot:GetID() + 1)
-        end
+        PutItemInBag(self:GetID())
     end
 end
 
@@ -476,7 +470,7 @@ local function updateKeyringButtonState()
     if not HAS_KEYRING or not GWkeyringbutton then
         return
     end
-    local open = IsBagOpen(KEYRING_CONTAINER)
+    local open = isKeyringOpen()
     GWkeyringbutton.border:SetShown(open)
     GWkeyringbutton.IconBorder:SetShown(not open)
 
@@ -487,19 +481,11 @@ local function updateKeyringButtonState()
     end
 end
 
--- toggles the keyring bag and brings its button and header in line with the new state;
--- shared by the keyring button and its bag header, which both offer the toggle
--- the player opening or closing the keyring; blizzard plays these sounds from its own keyring frame
+-- toggles the keyring and brings its button and header in line, used by the keyring button and its header
 local function setKeyringOpen(f, open)
     f.ItemFrame.Containers[KEYRING_CONTAINER].shouldShow = open
-    if open then
-        OpenBag(KEYRING_CONTAINER)
-        PlaySound(SOUNDKIT.KEY_RING_OPEN)
-    else
-        CloseBag(KEYRING_CONTAINER)
-        rescanBagContainers(f)
-        PlaySound(SOUNDKIT.KEY_RING_CLOSE)
-    end
+    rescanBagContainers(f)
+    PlaySound(open and SOUNDKIT.KEY_RING_OPEN or SOUNDKIT.KEY_RING_CLOSE)
     updateKeyringButtonState()
 end
 
@@ -512,7 +498,7 @@ local function createKeyringButton(f)
     GW.SetItemButtonQualityForBags(b, 1)
     b:SetScript("OnClick",
         function()
-            setKeyringOpen(parent, not IsBagOpen(KEYRING_CONTAINER))
+            setKeyringOpen(parent, not isKeyringOpen())
         end
     )
     return b
@@ -659,53 +645,43 @@ local function updateBagBar(f)
 end
 
 
--- deal with all the stupid permutations in which these can be called
-local function hookOpenBag(bag_id)
-    if not bag_id or bag_id ~= BACKPACK_CONTAINER then
-        return
-    end
+-- Blizzards bag functions only drive our frame, we never open or close its container frames
+-- ourselves: done from our code that would taint them, and escape reads them in combat.
+-- Blizzards open state can therefore differ from ours, so a toggle goes by our frame and runs
+-- after the open or close blizzard did on the way; the last change in the queue wins.
+local function setBagShown(shown)
     local f = GwBagFrame
-    if not f:IsShown() then
-        C_Timer.After(0, function() f:Show() end)
+    C_Timer.After(0, function() f:SetShown(shown) end)
+end
+
+local function hookOpenBag(bag_id)
+    if bag_id == BACKPACK_CONTAINER then
+        setBagShown(true)
     end
 end
 
 local function hookOpenBackpack()
-    hookOpenBag(BACKPACK_CONTAINER)
+    setBagShown(true)
 end
 
 local function hookCloseBag(bag_id)
-    if not bag_id or bag_id ~= BACKPACK_CONTAINER then
-        return
-    end
-    local f = GwBagFrame
-    if f:IsShown() then
-        C_Timer.After(0, function() f:Hide() end)
+    if bag_id == BACKPACK_CONTAINER then
+        setBagShown(false)
     end
 end
 
 local function hookCloseBackpack()
-    hookCloseBag(BACKPACK_CONTAINER)
+    setBagShown(false)
 end
 
 local function hookToggleBackpack()
-    local f = GwBagFrame
-    if IsBagOpen(0) then
-        if not f:IsShown() then
-            C_Timer.After(0, function() f:Show() end)
-        end
-    else
-        if f:IsShown() then
-            C_Timer.After(0, function() f:Hide() end)
-        end
-    end
+    setBagShown(not GwBagFrame:IsShown())
 end
 
 local function hookToggleBag(bag_id)
-    if not bag_id or bag_id ~= BACKPACK_CONTAINER then
-        return
+    if bag_id == BACKPACK_CONTAINER then
+        hookToggleBackpack()
     end
-    hookToggleBackpack()
 end
 
 
@@ -719,19 +695,6 @@ local function bag_OnShow(self)
     self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
     self:RegisterEvent("QUEST_ACCEPTED")
     self:RegisterEvent("QUEST_REMOVED")
-    -- every OpenBag makes blizzard build its container frame, and our hook on that
-    -- answers with a full rescan of all containers - opening the whole set would rescan
-    -- everything once per bag before the single rescan below does it once more
-    self.gw_suppressRescan = true
-    if not IsBagOpen(BACKPACK_CONTAINER) then
-        OpenBackpack()
-    end
-    for i = 1, LAST_HELD_BAG do
-        if not IsBagOpen(i) then
-            OpenBag(i)
-        end
-    end
-    self.gw_suppressRescan = false
 
     updateKeyringButtonState()
     updateBagBar(self.ItemFrame)
@@ -764,21 +727,12 @@ local function bag_OnHide(self)
         BagItemSearchBox:SetText("")
         BagItemSearchBox:ClearFocus()
     end
-    -- should an error ever leave the batch flag set, closing the bag recovers from it
-    self.gw_suppressRescan = false
     wipe(self.gw_dirtyBags)
     self.gw_need_bag_update = false
     self.gw_need_bag_rescan = false
-    for i = 1, LAST_HELD_BAG do
-        if IsBagOpen(i) then
-            CloseBag(i)
-        end
-    end
-    if IsBagOpen(BACKPACK_CONTAINER) then
-        CloseBackpack()
-    end
-    if HAS_KEYRING and IsBagOpen(KEYRING_CONTAINER) then
-        CloseBag(KEYRING_CONTAINER)
+    -- like blizzards keyring it is closed again on the next open
+    if HAS_KEYRING then
+        self.ItemFrame.Containers[KEYRING_CONTAINER].shouldShow = false
     end
 end
 
@@ -822,17 +776,6 @@ local function bag_OnEvent(self, event, ...)
         GW.UpdateAllOwnBagItemButtons()
     elseif event == "BAG_UPDATE_DELAYED" then
         if self.gw_need_bag_rescan then
-            self.gw_suppressRescan = true
-            for bag_id = 1, LAST_HELD_BAG do
-                if not IsBagOpen(bag_id) then
-                    OpenBag(bag_id)
-                end
-            end
-            if HAS_KEYRING and not IsBagOpen(KEYRING_CONTAINER) then
-                OpenBag(KEYRING_CONTAINER)
-            end
-            self.gw_suppressRescan = false
-
             updateBagBar(self.ItemFrame)
             updateKeyringButtonState()
         end
@@ -861,7 +804,7 @@ local function bagHeader_OnClick(self, btn)
     local headerIndex = self:GetID()
     if btn == "LeftButton" then
         if HAS_KEYRING and headerIndex == KEYRING_HEADER then
-            setKeyringOpen(self:GetParent(), not IsBagOpen(KEYRING_CONTAINER))
+            setKeyringOpen(self:GetParent(), not isKeyringOpen())
         else
             self:GetParent().ItemFrame.Containers[headerIndex].shouldShow = not self.icon:IsShown()
             self.icon:SetShown(not self.icon:IsShown())
@@ -961,8 +904,6 @@ end
 -- Opens the bag with its interaction window (merchant, mail, auction house, bank, trade)
 -- and closes it again with it. Only what the auto open opened is closed: a bag the player
 -- opened stays, and the ownership dies as soon as the bag is closed by hand (see OnHide).
--- OpenAllBags/CloseAllBags on purpose - they keep Blizzards open state bookkeeping in sync
--- with the hooks this bag is driven by.
 local AUTO_OPEN_EVENTS = {
     MERCHANT_SHOW = "merchant", MERCHANT_CLOSED = "merchant",
     MAIL_SHOW = "mail", MAIL_CLOSED = "mail",
@@ -984,13 +925,11 @@ local function setupAutoOpenClose(f)
             -- an already visible bag was opened by someone else, leave it theirs
             if GW.settings.bags.autoOpenContexts[context] and not f:IsShown() then
                 f.gwAutoOpenedContext = context
-                OpenAllBags()
+                f:Show()
             end
         elseif f.gwAutoOpenedContext == context then
             f.gwAutoOpenedContext = nil
-            if f:IsShown() then
-                CloseAllBags()
-            end
+            f:Hide()
         end
     end)
 end
@@ -1086,13 +1025,6 @@ local function LoadBag(helpers)
         f.ItemFrame.Containers[section.id] = cf
     end
 
-    -- anytime a ContainerFrame is populated with one of our bagIds, we rescan our buttons
-    hooksecurefunc("ContainerFrame_GenerateFrame", function(_, _, id)
-        if id and isOwnBagID(id) then
-            rescanBagContainers(f)
-        end
-    end)
-
     -- anytime a ContainerFrame is shown we set the stolen backpack button back to unchecked
     if ContainerFrame_OnShow then
         hooksecurefunc("ContainerFrame_OnShow", function()
@@ -1136,6 +1068,7 @@ local function LoadBag(helpers)
     hooksecurefunc("OpenBackpack", hookOpenBackpack)
     hooksecurefunc("CloseBackpack", hookCloseBackpack)
     hooksecurefunc("ToggleBackpack", hookToggleBackpack)
+    hooksecurefunc("ToggleAllBags", hookToggleBackpack)
     local bindings = GW.isModern and {"TOGGLEBACKPACK", "TOGGLEREAGENTBAG1", "TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"} or {"TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"}
     for _, b in pairs(bindings) do
         local key = GetBindingKey(b)
