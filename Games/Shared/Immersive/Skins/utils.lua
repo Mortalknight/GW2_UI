@@ -450,8 +450,9 @@ local function HandleTrimScrollBar(bar)
         -- blizzards scroll code reads the thumb size, set by us it would taint it; only our texture gets the width
         thumb.gwTex = thumb:CreateTexture(nil, "ARTWORK")
         thumb.gwTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
-        thumb.gwTex:SetPoint("TOPLEFT")
-        thumb.gwTex:SetPoint("BOTTOMLEFT")
+        local left = bar.thumbAnchor ~= "TOP"
+        thumb.gwTex:SetPoint(left and "TOPLEFT" or "TOP")
+        thumb.gwTex:SetPoint(left and "BOTTOMLEFT" or "BOTTOM")
         thumb.gwTex:SetWidth(12)
     end
 end
