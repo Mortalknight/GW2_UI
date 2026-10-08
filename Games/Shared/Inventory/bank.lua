@@ -615,23 +615,21 @@ local function LoadBank(helpers)
     )
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BANK)
     EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
-    f.buttonSettings:SetScript("OnClick", function(self)
-        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+    f.buttonSettings:SetupMenu(function(ownerRegion, rootDescription)
 
-            local function addCheck(label, getter, setter)
-                local check = rootDescription:CreateCheckbox(label, getter, setter)
-                check:AddInitializer(function(button, description, menu)
-                    GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
-                end)
-            end
+        local function addCheck(label, getter, setter)
+            local check = rootDescription:CreateCheckbox(label, getter, setter)
+            check:AddInitializer(function(button, description, menu)
+                GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
+            end)
+        end
 
-            inv.addItemSizeMenuEntries(rootDescription, "BANK")
-            addCheck(L["Reverse Bag Order"], function() return GW.settings.bags.bank.reverseSort end,
-                     function() GW.settings.bags.bank.reverseSort = not GW.settings.bags.bank.reverseSort; setBagBarOrder(f.ItemFrame); layoutItems(f); snapFrameSize(f) end)
-            addCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end, function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; GW.UpdateAllOwnBagItemButtons() end)
-            addCheck(L["Separate bags"], function() return GW.settings.bags.bank.separateBags end,
-                     function() local ns = not GW.settings.bags.bank.separateBags; GW.settings.bags.bank.separateBags = ns; layoutItems(f); snapFrameSize(f) end)
-        end)
+        inv.addItemSizeMenuEntries(rootDescription, "BANK")
+        addCheck(L["Reverse Bag Order"], function() return GW.settings.bags.bank.reverseSort end,
+                 function() GW.settings.bags.bank.reverseSort = not GW.settings.bags.bank.reverseSort; setBagBarOrder(f.ItemFrame); layoutItems(f); snapFrameSize(f) end)
+        addCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end, function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; GW.UpdateAllOwnBagItemButtons() end)
+        addCheck(L["Separate bags"], function() return GW.settings.bags.bank.separateBags end,
+                 function() local ns = not GW.settings.bags.bank.separateBags; GW.settings.bags.bank.separateBags = ns; layoutItems(f); snapFrameSize(f) end)
     end)
 
     -- return a callback that should be called when item size changes

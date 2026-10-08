@@ -469,31 +469,29 @@ local function LoadBank(helpers)
     end)
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BANK)
     EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
-    f.buttonSettings:SetScript("OnClick", function(self)
-        MenuUtil.CreateContextMenu(self, function(_, rootDescription)
-            local function AddCheck(label, getter, setter)
-                local check = rootDescription:CreateCheckbox(label, getter, setter)
-                check:AddInitializer(function(button, description, menu)
-                    GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
-                end)
-            end
+    f.buttonSettings:SetupMenu(function(_, rootDescription)
+        local function AddCheck(label, getter, setter)
+            local check = rootDescription:CreateCheckbox(label, getter, setter)
+            check:AddInitializer(function(button, description, menu)
+                GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
+            end)
+        end
 
-            inv.addItemSizeMenuEntries(rootDescription, "BANK")
-            AddCheck(L["Reverse Bag Order"], function() return GW.settings.bags.bank.reverseSort end, function()
-                GW.settings.bags.bank.reverseSort = not GW.settings.bags.bank.reverseSort
-                SetBagBarOrder(f.ItemFrame)
-                LayoutItems(f)
-                SnapFrameSize(f)
-            end)
-            AddCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end, function()
-                GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder
-                GW.UpdateAllOwnBagItemButtons()
-            end)
-            AddCheck(L["Separate bags"], function() return GW.settings.bags.bank.separateBags end, function()
-                GW.settings.bags.bank.separateBags = not GW.settings.bags.bank.separateBags
-                LayoutItems(f)
-                SnapFrameSize(f)
-            end)
+        inv.addItemSizeMenuEntries(rootDescription, "BANK")
+        AddCheck(L["Reverse Bag Order"], function() return GW.settings.bags.bank.reverseSort end, function()
+            GW.settings.bags.bank.reverseSort = not GW.settings.bags.bank.reverseSort
+            SetBagBarOrder(f.ItemFrame)
+            LayoutItems(f)
+            SnapFrameSize(f)
+        end)
+        AddCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end, function()
+            GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder
+            GW.UpdateAllOwnBagItemButtons()
+        end)
+        AddCheck(L["Separate bags"], function() return GW.settings.bags.bank.separateBags end, function()
+            GW.settings.bags.bank.separateBags = not GW.settings.bags.bank.separateBags
+            LayoutItems(f)
+            SnapFrameSize(f)
         end)
     end)
 

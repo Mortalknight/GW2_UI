@@ -52,7 +52,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.backButton" relativePoint="TOPLEFT" x="0" y="-55"/>
                 </Anchors>
             </EditBox>
-            <Button name="$parentFilter" parentKey="filter" registerForClicks="LeftButtonUp,RightButtonUp">
+            <DropdownButton name="$parentFilter" parentKey="filter">
                 <Size x="25" y="25"/>
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.input" relativePoint="RIGHT" x="5" y="0"/>
@@ -60,7 +60,7 @@
                 <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-up.png"></NormalTexture>
                 <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-down.png"></PushedTexture>
                 <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-down.png"></HighlightTexture>
-            </Button>
+            </DropdownButton>
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Size x="210" y="480"></Size>
                 <Anchors>

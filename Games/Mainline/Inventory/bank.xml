@@ -131,15 +131,19 @@
                     </Layer>
                 </Layers>
             </Frame>
-            <Button parentKey="buttonSettings" text="">
+            <DropdownButton parentKey="buttonSettings" text="">
+                <KeyValues>
+                    <KeyValue key="menuPoint" value="TOPRIGHT" type="string"/>
+                    <KeyValue key="menuRelativePoint" value="BOTTOMRIGHT" type="string"/>
+                </KeyValues>
                 <Size x="24" y="24" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-8"/>
                 </Anchors>
                 <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-up.png"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicronutton-down.png"></PushedTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-down.png"></PushedTexture>
                 <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-down.png"></HighlightTexture>
-            </Button>
+            </DropdownButton>
             <Button parentKey="buttonSort" text="">
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-40" y="-8" />

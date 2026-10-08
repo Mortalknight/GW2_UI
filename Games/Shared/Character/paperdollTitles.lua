@@ -106,42 +106,36 @@ local function ResetFilter()
     saveKnowenTitles(GwTitleWindow)
 end
 
-local function ShowFiterDropDown(self)
-    local function IsSelected(earned)
-        if earned then return showEarned end
-        return showUnearned
+local function IsFilterSelected(earned)
+    if earned then return showEarned end
+    return showUnearned
+end
+
+local function SetFilterSelected(earned)
+    if earned then
+        showEarned = not showEarned
+    else
+        showUnearned = not showUnearned
     end
+    GwTitleWindow.input:SetText("")
+    GwTitleWindow.input.clearButton:Hide()
+    saveKnowenTitles(GwTitleWindow)
+end
 
-    local function SetSelectedCompleted(earned)
-        if earned then
-            showEarned = not showEarned;
-        else
-            showUnearned = not showUnearned;
-        end
-        GwTitleWindow.input:SetText("");
-        GwTitleWindow.input.clearButton:Hide();
-        saveKnowenTitles(GwTitleWindow)
-    end
+local function GenerateFilterMenu(_, rootDescription)
+    rootDescription:SetMinimumWidth(1)
+    local check = rootDescription:CreateCheckbox(ACHIEVEMENTFRAME_FILTER_COMPLETED, IsFilterSelected, SetFilterSelected, true)
+    check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-    local menu = MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-        rootDescription:SetMinimumWidth(1)
-        local check = rootDescription:CreateCheckbox(ACHIEVEMENTFRAME_FILTER_COMPLETED, IsSelected , SetSelectedCompleted, true)
-        check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-        check = rootDescription:CreateCheckbox(L["Unearned"], IsSelected, SetSelectedCompleted, false)
-        check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-        check:SetTooltip(function(tooltip, elementDescription)
-            tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
-            tooltip:AddLine(L["You may see duplicated titles that are unavailable to your faction"], 1, 1, 1)
-        end);
+    check = rootDescription:CreateCheckbox(L["Unearned"], IsFilterSelected, SetFilterSelected, false)
+    check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+    check:SetTooltip(function(tooltip, elementDescription)
+        tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
+        tooltip:AddLine(L["You may see duplicated titles that are unavailable to your faction"], 1, 1, 1)
     end)
 
-    menu:SetClosedCallback(function()
-        if not showEarned and not showUnearned then
-            ResetFilter()
-        end
-    end)
+    rootDescription:CreateDivider()
+    rootDescription:CreateButton(RESET, ResetFilter)
 end
 
 function GW.LoadPDTitles(parent, fmMenu)
@@ -183,30 +177,22 @@ function GW.LoadPDTitles(parent, fmMenu)
         saveKnowenTitles(titlewin)
     end)
 
-    titlewin.filter.OnEnter = function(self)
+    -- blizzards dropdown button opens and closes the filter menu on its own
+    local filter = titlewin.filter
+    filter:SetupMenu(GenerateFilterMenu)
+    filter:RegisterCallback(DropdownButtonMixin.Event.OnMenuOpen, GameTooltip_Hide, titlewin)
+    -- with both filters off nothing would show, closing the menu then resets them
+    filter:RegisterCallback(DropdownButtonMixin.Event.OnMenuClose, function()
+        if not showEarned and not showUnearned then
+            ResetFilter()
+        end
+    end, titlewin)
+    filter:HookScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(FILTER, 1, 1, 1)
-        if showUnearned == true then
-            GameTooltip:AddLine(L["Right Click To Reset Filter"], 1, 0.82, 0, true)
-        end
         GameTooltip:Show()
-    end
-
-    titlewin.filter:SetScript("OnEnter", titlewin.filter.OnEnter)
-    titlewin.filter:SetScript("OnLeave", GameTooltip_Hide)
-    titlewin.filter:SetScript("OnClick", function(self, button)
-        if button == "LeftButton" then
-            GameTooltip:Hide()
-            ShowFiterDropDown(self)
-        elseif button == "RightButton" then
-            -- reset filter
-            ResetFilter()
-            if self:IsMouseMotionFocus() then
-                GameTooltip:Hide()
-                self:OnEnter()
-            end
-        end
     end)
+    filter:HookScript("OnLeave", GameTooltip_Hide)
 
     local view = CreateScrollBoxListLinearView()
     view:SetElementInitializer("GwTitleButtonTemplate", function(button, elementData)
