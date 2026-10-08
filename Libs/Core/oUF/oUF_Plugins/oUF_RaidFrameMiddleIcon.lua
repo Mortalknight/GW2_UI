@@ -7,6 +7,7 @@ local GetRaidTargetIndex = GetRaidTargetIndex
 local CLASS_ICONS = "Interface/AddOns/GW2_UI/textures/party/classicons.png"
 
 -- Prio: disconnect, death, target marker, class icon (only without class colors)
+-- the marker index is secret in combat: it only goes to the texture, never into a comparison
 local function GetState(self)
     local unit = self.__unit
     if not UnitIsConnected(unit) then
@@ -14,7 +15,7 @@ local function GetState(self)
     elseif UnitIsDeadOrGhost(unit) then
         return "dead"
     elseif self.showTargetmarker and GetRaidTargetIndex(unit) then
-        return GetRaidTargetIndex(unit)
+        return "marker", GetRaidTargetIndex(unit)
     elseif not self.useClassColor and not self.hideClassIcon then
         return "class" .. (select(3, UnitClass(unit)) or 0)
     end
@@ -23,7 +24,7 @@ end
 
 local function Update(self)
     local element = self.MiddleIcon
-    local state = GetState(self)
+    local state, markerIndex = GetState(self)
 
     -- runs on every health tick, so only touch the textures when something changed
     if state ~= element.gwState then
@@ -40,13 +41,17 @@ local function Update(self)
         elseif isDead then
             element:SetTexture(CLASS_ICONS)
             ns.SetDeadIcon(element)
-        elseif type(state) == "number" then
+        elseif state == "marker" then
             element:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcons")
-            SetRaidTargetIconTexture(element, state)
         elseif state ~= "none" then
             element:SetTexture(CLASS_ICONS)
             ns.SetClassIcon(element, select(3, UnitClass(self.__unit)))
         end
+    end
+
+    -- another marker keeps the state, so the cell is set every time
+    if state == "marker" then
+        SetRaidTargetIconTexture(element, markerIndex)
     end
 
     local shouldShowIcon = state ~= "none"
