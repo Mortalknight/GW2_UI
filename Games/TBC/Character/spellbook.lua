@@ -497,11 +497,8 @@ local function updateSpellbookTab(self)
                     spell:ContinueOnSpellLoad(function()
                         local subSpellName = buildSubSpellName(spellIndex, specName, isPassive, spell:GetSpellSubtext())
 
-                        if showAllRanks then
-                            button.rank:SetText(subSpellName:gsub(RANK, "") or "")
-                        else
-                            button.rank:SetText("")
-                        end
+                        local rank = showAllRanks and subSpellName:find(RANK, 1, true) and subSpellName:match("%d+")
+                        button.rank:SetText(rank or "")
 
                         header.subTitle:SetText(needNewHeader and subSpellName or "")
                     end)
