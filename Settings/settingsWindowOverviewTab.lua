@@ -14,9 +14,9 @@ local CreditsSection = {
 local CREDITS = {
     OWNER = {"Aethelwulf"},
     DEVELOPER = {"Glow", "Nezroy", "Shrugal", "Shoodox"},
-    CONTRIBUTION = {"Hatdragon","Zoelie"},
+    CONTRIBUTION = {"Hatdragon", "Zoelie"},
     LOCALIZATION = {"aSlightDrizzle", "Calcifer", "Murak", "AxelVader", "Crisll", "Dololo", "Kitto", "Pyrefox", "RickCiotti", "Throli", "Zelrog"},
-    TESTING = {"Crohnleuchter", "KYZ", "Ultrachocobo", "Belazor", "Zerid"}
+    TESTING = {"Zoelie", "Crohnleuchter", "KYZ", "Ultrachocobo", "Belazor", "Zerid"}
 }
 
 local function SortAndInsertCredits()

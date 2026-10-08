@@ -702,7 +702,7 @@ local function evPlayerLogin(self)
         GW.LoadWorldEventTimer()
     end
 
-    GW.Create_Raid_Counter()
+    GW.CreateRaidCounter()
     GW.LoadMirrorTimers()
     if GW.Forever then
         GW.LoadSwingTimerSkin()

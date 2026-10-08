@@ -9,6 +9,10 @@ local ConvertToParty = C_PartyInfo and C_PartyInfo.ConvertToParty or ConvertToPa
 local ConvertToRaid = C_PartyInfo and C_PartyInfo.ConvertToRaid or ConvertToRaid
 
 local function fnGMIG_OnEvent(self)
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("GwGroupManageUpdate", fnGMIG_OnEvent, {self})
+        return
+    end
     local activ = (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) or (IsInGroup() and not IsInRaid())
 
     if IsInRaid() then
@@ -135,11 +139,9 @@ local function CreateRaidControlFrame()
     inviteBox.hint:SetPoint("LEFT", inviteBox, "LEFT", 0, 0)
     inviteBox.hint:SetText(CALENDAR_PLAYER_NAME)
     inviteBox.hint:SetTextColor(1, 1, 1, 0.5)
-    -- the hint over an empty box, the invite button only with a name in it
+    -- the hint over an empty box; the invite button stays enabled, the protected group frame hangs on it
     local function UpdateInviteHint(box)
-        local hasName = strtrim(box:GetText()) ~= ""
         box.hint:SetShown(box:GetText() == "" and not box:HasFocus())
-        GwGroupManage.inviteToParty:SetEnabled(hasName)
     end
     local function InviteTypedName(box)
         local name = strtrim(box:GetText())
@@ -233,7 +235,6 @@ local function CreateRaidControlFrame()
 
     GwGroupManage.inGroup:RegisterEvent("GROUP_ROSTER_UPDATE")
     GwGroupManage.inGroup:RegisterEvent("RAID_ROSTER_UPDATE")
-    GwGroupManage.inGroup:RegisterEvent("PLAYER_REGEN_ENABLED")
     GwGroupManage.inGroup:SetScript("OnEvent", fnGMIG_OnEvent)
 
     local fnF_OnEnter = function(self)

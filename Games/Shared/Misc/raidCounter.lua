@@ -15,26 +15,46 @@ local function UpdateRaidCounterVisibility()
 end
 GW.UpdateRaidCounterVisibility = UpdateRaidCounterVisibility
 
-local function Create_Raid_Counter()
-    local raidCounterFrame = CreateFrame("Button", "GW_RaidCounter_Frame", UIParent, "SecureHandlerClickTemplate")
-
-    if GwSocialWindow then
-        raidCounterFrame:SetFrameRef("GwSocialWindow", GwSocialWindow)
+local function GetRaidTabName()
+    for i = 1, FRIEND_TAB_COUNT or 4 do
+        local tab = _G["FriendsFrameTab" .. i]
+        if tab and tab:GetID() == FRIEND_TAB_RAID then
+            return tab:GetName()
+        end
     end
-    raidCounterFrame:SetAttribute("ourWindow", (GW.Retail or GW.TBC) and GW.settings.windows.social.enabled)
-    raidCounterFrame.func = function() ToggleRaidFrame() end
-    raidCounterFrame:SetAttribute(
-        "_onclick",
-        [=[
-            if self:GetAttribute("ourWindow") then
-                local f = self:GetFrameRef("GwSocialWindow")
-                f:SetAttribute("keytoggle", true)
-                f:SetAttribute("windowpanelopen", "raidlist")
-            else
-                self:CallMethod("func")
+end
+
+local function CreateRaidCounter()
+    local newSocialUI = SocialUIControl and SocialUIControl.IsEnabled()
+    local raidTab = not newSocialUI and FriendsMicroButton and GetRaidTabName()
+    local raidCounterFrame
+    if raidTab then
+        local openMacro = "/click FriendsMicroButton\n/click " .. raidTab
+        local closeButton = FriendsFrame.CloseButton and FriendsFrame.CloseButton:GetName()
+        raidCounterFrame = CreateFrame("Button", "GW_RaidCounter_Frame", UIParent, "SecureActionButtonTemplate, SecureHandlerBaseTemplate")
+        raidCounterFrame:RegisterForClicks("LeftButtonUp")
+        raidCounterFrame:SetAttribute("type", "macro")
+        raidCounterFrame:SetAttribute("macrotext", openMacro)
+        if closeButton then
+            raidCounterFrame:SetAttribute("gwOpen", openMacro)
+            raidCounterFrame:SetAttribute("gwClose", "/click " .. closeButton)
+            raidCounterFrame:SetFrameRef("raidFrame", RaidFrame)
+            SecureHandlerWrapScript(raidCounterFrame, "OnClick", raidCounterFrame, [[
+                local open = not PlayerInCombat() and self:GetFrameRef("raidFrame"):IsVisible()
+                self:SetAttribute("macrotext", self:GetAttribute(open and "gwClose" or "gwOpen"))
+            ]])
+        end
+    else
+        -- the new social window has no named raid tab to click, in combat only blizzards keybind opens it
+        raidCounterFrame = CreateFrame("Button", "GW_RaidCounter_Frame", UIParent)
+        raidCounterFrame:SetScript("OnClick", function()
+            if InCombatLockdown() then
+                UIErrorsFrame:AddExternalErrorMessage(ERR_NOT_IN_COMBAT)
+                return
             end
-        ]=]
-    )
+            ToggleRaidFrame()
+        end)
+    end
     raidCounterFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
     raidCounterFrame:SetSize(100, 25)
@@ -96,4 +116,4 @@ local function Create_Raid_Counter()
 
     UpdateRaidCounterVisibility()
 end
-GW.Create_Raid_Counter = Create_Raid_Counter
+GW.CreateRaidCounter = CreateRaidCounter
