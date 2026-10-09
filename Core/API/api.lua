@@ -456,6 +456,17 @@ function GW.ShowQuestDetails(questID)
     QuestMapFrame_OpenToQuestDetails(questID)
 end
 
+function GW.GetQuestRewardXP(questID)
+    if not GW.settings.objectives.showXp or GW.mylevel >= GetMaxPlayerLevel() then return end
+    local xp = GetQuestLogRewardXP and GetQuestLogRewardXP(questID)
+    if xp and xp > 0 then
+        return xp
+    end
+    if Questie and Questie.started then
+        return QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(questID, false)
+    end
+end
+
 -- our popup with the wowhead link of a quest, achievement, ...; questie's own popup only exists with questie
 function GW.ShowWowheadUrlPopup(linkType, id)
     GW.ShowPopup({text = GW.L["Wowhead URL"],

@@ -144,10 +144,7 @@ local function BuildQuestBlockSignature(quest, colorKey)
     if quest.requiredMoney and quest.requiredMoney > 0 then
         AddSignaturePart(GetMoney())
     end
-    -- the Questie xp reward is part of the header text
-    if Questie and Questie.started and GW.settings.objectives.showXp and GW.mylevel < GetMaxPlayerLevel() then
-        AddSignaturePart(QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false))
-    end
+    AddSignaturePart(GW.GetQuestRewardXP(quest.questId))
     if isComplete then
         AddSignaturePart(GetQuestLogCompletionText(quest.questLogIndex))
     else
@@ -198,12 +195,9 @@ local function UpdateBlockInternal(self, parent, quest, signature)
 
     GW.CombatQueue:Queue("update_tracker_actionbutton_" .. parent:GetName() .. (self.index or 0), self.UpdateObjectiveActionButton, {self})
 
-    if Questie and Questie.started and GW.settings.objectives.showXp and GW.mylevel < GetMaxPlayerLevel() then
-        local xpReward = QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false)
-
-        if xpReward then
-            self.Header:SetText(text .. quest.title .. " |cFF888888(" .. GW.CommaValue(xpReward) .. XP .. ")|r")
-        end
+    local xpReward = GW.GetQuestRewardXP(quest.questId)
+    if xpReward then
+        self.Header:SetText(text .. quest.title .. " |cFF888888(" .. GW.CommaValue(xpReward) .. XP .. ")|r")
     end
 
     if quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then

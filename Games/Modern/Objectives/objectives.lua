@@ -91,6 +91,10 @@ local function AddSignaturePart(value)
     signatureParts[signatureCount] = tostring(value)
 end
 
+local function GetQuestRewardXP(questID)
+    return not GW.Retail and GW.GetQuestRewardXP(questID) or nil
+end
+
 local function BuildQuestBlockSignature(quest, questID, questLogIndex, colorKey)
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
@@ -126,6 +130,7 @@ local function BuildQuestBlockSignature(quest, questID, questLogIndex, colorKey)
         AddSignaturePart(GetQuestLogCompletionText(questLogIndex))
     end
     AddSignaturePart(timeTotal and timeElapsed and timeElapsed < timeTotal and timeTotal or false)
+    AddSignaturePart(GetQuestRewardXP(questID))
     AddSignaturePart(numObjectives)
     for objectiveIndex = 1, numObjectives do
         local text, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
@@ -187,7 +192,12 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, 
     self.gwSignature = signature or BuildQuestBlockSignature(quest, questID, questLogIndex, self.gwColorKey)
     self.title = quest.title
     self.isSuperTracked = isSuperTracked
-    self.Header:SetText(GetQuestLevelPrefix(quest, questID) .. quest.title)
+    local headerText = GetQuestLevelPrefix(quest, questID) .. quest.title
+    local xpReward = GetQuestRewardXP(questID)
+    if xpReward then
+        headerText = headerText .. " |cFF888888(" .. GW.CommaValue(xpReward) .. XP .. ")|r"
+    end
+    self.Header:SetText(headerText)
 
     if isSuperTracked then
         local r, g, b = BrightenColor(self.color.r, self.color.g, self.color.b, 0.3)

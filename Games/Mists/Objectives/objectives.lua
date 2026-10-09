@@ -125,6 +125,7 @@ local function BuildQuestBlockSignature(quest, colorKey)
     if quest.requiredMoney and quest.requiredMoney > 0 then
         AddSignaturePart(GetMoney())
     end
+    AddSignaturePart(GW.GetQuestRewardXP(quest.questId))
     -- turnin/accept popups are rendered as block buttons (the mixin method uses no self)
     AddSignaturePart(GwObjectivesBlockTemplateMixin.IsQuestAutoTurnInOrAutoAccept(nil, quest.questId, "COMPLETE", isComplete, quest.isAutoComplete))
     AddSignaturePart(GwObjectivesBlockTemplateMixin.IsQuestAutoTurnInOrAutoAccept(nil, quest.questId, "OFFER"))
@@ -177,6 +178,10 @@ local function UpdateBlockInternal(self, parent, quest, signature)
     self.title = quest.title
     self.isAutoComplete = quest.isAutoComplete
     self.Header:SetText(text .. quest.title)
+    local xpReward = GW.GetQuestRewardXP(quest.questId)
+    if xpReward then
+        self.Header:SetText(text .. quest.title .. " |cFF888888(" .. GW.CommaValue(xpReward) .. XP .. ")|r")
+    end
 
     GW.CombatQueue:Queue("update_tracker_actionbutton_" .. parent:GetName() .. (self.index or 0), self.UpdateObjectiveActionButton, {self})
 
