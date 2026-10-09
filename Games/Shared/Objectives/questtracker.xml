@@ -955,6 +955,65 @@
                     </Layer>
                 </Layers>
             </StatusBar>
+            <StatusBar parentKey="castbar" hidden="true">
+                <Size x="280" y="12"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-33"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png" setAllPoints="true">
+                            <Color r="1" g="1" b="1" a="0.5"></Color>
+                        </Texture>
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
+                            <Size x="314" y="2"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="2"/>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="1" y="2"/>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
+                            <Size x="314" y="2"/>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-1" y="-2"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="1" y="-2"/>
+                            </Anchors>
+                            <TexCoords left="0" right="1" top="1" bottom="0" />
+                        </Texture>
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
+                            <Size x="2" y="2"/>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="2" y="1"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="2" y="-1"/>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
+                            <Size x="2" y="2"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="1"/>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-2" y="-1"/>
+                            </Anchors>
+                            <TexCoords left="1" right="0" top="0" bottom="1" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="spellName" inherits="GameFontNormalSmall" justifyH="LEFT" wordwrap="false">
+                            <Color r="1" g="1" b="1"></Color>
+                            <Anchors>
+                                <Anchor point="LEFT" x="4" y="0"/>
+                                <Anchor point="RIGHT" x="-40" y="0"/>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="timer" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                            <Color r="1" g="1" b="1"></Color>
+                            <Anchors>
+                                <Anchor point="RIGHT" x="-4" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </StatusBar>
         </Frames>
     </Button>
 

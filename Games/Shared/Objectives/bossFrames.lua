@@ -2,6 +2,12 @@
 local GW = select(2, ...)
 local bossFrames = {}
 
+local TEST_BOSSES = {
+    {name = "Ragnaros", health = 0.72, power = 0.4, cast = "Wrath of Ragnaros", castTime = 2.5, auras = {{spellID = 589, dispelType = GW.Enum.DispelType.Magic}, {spellID = 172, dispelType = GW.Enum.DispelType.Magic}}},
+    {name = "Majordomo Executus", health = 0.45, power = 0.8, cast = "Magic Reflection", castTime = 4, notInterruptible = true, auras = {{spellID = 18499}}},
+    {name = "Flamewaker Healer", health = 1, power = 1},
+}
+
 GwBossFrameMixin = CreateFromMixins(GwObjectivesUnitFrameMixin)
 
 function GwBossFrameMixin:UpdateRaidMarkers()
@@ -32,17 +38,31 @@ function GwBossFrameMixin:UpdateHealthbarColor()
     self.health:SetStatusBarColor(nameColor:GetRGB())
 end
 
-function GwBossFrameMixin:OnShow()
-    self.container:UpdateCompass()
+function GwBossFrameMixin:UpdateAll()
     self:UpdateName()
     self:UpdateHealth()
     self:UpdatePower()
     self:UpdateRaidMarkers()
     self:UpdateHealthbarColor()
+    self:UpdateCastbar(GW.settings.objectives.bossFrames.castbar)
+end
+
+function GwBossFrameMixin:ApplySettings()
+    self:ApplyAuraSettings(GW.settings.objectives.bossFrames.auras)
+    if self:IsShown() and not self.gwTest then
+        self:UpdateCastbar(GW.settings.objectives.bossFrames.castbar)
+    end
+end
+
+function GwBossFrameMixin:OnShow()
+    self.container:UpdateCompass()
     self.container:UpdateBossFrameHeight()
+    if self.gwTest then return end
+    self:UpdateAll()
 end
 
 function GwBossFrameMixin:OnHide()
+    self:HideCastbar()
     self.container:UpdateBossFrameHeight()
     self.container:UpdateCompass()
 end
@@ -51,9 +71,11 @@ function GwBossFrameMixin:OnEvent(event, unit)
     if GW.IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH", "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UNIT_NAME_UPDATE", "UNIT_FACTION") then
         if unit ~= self.gwUnit then return end
     end
-    if not self:IsShown() then return end
+    if not self:IsShown() or self.gwTest then return end
 
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
+    if self:IsCastbarEvent(event) then
+        self:UpdateCastbar(GW.settings.objectives.bossFrames.castbar)
+    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         self:UpdateHealth()
     elseif event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT" then
         self:UpdatePower()
@@ -64,13 +86,40 @@ function GwBossFrameMixin:OnEvent(event, unit)
     elseif event == "UNIT_FACTION" then
         self:UpdateHealthbarColor()
     elseif event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then
-        self:UpdateName()
-        self:UpdateHealth()
-        self:UpdatePower()
-        self:UpdateRaidMarkers()
-        self:UpdateHealthbarColor()
+        self:UpdateAll()
         self.container:UpdateBossFrameHeight()
     end
+end
+
+function GwBossFrameMixin:StartTest(data)
+    UnregisterUnitWatch(self)
+    self.gwTest = true
+    self.name:SetText(data.name)
+    self.health:SetMinMaxValues(0, 1)
+    self.health:SetValue(data.health)
+    self.health.value:SetText(GW.RoundInt(data.health * 100) .. "%")
+    self.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Hostile:GetRGB())
+    self.power:SetMinMaxValues(0, 1)
+    self.power:SetValue(data.power)
+    self.power.value:SetText(GW.RoundInt(data.power * 100) .. "%")
+    self.power:SetStatusBarColor(GW.Colors.PowerBarCustomColors.MANA:GetRGB())
+    self.icon:Show()
+    self.marker:Hide()
+    if data.cast and GW.settings.objectives.bossFrames.castbar then
+        self:ShowTestCastbar(data.cast, data.castTime, data.notInterruptible)
+    else
+        self:HideCastbar()
+    end
+    self:SetTestAuras(data.auras, GW.settings.objectives.bossFrames.auras)
+    self:Show()
+end
+
+function GwBossFrameMixin:StopTest()
+    self.gwTest = nil
+    self:SetTestAuras(nil)
+    self:HideCastbar()
+    self:Hide()
+    RegisterUnitWatch(self)
 end
 
 local function UpdateBossFramesHealthbarColor()
@@ -81,6 +130,47 @@ local function UpdateBossFramesHealthbarColor()
     end
 end
 GW.UpdateBossFramesHealthbarColor = UpdateBossFramesHealthbarColor
+
+local function UpdateBossFramesSettings()
+    for _, frame in ipairs(bossFrames) do
+        frame:ApplySettings()
+    end
+    if bossFrames[1] and bossFrames[1].gwTest then
+        for i, data in ipairs(TEST_BOSSES) do
+            bossFrames[i]:StartTest(data)
+        end
+    end
+end
+GW.UpdateBossFramesSettings = UpdateBossFramesSettings
+
+-- secure frames: only out of combat, and the test ends when a fight starts
+local testWatcher = CreateFrame("Frame")
+testWatcher:SetScript("OnEvent", function()
+    GW.ToggleBossFramesTest(false)
+end)
+
+function GW.ToggleBossFramesTest(enable)
+    if #bossFrames == 0 or InCombatLockdown() then return end
+    local active = bossFrames[1].gwTest == true
+    if enable == nil then
+        enable = not active
+    elseif enable == active then
+        return enable
+    end
+
+    if enable then
+        for i, data in ipairs(TEST_BOSSES) do
+            bossFrames[i]:StartTest(data)
+        end
+        testWatcher:RegisterEvent("PLAYER_REGEN_DISABLED")
+    else
+        for i = 1, #TEST_BOSSES do
+            bossFrames[i]:StopTest()
+        end
+        testWatcher:UnregisterEvent("PLAYER_REGEN_DISABLED")
+    end
+    return enable
+end
 
 GwObjectivesBossContainerMixin = {}
 
@@ -93,7 +183,7 @@ end
 function GwObjectivesBossContainerMixin:UpdateCompass()
     for _, frame in ipairs(bossFrames) do
         if frame:IsShown() then
-            GwObjectivesNotification:SetNotification("boss", {title = UnitName(frame.gwUnit)})
+            GwObjectivesNotification:SetNotification("boss", {title = frame.gwTest and frame.name:GetText() or UnitName(frame.gwUnit)})
             return
         end
     end
@@ -137,6 +227,12 @@ function GwObjectivesBossContainerMixin:RegisterFrame(i)
 
     bossFrame.icon:SetVertexColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Boss]:GetRGB())
 
+    bossFrame:InitCastbarAndAuras({ "INSTANCE_ENCOUNTER_ENGAGE_UNIT", "PLAYER_ENTERING_WORLD" }, {
+        { key = "debuffs", filter = "HARMFUL|PLAYER", candidateFilters = { nameplateShowPersonal = true }, maxFrameCount = 3, isDebuff = true },
+        { key = "buffs", filter = "HELPFUL|IMPORTANT", maxFrameCount = 2, showStealable = true },
+    })
+    bossFrame:ApplySettings()
+
     bossFrame:RegisterEvent("RAID_TARGET_UPDATE")
     bossFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     bossFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -147,6 +243,7 @@ function GwObjectivesBossContainerMixin:RegisterFrame(i)
     bossFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
     bossFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
     bossFrame:RegisterUnitEvent("UNIT_FACTION", unit)
+    bossFrame:RegisterCastbarEvents()
 
     bossFrame:SetScript("OnEvent", bossFrame.OnEvent)
     bossFrame:SetScript("OnShow", bossFrame.OnShow)

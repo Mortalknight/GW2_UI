@@ -36,6 +36,7 @@ local GW = select(2, ...)
 --             showDispelIcon = false,        -- dispel type icon in the corner
 --             dispelIconSize = 12,
 --             showPandemic = false,          -- glow inside the refresh window
+--             thinBorder = false,            -- only the 1px background frame, no black frame around it
 --         },
 --     },
 -- }
@@ -444,11 +445,13 @@ local function BuildAuraButton(button, container, group)
     visual:SetFrameLevel(button:GetFrameLevel() + 1)
     button.gwVisual = visual
 
-    local backdrop = visual:CreateTexture(nil, "ARTWORK", nil, -1)
-    backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    backdrop:SetVertexColor(0, 0, 0)
-    backdrop:SetPoint("TOPLEFT", visual, "TOPLEFT", -1, 1)
-    backdrop:SetPoint("BOTTOMRIGHT", visual, "BOTTOMRIGHT", 1, -1)
+    if not group.thinBorder then
+        local backdrop = visual:CreateTexture(nil, "ARTWORK", nil, -1)
+        backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+        backdrop:SetVertexColor(0, 0, 0)
+        backdrop:SetPoint("TOPLEFT", visual, "TOPLEFT", -1, 1)
+        backdrop:SetPoint("BOTTOMRIGHT", visual, "BOTTOMRIGHT", 1, -1)
+    end
 
     local background = visual:CreateTexture(nil, "ARTWORK")
     background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")

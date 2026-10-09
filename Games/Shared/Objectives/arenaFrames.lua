@@ -17,6 +17,12 @@ local FractionIcon = {
     NONE     = ""
 }
 
+local TEST_OPPONENTS = {
+    {name = "Lightbringer", spec = "Holy", role = "HEALER", class = "PALADIN", classIndex = 2, health = 0.63, power = 0.55, powerToken = "MANA", cast = "Flash of Light", castTime = 1.5, auras = {{spellID = 118, dispelType = GW.Enum.DispelType.Magic}}},
+    {name = "Shadowstep", spec = "Subtlety", role = "DAMAGER", class = "ROGUE", classIndex = 4, health = 0.88, power = 0.7, powerToken = "ENERGY", auras = {{spellID = 1022}}},
+    {name = "Frostfire", spec = "Frost", role = "DAMAGER", class = "MAGE", classIndex = 8, health = 0.4, power = 0.9, powerToken = "MANA", cast = "Polymorph", castTime = 1.7, notInterruptible = true},
+}
+
 GwArenaFrameMixin = CreateFromMixins(GwObjectivesUnitFrameMixin)
 
 function GwArenaFrameMixin:UpdateName()
@@ -73,11 +79,13 @@ end
 function GwArenaFrameMixin:OnEvent(event, unitId)
     if event == "UNIT_POWER_FREQUENT" and self.gwUnit ~= unitId then return end
     local _, instanceType = IsInInstance()
-    if instanceType ~= "arena" and instanceType ~= "pvp" then
+    if self.gwTest or (instanceType ~= "arena" and instanceType ~= "pvp") then
         return
     end
 
-    if IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
+    if self:IsCastbarEvent(event) then
+        self:UpdateCastbar(GW.settings.objectives.arenaFrames.castbar)
+    elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
         self:UpdateHealth()
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
         self:UpdatePower()
@@ -87,7 +95,45 @@ function GwArenaFrameMixin:OnEvent(event, unitId)
         self:UpdateHealth()
         self:UpdatePower()
         self:UpdateName()
+        self:UpdateCastbar(GW.settings.objectives.arenaFrames.castbar)
     end
+end
+
+function GwArenaFrameMixin:ApplySettings()
+    self:ApplyAuraSettings(GW.settings.objectives.arenaFrames.auras)
+    if self:IsShown() and not self.gwTest then
+        self:UpdateCastbar(GW.settings.objectives.arenaFrames.castbar)
+    end
+end
+
+function GwArenaFrameMixin:StartTest(data)
+    UnregisterUnitWatch(self)
+    self.gwTest = true
+    self.name:SetText(nameRoleIcon[data.role] .. data.name .. " - " .. data.spec)
+    SetClassIcon(self.icon, data.classIndex)
+    local color = GWGetClassColor(data.class, true)
+    self.health:SetMinMaxValues(0, 1)
+    self.health:SetValue(data.health)
+    self.health.value:SetText(GW.RoundInt(data.health * 100) .. "%")
+    self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
+    self.power:SetMinMaxValues(0, 1)
+    self.power:SetValue(data.power)
+    self.power:SetStatusBarColor(GW.Colors.PowerBarCustomColors[data.powerToken]:GetRGB())
+    if data.cast and GW.settings.objectives.arenaFrames.castbar then
+        self:ShowTestCastbar(data.cast, data.castTime, data.notInterruptible)
+    else
+        self:HideCastbar()
+    end
+    self:SetTestAuras(data.auras, GW.settings.objectives.arenaFrames.auras)
+    self:Show()
+end
+
+function GwArenaFrameMixin:StopTest()
+    self.gwTest = nil
+    self:SetTestAuras(nil)
+    self:HideCastbar()
+    self:Hide()
+    RegisterUnitWatch(self)
 end
 
 function GwArenaFrameMixin:OnShow()
@@ -99,13 +145,16 @@ function GwArenaFrameMixin:OnShow()
     end
 
     self.container:UpdateArenaFrameHeight()
+    countArenaFrames = countArenaFrames + 1
+    if self.gwTest then return end
     self:UpdateHealth()
     self:UpdatePower()
     self:UpdateName()
-    countArenaFrames = countArenaFrames + 1
+    self:UpdateCastbar(GW.settings.objectives.arenaFrames.castbar)
 end
 
 function GwArenaFrameMixin:OnHide()
+    self:HideCastbar()
     countArenaFrames = countArenaFrames - 1
     self.container:UpdateArenaFrameHeight()
     local _, instanceType = IsInInstance()
@@ -121,6 +170,48 @@ function GwArenaPrepFrameMixin:OnShow()
     self.container:UpdateArenaFrameHeight()
 end
 
+
+local function UpdateArenaFramesSettings()
+    for _, frame in ipairs(arenaFrames) do
+        frame:ApplySettings()
+    end
+    if arenaFrames[1] and arenaFrames[1].gwTest then
+        for i, data in ipairs(TEST_OPPONENTS) do
+            arenaFrames[i]:StartTest(data)
+        end
+    end
+end
+GW.UpdateArenaFramesSettings = UpdateArenaFramesSettings
+
+-- secure frames: only out of combat, and the test ends when a fight starts
+local testWatcher = CreateFrame("Frame")
+testWatcher:SetScript("OnEvent", function()
+    GW.ToggleArenaFramesTest(false)
+end)
+
+function GW.ToggleArenaFramesTest(enable)
+    if #arenaFrames == 0 or InCombatLockdown() then return end
+    local active = arenaFrames[1].gwTest == true
+    if enable == nil then
+        enable = not active
+    elseif enable == active then
+        return enable
+    end
+
+    if enable then
+        for i, data in ipairs(TEST_OPPONENTS) do
+            arenaFrames[i]:StartTest(data)
+        end
+        GwObjectivesNotification:SetNotification("arena", {title = ARENA})
+        testWatcher:RegisterEvent("PLAYER_REGEN_DISABLED")
+    else
+        for i = 1, #TEST_OPPONENTS do
+            arenaFrames[i]:StopTest()
+        end
+        testWatcher:UnregisterEvent("PLAYER_REGEN_DISABLED")
+    end
+    return enable
+end
 
 GwObjectivesArenaContainerMixin = {}
 
@@ -198,6 +289,13 @@ function GwObjectivesArenaContainerMixin:RegisterFrame(i)
 
     arenaFrame.power.value:Hide()
 
+    -- crowd control on the opponent first, then the important buffs (defensives, trinket effects)
+    arenaFrame:InitCastbarAndAuras({ "ARENA_OPPONENT_UPDATE", "PLAYER_ENTERING_WORLD" }, {
+        { key = "cc", filter = "HARMFUL|CROWD_CONTROL", maxFrameCount = 2, isDebuff = true },
+        { key = "buffs", filter = "HELPFUL|IMPORTANT", maxFrameCount = 2, showStealable = true },
+    })
+    arenaFrame:ApplySettings()
+
     arenaFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     arenaFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     arenaFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
@@ -207,6 +305,7 @@ function GwObjectivesArenaContainerMixin:RegisterFrame(i)
     arenaFrame:RegisterUnitEvent("UNIT_MAXPOWER", unit)
     arenaFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
     arenaFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
+    arenaFrame:RegisterCastbarEvents()
 
     arenaFrame:SetScript("OnShow", arenaFrame.OnShow)
     arenaFrame:SetScript("OnHide", arenaFrame.OnHide)

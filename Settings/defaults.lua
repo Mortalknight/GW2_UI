@@ -1468,6 +1468,14 @@ GW.globalDefault = {
                 Combat = false,
             },
             compass = true,
+            bossFrames = {
+                castbar = true,
+                auras = true,
+            },
+            arenaFrames = {
+                castbar = true,
+                auras = true,
+            },
             statusBars = true,
             superTrackedOnTop = false,
             showCompleted = false,
