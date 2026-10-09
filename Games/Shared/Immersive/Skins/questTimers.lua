@@ -15,6 +15,11 @@ local function ApplyQuestTimersSkin()
     if QuestTimerHeader then
         QuestTimerHeader:SetPoint('TOP', 1, 8)
     end
+    local header = QuestTimerFrame.Header
+    if header then
+        header:GwStripTextures()
+        header.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    end
     if QuestTimerFrame.Border then
         QuestTimerFrame.Border:Hide()
     end
