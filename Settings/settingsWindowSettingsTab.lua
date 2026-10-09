@@ -423,12 +423,15 @@ local function SearchWidgetsByText(query)
     for _, bucket in ipairs(buckets) do
         local hits = {}
         for _, e in ipairs(bucket.entries) do
-            if searchNew then
-                if IsNewOption(e.opt) then
+            -- headers only structure the panel, alone they are no result
+            if e.type ~= "header" and e.type ~= "subHeader" then
+                if searchNew then
+                    if IsNewOption(e.opt) then
+                        hits[#hits+1] = e
+                    end
+                elseif e.titleNorm:find(q, 1, true) or e.groupHeaderNorm:find(q, 1, true) or e.descNorm:find(q, 1, true) then
                     hits[#hits+1] = e
                 end
-            elseif e.titleNorm:find(q, 1, true) or e.groupHeaderNorm:find(q, 1, true) or e.descNorm:find(q, 1, true) then
-                hits[#hits+1] = e
             end
         end
         if #hits > 0 then
