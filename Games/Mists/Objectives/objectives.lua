@@ -480,15 +480,12 @@ function GwQuestLogMixin:BlockOnClick(button)
             else
                 if WatchFrame.showObjectives then
                     rootDescription:CreateButton(OBJECTIVES_SHOW_QUEST_MAP, function()
-                        QuestMapFrame_OpenToQuestDetails(self.questID)
+                        GW.ShowQuestDetails(self.questID)
                     end)
                 end
             end
 
-            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() ShowUIPanel(QuestLogFrame)
-                QuestLog_SetSelection(self.questLogIndex)
-                QuestLog_Update()
-            end)
+            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() GW.ShowQuestLogEntry(self.questLogIndex) end)
 
             if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
                 rootDescription:CreateButton(GW.L["Set TomTom Target"], function() AddTomTomWaypoint(self.questID, nil) end)
@@ -534,9 +531,7 @@ function GwQuestLogMixin:BlockOnClick(button)
             ShowQuestComplete(self.questLogIndex)
             WatchFrameAutoQuest_ClearPopUp(self.questID)
         else
-            ShowUIPanel(QuestLogFrame)
-            QuestLog_SetSelection(self.questLogIndex)
-            QuestLog_Update()
+            GW.ShowQuestLogEntry(self.questLogIndex)
         end
     end
 end

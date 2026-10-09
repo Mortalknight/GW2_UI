@@ -432,6 +432,30 @@ function GW.GetWowheadLinkForLanguage()
     return "https://www.wowhead.com/".. xpac .. langShort
 end
 
+local function CanChangePanels()
+    if InCombatLockdown() then
+        UIErrorsFrame:AddExternalErrorMessage(ERR_NOT_IN_COMBAT)
+        return false
+    end
+    return true
+end
+
+function GW.ShowQuestLogEntry(questLogIndex, toggle)
+    if not CanChangePanels() then return end
+    if toggle and QuestLogFrame:IsShown() and QuestLogFrame.selectedButtonID == questLogIndex then
+        HideUIPanel(QuestLogFrame)
+        return
+    end
+    ShowUIPanel(QuestLogFrame)
+    QuestLog_SetSelection(questLogIndex)
+    QuestLog_Update()
+end
+
+function GW.ShowQuestDetails(questID)
+    if not CanChangePanels() then return end
+    QuestMapFrame_OpenToQuestDetails(questID)
+end
+
 -- our popup with the wowhead link of a quest, achievement, ...; questie's own popup only exists with questie
 function GW.ShowWowheadUrlPopup(linkType, id)
     GW.ShowPopup({text = GW.L["Wowhead URL"],

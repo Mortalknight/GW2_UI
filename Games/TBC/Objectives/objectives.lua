@@ -488,10 +488,7 @@ function GwQuestLogMixin:BlockOnClick(button)
 
             rootDescription:CreateButton(COMMUNITIES_INVITE_MANAGER_LINK_TO_CHAT, function() LinkQuestIntoChat(self.title, self.questID) end)
             rootDescription:CreateButton(GW.L["Wowhead URL"], function() GW.ShowWowheadUrlPopup("quest", self.questID) end)
-            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() ShowUIPanel(QuestLogFrame)
-                QuestLog_SetSelection(self.questLogIndex)
-                QuestLog_Update()
-            end)
+            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() GW.ShowQuestLogEntry(self.questLogIndex) end)
 
             if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
                 rootDescription:CreateButton(GW.L["Set TomTom Target"], function() AddTomTomWaypoint(self.questID, nil) end)
@@ -526,13 +523,7 @@ function GwQuestLogMixin:BlockOnClick(button)
 
     if button ~= "RightButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        if QuestLogFrame:IsShown() and QuestLogFrame.selectedButtonID == self.questLogIndex then
-            HideUIPanel(QuestLogFrame)
-        else
-            ShowUIPanel(QuestLogFrame)
-            QuestLog_SetSelection(self.questLogIndex)
-            QuestLog_Update()
-        end
+        GW.ShowQuestLogEntry(self.questLogIndex, true)
     end
 end
 

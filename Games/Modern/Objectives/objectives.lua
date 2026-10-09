@@ -627,7 +627,7 @@ function GwQuestLogMixin:BlockOnClick(button)
                 RemoveAutoQuestPopUp(questID)
                 ShowQuestComplete(questID)
             else
-                QuestMapFrame_OpenToQuestDetails(questID)
+                GW.ShowQuestDetails(questID)
             end
         end
     else
@@ -652,9 +652,7 @@ function GwQuestLogMixin:BlockOnClick(button)
                 QuestUtil.OpenQuestDetails(questID)
             end)
 
-            rootDescription:CreateButton(OBJECTIVES_SHOW_QUEST_MAP, function()
-                QuestMapFrame_OpenToQuestDetails(questID)
-            end)
+            rootDescription:CreateButton(OBJECTIVES_SHOW_QUEST_MAP, function() GW.ShowQuestDetails(questID) end)
 
             rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()
                 C_QuestLog.RemoveQuestWatch(questID)
