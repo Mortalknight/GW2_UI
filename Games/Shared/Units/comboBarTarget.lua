@@ -121,11 +121,12 @@ local function comboBarOnEvent(self, event, ...)
 end
 
 local function UpdateSettings(targetFrame)
+    local castBar = targetFrame.castingbar or targetFrame.castingbarNormal
     comboBar:ClearAllPoints()
     if targetFrame.frameInvert then
-        comboBar:SetPoint("TOPRIGHT", targetFrame.castingbar, "TOPRIGHT", 0, -13)
+        comboBar:SetPoint("TOPRIGHT", castBar, "TOPRIGHT", 0, -13)
     else
-        comboBar:SetPoint("TOPLEFT", targetFrame.castingbar, "TOPLEFT", 0, -13)
+        comboBar:SetPoint("TOPLEFT", castBar, "TOPLEFT", 0, -13)
     end
 
     local point = 0
