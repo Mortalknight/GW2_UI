@@ -174,7 +174,7 @@ local function LoadTargetPanel(sWindow)
     -- Retail: tri-state filters, one list (single group per aura type);
     -- classic keeps the old boolean per-side list (old filter engine)
     local advancedAuraOptions, advancedAuraOptionsNames, advancedAuraOptionsOther, advancedAuraOptionsNamesOther
-    if GW.Retail then
+    if GW.isModern then
         advancedAuraOptions = {
             "HEADER", "isAuraPlayer", "isAuraRaidPlayerDispellable", "isAuraStealable", "isAuraBoss", "isAuraPriority", "isAuraRole",
             "HEADER", "isAuraRaid", "isAuraRaidInCombat", "isAuraCancelable", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraExternalDefensive", "isAuraImportant"
@@ -194,7 +194,7 @@ local function LoadTargetPanel(sWindow)
 
     local statusBarTexturesOptions, statusBarTexturesLables = GW.GetStatusBarTextures()
 
-    if not GW.Retail then
+    if not GW.isModern then
         -- classic only: the "Dungeon & Raid Debuffs" preset of the old filter engine
         tinsert(debuffOptions, 2, "importent")
         tinsert(debuffOptionNames, 2, L["Dungeon & Raid Debuffs"])
@@ -225,8 +225,8 @@ local function LoadTargetPanel(sWindow)
 
     pPlayerPet:AddGroupHeader(AURAS)
     pPlayerPet:AddOption(L["Show auras below"], nil, {getterSetter = "unitframes.pet.aurasUnder", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleAuraPosition() end end, dependence = {["unitframes.pet.enabled"] = true}})
-    pPlayerPet:AddOption(L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "unitframes.pet.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.pet.enabled"] = true}, hidden = not GW.Retail})
-    pPlayerPet:AddOptionDropdown(L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "unitframes.pet.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.pet.enabled"] = true}, hidden = not GW.Retail})
+    pPlayerPet:AddOption(L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "unitframes.pet.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.pet.enabled"] = true}, hidden = not GW.isModern})
+    pPlayerPet:AddOptionDropdown(L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "unitframes.pet.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.pet.enabled"] = true}, hidden = not GW.isModern})
     pPlayerPet:AddOptionDropdown(L["Buffs"], L["Display the target's buffs."], { getterSetter = "unitframes.pet.buffFilter", callback = function() GwPlayerPetFrame:UpdateSettings() end, optionsList = buffOptions, optionNames = buffOptionNames, dependence = {["unitframes.pet.enabled"] = true}, groupHeaderName = AURAS})
     pPlayerPet:AddOptionNote(L["Every selected filter narrows the display further - only auras matching all selected filters are shown. No selection shows everything."]
         .. "\n" .. L["Clicking an entry cycles through three states: off (ignored) - check (only auras with this property are shown) - red cross (auras with this property are hidden)."], {
@@ -239,7 +239,7 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["unitframes.pet.enabled"] = true, ["unitframes.pet.buffFilter"] = {"advanced"}},
         checkbox = true,
-        triState = GW.Retail,
+        triState = GW.isModern,
         groupHeaderName = AURAS}
     )
 
@@ -250,12 +250,12 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["unitframes.pet.enabled"] = true, ["unitframes.pet.debuffFilter"] = {"advanced"}},
         checkbox = true,
-        triState = GW.Retail,
+        triState = GW.isModern,
         groupHeaderName = AURAS}
     )
     pPlayerPet:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "unitframes.pet.ignoredAuras", callback = function() GwPlayerPetFrame:UpdateSettings() end, dependence = {["unitframes.pet.enabled"] = true}, groupHeaderName = AURAS})
     pPlayerPet:AddOptionDropdown(L["Aura Sorting"], L["Set the sorting order of the auras."], {
-        getterSetter = "unitframes.pet.auraSort", callback = function() GwPlayerPetFrame:UpdateSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["unitframes.pet.enabled"] = true}, groupHeaderName = AURAS, hidden = not GW.Retail
+        getterSetter = "unitframes.pet.auraSort", callback = function() GwPlayerPetFrame:UpdateSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["unitframes.pet.enabled"] = true}, groupHeaderName = AURAS, hidden = not GW.isModern
     })
     pPlayerPet:AddGroupHeader(L["Fader"])
     pPlayerPet:AddOptionDropdown(L["Fader"], GW.FADER_DROPDOWN_DESC, { getterSetter = "unitframes.pet.fader", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, optionsList = select(1, GW.GetFaderDropdownOptions()), optionNames = select(2, GW.GetFaderDropdownOptions()), optionTooltips = select(3, GW.GetFaderDropdownOptions()), tooltipType = "text", dependence = {["unitframes.pet.enabled"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
@@ -287,8 +287,8 @@ local function LoadTargetPanel(sWindow)
 
     p_target:AddGroupHeader(AURAS)
     p_target:AddOption(BUFFS_ON_TOP, nil, {getterSetter = "unitframes.target.aurasOnTop", callback = function() GwTargetUnitFrame:ToggleSettings() end, groupHeaderName = AURAS, dependence = {["unitframes.target.enabled"] = true}})
-    p_target:AddOption(L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "unitframes.target.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.target.enabled"] = true}, hidden = not GW.Retail})
-    p_target:AddOptionDropdown(L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "unitframes.target.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.target.enabled"] = true}, hidden = not GW.Retail})
+    p_target:AddOption(L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "unitframes.target.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.target.enabled"] = true}, hidden = not GW.isModern})
+    p_target:AddOptionDropdown(L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "unitframes.target.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.target.enabled"] = true}, hidden = not GW.isModern})
     p_target:AddOptionDropdown(L["Buffs"], L["Display the target's buffs."], { getterSetter = "unitframes.target.buffFilter", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = buffOptions, optionNames = buffOptionNames, dependence = {["unitframes.target.enabled"] = true}, groupHeaderName = AURAS})
     p_target:AddOptionNote(L["Every selected filter narrows the display further - only auras matching all selected filters are shown. No selection shows everything."]
         .. "\n" .. L["Clicking an entry cycles through three states: off (ignored) - check (only auras with this property are shown) - red cross (auras with this property are hidden)."], {
@@ -301,7 +301,7 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["unitframes.target.enabled"] = true, ["unitframes.target.buffFilter"] = {"advanced"}},
         checkbox = true,
-        triState = GW.Retail,
+        triState = GW.isModern,
         groupHeaderName = AURAS}
     )
 
@@ -312,14 +312,14 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["unitframes.target.enabled"] = true, ["unitframes.target.debuffFilter"] = {"advanced"}},
         checkbox = true,
-        triState = GW.Retail,
+        triState = GW.isModern,
         groupHeaderName = AURAS}
     )
-    p_target:AddOptionSlider(GW.Retail and L["Buff size"] or L["Aura size"], nil, { getterSetter = "unitframes.target.auraSmallSize", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["unitframes.target.enabled"] = true}})
-    p_target:AddOptionSlider(GW.Retail and L["Debuff size"] or L["Own aura size"], nil, { getterSetter = "unitframes.target.auraBigSize", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["unitframes.target.enabled"] = true}})
+    p_target:AddOptionSlider(GW.isModern and L["Buff size"] or L["Aura size"], nil, { getterSetter = "unitframes.target.auraSmallSize", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["unitframes.target.enabled"] = true}})
+    p_target:AddOptionSlider(GW.isModern and L["Debuff size"] or L["Own aura size"], nil, { getterSetter = "unitframes.target.auraBigSize", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["unitframes.target.enabled"] = true}})
     p_target:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "unitframes.target.ignoredAuras", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.target.enabled"] = true}, groupHeaderName = AURAS})
     p_target:AddOptionDropdown(L["Aura Sorting"], L["Set the sorting order of the auras."], {
-        getterSetter = "unitframes.target.auraSort", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["unitframes.target.enabled"] = true}, groupHeaderName = AURAS, hidden = not GW.Retail
+        getterSetter = "unitframes.target.auraSort", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["unitframes.target.enabled"] = true}, groupHeaderName = AURAS, hidden = not GW.isModern
     })
 
 
@@ -376,8 +376,8 @@ local function LoadTargetPanel(sWindow)
 
     p_focus:AddGroupHeader(AURAS)
     p_focus:AddOption(BUFFS_ON_TOP, nil, {getterSetter = "unitframes.focus.aurasOnTop", callback = function() GwFocusUnitFrame:ToggleSettings() end, groupHeaderName = AURAS, dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic})
-    p_focus:AddOption(L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "unitframes.focus.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.focus.enabled"] = true}, hidden = not GW.Retail})
-    p_focus:AddOptionDropdown(L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "unitframes.focus.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.focus.enabled"] = true}, hidden = not GW.Retail})
+    p_focus:AddOption(L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "unitframes.focus.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.focus.enabled"] = true}, hidden = not GW.isModern})
+    p_focus:AddOptionDropdown(L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]}, getterSetter = "unitframes.focus.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.focus.enabled"] = true}, hidden = not GW.isModern})
     p_focus:AddOptionDropdown(L["Buffs"], L["Display the focus's buffs."], { getterSetter = "unitframes.focus.buffFilter", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = buffOptions, optionNames = buffOptionNames, dependence = {["unitframes.focus.enabled"] = true}, groupHeaderName = AURAS})
     p_focus:AddOptionNote(L["Every selected filter narrows the display further - only auras matching all selected filters are shown. No selection shows everything."]
         .. "\n" .. L["Clicking an entry cycles through three states: off (ignored) - check (only auras with this property are shown) - red cross (auras with this property are hidden)."], {
@@ -390,7 +390,7 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["unitframes.focus.enabled"] = true, ["unitframes.focus.buffFilter"] = {"advanced"}},
         checkbox = true,
-        triState = GW.Retail,
+        triState = GW.isModern,
         groupHeaderName = AURAS}
     )
 
@@ -401,14 +401,14 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["unitframes.focus.enabled"] = true, ["unitframes.focus.debuffFilter"] = {"advanced"}},
         checkbox = true,
-        triState = GW.Retail,
+        triState = GW.isModern,
         groupHeaderName = AURAS}
     )
-    p_focus:AddOptionSlider(GW.Retail and L["Buff size"] or L["Aura size"], nil, { getterSetter = "unitframes.focus.auraSmallSize", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["unitframes.focus.enabled"] = true}})
-    p_focus:AddOptionSlider(GW.Retail and L["Debuff size"] or L["Own aura size"], nil, { getterSetter = "unitframes.focus.auraBigSize", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["unitframes.focus.enabled"] = true}})
+    p_focus:AddOptionSlider(GW.isModern and L["Buff size"] or L["Aura size"], nil, { getterSetter = "unitframes.focus.auraSmallSize", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["unitframes.focus.enabled"] = true}})
+    p_focus:AddOptionSlider(GW.isModern and L["Debuff size"] or L["Own aura size"], nil, { getterSetter = "unitframes.focus.auraBigSize", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["unitframes.focus.enabled"] = true}})
     p_focus:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "unitframes.focus.ignoredAuras", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["unitframes.focus.enabled"] = true}, groupHeaderName = AURAS})
     p_focus:AddOptionDropdown(L["Aura Sorting"], L["Set the sorting order of the auras."], {
-        getterSetter = "unitframes.focus.auraSort", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["unitframes.focus.enabled"] = true}, groupHeaderName = AURAS, hidden = not GW.Retail
+        getterSetter = "unitframes.focus.auraSort", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"DEFAULT", "EXPIRATION_ASC", "EXPIRATION_DESC", "NAME_ASC", "NAME_DESC"}, optionNames = {DEFAULT, L["Remaining time (ascending)"], L["Remaining time (descending)"], L["Name (ascending)"], L["Name (descending)"]}, dependence = {["unitframes.focus.enabled"] = true}, groupHeaderName = AURAS, hidden = not GW.isModern
     })
 
 
@@ -483,9 +483,9 @@ local function LoadTargetPanel(sWindow)
     party:AddOption(SHOW_BUFFS, nil, {getterSetter = "unitframes.party.showBuffs", callback = GW.UpdatePartyFrames, dependence = {["unitframes.party.enabled"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "playerAuras"})
     party:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "unitframes.party.showDebuffs", callback = GW.UpdatePartyFrames, dependence = {["unitframes.party.enabled"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "playerAuras"})
     party:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispel."], {getterSetter = "unitframes.party.onlyDispellableDebuffs", callback = GW.UpdatePartyFrames, dependence = {["unitframes.party.enabled"] = true, ["unitframes.party.showDebuffs"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "playerAuras"})
-    party:AddOption(L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "unitframes.party.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.party.enabled"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, hidden = not GW.Retail, group = "playerAuras"})
+    party:AddOption(L["Pandemic Highlight"], L["Highlights your own auras while they are inside their refresh window, where refreshing adds the remaining time on top."], {getterSetter = "unitframes.party.pandemicHighlight", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.party.enabled"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, hidden = not GW.isModern, group = "playerAuras"})
     party:AddOptionDropdown(L["Show Dispel Type Icon"], L["Shows the dispel type as a small icon in the corner of the aura - on every aura with a dispel type, or only on those your group can dispel."], {optionsList = {"OFF", "ALL", "DISPELLABLE"}, optionNames = {OFF, ALL, L["Only Dispellable"]},
-        getterSetter = "unitframes.party.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.party.enabled"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, hidden = not GW.Retail, group = "playerAuras"
+        getterSetter = "unitframes.party.dispelIcon", callback = GW.UpdateAuraOptionRegions, dependence = {["unitframes.party.enabled"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, hidden = not GW.isModern, group = "playerAuras"
     })
     party:AddOptionSpellList(L["Ignored Auras"], L["A list of auras that should never be shown."], { getterSetter = "unitframes.party.ignoredAuras", callback = GW.UpdatePartyFrames, dependence = {["unitframes.party.enabled"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "playerAuras"})
     party:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "unitframes.party.showRaidInstanceDebuffs", callback = GW.UpdatePartyFrames, dependence = {["unitframes.party.enabled"] = true, ["PARTY_GRID_REPLACES_FRAMES"] = false}, group = "playerAuras"})
