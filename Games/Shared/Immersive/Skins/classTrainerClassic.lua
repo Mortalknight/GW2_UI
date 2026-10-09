@@ -76,7 +76,7 @@ local function ApplyClassTrainerSkin()
         GW.SetHeaderPortrait(self.gwHeader, UnitExists("npc") and "npc" or "player")
         SkinTrainAllButton()
     end)
-    
+
     ClassTrainerGreetingText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     ClassTrainerGreetingText:ClearAllPoints()
     ClassTrainerGreetingText:SetPoint("TOPLEFT", frame, "TOPLEFT", 20, -52)
@@ -101,6 +101,7 @@ local function ApplyClassTrainerSkin()
         _G[scrollFrame:GetName() .. "ScrollBar"]:GwSkinScrollBar()
         scrollFrame:GwSkinScrollFrame()
     end
+    ScrollFrame_OnScrollRangeChanged(ClassTrainerDetailScrollFrame)
     -- the list bg also holds the collapse all row and the filter, the rows keep some space to its edge
     local listBg = GW.CreateDetailsBackgroundTexture(frame)
     listBg:SetPoint("TOPLEFT", ClassTrainerExpandButtonFrame, "TOPLEFT", 0, 0)
