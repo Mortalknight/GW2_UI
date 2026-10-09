@@ -476,7 +476,7 @@ function GwQuestLogMixin:BlockOnClick(button)
                     end
                 end
 
-                rootDescription:CreateButton(GW.L["Wowhead URL"], function() StaticPopup_Show("QUESTIE_WOWHEAD_URL", self.questID, self.title) end)
+                rootDescription:CreateButton(GW.L["Wowhead URL"], function() GW.ShowWowheadUrlPopup("quest", self.questID) end)
             else
                 if WatchFrame.showObjectives then
                     rootDescription:CreateButton(OBJECTIVES_SHOW_QUEST_MAP, function()

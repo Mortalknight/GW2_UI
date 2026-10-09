@@ -423,9 +423,23 @@ function GW.GetWowheadLinkForLanguage()
         xpac = "tbc/"
     elseif GW.Retail then
         xpac = ""
+    elseif GW.Forever then
+        xpac = "forever/"
     else
         xpac = "classic/" -- era/sod/hardcore are all on this URL
     end
 
     return "https://www.wowhead.com/".. xpac .. langShort
+end
+
+-- our popup with the wowhead link of a quest, achievement, ...; questie's own popup only exists with questie
+function GW.ShowWowheadUrlPopup(linkType, id)
+    GW.ShowPopup({text = GW.L["Wowhead URL"],
+        hasEditBox = true,
+        hideOnEscape = true,
+        EditBoxOnEnterPressed = function(popup) popup:Hide() end,
+        EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+        button2 = CLOSE,
+        inputText = GW.GetWowheadLinkForLanguage() .. linkType .. "=" .. id,
+    })
 end
