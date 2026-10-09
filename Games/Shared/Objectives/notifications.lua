@@ -630,10 +630,44 @@ function GwObjectivesTrackerNotificationMixin:NotificationStateChanged(show)
     )
 end
 
+local function GetQuestBlock(questID)
+    local containers = GW.ObjectiveTrackerContainer
+    for _, container in pairs({containers.Campaign or false, containers.Quests or false}) do
+        if container then
+            for _, block in ipairs(container.blocks) do
+                if block.questID == questID and block:IsShown() then
+                    return block
+                end
+            end
+        end
+    end
+end
+
+local function CompassOnMouseUp(self, button)
+    local questID = self.compassQuestID
+    if not questID then return end
+
+    local block = GetQuestBlock(questID)
+    if block then
+        block:GetScript("OnMouseDown")(block, button)
+    elseif button == "LeftButton" then
+        -- a quest the tracker does not show has no block menu, it can still be opened
+        if GW.isModern then
+            GW.ShowQuestDetails(questID)
+        else
+            local questLogIndex = GetQuestLogIndexByID(questID)
+            if questLogIndex and questLogIndex > 0 then
+                GW.ShowQuestLogEntry(questLogIndex)
+            end
+        end
+    end
+end
+
 local currentCompassData
 function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
     if not GW.settings.objectives.compass then
         self.shouldDisplay = false
+        self.compassQuestID = nil
         return
     end
 
@@ -665,10 +699,12 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
 
     if not data then
         self.shouldDisplay = false
+        self.compassQuestID = nil
         return
     end
 
     data.COLOR = data.COLOR or { r = 1, g = 1, b = 1 }
+    self.compassQuestID = data.QUESTID
 
     --remove tooltip here
     self.iconFrame:SetScript("OnEnter", nil)
@@ -820,7 +856,11 @@ function GwObjectivesTrackerNotificationMixin:InitModule()
     self.bonusbar:SetScript("OnEnter", self.BonusbarOnEnter)
     self.bonusbar:SetScript("OnLeave", GameTooltip_Hide)
     self.compass:SetScript("OnShow", self.compass.NewQuestAnimation)
-    self.compass:SetScript("OnMouseDown", function() if GW.Retail then C_SuperTrack.ClearAllSuperTracked() end end)
+    self.compass:SetScript("OnMouseDown", function() if C_SuperTrack and C_SuperTrack.ClearAllSuperTracked then C_SuperTrack.ClearAllSuperTracked() end end)
+    self:SetScript("OnMouseUp", CompassOnMouseUp)
+    if not C_SuperTrack or not C_SuperTrack.ClearAllSuperTracked then
+        self.compass:SetScript("OnMouseUp", function(_, button) CompassOnMouseUp(self, button) end)
+    end
     self.shouldDisplay = false
     self.headerAnimationName = self:GetDebugName() .. "_Header"
     self.indicatorAnimationName = self:GetDebugName() .. "_Indicator"
