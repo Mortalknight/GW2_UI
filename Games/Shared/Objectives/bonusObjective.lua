@@ -147,21 +147,17 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
 
     for _, questData in pairs(questIDs) do
         local questID = questData.questID
-        local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
+        local isInArea, _, numObjectives, text = GetTaskInfo(questID)
         text = text or ""
         numObjectives = numObjectives or 0
         local treatAsInArea = (questData.tracked and text ~= "") or isInArea
         local simpleDesc = ""
         local compassData = {}
 
-        if isOnMap then
-            compassData.TYPE = GW.Enum.ObjectivesNotificationType.Event
-            compassData.COMPASS = true
-        end
         if numObjectives > 0 and treatAsInArea then
             if not self.collapsed then
                 local block = self:GetBlock(blockIndex, GW.Enum.ObjectivesNotificationType.Event, true)
-                compassData.TITLE = text
+                compassData.title = text
                 -- needed for tooltip
                 block.parentModule = { showWorldQuests = true }
                 block.event = true
@@ -183,18 +179,9 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
 
                 foundEvent = true
 
-                compassData.PROGRESS = 0
                 local objectiveProgress = 0
-                local playerMapID = GW.Location.GetMapID()
-
-                compassData.TYPE = GW.Enum.ObjectivesNotificationType.Event
-                compassData.ID = questID
-                compassData.COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]
-                compassData.COMPASS = false
-                compassData.X = nil
-                compassData.Y = nil
-                compassData.QUESTID = questID
-                compassData.MAPID = playerMapID
+                compassData.id = questID
+                compassData.questID = questID
 
                 for objectiveIndex = 1, numObjectives do
                     local txt, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
@@ -223,13 +210,15 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 end
 
                 if simpleDesc ~= "" then
-                    compassData.DESC = simpleDesc
+                    compassData.desc = simpleDesc
                 end
 
-                compassData.PROGRESS = objectiveProgress
+                compassData.progress = objectiveProgress
 
-                if isInArea then
-                    GwObjectivesNotification:AddNotification(compassData)
+                -- several events in the area: the first one keeps the compass
+                if isInArea and not self.compassEventSet then
+                    self.compassEventSet = true
+                    GwObjectivesNotification:SetNotification("event", compassData)
                 end
 
                 if block.hasItem then
@@ -254,7 +243,8 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateLayout(newQuestId)
 
     self.isUpdating = true
     local trackedEventIDs = {}
-    GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Event)
+    GwObjectivesNotification:SetNotification("event", nil)
+    self.compassEventSet = nil
 
     for i = 1, #self.blocks do
         local block = self.blocks[i]

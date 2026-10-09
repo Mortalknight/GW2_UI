@@ -110,7 +110,7 @@ function GwArenaFrameMixin:OnHide()
     self.container:UpdateArenaFrameHeight()
     local _, instanceType = IsInInstance()
     if countArenaFrames < 1 and instanceType ~= "arena" and instanceType ~= "pvp" then
-        GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Arena)
+        GwObjectivesNotification:SetNotification("arena", nil)
         countArenaFrames = 0
     end
 end
@@ -125,7 +125,6 @@ end
 GwObjectivesArenaContainerMixin = {}
 
 function GwObjectivesArenaContainerMixin:SetCompass()
-    local compassData = {}
     local compassTitle, compassDesc = "", ""
 
     if C_PvP.IsInBrawl() then
@@ -145,18 +144,7 @@ function GwObjectivesArenaContainerMixin:SetCompass()
         end
     end
 
-    compassData.TITLE = compassTitle
-    compassData.DESC = compassDesc
-    compassData.TYPE = GW.Enum.ObjectivesNotificationType.Arena
-    compassData.ID = "arena_unknown"
-    compassData.QUESTID = "unknown"
-    compassData.COMPASS = false
-    compassData.MAPID = nil
-    compassData.X = nil
-    compassData.Y = nil
-    compassData.COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Arena]
-
-    GwObjectivesNotification:AddNotification(compassData, true)
+    GwObjectivesNotification:SetNotification("arena", {title = compassTitle, desc = compassDesc})
 end
 
 function GwObjectivesArenaContainerMixin:UpdateArenaFrameHeight()

@@ -762,21 +762,7 @@ function GwObjectivesScenarioContainerMixin:QueueUpdateLayout(event, ...)
 end
 
 function GwObjectivesScenarioContainerMixin:UpdateLayout()
-    GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Scenario)
-    GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Torghast)
-    GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Delve)
-
-    local compassData = self.compassData or {}
-    self.compassData = compassData
-    compassData.TYPE = GW.Enum.ObjectivesNotificationType.Scenario
-    compassData.TITLE = "Unknown Scenario"
-    compassData.ID = "unknown"
-    compassData.QUESTID = "unknown"
-    compassData.COMPASS = false
-    compassData.MAPID = nil
-    compassData.X = nil
-    compassData.Y = nil
-    compassData.COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Scenario]
+    local compassData = {type = GW.Enum.ObjectivesNotificationType.Scenario, title = "Unknown Scenario"}
 
     local block = self.block
     local timerBlock = self.timerBlock
@@ -823,13 +809,12 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     block:Show()
     if hasNoScenario then
         if instanceType == "raid" then
-            compassData.TITLE = name
-            compassData.DESC = difficultyName
-            GwObjectivesNotification:AddNotification(compassData)
+            compassData.title = name
+            compassData.desc = difficultyName
+            GwObjectivesNotification:SetNotification("scenario", compassData)
             block.height = block.height + 5
         else
-            GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Scenario)
-            GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Torghast)
+            GwObjectivesNotification:SetNotification("scenario", nil)
             block:Hide()
         end
 
@@ -864,11 +849,11 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     if difficultyName then
         local level = GW.Retail and C_ChallengeMode.GetActiveKeystoneInfo() or 0
         if level > 0 then
-            compassData.TITLE = stageName .. " |cFFFFFFFF +" .. level .. " " .. difficultyName .. "|r"
+            compassData.title = stageName .. " |cFFFFFFFF +" .. level .. " " .. difficultyName .. "|r"
         else
-            compassData.TITLE = stageName .. " |cFFFFFFFF " .. difficultyName .. "|r"
+            compassData.title = stageName .. " |cFFFFFFFF " .. difficultyName .. "|r"
         end
-        compassData.DESC = stageDescription .. " "
+        compassData.desc = stageDescription .. " "
     end
 
     if GW.Retail and IsInJailersTower() then
@@ -879,16 +864,15 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         if self.jailersTowerLevelUpdateInfo and self.jailersTowerLevelUpdateInfo.type then
             local typeString = C_ScenarioInfo.GetJailersTowerTypeString(self.jailersTowerLevelUpdateInfo.type)
             if typeString then
-                compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. floor .. " - " .. typeString .. "|r"
+                compassData.title = difficultyName .. " |cFFFFFFFF " .. floor .. " - " .. typeString .. "|r"
             else
-                compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. floor .. "|r"
+                compassData.title = difficultyName .. " |cFFFFFFFF " .. floor .. "|r"
             end
         else
-            compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. floor .. "|r"
+            compassData.title = difficultyName .. " |cFFFFFFFF " .. floor .. "|r"
         end
 
-        compassData.COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Torghast]
-        compassData.TYPE = GW.Enum.ObjectivesNotificationType.Torghast
+        compassData.type = GW.Enum.ObjectivesNotificationType.Torghast
     end
 
     -- check for active delves
@@ -896,7 +880,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     if delvesWidgetInfo and delvesWidgetInfo.frameTextureKit == "delves-scenario" then
         local tierLevel = delvesWidgetInfo.tierText or ""
         GwObjectivesNotification.iconFrame.tooltipSpellID = delvesWidgetInfo.tierTooltipSpellID
-        compassData.TITLE = difficultyName .. " |cFFFFFFFF(" .. tierLevel .. ")|r - " .. delvesWidgetInfo.headerText
+        compassData.title = difficultyName .. " |cFFFFFFFF(" .. tierLevel .. ")|r - " .. delvesWidgetInfo.headerText
         block.delvesFrame:Show()
         -- without a stage description the icon row floats in the notifications empty
         -- lower half (InitModule anchor, +35). WITH one that space holds the description
@@ -965,14 +949,13 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
             block.delvesFrame.reward:Hide()
         end
 
-        compassData.COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Delve]
-        compassData.TYPE = GW.Enum.ObjectivesNotificationType.Delve
+        compassData.type = GW.Enum.ObjectivesNotificationType.Delve
     end
 
-    block:SetBlockColorByKey(compassData.TYPE)
+    block:SetBlockColorByKey(compassData.type)
     block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
     block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
-    GwObjectivesNotification:AddNotification(compassData, true)
+    GwObjectivesNotification:SetNotification("scenario", compassData)
 
     if questID then
         block.questLogIndex = (GW.Retail and C_QuestLog.GetLogIndexForQuestID or GetQuestLogIndexByID)(questID)

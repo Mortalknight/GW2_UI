@@ -33,20 +33,7 @@ function GwBossFrameMixin:UpdateHealthbarColor()
 end
 
 function GwBossFrameMixin:OnShow()
-    local compassData = {
-        TYPE    = GW.Enum.ObjectivesNotificationType.Boss,
-        ID      = "boss_unknown",
-        QUESTID = "unknown",
-        COMPASS = false,
-        DESC    = "",
-        MAPID   = nil,
-        X       = nil,
-        Y       = nil,
-        COLOR   = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Boss],
-        TITLE   = UnitName(self.gwUnit)
-    }
-    GwObjectivesNotification:AddNotification(compassData)
-
+    self.container:UpdateCompass()
     self:UpdateName()
     self:UpdateHealth()
     self:UpdatePower()
@@ -57,9 +44,7 @@ end
 
 function GwBossFrameMixin:OnHide()
     self.container:UpdateBossFrameHeight()
-    if self.id == 1 then
-        GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Boss)
-    end
+    self.container:UpdateCompass()
 end
 
 function GwBossFrameMixin:OnEvent(event, unit)
@@ -102,6 +87,17 @@ GwObjectivesBossContainerMixin = {}
 function GwObjectivesBossContainerMixin:UpdateBossFrameHeight()
     local height = GW.GetFixedSlotContainerHeight(bossFrames)
     self:SetHeight(height)
+end
+
+-- the compass names the first boss still shown
+function GwObjectivesBossContainerMixin:UpdateCompass()
+    for _, frame in ipairs(bossFrames) do
+        if frame:IsShown() then
+            GwObjectivesNotification:SetNotification("boss", {title = UnitName(frame.gwUnit)})
+            return
+        end
+    end
+    GwObjectivesNotification:SetNotification("boss", nil)
 end
 
 function GwObjectivesBossContainerMixin:SetUpFramePosition()

@@ -2,7 +2,16 @@
 local GW = select(2, ...)
 local L = GW.L
 
-local notifications = {}
+-- one entry per source, the first source in this order that has one is shown; dead and quest
+-- are asked on every refresh, the others are set by their modules
+local SOURCE_ORDER = {"dead", "scenario", "event", "arena", "boss", "quest"}
+local SOURCE_TYPES = {
+    scenario = GW.Enum.ObjectivesNotificationType.Scenario,
+    event = GW.Enum.ObjectivesNotificationType.Event,
+    arena = GW.Enum.ObjectivesNotificationType.Arena,
+    boss = GW.Enum.ObjectivesNotificationType.Boss,
+}
+local sourceEntries = {}
 
 local icons = {
     [GW.Enum.ObjectivesNotificationType.Quest] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
@@ -20,15 +29,6 @@ local icons = {
 function GW.GetObjectivesTypeIcon(notificationType)
     return icons[notificationType]
 end
-
-local notification_priority = {
-    [GW.Enum.ObjectivesNotificationType.Delve] = 1,
-    [GW.Enum.ObjectivesNotificationType.Torghast] = 1,
-    [GW.Enum.ObjectivesNotificationType.Scenario] = 2,
-    [GW.Enum.ObjectivesNotificationType.Event] = 3,
-    [GW.Enum.ObjectivesNotificationType.Arena] = 4,
-    [GW.Enum.ObjectivesNotificationType.Boss] = 5,
-}
 
 -- Questie Helper
 local function _GetDistance(x1, y1, x2, y2)
@@ -85,16 +85,6 @@ local function _GetDistanceToClosestObjective(spawn, zone, name)
     end
 
     return closestDistance
-end
-
-local function prioritys(a, b)
-    if a == nil or a == "" then
-        return true
-    end
-    if a == b then
-        return true
-    end
-    return notification_priority[a] > notification_priority[b]
 end
 
 local function getQuestPOIText(questLogIndex)
@@ -221,18 +211,14 @@ local function getNearestQuestPOIRetail()
     end
 
     return {
-        X = poiX,
-        Y = poiY,
-        DESC = objectiveText,
-        TITLE = questData.title,
-        TYPE = isCampaign and GW.Enum.ObjectivesNotificationType.Campaign or isFrequent and GW.Enum.ObjectivesNotificationType.DailyQuest or isWQ and GW.Enum.ObjectivesNotificationType.Event or GW.Enum.ObjectivesNotificationType.Quest,
-        ID = closestQuestID,
-        COLOR = isCampaign and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]
-            or isFrequent and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.DailyQuest]
-            or isWQ and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]
-            or GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest],
-        COMPASS = true,
-        QUESTID = closestQuestID
+        x = poiX,
+        y = poiY,
+        desc = objectiveText,
+        title = questData.title,
+        type = isCampaign and GW.Enum.ObjectivesNotificationType.Campaign or isFrequent and GW.Enum.ObjectivesNotificationType.DailyQuest or isWQ and GW.Enum.ObjectivesNotificationType.Event or GW.Enum.ObjectivesNotificationType.Quest,
+        id = closestQuestID,
+        compass = true,
+        questID = closestQuestID
     }
 end
 
@@ -296,15 +282,14 @@ local function getNearestQuestPOIClassic()
     local isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(closestQuestID)
 
     return {
-        X = poiX,
-        Y = poiY,
-        DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
-        TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID)),
-        TYPE = isDaily and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
-        ID = closestQuestID,
-        COLOR = isDaily and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.DailyQuest] or GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest],
-        COMPASS = true,
-        QUESTID = closestQuestID
+        x = poiX,
+        y = poiY,
+        desc = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
+        title = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID)),
+        type = isDaily and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
+        id = closestQuestID,
+        compass = true,
+        questID = closestQuestID
     }
 end
 
@@ -344,15 +329,14 @@ local function getNearestQuestPOIMists()
         local _, poiX, poiY = QuestPOIGetIconInfo(closestQuestID)
 
         return {
-            X = poiX,
-            Y = poiY,
-            DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
-            TITLE = title,
-            TYPE = isFrequent and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
-            ID = closestQuestID,
-            COLOR = isFrequent and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.DailyQuest] or GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest],
-            COMPASS = true,
-            QUESTID = closestQuestID
+            x = poiX,
+            y = poiY,
+            desc = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
+            title = title,
+            type = isFrequent and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
+            id = closestQuestID,
+            compass = true,
+            questID = closestQuestID
         }
     end
 
@@ -376,29 +360,41 @@ local function getBodyPOI()
     end
 
     return {
-        X = x,
-        Y = y,
-        TITLE = L["Retrieve your corpse"],
-        TYPE = GW.Enum.ObjectivesNotificationType.Dead,
-        ID = "playerDead",
-        COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Dead],
-        COMPASS = true
+        x = x,
+        y = y,
+        title = L["Retrieve your corpse"],
+        type = GW.Enum.ObjectivesNotificationType.Dead,
+        id = "playerDead",
+        compass = true
     }
 end
 
+local sourceProviders = {
+    dead = function()
+        return UnitIsDeadOrGhost("player") and getBodyPOI() or nil
+    end,
+    quest = function()
+        if GW.isModern then
+            return getNearestQuestPOIRetail()
+        elseif GW.Classic or GW.TBC or GW.Wrath then
+            return getNearestQuestPOIClassic()
+        elseif GW.Mists then
+            return getNearestQuestPOIMists()
+        end
+    end,
+}
 
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
 local function updateRadar(self)
     local x, y = GW.Location.GetCoords()
-    if not x or not y or not self.data.X then
-        self:GetParent():RemoveNotificationById(self.dataIndex)
+    if not x or not y or not self.data.x then
         return
     end
 
     local pFacing = GetPlayerFacing() or 0
-    local dir_x = self.data.X - x
-    local dir_y = self.data.Y - y
+    local dir_x = self.data.x - x
+    local dir_y = self.data.y - y
     local angle = math.atan2(dir_y, dir_x)
     angle = rad_135 - angle - pFacing
 
@@ -476,8 +472,8 @@ end
 
 local function ApplyIndicatorState(self, useProgress, data, animate)
     if useProgress then
-        self.bonusbar.progress = data.PROGRESS
-        self.bonusbar.bar:SetValue(data.PROGRESS)
+        self.bonusbar.progress = data.progress
+        self.bonusbar.bar:SetValue(data.progress)
     end
 
     if not animate then
@@ -574,30 +570,26 @@ local function PlayBonusbarShowAnimation(self)
     )
 end
 
-function GwObjectivesTrackerNotificationMixin:AddNotification(data, forceUpdate)
-    if data == nil or data.ID == nil then
+-- data needs a title; desc, progress, questID and a type other than the sources one are optional;
+-- nil removes the sources entry
+function GwObjectivesTrackerNotificationMixin:SetNotification(source, data)
+    if data then
+        data.id = data.id or source
+        data.type = data.type or SOURCE_TYPES[source]
+    end
+    sourceEntries[source] = data
+    self:QueueRefresh()
+end
+
+function GwObjectivesTrackerNotificationMixin:QueueRefresh(delay)
+    if self.pendingRefresh then
         return
     end
-    notifications[data.ID] = data
-    if forceUpdate then
+    self.pendingRefresh = true
+    C_Timer.After(delay or 0, function()
+        self.pendingRefresh = nil
         self:OnUpdate()
-    end
-end
-
-function GwObjectivesTrackerNotificationMixin:RemoveNotificationById(notificationID)
-    if notificationID == nil then
-        return
-    end
-
-    notifications[notificationID] = nil
-end
-
-function GwObjectivesTrackerNotificationMixin:RemoveNotificationOfType(doType)
-    for k, v in pairs(notifications) do
-        if v.TYPE == doType then
-            notifications[k] = nil
-        end
-    end
+    end)
 end
 
 function GwObjectivesTrackerNotificationMixin:NotificationStateChanged(show)
@@ -671,31 +663,16 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         return
     end
 
-    local data = nil
-
-    if UnitIsDeadOrGhost("player") then
-        data = getBodyPOI()
-    end
-
-    if not data then
-        for _, notification in pairs(notifications) do
-            if notification and not notification.COMPASS then
-                if not data or prioritys(data.TYPE, notification.TYPE) then
-                    data = notification
-                end
-            end
+    local data, source
+    for _, key in ipairs(SOURCE_ORDER) do
+        local provider = sourceProviders[key]
+        data = sourceEntries[key] or (provider and provider())
+        if data then
+            source = key
+            break
         end
     end
-
-    if not data then
-        if GW.isModern then
-            data = getNearestQuestPOIRetail()
-        elseif GW.Classic or GW.TBC or GW.Wrath then
-            data = getNearestQuestPOIClassic()
-        elseif GW.Mists then
-            data = getNearestQuestPOIMists()
-        end
-    end
+    self.currentSource = source
 
     if not data then
         self.shouldDisplay = false
@@ -703,20 +680,20 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         return
     end
 
-    data.COLOR = data.COLOR or { r = 1, g = 1, b = 1 }
-    self.compassQuestID = data.QUESTID
+    data.color = data.color or GW.Colors.ObjectivesTypeColors[data.type] or GW.Colors.FallbackWhite
+    self.compassQuestID = data.questID
 
     --remove tooltip here
     self.iconFrame:SetScript("OnEnter", nil)
     self.iconFrame:SetScript("OnLeave", nil)
 
-    local iconInfo = icons[data.TYPE]
+    local iconInfo = icons[data.type]
 
     if iconInfo then
         self.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex .. ".png")
         self.iconFrame.icon:SetTexCoord(iconInfo.l, iconInfo.r, iconInfo.t, iconInfo.b)
 
-        if data.TYPE == GW.Enum.ObjectivesNotificationType.Delve then
+        if data.type == GW.Enum.ObjectivesNotificationType.Delve then
             self.iconFrame:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(self.iconFrame, "ANCHOR_LEFT")
                 GameTooltip:SetSpellByID(self.iconFrame.tooltipSpellID)
@@ -726,7 +703,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
             end)
         end
 
-        local useProgressIndicator = (data.PROGRESS ~= nil) and (iconInfo ~= nil)
+        local useProgressIndicator = (data.progress ~= nil) and (iconInfo ~= nil)
         local shouldAnimateIndicator = self.usingProgressIndicator ~= nil and self.usingProgressIndicator ~= useProgressIndicator
         ApplyIndicatorState(self, useProgressIndicator, data, shouldAnimateIndicator)
     else
@@ -739,10 +716,10 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         self.iconFrame.icon:SetTexture(nil)
     end
 
-    if data.COMPASS then
+    if data.compass then
         self.compass:Show()
         self.compass.data = data
-        self.compass.dataIndex = data.ID
+        self.compass.dataIndex = data.id
 
         if iconInfo then
             self.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex .. ".png")
@@ -769,28 +746,28 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         end
     end
 
-    local titleText = data.TITLE or ""
-    local descText = data.DESC or ""
-    local headerStateChanged = GW.SafeValuesDiffer(self.lastNotificationID, data.ID) or GW.SafeValuesDiffer(self.lastTitleText, titleText)
+    local titleText = data.title or ""
+    local descText = data.desc or ""
+    local headerStateChanged = GW.SafeValuesDiffer(self.lastNotificationID, data.id) or GW.SafeValuesDiffer(self.lastTitleText, titleText)
 
     self.title:SetText(titleText)
-    self.title:SetTextColor(data.COLOR.r, data.COLOR.g, data.COLOR.b)
-    self.compassBG:SetVertexColor(data.COLOR.r, data.COLOR.g, data.COLOR.b, 0.3)
-    self.currentNotificationColor = data.COLOR
+    self.title:SetTextColor(data.color.r, data.color.g, data.color.b)
+    self.compassBG:SetVertexColor(data.color.r, data.color.g, data.color.b, 0.3)
+    self.currentNotificationColor = data.color
     self.currentBgAlpha = 0.3
     self.desc:SetText(descText)
 
-    if GW.IsNilOrEmptyNonSecretString(data.DESC) then
+    if GW.IsNilOrEmptyNonSecretString(data.desc) then
         self.title:SetPoint("TOP", self, "TOP", 0, -30)
     else
         self.title:SetPoint("TOP", self, "TOP", 0, -15)
     end
 
     if headerStateChanged then
-        PlayHeaderRefreshAnimation(self, data.COLOR)
+        PlayHeaderRefreshAnimation(self, data.color)
     end
 
-    self.lastNotificationID = data.ID
+    self.lastNotificationID = data.id
     self.lastTitleText = titleText
     self.lastDescText = descText
 
@@ -816,13 +793,20 @@ function GwObjectivesTrackerNotificationMixin:OnUpdate()
     end
 end
 
+-- while moving only the asked sources (corpse, nearest quest) can change, a modules entry stays the same
+local function OnMovingTick(self)
+    if not self.currentSource or sourceProviders[self.currentSource] then
+        self:OnUpdate()
+    end
+end
+
 function GwObjectivesTrackerNotificationMixin:OnEvent(event, ...)
     if GW.IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
         if self.Ticker then
             self.Ticker:Cancel()
             self.Ticker = nil
         end
-        self.Ticker = C_Timer.NewTicker(1, function() self:OnUpdate() end)
+        self.Ticker = C_Timer.NewTicker(1, function() OnMovingTick(self) end)
     elseif GW.IsIn(event, "PLAYER_STOPPED_MOVING", "PLAYER_CONTROL_GAINED") then -- Events for stop updating
         if self.Ticker then
             self.Ticker:Cancel()
@@ -834,14 +818,7 @@ function GwObjectivesTrackerNotificationMixin:OnEvent(event, ...)
             self:OnUpdate()
         end
     else
-        if self.pendingRefresh then
-            return
-        end
-        self.pendingRefresh = true
-        C_Timer.After(0.25, function()
-            self.pendingRefresh = nil
-            self:OnUpdate()
-        end)
+        self:QueueRefresh(0.25)
     end
 end
 
@@ -894,6 +871,9 @@ function GwObjectivesTrackerNotificationMixin:InitModule()
     self:RegisterEvent("PLAYER_MONEY")
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    self:RegisterEvent("PLAYER_DEAD")
+    self:RegisterEvent("PLAYER_ALIVE")
+    self:RegisterEvent("PLAYER_UNGHOST")
     if GW.isModern then
         self:RegisterEvent("QUEST_DATA_LOAD_RESULT")
         self:RegisterEvent("SUPER_TRACKING_CHANGED")
