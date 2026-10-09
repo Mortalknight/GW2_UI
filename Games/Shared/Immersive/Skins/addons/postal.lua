@@ -4,18 +4,42 @@ local GW = select(2, ...)
 local function LoadPostalAddonSkin()
     if PostalOpenAllButton then
         PostalOpenAllButton:GwSkinButton(false, true)
+        PostalOpenAllButton:ClearAllPoints()
+        PostalOpenAllButton:SetPoint("CENTER", InboxFrame, "BOTTOM", -14, 114)
     end
 
-    if PostalSelectOpenButton then
-        PostalSelectOpenButton:GwSkinButton(false, true)
-        PostalSelectOpenButton:SetPoint("TOPRIGHT", MailFrameTab2, "TOPRIGHT", -85, -35)
-        PostalSelectOpenButton:SetSize(SendMailCancelButton:GetSize())
-    end
-
-    if PostalSelectReturnButton then
+    if PostalSelectOpenButton and PostalSelectReturnButton then
+        local height = MailFrameTab2:GetHeight()
         PostalSelectReturnButton:GwSkinButton(false, true)
-        PostalSelectReturnButton:SetPoint("TOPLEFT", PostalSelectOpenButton, "TOPRIGHT", 2, 0)
-        PostalSelectReturnButton:SetSize(PostalSelectOpenButton:GetSize())
+        PostalSelectReturnButton:SetSize(80, height)
+        PostalSelectReturnButton:ClearAllPoints()
+        PostalSelectReturnButton:SetPoint("BOTTOMRIGHT", MailItem1, "TOPRIGHT", 0, 10)
+        PostalSelectOpenButton:GwSkinButton(false, true)
+        PostalSelectOpenButton:SetSize(80, height)
+        PostalSelectOpenButton:ClearAllPoints()
+        PostalSelectOpenButton:SetPoint("RIGHT", PostalSelectReturnButton, "LEFT", -4, 0)
+        -- the same text size as our compose button
+        local font, size, flags = MailFrameTab2:GetFontString():GetFont()
+        PostalSelectOpenButton:GetFontString():SetFont(font, size, flags)
+        PostalSelectReturnButton:GetFontString():SetFont(font, size, flags)
+        GW.AnchorMailComposeButton()
+    end
+
+    local index = 1
+    while _G["Postal_QuickAttachButton" .. index] do
+        local button = _G["Postal_QuickAttachButton" .. index]
+        if button.IconMask then
+            button.icon:RemoveMaskTexture(button.IconMask)
+        end
+        GW.HandleItemButton(button, true)
+        index = index + 1
+    end
+
+    for i = 1, 7 do
+        local checkBox = _G["PostalInboxCB" .. i]
+        if checkBox then
+            checkBox:GwSkinCheckButton(false, 20)
+        end
     end
 
     if Postal_ModuleMenuButton then

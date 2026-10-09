@@ -30,12 +30,22 @@ local function ResetComposeView()
     ClearSendMailAttachments()
 end
 
+local function AnchorComposeButton()
+    MailFrameTab2:ClearAllPoints()
+    MailFrameTab2:SetPoint("BOTTOMLEFT", MailItem1, "TOPLEFT", 0, 10)
+    local postalOpen = PostalSelectOpenButton
+    if postalOpen and postalOpen:IsShown() then
+        MailFrameTab2:SetPoint("RIGHT", postalOpen, "LEFT", -4, 0)
+    else
+        MailFrameTab2:SetPoint("BOTTOMRIGHT", MailItem1, "TOPRIGHT", 0, 10)
+    end
+end
+GW.AnchorMailComposeButton = AnchorComposeButton
+
 local function FixMailSkin()
     -- MailFrameTab2.SetWidth is overridden with GW.NoOp later, so force width via SetSize.
     MailFrameTab2:SetSize(310, MailFrameTab2:GetHeight())
-    MailFrameTab2:ClearAllPoints()
-    MailFrameTab2:SetPoint("BOTTOMLEFT", MailItem1, "TOPLEFT", 0, 10)
-    MailFrameTab2:SetPoint("BOTTOMRIGHT", MailItem1, "TOPRIGHT", 0, 10)
+    AnchorComposeButton()
     SendMailSendMoneyButtonText:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
     SendMailCODButtonText:SetTextColor(GW.Colors.FallbackWhite:GetRGBA())
 end
@@ -329,6 +339,11 @@ local function SkinComposeButton()
 
     MailFrameTab2:SetText(SENDMAIL)
     MailFrameTab2:GwSkinButton(false, true)
+    -- a tab moves its text up or down with its state, as our button it stays in the middle
+    MailFrameTab2.selectedTextY = 0
+    MailFrameTab2.deselectedTextY = 0
+    MailFrameTab2:GetFontString():ClearAllPoints()
+    MailFrameTab2:GetFontString():SetPoint("CENTER")
     MailFrameTab2:SetScript("OnClick", function(self)
         SwitchToComposeView(self)
     end)
