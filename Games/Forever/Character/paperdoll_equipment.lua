@@ -246,8 +246,6 @@ local function SetupStatsScroll(stats)
     return stats.tiles
 end
 
-local AMMO_CLASSES = {HUNTER = true, ROGUE = true, WARRIOR = true}
-
 local function LoadPDBagList(fmMenu, parent)
     -- paladins, shamans and druids carry a relic instead of a ranged weapon and have no ammo
     local hasRelicSlot = UnitHasRelicSlot("player")
@@ -269,7 +267,7 @@ local function LoadPDBagList(fmMenu, parent)
     fmGDR.stats:SetScript("OnEvent", stats_OnEvent)
     RegisterStatsEvents(fmGDR.stats)
 
-    CharacterAmmoSlot:SetShown(AMMO_CLASSES[GW.myclass] == true)
+    CharacterAmmoSlot:SetShown(UnitUsesAmmo("player"))
     CharacterAmmoSlot:HookScript("OnShow", PaperDollItemSlotButton_Update)
     PaperDollItemSlotButton_Update(CharacterRangedSlot)
 

@@ -688,7 +688,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
     end
 
     if not data then
-        if GW.Retail then
+        if GW.isModern then
             data = getNearestQuestPOIRetail()
         elseif GW.Classic or GW.TBC or GW.Wrath then
             data = getNearestQuestPOIClassic()
@@ -856,11 +856,18 @@ function GwObjectivesTrackerNotificationMixin:InitModule()
     self.bonusbar:SetScript("OnEnter", self.BonusbarOnEnter)
     self.bonusbar:SetScript("OnLeave", GameTooltip_Hide)
     self.compass:SetScript("OnShow", self.compass.NewQuestAnimation)
-    self.compass:SetScript("OnMouseDown", function() if C_SuperTrack and C_SuperTrack.ClearAllSuperTracked then C_SuperTrack.ClearAllSuperTracked() end end)
+    local canClearSuperTrack = C_SuperTrack and C_SuperTrack.ClearAllSuperTracked
+    self.compass:SetScript("OnMouseDown", function(_, button)
+        if canClearSuperTrack and button == "LeftButton" then
+            C_SuperTrack.ClearAllSuperTracked()
+        end
+    end)
+    self.compass:SetScript("OnMouseUp", function(_, button)
+        if not canClearSuperTrack or button ~= "LeftButton" then
+            CompassOnMouseUp(self, button)
+        end
+    end)
     self:SetScript("OnMouseUp", CompassOnMouseUp)
-    if not C_SuperTrack or not C_SuperTrack.ClearAllSuperTracked then
-        self.compass:SetScript("OnMouseUp", function(_, button) CompassOnMouseUp(self, button) end)
-    end
     self.shouldDisplay = false
     self.headerAnimationName = self:GetDebugName() .. "_Header"
     self.indicatorAnimationName = self:GetDebugName() .. "_Indicator"
@@ -887,7 +894,7 @@ function GwObjectivesTrackerNotificationMixin:InitModule()
     self:RegisterEvent("PLAYER_MONEY")
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
-    if GW.Retail then
+    if GW.isModern then
         self:RegisterEvent("QUEST_DATA_LOAD_RESULT")
         self:RegisterEvent("SUPER_TRACKING_CHANGED")
         self:RegisterEvent("SCENARIO_UPDATE")

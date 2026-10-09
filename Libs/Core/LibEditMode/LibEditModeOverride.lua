@@ -171,7 +171,13 @@ function lib:LoadLayouts()
   if not reconciledLayouts then
     local anyChanged = false
     for _, layout in ipairs(layoutInfo.layouts) do
-      anyChanged = anyChanged or EditModeManagerFrame:ReconcileWithModern(layout)
+      local changed
+      if EditModeManagerFrame.ReconcileWithGamepad and layout.interfaceStyle == Enum.InputDeviceInterfaceType.Gamepad then
+        changed = EditModeManagerFrame:ReconcileWithGamepad(layout)
+      else
+        changed = EditModeManagerFrame:ReconcileWithModern(layout)
+      end
+      anyChanged = changed or anyChanged
     end
     if not anyChanged then
       reconciledLayouts = true

@@ -2,12 +2,12 @@
 local GW = select(2, ...)
 
 --[[
-    Inspect window of the modern clients. Retail builds it with three tabs (character, pvp, guild),
-    forever (camelot) with two: no pvp panel, talents and view button on the paperdoll frame itself,
-    slots with a border art frame, and the tab switching done by side "mode tabs" while the bottom
-    tabs ship hidden. Everything one client may lack is checked before it is touched; on camelot the
-    side tabs are hidden and the bottom tabs brought back, blizzards tab code (InspectFrameTab_OnClick,
-    PanelTemplates_*) drives them on both.
+    Inspect window of the modern clients. Both build it with three tabs (character, pvp, guild);
+    forever (camelot) has its own pvp panel (rank ring instead of ratings), talents and view button
+    on the paperdoll frame itself, slots with a border art frame, and the tab switching done by side
+    "mode tabs" while the bottom tabs ship hidden. Everything one client may lack is checked before
+    it is touched; on camelot the side tabs are hidden and the bottom tabs brought back, blizzards
+    tab code (InspectFrameTab_OnClick, PanelTemplates_*) drives them on both.
 ]]
 
 local function SkinPvpTalents(slot)
@@ -63,7 +63,7 @@ local function SkinSlots()
                 slot.BorderFrame:GwStripTextures()
             end
             if GW.HandleIconBorder then
-                GW.HandleIconBorder(slot.IconBorder, slot.icon.backdrop)
+                GW.HandleIconBorder(slot.IconBorder, slot.icon.backdrop, GW.Colors.SkinColors.IconBorder)
             end
 
             -- item level like on our own character window slots; the icon backdrop is a child frame of
@@ -130,7 +130,21 @@ local function SkinPvpStatRow(row, previous, width, index)
     row.RecordLabel:SetTextColor(0.7, 0.7, 0.7)
 end
 
--- retail only, camelot has no pvp panel
+-- camelot: rank ring with season, rank and kills as text, blizzards ring art stays
+local function SkinCamelotPvpFrame()
+    local info = InspectPVPFrame.MainInfoFrame
+    info.CurrentSeasonField:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    info.CurrentSeasonField:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    info.CurrentRankField:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+    info.CurrentRankField:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    info.HonorableKillsField:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    info.HonorableKillsField:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    for _, text in pairs({info.CurrentRankProgressField, info.LifetimeHKsField, info.TodayHKsField}) do
+        text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    end
+end
+
 local function SkinPvpFrame(frameWidth)
     local pvp = InspectPVPFrame
     pvp.BG:GwKill()
@@ -189,12 +203,12 @@ local function SkinGuildFrame()
     for _, key in pairs({"guildRealmName", "guildLevel", "guildNumMembers"}) do
         if guild[key] then
             guild[key]:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+            guild[key]:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
 end
 
--- the number of tabs differs per client (retail three, camelot two), camelot additionally ships
--- side mode tabs which go in favor of the bottom row
+-- camelot additionally ships side mode tabs which go in favor of the bottom row
 local function SkinTabs()
     if InspectFrame.ModeTabs then
         InspectFrame.ModeTabs:Hide()
@@ -289,7 +303,9 @@ local function SkinInspectFrameOnLoad()
     SkinTabs()
     SkinModel()
     SkinSlots()
-    if InspectPVPFrame then
+    if InspectPVPFrame and InspectPVPFrame.MainInfoFrame then
+        SkinCamelotPvpFrame()
+    elseif InspectPVPFrame then
         SkinPvpFrame(w)
     end
     SkinGuildFrame()

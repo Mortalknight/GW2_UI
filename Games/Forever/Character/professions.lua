@@ -328,6 +328,20 @@ local function SkinRankBar(rankBar)
     rankBar.Rank.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
 end
 
+local function UpdateLinkButton(button)
+    button.Background:SetAlpha(0)
+    local enabled = button:IsEnabled()
+    button.Icon:SetTexture(enabled and button:IsOver() and "Interface/AddOns/GW2_UI/textures/chat/bubble_down.png" or "Interface/AddOns/GW2_UI/textures/chat/bubble_up.png")
+    button.Icon:SetDesaturated(not enabled)
+    button.Icon:SetSize(button:GetSize())
+end
+
+local function SkinLinkButton(button)
+    if not button then return end
+    UpdateLinkButton(button)
+    hooksecurefunc(button, "OnButtonStateChanged", UpdateLinkButton)
+end
+
 local function AnchorRankBar(page)
     page.RankBar:ClearAllPoints()
     page.RankBar:SetPoint("TOP", page, "TOP", 0, -14)
@@ -481,6 +495,9 @@ local function SkinSchematicForm(form)
     output.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
     form.TrackRecipeCheckbox:GwSkinCheckButton(false, 15)
     form.TrackRecipeCheckbox.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    -- blizzard places it from the right by its text width, measured before our font and form width
+    form.TrackRecipeCheckbox:ClearAllPoints()
+    form.TrackRecipeCheckbox:SetPoint("BOTTOMLEFT", form, "BOTTOMLEFT", 17, 11)
 
     form.Reagents.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     form.Reagents.Label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -575,6 +592,7 @@ local function SkinCraftingPage(page)
     hooksecurefunc(page, "SetControlAnchors", AnchorControls)
 
     SkinRankBar(page.RankBar)
+    SkinLinkButton(page.LinkButton)
     AnchorRankBar(page)
     hooksecurefunc(page, "SetRankBarAnchors", AnchorRankBar)
 end
@@ -655,8 +673,6 @@ local function AdoptProfessionTab(tab)
     tab:GwAddHover()
     tab.hover:SetTexture(MENU_HOVER)
     tab.limitHoverStripAmount = 1
-    -- Blizzard lets every tab cast its profession when the frame shows, which opens the wrong one
-    EventRegistry:UnregisterCallback("ProfessionsFrame.Show", tab)
 
     hooksecurefunc(tab, "SetChecked", function(self, checked)
         self.SelectedTexture:Hide()

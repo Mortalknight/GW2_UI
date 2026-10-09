@@ -642,9 +642,15 @@ end
 
 -- old style tabs only learn their state through the global PanelTemplates functions; one hook each,
 -- the skinned tabs register their handler instead of hooking again for every tab
-local tabHandlers = {Select = {}, Deselect = {}, Resize = {}}
+local tabHandlers = {Select = {}, Deselect = {}, Resize = {}, Disable = {}}
+local tabHooks = {
+    Select = "PanelTemplates_SelectTab",
+    Deselect = "PanelTemplates_DeselectTab",
+    Resize = "PanelTemplates_TabResize",
+    Disable = "PanelTemplates_SetDisabledTabState",
+}
 for state, handlers in pairs(tabHandlers) do
-    hooksecurefunc(state == "Resize" and "PanelTemplates_TabResize" or "PanelTemplates_" .. state .. "Tab", function(tab)
+    hooksecurefunc(tabHooks[state], function(tab)
         local handler = handlers[tab]
         if handler then
             handler(tab)
@@ -652,10 +658,11 @@ for state, handlers in pairs(tabHandlers) do
     end)
 end
 
-local function OnTabState(tab, onSelect, onDeselect, onResize)
+local function OnTabState(tab, onSelect, onDeselect, onResize, onDisable)
     tabHandlers.Select[tab] = onSelect
     tabHandlers.Deselect[tab] = onDeselect
     tabHandlers.Resize[tab] = onResize
+    tabHandlers.Disable[tab] = onDisable
 end
 
 local function HandleTabs(self, direction, textures, setDesaturated)
@@ -764,14 +771,18 @@ local function HandleTabs(self, direction, textures, setDesaturated)
                 self.tex:SetAlpha(1)
             end
         else
-            local function SetTabBlend(tab, mode)
+            local function SetTabBlend(tab, mode, alpha)
                 tab.background:SetBlendMode(mode)
+                tab:SetAlpha(alpha or 1)
                 if tab.Text then
                     tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
                 end
             end
-            OnTabState(self, function(tab) SetTabBlend(tab, "MOD") end, function(tab) SetTabBlend(tab, "BLEND") end)
-            if self.LeftActive and self.LeftActive:IsShown() then -- selected
+            OnTabState(self, function(tab) SetTabBlend(tab, "MOD") end, function(tab) SetTabBlend(tab, "BLEND") end, nil,
+                function(tab) SetTabBlend(tab, "BLEND", 0.5) end)
+            if self.isDisabled then
+                SetTabBlend(self, "BLEND", 0.5)
+            elseif self.LeftActive and self.LeftActive:IsShown() then -- selected
                 self.background:SetBlendMode("MOD")
             else
                 self.background:SetBlendMode("BLEND")

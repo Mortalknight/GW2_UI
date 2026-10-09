@@ -544,6 +544,9 @@ local function createBagBar(f)
     local bp = MainMenuBarBackpackButton
     bp:SetParent(f)
     inv.reskinBagBar(bp)
+    if bp.FreeSlots then
+        bp.FreeSlots:SetAlpha(0)
+    end
     bp:RegisterForClicks("LeftButtonUp")
     if bp.SetChecked then
         bp:SetChecked(false)
