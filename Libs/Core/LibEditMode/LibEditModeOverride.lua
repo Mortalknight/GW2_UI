@@ -311,7 +311,7 @@ local function SetLayoutBackToGw2Layout(_, layoutIndex)
     local gw2LayoutIndex = GetLayoutIndex("GW2_Layout")
     if layoutIndex ~= gw2LayoutIndex and EditModeManagerFrame.layoutInfo.activeLayout ~= gw2LayoutIndex then
       lib:SetActiveLayout("GW2_Layout")
-      lib:ApplyChanges()
+      lib:SaveOnly()
       EditModeManagerFrame:NotifyChatOfLayoutChange()
       eventFrame:UnregisterAllEvents()
     end

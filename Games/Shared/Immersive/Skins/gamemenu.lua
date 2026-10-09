@@ -89,10 +89,7 @@ end
 
 local function applyButtonStyle(b)
     styleButtonOnce(b)
-
-    if not InCombatLockdown() then
-        b:SetSize(180, 25)
-    end
+    b:SetSize(180, 25)
 
     local buttonSprint = BUTTONS[b:GetText()]
     if buttonSprint then
@@ -150,20 +147,6 @@ local function SkinMainMenu()
         settingsButton.layoutIndex = lastLayoutIndex + 1
         settingsButton.topPadding = 20
         GW.UpdateGameMenuNewLabel(settingsButton)
-    end)
-
-    -- re-apply the button sizes that were skipped while in combat
-    local regenWatcher = CreateFrame("Frame")
-    regenWatcher:RegisterEvent("PLAYER_REGEN_ENABLED")
-    regenWatcher:SetScript("OnEvent", function()
-        if GameMenuFrame:IsShown() and GameMenuFrame.buttonPool then
-            for btn in GameMenuFrame.buttonPool:EnumerateActive() do
-                applyButtonStyle(btn)
-            end
-            if settingsButton then
-                applyButtonStyle(settingsButton)
-            end
-        end
     end)
 
     -- remove elvui transparent bg if ours is enabled
