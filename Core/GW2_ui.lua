@@ -894,6 +894,7 @@ local function evLoadSkins()
     GW.AddCoordsToWorldMap()
 
     GW.LoadDressUpFrameSkin()
+    GW.LoadTransmogSkin()
 
     if GW.Retail then
         GW.LoadExpansionLadningPageSkin()
