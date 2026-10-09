@@ -158,7 +158,7 @@ local function CreateBar()
     end
 
     bar.name = bar.status:CreateFontString(nil, "OVERLAY")
-    bar.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    bar.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
     bar.name:SetJustifyH("LEFT")
     bar.name:SetWordWrap(false)
     bar.name:SetPoint("LEFT", 6, 0)
@@ -207,7 +207,7 @@ local function StartRoll(rollID, rollTime)
     bar.icon.itemLevel:SetText(link and GW.IsItemEligibleForItemLevelDisplay(link) and C_Item.GetDetailedItemLevelInfo(link) or "")
 
     bar.name:SetText(name)
-    bar.name:SetTextColor(color.r, color.g, color.b)
+    bar.name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     bar.status:SetStatusBarColor(color.r, color.g, color.b, 0.5)
     bar.status.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
     bar.status:SetMinMaxValues(0, rollTime)
@@ -251,25 +251,33 @@ function GW.LoadLootRollBars()
 end
 
 -- /gw2 test lootroll
-local TEST_ITEMS = {19019, 32837, 71086}
+-- one bar per quality from poor to legendary; the quality is set here, items that exist on every client
+local TEST_ITEMS = {
+    {itemID = 7073, quality = 0},
+    {itemID = 2589, quality = 1},
+    {itemID = 4500, quality = 2},
+    {itemID = 2164, quality = 3},
+    {itemID = 18832, quality = 4},
+    {itemID = 19019, quality = 5},
+}
 function GW.TestLootRolls()
     if not GW.settings.skins.lootRoll.enabled then
         GW.Notice(GW.L["Loot roll bars"] .. ": " .. ADDON_DISABLED)
         return
     end
-    for index, itemID in ipairs(TEST_ITEMS) do
+    for index, test in ipairs(TEST_ITEMS) do
         CancelRoll(-index)
-        local item = Item:CreateFromItemID(itemID)
+        local item = Item:CreateFromItemID(test.itemID)
         item:ContinueOnItemLoad(function()
             local rollID = -index
             testRolls[rollID] = {
                 texture = item:GetItemIcon(),
                 name = item:GetItemName(),
-                quality = item:GetItemQuality(),
+                quality = test.quality,
                 link = item:GetItemLink(),
                 expires = GetTime() + 60,
-                canDisenchant = index == 2,
-                canTransmog = index == 3,
+                canDisenchant = test.quality >= 2,
+                canTransmog = test.quality == 4,
             }
             StartRoll(rollID, 60000)
         end)
