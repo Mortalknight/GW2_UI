@@ -1053,8 +1053,13 @@ local API = {
 }
 
 local methodTables = {}
+-- addons with their own class systems (PLoop) give their frames a metatable without a method table
 local function Collect(widget)
-    methodTables[getmetatable(widget).__index] = true
+    local metatable = getmetatable(widget)
+    local index = metatable and metatable.__index
+    if type(index) == "table" then
+        methodTables[index] = true
+    end
 end
 
 local sample = CreateFrame("Frame")
