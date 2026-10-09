@@ -2,6 +2,7 @@
 local GW = select(2, ...)
 
 local comboBar
+local FADE_IN_TIME = 0.3
 
 local function ComboFrame_Update(self)
     -- druids only have a max in cat form, it changes without an event of its own
@@ -18,7 +19,7 @@ local function ComboFrame_Update(self)
     if comboPoints > 0 and UnitExists("target") then
         if not self:IsShown() then
 			self:Show()
-			UIFrameFadeIn(self, COMBOFRAME_FADE_IN, 0, 1)
+			UIFrameFadeIn(self, FADE_IN_TIME, 0, 1)
 		end
 
         local chargedPowerPoints = GetUnitChargedPowerPoints and GetUnitChargedPowerPoints("player") or {}
