@@ -26,7 +26,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Honor badges on Retail in the health globe tooltip and on the honor bar, with matching prestige portraits]=]},
     {GW.Enum.ChangelogType.feature, [=[Profiles: a new page lists the data saved per character and removes it for deleted characters]=]},
     {GW.Enum.ChangelogType.feature, [=[Micro bar: right click on the talent button switches specialization, loot specialization and loadout]=]},
-    {GW.Enum.ChangelogType.feature, [=[More for the classic clients: upcoming spells, shaman totem bar and player pet frame options]=]},
+    {GW.Enum.ChangelogType.feature, [=[More for the classic clients: upcoming spells, shaman totem bar, player pet frame options and abandon quest in the quest tracker menu]=]},
     {GW.Enum.ChangelogType.feature, [=[Small additions: currency cap toast, game icons in the friends data text, GW2 UI memory in the system data text]=]},
     {GW.Enum.ChangelogType.feature, [=[New and updated skins: quest choice, class trainer, trade, mail and hunter stable on all clients, chat, communities, books and letters, macros, flight map, merchant, inspect, dressing room, transmogrifier, Auctionator and Postal]=]},
     {GW.Enum.ChangelogType.change, [=[Friends tooltip and menu moved to the contacts button next to the chat]=]},

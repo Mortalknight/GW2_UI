@@ -451,6 +451,25 @@ function GW.ShowQuestLogEntry(questLogIndex, toggle)
     QuestLog_Update()
 end
 
+-- the classic quest log abandons its selected entry, like blizzards WatchFrame_AbandonQuest
+function GW.AbandonQuestLogEntry(questID)
+    local questLogIndex = GetQuestLogIndexByID(questID)
+    if not questLogIndex or questLogIndex == 0 or not CanAbandonQuest(questID) then return end
+
+    local lastSelection = GetQuestLogSelection()
+    SelectQuestLogEntry(questLogIndex)
+    SetAbandonQuest()
+    local items = GetAbandonQuestItems()
+    if items then
+        StaticPopup_Hide("ABANDON_QUEST")
+        StaticPopup_Show("ABANDON_QUEST_WITH_ITEMS", GetAbandonQuestName(), items)
+    else
+        StaticPopup_Hide("ABANDON_QUEST_WITH_ITEMS")
+        StaticPopup_Show("ABANDON_QUEST", GetAbandonQuestName())
+    end
+    SelectQuestLogEntry(lastSelection)
+end
+
 function GW.ShowQuestDetails(questID)
     if not CanChangePanels() then return end
     QuestMapFrame_OpenToQuestDetails(questID)
