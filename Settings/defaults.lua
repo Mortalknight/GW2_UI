@@ -1844,6 +1844,9 @@ GW.globalDefault = {
             collections = {
                 enabled = true,
             },
+            transmog = {
+                enabled = true,
+            },
             covenantSanctum = {
                 enabled = true,
             },
