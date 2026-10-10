@@ -28,7 +28,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Micro bar: right click on the talent button switches specialization, loot specialization and loadout]=]},
     {GW.Enum.ChangelogType.feature, [=[More for the classic clients: upcoming spells, shaman totem bar and player pet frame options]=]},
     {GW.Enum.ChangelogType.feature, [=[Small additions: currency cap toast, game icons in the friends data text, GW2 UI memory in the system data text]=]},
-    {GW.Enum.ChangelogType.feature, [=[New and updated skins: quest choice, class trainer, trade, mail and hunter stable on all clients, chat, communities, books and letters, macros, flight map, merchant, inspect, dressing room, Auctionator and Postal]=]},
+    {GW.Enum.ChangelogType.feature, [=[New and updated skins: quest choice, class trainer, trade, mail and hunter stable on all clients, chat, communities, books and letters, macros, flight map, merchant, inspect, dressing room, transmogrifier, Auctionator and Postal]=]},
     {GW.Enum.ChangelogType.change, [=[Friends tooltip and menu moved to the contacts button next to the chat]=]},
     {GW.Enum.ChangelogType.change, [=[Smaller changes: sliders show percent, cleaner status report, target and focus frames without show animation, Forever leaves the action bars to the gamepad interface]=]},
     {GW.Enum.ChangelogType.bug, [=[Fewer taints and "action blocked" errors, among them the spellbook, the game menu and bags in combat]=]},

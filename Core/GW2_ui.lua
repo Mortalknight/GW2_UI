@@ -894,7 +894,6 @@ local function evLoadSkins()
     GW.AddCoordsToWorldMap()
 
     GW.LoadDressUpFrameSkin()
-    GW.LoadTransmogSkin()
 
     if GW.Retail then
         GW.LoadExpansionLadningPageSkin()
@@ -941,6 +940,7 @@ local function evLoadSkins()
         GW.LoadCooldownManagerSkin()
         GW.LoadPlayerChoiceSkin()
         GW.LoadAuctionatorAddonSkin()
+        GW.LoadTransmogSkin()
     end
 
     if not (GW.Classic or GW.TBC) then

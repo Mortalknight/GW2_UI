@@ -157,6 +157,31 @@ local function UpdatePopupButtonSchemes(popup)
     end
 end
 
+-- frames addons insert into a popup (Plumber): their panel buttons and check boxes in our look
+local function SkinInsertedFrame(popup)
+    local inserted = popup.insertedFrame
+    if not inserted then return end
+    for _, child in ipairs({inserted:GetChildren()}) do
+        if child:IsObjectType("Button") and child.Left and child.Middle and child.Right then
+            StyleStaticPopupButton(child)
+            GW.SetPopupButtonScheme(child, ClassifyPopupButton(child))
+        elseif child.CheckedTexture and child.Border and child.Label then
+            if not child.gwSkinned then
+                child.gwSkinned = true
+                child.Border:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
+                child.Border:SetTexCoord(0, 1, 0, 1)
+                child.Border:SetSize(16, 16)
+                child.CheckedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
+                child.CheckedTexture:SetTexCoord(0, 1, 0, 1)
+                if child.Highlight then
+                    child.Highlight:SetAlpha(0)
+                end
+            end
+            child.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+        end
+    end
+end
+
 local FOOTER_SHADE_ALPHA = 0.35
 local FOOTER_SHADE_EDGE = 28
 
@@ -290,6 +315,7 @@ local function LoadStaticPopupSkin()
         GW.CreatePopupPanelDecoration(StaticPopup, button1)
 
         StaticPopup:HookScript("OnShow", UpdatePopupButtonSchemes)
+        StaticPopup:HookScript("OnShow", SkinInsertedFrame)
 
         StaticPopup.Dropdown:GwHandleDropDownBox()
 

@@ -49,6 +49,9 @@ GW.Colors.SkinColors = {
     Positive = CreateColor(0.3, 1, 0.3),
     Negative = CreateColor(1, 0.3, 0.3),
     TokenBorder = CreateColor(0, 0.8, 1), -- the WoW token icon frame
+    Applied = CreateColor(1, 0.7, 1), -- an applied transmog appearance
+    DisabledBorder = CreateColor(0.3, 0.3, 0.3), -- the frame of something that cannot be used
+    CardBorder = CreateColor(0.6, 0.6, 0.6), -- the light grey frame of cards and model previews
 }
 
 -- the coin amounts of our bag money

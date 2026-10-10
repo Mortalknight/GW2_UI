@@ -1,11 +1,8 @@
 ---@class GW2
 local GW = select(2, ...)
 
--- Transmogrifier (Blizzard_Transmog: retail 12.x and the classic clients that ship it): outfit list,
--- character preview and the wardrobe with its tabs. The window follows the merchant skin, the preview our
--- character window, buttons and boxes the other skins.
--- Slots and cards are pooled and created after this runs, they are styled from their mixin updates; those
--- run on every refresh, so they only touch what changed.
+-- Transmogrifier: outfit list, character preview and wardrobe. Slots and cards are pooled, they are styled
+-- from their mixin updates and only touch what changed
 
 local HEADER_OVERLAP = 11 -- blizzards panels start 21 below the top, our header covers 32
 local CONTROL_HEIGHT = 20
@@ -13,30 +10,22 @@ local FILTER_WIDTH = 90
 local CHECKBOX_SIZE = 18
 local BUTTON_HEIGHT = 28
 local SITUATION_DROPDOWN_WIDTH = 300
-local DISPLAY_TYPE_ICON_SCALE = 0.7
 local ICON_SIZE = 45 -- the slot icon, blizzards slot frame around it is 59
 local FLYOUT_HEIGHT = 14
 local ILLUSION_OFFSET = 4 -- the top of an enchant slot below the slot frame of its weapon
 
 local WINDOW_ICON = "Interface/AddOns/GW2_UI/textures/character/character-window-icon.png"
-local PAPERDOLL_BACKGROUND = "Interface/AddOns/GW2_UI/textures/character/paperdollbg.png"
 local LIST_SELECTED = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
 local ITEM_BORDER = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
-local BUTTON_NORMAL = "Interface/AddOns/GW2_UI/textures/uistuff/button.png"
-local BUTTON_SELECTED = "Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png"
 local ARROW_UP = "Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up.png"
 local ARROW_DOWN = "Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up.png"
 
-local HIGHLIGHT_R, HIGHLIGHT_G, HIGHLIGHT_B, HIGHLIGHT_A = 1, 1, 1, 0.25
-local ACTIVE_R, ACTIVE_G, ACTIVE_B = GW.Colors.TextColors.LightHeader:GetRGB()
-
 -- the state blizzard shows with its card and slot art, as the tint of our borders
 local STATE_COLOR = {
-    default = {1, 1, 1},
-    incomplete = {0.5, 0.5, 0.5},
-    disabled = {0.3, 0.3, 0.3},
-    applied = {1, 0.7, 1},
-    pending = {1, 0.82, 0},
+    default = GW.Colors.SkinColors.CardBorder,
+    incomplete = GW.Colors.SkinColors.IconBorder,
+    disabled = GW.Colors.SkinColors.DisabledBorder,
+    applied = GW.Colors.SkinColors.Applied,
 }
 
 local TAB_ART_KEYS = {
@@ -44,15 +33,13 @@ local TAB_ART_KEYS = {
     "LeftHighlight", "MiddleHighlight", "RightHighlight",
 }
 
----------- shared pieces ----------
-
 local function SetWhiteText(text, sizeType)
     text:GwSetFontTemplate(UNIT_NAME_FONT, sizeType or GW.Enum.TextSizeType.Normal)
     text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 local function SetHighlight(texture, region)
-    texture:SetColorTexture(HIGHLIGHT_R, HIGHLIGHT_G, HIGHLIGHT_B, HIGHLIGHT_A)
+    texture:SetColorTexture(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
     texture:ClearAllPoints()
     texture:SetAllPoints(region)
 end
@@ -61,12 +48,11 @@ end
 local function SetActiveBorder(texture, icon)
     texture:SetTexture(ITEM_BORDER)
     texture:SetTexCoord(0, 1, 0, 1)
-    texture:SetVertexColor(ACTIVE_R, ACTIVE_G, ACTIVE_B)
+    texture:SetVertexColor(GW.Colors.TextColors.LightHeader:GetRGB())
     texture:ClearAllPoints()
     texture:SetAllPoints(icon)
 end
 
--- NineSlice boxes with a background atlas, without the Left / Middle / Right textures of the old template
 local function SkinSearchBox(box)
     if box.Background then
         box.Background:Hide()
@@ -86,14 +72,18 @@ local function SkinDropdown(dropdown, width)
     end
     dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, width)
     dropdown:SetHeight(CONTROL_HEIGHT)
-    dropdown.backdrop:ClearAllPoints()
-    dropdown.backdrop:SetAllPoints(dropdown)
+    if dropdown.backdrop then
+        dropdown.backdrop:ClearAllPoints()
+        dropdown.backdrop:SetAllPoints(dropdown)
+    end
 end
 
 local function SkinSearchAndFilter(frame)
-    SkinSearchBox(frame.SearchBox)
-    local filter = frame.FilterButton
+    local search, filter = frame.SearchBox, frame.FilterButton
+    SkinSearchBox(search)
     SkinDropdown(filter, FILTER_WIDTH)
+    search:ClearAllPoints()
+    search:SetPoint("RIGHT", filter, "LEFT", -10, 0)
     local reset = filter.ResetButton
     if reset then
         reset:GwSkinButton(true)
@@ -146,8 +136,6 @@ local function SkinLightButton(button)
     LockBlackFont(button)
 end
 
----------- outfit list ----------
-
 local function SkinOutfitEntry(entry)
     local iconButton = entry.OutfitIcon
     iconButton.Border:SetAlpha(0)
@@ -159,18 +147,23 @@ local function SkinOutfitEntry(entry)
     end
 
     local button = entry.OutfitButton
-    -- alpha survives the atlas blizzard sets on every Init
     button.NormalTexture:SetAlpha(0)
     -- the row reaches the scroll bar instead of blizzards fixed 208
     button:SetPoint("RIGHT", entry, "RIGHT", 0, 0)
     GW.AddListItemChildHoverTexture(button)
 
-    local selected = button.Selected
+    -- an own selection texture; blizzards art goes, its save and new animations would show it again
+    for _, key in ipairs({"Selected", "SelectedPurple", "Glow", "GlowPurple"}) do
+        button[key]:SetTexture(nil)
+    end
+    local selected = button:CreateTexture(nil, "ARTWORK", nil, 1)
     selected:SetTexture(LIST_SELECTED)
-    selected:SetTexCoord(0, 1, 0, 1)
     selected:SetVertexColor(GW.Colors.SkinColors.ListSelected:GetRGBA())
-    selected:ClearAllPoints()
     selected:SetAllPoints(button)
+    selected:SetShown(button.Selected:IsShown())
+    hooksecurefunc(entry, "SetSelected", function(_, isSelected)
+        selected:SetShown(isSelected)
+    end)
 
     SetWhiteText(button.TextContent.Name)
     button.TextContent.SituationInfo:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
@@ -191,7 +184,6 @@ local function SkinEquippedGearFrame(spellFrame)
     SetWhiteText(spellFrame.Label)
 end
 
--- the coins in our money font and colors on our details background, like the merchant skin
 local function SkinMoneyFrame(moneyFrame)
     moneyFrame.Background:Hide()
     GW.AddDetailsBackground(moneyFrame)
@@ -207,24 +199,22 @@ local function SkinMoneyFrame(moneyFrame)
 end
 
 local function SkinOutfitCollection(collection)
-    for _, key in ipairs({"Background", "GradientTop", "GradientBottom", "DividerBar"}) do
+    for _, key in ipairs({"Background", "GradientTop", "GradientBottom"}) do
         collection[key]:Hide()
     end
-    -- blizzard insets the panel by 2, the uncovered strip of window background read as a line along the
-    -- edge; the details background reaches the window edges instead
-    GW.AddDetailsBackground(collection)
-    local window = collection:GetParent()
-    collection.tex:ClearAllPoints()
-    collection.tex:SetPoint("TOP", collection, "TOP", 0, 0)
-    collection.tex:SetPoint("RIGHT", collection, "RIGHT", 0, 0)
-    collection.tex:SetPoint("LEFT", window, "LEFT", 0, 0)
-    collection.tex:SetPoint("BOTTOM", window, "BOTTOM", 0, 0)
+    -- the divider has a fixed height of the panel, our window ends earlier
+    local divider = collection.DividerBar
+    divider:ClearAllPoints()
+    divider:SetPoint("TOPRIGHT", collection, "TOPRIGHT", 2, 0)
+    divider:SetPoint("BOTTOM", collection:GetParent(), "BOTTOM", 0, 0)
 
     local list = collection.OutfitList
     list.DividerTop:SetAlpha(0)
     list.DividerBottom:SetAlpha(0)
+    GW.AddDetailsBackground(list)
     GW.HandleTrimScrollBar(list.ScrollBar)
     GW.HandleScrollControls(list)
+    ScrollUtil.AddManagedScrollBarVisibilityBehavior(list.ScrollBox, list.ScrollBar)
     GW.SkinScrollBoxFrames(list.ScrollBox, SkinOutfitEntry)
 
     SkinEquippedGearFrame(collection.ShowEquippedGearSpellFrame)
@@ -235,6 +225,8 @@ local function SkinOutfitCollection(collection)
     LockBlackFont(purchase)
     -- blizzard moves the icon on mouse down / up, only its size is ours
     purchase.Icon:SetSize(16, 16)
+    purchase.Text:ClearAllPoints()
+    purchase.Text:SetPoint("CENTER", purchase, "CENTER", 0, 0)
 
     -- without blizzards green "unsaved changes" glow, the enabled state already says it
     local save = collection.SaveOutfitButton
@@ -251,8 +243,6 @@ local function SkinOutfitCollection(collection)
     SkinMoneyFrame(collection.MoneyFrame)
 end
 
----------- character preview: gear slots like our character window ----------
-
 -- border atlas -> state color, looked up once per atlas name
 local slotColorByAtlas = setmetatable({}, {__index = function(cache, atlas)
     local color = STATE_COLOR.default
@@ -265,7 +255,7 @@ local slotColorByAtlas = setmetatable({}, {__index = function(cache, atlas)
     return color
 end})
 
--- item icons are cropped, the empty slot art is an atlas and keeps its coordinates
+-- the empty slot art is an atlas and keeps its coordinates
 local function CropSlotIcon(icon)
     if not icon:GetAtlas() then
         icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -282,7 +272,6 @@ local function SetSlotHighlight(slot)
     highlight:SetAllPoints(slot.Icon)
 end
 
--- the weapon option pull up above weapon slots: a small bar with our arrow, down while the menu is open
 local function SetFlyoutArrow(dropdown, open)
     dropdown.gwArrow:SetTexture(open and ARROW_DOWN or ARROW_UP)
 end
@@ -295,10 +284,8 @@ local function SetFlyoutHighlight(dropdown)
 end
 
 local function SkinFlyoutDropdown(dropdown)
-    -- alpha survives the atlases blizzard sets when the menu opens / closes and on mouse down
     dropdown.NormalTexture:SetAlpha(0)
     dropdown.PushedTexture:SetAlpha(0)
-    -- blizzard set its highlight atlas on load already and sets it again on every state change
     hooksecurefunc(dropdown, "SetHighlightAtlas", SetFlyoutHighlight)
     SetFlyoutHighlight(dropdown)
 
@@ -318,7 +305,6 @@ local function SkinSlot(slot)
         SkinFlyoutDropdown(slot.FlyoutDropdown)
     end
 
-    -- alpha survives the border atlas blizzard sets on every update
     slot.Border:SetAlpha(0)
     slot.gwBorder = slot:CreateTexture(nil, "BORDER", nil, 1)
     slot.gwBorder:SetTexture(ITEM_BORDER)
@@ -342,7 +328,7 @@ local function UpdateSlot(slot)
     local color = slotColorByAtlas[slot.Border:GetAtlas() or ""]
     if slot.gwBorderColor ~= color then
         slot.gwBorderColor = color
-        slot.gwBorder:SetVertexColor(color[1], color[2], color[3])
+        slot.gwBorder:SetVertexColor(color:GetRGB())
     end
 end
 
@@ -359,19 +345,22 @@ local function PlaceBottomIllusionSlots(preview)
 end
 
 local function SkinCharacterPreview(preview)
-    preview.Background:SetTexture(PAPERDOLL_BACKGROUND)
-    preview.Background:SetTexCoord(0, 1, 0, 1)
-    preview.Background:ClearAllPoints()
-    preview.Background:SetAllPoints(preview)
+    preview.Background:Hide()
     preview.Gradients:Hide()
+    GW.AddDetailsBackground(preview)
+    preview.tex:ClearAllPoints()
+    preview.tex:SetPoint("TOPLEFT", preview, "TOPLEFT", 4, 0)
+    preview.tex:SetPoint("BOTTOMRIGHT", preview, "BOTTOMRIGHT", -4, 0)
 
     for _, key in ipairs({"HideIgnoredToggle", "SheatheWeaponToggle", "PreviewedWeaponToggle"}) do
         SkinToggle(preview.ToggleOptions[key])
     end
 
-    -- the undo button like the zoom and rotate buttons of the model
+    -- like the zoom and rotate buttons of the model
     local clear = preview.ClearAllPendingButton
-    clear:GwSkinButton(false, false, false, false, false, false, true)
+    for _, key in ipairs({"NormalTexture", "PushedTexture", "HighlightTexture"}) do
+        clear[key]:SetAlpha(0)
+    end
     clear:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
     clear:SetSize(24, 24)
     clear.Icon:SetSize(14, 14)
@@ -384,60 +373,55 @@ local function SkinCharacterPreview(preview)
     hooksecurefunc(preview, "SetupSlotSection", PlaceBottomIllusionSlots)
 end
 
----------- display type buttons (Unassigned / Show Equipped Gear) ----------
-
--- blizzard swaps the normal atlas by state, "depressed" is the active type: our pressed look
-local function SetDisplayTypeArt(button, atlas)
-    local selected = type(atlas) == "string" and atlas:find("depressed", 1, true) ~= nil
-    button:SetNormalTexture(selected and BUTTON_SELECTED or BUTTON_NORMAL)
-    -- the atlas coordinates would stay on the texture
-    button:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
+-- the display type buttons keep blizzards animated art; blizzard marks the active type by its font object,
+-- ours keep that in our font: white while active, grey if not
+local displayTypeFonts
+local function SetDisplayTypeFont(button, font)
+    if not displayTypeFonts then
+        local _, size = GameFontNormal:GetFont()
+        local function NewFont(name, color)
+            local fontObject = CreateFont(name)
+            fontObject:CopyFontObject(GameFontNormal)
+            fontObject:SetFont(UNIT_NAME_FONT, size, "")
+            fontObject:SetTextColor(color:GetRGB())
+            return fontObject
+        end
+        displayTypeFonts = {
+            active = NewFont("GW2_TransmogDisplayTypeActive", GW.Colors.FallbackWhite),
+            inactive = NewFont("GW2_TransmogDisplayTypeInactive", GW.Colors.SkinColors.SubText),
+        }
+    end
+    if font == displayTypeFonts.active or font == displayTypeFonts.inactive then return end
+    local isActive = font == "GameFontHighlight" or font == GameFontHighlight
+    local wanted = isActive and displayTypeFonts.active or displayTypeFonts.inactive
+    if button:GetNormalFontObject() ~= wanted then
+        button:SetNormalFontObject(wanted)
+    end
 end
 
 local function SkinDisplayTypeButton(button)
-    button:GwSkinButton(false, false)
-    button:SetHeight(BUTTON_HEIGHT)
-    hooksecurefunc(button, "SetNormalAtlas", SetDisplayTypeArt)
-    SetDisplayTypeArt(button)
-    hooksecurefunc(button, "SetNormalFontObject", LockBlackFont)
-    LockBlackFont(button)
-
-    -- the purple state and its pending / saved effects are drawn for blizzards dark buttons
-    button.StateTexture:SetAlpha(0)
-    button.PendingFrame:SetAlpha(0)
-    button.SavedFrame:SetAlpha(0)
-
-    -- the round icon inside the button instead of over its left edge, without the gold ring
-    local iconFrame = button.IconFrame
-    iconFrame.Border:SetAlpha(0)
-    iconFrame:SetScale(DISPLAY_TYPE_ICON_SCALE)
-    iconFrame:ClearAllPoints()
-    iconFrame:SetPoint("LEFT", button, "LEFT", 4 / DISPLAY_TYPE_ICON_SCALE, 0)
-    button.Text:ClearAllPoints()
-    button.Text:SetPoint("LEFT", button, "LEFT", 36, 0)
-    button.Text:SetPoint("RIGHT", button, "RIGHT", -6, 0)
+    hooksecurefunc(button, "SetNormalFontObject", SetDisplayTypeFont)
+    SetDisplayTypeFont(button, button:GetNormalFontObject())
 end
-
----------- wardrobe cards ----------
 
 local function SkinCard(card, highlight, stateTexture)
     card.gwSkinned = true
-    card:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    card:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
     card.Border:SetAlpha(0)
-    -- the applied / pending state becomes the border color
     stateTexture:SetAlpha(0)
     SetHighlight(highlight, card)
     highlight:SetBlendMode("ADD")
 end
 
+-- a pending card keeps its frame, blizzards animation around it shows the state
 local function SetCardState(card, stateTexture, baseColor)
     local color = baseColor
-    if stateTexture:IsShown() then
-        color = card.PendingFrame:IsShown() and STATE_COLOR.pending or STATE_COLOR.applied
+    if stateTexture:IsShown() and not card.PendingFrame:IsShown() then
+        color = STATE_COLOR.applied
     end
     if card.gwStateColor ~= color then
         card.gwStateColor = color
-        card.backdrop:SetBackdropBorderColor(color[1], color[2], color[3], 1)
+        card.backdrop:SetBackdropBorderColor(color:GetRGB())
     end
 end
 
@@ -448,7 +432,6 @@ local function UpdateItemCard(card)
     SetCardState(card, card.StateTexture, STATE_COLOR.default)
 end
 
--- incomplete sets are dimmed
 local function UpdateSetCard(card)
     if not card.gwSkinned then
         -- blizzard sets its atlas on the highlight with every update, ours is a texture of its own
@@ -457,8 +440,6 @@ local function UpdateSetCard(card)
     end
     SetCardState(card, card.TransmogStateTexture, card.IncompleteOverlay:IsShown() and STATE_COLOR.incomplete or STATE_COLOR.default)
 end
-
----------- wardrobe ----------
 
 local function HideTabArt(tab)
     for _, key in ipairs(TAB_ART_KEYS) do
@@ -484,13 +465,19 @@ local function SkinTabs(tabHeaders)
     end
 end
 
--- the situation rows are pooled, set up when the tab opens or refreshes
 local function SkinSituationRow(situation)
+    situation.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     SkinDropdown(situation.Dropdown, SITUATION_DROPDOWN_WIDTH)
 end
 
+-- blizzard colors the titles and resets the toggle font on every refresh: white while enabled, grey if not
 local function SkinSituationRows(frame)
     GW.SkinPoolFrames(frame.SituationFramePool, SkinSituationRow)
+    local color = C_TransmogOutfitInfo.GetOutfitSituationsEnabled() and GW.Colors.FallbackWhite or GW.Colors.SkinColors.Disabled
+    for situation in frame.SituationFramePool:EnumerateActive() do
+        situation.Title:SetTextColor(color:GetRGB())
+    end
+    SetWhiteText(frame.EnabledToggle.Text)
 end
 
 local function SkinItemsFrame(items)
@@ -503,7 +490,12 @@ local function SkinItemsFrame(items)
     local displayTypes = items.DisplayTypes
     SkinDisplayTypeButton(displayTypes.DisplayTypeUnassignedButton)
     SkinDisplayTypeButton(displayTypes.DisplayTypeEquippedButton)
-    displayTypes:Layout()
+
+    -- the weapon type in the row of the display type buttons
+    local weapon = items.WeaponDropdown
+    weapon:SetHeight(BUTTON_HEIGHT)
+    weapon:ClearAllPoints()
+    weapon:SetPoint("LEFT", displayTypes, "RIGHT", 10, 0)
 
     items.ActiveSlotTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     items.ActiveSlotTitle:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -524,7 +516,7 @@ end
 local function SkinSituationsFrame(situations)
     situations.Situations.Background:Hide()
     situations.Situations:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-    situations.DescriptionText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    SetWhiteText(situations.DescriptionText)
     SkinLightButton(situations.DefaultsButton)
     SkinLightButton(situations.ApplyButton)
     SkinToggle(situations.EnabledToggle)
@@ -540,7 +532,6 @@ local function SkinWardrobeCollection(wardrobe)
     content.Border:Hide()
     GW.AddDetailsBackground(content)
 
-    -- the tabs stand on the content box instead of reaching into it
     local tabHeaders = wardrobe.TabHeaders
     SkinTabs(tabHeaders)
     hooksecurefunc(tabHeaders, "AddTab", SkinTabs)
@@ -558,12 +549,17 @@ local function SkinWardrobeCollection(wardrobe)
     hooksecurefunc(TransmogCustomSetModelMixin, "UpdateSet", UpdateSetCard)
 end
 
----------- the window ----------
+-- from the height that was set, a repeated call with the same size does not grow it again
+local function GrowWindow(frame, height)
+    if frame.gwGrowing then return end
+    frame.gwGrowing = true
+    frame:SetHeight(height + HEADER_OVERLAP)
+    frame.gwGrowing = nil
+end
 
--- the merchant skin header: the framed portrait of the transmogrifier npc
 local function SkinWindow(frame)
     GW.HandlePortraitFrame(frame)
-    GW.HandlePortraitFrameArt(frame) -- the NineSlice border and title bar art
+    GW.HandlePortraitFrameArt(frame)
 
     local title = frame.TitleContainer and frame.TitleContainer.TitleText or TRANSMOGRIFY
     GW.CreateFrameHeaderWithBody(frame, title, WINDOW_ICON, nil, nil, false, true)
@@ -578,8 +574,11 @@ local function SkinWindow(frame)
         GW.SetHeaderPortrait(header, "npc")
     end)
 
-    -- the frame grows by the part of blizzards panels our header would cover
-    frame:SetHeight(frame:GetHeight() + HEADER_OVERLAP)
+    -- the frame grows by the part of blizzards panels our header would cover; addons like Plumber set
+    -- blizzards size again on every show
+    GrowWindow(frame, frame:GetHeight())
+    hooksecurefunc(frame, "SetSize", function(self, _, height) GrowWindow(self, height) end)
+    hooksecurefunc(frame, "SetHeight", GrowWindow)
     local _, _, _, x, y = frame.OutfitCollection:GetPoint(1)
     frame.OutfitCollection:ClearAllPoints()
     frame.OutfitCollection:SetPoint("TOPLEFT", frame, "TOPLEFT", x, y - HEADER_OVERLAP)
@@ -587,13 +586,37 @@ local function SkinWindow(frame)
     frame:SetClampedToScreen(true)
     frame:SetClampRectInsets(0, 0, header:GetHeight() - 20, 0)
     frame.CloseButton:ClearAllPoints()
-    frame.CloseButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -10, -2)
+    frame.CloseButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -20, -2)
 
     local help = frame.HelpPlateButton
     if help then
         GW.SkinHelpIconButton(help, 20)
         help:ClearAllPoints()
         help:SetPoint("RIGHT", frame.CloseButton, "LEFT", -6, 0)
+    end
+end
+
+-- Plumber: its quick access bar above the outfit list, created on the first show of the window
+local function SkinPlumberQuickAccess(frame)
+    for _, child in ipairs({frame:GetChildren()}) do
+        if not child.gwSkinned then
+            for _, button in ipairs({child:GetChildren()}) do
+                if button.SetIconAndText then
+                    child.gwSkinned = true
+                    child:GwStripTextures()
+                    -- left aligned above the equipped gear line, white like the texts around it
+                    button:ClearAllPoints()
+                    button:SetPoint("TOPLEFT", frame.OutfitCollection, "TOPLEFT", 16, -8)
+                    button.Icon:ClearAllPoints()
+                    button.Icon:SetPoint("LEFT", button, "LEFT", 0, 0)
+                    SetWhiteText(button.Text)
+                    button:HookScript("OnLeave", function(self)
+                        self.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+                    end)
+                    return
+                end
+            end
+        end
     end
 end
 
@@ -604,17 +627,12 @@ local function SkinTransmogFrame()
     SkinCharacterPreview(frame.CharacterPreview)
     SkinWardrobeCollection(frame.WardrobeCollection)
     frame.OutfitPopup:HookScript("OnShow", GW.HandleIconSelectionFrame)
-end
-
--- a load on demand addon, clients without the new transmogrifier never load it
-local function HasTransmogUI()
-    if C_AddOns.DoesAddOnExist then
-        return C_AddOns.DoesAddOnExist("Blizzard_Transmog")
+    if C_AddOns.IsAddOnLoaded("Plumber") then
+        frame:HookScript("OnShow", function()
+            C_Timer.After(0, function() SkinPlumberQuickAccess(frame) end)
+        end)
     end
-    local _, _, _, _, reason = C_AddOns.GetAddOnInfo("Blizzard_Transmog")
-    return reason ~= "MISSING"
 end
-GW.HasTransmogUI = HasTransmogUI
 
 local function LoadTransmogSkin()
     if not GW.settings.skins.transmog.enabled then return end
