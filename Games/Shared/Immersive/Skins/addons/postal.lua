@@ -1,7 +1,40 @@
 ---@class GW2
 local GW = select(2, ...)
 
+local DELETE_ICON = "Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png"
+local RETURN_ICON = "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png" -- postal mirrors it to the left
+
+-- the delete / return icon of an inbox row, postal sets its texture on every inbox update
+local function SetPostalRowIcon(texture, file)
+    if texture.gwSetting then return end
+    texture.gwSetting = true
+    local isDelete = type(file) == "string" and file:find("ReadyCheck", 1, true) ~= nil
+    texture:SetTexture(isDelete and DELETE_ICON or RETURN_ICON)
+    texture.gwSetting = nil
+end
+
+-- postal enables its modules after our skin ran, their buttons get skinned when the mail opens
+local function SkinPostalModuleButtons()
+    if OpenMailForwardButton and not OpenMailForwardButton.gwSkinned then
+        OpenMailForwardButton:GwSkinButton(false, true)
+    end
+    for i = 1, 7 do
+        local expire = _G["MailItem" .. i .. "ExpireTime"]
+        local icon = expire and expire.returnicon
+        if icon and not icon.gwSkinned then
+            icon.gwSkinned = true
+            icon:ClearAllPoints()
+            icon:SetPoint("TOPRIGHT", expire, "BOTTOMRIGHT", -15, -1)
+            hooksecurefunc(icon.texture, "SetTexture", SetPostalRowIcon)
+            SetPostalRowIcon(icon.texture, icon.texture:GetTexture())
+        end
+    end
+end
+
 local function LoadPostalAddonSkin()
+    SkinPostalModuleButtons()
+    MailFrame:HookScript("OnShow", SkinPostalModuleButtons)
+
     if PostalOpenAllButton then
         PostalOpenAllButton:GwSkinButton(false, true)
         PostalOpenAllButton:ClearAllPoints()

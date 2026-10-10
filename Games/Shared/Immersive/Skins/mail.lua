@@ -122,6 +122,9 @@ local function SkinOpenMailFrame()
     OpenMailSenderLabel:Hide()
     OpenMailSubjectLabel:Hide()
     OpenMailFrame.TitleContainer:Hide()
+    if OpenMailTitleText then
+        OpenMailTitleText:SetAlpha(0)
+    end
     OpenStationeryBackgroundLeft:Hide()
     OpenStationeryBackgroundRight:Hide()
 
@@ -521,51 +524,14 @@ local function LoadMailSkin()
     _G.AutoCompleteBox:GwStripTextures()
     _G.AutoCompleteBox:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
-    -- movable stuff
-    local pos = GW.settings.skins.mail.pos
+    -- moved by its header like our bank; the panel manager can not move it back
     MailFrame.mover = CreateFrame("Frame", nil, MailFrame)
-    MailFrame.mover:EnableMouse(true)
-    MailFrame:SetMovable(true)
     MailFrame.mover:SetSize(expandedWidth, 30)
     MailFrame.mover:SetPoint("BOTTOMLEFT", MailFrame, "TOPLEFT", 0, 0)
     MailFrame.mover:SetPoint("BOTTOMRIGHT", MailFrame, "TOPRIGHT", 0, 0)
-    MailFrame.mover:RegisterForDrag("LeftButton")
+    GW.MakeFrameMovable(MailFrame, nil, "mail", true)
+    GW.MakeFrameMovable(MailFrame.mover, MailFrame, "mail")
     MailFrame:SetClampedToScreen(true)
-    MailFrame.mover:SetScript("OnDragStart", function()
-        MailFrame:StartMoving()
-    end)
-    MailFrame.mover:SetScript("OnDragStop", function()
-        MailFrame:StopMovingOrSizing()
-
-        local x = MailFrame:GetLeft()
-        local y = MailFrame:GetTop()
-
-        -- re-anchor to UIParent after the move
-        MailFrame.SetPoint = nil
-        MailFrame:ClearAllPoints()
-        MailFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, y)
-        MailFrame.SetPoint = GW.NoOp -- prevent blizz from overriding our position
-
-        -- store the updated position
-        local pos = GW.settings.skins.mail.pos
-        wipe(pos)
-        pos.point = "TOPLEFT"
-        pos.relativePoint = "BOTTOMLEFT"
-        pos.xOfs = x
-        pos.yOfs = y
-        GW.settings.skins.mail.pos = pos
-    end)
-    MailFrame:ClearAllPoints()
-    MailFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-    MailFrame.SetPoint = GW.NoOp -- prevent blizz from overriding our position
-
-    MailFrame:HookScript("OnShow", function()
-        local pos = GW.settings.skins.mail.pos
-        MailFrame.SetPoint = nil
-        MailFrame:ClearAllPoints()
-        MailFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-        MailFrame.SetPoint = GW.NoOp -- prevent blizz from overriding our position
-    end)
 
     local function UpdateInboxBottomButtons()
         local yOffset = 88
