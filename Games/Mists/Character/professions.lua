@@ -53,14 +53,12 @@ local function profButton_OnEnter(self)
 end
 
 
-local profButtonSecure_OnDragStart =
-    [=[
-    local spellId = self:GetAttribute("spell")
-    if not spellId then
-        return "clear", nil
+-- by the spellbook item like blizzards book; a profession has a spell id per rank, a pickup by id can miss
+local function profButton_OnDragStart(self)
+    if self.spellbookIndex then
+        PickupSpellBookItem(self.spellbookIndex, self.booktype)
     end
-    return "clear", "spell", spellId
-    ]=]
+end
 
 local function updateButton(self, spellIdx, unlearn)
     if spellIdx then
@@ -72,13 +70,14 @@ local function updateButton(self, spellIdx, unlearn)
         self.icon:SetTexture(tex)
         self.name:SetText(name)
         self.modifiedClick = TalProfButton_OnModifiedClick
-        self:RegisterForClicks("AnyDown")
+        -- on release like blizzards book, a press would cast before a drag can start
+        self:RegisterForClicks("AnyUp")
+        self:SetAttribute("useOnKeyDown", false)
         self:SetAttribute("type1", "spell")
         self:SetAttribute("type2", "spell")
         self:SetAttribute("shift-type1", "modifiedClick")
         self:SetAttribute("shift-type2", "modifiedClick")
         self:SetAttribute("spell", spellId)
-        self:SetAttribute("_ondragstart", profButtonSecure_OnDragStart)
         self:Enable()
         if unlearn then
             self.unlearn:Show()
@@ -102,7 +101,6 @@ local function updateButton(self, spellIdx, unlearn)
         self:SetAttribute("shift-type1", nil)
         self:SetAttribute("shift-type2", nil)
         self:SetAttribute("spell", nil)
-        self:SetAttribute("_ondragstart", nil)
         self:Disable()
         self.unlearn:Hide()
         self:SetAlpha(0)
@@ -379,6 +377,7 @@ local function loadOverview(parent)
         fm.btn1.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
         fm.btn1.name:SetTextColor(1, 1, 1, 1)
         fm.btn1:SetScript("OnEnter", profButton_OnEnter)
+        fm.btn1:SetScript("OnDragStart", profButton_OnDragStart)
         fm.btn1:SetScript("OnLeave", GameTooltip_Hide)
         fm.btn1:EnableMouse(true)
         fm.btn1:RegisterForDrag("LeftButton")
@@ -386,6 +385,7 @@ local function loadOverview(parent)
         fm.btn2.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
         fm.btn2.name:SetTextColor(1, 1, 1, 1)
         fm.btn2:SetScript("OnEnter", profButton_OnEnter)
+        fm.btn2:SetScript("OnDragStart", profButton_OnDragStart)
         fm.btn2:SetScript("OnLeave", GameTooltip_Hide)
         fm.btn2:EnableMouse(true)
         fm.btn2:RegisterForDrag("LeftButton")

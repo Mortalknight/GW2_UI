@@ -50,13 +50,12 @@ local function profButton_OnEnter(self)
     GameTooltip:Show()
 end
 
-local profButtonSecure_OnDragStart = [=[
-    local spellId = self:GetAttribute("spell")
-    if not spellId then
-        return "clear", nil
+-- by the spellbook item like blizzards book; a profession has a spell id per rank, a pickup by id can miss
+local function profButton_OnDragStart(self)
+    if self.spellbookIndex then
+        C_SpellBook.PickupSpellBookItem(self.spellbookIndex, self.booktype)
     end
-    return "clear", "spell", spellId
-]=]
+end
 
 local function updateButton(self, spellIdx)
     if spellIdx then
@@ -66,11 +65,12 @@ local function updateButton(self, spellIdx)
         self.skillName = C_SpellBook.GetSpellBookItemName(spellIdx, Enum.SpellBookSpellBank.Player)
         self.icon:SetTexture(C_SpellBook.GetSpellBookItemTexture(spellIdx, Enum.SpellBookSpellBank.Player))
         self.name:SetText(self.skillName)
-        self:RegisterForClicks("AnyUp", "AnyDown")
+        -- on release like blizzards book, a press would cast before a drag can start
+        self:RegisterForClicks("AnyUp")
+        self:SetAttribute("useOnKeyDown", false)
         self:SetAttribute("type1", "spell")
         self:SetAttribute("type2", "spell")
         self:SetAttribute("spell", spellBookItemInfo and spellBookItemInfo.spellID)
-        self:SetAttribute("_ondragstart", profButtonSecure_OnDragStart)
         self:Enable()
         self:SetAlpha(1)
     else
@@ -82,7 +82,6 @@ local function updateButton(self, spellIdx)
         self:SetAttribute("type1", nil)
         self:SetAttribute("type2", nil)
         self:SetAttribute("spell", nil)
-        self:SetAttribute("_ondragstart", nil)
         self:Disable()
         self:SetAlpha(0)
     end
@@ -235,6 +234,7 @@ local function loadOverview(parent)
             btn.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
             btn.name:SetTextColor(1, 1, 1, 1)
             btn:SetScript("OnEnter", profButton_OnEnter)
+            btn:SetScript("OnDragStart", profButton_OnDragStart)
             btn:SetScript("OnLeave", GameTooltip_Hide)
             btn:EnableMouse(true)
             btn:RegisterForDrag("LeftButton")
