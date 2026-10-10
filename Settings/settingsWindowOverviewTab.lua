@@ -74,10 +74,11 @@ local SETTINGS_SPLASH_ART_PATH = "Interface/AddOns/GW2_UI/textures/uistuff/splas
 local SETTINGS_SPLASH_ART_FILES = {
     {enabled = "TWW", file = "settingartwork-tww.png", darkFile = "settingartwork-tww-dark.png", init = GW.InitBeledarsSplashScreen},
     {enabled = "Retail", file = "settingartwork-retail.png"},
-    {enabled = "Mists", file = "settingartwork-cata.png"},
+    {enabled = "Forever", file = "settingartwork-forever.png"},
+    {enabled = "Mists", file = "settingartwork-mists.png"},
     {enabled = "Cata", file = "settingartwork-cata.png"},
     {enabled = "Wrath", file = "settingartwork-wrath.png"},
-    {enabled = "TBC", file = "settingartwork-classic.png"},
+    {enabled = "TBC", file = "settingartwork-tbc.png"},
     {enabled = "Classic", file = "settingartwork-classic.png"},
 }
 
