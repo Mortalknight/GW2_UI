@@ -188,14 +188,13 @@ end
 local function CreateBagBar(itemFrame)
     itemFrame.bags = {}
 
-    -- the fixed first tab, it holds no bag
+    -- the fixed first tab, it holds no bag; a new character has to buy it first
     local base = CreateFrame("Button", nil, itemFrame, "GwBankBaseBagTemplate")
+    base.tabIndex = 1
     inv.reskinBagBar(base)
     base:GetNormalTexture():SetVertexColor(1, 1, 1, 0.75)
     GW.SetItemButtonQualityForBags(base, 1)
     EnableTooltip(base, BANK, "ANCHOR_RIGHT", 0)
-    base.icon:SetTexture(133633)
-    base.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     itemFrame.bags[1] = base
 
     for tabIndex = 2, NUM_TABS do
@@ -227,6 +226,18 @@ local function UpdateBagBar(itemFrame)
     local maxTabs = C_Bank.FetchMaxNumBankTabs(BANK_TYPE)
     local purchase = itemFrame.purchaseButton
     purchase.slot = nil
+
+    local base = itemFrame.bags[1]
+    if IsNextPurchasableTab(1) then
+        base.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon.png")
+        base.icon:SetTexCoord(0.2, 0.8, 0.2, 0.8)
+        base.tooltipText = BANK_BAG_PURCHASE
+        purchase.slot = base
+    else
+        base.icon:SetTexture(133633)
+        base.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    end
+
     for tabIndex = 2, NUM_TABS do
         local b = itemFrame.bags[tabIndex]
         b:SetShown(tabIndex <= maxTabs)
