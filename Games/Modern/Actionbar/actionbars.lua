@@ -104,6 +104,22 @@ local function changeVertexColorActionbars(btn)
     end
 end
 
+local function RestoreButtonArt(btn)
+    if btn.NormalTexture then
+        btn:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bagnormal.png")
+    end
+    local width = btn:GetWidth()
+    btn:GetPushedTexture():SetSize(width, width)
+end
+
+local function AnchorToBar(frame, target, x, y)
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue(frame:GetName() .. "GwAnchor", AnchorToBar, {frame, target, x, y})
+        return
+    end
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", target, "TOPLEFT", x, y)
+end
 
 local function setButtonBackgroundAlpha(btn, alpha)
     btn.gwBackdrop.bg:SetAlpha(alpha)
@@ -446,7 +462,7 @@ local function skinMainBar()
         bar.gw_Buttons[i] = btn
 
         if btn then
-            btn.SlotArt = nil
+            hooksecurefunc(btn, "UpdateButtonArt", RestoreButtonArt)
 
             local hotkey = _G["ActionButton" .. i .. "HotKey"]
             btn.gw_ShowMacroName = GW.settings.actionbars.showMacroNames
@@ -588,7 +604,6 @@ local function updateMainBar()
     MainActionBar:SetMovable(1)
     MainActionBar:SetUserPlaced(true)
     MainActionBar:SetMovable(0)
-    MainActionBar.ignoreFramePositionManager = true
 
     -- set fader logic
     GW.CreateActionBarFaderAnim(fmActionbar, true)
@@ -607,7 +622,7 @@ local function skinMultiBar(barName, buttonName)
         bar.gw_Buttons[i] = btn
 
         if btn then
-            btn.SlotArt = nil
+            hooksecurefunc(btn, "UpdateButtonArt", RestoreButtonArt)
             btn.SlotBackground:SetAlpha(0)
 
             GW.UpdateHotkey(btn)
@@ -709,8 +724,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn.gw_ChangedColor = false
             hooksecurefunc(btn, "SetPoint", function(_, _, parent)
                 if parent ~= fmMultibar then
-                    btn:ClearAllPoints()
-                    btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn.gwX, -btn.gwY)
+                    AnchorToBar(btn, fmMultibar, btn.gwX, -btn.gwY)
                 end
             end)
 
@@ -745,8 +759,6 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         end
     end)
 
-    multibar.ignoreFramePositionManager = true
-
     if barName == "MultiBarLeft" then
         RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(5), "actionbars.bars." .. barName, BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale}, nil, GW.FlyoutDirection)
     elseif barName == "MultiBarRight" then
@@ -769,8 +781,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover)
     hooksecurefunc(fmMultibar, "SetPoint", function(_, _, anchor)
         if anchor ~= fmMultibar.gwMover then
-            fmMultibar:ClearAllPoints()
-            fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover)
+            AnchorToBar(fmMultibar, fmMultibar.gwMover, 0, 0)
         end
     end)
 
