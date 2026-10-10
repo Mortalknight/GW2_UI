@@ -20,7 +20,7 @@ addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Quest tracker boss and arena frames: a slim cast bar and, on Retail and Forever, the most important auras; preview them in the settings]=]},
     {GW.Enum.ChangelogType.feature, [=[Own loot roll bars with timer and item level]=]},
     {GW.Enum.ChangelogType.feature, [=[Guild bank in the look of the GW2 bank and an optional bind type label on items]=]},
-    {GW.Enum.ChangelogType.feature, [=[Automation options (all off by default): accept resurrections, summons and group invites from friends, set your role, track reputation, fast loot, release in battlegrounds, choose the only gossip option, skip cinematics, combat log for raids and Mythic+, a train all button and spell rank updates on the classic action bars]=]},
+    {GW.Enum.ChangelogType.feature, [=[Automation options (all off by default): accept group invites from friends, set your role, track reputation, fast loot, release in battlegrounds and a train all button]=]},
     {GW.Enum.ChangelogType.feature, [=[Tooltips: Mythic+ enemy forces, best Mythic+ run, optional item quality border and the mount of other players again]=]},
     {GW.Enum.ChangelogType.feature, [=[Dynamic HUD: choose the action bar background in and out of combat, with its own opacity]=]},
     {GW.Enum.ChangelogType.feature, [=[Honor badges on Retail in the health globe tooltip and on the honor bar, with matching prestige portraits]=]},

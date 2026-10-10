@@ -7,7 +7,6 @@
     <Script file ="autoRepair.lua"/>
     <Script file ="automation.lua"/>
     <Script file ="trainAll.lua"/>
-    <Script file ="spellRanks.lua"/>
     <Script file ="interruptAnnouncement.lua"/>
     <Script file ="afk.lua"/>
     <Script file ="itemlevel.lua"/>
