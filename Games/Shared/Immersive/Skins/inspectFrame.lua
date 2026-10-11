@@ -10,6 +10,7 @@ local MODEL_BORDERS = {
     "TopLeft", "TopRight", "Top", "Left", "Right", "BottomLeft", "BottomRight", "Bottom",
 }
 local PVP_PANELS = {"RatedBG", "Arena2v2", "Arena3v3", "Arena5v5"}
+local ARENA_TEAM_BORDERS = {"Top", "Left", "Right", "Bottom", "Background"}
 
 local function Update_InspectPaperDollItemSlotButton(button)
     local unit = button.hasItem and InspectFrame.unit
@@ -198,6 +199,62 @@ local function SkinPvP()
             panel.backdrop:SetFrameLevel(panel:GetFrameLevel())
         end
     end
+
+    -- the arena teams of tbc and wrath
+    if not InspectPVPTeam1 then return end
+    InspectPVPFrameBackground:SetPoint("TOPLEFT", 14, -50)
+    for index = 1, 3 do
+        local team = _G["InspectPVPTeam" .. index]
+        for _, part in ipairs(ARENA_TEAM_BORDERS) do
+            _G[team:GetName() .. part]:SetTexture(nil)
+        end
+        team:GwCreateBackdrop(GW.BackdropTemplates.Default)
+        team.backdrop:SetPoint("TOPLEFT", 0, -2)
+        team.backdrop:SetPoint("BOTTOMRIGHT", -20, 4)
+        team.backdrop:SetFrameLevel(team:GetFrameLevel())
+    end
+end
+
+-- the talent trees of tbc and wrath, blizzard colors the slot by the state of the talent and the border takes it over
+local function SetTalentBorderColor(slot, r, g, b)
+    slot:GetParent().backdrop:SetBackdropBorderColor(r, g, b)
+end
+
+local function SkinTalents()
+    if not InspectTalentFrameScrollFrame then return end
+    InspectTalentFramePortrait:GwKill()
+
+    for index = 1, 3 do
+        GW.HandleTabs(_G["InspectTalentFrameTab" .. index], "top")
+    end
+
+    InspectTalentFramePointsBar:GwStripTextures()
+    InspectTalentFramePointsBar:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    InspectTalentFrameSpentPointsText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    InspectTalentFrameTalentPointsText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+
+    InspectTalentFrameScrollFrame:GwStripTextures()
+    InspectTalentFrameScrollFrameScrollBar:GwSkinScrollBar()
+    InspectTalentFrameScrollFrame:GwSkinScrollFrame()
+
+    local index = 1
+    while _G["InspectTalentFrameTalent" .. index] do
+        local button = _G["InspectTalentFrameTalent" .. index]
+        local name = button:GetName()
+        button:GwStripTextures()
+        button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+        button.backdrop:SetAllPoints()
+        button:GwStyleButton()
+        _G[name .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        _G[name .. "IconTexture"]:GwSetInside()
+        hooksecurefunc(_G[name .. "Slot"], "SetVertexColor", SetTalentBorderColor)
+
+        local rank = _G[name .. "Rank"]
+        rank:ClearAllPoints()
+        rank:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
+        rank:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
+        index = index + 1
+    end
 end
 
 -- returns false when the skin is switched off, so the flavors can skip their own parts as well
@@ -210,6 +267,7 @@ local function SkinInspectFrameBase()
     SkinPaperDoll()
     SkinModel()
     SkinPvP()
+    SkinTalents()
 
     return true
 end
