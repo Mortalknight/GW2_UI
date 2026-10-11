@@ -187,6 +187,7 @@ function GwDodgeBarMixin:OnFinished(refilled)
 
     if self.cooldownText then
         self:SetScript("OnUpdate", nil)
+        self.cooldownText:SetText("")
         self:UpdateBarText(false, nil, false)
     end
 end
