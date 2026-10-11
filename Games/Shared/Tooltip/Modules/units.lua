@@ -120,7 +120,8 @@ end
 
 local function SetPlayerLines(tooltip, unit, color)
     local awayTag = GW.UnitIsAFK(unit) and AFK_TAG or GW.UnitIsDND(unit) and DND_TAG or ""
-    GameTooltipTextLeft1:SetText(color:WrapTextInColorCode(GetPlayerName(unit) or UNKNOWN) .. awayTag)
+    local staffIcon = GW.GetStaffIcon and GW.GetStaffIcon(unit)
+    GameTooltipTextLeft1:SetText((staffIcon and staffIcon .. " " or "") .. color:WrapTextInColorCode(GetPlayerName(unit) or UNKNOWN) .. awayTag)
 
     local hasGuild = GW.NotSecretValue(GetGuildInfo(unit)) and GetGuildInfo(unit)
     local levelLine, specLine = FindLevelLine(tooltip, hasGuild and HAS_GUILD_LINE and 2 or 1)

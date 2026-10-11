@@ -22,9 +22,14 @@ local function GetAffordableServices()
     return services
 end
 
-local function UpdateButton(button)
-    button:SetEnabled(#GetAffordableServices() > 0)
+local trainAllButton
+
+local function UpdateButton()
+    if not trainAllButton then return end
+    trainAllButton:SetShown(GW.settings.general.trainAllButton)
+    trainAllButton:SetEnabled(#GetAffordableServices() > 0)
 end
+GW.UpdateTrainAllButton = UpdateButton
 
 local function TrainAll()
     for _, index in ipairs(GetAffordableServices()) do
@@ -38,15 +43,20 @@ local function CreateTrainAllButton()
     local button = CreateFrame("Button", "GwTrainAllButton", ClassTrainerFrame, "UIPanelButtonTemplate")
     button:SetText(GW.L["Train all"])
     button:SetSize(ClassTrainerTrainButton:GetWidth(), ClassTrainerTrainButton:GetHeight())
-    button:SetPoint("RIGHT", ClassTrainerTrainButton, "LEFT", -4, 0)
+    -- the old trainer has its money left of the train button, there it goes next to the filter
+    if GW.isModern then
+        button:SetPoint("RIGHT", ClassTrainerTrainButton, "LEFT", -4, 0)
+    else
+        button:SetPoint("RIGHT", ClassTrainerFrame.FilterDropdown, "LEFT", -5, 0)
+    end
     button:GwSkinButton(false, true)
     button:SetScript("OnClick", TrainAll)
-    hooksecurefunc("ClassTrainerFrame_Update", function() UpdateButton(button) end)
-    UpdateButton(button)
+    trainAllButton = button
+    hooksecurefunc("ClassTrainerFrame_Update", UpdateButton)
+    UpdateButton()
 end
 
 local function LoadTrainAllButton()
-    if not GW.settings.general.trainAllButton then return end
     GW.RegisterLoadHook(CreateTrainAllButton, "Blizzard_TrainerUI", ClassTrainerFrame)
 end
 GW.LoadTrainAllButton = LoadTrainAllButton

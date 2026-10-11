@@ -74,7 +74,7 @@ local function LoadGeneralPanel(sWindow)
     general:AddOption(GW.NewSign .. L["Fill in delete confirmation"], L["Fills in the confirmation word when deleting a valuable item."], {getterSetter = "general.autoFillDelete"})
     general:AddOption(GW.NewSign .. L["Fast loot"], L["Loots all items at once when auto loot is active."], {getterSetter = "general.fastLoot"})
     general:AddOption(GW.NewSign .. L["Release in battlegrounds"], L["Releases your spirit when you die in a battleground, not while a soulstone or similar is waiting."], {getterSetter = "general.autoReleasePvP"})
-    general:AddOption(GW.NewSign .. L["Train all button"], L["Adds a button to trainers that learns everything you can afford."], {getterSetter = "general.trainAllButton", callback = function() GW.ShowRlPopup = true end})
+    general:AddOption(GW.NewSign .. L["Train all button"], L["Adds a button to trainers that learns everything you can afford."], {getterSetter = "general.trainAllButton", callback = function() GW.UpdateTrainAllButton() end})
 
     general:AddGroupHeader(L["Scale"])
     general:AddOption(L["Pixel Perfect Mode"], L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."], {getterSetter = "general.pixelPerfection", callback = function() C_CVar.SetCVar("useUiScale", "0") GW.PixelPerfection() end})

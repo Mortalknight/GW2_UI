@@ -2,6 +2,7 @@
 local GW = select(2, ...)
 
 local STAFF_ICON = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label.png:14:14|t"
+local TOOLTIP_STAFF_ICON = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label.png:11:11|t"
 
 -- the GW2 UI team, by Name-Realm
 local STAFF = {
@@ -21,6 +22,16 @@ local STAFF = {
     ["Zoelia-Nightslayer"] = true,
     ["Zoefia-Dreamscythe"] = true,
 }
+
+-- on forever the realm is the surname, so entries there are "Firstname-Surname"
+function GW.GetStaffIcon(unit)
+    local name, realm = UnitFullName(unit)
+    if not name or GW.IsSecretValue(name) or GW.IsSecretValue(realm) then return end
+    if realm and realm ~= "" then
+        name = name .. "-" .. realm
+    end
+    return STAFF[GW.GetChatNameWithRealm(name)] and TOOLTIP_STAFF_ICON or nil
+end
 
 GW.RegisterChatModule({
     onSenderName = function(_, name, _, sender)

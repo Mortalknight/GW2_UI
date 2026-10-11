@@ -114,6 +114,10 @@ local function ApplyClassTrainerSkin()
     ClassTrainerSkillHighlight:SetTexture(MENU_HOVER)
 
     GW.HookClassicCollapseTexture(ClassTrainerCollapseAllButton)
+    -- blizzard disables it while the trainer has nothing to show
+    ClassTrainerCollapseAllButton:SetDisabledTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right.png")
+    ClassTrainerCollapseAllButton:GetDisabledTexture():SetDesaturated(true)
+    ClassTrainerCollapseAllButton:GetDisabledTexture():SetSize(16, 16)
     ClassTrainerCollapseAllButton:ClearHighlightTexture()
     ClassTrainerCollapseAllButton:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     ClassTrainerCollapseAllButton:GetFontString():GwLockTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
