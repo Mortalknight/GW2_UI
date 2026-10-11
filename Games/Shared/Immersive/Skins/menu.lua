@@ -138,6 +138,40 @@ local function SkinRadio(_, frame)
     SkinSelection(frame, "Interface/AddOns/GW2_UI/textures/uistuff/radio-selected.png", "Interface/AddOns/GW2_UI/textures/uistuff/radio-unselected.png")
 end
 
+local HOVER_STRENGTH = GW.Colors.SkinColors.HighlightWhite.a
+
+local function SetNegative(button)
+    local color = GW.Colors.SkinColors.Negative
+    local strength = GW.settings.skins.dropdown.enabled and HOVER_STRENGTH or 1
+    button.highlight:SetVertexColor(color.r * strength, color.g * strength, color.b * strength)
+    if button.fontString then
+        button.fontString:SetText(color:WrapTextInColorCode(button.fontString:GetText()))
+    end
+end
+
+function GW.SetMenuEntryNegative(description)
+    description:AddInitializer(SetNegative)
+end
+
+hooksecurefunc(MenuVariants, "CreateHighlight", function(frame)
+    local highlight = frame.highlight
+    if GW.settings.skins.dropdown.enabled then
+        highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
+        highlight:SetVertexColor(HOVER_STRENGTH, HOVER_STRENGTH, HOVER_STRENGTH)
+    else
+        highlight:SetVertexColor(1, 1, 1)
+    end
+end)
+
+local function SkinVoiceLevels(frame)
+    local slider = frame.Slider
+    if slider and not slider.gwSkinned then
+        slider.gwSkinned = true
+        slider:GwSkinSliderFrame()
+        GW.AddSliderValueFill(slider)
+    end
+end
+
 local function LoadDropDownSkin()
     if not GW.settings.skins.dropdown.enabled then return end
 
@@ -152,5 +186,8 @@ local function LoadDropDownSkin()
     hooksecurefunc(MenuVariants, "CreateSubmenuArrow", SkinSubmenuArrow)
     hooksecurefunc(MenuVariants, "CreateCheckbox", SkinCheckbox)
     hooksecurefunc(MenuVariants, "CreateRadio", SkinRadio)
+    if UnitPopupVoiceLevelsMixin then
+        hooksecurefunc(UnitPopupVoiceLevelsMixin, "OnAttach", SkinVoiceLevels)
+    end
 end
 GW.LoadDropDownSkin = LoadDropDownSkin

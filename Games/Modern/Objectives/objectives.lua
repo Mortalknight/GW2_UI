@@ -673,9 +673,9 @@ function GwQuestLogMixin:BlockOnClick(button)
                     QuestUtil.ShareQuest(questID)
                 end)
             end
-            rootDescription:CreateButton(ABANDON_QUEST_ABBREV, function()
+            GW.SetMenuEntryNegative(rootDescription:CreateButton(ABANDON_QUEST_ABBREV, function()
                 QuestMapQuestOptions_AbandonQuest(questID)
-            end)
+            end))
             rootDescription:CreateButton(GW.L["Wowhead URL"], function() GW.ShowWowheadUrlPopup("quest", questID) end)
         end)
     end

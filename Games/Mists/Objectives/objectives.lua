@@ -492,7 +492,7 @@ function GwQuestLogMixin:BlockOnClick(button)
 
             rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() GW.ShowQuestLogEntry(self.questLogIndex) end)
             if CanAbandonQuest(self.questID) then
-                rootDescription:CreateButton(ABANDON_QUEST_ABBREV, function() GW.AbandonQuestLogEntry(self.questID) end)
+                GW.SetMenuEntryNegative(rootDescription:CreateButton(ABANDON_QUEST_ABBREV, function() GW.AbandonQuestLogEntry(self.questID) end))
             end
 
             if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
