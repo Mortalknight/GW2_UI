@@ -319,7 +319,6 @@ GW.Libs.LSM:Register("icon", "GW2_UI_Hamburger", "Interface/AddOns/GW2_UI/textur
 GW.Libs.LSM:Register("border", "GW2_UI_Cheese_Footer", "Interface/AddOns/GW2_UI/textures/uistuff/achievementfooter.png")
 GW.Libs.LSM:Register("border", "GW2_UI_Cheese_Footer_2", "Interface/AddOns/GW2_UI/textures/uistuff/achievementfooternotrack.png")
 GW.Libs.LSM:Register("background", "GW2_UI_Cheese_Complete", "Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg.png")
-GW.Libs.LSM:Register("background", "GW2_UI_Cheese_Complete_2", "Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete.png")
 GW.Libs.LSM:Register("background", "GW2_UI_Cheese_Complete_Red", "Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred.png")
 GW.Libs.LSM:Register("background", "GW2_UI_Cheese_Hover", "Interface/AddOns/GW2_UI/textures/uistuff/achievementhover.png")
 GW.Libs.LSM:Register("icon", "GW2_UI_Chest_Sm", "Interface/AddOns/GW2_UI/textures/uistuff/rewardchestsmall.png")

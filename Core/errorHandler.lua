@@ -99,6 +99,15 @@ function Gw2ErrorHandlerMixin:CleanFilePaths(msg)
     return tostring(msg or ""):gsub("@?Interface\\AddOns\\", ""):gsub("@?Interface/AddOns/", "")
 end
 
+-- this file loads before the api, an error while the addon loads finds no GW.Notice / GW.Debug yet
+local function Notice(msg)
+    if GW.Notice then
+        GW.Notice(msg)
+    else
+        print("GW2 UI: " .. msg)
+    end
+end
+
 -- Check for GW2 errors and log them
 function Gw2ErrorHandlerMixin:HandleError(msg, stack, locals)
     if not self:ShouldHandleError() then
@@ -112,15 +121,17 @@ function Gw2ErrorHandlerMixin:HandleError(msg, stack, locals)
     local filePattern = addonName .. "[\\/]" .. "[Cc]ore[\\/]" .. "errorHandler%.lua[^\n]*"
     if stack:match(filePattern .. "HandleError") then
         self.errors = math.huge
-        GW.Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nThis is an error in the error-handling system itself. Please create a new ticket on Curse, Discord or GitHub, copy & paste the error message in there and add any additional info you might have. Thank you! =)")
+        Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nThis is an error in the error-handling system itself. Please create a new ticket on Curse, Discord or GitHub, copy & paste the error message in there and add any additional info you might have. Thank you! =)")
     elseif self.errors < self.LOG_MAX_ERRORS then
         self.errorRate = max(0, self.errorRate - self.LOG_MAX_ERROR_RATE * (GetTime() - self.errorPrev)) + 1
         self.errorPrev = GetTime()
 
         for match in stack:gmatch("%[?" .. addonName .. "[\\/]+([^:%]]+)") do
-            if match and not GW.StartsWith(match, "Libs") and not GW.StartsWith(match, "libs") then
+            if match and not match:find("^[Ll]ibs") then
                 self.errors = self.errors + 1
-                GW.Debug("ERROR", msg .. "\n" .. stack)
+                if GW.Debug then
+                    GW.Debug("ERROR", msg .. "\n" .. stack)
+                end
                 local entry = msg .. "\n" .. stack
                 if locals and locals ~= "" then
                     local cleanLocals = self:CleanFilePaths(locals)
@@ -137,7 +148,7 @@ function Gw2ErrorHandlerMixin:HandleError(msg, stack, locals)
                 EventRegistry:TriggerEvent("GW2_UI.ErrorLogged", #self.log, self.errors == 1)
 
                 if self.errors == 1 then
-                    GW.Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nPlease type in |cffbbbbbb/gw2 error|r, create a new ticket on Curse or GitHub, copy & paste the log in there and add any additional info you might have. Thank you! =)")
+                    Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nPlease type in |cffbbbbbb/gw2 error|r, create a new ticket on Curse or GitHub, copy & paste the log in there and add any additional info you might have. Thank you! =)")
                 end
 
                 break
