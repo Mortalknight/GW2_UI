@@ -20,6 +20,9 @@ local function SkinPostalModuleButtons()
     end
     for i = 1, 7 do
         local expire = _G["MailItem" .. i .. "ExpireTime"]
+        if expire then
+            expire:SetPoint("TOPRIGHT", "MailItem" .. i, "TOPRIGHT", -4, -4)
+        end
         local icon = expire and expire.returnicon
         if icon and not icon.gwSkinned then
             icon.gwSkinned = true
