@@ -42,6 +42,24 @@ local function FormatEntry(entry)
     return text
 end
 
+-- the tier of the running delve, as the scenario header shows it; GetActiveDelveTier stays empty inside the delve
+local function GetDelveTier()
+    local stepInfo = C_ScenarioInfo.GetScenarioStepInfo()
+    local setID = stepInfo and stepInfo.widgetSetID
+    if setID then
+        for _, widget in ipairs(C_UIWidgetManager.GetAllWidgetsBySetID(setID)) do
+            if widget.widgetType == Enum.UIWidgetVisualizationType.ScenarioHeaderDelves then
+                local info = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(widget.widgetID)
+                -- the number alone, in case blizzard puts a word or a color around it
+                local tier = info and GW.NotSecretValue(info.tierText) and tonumber(strmatch(info.tierText, "%d+") or "")
+                if tier then return tier end
+            end
+        end
+    end
+    local tierInfo = C_DelvesUI.GetActiveDelveTier()
+    return tierInfo and tierInfo.tier > 0 and tierInfo.tier or nil
+end
+
 -- key, kind and the difficulty shown in the chat ("Normal", "+12")
 local function GetRunKey(instanceMapID)
     if C_ChallengeMode and C_ChallengeMode.IsChallengeModeActive and C_ChallengeMode.IsChallengeModeActive() then
@@ -49,15 +67,15 @@ local function GetRunKey(instanceMapID)
         local label = level > 0 and "+" .. level or GetDifficultyInfo(select(3, GetInstanceInfo()))
         return "mplus:" .. C_ChallengeMode.GetActiveChallengeMapID() .. ":" .. level, "mplus", label
     end
-    -- a completed key stays the run until the instance is left
-    if run.kind == "mplus" and run.instanceMapID == instanceMapID then
+    -- a completed key stays the run until the instance is left, a delve as well, its data comes late after a reload
+    if (run.kind == "mplus" or run.kind == "delve") and run.instanceMapID == instanceMapID then
         return run.key, run.kind, run.difficulty
     end
-    -- every tier of a delve has its own times; until the delve data is there the tier is 0
+    -- every tier of a delve has its own times
     if GW.Retail and C_DelvesUI.HasActiveDelve() and not C_DelvesUI.IsInLair() then
-        local tierInfo = C_DelvesUI.GetActiveDelveTier()
-        if tierInfo and tierInfo.tier > 0 then
-            return "delve:" .. instanceMapID .. ":" .. tierInfo.tier, "delve", L["Tier %d"]:format(tierInfo.tier)
+        local tier = GetDelveTier()
+        if tier then
+            return "delve:" .. instanceMapID .. ":" .. tier, "delve", L["Tier %d"]:format(tier)
         end
     end
     local _, instanceType, difficultyID = GetInstanceInfo()
@@ -224,6 +242,7 @@ frame:RegisterEvent("ENCOUNTER_END")
 if GW.Retail then
     frame:RegisterEvent("SCENARIO_COMPLETED")
     frame:RegisterEvent("ACTIVE_DELVE_DATA_UPDATE")
+    frame:RegisterEvent("SCENARIO_UPDATE")
 end
 if C_EventUtils.IsEventValid("CHALLENGE_MODE_COMPLETED") then
     frame:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
