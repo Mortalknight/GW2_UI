@@ -39,8 +39,10 @@ local function HandleBlizzardRegions(frame)
 end
 GW.HandleBlizzardRegions = HandleBlizzardRegions
 
--- 12.x: the backdrop mixin fails on a secret frame size, such frames keep their texture coordinates
+-- 12.x: the backdrop mixin fails on a secret frame size, such frames keep their texture coordinates;
+-- in instances a tooltip and its border frames can be forbidden while blizzard shows them
 local function SetupTextureCoordinates(frame)
+    if frame:IsForbidden() then return end
     local width, height = frame:GetSize()
     if GW.NotSecretValue(width) and GW.NotSecretValue(height) then
         BackdropTemplateMixin.SetupTextureCoordinates(frame)
