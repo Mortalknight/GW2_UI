@@ -845,6 +845,11 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
     elseif event == "RAID_TARGET_UPDATE" then
         self:UpdateRaidMarkers()
         if secondaryFrame then secondaryFrame:UpdateRaidMarkers() end
+    elseif event == "PARTY_LEADER_CHANGED" then
+        -- the leader crown sits in front of the name
+        if UnitExists(self.gwUnit) then
+            self:UnitFrameData()
+        end
     elseif event == "INSPECT_READY" then
         if self.gwUnit == "target" then
             if self.showItemLevel == "NONE" then
@@ -1198,6 +1203,7 @@ local function LoadUnitFrame(unit, frameInvert)
 
     unitframe:RegisterEvent("PLAYER_ENTERING_WORLD")
     unitframe:RegisterEvent("RAID_TARGET_UPDATE")
+    unitframe:RegisterEvent("PARTY_LEADER_CHANGED")
     unitframe:RegisterUnitEvent("UNIT_HEALTH", unit)
     unitframe:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
     unitframe:RegisterUnitEvent("UNIT_TARGET", unit)

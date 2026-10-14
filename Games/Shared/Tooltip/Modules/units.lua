@@ -25,7 +25,9 @@ local function GetLevelWords(template)
 end
 local LEVEL_WORDS = {GetLevelWords(TOOLTIP_UNIT_LEVEL), GetLevelWords(TOOLTIP_UNIT_LEVEL_RACE or TOOLTIP_UNIT_LEVEL_CLASS)}
 
+-- the level line always carries the level, a guild like "<Next Level>" has the words but no number
 local function IsLevelLine(text)
+    if not (strfind(text, "%d") or strfind(text, "??", 1, true)) then return end
     local lower = strlower(text)
     for _, words in ipairs(LEVEL_WORDS) do
         if words ~= "" and strfind(lower, words, 1, true) then

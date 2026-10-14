@@ -130,6 +130,13 @@ local function LoadWorldMapSkin()
     hooksecurefunc(WorldMapFrame, "SynchronizeDisplayState", UpdateMapLayout)
     UpdateMapLayout(WorldMapFrame)
 
+    -- at login blizzard sets the opacity of the mini map before the saved cvar is there
+    WorldMapFrame:HookScript("OnShow", function(self)
+        if not self:IsMaximized() then
+            WorldMapFrame_SetOpacity(GetCVar("worldMapOpacity"))
+        end
+    end)
+
     WorldMapFrame:SetScript("OnDragStart", function()
         WorldMapFrame:StartMoving()
     end)

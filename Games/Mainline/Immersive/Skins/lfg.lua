@@ -1192,6 +1192,8 @@ local function ApplyDelvesDifficultyPickerSkin()
     DelvesDifficultyPickerFrame.Description:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.RewardText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    GW.HandleTrimScrollBar(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.ScrollBar)
+    GW.HandleScrollControls(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame)
 
     hooksecurefunc(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame, "SetRewards", function(self)
         C_Timer.After(0, function()

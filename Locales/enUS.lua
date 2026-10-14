@@ -1148,6 +1148,7 @@ L["Nightfall"] = true
 L["Ecological Succession"] = true
 L["Delves Weekly"] = true
 L["Delves"] = true
+L["Tier %d"] = true
 L["Delve times"] = true
 L["Shows how long each boss fight and the whole delve took, compared to your best time on this tier."] = true
 L["Archives Weekly"] = true

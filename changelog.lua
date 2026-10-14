@@ -14,7 +14,12 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
-    {GW.Enum.ChangelogType.bug, [=[In dev....]=]},
+    {GW.Enum.ChangelogType.bug, [=[Forever: a profession dragged from the hero panel to the action bars opens the profession again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Classic and TBC: the opacity of the small world map is applied right after login]=]},
+    {GW.Enum.ChangelogType.bug, [=[Target and focus frames update the group leader crown right away when the lead changes]=]},
+    {GW.Enum.ChangelogType.bug, [=[Delve boss times show the tier in the chat and on the boss times page]=]},
+    {GW.Enum.ChangelogType.bug, [=[Tooltips of players in a guild with "level" in its name show the level line correctly]=]},
+    {GW.Enum.ChangelogType.change, [=[Track reputation automatically: losses no longer switch the bar, a faction that keeps gaining stays tracked, otherwise the biggest gain is shown]=]},
 })
 
 addChange("12.0.0", {

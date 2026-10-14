@@ -53,11 +53,11 @@ local function GetRunKey(instanceMapID)
     if run.kind == "mplus" and run.instanceMapID == instanceMapID then
         return run.key, run.kind, run.difficulty
     end
-    -- every tier of a delve has its own times, blizzard names the tier for us
+    -- every tier of a delve has its own times; until the delve data is there the tier is 0
     if GW.Retail and C_DelvesUI.HasActiveDelve() and not C_DelvesUI.IsInLair() then
         local tierInfo = C_DelvesUI.GetActiveDelveTier()
-        if tierInfo then
-            return "delve:" .. instanceMapID .. ":" .. tierInfo.tier, "delve", tierInfo.tierDescription
+        if tierInfo and tierInfo.tier > 0 then
+            return "delve:" .. instanceMapID .. ":" .. tierInfo.tier, "delve", L["Tier %d"]:format(tierInfo.tier)
         end
     end
     local _, instanceType, difficultyID = GetInstanceInfo()
@@ -111,8 +111,6 @@ local function StoreTime(id, seconds, name)
         data = {best = data, kills = 0}
         store[id] = data
     end
-    -- the delve tier can only be asked inside, the page reads it from here
-    store.label = run.kind == "delve" and run.difficulty or store.label
     data.name = name or data.name
     data.firstDate = data.firstDate or time()
     local previousBest = data.best
@@ -225,6 +223,7 @@ frame:RegisterEvent("ENCOUNTER_START")
 frame:RegisterEvent("ENCOUNTER_END")
 if GW.Retail then
     frame:RegisterEvent("SCENARIO_COMPLETED")
+    frame:RegisterEvent("ACTIVE_DELVE_DATA_UPDATE")
 end
 if C_EventUtils.IsEventValid("CHALLENGE_MODE_COMPLETED") then
     frame:RegisterEvent("SCENARIO_CRITERIA_UPDATE")

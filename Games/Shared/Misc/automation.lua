@@ -36,6 +36,46 @@ local function TrackFaction(factionID)
     end
 end
 
+-- a kill can change several reputations at once: losses never switch the bar, the watched faction stays when it
+-- gained as well, otherwise the biggest gain wins; the standings before are needed to tell gains from losses
+local standings = {}
+local gains
+
+local function RememberStandings()
+    for i = 1, GetNumFactions() do
+        local data = GW.GetFactionDataByIndex(i)
+        if data and data.factionID and data.factionID > 0 then
+            standings[data.factionID] = data.currentStanding
+        end
+    end
+end
+
+local function TrackBiggestGain()
+    local pending = gains
+    gains = nil
+    local watched = GW.GetWatchedFactionInfo()
+    if watched and pending[watched.factionID] then return end
+    local bestID, bestGain
+    for factionID, gain in pairs(pending) do
+        if not bestGain or gain > bestGain then
+            bestID, bestGain = factionID, gain
+        end
+    end
+    TrackFaction(bestID)
+end
+
+local function OnStandingChanged(factionID, standing)
+    local previous = standings[factionID]
+    standings[factionID] = standing
+    -- a faction not known before counts as a gain, it was not in the list at login
+    if not GW.settings.general.autoTrackReputation or factionID == GUILD_FACTION_ID or (previous and standing <= previous) then return end
+    if not gains then
+        gains = {}
+        C_Timer.After(0, TrackBiggestGain)
+    end
+    gains[factionID] = (gains[factionID] or 0) + standing - (previous or standing)
+end
+
 local function SetRoleFromSpec()
     local spec = C_SpecializationInfo.GetSpecialization()
     local role = spec and select(5, C_SpecializationInfo.GetSpecializationInfo(spec))
@@ -107,9 +147,9 @@ frame:SetScript("OnEvent", function(_, event, ...)
             SetRoleFromSpec()
         end
     elseif event == "FACTION_STANDING_CHANGED" then
-        if settings.autoTrackReputation then
-            TrackFaction(...)
-        end
+        OnStandingChanged(...)
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        RememberStandings()
     elseif event == "DELETE_ITEM_CONFIRM" then
         if settings.autoFillDelete then
             FillDeleteConfirmation()
@@ -130,6 +170,7 @@ frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 frame:RegisterEvent("PARTY_INVITE_REQUEST")
 frame:RegisterEvent("GROUP_ROSTER_UPDATE")
 frame:RegisterEvent("FACTION_STANDING_CHANGED")
+frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("DELETE_ITEM_CONFIRM")
 frame:RegisterEvent("LOOT_READY")
 frame:RegisterEvent("PLAYER_DEAD")

@@ -14,11 +14,11 @@ local function FormatDate(timestamp)
     return FormatShortDate(d.day, d.month, d.year % 100)
 end
 
-local function GetGroupInfo(key, store)
+local function GetGroupInfo(key)
     local kind, mapID, value = strsplit(":", key)
     mapID, value = tonumber(mapID), tonumber(value)
     if kind == "delve" then
-        return kind, GetRealZoneText(mapID) or UNKNOWN, store.label or tostring(value), value
+        return kind, GetRealZoneText(mapID) or UNKNOWN, L["Tier %d"]:format(value), value
     end
     if kind == "mplus" then
         local difficulty = value > 0 and "+" .. value or GetDifficultyInfo(DifficultyUtil.ID.DungeonChallenge) or ""
@@ -54,7 +54,7 @@ end
 local function BuildDataProvider(search, filter)
     local groups = {}
     for key, store in pairs(GW.private.encounterTimes or {}) do
-        local kind, name, difficulty, value = GetGroupInfo(key, store)
+        local kind, name, difficulty, value = GetGroupInfo(key)
         if KIND_ORDER[kind] and (not filter or filter == kind) then
             local group = {key = key, kind = kind, name = name, difficulty = difficulty, value = value or 0, bosses = {}}
             local groupMatches = Matches(name .. " " .. difficulty, search)
