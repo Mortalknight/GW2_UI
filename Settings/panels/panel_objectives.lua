@@ -114,9 +114,9 @@ local function LoadObjectivesPanel(sWindow)
     })
 
     p:AddGroupHeader(HUD_EDIT_MODE_BOSS_FRAMES_LABEL, {hidden = GW.Classic or GW.TBC})
-    p:AddOption(GW.NewSign .. HUD_EDIT_MODE_CAST_BAR_LABEL, L["Shows the casts of the bosses in place of their power bar."], {getterSetter = "objectives.bossFrames.castbar", callback = GW.UpdateBossFramesSettings, dependence = {["objectives.enabled"] = true}, hidden = GW.Classic or GW.TBC})
-    p:AddOption(GW.NewSign .. AURAS, L["Shows your own debuffs and the important buffs of the bosses, chosen like on Blizzard's enemy nameplates."], {getterSetter = "objectives.bossFrames.auras", callback = GW.UpdateBossFramesSettings, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
-    p:AddOptionButton(GW.NewSign .. L["Preview Boss Frames"], L["Shows test bosses in the quest tracker. Ends with the next fight."], {callback = function()
+    p:AddOption(HUD_EDIT_MODE_CAST_BAR_LABEL, L["Shows the casts of the bosses in place of their power bar."], {getterSetter = "objectives.bossFrames.castbar", callback = GW.UpdateBossFramesSettings, dependence = {["objectives.enabled"] = true}, hidden = GW.Classic or GW.TBC})
+    p:AddOption(AURAS, L["Shows your own debuffs and the important buffs of the bosses, chosen like on Blizzard's enemy nameplates."], {getterSetter = "objectives.bossFrames.auras", callback = GW.UpdateBossFramesSettings, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
+    p:AddOptionButton(L["Preview Boss Frames"], L["Shows test bosses in the quest tracker. Ends with the next fight."], {callback = function()
         if GW.ToggleBossFramesTest() then
             GW.ActivateSettingsPreview("bossFrames", function() GW.ToggleBossFramesTest(false) end)
         else
@@ -125,9 +125,9 @@ local function LoadObjectivesPanel(sWindow)
     end, dependence = {["objectives.enabled"] = true}, forceNewLine = true, hidden = GW.Classic or GW.TBC})
 
     p:AddGroupHeader(HUD_EDIT_MODE_ARENA_FRAMES_LABEL, {hidden = GW.Classic})
-    p:AddOption(GW.NewSign .. HUD_EDIT_MODE_CAST_BAR_LABEL, L["Shows the casts of the opponents in place of their power bar."], {getterSetter = "objectives.arenaFrames.castbar", callback = GW.UpdateArenaFramesSettings, dependence = {["objectives.enabled"] = true}, hidden = GW.Classic})
-    p:AddOption(GW.NewSign .. AURAS, L["Shows crowd control on the opponents and their important buffs."], {getterSetter = "objectives.arenaFrames.auras", callback = GW.UpdateArenaFramesSettings, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
-    p:AddOptionButton(GW.NewSign .. L["Preview Arena Frames"], L["Shows test opponents in the quest tracker. Ends with the next fight."], {callback = function()
+    p:AddOption(HUD_EDIT_MODE_CAST_BAR_LABEL, L["Shows the casts of the opponents in place of their power bar."], {getterSetter = "objectives.arenaFrames.castbar", callback = GW.UpdateArenaFramesSettings, dependence = {["objectives.enabled"] = true}, hidden = GW.Classic})
+    p:AddOption(AURAS, L["Shows crowd control on the opponents and their important buffs."], {getterSetter = "objectives.arenaFrames.auras", callback = GW.UpdateArenaFramesSettings, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
+    p:AddOptionButton(L["Preview Arena Frames"], L["Shows test opponents in the quest tracker. Ends with the next fight."], {callback = function()
         if GW.ToggleArenaFramesTest() then
             GW.ActivateSettingsPreview("arenaFrames", function() GW.ToggleArenaFramesTest(false) end)
         else
@@ -136,11 +136,11 @@ local function LoadObjectivesPanel(sWindow)
     end, dependence = {["objectives.enabled"] = true}, forceNewLine = true, hidden = GW.Classic})
 
     p:AddGroupHeader(L["Boss times"])
-    p:AddOption(GW.NewSign .. L["Mythic+ split times"], L["Shows when each boss died since the key started, compared to your best time on this key level."], {getterSetter = "objectives.encounterTimes.mythicPlus", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not (GW.Retail or GW.Mists)})
-    p:AddOption(GW.NewSign .. L["Dungeon fight times"], L["Shows how long each boss fight took, compared to your best time on this difficulty."], {getterSetter = "objectives.encounterTimes.dungeon", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
-    p:AddOption(GW.NewSign .. L["Raid fight times"], L["Shows how long each boss fight took, compared to your best time on this difficulty."], {getterSetter = "objectives.encounterTimes.raid", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
+    p:AddOption(L["Mythic+ split times"], L["Shows when each boss died since the key started, compared to your best time on this key level."], {getterSetter = "objectives.encounterTimes.mythicPlus", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not (GW.Retail or GW.Mists)})
+    p:AddOption(L["Dungeon fight times"], L["Shows how long each boss fight took, compared to your best time on this difficulty."], {getterSetter = "objectives.encounterTimes.dungeon", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
+    p:AddOption(L["Raid fight times"], L["Shows how long each boss fight took, compared to your best time on this difficulty."], {getterSetter = "objectives.encounterTimes.raid", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
     p:AddOption(GW.NewSign .. L["Delve times"], L["Shows how long each boss fight and the whole delve took, compared to your best time on this tier."], {getterSetter = "objectives.encounterTimes.delve", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not GW.Retail})
-    p:AddOption(GW.NewSign .. L["Boss times in chat"], L["Posts the time of each defeated boss in the chat."], {getterSetter = "objectives.encounterTimes.chat"})
+    p:AddOption(L["Boss times in chat"], L["Posts the time of each defeated boss in the chat."], {getterSetter = "objectives.encounterTimes.chat"})
 
     p:AddGroupHeader(L["Quest Frame"])
     p:AddOption(L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], {getterSetter = "general.questXpPercent"})

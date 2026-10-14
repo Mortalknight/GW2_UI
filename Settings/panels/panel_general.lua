@@ -50,12 +50,12 @@ local function LoadGeneralPanel(sWindow)
     general:AddOptionDropdown(L["Shorten value prefix style"], nil, { getterSetter = "unitframes.shortValuePrefixStyle", callback = GW.BuildPrefixValues, optionsList = {"TCHINESE", "CHINESE", "ENGLISH", "GERMAN", "KOREAN", "METRIC"}, optionNames = {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"}})
     general:AddOptionDropdown(L["Number format"], L["Will be used for the most numbers"] .. (GW.Retail and L[" For Retail: Not used for secret numbers."] or ""), { getterSetter = "general.numberFormat", optionsList = {"POINT", "COMMA"}, optionNames = {"1,000,000.00", "1.000.000,00"}})
     general:AddOption(L["AFK Mode"], L["When you go AFK, display the AFK screen."], {getterSetter = "general.afkMode", callback = GW.ToggelAfkMode})
-    general:AddOption(GW.NewSign .. L["Show Lua errors"], L["Shows Blizzard's error window for every Lua error and the GW2 error icon in the micro menu."] .. (BugGrabber and ("\n\n" .. L["BugSack is loaded and collects the errors anyway."]) or ""), {
+    general:AddOption(L["Show Lua errors"], L["Shows Blizzard's error window for every Lua error and the GW2 error icon in the micro menu."] .. (BugGrabber and ("\n\n" .. L["BugSack is loaded and collects the errors anyway."]) or ""), {
         getter = function() return C_CVar.GetCVarBool("scriptErrors") end,
         setter = function(value) C_CVar.SetCVar("scriptErrors", value and "1" or "0") end,
         getDefault = function() return false end,
     })
-    general:AddOption(GW.NewSign .. L["Hide error messages in combat"], L["Hides messages like 'Not enough rage' while in combat."], {getterSetter = "general.hideErrorsInCombat"})
+    general:AddOption(L["Hide error messages in combat"], L["Hides messages like 'Not enough rage' while in combat."], {getterSetter = "general.hideErrorsInCombat"})
     general:AddOption(CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, {getterSetter = "general.dynamicCam",
         callback = function(value)
             C_CVar.SetCVar("test_cameraDynamicPitch", value and "1" or "0")
@@ -68,13 +68,13 @@ local function LoadGeneralPanel(sWindow)
     general:AddGroupHeader(L["Automation"])
     general:AddOptionDropdown(L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], { getterSetter = "general.autoRepair", optionsList = {"NONE", "PLAYER", "GUILD"}, optionNames = {NONE_KEY, PLAYER, GUILD}})
     general:AddOption(L["Sell junk automatically"], L["Automatically sell poor quality items when visiting a merchant."], {getterSetter = "bags.vendorGrays", callback = GW.SetupVendorJunk})
-    general:AddOption(GW.NewSign .. L["Accept group invites"], L["Accepts group invites from friends and guild members, not while you are queued."], {getterSetter = "general.autoAcceptInvite"})
-    general:AddOption(GW.NewSign .. L["Set role from specialization"], L["Sets your group role to the role of your current specialization."], {getterSetter = "general.autoSetRole"})
-    general:AddOption(GW.NewSign .. L["Track reputation automatically"], L["Watches the faction you just gained reputation with."], {getterSetter = "general.autoTrackReputation"})
-    general:AddOption(GW.NewSign .. L["Fill in delete confirmation"], L["Fills in the confirmation word when deleting a valuable item."], {getterSetter = "general.autoFillDelete"})
-    general:AddOption(GW.NewSign .. L["Fast loot"], L["Loots all items at once when auto loot is active."], {getterSetter = "general.fastLoot"})
-    general:AddOption(GW.NewSign .. L["Release in battlegrounds"], L["Releases your spirit when you die in a battleground, not while a soulstone or similar is waiting."], {getterSetter = "general.autoReleasePvP"})
-    general:AddOption(GW.NewSign .. L["Train all button"], L["Adds a button to trainers that learns everything you can afford."], {getterSetter = "general.trainAllButton", callback = function() GW.UpdateTrainAllButton() end})
+    general:AddOption(L["Accept group invites"], L["Accepts group invites from friends and guild members, not while you are queued."], {getterSetter = "general.autoAcceptInvite"})
+    general:AddOption(L["Set role from specialization"], L["Sets your group role to the role of your current specialization."], {getterSetter = "general.autoSetRole"})
+    general:AddOption(L["Track reputation automatically"], L["Watches the faction you just gained reputation with."], {getterSetter = "general.autoTrackReputation"})
+    general:AddOption(L["Fill in delete confirmation"], L["Fills in the confirmation word when deleting a valuable item."], {getterSetter = "general.autoFillDelete"})
+    general:AddOption(L["Fast loot"], L["Loots all items at once when auto loot is active."], {getterSetter = "general.fastLoot"})
+    general:AddOption(L["Release in battlegrounds"], L["Releases your spirit when you die in a battleground, not while a soulstone or similar is waiting."], {getterSetter = "general.autoReleasePvP"})
+    general:AddOption(L["Train all button"], L["Adds a button to trainers that learns everything you can afford."], {getterSetter = "general.trainAllButton", callback = function() GW.UpdateTrainAllButton() end})
 
     general:AddGroupHeader(L["Scale"])
     general:AddOption(L["Pixel Perfect Mode"], L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."], {getterSetter = "general.pixelPerfection", callback = function() C_CVar.SetCVar("useUiScale", "0") GW.PixelPerfection() end})

@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.0.1", {
+    {GW.Enum.ChangelogType.bug, [=[In dev....]=]},
+})
+
 addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Support for World of Warcraft: Forever, with its own hero panel, bank, swing timer and skins for its new windows]=]},
     {GW.Enum.ChangelogType.change, [=[One addon for every game version; large parts of GW2 UI are rewritten to be faster and use less memory]=]},
