@@ -90,6 +90,18 @@
         </Layers>
     </Button>
 
+    <Frame name="GwSpellbookPageTemplate" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true" virtual="true">
+        <Size x="608" y="541"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+        </Anchors>
+        <Scripts>
+            <OnShow>
+                self:GetParent().pages:SetText(self:GetID())
+            </OnShow>
+        </Scripts>
+    </Frame>
+
     <Frame name="GwSpellbookContainerTab" inherits="SecureHandlerShowHideTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="611" y="581"/>
         <Anchors>
@@ -121,94 +133,7 @@
         <Frames>
             <Frame parentKey="attrDummy" inherits="SecureHandlerAttributeTemplate">
             </Frame>
-            <Frame name="$parentcontainer1" parentKey="container1" inherits="SecureHandlerShowHideTemplate" enableMouse="false">
-                <Size x="608" y="541"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-                <Scripts>
-                    <OnShow>
-                        self:GetParent().pages:SetText(1)
-                    </OnShow>
-                </Scripts>
-            </Frame>
-            <Frame name="$parentcontainer2" parentKey="container2" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-                <Size x="608" y="541"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-                <Scripts>
-                    <OnShow>
-                        self:GetParent().pages:SetText(2)
-                    </OnShow>
-                </Scripts>
-            </Frame>
-            <Frame name="$parentcontainer3" parentKey="container3" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-                <Size x="608" y="541"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-                <Scripts>
-                    <OnShow>
-                        self:GetParent().pages:SetText(3)
-                    </OnShow>
-                </Scripts>
-            </Frame>
-            <Frame name="$parentcontainer4" parentKey="container4" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-                <Size x="608" y="541"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-                <Scripts>
-                    <OnShow>
-                        self:GetParent().pages:SetText(4)
-                    </OnShow>
-                </Scripts>
-            </Frame>
-            <Frame name="$parentcontainer5" parentKey="container5" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-                <Size x="608" y="541"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-                <Scripts>
-                    <OnShow>
-                        self:GetParent().pages:SetText(5)
-                    </OnShow>
-                </Scripts>
-            </Frame>
-            <Frame name="$parentcontainer6" parentKey="container6" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-                <Size x="608" y="541"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-                <Scripts>
-                    <OnShow>
-                        self:GetParent().pages:SetText(6)
-                    </OnShow>
-                </Scripts>
-            </Frame>
-            <Frame name="$parentcontainer7" parentKey="container7" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-                <Size x="608" y="541"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-                <Scripts>
-                    <OnShow>
-                        self:GetParent().pages:SetText(7)
-                    </OnShow>
-                </Scripts>
-            </Frame>
-            <Frame name="$parentcontainer8" parentKey="container8" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-                <Size x="608" y="541"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                </Anchors>
-                <Scripts>
-                    <OnShow>
-                        self:GetParent().pages:SetText(8)
-                    </OnShow>
-                </Scripts>
-            </Frame>
+            <Frame name="$parentcontainer1" parentKey="container1" inherits="GwSpellbookPageTemplate" id="1" hidden="false"/>
             <Button parentKey="left" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate">
                 <size x="32" y="32"/>
                 <Anchors>

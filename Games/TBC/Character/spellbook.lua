@@ -287,6 +287,24 @@ local function getHeaderHeight(pagingContainer, lastHeader)
     return c2
 end
 
+local function getNumPages(container)
+    local count = 0
+    while container["container" .. (count + 1)] do
+        count = count + 1
+    end
+    return count
+end
+
+-- the xml brings the first page, further pages come as the spells need them
+local function getPagingContainer(container, pagingID)
+    local page = container["container" .. pagingID]
+    if not page then
+        page = CreateFrame("Frame", "$parentcontainer" .. pagingID, container, "GwSpellbookPageTemplate", pagingID)
+        container["container" .. pagingID] = page
+    end
+    return page
+end
+
 local function setUpPaging(self)
     self.left:SetFrameRef("tab", self.attrDummy)
     self.left:SetAttribute("_onclick", [=[
@@ -299,14 +317,11 @@ local function setUpPaging(self)
     ]=])
     self.attrDummy:SetAttribute("neededContainers", self.tabs)
 
-    self.attrDummy:SetFrameRef("container1", self.container1)
-    self.attrDummy:SetFrameRef("container2", self.container2)
-    self.attrDummy:SetFrameRef("container3", self.container3)
-    self.attrDummy:SetFrameRef("container4", self.container4)
-    self.attrDummy:SetFrameRef("container5", self.container5)
-    self.attrDummy:SetFrameRef("container6", self.container6)
-    self.attrDummy:SetFrameRef("container7", self.container7)
-    self.attrDummy:SetFrameRef("container8", self.container8)
+    local numPages = getNumPages(self)
+    self.attrDummy:SetAttribute("numContainers", numPages)
+    for i = 1, numPages do
+        self.attrDummy:SetFrameRef("container" .. i, self["container" .. i])
+    end
     self.attrDummy:SetFrameRef("left", self.left)
     self.attrDummy:SetFrameRef("right", self.right)
     self.attrDummy:SetAttribute("_onattributechanged", ([=[
@@ -315,7 +330,7 @@ local function setUpPaging(self)
         local left = self:GetFrameRef("left")
         local right = self:GetFrameRef("right")
 
-        local maxNumberOfContainers = 8
+        local maxNumberOfContainers = self:GetAttribute("numContainers")
         local container
         local showNext = false
         local hadSomethingToShow = false
@@ -478,7 +493,7 @@ local function updateSpellbookTab(self)
                     local currentHeight = getHeaderHeight(pagingContainer, header)
                     if currentHeight > (pagingContainer:GetHeight() - 120) then
                         pagingID = pagingID + 1
-                        pagingContainer = container["container" .. pagingID]
+                        pagingContainer = getPagingContainer(container, pagingID)
                         pagingContainer.headers = {}
                         container.tabs = pagingID
                     end

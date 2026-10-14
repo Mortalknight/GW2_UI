@@ -247,97 +247,99 @@ local function getHeaderHeight(pagingContainer, lastHeader)
     return c2
 end
 
+local function getNumPages(container)
+    local count = 0
+    while container["container" .. (count + 1)] do
+        count = count + 1
+    end
+    return count
+end
+
+-- the xml brings the first page, further pages come as the spells need them
+local function getPagingContainer(container, pagingID)
+    local page = container["container" .. pagingID]
+    if not page then
+        page = CreateFrame("Frame", "$parentcontainer" .. pagingID, container, "GwSpellbookPageTemplate", pagingID)
+        container["container" .. pagingID] = page
+    end
+    return page
+end
+
 local function setUpPaging(self)
-    self.left:SetFrameRef('tab', self.attrDummy)
+    self.left:SetFrameRef("tab", self.attrDummy)
     self.left:SetAttribute("_onclick", [=[
-        self:GetFrameRef('tab'):SetAttribute('page', 'left')
+        self:GetFrameRef("tab"):SetAttribute("page", "left")
     ]=])
 
-    self.right:SetFrameRef('tab', self.attrDummy)
+    self.right:SetFrameRef("tab", self.attrDummy)
     self.right:SetAttribute("_onclick", [=[
-        self:GetFrameRef('tab'):SetAttribute('page', 'right')
+        self:GetFrameRef("tab"):SetAttribute("page", "right")
     ]=])
+    self.attrDummy:SetAttribute("neededContainers", self.tabs)
 
-    self.attrDummy:SetFrameRef('container1', self.container1)
-    self.attrDummy:SetFrameRef('container2', self.container2)
-    self.attrDummy:SetFrameRef('container3', self.container3)
-    self.attrDummy:SetFrameRef('container4', self.container4)
-    self.attrDummy:SetFrameRef('container5', self.container5)
-    self.attrDummy:SetFrameRef('container6', self.container6)
-    self.attrDummy:SetFrameRef('container7', self.container7)
-    self.attrDummy:SetFrameRef('left', self.left)
-    self.attrDummy:SetFrameRef('right', self.right)
-    self.attrDummy:SetAttribute('_onattributechanged', ([=[
-        if name ~= 'page' then return end
+    local numPages = getNumPages(self)
+    self.attrDummy:SetAttribute("numContainers", numPages)
+    for i = 1, numPages do
+        self.attrDummy:SetFrameRef("container" .. i, self["container" .. i])
+    end
+    self.attrDummy:SetFrameRef("left", self.left)
+    self.attrDummy:SetFrameRef("right", self.right)
+    self.attrDummy:SetAttribute("_onattributechanged", [=[
+        if name ~= "page" then return end
 
-        local p1 = self:GetFrameRef('container1')
-        local p2 = self:GetFrameRef('container2')
-        local p3 = self:GetFrameRef('container3')
-        local p4 = self:GetFrameRef('container4')
-        local p5 = self:GetFrameRef('container5')
-        local p6 = self:GetFrameRef('container6')
-        local p7 = self:GetFrameRef('container7')
-        local left = self:GetFrameRef('left')
-        local right = self:GetFrameRef('right')
-        local numPages = %s
+        local left = self:GetFrameRef("left")
+        local right = self:GetFrameRef("right")
+
+        local maxNumberOfContainers = self:GetAttribute("numContainers")
+        local container
+        local showNext = false
+        local hadSomethingToShow = false
+
         local currentPage = 1
+        local neededContainers = self:GetAttribute("neededContainers")
 
-        if value == "left" then
-            if p7:IsVisible() then
-                p7:Hide()
-                p6:Show()
-                currentPage = 6
-            elseif p6:IsVisible() then
-                p6:Hide()
-                p5:Show()
-                currentPage = 5
-            elseif p5:IsVisible() then
-                p5:Hide()
-                p4:Show()
-                currentPage = 4
-            elseif p4:IsVisible() then
-                p4:Hide()
-                p3:Show()
-                currentPage = 3
-            elseif p3:IsVisible() then
-                p3:Hide()
-                p2:Show()
-                currentPage = 2
-            elseif p2:IsVisible() then
-                p2:Hide()
-                p1:Show()
-                currentPage = 1
+        if value == "left" then -- container -1
+            for i = maxNumberOfContainers, 1, -1 do
+                container = self:GetFrameRef("container" .. i)
+                if container:IsVisible() then
+                    container:Hide()
+                    showNext = true
+                else
+                    if showNext then
+                        container:Show()
+                        showNext = false
+                        hadSomethingToShow = true
+                        currentPage = i
+                    else
+                        container:Hide()
+                    end
+                end
+
+                if i == 1 and not hadSomethingToShow then
+                    self:GetFrameRef("container" .. i):Show()
+                    currentPage = i
+                end
             end
         end
-        if value == "right" then
-            if p1:IsVisible()  then
-                p1:Hide()
-                p2:Show()
-                currentPage = 2
-            elseif p2:IsVisible() then
-                p2:Hide()
-                p3:Show()
-                currentPage = 3
-            elseif p3:IsVisible() then
-                p3:Hide()
-                p4:Show()
-                currentPage = 4
-            elseif p4:IsVisible() then
-                p4:Hide()
-                p5:Show()
-                currentPage = 5
-            elseif p5:IsVisible() then
-                p5:Hide()
-                p6:Show()
-                currentPage = 6
-            elseif p6:IsVisible() then
-                p6:Hide()
-                p7:Show()
-                currentPage = 7
+        if value == "right" then -- container +1
+            for i = 1, maxNumberOfContainers do
+                container = self:GetFrameRef("container" .. i)
+
+                if container:IsVisible() then
+                    container:Hide()
+                    showNext = true
+                else
+                    if showNext then
+                        container:Show()
+                        showNext = false
+                        currentPage = i
+                    else
+                        container:Hide()
+                    end
+                end
             end
         end
-
-        if currentPage >= numPages then
+        if currentPage >= neededContainers then
             right:Hide()
         else
             right:Show()
@@ -347,8 +349,8 @@ local function setUpPaging(self)
         else
             left:Show()
         end
-    ]=]):format(self.tabs))
-    self.attrDummy:SetAttribute('page', 'left')
+    ]=])
+    self.attrDummy:SetAttribute("page", "left")
 end
 
 local function updateSpellbookTab()
@@ -419,7 +421,7 @@ local function updateSpellbookTab()
                     local currentHeight = getHeaderHeight(pagingContainer, header)
                     if currentHeight > (pagingContainer:GetHeight() - 120) then
                         pagingID = pagingID + 1
-                        pagingContainer = tabContainer['container' .. pagingID]
+                        pagingContainer = getPagingContainer(tabContainer, pagingID)
                         pagingContainer.headers = {}
                         pagingContainer.column1 = 0
                         pagingContainer.column2 = 0
