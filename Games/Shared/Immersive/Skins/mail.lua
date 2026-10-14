@@ -301,13 +301,13 @@ local function SkinSendMailFrame()
     SendMailMoneyButton:ClearAllPoints()
     SendMailMoneyButton:SetPoint("BOTTOMLEFT", SendMailFrame, "BOTTOMLEFT", 15, 125)
 
-    GW.SkinTextBox(SendMailNameEditBoxMiddle, SendMailNameEditBoxLeft, SendMailNameEditBoxRight, nil, nil, 5)
-    GW.SkinTextBox(SendMailSubjectEditBoxMiddle, SendMailSubjectEditBoxLeft, SendMailSubjectEditBoxRight, nil, nil, 5)
-    GW.SkinTextBox(SendMailMoneyGoldMiddle, SendMailMoneyGoldLeft, SendMailMoneyGoldRight, nil, nil, 5)
+    GW.SkinEditBox(SendMailNameEditBox)
+    GW.SkinEditBox(SendMailSubjectEditBox)
+    GW.AddEditBoxBackground(SendMailMoneyGold, 5, 0, 0)
     -- the classic coins hang right of the box, the newer template draws them inside
-    local coinOffset = not SendMailMoneySilver.coinAtlas and -12 or nil
-    GW.SkinTextBox(SendMailMoneySilverMiddle, SendMailMoneySilverLeft, SendMailMoneySilverRight, nil, nil, 5, coinOffset)
-    GW.SkinTextBox(SendMailMoneyCopperMiddle, SendMailMoneyCopperLeft, SendMailMoneyCopperRight, nil, nil, 5, coinOffset)
+    local coinOffset = not SendMailMoneySilver.coinAtlas and -12 or 0
+    GW.AddEditBoxBackground(SendMailMoneySilver, 5, coinOffset, 0)
+    GW.AddEditBoxBackground(SendMailMoneyCopper, 5, coinOffset, 0)
 
     --reposition buttons
     SendMailMailButton:ClearAllPoints()

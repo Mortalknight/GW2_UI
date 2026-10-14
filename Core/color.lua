@@ -45,6 +45,7 @@ GW.Colors.SkinColors = {
     QuestGold = CreateColor(1, 0.8, 0.1), -- quest titles, enough money, finished objectives
     ObjectiveOpen = CreateColor(0.63, 0.09, 0.09), -- an objective still to do
     Disabled = CreateColor(0.6, 0.6, 0.6), -- greyed out text, money that is missing
+    Placeholder = CreateColor(0.7, 0.7, 0.7), -- the hint in an empty text field
     SubText = CreateColor(0.75, 0.75, 0.75), -- the small second line under a name
     Positive = CreateColor(0.3, 1, 0.3),
     Negative = CreateColor(1, 0.3, 0.3),

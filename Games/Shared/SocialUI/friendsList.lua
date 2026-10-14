@@ -109,8 +109,7 @@ local function SkinSocialContactsView(view, cardContentHandler)
     local FilterBar = view.FilterBar
     if FilterBar then
         if FilterBar.SearchBar then
-            FilterBar.SearchBar.Background:SetAlpha(0)
-            GW.SkinTextBox(nil, nil, nil, nil, nil, 0, 0, nil, FilterBar.SearchBar)
+            GW.SkinEditBox(FilterBar.SearchBar, {search = true})
         end
         if FilterBar.SearchFilterDropdown then
             FilterBar.SearchFilterDropdown.OnButtonStateChanged = GW.NoOp
@@ -320,8 +319,7 @@ function GW.SkinSocialUIFriendList()
     broadcastFrame:ClearAllPoints()
     broadcastFrame:SetPoint("TOPLEFT", SocialUIFrame.gwHeader, "BOTTOMRIGHT", 45, 1)
     broadcastFrame.EditBox:GwStripTextures()
-    GW.HandleBlizzardRegions(broadcastFrame.EditBox)
-    GW.SkinTextBox(broadcastFrame.EditBox.MiddleBorder, broadcastFrame.EditBox.LeftBorder, broadcastFrame.EditBox.RightBorder, nil, nil, 5, 5)
+    GW.SkinEditBox(broadcastFrame.EditBox)
     broadcastFrame.UpdateButton:GwSkinButton(false, true)
     broadcastFrame.CancelButton:GwSkinButton(false, true)
     broadcastFrame.CancelButton:GwSkinNegativeButton()

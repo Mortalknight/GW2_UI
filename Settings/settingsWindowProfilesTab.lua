@@ -99,7 +99,6 @@ local function export_OnClick(self)
         hasEditBox = true,
         inputText = exportString or "",
         maxLetters = 0,
-        highlightInput = true,
         hideCancel = true,
         button1 = CLOSE,
         hideOnEscape = true,

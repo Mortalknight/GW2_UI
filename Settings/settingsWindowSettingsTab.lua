@@ -1133,10 +1133,8 @@ local function LeaveSearch(sp)
 end
 
 local function SearchClear(edit, sp)
-    edit:SetText(SEARCH)
+    edit:SetText("")
     edit:ClearFocus()
-    edit:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-    edit.clearButton:Hide()
     if SEARCH_ACTIVE or sp:IsShown() then
         LeaveSearch(sp)
     end
@@ -1150,7 +1148,7 @@ end
 
 local function SearchUpdate(sp, query)
     -- an emptied search box (still focused) goes back to the page like escape does
-    if not query or query == "" or query == SEARCH then
+    if not query or query == "" then
         if SEARCH_ACTIVE then
             LeaveSearch(sp)
         end
@@ -1335,7 +1333,7 @@ local function LoadSettingsTab(container)
     local settingsTab = CreateFrame("Frame", nil, container, "GwSettingsSettingsTabTemplate")
     settingsWindowFrame = settingsTab
     settingsMenuFrame = settingsTab.menu
-    searchEdit = settingsTab.menu.search.input
+    searchEdit = settingsTab.menu.search
 
     settingsTab.name = "GwSettingsSettings"
     settingsTab.headerBreadcrumbText = SETTINGS
@@ -1448,30 +1446,16 @@ local function LoadSettingsTab(container)
     GW.HandleScrollControls(searchPanel.scroll)
     searchPanel.scroll.ScrollBar:SetHideIfUnscrollable(true)
 
-    settingsTab.menu.search.input:SetFont(UNIT_NAME_FONT, 14, "")
-    settingsTab.menu.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-    settingsTab.menu.search.input:SetText(SEARCH)
-    settingsTab.menu.search.input:SetScript("OnEscapePressed", function(self) SearchClear(self, searchPanel) end)
-    settingsTab.menu.search.input:SetScript("OnEditFocusGained", function(self) if self:GetText() == SEARCH then self:SetText("") end self.clearButton:Show() end)
-    settingsTab.menu.search.input:SetScript("OnEditFocusLost", function(self) if self:GetText() == nil or self:GetText() == "" then SearchClear(self, searchPanel) end end)
-    settingsTab.menu.search.input:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
-    settingsTab.menu.search.input:SetScript("OnTextChanged", function(self)
-        if not self:HasFocus() then return end
-        local txt = self:GetText() or ""
-        self.clearButton:SetShown(txt ~= "" and txt ~= SEARCH)
-        self:SetTextColor(1, 1, 1)
-        SearchUpdate(searchPanel, txt)
-    end)
-    settingsTab.menu.search.input.clearButton:SetScript("OnClick", function(self)
-        local edit = self:GetParent()
-        SearchClear(edit, searchPanel)
-    end)
-    settingsTab.menu.search.input:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(settingsTab.menu.search.input, "ANCHOR_TOP")
+    local search = settingsTab.menu.search
+    GW.SkinEditBox(search, {search = true})
+    search:SetScript("OnEnterPressed", search.ClearFocus)
+    search:HookScript("OnTextChanged", function(self) SearchUpdate(searchPanel, self:GetText()) end)
+    search:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
         GameTooltip:SetText(GW.L["Type '%s' or '!' to show all new settings"]:format(NEW), 1, 1, 1)
         GameTooltip:Show()
     end)
-    settingsTab.menu.search.input:SetScript("OnLeave", GameTooltip_Hide)
+    search:SetScript("OnLeave", GameTooltip_Hide)
 
     settingsTab:SetScript("OnShow", function()
         if GetCVarBool("useUiScale") then

@@ -94,12 +94,12 @@
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-8" y="0"/>
                 </Anchors>
             </EventFrame>
-            <Frame parentKey="search" inherits="GwStandardInputField">
+            <EditBox parentKey="search" inherits="GwEditBoxTemplate">
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="-200" y="2"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="7" y="-27"></Anchor>
                 </Anchors>
-            </Frame>
+            </EditBox>
         </Frames>
     </Frame>
 

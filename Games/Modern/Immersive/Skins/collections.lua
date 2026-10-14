@@ -99,9 +99,7 @@ local function SkinHelpButton(button)
 end
 
 local function SkinSearchBox(box)
-    if box.gwSkinned then return end
-    box.gwSkinned = true
-    GW.SkinTextBox(box.Middle, box.Left, box.Right)
+    GW.SkinEditBox(box, {search = true})
 end
 
 -- xp bars have no color of their own and would vanish white on the gray background

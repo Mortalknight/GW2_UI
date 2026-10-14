@@ -30,42 +30,12 @@
             </Layer>
         </Layers>
         <Frames>
-            <EditBox hidden="true" parentKey="input" autoFocus="false">
-                <Size x="1" y="20"/>
+            <EditBox hidden="true" parentKey="input" inherits="GwEditBoxTemplate">
+                <Size x="1" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.string" relativePoint="BOTTOMLEFT" x="0" y="-15"/>
                     <Anchor point="TOPRIGHT" relativeKey="$parent.string" relativePoint="BOTTOMRIGHT" x="0" y="-15"/>
                 </Anchors>
-                <FontString inherits="ChatFontNormal" />
-                <Layers>
-                    <Layer>
-                        <Texture parentKey="middle" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png">
-                            <Anchors>
-                                <Anchor point="TOPLEFT" x="-3" y="0"/>
-                                <Anchor point="BOTTOMRIGHT"  x="3" y="0"/>
-                            </Anchors>
-                        </Texture>
-                        <Texture parentKey="left" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
-                            <Anchors>
-                                <Anchor point="TOPLEFT" x="-3" y="0"/>
-                                <Anchor point="BOTTOMLEFT" x="-3" y="0"/>
-                            </Anchors>
-                            <TexCoords left="0" right="1" top="1" bottom="0" />
-                        </Texture>
-                        <Texture parentKey="right" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" x="3" y="0"/>
-                                <Anchor point="BOTTOMRIGHT" x="3" y="0"/>
-                            </Anchors>
-                        </Texture>
-                        <Texture parentKey="top" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
-                            <Anchors>
-                                <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-3" y="0"/>
-                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="3" y="0"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
             </EditBox>
             <Button inherits="GwStandardButton" text="ACCEPT" parentKey="acceptButton">
                 <Size x="110" y="24" />

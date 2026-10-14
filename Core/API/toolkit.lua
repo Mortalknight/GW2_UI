@@ -682,52 +682,6 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdown
     end
 end
 
-local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textBoxRightOffset)
-    local frameName = frame.GetName and frame:GetName()
-    local button = frame.Button or frameName and (_G[frameName .. "Button"] or _G[frameName .. "_Button"])
-    local text = frameName and _G[frameName .. "Text"] or frame.Text
-    local middle = frameName and _G[frameName .. "Middle"] or frame.Middle
-    local left = frameName and _G[frameName .. "Left"] or frame.Left
-    local right = frameName and _G[frameName .. "Right"] or frame.Right
-    local icon = frame.Icon
-
-    frame:GwStripTextures()
-    frame:SetWidth(155)
-
-    if backdropTemplate then
-        frame:GwCreateBackdrop(backdropTemplate, true)
-        frame.backdrop:SetBackdropColor(0, 0, 0)
-    else
-        frame:GwCreateBackdrop()
-        GW.SkinTextBox(middle, left, right, nil, nil, -5, textBoxRightOffset or -10)
-    end
-
-    frame:SetFrameLevel(frame:GetFrameLevel() + 2)
-    frame.backdrop:SetPoint("TOPLEFT", 5, -2)
-    frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, -2)
-
-    button:ClearAllPoints()
-    button:SetPoint("RIGHT", frame, "RIGHT", buttonPaddindX or -10, 0)
-
-    button.SetPoint = GW.NoOp
-    button:GwStripTextures()
-
-    GW.HandleNextPrevButton(button, "down")
-
-    if text then
-        text:ClearAllPoints()
-        text:SetPoint("RIGHT", button, "LEFT", -2, 0)
-        text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-        text:SetHeight(frame:GetHeight())
-        text:SetJustifyV("MIDDLE")
-    end
-
-    if icon then
-        icon:SetPoint("LEFT", 23, 0)
-    end
-end
-
 local ARROW_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png"
 
 local function SkinMaxMinButton(button, direction)
@@ -1040,7 +994,6 @@ local API = {
     GwSkinTab = GwSkinTab,
     GwSkinScrollFrame = GwSkinScrollFrame,
     GwSkinScrollBar = GwSkinScrollBar,
-    GwSkinDropDownMenu = GwSkinDropDownMenu,
     GwHandleMaxMinFrame = GwHandleMaxMinFrame,
     GwSetOutside = GwSetOutside,
     GwSetInside = GwSetInside,

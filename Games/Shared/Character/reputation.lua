@@ -1034,11 +1034,6 @@ local function InitCategorieButton(button, elementData)
     end
 end
 
-local function SetSearchboxInstructions(editbox, text)
-    editbox.Instructions:SetTextColor(0.5, 0.5, 0.5)
-    editbox.Instructions:SetText(text)
-end
-
 function GW.LoadReputation(tabContainer)
     local fmGPR = CreateFrame("Frame", "GwPaperReputation", tabContainer, "GwPaperReputationTemplate")
     local fmDetail = CreateFrame("Frame", "GwRepDetailFrame", tabContainer, "GwRepDetailFrameTemplate")
@@ -1068,47 +1063,12 @@ function GW.LoadReputation(tabContainer)
         end
     end
     fmGPR.Categories:SetScript("OnEvent", fnGPR_OnEvent)
-    SetSearchboxInstructions(fmGPR.input, SEARCH .. "...")
-    fmGPR.input:SetText("")
-    fmGPR.input:SetScript("OnEnterPressed", nil)
-
+    GW.SkinEditBox(fmGPR.input, {search = true})
+    fmGPR.input:SetScript("OnEnterPressed", fmGPR.input.ClearFocus)
     fmGPR.input:HookScript("OnTextChanged", function(self)
         local text = self:GetText()
-        local details
-        if text == "" then
-            isSearchResult = nil
-            _, details = CollectFactionData()
-            self.clearButton:Hide()
-        else
-            isSearchResult = text
-            _, details = CollectFactionData()
-            self.clearButton:Show()
-        end
-        UpdateDetailsData(fmDetail.Details, details)
-    end)
-
-    fmGPR.input:SetScript("OnEscapePressed", function(self)
-        isSearchResult = nil
+        isSearchResult = text ~= "" and text or nil
         local _, details = CollectFactionData()
-        self:ClearFocus()
-        self:SetText("")
-        UpdateDetailsData(fmDetail.Details, details)
-    end)
-
-    fmGPR.input:SetScript("OnEditFocusGained", function(self)
-        self.clearButton:Show()
-    end)
-
-    fmGPR.input:SetScript("OnEditFocusLost", function(self)
-        if self:GetText() == "" then
-            self.clearButton:Hide()
-        end
-    end)
-    fmGPR.input.clearButton:SetScript("OnClick", function(self)
-        isSearchResult = nil
-        local _, details = CollectFactionData()
-        self:GetParent():ClearFocus()
-        self:GetParent():SetText("")
         UpdateDetailsData(fmDetail.Details, details)
     end)
 

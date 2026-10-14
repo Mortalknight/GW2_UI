@@ -149,39 +149,16 @@ local function EngravingFrame_UpdateRuneList(self)
 end
 
 function GwEngravingFrameSearchBox_OnShow(self)
-	self:SetText(SEARCH);
-	self:SetFontObject("GameFontDisable");
-	self.searchIcon:SetVertexColor(0.6, 0.6, 0.6);
-	self:SetTextInsets(16, 0, 0, 0);
-end
-
-function GwEngravingFrameSearchBox_OnEditFocusLost(self)
-	self:HighlightText(0, 0);
-	if ( self:GetText() == "" ) then
-		self:SetText(SEARCH);
-		self:SetFontObject("GameFontDisable");
-		self.searchIcon:SetVertexColor(0.6, 0.6, 0.6);
-	end
-end
-
-function GwEngravingFrameSearchBox_OnEditFocusGained(self)
-	self:HighlightText();
-	if ( self:GetText() == SEARCH ) then
-		self:SetFontObject("ChatFontSmall");
-		self.searchIcon:SetVertexColor(1.0, 1.0, 1.0);
-	end
+	self:SetText("");
 end
 
 function GwEngravingFrameSearchBox_OnTextChanged(self)
-	local text = self:GetText();
-
-	if ( text == SEARCH ) then
-		C_Engraving.SetSearchFilter("");
-		return;
+	C_Engraving.SetSearchFilter(self:GetText());
+	local frame = self:GetParent()
+	-- the box is emptied on show, also before the list has its buttons
+	if frame.scrollFrame.buttons then
+		EngravingFrame_UpdateRuneList(frame);
 	end
-
-	C_Engraving.SetSearchFilter(text);
-	EngravingFrame_UpdateRuneList(_G["GwEngravingFrame"]);
 end
 
 local function EngravingFrame_OnShow(self)
@@ -286,6 +263,7 @@ local function LoadEngravingFrame(parent, fmMenu)
     end
 
     local engravingFrame = CreateFrame("Frame", "GwEngravingFrame", parent, "GwEngravingFrame")
+    GW.SkinEditBox(engravingFrame.searchBox, {search = true})
     engravingFrame.scrollFrame.update = function() EngravingFrame_UpdateRuneList(engravingFrame) end
 	engravingFrame.scrollFrame.scrollBar.doNotHide = true
 	engravingFrame.scrollFrame.dynamic = EngravingFrame_CalculateScroll

@@ -14,7 +14,7 @@ local function HandleSearchBarFrame(Frame)
 	Frame.SearchBox:SetPoint("LEFT", Frame.FavoritesSearchButton, "RIGHT", 9, -1)
 
 	Frame.SearchButton:GwSkinButton(false, true)
-	GW.SkinTextBox(Frame.SearchBox.Middle, Frame.SearchBox.Left, Frame.SearchBox.Right)
+	GW.SkinEditBox(Frame.SearchBox, {search = true})
 	Frame.FavoritesSearchButton:GwSkinButton(false, true)
 	Frame.FavoritesSearchButton.Icon:SetDesaturated(true)
 	hooksecurefunc(Frame.FavoritesSearchButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end) --TODO
@@ -56,7 +56,7 @@ local function SkinBidAmount(bidAmount)
 				region:SetAlpha(0)
 			end
 		end
-		GW.SkinTextBox(nil, nil, nil, nil, nil, nil, nil, nil, box)
+		GW.AddEditBoxBackground(box, 0)
 	end
 end
 
@@ -77,7 +77,7 @@ end
 local function SkinMoneyInput(moneyInput)
 	-- retail hides the copper box for auctions, forever shows it
 	for _, box in ipairs({ moneyInput.GoldBox, moneyInput.SilverBox, moneyInput.CopperBox }) do
-		GW.SkinTextBox(box.Middle, box.Left, box.Right)
+		GW.AddEditBoxBackground(box, 0)
 	end
 end
 
@@ -144,7 +144,7 @@ local function SkinSellFrame(frame)
 	SkinItemDisplay(frame.ItemDisplay, true)
 
 	local quantity = frame.QuantityInput
-	GW.SkinTextBox(quantity.InputBox.Middle, quantity.InputBox.Left, quantity.InputBox.Right)
+	GW.SkinEditBox(quantity.InputBox, {compact = true})
 	quantity.MaxButton:GwSkinButton(false, true)
 	SetWhite(quantity.Label)
 	SkinPriceInput(frame.PriceInput)
@@ -451,7 +451,7 @@ local function ApplyAuctionHouseSkin()
 	SkinList(commoditiesBuy.ItemList, {})
 	local buyDisplay = commoditiesBuy.BuyDisplay
 	SkinItemDisplay(buyDisplay.ItemDisplay)
-	GW.SkinTextBox(buyDisplay.QuantityInput.InputBox.Middle, buyDisplay.QuantityInput.InputBox.Left, buyDisplay.QuantityInput.InputBox.Right)
+	GW.SkinEditBox(buyDisplay.QuantityInput.InputBox, {compact = true})
 	buyDisplay.BuyButton:GwSkinButton(false, true)
 	for _, text in ipairs({ buyDisplay.QuantityInput.Label, buyDisplay.UnitPrice.Label, buyDisplay.TotalPrice.Label }) do
 		SetWhite(text)

@@ -306,7 +306,10 @@ local function SkinLegacyIconPopup(popup)
     end
     popup:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
-    GW.SkinTextBox(GuildBankPopupNameMiddle, GuildBankPopupNameLeft, GuildBankPopupNameRight, nil, nil, 5, 5)
+    -- the art is named after the popup, not after the box
+    local nameBox = GuildBankPopupNameMiddle:GetParent()
+    nameBox:GwStripTextures()
+    GW.SkinEditBox(nameBox)
     popup.OkayButton:GwSkinButton(false, true)
     popup.CancelButton:GwSkinButton(false, true)
 

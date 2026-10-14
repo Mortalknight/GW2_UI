@@ -130,19 +130,9 @@ local function CreateRaidControlFrame()
     ]=])
     RegisterStateDriver(GwGroupManage, "barlayout", "[group:raid] show; [group:party] show; hide")
 
-    local TextBox_OnEscapePressed = function(self)
-        self:ClearFocus()
-    end
-
     local inviteBox = GwGroupManage.groupInviteBox
-    inviteBox.hint = inviteBox:CreateFontString(nil, "ARTWORK", "ChatFontNormal")
-    inviteBox.hint:SetPoint("LEFT", inviteBox, "LEFT", 0, 0)
-    inviteBox.hint:SetText(CALENDAR_PLAYER_NAME)
-    inviteBox.hint:SetTextColor(1, 1, 1, 0.5)
-    -- the hint over an empty box; the invite button stays enabled, the protected group frame hangs on it
-    local function UpdateInviteHint(box)
-        box.hint:SetShown(box:GetText() == "" and not box:HasFocus())
-    end
+    GW.SkinEditBox(inviteBox, {placeholder = CALENDAR_PLAYER_NAME})
+    -- the invite button stays enabled, the protected group frame hangs on it
     local function InviteTypedName(box)
         local name = strtrim(box:GetText())
         if name ~= "" then
@@ -151,12 +141,7 @@ local function CreateRaidControlFrame()
         box:SetText("")
         box:ClearFocus()
     end
-    inviteBox:SetScript("OnEscapePressed", TextBox_OnEscapePressed)
-    inviteBox:SetScript("OnEditFocusGained", UpdateInviteHint)
-    inviteBox:SetScript("OnEditFocusLost", UpdateInviteHint)
-    inviteBox:SetScript("OnTextChanged", UpdateInviteHint)
     inviteBox:SetScript("OnEnterPressed", InviteTypedName)
-    UpdateInviteHint(inviteBox)
 
     GwGroupManage.inviteToParty:SetScript("OnClick", function(self)
         InviteTypedName(self:GetParent().groupInviteBox)
@@ -195,9 +180,8 @@ local function CreateRaidControlFrame()
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowOffset(1, -1)
     GwGroupManage.inGroup.countdown:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
 
+    GW.SkinEditBox(GwGroupManage.inGroup.inputCountdownFrame.input, {compact = true})
     GwGroupManage.inGroup.inputCountdownFrame.input:SetText(GW.settings.groupFrames.pullTimerSeconds)
-
-    GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEscapePressed", TextBox_OnEscapePressed)
     GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEnterPressed", function(self)
         local roundValue = GW.RoundDec(self:GetNumber(), 0) or GW.settings.groupFrames.pullTimerSeconds
         self:ClearFocus()

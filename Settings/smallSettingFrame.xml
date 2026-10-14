@@ -145,25 +145,11 @@
                     </Layer>
                 </Layers>
             </Slider>
-            <EditBox parentKey="input" autoFocus="false">
-                <Size x="25" y="16"/>
+            <EditBox parentKey="input" inherits="GwEditBoxTemplate">
+                <Size x="35" y="18"/>
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
+                    <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="5" y="0"/>
                 </Anchors>
-                <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
-                            <Anchors>
-                                <Anchor point="TOPLEFT" x="-5" y="3"/>
-                                <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
-                            </Anchors>
-                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
-                        </Texture>
-                    </Layer>
-                </Layers>
-                <FontString inherits="GameFontNormalSmall">
-                    <Color r="1" b="1" g="1"/>
-                </FontString>
             </EditBox>
         </Frames>
     </Frame>

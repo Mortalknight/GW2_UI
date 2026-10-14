@@ -226,7 +226,7 @@ local function SkinSettings(settings)
     GW.HandlePortraitFrame(settings)
     GW.CreateFrameHeaderWithBody(settings, settings.TitleContainer.TitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {settings.CooldownScroll}, nil, nil, true)
 
-    GW.SkinTextBox(settings.SearchBox.Middle, settings.SearchBox.Left, settings.SearchBox.Right)
+    GW.SkinEditBox(settings.SearchBox, {search = true})
     for _, scroll in ipairs({settings.CooldownScroll, settings.GroupBuffFilter.Scroll}) do
         GW.HandleTrimScrollBar(scroll.ScrollBar)
         GW.HandleScrollControls(scroll)

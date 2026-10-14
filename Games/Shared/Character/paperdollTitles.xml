@@ -46,7 +46,7 @@
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"/>
                 </Anchors>
             </Button>
-            <EditBox name="$parentInput" inherits="GwSearchBoxTemplate" parentKey="input" autoFocus="false">
+            <EditBox name="$parentInput" inherits="GwEditBoxTemplate" parentKey="input">
                 <Size x="195" y="25"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.backButton" relativePoint="TOPLEFT" x="0" y="-55"/>

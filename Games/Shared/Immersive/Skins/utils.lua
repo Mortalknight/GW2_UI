@@ -1,97 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
---middle left right
-local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, leftOffset, rightOffset, noTop, frame)
-    if middleTex then
-        middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
-        middleTex:ClearAllPoints()
-        middleTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
-        middleTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
-        middleTex:SetAlpha(1)
-    elseif frame then
-        frame.middleTex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
-        frame.middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
-        frame.middleTex:ClearAllPoints()
-        frame.middleTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
-        frame.middleTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
-        frame.middleTex:SetAlpha(1)
-    end
-    if leftTex then
-        leftTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
-        leftTex:SetWidth(2)
-        leftTex:ClearAllPoints()
-        leftTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
-        leftTex:SetPoint("BOTTOMLEFT", -(leftOffset or 0), 0)
-        leftTex:SetTexCoord(0,1,1,0)
-        leftTex:SetAlpha(1)
-    elseif frame then
-        frame.leftTex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
-        frame.leftTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
-        frame.leftTex:SetWidth(2)
-        frame.leftTex:ClearAllPoints()
-        frame.leftTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
-        frame.leftTex:SetPoint("BOTTOMLEFT", -(leftOffset or 0), 0)
-        frame.leftTex:SetTexCoord(0,1,1,0)
-        frame.leftTex:SetAlpha(1)
-    end
-    if rightTex then
-        rightTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
-        rightTex:SetWidth(1)
-        rightTex:ClearAllPoints()
-        rightTex:SetPoint("TOPRIGHT", (rightOffset or 0), 0)
-        rightTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
-        rightTex:SetAlpha(1)
-    elseif frame then
-        frame.rightTex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
-        frame.rightTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
-        frame.rightTex:SetWidth(1)
-        frame.rightTex:ClearAllPoints()
-        frame.rightTex:SetPoint("TOPRIGHT", (rightOffset or 0), 0)
-        frame.rightTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
-        frame.rightTex:SetAlpha(1)
-        rightTex = frame.rightTex
-    end
-
-    local pframe = rightTex and rightTex:GetParent()
-    if pframe and topTex then
-        topTex:ClearAllPoints()
-        topTex:SetHeight(2)
-        topTex:SetPoint("BOTTOMLEFT", pframe, "TOPLEFT", -(leftOffset or 0), 0)
-        topTex:SetPoint("BOTTOMRIGHT", pframe, "TOPRIGHT", (rightOffset or 0), 0)
-        topTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
-        topTex:SetAlpha(1)
-    elseif pframe and not noTop then
-        local top = pframe:CreateTexture(nil, "BACKGROUND", nil, 0)
-        pframe.top = top
-        top:ClearAllPoints()
-        top:SetHeight(2)
-        top:SetPoint("BOTTOMLEFT", pframe, "TOPLEFT", -(leftOffset or 0), 0)
-        top:SetPoint("BOTTOMRIGHT", pframe, "TOPRIGHT", (rightOffset or 0), 0)
-        top:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
-        if middleTex then return end
-    end
-    if bottomTex and pframe then
-        bottomTex:ClearAllPoints()
-        bottomTex:SetHeight(2)
-        bottomTex:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT", -(leftOffset or 0), 0)
-        bottomTex:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",( rightOffset or 0), 0)
-        bottomTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
-        bottomTex:SetTexCoord(0, 1, 1, 0)
-        bottomTex:SetAlpha(1)
-    elseif pframe and not noTop then
-        local bottom = pframe:CreateTexture(nil, "BACKGROUND", nil, 0)
-        pframe.bottom = bottom
-        bottom:ClearAllPoints()
-        bottom:SetHeight(2)
-        bottom:SetPoint("TOPLEFT", pframe, "BOTTOMLEFT", -(leftOffset or 0), 0)
-        bottom:SetPoint("TOPRIGHT", pframe, "BOTTOMRIGHT", (rightOffset or 0), 0)
-        bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
-        bottom:SetTexCoord(0, 1, 1, 0)
-    end
-end
-GW.SkinTextBox = SkinTextBox
-
 -- a coin amount in the font and color of our bag money; coin is "Gold", "Silver" or "Copper"
 function GW.StyleMoneyText(text, coin, sizeType)
     text:GwSetFontTemplate(UNIT_NAME_FONT, sizeType or GW.Enum.TextSizeType.Normal)
@@ -620,7 +529,8 @@ do
         end
         local editBox = borderBox.IconSelectorEditBox
         if editBox then
-            GW.SkinTextBox(editBox.IconSelectorPopupNameMiddle, editBox.IconSelectorPopupNameLeft, editBox.IconSelectorPopupNameRight, nil, nil, 5, 5)
+            editBox:GwStripTextures()
+            GW.SkinEditBox(editBox)
         end
 
         -- cancel in the corner, okay beside it

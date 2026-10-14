@@ -136,9 +136,6 @@ local function ShowPopup(info, data)
 
     SetUpPosition()
     popup:Show()
-    if info.hasEditBox and info.highlightInput then
-        popup.input:HighlightText()
-    end
     Resize(popup)
     -- re-run once the text layout has settled; wrapped font strings can report a
     -- too small height on the frame they are shown
@@ -233,8 +230,7 @@ local function CreatePopupFrame()
                 pp.EditBoxOnTextChanged(pp, userInput)
             end
         end)
-        popup.input:SetScript("OnEditFocusGained", nil)
-        popup.input:SetScript("OnEditFocusLost", nil)
+        GW.SkinEditBox(popup.input)
         popup.acceptButton:SetScript("OnClick", OnAccept)
         popup.cancelButton:SetScript("OnClick", OnCancel)
 

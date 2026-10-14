@@ -54,13 +54,10 @@ local function SetActiveBorder(texture, icon)
 end
 
 local function SkinSearchBox(box)
-    if box.Background then
-        box.Background:Hide()
-    end
     if box.NineSlice then
         box.NineSlice:Hide()
     end
-    GW.SkinTextBox(box.Middle, box.Left, box.Right, nil, nil, nil, nil, nil, box)
+    GW.SkinEditBox(box, {search = true})
     box:SetHeight(CONTROL_HEIGHT)
 end
 

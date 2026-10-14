@@ -298,11 +298,11 @@ local function worldMapSkin()
     QuestScrollFrame.Edge:SetAlpha(0)
     QuestScrollFrame.BorderFrame:SetAlpha(0)
     QuestScrollFrame.Background:SetAlpha(0)
-    GW.SkinTextBox(QuestScrollFrame.SearchBox.Middle, QuestScrollFrame.SearchBox.Left, QuestScrollFrame.SearchBox.Right)
+    GW.SkinEditBox(QuestScrollFrame.SearchBox, {search = true})
     -- the quest count pill next to the search box: same input box art, forever shows it
     -- (QuestLogQuests_ShowQuestCount), retail keeps it hidden
     if QuestLogCount and QuestLogCount.Middle then
-        GW.SkinTextBox(QuestLogCount.Middle, QuestLogCount.Left, QuestLogCount.Right)
+        GW.AddEditBoxBackground(QuestLogCount, 0)
         if QuestLogQuestCount then
             -- blizzard only colors the numbers, the label keeps the font objects yellow
             QuestLogQuestCount:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)

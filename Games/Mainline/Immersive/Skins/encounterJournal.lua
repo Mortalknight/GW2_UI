@@ -696,7 +696,7 @@ local function encounterJournalSkin()
     EJ.CloseButton:SetPoint("TOPRIGHT", -10, -2)
     EncounterJournalPortrait:Show()
 
-    GW.SkinTextBox(EJ.searchBox.Middle, EJ.searchBox.Left, EJ.searchBox.Right)
+    GW.SkinEditBox(EJ.searchBox, {search = true})
     EJ.searchBox:ClearAllPoints()
     EJ.searchBox:SetPoint("BOTTOMRIGHT", EJ.gwHeader, "BOTTOMRIGHT", -5, -30)
     EncounterJournalSearchResults:GwStripTextures()

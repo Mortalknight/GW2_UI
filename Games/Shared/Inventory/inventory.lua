@@ -797,22 +797,18 @@ local function reskinSearchBox(sb)
         return
     end
 
-    sb:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    sb.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-
-    sb.Left:SetPoint("LEFT", 0, 0)
+    GW.SkinEditBox(sb, {search = true, noBackground = true})
 
     sb.Left:SetTexture(nil)
     sb.Right:SetTexture(nil)
     sb.Middle:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg.png")
-
+    -- blizzard hangs the middle on the left cap, the search icon has to sit inside it
+    sb.Middle:ClearAllPoints()
+    sb.Middle:SetPoint("LEFT", sb, "LEFT", 0, 0)
     sb.Middle:SetPoint("RIGHT", sb, "RIGHT", 0, 0)
 
     sb.Middle:SetHeight(24)
     sb.Middle:SetTexCoord(unpack(GW.TexCoords))
-
-    sb.searchIcon:Hide()
 end
 GW.SkinBagSearchBox = reskinSearchBox
 
@@ -825,8 +821,9 @@ local function relocateSearchBox(sb, f)
 
     sb:SetParent(f)
     sb:ClearAllPoints()
-    sb:SetPoint("TOPLEFT", f, "TOPLEFT", 0, -40)
-    sb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -10, -40)
+    -- in line with the item slots
+    sb:SetPoint("TOPLEFT", f, "TOPLEFT", 8, -40)
+    sb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -5, -40)
     sb:SetHeight(24)
 end
 

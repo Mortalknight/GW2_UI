@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file ="toolkit.lua"/>
     <Script file ="utils.lua"/>
+    <Script file ="editBox.lua"/>
     <Script file ="api.lua"/>
     <Script file ="dispel.lua"/>
     <Script file ="location.lua"/>

@@ -780,10 +780,24 @@ local function styleChatWindow(frame)
     editbox:SetAltArrowKeyMode(false)
     editbox.editboxHasFocus = false
     editbox:Hide()
-    GW.SkinTextBox(_G[name .. "EditBoxMid"], _G[name .. "EditBoxLeft"], _G[name .. "EditBoxRight"])
-    if _G[name .. "EditBoxFocusMid"] then
-        GW.SkinTextBox(_G[name .. "EditBoxFocusMid"], _G[name .. "EditBoxFocusLeft"], _G[name .. "EditBoxFocusRight"])
+    -- the chat fade brings the alpha of the art back, so it loses its texture; the right ends stay at the box
+    -- edge, other chat buttons hang on them
+    for _, part in ipairs({"Left", "Mid", "Right", "FocusLeft", "FocusMid", "FocusRight"}) do
+        local texture = _G[name .. "EditBox" .. part]
+        if texture then
+            texture:SetTexture(nil)
+        end
     end
+    for _, part in ipairs({"Right", "FocusRight"}) do
+        local texture = _G[name .. "EditBox" .. part]
+        if texture then
+            texture:ClearAllPoints()
+            texture:SetPoint("TOPRIGHT")
+            texture:SetPoint("BOTTOMRIGHT")
+            texture:SetWidth(1)
+        end
+    end
+    GW.AddEditBoxBackground(editbox, 0)
 
     --Character count
     local charCount = editbox:CreateFontString(nil, "ARTWORK")

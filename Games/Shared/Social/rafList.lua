@@ -31,7 +31,7 @@ function GW.SkinRecruitAFriendList()
 
     RecruitAFriendRecruitmentFrame:GwStripTextures()
     RecruitAFriendRecruitmentFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-    GW.SkinTextBox(RecruitAFriendRecruitmentFrame.EditBox.Middle, RecruitAFriendRecruitmentFrame.EditBox.Left, RecruitAFriendRecruitmentFrame.EditBox.Right)
+    GW.SkinEditBox(RecruitAFriendRecruitmentFrame.EditBox)
     RecruitAFriendRecruitmentFrame.GenerateOrCopyLinkButton:GwSkinButton(false, true)
     RecruitAFriendRecruitmentFrame.CloseButton:GwSkinButton(true)
     RecruitAFriendRecruitmentFrame.CloseButton:SetSize(15, 15)

@@ -381,7 +381,7 @@ local function LoadSettingsPanelSkin()
     panel.ClosePanelButton:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -5, 0)
     panel.ApplyButton:GwSkinButton(false, true)
     panel.CloseButton:GwSkinButton(false, true)
-    GW.SkinTextBox(panel.SearchBox.Middle, panel.SearchBox.Left, panel.SearchBox.Right)
+    GW.SkinEditBox(panel.SearchBox, {search = true})
 
     SkinTab(panel.GameTab)
     SkinTab(panel.AddOnsTab)

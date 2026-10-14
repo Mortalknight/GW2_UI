@@ -69,10 +69,6 @@ local function SkinTextSection(frame, background)
     end
 end
 
-local function SkinTextBox(edit)
-    GW.SkinTextBox(edit.Middle, edit.Left, edit.Right)
-end
-
 -- the event icon sits big in the corner of the event header, the title or date beside it
 local function SkinEventIcon(icon, label)
     icon:SetSize(54, 54)
@@ -206,9 +202,10 @@ local function ApplyCalendarFrameSkin()
     -- create event: invite line, title, lock check and difficulty
     CalendarCreateEventInviteEdit:SetWidth(CalendarCreateEventInviteEdit:GetWidth() - 2)
     CalendarCreateEventInviteButton:SetPoint("TOPLEFT", CalendarCreateEventInviteEdit, "TOPRIGHT", 4, 1)
-    for _, edit in ipairs({CalendarCreateEventInviteEdit, CalendarCreateEventTitleEdit, CalendarMassInviteMinLevelEdit, CalendarMassInviteMaxLevelEdit}) do
-        SkinTextBox(edit)
-    end
+    GW.SkinEditBox(CalendarCreateEventInviteEdit)
+    GW.SkinEditBox(CalendarCreateEventTitleEdit)
+    GW.SkinEditBox(CalendarMassInviteMinLevelEdit, {compact = true})
+    GW.SkinEditBox(CalendarMassInviteMaxLevelEdit, {compact = true})
     CalendarCreateEventLockEventCheck:GwSkinCheckButton()
     CalendarCreateEventFrame.DifficultyOptionDropdown:ClearAllPoints()
     CalendarCreateEventFrame.DifficultyOptionDropdown:SetPoint("TOPLEFT", CalendarCreateEventFrame, "TOPLEFT", 220, -114)

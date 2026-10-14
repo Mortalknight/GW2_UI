@@ -232,8 +232,7 @@ local function SkinCombatSettings()
     GW.HandleNextPrevButton(ChatConfigMoveFilterUpButton, "up")
     GW.HandleNextPrevButton(ChatConfigMoveFilterDownButton, "down")
 
-    local editBox = CombatConfigSettingsNameEditBox
-    GW.SkinTextBox(editBox.Middle, editBox.Left, editBox.Right)
+    GW.SkinEditBox(CombatConfigSettingsNameEditBox)
 
     for _, name in ipairs(RADIO_BUTTONS) do
         SkinCheckButton(_G[name], true)

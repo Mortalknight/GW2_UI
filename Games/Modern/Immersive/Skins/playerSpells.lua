@@ -60,7 +60,7 @@ local function HandleTalentFrameDialog(dialog)
         dialog.DeleteButton:GwSkinNegativeButton()
     end
 
-    GW.SkinTextBox(dialog.NameControl.EditBox.Middle, dialog.NameControl.EditBox.Left, dialog.NameControl.EditBox.Right, nil, nil, 5, 5)
+    GW.SkinEditBox(dialog.NameControl.EditBox)
     dialog.NameControl.EditBox:ClearAllPoints()
     dialog.NameControl.EditBox:SetPoint("TOPLEFT", dialog.NameControl.Label, "BOTTOMLEFT", 0, -10)
     dialog.NameControl.EditBox:SetHeight(25)
@@ -541,7 +541,7 @@ local function skinPlayerSpells()
         end
     end
 
-    GW.SkinTextBox(TalentsFrame.SearchBox.Middle, TalentsFrame.SearchBox.Left, TalentsFrame.SearchBox.Right)
+    GW.SkinEditBox(TalentsFrame.SearchBox, {search = true})
     TalentsFrame.SearchBox:SetHeight(20)
     TalentsFrame.SearchPreviewContainer:GwStripTextures()
     TalentsFrame.SearchPreviewContainer:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
@@ -562,7 +562,7 @@ local function skinPlayerSpells()
         HandleTalentFrameDialog(ClassTalentLoadoutImportDialog)
         ClassTalentLoadoutImportDialog.ImportControl.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         ClassTalentLoadoutImportDialog.ImportControl.InputContainer:GwStripTextures()
-        GW.SkinTextBox(ClassTalentLoadoutImportDialog.ImportControl.InputContainer.MiddleTex, ClassTalentLoadoutImportDialog.ImportControl.InputContainer.LeftTex, ClassTalentLoadoutImportDialog.ImportControl.InputContainer.RightTex, nil, nil, 5, 5)
+        GW.AddEditBoxBackground(ClassTalentLoadoutImportDialog.ImportControl.InputContainer)
     end
 
     if ClassTalentLoadoutCreateDialog then
@@ -574,7 +574,7 @@ local function skinPlayerSpells()
 
         local editbox = ClassTalentLoadoutEditDialog.LoadoutName
         if editbox then
-            GW.SkinTextBox(editbox.Middle, editbox.Left, editbox.Right)
+            GW.SkinEditBox(editbox)
             editbox:SetHeight(20)
         end
 
@@ -613,7 +613,7 @@ local function skinPlayerSpells()
         if maxMin then
             maxMin:GwHandleMaxMinFrame()
         end
-        GW.SkinTextBox(SpellBookFrame.SearchBox.Middle, SpellBookFrame.SearchBox.Left, SpellBookFrame.SearchBox.Right)
+        GW.SkinEditBox(SpellBookFrame.SearchBox, {search = true})
         SpellBookFrame.SearchBox:SetHeight(20)
         if SpellBookFrame.HidePassivesCheckButton then
             SpellBookFrame.HidePassivesCheckButton.Button:GwSkinCheckButton(false, 20)

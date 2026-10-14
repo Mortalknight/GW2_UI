@@ -220,6 +220,7 @@ local WIDGET_INIT, WIDGET_SETUP = {}, {}
 WIDGET_INIT[MoverOptionType.Slider] = function(widget)
     widget.title:SetFont(UNIT_NAME_FONT, 12, "")
     widget.input:SetFont(UNIT_NAME_FONT, 8, "")
+    GW.SkinEditBox(widget.input, {compact = true, keepFont = true})
     GW.AddSliderValueFill(widget.slider)
 
     widget.slider:SetScript("OnValueChanged", function(_, value, userInput)
@@ -237,7 +238,6 @@ WIDGET_INIT[MoverOptionType.Slider] = function(widget)
         ApplyMoverOption(widget.mover, option, value, true)
         widget.slider:SetValue(value)
     end)
-    widget.input:SetScript("OnEscapePressed", function(input) input:ClearFocus() end)
 end
 WIDGET_SETUP[MoverOptionType.Slider] = function(widget, option)
     widget.title:SetText(option.label)
@@ -1070,21 +1070,11 @@ local function LoadMovers(layoutManager)
         text:SetPoint("LEFT", position, "LEFT", offsetX, 0)
         text:SetText(label)
 
-        local input = CreateFrame("EditBox", nil, position)
-        input:SetSize(38, 14)
-        input:SetAutoFocus(false)
+        local input = CreateFrame("EditBox", nil, position, "GwEditBoxTemplate")
+        input:SetSize(44, 16)
         input:SetFont(UNIT_NAME_FONT, 9, "")
-        input:SetTextColor(1, 1, 1)
-        input:SetJustifyH("CENTER")
         input:SetPoint("LEFT", text, "RIGHT", 4, 0)
-
-        local bg = input:CreateTexture(nil, "BACKGROUND")
-        bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
-        bg:SetTexCoord(0, 0.2, 0, 1)
-        bg:SetPoint("TOPLEFT", -3, 1)
-        bg:SetPoint("BOTTOMRIGHT", 3, -1)
-
-        input:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+        GW.SkinEditBox(input, {compact = true, keepFont = true})
         return input
     end
 
@@ -1179,6 +1169,7 @@ local function LoadMovers(layoutManager)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetValue(GW.RoundDec(GW.settings.hud.gridSpacing, 0))
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetObeyStepOnDrag(true)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetValueStep(2)
+    GW.SkinEditBox(smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.inputFrame.input, {compact = true})
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.inputFrame.input:SetText(GW.RoundDec(GW.settings.hud.gridSpacing, 0))
 
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetScript("OnValueChanged", function(self)

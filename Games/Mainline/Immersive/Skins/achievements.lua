@@ -1161,14 +1161,8 @@ local function skinAchevement()
     searchBox:SetPoint("BOTTOMLEFT", AchievementFrameCategories, "TOPLEFT", 0, 5)
     searchBox.ClearAllPoints = GW.NoOp
     searchBox.SetPoint = GW.NoOp
-    searchBox:SetWidth(237)
-    searchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    GW.SkinTextBox(searchBox.Middle, searchBox.Left, searchBox.Right)
-    searchBox:SetHeight(26)
-    searchBox.searchIcon:Hide()
-    searchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    searchBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    searchBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+    searchBox:SetSize(237, 26)
+    GW.SkinEditBox(searchBox, {search = true})
 
     searchBox.SearchPreviewContainer:GwStripTextures()
     searchBox.SearchPreviewContainer:ClearAllPoints()

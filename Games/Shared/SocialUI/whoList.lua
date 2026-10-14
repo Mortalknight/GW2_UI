@@ -64,12 +64,9 @@ function GW.SkinSocialUIWhoList()
     hooksecurefunc(WhoFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 
     if WhoFrameEditBox.Backdrop then
-        WhoFrameEditBox.Backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg.png")
+        WhoFrameEditBox.Backdrop:SetAlpha(0)
     end
-    WhoFrameEditBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    WhoFrameEditBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    WhoFrameEditBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-    GW.SkinBagSearchBox(WhoFrameEditBox)
+    GW.SkinEditBox(WhoFrameEditBox, {search = true})
 
     for _, frame in ipairs({WhoFrameColumnHeader1, WhoFrameColumnHeader2, WhoFrameColumnHeader3, WhoFrameColumnHeader4}) do
         frame:GwStripTextures()

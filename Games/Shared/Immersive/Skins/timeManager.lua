@@ -174,10 +174,8 @@ local function SkinTimeManagerFrame()
     end
 
     if TimeManagerAlarmMessageEditBox then
-        GW.SkinTextBox(TimeManagerAlarmMessageEditBox.Middle, TimeManagerAlarmMessageEditBox.Left, TimeManagerAlarmMessageEditBox.Right, nil, nil, 5, 5)
         TimeManagerAlarmMessageEditBox:SetWidth(210)
-        TimeManagerAlarmMessageEditBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        TimeManagerAlarmMessageEditBox:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+        GW.SkinEditBox(TimeManagerAlarmMessageEditBox)
     end
 
     for _, checkButton in pairs({

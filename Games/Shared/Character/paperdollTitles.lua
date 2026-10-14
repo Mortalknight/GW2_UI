@@ -92,11 +92,6 @@ local function saveKnowenTitles(titlewin, searchString)
 end
 
 
-local function SetSearchboxInstructions(editbox, text)
-    editbox.Instructions:SetTextColor(0.5, 0.5, 0.5)
-    editbox.Instructions:SetText(text)
-end
-
 local function ResetFilter()
     showEarned = true
     showUnearned = false
@@ -141,40 +136,11 @@ end
 function GW.LoadPDTitles(parent, fmMenu)
     local titlewin = CreateFrame("Frame", "GwTitleWindow", parent, "GwTitleWindow")
 
-    SetSearchboxInstructions(titlewin.input, SEARCH .. "...")
-    titlewin.input:SetText("")
-    titlewin.input:SetScript("OnEnterPressed", nil)
+    GW.SkinEditBox(titlewin.input, {search = true})
+    titlewin.input:SetScript("OnEnterPressed", titlewin.input.ClearFocus)
     titlewin.input:HookScript("OnTextChanged", function(self)
         local text = self:GetText()
-        if text == "" then
-            saveKnowenTitles(titlewin)
-            self.clearButton:Hide()
-            return
-        end
-        saveKnowenTitles(titlewin, text)
-        self.clearButton:Show()
-    end)
-
-    titlewin.input:SetScript("OnEscapePressed", function(self)
-        self:ClearFocus()
-        self:SetText("")
-        saveKnowenTitles(titlewin)
-    end)
-
-    titlewin.input:SetScript("OnEditFocusGained", function(self)
-        self.clearButton:Show()
-        saveKnowenTitles(titlewin)
-    end)
-
-    titlewin.input:SetScript("OnEditFocusLost", function(self)
-        if self:GetText() == "" then
-            self.clearButton:Hide()
-        end
-    end)
-    titlewin.input.clearButton:SetScript("OnClick", function(self)
-        self:GetParent():ClearFocus()
-        self:GetParent():SetText("")
-        saveKnowenTitles(titlewin)
+        saveKnowenTitles(titlewin, text ~= "" and text or nil)
     end)
 
     -- blizzards dropdown button opens and closes the filter menu on its own

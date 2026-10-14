@@ -143,48 +143,23 @@
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="-15"></Anchor>
                 </Anchors>
             </Button>
-            <EditBox name="$parentSearchBox" autoFocus="false" letters="25">
+            <EditBox name="$parentSearchBox" parentKey="searchBox" inherits="GwEditBoxTemplate" letters="25">
                 <Size x="225" y="20"></Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentBackButton" x="3" y="-54"/>
 				</Anchors>
-				<Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
-                            <Anchors>
-                                <Anchor point="TOPLEFT" x="-3" y="0"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" x="3" y="0"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                    <Layer level="OVERLAY">
-						<Texture name="$parentSearchIcon" file="Interface\Common\UI-Searchbox-Icon" parentKey="searchIcon">
-							<Size>
-								<AbsDimension x="14" y="14"/>
-							</Size>
-							<Anchors>
-								<Anchor point="LEFT" y="-2"/>
-							</Anchors>
-							<Color r="0.7" g="0.7" b="0.7" />
-						</Texture>
-					</Layer>
-                </Layers>
-                <FontString inherits="ChatFontNormal" />
 				<Scripts>
 					<OnShow function="GwEngravingFrameSearchBox_OnShow"/>
 					<OnEnterPressed function="EditBox_ClearFocus"/>
-					<OnEscapePressed function="EditBox_ClearFocus"/>
 					<OnTextChanged function="GwEngravingFrameSearchBox_OnTextChanged"/>
-					<OnEditFocusLost function="GwEngravingFrameSearchBox_OnEditFocusLost"/>
-					<OnEditFocusGained function="GwEngravingFrameSearchBox_OnEditFocusGained"/>
 				</Scripts>
 			</EditBox>
             <DropdownButton name="$parentFilterDropDown" parentKey="dropdown" inherits="WowStyle1DropdownTemplate" enableMouse="true">
                 <Size y="24"></Size>
 				<Anchors>
-					<!-- the search box background overhangs its frame by 3px and the skinned backdrop is inset by 3px/2px, so overhang the frame to visually match the search box width -->
-					<Anchor point="TOPLEFT" relativeTo="$parentSearchBox" relativePoint="BOTTOMLEFT" x="-6" y="-3"/>
-					<Anchor point="TOPRIGHT" relativeTo="$parentSearchBox" relativePoint="BOTTOMRIGHT" x="5" y="-3"/>
+					<!-- the skinned backdrop is inset by 3px/2px, the search box border sits 1px outside its frame -->
+					<Anchor point="TOPLEFT" relativeTo="$parentSearchBox" relativePoint="BOTTOMLEFT" x="-4" y="-3"/>
+					<Anchor point="TOPRIGHT" relativeTo="$parentSearchBox" relativePoint="BOTTOMRIGHT" x="3" y="-3"/>
 				</Anchors>
 			</DropdownButton>
             <ScrollFrame name="$parentScrollFrame" parentKey="scrollFrame" inherits="GwHybridScrollFrameTemplate" enableMouse="true">

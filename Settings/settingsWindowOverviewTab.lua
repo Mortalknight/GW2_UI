@@ -123,9 +123,6 @@ end
 
 local function NormalizeSearchQuery(query)
     query = strtrim((query or ""):lower())
-    if query == "" or query == SEARCH:lower() then
-        return ""
-    end
     return query
 end
 
@@ -386,13 +383,8 @@ end
 local function ResetChangelogSearch(settingsOverview)
     settingsOverview.searchQuery = ""
 
-    local edit = settingsOverview.search.input
-    edit:SetText(SEARCH)
-    edit:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-    edit:ClearFocus()
-    if edit.clearButton then
-        edit.clearButton:Hide()
-    end
+    settingsOverview.search:SetText("")
+    settingsOverview.search:ClearFocus()
 
     if settingsOverview.currentOverviewType then
         UpdateScrollBox(settingsOverview.ScrollBox, settingsOverview.currentOverviewType)
@@ -730,46 +722,14 @@ function GW.LoadSettingsOverview(container)
 
     settingsOverview.currentOverviewType = "changelog"
     settingsOverview.searchQuery = ""
-    settingsOverview.search.background:SetAlpha(1)
-    settingsOverview.search.input:SetFont(UNIT_NAME_FONT, 14, "")
-    settingsOverview.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-    settingsOverview.search.input:SetText(SEARCH)
-    settingsOverview.search.input:SetScript("OnEscapePressed", function(self)
-        self:ClearFocus()
-    end)
-    settingsOverview.search.input:SetScript("OnEnterPressed", function(self)
-        self:ClearFocus()
-    end)
-    settingsOverview.search.input:SetScript("OnEditFocusGained", function(self)
-        if self:GetText() == SEARCH then
-            self:SetText("")
-        end
-        self:SetTextColor(1, 1, 1)
-        self.clearButton:SetShown((self:GetText() or "") ~= "")
-    end)
-    settingsOverview.search.input:SetScript("OnEditFocusLost", function(self)
-        local txt = NormalizeSearchQuery(self:GetText())
-        if txt == "" then
-            self:SetText(SEARCH)
-            self:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-            self.clearButton:Hide()
-        end
-    end)
-    settingsOverview.search.input:SetScript("OnTextChanged", function(self)
-        if not self:HasFocus() then return end
-        local txt = self:GetText() or ""
+    local search = settingsOverview.search
+    GW.SkinEditBox(search, {search = true})
+    search:SetScript("OnEnterPressed", search.ClearFocus)
+    search:HookScript("OnTextChanged", function(self)
+        local txt = self:GetText()
+        -- the reset on hide sets the query itself
+        if txt == settingsOverview.searchQuery then return end
         settingsOverview.searchQuery = txt
-        self.clearButton:SetShown(NormalizeSearchQuery(txt) ~= "")
-        UpdateScrollBox(settingsOverview.ScrollBox, "changelog")
-        UpdateOverviewScrollFx(settingsOverview.ScrollBar)
-    end)
-    settingsOverview.search.input.clearButton:SetScript("OnClick", function(self)
-        local edit = self:GetParent()
-        settingsOverview.searchQuery = ""
-        edit:SetText(SEARCH)
-        edit:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-        edit:ClearFocus()
-        self:Hide()
         UpdateScrollBox(settingsOverview.ScrollBox, "changelog")
         UpdateOverviewScrollFx(settingsOverview.ScrollBar)
     end)

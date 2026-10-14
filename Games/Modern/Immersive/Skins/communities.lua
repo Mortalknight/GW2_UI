@@ -620,14 +620,8 @@ local function SkinNotificationSettingsDialog(dialog)
     hooksecurefunc(dialog, "Refresh", SkinNotificationStreamEntries)
 end
 
-local INPUT_SCROLL_CORNERS = {"TopLeftTex", "TopRightTex", "BottomLeftTex", "BottomRightTex"}
 local TEXTBOX_PADDING = 6
 
--- blizzards box art hangs 5 out to the left of the text, ours starts at the text, so the text needs the room
-local function SkinInputBox(editBox)
-    GW.SkinTextBox(editBox.Middle, editBox.Left, editBox.Right)
-    editBox:SetTextInsets(TEXTBOX_PADDING, TEXTBOX_PADDING, 0, 0)
-end
 
 local function SkinInputScrollText(scroll)
     GW.SkinSlimScrollFrame(scroll)
@@ -638,25 +632,19 @@ local function SkinInputScrollText(scroll)
 end
 
 local function SkinInputScroll(scroll)
-    for _, key in ipairs(INPUT_SCROLL_CORNERS) do
-        scroll[key]:Hide()
-    end
-    GW.SkinTextBox(scroll.MiddleTex, scroll.LeftTex, scroll.RightTex, scroll.TopTex, scroll.BottomTex)
+    GW.HandleBlizzardRegions(scroll)
+    GW.AddEditBoxBackground(scroll)
     SkinInputScrollText(scroll)
 end
 
 -- the club finder message boxes: a bordered frame around an input scroll frame that keeps its own border art too
-local MESSAGE_FRAME_CORNERS = {"TopLeft", "TopRight", "BottomLeft", "BottomRight"}
-local INPUT_SCROLL_ART = {"TopLeftTex", "TopRightTex", "TopTex", "BottomLeftTex", "BottomRightTex", "BottomTex", "LeftTex", "RightTex", "MiddleTex"}
 local function SkinMessageFrame(frame, scroll)
-    for _, key in ipairs(MESSAGE_FRAME_CORNERS) do
-        frame[key]:Hide()
-    end
-    GW.SkinTextBox(frame.Middle, frame.Left, frame.Right, frame.Top, frame.Bottom)
+    GW.HandleBlizzardRegions(frame)
+    frame.Top:Hide()
+    frame.Bottom:Hide()
+    GW.AddEditBoxBackground(frame, 0)
 
-    for _, key in ipairs(INPUT_SCROLL_ART) do
-        scroll[key]:Hide()
-    end
+    GW.HandleBlizzardRegions(scroll)
     SkinInputScrollText(scroll)
 end
 
@@ -697,7 +685,7 @@ local function SkinEditStreamDialog(dialog)
     GW.SkinSmallWindow(dialog, dialog.TitleLabel, WINDOW_ICON)
 
     SkinDialogLabels({dialog.NameLabel, dialog.DescriptionLabel, dialog.TypeLabel})
-    SkinInputBox(dialog.NameEdit)
+    GW.SkinEditBox(dialog.NameEdit)
     SkinInputScroll(dialog.Description)
 
     dialog.TypeCheckbox:GwSkinCheckButton(false, 15)
@@ -791,7 +779,7 @@ local function SkinGuildMemberDetail(detail)
 
     for _, background in ipairs({detail.NoteBackground, detail.OfficerNoteBackground}) do
         background.NineSlice:Hide()
-        GW.SkinTextBox(nil, nil, nil, nil, nil, 0, 0, false, background)
+        GW.AddEditBoxBackground(background, 0)
     end
 
     detail.CloseButton:GwSkinButton(true)
@@ -843,9 +831,9 @@ local function SkinCommunitiesSettings(dialog)
     GW.SkinSmallWindow(dialog, dialog.DialogLabel, WINDOW_ICON)
 
     SkinDialogLabels({dialog.NameLabel, dialog.ShortNameLabel, dialog.DescriptionLabel, dialog.MessageOfTheDayLabel})
-    SkinInputBox(dialog.NameEdit)
-    SkinInputBox(dialog.ShortNameEdit)
-    SkinInputBox(dialog.MinIlvlOnly.EditBox)
+    GW.SkinEditBox(dialog.NameEdit)
+    GW.SkinEditBox(dialog.ShortNameEdit)
+    GW.SkinEditBox(dialog.MinIlvlOnly.EditBox, {compact = true})
     SkinInputScroll(dialog.Description)
     SkinInputScroll(dialog.MessageOfTheDay)
 
@@ -875,7 +863,7 @@ local function SkinRecruitmentDialog(dialog)
     for _, key in ipairs({"ShouldListClub", "MaxLevelOnly", "MinIlvlOnly"}) do
         SkinSettingsCheckbox(dialog[key].Button, dialog[key].Label)
     end
-    SkinInputBox(dialog.MinIlvlOnly.EditBox)
+    GW.SkinEditBox(dialog.MinIlvlOnly.EditBox, {compact = true})
     SkinClubFinderPostingDropdowns(dialog)
 
     local messageFrame = dialog.RecruitmentMessageFrame
@@ -1098,8 +1086,7 @@ local function SkinFinderOptions(options)
     -- blizzards box is 35 high for its art, ours would reach into the header
     local searchBox = options.SearchBox
     searchBox:SetHeight(SEARCH_BOX_HEIGHT)
-    GW.SkinTextBox(searchBox.Middle, searchBox.Left, searchBox.Right)
-    searchBox.Instructions:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    GW.SkinEditBox(searchBox, {search = true})
     -- blizzard hangs the button 15 into its tall box, under ours it gets a gap and the box width
     options.Search:ClearAllPoints()
     options.Search:SetPoint("TOPLEFT", searchBox, "BOTTOMLEFT", 0, -SEARCH_BUTTON_GAP)

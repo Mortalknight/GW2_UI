@@ -359,6 +359,7 @@ L["Raid Auras"] = true
 L["Edit which buffs and debuffs are shown."] = true
 L["Ignored Auras"] = true
 L["Invalid spell ID"] = true
+L["Spell ID"] = true
 L["Custom Spell ID..."] = true
 L["Enter a spell ID for the %s indicator:"] = true
 L["Aura Sorting"] = true

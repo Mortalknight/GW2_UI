@@ -155,7 +155,7 @@ local function SkinCategoryList(list)
     list.tex:SetPoint("BOTTOMRIGHT", list, "BOTTOMRIGHT", -15, 0)
 
     local search = list.SearchBox
-    GW.SkinTextBox(search.Middle, search.Left, search.Right)
+    GW.SkinEditBox(search, {search = true})
 
     local dropdown = list.FilterDropdown
     dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 80)
@@ -350,7 +350,7 @@ local function SkinTreePage(page)
     summary.Shield:ClearAllPoints()
     summary.Shield:SetPoint("RIGHT", summary, "LEFT", -6, 0)
     summary.Shield.Points:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
-    GW.SkinTextBox(panel.SearchBox.Middle, panel.SearchBox.Left, panel.SearchBox.Right)
+    GW.SkinEditBox(panel.SearchBox, {search = true})
     panel.SearchBox:SetHeight(CONTROL_HEIGHT)
     panel.ApplyButton:GwSkinButton(false, true)
     SkinIconButton(panel.ResetButton)

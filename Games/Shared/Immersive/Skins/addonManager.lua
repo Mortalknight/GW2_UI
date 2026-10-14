@@ -64,7 +64,7 @@ local function LoadAddonListSkin()
         end
     end
 
-    GW.SkinTextBox(AddonList.SearchBox.Middle, AddonList.SearchBox.Left, AddonList.SearchBox.Right)
+    GW.SkinEditBox(AddonList.SearchBox, {search = true})
     AddonList.SearchBox:ClearAllPoints()
     AddonList.SearchBox:SetPoint("TOPRIGHT", AddonList, "TOPRIGHT", -10, -38)
 

@@ -252,10 +252,10 @@ local function SkinRetailStable()
 
     local filterBar = list.FilterBar
     -- our dropdown is wider than blizzards, both share the width of the list
-    GW.SkinBagSearchBox(filterBar.SearchBox)
+    GW.SkinEditBox(filterBar.SearchBox, {search = true})
     filterBar.SearchBox:SetWidth(160)
     filterBar.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 100)
-    filterBar.FilterDropdown:SetHeight(filterBar.SearchBox.Middle:GetHeight())
+    filterBar.FilterDropdown:SetHeight(filterBar.SearchBox:GetHeight())
 
     local activeList = frame.ActivePetList
     activeList.ActivePetListBG:SetAlpha(0)

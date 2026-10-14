@@ -111,7 +111,7 @@
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-4" y="0"></Anchor>
                 </Anchors>
             </EventFrame>
-            <EditBox parentKey="search" inherits="GwSearchBoxTemplate" autoFocus="false">
+            <EditBox parentKey="search" inherits="GwEditBoxTemplate">
                 <Size y="22"/>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPLEFT" x="3" y="6"/>

@@ -1886,6 +1886,7 @@ local function SettingsInitOptionWidget(of, v, panel)
 
         of:RefreshList()
     elseif v.optionType == "spellInput" then
+        GW.SkinEditBox(of.inputFrame.input, {compact = true, placeholder = L["Spell ID"]})
         of.inputFrame.input:SetNumeric(true)
         of.inputFrame.input:SetMaxLetters(10)
         of.spellPreview.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
@@ -1956,6 +1957,7 @@ local function SettingsInitOptionWidget(of, v, panel)
         end
 
         of.okButton:GwSkinButton(false, true)
+        GW.SkinEditBox(of.inputFrame.input, {placeholder = L["Spell ID"]})
         of.inputFrame.input:SetNumeric(true)
         of.inputFrame.input:SetScript("OnEnterPressed", function()
             TryAddSpellToList(of, v)
@@ -1972,7 +1974,7 @@ local function SettingsInitOptionWidget(of, v, panel)
 
         RefreshSpellListOption(of, v)
     elseif v.optionType == "slider" then
-        of.inputFrame.input:SetJustifyH("CENTER")
+        GW.SkinEditBox(of.inputFrame.input, {compact = true})
         of.inputFrame.input:SetTextColor(1, 0.93, 0.73)
 
         GW.AddSliderValueFill(of.slider)
@@ -2027,6 +2029,7 @@ local function SettingsInitOptionWidget(of, v, panel)
             end
         end)
     elseif v.optionType == "text" then
+        GW.SkinEditBox(of.inputFrame.input)
         of.inputFrame.input:SetText(of.get() or "")
         of.inputFrame.input:SetScript("OnEnterPressed", function(self)
             if ShouldHandleIncompatibility(v) then

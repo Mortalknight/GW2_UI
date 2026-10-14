@@ -14,12 +14,12 @@
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.$parent.tabContent.menu" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Frames>
-                    <Frame parentKey="search" inherits="GwStandardInputField">
+                    <EditBox parentKey="search" inherits="GwEditBoxTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" x="10" y="-5"></Anchor>
                             <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-10" y="-30"></Anchor>
                         </Anchors>
-                    </Frame>
+                    </EditBox>
                     <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.search" relativePoint="BOTTOMLEFT" x="-10" y="-10"></Anchor>

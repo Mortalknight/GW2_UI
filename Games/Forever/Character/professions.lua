@@ -534,12 +534,7 @@ local function SkinCraftingPage(page)
     GW.AddDetailsBackground(list.ScrollBox)
 
     local search = list.SearchBox
-    GW.SkinTextBox(search.Middle, search.Left, search.Right)
-    for _, key in ipairs({"TopLeftTex", "TopTex", "TopRightTex", "BottomLeftTex", "BottomTex", "BottomRightTex"}) do
-        if search[key] then
-            search[key]:Hide()
-        end
-    end
+    GW.SkinEditBox(search, {search = true})
     -- blizzard hangs the search box on the filter, the filter follows the search box here
     search:ClearAllPoints()
     search:SetPoint("TOPLEFT", list, "TOPLEFT", 4, -2)
@@ -573,7 +568,7 @@ local function SkinCraftingPage(page)
     end
     local spinner = page.CreateMultipleInputBox
     spinner:GwStripTextures()
-    GW.SkinTextBox(spinner.Middle, spinner.Left, spinner.Right, nil, nil, 10)
+    GW.SkinEditBox(spinner, {compact = true})
     GW.HandleNextPrevButton(spinner.DecrementButton, "left")
     GW.HandleNextPrevButton(spinner.IncrementButton, "right")
 

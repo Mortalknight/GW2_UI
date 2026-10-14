@@ -293,6 +293,7 @@ L["If enabled, the above settings will apply to buffs you have, instead of buffs
 L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."] = "Wenn aktiviert, zeigt dies sowohl die stilisierten Gruppenfenster als auch das Gruppen-Raster an. Diese Einstellung hat keinen Effekt, wenn '%s' aktiviert ist."
 L["Ignored Auras"] = "Ignorierte Auren"
 L["Invalid spell ID"] = "Ungültige Zauber-ID"
+L["Spell ID"] = "Zauber-ID"
 L["Custom Spell ID..."] = "Eigene Zauber-ID..."
 L["Enter a spell ID for the %s indicator:"] = "Zauber-ID für den Indikator %s eingeben:"
 L["Aura Sorting"] = "Auren-Sortierung"

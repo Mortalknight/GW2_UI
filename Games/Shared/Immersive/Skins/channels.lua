@@ -109,10 +109,8 @@ local function SkinCreateChannelPopup()
     title:ClearAllPoints()
     title:SetPoint("TOP", popup, "TOP", 0, -10)
 
-    -- our box starts at the text, blizzards art hangs out to the left, so the text needs the room
     for _, editBox in ipairs({popup.Name, popup.Password}) do
-        GW.SkinTextBox(editBox.Middle, editBox.Left, editBox.Right)
-        editBox:SetTextInsets(6, 6, 0, 0)
+        GW.SkinEditBox(editBox)
         editBox.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
     popup.OKButton:GwSkinButton(false, true)

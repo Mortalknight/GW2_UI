@@ -138,7 +138,7 @@ local function takeOverBlizzardsGlypheFrame(tabContainer)
     GlyphFrame.FilterDropdown:ClearAllPoints()
     GlyphFrame.FilterDropdown:SetPoint("TOPLEFT", GlyphFrameSearchBox, "BOTTOMLEFT", -5, -3)
 
-    GW.SkinTextBox(GlyphFrameSearchBoxMiddle, GlyphFrameSearchBoxLeft, GlyphFrameSearchBoxRight)
+    GW.SkinEditBox(GlyphFrameSearchBox, {search = true})
 end
 
 local function LoadGlyphes(tabContainer)

@@ -74,26 +74,12 @@
             </Layer>
         </Layers>
         <Frames>
-            <EditBox parentKey="groupInviteBox" autoFocus="false">
-                <Size x="110" y="20"></Size>
+            <EditBox parentKey="groupInviteBox" inherits="GwEditBoxTemplate">
+                <Size x="110" y="24"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-10"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-8"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-5" y="-8"></Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
-
-                            <Anchors>
-                                <Anchor point="TOPLEFT" x="-5" y="3"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" x="5" y="-3"></Anchor>
-                            </Anchors>
-                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
-                        </Texture>
-
-                    </Layer>
-                </Layers>
-                <FontString inherits="ChatFontNormal" />
             </EditBox>
             <Button parentKey="inviteToParty" inherits="GwStandardButton" text="INVITE">
                 <Size x="80" y="20" />
@@ -172,7 +158,7 @@
                             </Layer>
                         </Layers>
                     </Button>
-                    <Frame parentKey="inputCountdownFrame" inherits="GwStandardInputField" justifyH="CENTER">
+                    <Frame parentKey="inputCountdownFrame" inherits="GwStandardInputField">
                         <Size x="23" y="20"/>
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.countdown" relativePoint="RIGHT" x="2" y="0"/>

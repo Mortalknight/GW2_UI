@@ -68,7 +68,9 @@ local function SkinWindow(regions, headerText)
         textBackground:GwStripTextures()
     end
 
-    local detailBackgrounds = {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox, MacroFrameTextBackground}
+    -- the macro text is a text field like our others
+    GW.AddEditBoxBackground(textBackground, 0)
+    local detailBackgrounds = {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox}
     GW.CreateFrameHeaderWithBody(MacroFrame, headerText, WINDOW_ICON, detailBackgrounds, nil, false, true)
 
     if GW.isModern then

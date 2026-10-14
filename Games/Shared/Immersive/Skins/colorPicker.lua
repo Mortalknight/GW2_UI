@@ -109,10 +109,7 @@ local function CreateInputBox(parent, label, width)
     local box = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
     box:SetSize(width, 22)
     box:SetAutoFocus(false)
-    box:SetJustifyH("CENTER")
-    box:SetFontObject("GameFontNormalSmall")
-    box:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    GW.SkinTextBox(box.Middle, box.Left, box.Right)
+    GW.SkinEditBox(box, {compact = true})
 
     box.label = box:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     box.label:SetPoint("RIGHT", box, "LEFT", -6, 0)
@@ -221,7 +218,7 @@ local function LayoutModern(frame, tools)
     parts.hexBox.Hash:SetFontObject("GameFontNormalSmall")
     parts.hexBox:SetFontObject("GameFontNormalSmall")
     parts.hexBox:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    GW.SkinTextBox(parts.hexBox.Middle, parts.hexBox.Left, parts.hexBox.Right)
+    GW.AddEditBoxBackground(parts.hexBox, 0)
 end
 
 -- classic: the swatch and slider fill the right side, tools go into a row below the wheel

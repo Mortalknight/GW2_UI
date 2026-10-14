@@ -62,7 +62,7 @@ local function SkinDialog()
             end
             if frame.editBox and not frame.editBox.gwSkinned then
                 frame.editBox.gwSkinned = true
-                GW.SkinTextBox(frame.editBox.Middle, frame.editBox.Left, frame.editBox.Right, nil, nil, 5, 5)
+                GW.SkinEditBox(frame.editBox)
             end
         end
     end
@@ -111,9 +111,9 @@ local function SkinAuctionator()
     GW.AddDetailsBackground(AuctionatorConfigFrame)
     AuctionatorConfigFrame.OptionsButton:GwSkinButton(false, true)
     AuctionatorConfigFrame.ScanButton:GwSkinButton(false, true)
-    GW.SkinTextBox(AuctionatorConfigFrame.ContributeLink.InputBox.Middle, AuctionatorConfigFrame.ContributeLink.InputBox.Left, AuctionatorConfigFrame.ContributeLink.InputBox.Right)
-    GW.SkinTextBox(AuctionatorConfigFrame.DiscordLink.InputBox.Middle, AuctionatorConfigFrame.DiscordLink.InputBox.Left, AuctionatorConfigFrame.DiscordLink.InputBox.Right)
-    GW.SkinTextBox(AuctionatorConfigFrame.BugReportLink.InputBox.Middle, AuctionatorConfigFrame.BugReportLink.InputBox.Left, AuctionatorConfigFrame.BugReportLink.InputBox.Right)
+    GW.SkinEditBox(AuctionatorConfigFrame.ContributeLink.InputBox)
+    GW.SkinEditBox(AuctionatorConfigFrame.DiscordLink.InputBox)
+    GW.SkinEditBox(AuctionatorConfigFrame.BugReportLink.InputBox)
     AuctionatorConfigFrame.AuthorHeading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     AuctionatorConfigFrame.ContributorsHeading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     AuctionatorConfigFrame.ContributeHeading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -129,7 +129,7 @@ local function SkinAuctionator()
     AuctionatorCancellingFrame.UndercutScanContainer.StartScanButton:GwSkinButton(false, true)
     AuctionatorCancellingFrame.UndercutScanContainer.CancelNextButton:GwSkinButton(false, true)
     AuctionatorCancelUndercutButton:GwSkinButton(false, true)
-    GW.SkinTextBox(AuctionatorCancellingFrame.SearchFilter.Middle, AuctionatorCancellingFrame.SearchFilter.Left, AuctionatorCancellingFrame.SearchFilter.Right)
+    GW.SkinEditBox(AuctionatorCancellingFrame.SearchFilter, {search = true})
     GW.HandleSrollBoxHeaders(AuctionatorCancellingFrame.ResultsListing)
 
     GW.HandleTrimScrollBar(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar)
@@ -198,10 +198,11 @@ local function SkinAuctionator()
     selling.SaleItemFrame.Deposit:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     selling.SaleItemFrame.Total:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
-    GW.SkinTextBox(selling.SaleItemFrame.Quantity.InputBox.Middle, selling.SaleItemFrame.Quantity.InputBox.Left, selling.SaleItemFrame.Quantity.InputBox.Right)
-    GW.SkinTextBox(selling.SaleItemFrame.Price.MoneyInput.GoldBox.Middle, selling.SaleItemFrame.Price.MoneyInput.GoldBox.Left, selling.SaleItemFrame.Price.MoneyInput.GoldBox.Right)
-    GW.SkinTextBox(selling.SaleItemFrame.Price.MoneyInput.SilverBox.Middle, selling.SaleItemFrame.Price.MoneyInput.SilverBox.Left, selling.SaleItemFrame.Price.MoneyInput.SilverBox.Right)
-    GW.SkinTextBox(selling.SaleItemFrame.Price.MoneyInput.CopperBox.Middle, selling.SaleItemFrame.Price.MoneyInput.CopperBox.Left, selling.SaleItemFrame.Price.MoneyInput.CopperBox.Right)
+    GW.SkinEditBox(selling.SaleItemFrame.Quantity.InputBox, {compact = true})
+    local moneyInput = selling.SaleItemFrame.Price.MoneyInput
+    for _, box in ipairs({moneyInput.GoldBox, moneyInput.SilverBox, moneyInput.CopperBox}) do
+        GW.AddEditBoxBackground(box, 0)
+    end
 
     for _, child in next, {selling.AuctionatorSaleItem:GetChildren()} do
         if child.iconAtlas == "UI-RefreshButton" then
@@ -361,8 +362,8 @@ local function SkinAuctionator()
         end
     end
 
-    GW.SkinTextBox(list.SearchOptions.SearchString.Middle, list.SearchOptions.SearchString.Left, list.SearchOptions.SearchString.Right)
-    GW.SkinTextBox(buyingFrame.DetailsContainer.Quantity.Middle, buyingFrame.DetailsContainer.Quantity.Left, buyingFrame.DetailsContainer.Quantity.Right)
+    GW.SkinEditBox(list.SearchOptions.SearchString, {search = true})
+    GW.SkinEditBox(buyingFrame.DetailsContainer.Quantity, {compact = true})
 
     GW.HandleSrollBoxHeaders(list.ResultsListing)
     GW.HandleSrollBoxHeaders(buyingFrame.ResultsListing)
@@ -453,7 +454,7 @@ local function SkinAuctionator()
 
     extendedSearch.SearchContainer.IsExact:GwSkinCheckButton()
 
-    for _, textarea in next, {
+    for _, box in next, {
         extendedSearch.LevelRange.MaxBox,
         extendedSearch.LevelRange.MinBox,
         extendedSearch.ItemLevelRange.MaxBox,
@@ -462,11 +463,11 @@ local function SkinAuctionator()
         extendedSearch.PriceRange.MinBox,
         extendedSearch.CraftedLevelRange.MaxBox,
         extendedSearch.CraftedLevelRange.MinBox,
-        extendedSearch.SearchContainer.SearchString,
         extendedSearch.PurchaseQuantity.InputBox
     } do
-        GW.SkinTextBox(textarea.Middle, textarea.Left, textarea.Right)
+        GW.SkinEditBox(box, {compact = true})
     end
+    GW.SkinEditBox(extendedSearch.SearchContainer.SearchString, {search = true})
 
     extendedSearch.FilterKeySelector.DropDown:GwHandleDropDownBox(nil, nil, nil, 280)
     extendedSearch.QualityContainer.DropDown.DropDown:GwHandleDropDownBox()
