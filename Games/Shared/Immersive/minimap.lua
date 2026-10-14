@@ -175,10 +175,12 @@ local function MapCoordsMiniMap_OnClick(self, button)
 end
 
 
+-- the fade shows its frame, a detail that is switched off (like the coordinates) stays hidden
 local function hoverMiniMapIn()
     for k, v in pairs(GW.settings.minimap.alwaysShowHoverDetails) do
-        if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
-            UIFrameFadeIn(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 1)
+        local frame = v == false and minimapDetails[k] and _G[minimapDetails[k]]
+        if frame and frame:IsShown() then
+            UIFrameFadeIn(frame, 0.2, frame:GetAlpha(), 1)
         end
     end
 end

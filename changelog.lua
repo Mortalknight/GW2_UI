@@ -18,6 +18,7 @@ addChange("12.0.1", {
     {GW.Enum.ChangelogType.bug, [=[Classic and TBC: the opacity of the small world map is applied right after login]=]},
     {GW.Enum.ChangelogType.bug, [=[Target and focus frames update the group leader crown right away when the lead changes]=]},
     {GW.Enum.ChangelogType.bug, [=[Delve boss times show the tier in the chat and on the boss times page]=]},
+    {GW.Enum.ChangelogType.bug, [=[Minimap: switched off coordinates no longer show up when hovering the minimap]=]},
     {GW.Enum.ChangelogType.bug, [=[Tooltips of players in a guild with "level" in its name show the level line correctly]=]},
     {GW.Enum.ChangelogType.change, [=[English texts reviewed: consistent capitalization of option names, punctuation, spelling and wording in the settings]=]},
     {GW.Enum.ChangelogType.change, [=[Escape closes the hero panel together with the other open windows, in combat it still closes the hero panel first]=]},
