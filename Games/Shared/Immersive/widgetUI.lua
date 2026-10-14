@@ -98,13 +98,13 @@ end
 local function WidgetUISetup()
     if IsElvUIHandlingWidgets() then return end
 
-    AddMover(UIWidgetTopCenterContainerFrame, "TopWidget", "widgets.topCenter", { 58, 58 })
-    AddMover(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "widgets.belowMinimapContainer", { 150, 30 })
+    AddMover(UIWidgetTopCenterContainerFrame, "Top Widget", "widgets.topCenter", { 58, 58 })
+    AddMover(UIWidgetBelowMinimapContainerFrame, "Below Minimap Widget", "widgets.belowMinimapContainer", { 150, 30 })
     AddMover(TicketStatusFrame, "GM Ticket Frame", "widgets.ticketStatus")
     if GW.Retail then
-        AddMover(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "widgets.powerBarContainer", { 100, 20 })
-        AddMover(EventToastManagerFrame, "EventToastWidget", "widgets.eventToast", { 200, 20 })
-        AddMover(BossBanner, "BossBannerWidget", "widgets.bossBanner", { 200, 20 })
+        AddMover(UIWidgetPowerBarContainerFrame, "Power Bar Container", "widgets.powerBarContainer", { 100, 20 })
+        AddMover(EventToastManagerFrame, "Event Toast Widget", "widgets.eventToast", { 200, 20 })
+        AddMover(BossBanner, "Boss Banner Widget", "widgets.bossBanner", { 200, 20 })
     end
 
     hooksecurefunc(UIWidgetTemplateStatusBarMixin, "Setup", SkinStatusBarWidget)

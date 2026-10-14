@@ -47,21 +47,21 @@ local SECTIONS = {
     {
         title = "AddOn Info",
         rows = {
-            { "GW2 UI version", function() return GW.GetVersionString() end },
-            { "Other AddOns enabled", function() local on = AreOtherAddOnsEnabled() return YesNo(on), on end },
-            { "Paste AddOn enabled", function() local on = CheckForPasteAddon() return YesNo(on), on end },
-            { "Recommended scale", function() return format("%.2f", GW.getBestPixelScale()) end },
-            { "UI scale", function() return format("%.2f", GW.scale), GW.scale ~= GW.getBestPixelScale() end },
+            { "GW2 UI Version", function() return GW.GetVersionString() end },
+            { "Other AddOns Enabled", function() local on = AreOtherAddOnsEnabled() return YesNo(on), on end },
+            { "Paste AddOn Enabled", function() local on = CheckForPasteAddon() return YesNo(on), on end },
+            { "Recommended Scale", function() return format("%.2f", GW.getBestPixelScale()) end },
+            { "UI Scale", function() return format("%.2f", GW.scale), GW.scale ~= GW.getBestPixelScale() end },
         },
     },
     {
         title = "WoW Info",
         rows = {
-            { "WoW version", function() return format("%s (build %s)", GW.wowpatch, GW.wowbuild) end },
-            { "Client language", function() return GW.mylocal end },
-            { "Display mode", GetDisplayMode },
+            { "WoW Version", function() return format("%s (build %s)", GW.wowpatch, GW.wowbuild) end },
+            { "Client Language", function() return GW.mylocal end },
+            { "Display Mode", GetDisplayMode },
             { "Resolution", function() return GW.resolution end },
-            { "Mac client", function() return YesNo(IsMacClient()) end },
+            { "Mac Client", function() return YesNo(IsMacClient()) end },
         },
     },
     {
