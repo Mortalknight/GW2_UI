@@ -15,8 +15,8 @@ local CREDITS = {
     OWNER = {"Aethelwulf"},
     DEVELOPER = {"Glow", "Nezroy", "Shrugal", "Shoodox"},
     CONTRIBUTION = {"Hatdragon", "Zoelie"},
-    LOCALIZATION = {"aSlightDrizzle", "Calcifer", "Murak", "AxelVader", "Crisll", "Dololo", "Kitto", "Pyrefox", "RickCiotti", "Throli", "Zelrog"},
-    TESTING = {"Zoelie", "Crohnleuchter", "KYZ", "Ultrachocobo", "Belazor", "Zerid"}
+    LOCALIZATION = {"aSlightDrizzle", "Glow", "Calcifer", "Murak", "AxelVader", "Crisll", "Dololo", "Kitto", "Pyrefox", "RickCiotti", "Throli", "Zelrog"},
+    TESTING = {"Zoelie", "Crohnleuchter", "KYZ", "Ultrachocobo", "Belazor"}
 }
 
 local function SortAndInsertCredits()

@@ -2,9 +2,9 @@
 local GW = select(2, ...)
 local L = GW.L
 
--- boss times per character: mythic+ splits since the key started, fight times in dungeons and raids,
--- each compared to the best time of that boss on this instance, difficulty and key level
-local SETTING_BY_KIND = {mplus = "mythicPlus", party = "dungeon", raid = "raid"}
+-- boss times per character: mythic+ splits since the key started, fight times in dungeons, raids and delves
+-- and the time of a whole delve, each compared to the best time on this instance, difficulty, key level or tier
+local SETTING_BY_KIND = {mplus = "mythicPlus", party = "dungeon", raid = "raid", delve = "delve"}
 local COLOR_TIME = GW.Colors.SkinColors.Disabled
 local COLOR_FASTER = GW.Colors.SkinColors.Positive
 local COLOR_SLOWER = GW.Colors.SkinColors.Negative
@@ -53,6 +53,13 @@ local function GetRunKey(instanceMapID)
     if run.kind == "mplus" and run.instanceMapID == instanceMapID then
         return run.key, run.kind, run.difficulty
     end
+    -- every tier of a delve has its own times, blizzard names the tier for us
+    if GW.Retail and C_DelvesUI.HasActiveDelve() and not C_DelvesUI.IsInLair() then
+        local tierInfo = C_DelvesUI.GetActiveDelveTier()
+        if tierInfo then
+            return "delve:" .. instanceMapID .. ":" .. tierInfo.tier, "delve", tierInfo.tierDescription
+        end
+    end
     local _, instanceType, difficultyID = GetInstanceInfo()
     if instanceType == "party" or instanceType == "raid" then
         return instanceType .. ":" .. instanceMapID .. ":" .. difficultyID, instanceType, GetDifficultyInfo(difficultyID)
@@ -61,7 +68,7 @@ end
 
 -- the current run lives in the character data, so a reload keeps its times and a running fight
 local function NewRun(key, kind, difficulty, instanceMapID)
-    run = {key = key, kind = kind, difficulty = difficulty, instanceMapID = instanceMapID, times = {}, fightStart = {}}
+    run = {key = key, kind = kind, difficulty = difficulty, instanceMapID = instanceMapID, times = {}, fightStart = {}, startTime = GetTime()}
     GW.private.encounterRun = run
 end
 
@@ -104,6 +111,8 @@ local function StoreTime(id, seconds, name)
         data = {best = data, kills = 0}
         store[id] = data
     end
+    -- the delve tier can only be asked inside, the page reads it from here
+    store.label = run.kind == "delve" and run.difficulty or store.label
     data.name = name or data.name
     data.firstDate = data.firstDate or time()
     local previousBest = data.best
@@ -197,6 +206,12 @@ frame:SetScript("OnEvent", function(_, event, ...)
         end
     elseif event == "SCENARIO_CRITERIA_UPDATE" then
         RecordForces()
+    elseif event == "SCENARIO_COMPLETED" then
+        -- GetTime keeps running through a reload as well, the whole delve since it was entered
+        if run.kind == "delve" and run.startTime and not run.times.total then
+            local name = GetRealZoneText(run.instanceMapID) or ""
+            Record("total", GetTime() - run.startTime, name .. " " .. (run.difficulty or ""), "total")
+        end
     elseif event == "CHALLENGE_MODE_COMPLETED" then
         local info = C_ChallengeMode.GetChallengeCompletionInfo()
         if info and info.time and info.time > 0 and not info.practiceRun then
@@ -208,6 +223,9 @@ end)
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("ENCOUNTER_START")
 frame:RegisterEvent("ENCOUNTER_END")
+if GW.Retail then
+    frame:RegisterEvent("SCENARIO_COMPLETED")
+end
 if C_EventUtils.IsEventValid("CHALLENGE_MODE_COMPLETED") then
     frame:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
     frame:RegisterEvent("CHALLENGE_MODE_COMPLETED")

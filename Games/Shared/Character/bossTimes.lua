@@ -5,7 +5,7 @@ local L = GW.L
 -- boss times page in the currency tab, filled from GW.private.encounterTimes (Objectives/encounterTimes.lua)
 local ARROW_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png"
 local HEADER_HEIGHT, ROW_HEIGHT = 32, 24
-local KIND_ORDER = {mplus = 1, raid = 2, party = 3}
+local KIND_ORDER = {mplus = 1, raid = 2, party = 3, delve = 4}
 local expanded = {}
 local page
 
@@ -14,9 +14,12 @@ local function FormatDate(timestamp)
     return FormatShortDate(d.day, d.month, d.year % 100)
 end
 
-local function GetGroupInfo(key)
+local function GetGroupInfo(key, store)
     local kind, mapID, value = strsplit(":", key)
     mapID, value = tonumber(mapID), tonumber(value)
+    if kind == "delve" then
+        return kind, GetRealZoneText(mapID) or UNKNOWN, store.label or tostring(value), value
+    end
     if kind == "mplus" then
         local difficulty = value > 0 and "+" .. value or GetDifficultyInfo(DifficultyUtil.ID.DungeonChallenge) or ""
         return kind, C_ChallengeMode.GetMapUIInfo(mapID) or UNKNOWN, difficulty, value
@@ -51,7 +54,7 @@ end
 local function BuildDataProvider(search, filter)
     local groups = {}
     for key, store in pairs(GW.private.encounterTimes or {}) do
-        local kind, name, difficulty, value = GetGroupInfo(key)
+        local kind, name, difficulty, value = GetGroupInfo(key, store)
         if KIND_ORDER[kind] and (not filter or filter == kind) then
             local group = {key = key, kind = kind, name = name, difficulty = difficulty, value = value or 0, bosses = {}}
             local groupMatches = Matches(name .. " " .. difficulty, search)
@@ -187,6 +190,9 @@ local function CreateFilterTabs()
     -- retail has keystones, mists its challenge modes; the other modern clients know the api without either
     if GW.Retail or GW.Mists then
         tinsert(filters, 2, {"mplus", GW.Retail and PLAYER_DIFFICULTY_MYTHIC_PLUS or CHALLENGES})
+    end
+    if GW.Retail then
+        tinsert(filters, {"delve", L["Delves"]})
     end
     for i = #filters, 1, -1 do
         local tab = CreateFrame("Button", nil, page)

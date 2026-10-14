@@ -1447,6 +1447,7 @@ GW.globalDefault = {
                 mythicPlus = true,
                 dungeon = true,
                 raid = true,
+                delve = true,
                 chat = false,
             },
             enabled = true,
