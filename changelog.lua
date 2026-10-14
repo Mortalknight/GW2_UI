@@ -19,6 +19,7 @@ addChange("12.0.1", {
     {GW.Enum.ChangelogType.bug, [=[Target and focus frames update the group leader crown right away when the lead changes]=]},
     {GW.Enum.ChangelogType.bug, [=[Delve boss times show the tier in the chat and on the boss times page]=]},
     {GW.Enum.ChangelogType.bug, [=[Tooltips of players in a guild with "level" in its name show the level line correctly]=]},
+    {GW.Enum.ChangelogType.change, [=[Escape closes the hero panel together with the other open windows, in combat it still closes the hero panel first]=]},
     {GW.Enum.ChangelogType.change, [=[Track reputation automatically: losses no longer switch the bar, a faction that keeps gaining stays tracked, otherwise the biggest gain is shown]=]},
 })
 

@@ -134,16 +134,37 @@ local mover_OnDragStop = [=[
     self:CallMethod("savePosition", x, y)
 ]=]
 
-local charSecure_OnShow = [=[
+-- escape takes over only in combat while the window is open; outside of combat blizzards escape closes it together
+-- with the other windows through UISpecialFrames
+local escapeSecure_Update = [=[
+    self:ClearBindings()
     local keyEsc = GetBindingKey("TOGGLEGAMEMENU")
-    if keyEsc ~= nil then
+    if keyEsc and self:IsVisible() and self:GetAttribute("state-combat") == "1" then
         self:SetBinding(false, keyEsc, "CLICK GwCharacterWindowClick:Close")
     end
 ]=]
 
-local charSecure_OnHide = [=[
-    self:ClearBindings()
-]=]
+local function SetupEscape(frame)
+    local secureEscape = CreateFrame("Frame", nil, frame, "SecureHandlerStateTemplate")
+    secureEscape:SetAttribute("_onstate-combat", escapeSecure_Update)
+    secureEscape:WrapScript(secureEscape, "OnShow", escapeSecure_Update)
+    secureEscape:WrapScript(secureEscape, "OnHide", escapeSecure_Update)
+    RegisterStateDriver(secureEscape, "combat", "[combat] 1; 0")
+
+    local escape = CreateFrame("Frame", "GwCharacterWindowEscape", UIParent)
+    escape:Hide()
+    escape:SetScript("OnHide", function()
+        if frame:IsShown() and not InCombatLockdown() then
+            frame:SetAttribute("windowpanelopen", nil)
+        end
+    end)
+    tinsert(UISpecialFrames, "GwCharacterWindowEscape")
+    frame:HookScript("OnShow", function() escape:Show() end)
+    frame:HookScript("OnHide", function() escape:Hide() end)
+    -- a close of all windows in combat cannot close the window, the next escape after combat should
+    escape:SetScript("OnEvent", function() escape:SetShown(frame:IsShown()) end)
+    escape:RegisterEvent("PLAYER_REGEN_ENABLED")
+end
 
 local charCloseSecure_OnClick = [=[
     self:GetParent():SetAttribute("windowpanelopen", nil)
@@ -236,8 +257,7 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
     GW.SetupCharacterPanelSwitchAnimation(frame)
     GW.SetupCharacterWindowRevealAnimation(frame)
 
-    frame:WrapScript(frame, "OnShow", charSecure_OnShow)
-    frame:WrapScript(frame, "OnHide", charSecure_OnHide)
+    SetupEscape(frame)
     frame.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 
     local pos = GW.settings.windows.character.pos
