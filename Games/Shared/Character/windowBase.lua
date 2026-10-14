@@ -139,7 +139,7 @@ local mover_OnDragStop = [=[
 local escapeSecure_Update = [=[
     self:ClearBindings()
     local keyEsc = GetBindingKey("TOGGLEGAMEMENU")
-    if keyEsc and self:IsVisible() and self:GetAttribute("state-combat") == "1" then
+    if keyEsc and self:IsVisible() and PlayerInCombat() then
         self:SetBinding(false, keyEsc, "CLICK GwCharacterWindowClick:Close")
     end
 ]=]
@@ -149,7 +149,7 @@ local function SetupEscape(frame)
     secureEscape:SetAttribute("_onstate-combat", escapeSecure_Update)
     secureEscape:WrapScript(secureEscape, "OnShow", escapeSecure_Update)
     secureEscape:WrapScript(secureEscape, "OnHide", escapeSecure_Update)
-    RegisterStateDriver(secureEscape, "combat", "[combat] 1; 0")
+    RegisterStateDriver(secureEscape, "combat", "[combat] combat; nocombat")
 
     local escape = CreateFrame("Frame", "GwCharacterWindowEscape", UIParent)
     escape:Hide()
