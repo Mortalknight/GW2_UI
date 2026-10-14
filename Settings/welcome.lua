@@ -25,7 +25,7 @@ end
 
 local function settings_OnClick(self)
     local t = self.target
-    self:GetParent():Hide()
+    wpanel:Hide()
     t:Show()
     UIFrameFadeIn(t, 0.2, 0, 1)
 end
@@ -866,7 +866,7 @@ local function CreateLandingFrame()
     landingFrame.close:SetHeight(24)
     landingFrame.close:SetPoint("BOTTOMRIGHT", landingFrame, "BOTTOMRIGHT", -10, 4)
     landingFrame.close:SetText(CLOSE)
-    landingFrame.close:SetScript("OnClick", GW.Parent_Hide)
+    landingFrame.close:SetScript("OnClick", function() wpanel:Hide() end)
 end
 
 local function setDefaultOpenLayout()

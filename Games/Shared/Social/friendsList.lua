@@ -520,7 +520,6 @@ function GW.SkinAddFriendFrame()
         GW.SkinHelpIconButton(AddFriendEntryFrameInfoButton, 24)
     end
     if AddFriendInfoFrame then
-        AddFriendInfoFrame:GwStripTextures()
         AddFriendInfoFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
         SkinCloseButton(AddFriendInfoFrame)
         if AddFriendInfoFrame.OkayButton then
