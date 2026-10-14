@@ -401,6 +401,10 @@ L["Profiles are an easy way to share your settings across characters and realms.
 L["Profit:"] = "Gewinn:"
 L["PvP Indicator"] = "PvP Indikator"
 L["QA Testing by"] = "QS-Tests von"
+L["Lead developer"] = "Hauptentwickler"
+L["Created GW2 UI in 2015, inspired by the interface of Guild Wars 2."] = "Hat GW2 UI 2015 erschaffen, inspiriert von der Oberfläche von Guild Wars 2."
+L["Part of GW2 UI since 2016, lead developer since 2020."] = "Seit 2016 dabei, seit 2020 Hauptentwickler von GW2 UI."
+L["Thank you to everyone who uses GW2 UI, reports bugs and shares ideas."] = "Danke an alle, die GW2 UI nutzen, Fehler melden und Ideen teilen."
 L["Quick Join Messages"] = "Schnellbeitrittsnachrichten"
 L["R"] = true
 L["Raid Auras"] = "Schlachtzugsauren"

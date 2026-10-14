@@ -44,8 +44,9 @@ local function IsRecent(text, now)
     return lastShown[text] ~= nil
 end
 
+-- in combat blizzards queue names can be secret and its own name helper breaks on them
 local function OnQueueUpdate(_, _, guid, numAddedItems)
-    if GW.IsSecretValue(guid) or GW.IsSecretValue(numAddedItems) or not GW.settings.chat.socialLink or not guid or numAddedItems == 0 then
+    if InCombatLockdown() or GW.IsSecretValue(guid) or GW.IsSecretValue(numAddedItems) or not GW.settings.chat.socialLink or not guid or numAddedItems == 0 then
         return
     end
     local text = GetGroupText(guid)

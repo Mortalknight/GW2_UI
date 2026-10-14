@@ -3,39 +3,17 @@ local GW = select(2, ...)
 
 local L = GW.L
 
-local CreditsSection = {
-    GW.Gw2Color .. L["Created by: "]:gsub(":", "")  .. "|r",
-    GW.Gw2Color .. L["Developed by"] .. "|r",
-    GW.Gw2Color .. L["With Contributions by"] .. "|r",
-    GW.Gw2Color .. L["Localised by"] .. "|r",
-    GW.Gw2Color .. L["QA Testing by"] .. "|r",
-}
-
-local CREDITS = {
-    OWNER = {"Aethelwulf"},
-    DEVELOPER = {"Glow", "Nezroy", "Shrugal", "Shoodox"},
-    CONTRIBUTION = {"Hatdragon", "Zoelie"},
-    LOCALIZATION = {"aSlightDrizzle", "Glow", "Calcifer", "Murak", "AxelVader", "Crisll", "Dololo", "Kitto", "Pyrefox", "RickCiotti", "Throli", "Zelrog"},
-    TESTING = {"Zoelie", "Crohnleuchter", "KYZ", "Ultrachocobo", "Belazor"}
-}
-
-local function SortAndInsertCredits()
-    local creditKeys = {"OWNER", "DEVELOPER", "CONTRIBUTION", "LOCALIZATION", "TESTING"}
-    for _, key in ipairs(creditKeys) do
-        local category = CREDITS[key]
-        if category then
-            sort(category)
-            for _, name in ipairs(category) do
-                tinsert(GW.CreditsList, name)
-            end
-        end
-    end
-end
-
-SortAndInsertCredits()
 local welcome_OnClick = function()
     HideUIPanel(GwSettingsWindow)
     GW.ShowWelcomePanel()
+end
+
+local function ShowDiscordPopup()
+    GW.ShowPopup({text = L["Join Discord"],
+        hasEditBox = true,
+        inputText = "https://discord.gg/MZZtRWt",
+        EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+        hideOnEscape = true})
 end
 
 local statusReport_OnClick = function()
@@ -53,10 +31,6 @@ local function getChangeLogIcon(self, tag)
         self:SetTexCoord(0, 0.5, 0.5, 1)
     end
 end
-local function getCreditsIcon(self, type)
-    self:SetTexCoord(0, 1, 0, 1)
-    self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/credits_" .. (type and type:lower() or "") .. ".png")
-end
 
 local CHANGELOG_GROUP_ORDER = {
     GW.Enum.ChangelogType.feature,
@@ -64,7 +38,6 @@ local CHANGELOG_GROUP_ORDER = {
     GW.Enum.ChangelogType.bug
 }
 
-local CREDITS_NAME_COLOR = {0.70, 0.64, 0.54, 1}
 local CHANGELOG_COLLAPSED_VERSIONS = {}
 local CHANGELOG_COLLAPSED_GROUPS = {}
 local CHANGELOG_COLLAPSE_INIT = false
@@ -217,31 +190,6 @@ local function ConvertChangeLogTableToOneTable()
     return table
 end
 
-local function ConvertCreditsTableToOneTable()
-    local table = {}
-    local creditKeys = {"OWNER", "DEVELOPER", "CONTRIBUTION", "LOCALIZATION", "TESTING"}
-
-    for i = 1, #CreditsSection do
-        local contentTable = CREDITS[creditKeys[i]] or {}
-        tinsert(table, {
-            kind = "creditsHeader",
-            name = CreditsSection[i],
-            category = creditKeys[i]
-        })
-
-        for idx = 1, #contentTable, 2 do
-            tinsert(table, {
-                kind = "creditsEntry",
-                leftName = contentTable[idx],
-                rightName = contentTable[idx + 1],
-                category = creditKeys[i]
-            })
-        end
-    end
-
-    return table
-end
-
 local function UpdateScrollBox(self, type)
     local dataProvider = CreateDataProvider()
 
@@ -269,14 +217,6 @@ local function UpdateScrollBox(self, type)
             end
             dataProvider:Insert(line)
         end
-    elseif type == "credits" then
-        self:GetParent().header:SetText(L["Credits"])
-
-        for index, line in ipairs(ConvertCreditsTableToOneTable()) do
-            line.index = index
-            line.type = type
-            dataProvider:Insert(line)
-        end
     end
 
     self:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
@@ -298,7 +238,8 @@ local function UpdateOverviewScrollFx(source)
         end
     end
 
-    if not settingsOverview or not settingsOverview.ScrollBar then
+    -- the credits set the page block height themselves
+    if not settingsOverview or not settingsOverview.ScrollBar or settingsOverview.currentOverviewType == "credits" then
         return
     end
 
@@ -399,6 +340,10 @@ local function ShowChangelog(frame)
     end
     settingsOverview.currentOverviewType = "changelog"
     settingsOverview.search:Show()
+    settingsOverview.credits:Hide()
+    settingsOverview.pageblock:SetHeight(settingsOverview.basePageBlockHeight)
+    frame:Show()
+    settingsOverview.ScrollBar:Show()
     UpdateScrollBox(frame, "changelog")
     settingsOverview.ScrollBar:ScrollToBegin();
     UpdateOverviewScrollFx(frame)
@@ -411,9 +356,16 @@ local function ShowCredits(frame)
     end
     settingsOverview.currentOverviewType = "credits"
     settingsOverview.search:Hide()
-    UpdateScrollBox(frame, "credits")
-    settingsOverview.ScrollBar:ScrollToBegin();
-    UpdateOverviewScrollFx(frame)
+    settingsOverview.header:SetText(L["Credits"])
+    -- an empty list, so the scroll bar of the hidden changelog does not come back with its next update
+    frame:SetDataProvider(CreateDataProvider())
+    frame:Hide()
+    settingsOverview.ScrollBar:Hide()
+    settingsOverview.credits:Show()
+    -- the page block grows up like on scrolling until all credits fit, the credits sit 15 inside it
+    local base = settingsOverview.basePageBlockHeight
+    settingsOverview.pageblock:SetHeight(math.max(base, (settingsOverview.credits.contentHeight or 0) + 30))
+    settingsOverview.lastScrollGrowAmount = nil
 end
 
 local function SetTitleTextAnchors(button, xOffset, yOffset)
@@ -434,16 +386,6 @@ local function InitButton(button, elementData)
         button.content.text:SetFont(UNIT_NAME_FONT, 12)
         button.content.text:SetTextColor(181 / 255, 160 / 255, 128 / 255)
         button.content.text:SetJustifyV("MIDDLE")
-        button.content.textRight = button.content:CreateFontString(nil, "BORDER", "GameFontNormalSmall")
-        button.content.textRight:SetFont(UNIT_NAME_FONT, 13)
-        button.content.textRight:SetTextColor(unpack(CREDITS_NAME_COLOR))
-        button.content.textRight:SetJustifyH("LEFT")
-        button.content.textRight:SetJustifyV("MIDDLE")
-        button.content.textRight:Hide()
-
-        button.content.iconRight = button.content:CreateTexture(nil, "BORDER")
-        button.content.iconRight:SetSize(18, 18)
-        button.content.iconRight:Hide()
         GW.AddListItemChildHoverTexture(button)
 
         button.gwSkinned = true
@@ -456,9 +398,6 @@ local function InitButton(button, elementData)
     button.title.text:SetFont(DAMAGE_TEXT_FONT, 14)
 
     -- Reset shared row layout defaults (changelog template) before applying type-specific layout.
-    button.content.textRight:Hide()
-    button.content.iconRight:Hide()
-    button.content.textRight:SetText("")
     button.content.icon:Show()
     button.content.icon:ClearAllPoints()
     button.content.icon:SetPoint("TOPLEFT", button.content, "TOPLEFT", 10, -10)
@@ -494,23 +433,6 @@ local function InitButton(button, elementData)
             CHANGELOG_COLLAPSED_GROUPS[groupKey] = not CHANGELOG_COLLAPSED_GROUPS[groupKey]
             UpdateScrollBox(elementData.owner, "changelog")
         end)
-    elseif elementData.type == "credits" and elementData.kind == "creditsHeader" then
-        button.content:Hide()
-        button.title:Show()
-        button.title.icon:Show()
-        getCreditsIcon(button.title.icon, elementData.category)
-        button.title.icon:ClearAllPoints()
-        button.title.icon:SetPoint("LEFT", button.title, "LEFT", 8, 0)
-        button.title.icon:SetSize(16, 16)
-
-        button.title.text:ClearAllPoints()
-        button.title.text:SetPoint("LEFT", button.title.icon, "RIGHT", 8, 0)
-        button.title.text:SetPoint("RIGHT", button.title, "RIGHT", -6, 0)
-        button.title.text:SetText(elementData.name or "")
-        button.title.text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        button.title.text:SetFont(DAMAGE_TEXT_FONT, 13)
-        button.title.text:SetJustifyV("MIDDLE")
-        elementData.isHeader = true
     else
         if elementData.type == "changelog" then
             button.content.text:SetText(elementData.text or "")
@@ -522,30 +444,6 @@ local function InitButton(button, elementData)
             else
                 button.content.text:SetTextColor(1, 0.93, 0.73, 1)
             end
-        elseif elementData.type == "credits" then
-            button.content.text:SetText(elementData.leftName or elementData.name or "")
-            button.content.text:SetTextColor(unpack(CREDITS_NAME_COLOR))
-            button.content.text:SetFont(UNIT_NAME_FONT, 13)
-            button.content.text:SetJustifyH("LEFT")
-
-            button.content.icon:Hide()
-
-            button.content.text:ClearAllPoints()
-            button.content.text:SetPoint("LEFT", button.content, "LEFT", 12, 0)
-            button.content.text:SetPoint("RIGHT", button.content, "CENTER", -14, 0)
-            button.content.text:SetJustifyV("MIDDLE")
-
-            if elementData.rightName and elementData.rightName ~= "" then
-                button.content.iconRight:Hide()
-
-                button.content.textRight:Show()
-                button.content.textRight:SetText(elementData.rightName)
-                button.content.textRight:ClearAllPoints()
-                button.content.textRight:SetPoint("LEFT", button.content, "CENTER", 8, 0)
-                button.content.textRight:SetPoint("RIGHT", button.content, "RIGHT", -12, 0)
-            else
-                button.content.text:SetPoint("RIGHT", button.content, "RIGHT", -12, 0)
-            end
         end
 
         button.title:Hide()
@@ -555,10 +453,6 @@ local function InitButton(button, elementData)
 
     if elementData.type == "changelog" and elementData.kind == "typeHeader" then
         elementData.neededHeight = 28
-    elseif elementData.type == "credits" and elementData.kind == "creditsHeader" then
-        elementData.neededHeight = 30
-    elseif elementData.type == "credits" then
-        elementData.neededHeight = 32
     else
         elementData.neededHeight = elementData.isHeader and 36 or math.max(34, button.content.text:GetStringHeight() + 16)
     end
@@ -574,14 +468,6 @@ local function InitButton(button, elementData)
         end
     elseif elementData.type == "changelog" and (elementData.kind == "version" or elementData.kind == "typeHeader") then
         button.content.background:SetVertexColor(0, 0, 0, 0)
-    elseif elementData.type == "credits" and elementData.kind == "creditsHeader" then
-        button.content.background:SetVertexColor(0, 0, 0, 0)
-    elseif elementData.type == "credits" then
-        if (elementData.index % 2) == 1 then
-            button.content.background:SetVertexColor(0.20, 0.18, 0.15, 0.48)
-        else
-            button.content.background:SetVertexColor(0.14, 0.12, 0.10, 0.38)
-        end
     elseif (elementData.index % 2) == 1 then
         button.content.background:SetVertexColor(1, 1, 1, 1)
     else
@@ -620,14 +506,12 @@ function GW.LoadSettingsOverview(container)
             GW.moveHudObjects(GW.MoveHudScaleableFrame)
         end},
         {button = settingsOverview.menu.keybindingsbtn, text = KEY_BINDING, onClick = function() container:Hide() GW.DisplayHoverBinding() end},
-        {button = settingsOverview.menu.discordbtn, text = L["Join Discord"], onClick = function()
-            GW.ShowPopup({text = L["Join Discord"],
-            hasEditBox = true,
-            inputText = "https://discord.gg/MZZtRWt",
-            EditBoxOnEscapePressed = function(popup) popup:Hide() end,
-            hideOnEscape = true})
-        end}
+        {button = settingsOverview.menu.discordbtn, text = L["Join Discord"], onClick = ShowDiscordPopup}
     }
+
+    settingsOverview.credits = GW.CreateCreditsPage(settingsOverview, ShowDiscordPopup)
+    settingsOverview.credits:SetPoint("TOPLEFT", settingsOverview.ScrollBox, "TOPLEFT", 10, -10)
+    settingsOverview.credits:SetPoint("BOTTOMRIGHT", settingsOverview.ScrollBox, "BOTTOMRIGHT", -10, 10)
 
     settingsOverview.header:SetFont(DAMAGE_TEXT_FONT, 30)
 

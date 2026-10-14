@@ -53,6 +53,7 @@ GW.Colors.SkinColors = {
     Applied = CreateColor(1, 0.7, 1), -- an applied transmog appearance
     DisabledBorder = CreateColor(0.3, 0.3, 0.3), -- the frame of something that cannot be used
     CardBorder = CreateColor(0.6, 0.6, 0.6), -- the light grey frame of cards and model previews
+    Chip = CreateColor(0, 0, 0, 0.35), -- a small name plate on a card
 }
 
 -- the coin amounts of our bag money

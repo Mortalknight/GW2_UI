@@ -15,6 +15,8 @@ local GW = select(2, ...)
             onLine       = function(chatFrame, text, r, g, b, infoID, accessID, typeID, event, ...) end,
                                                                 -- the finished line as stored, nil keeps it; chat
                                                                 -- messages carry an accessID, system lines do not
+            secretLines  = true,                                -- onLine also runs for secret lines, it may only
+                                                                -- put text in front of them
             links        = {url = function(data, text, button, chatFrame) end}, -- clicks on GW.CreateChatLink links
             onFrame      = function(chatFrame) end,             -- once for every chat window, whisper windows included
             onLoad       = function() end,
@@ -136,8 +138,41 @@ function GW.MapChatText(msg, func)
     return table.concat(parts)
 end
 
+-- a secret line can not be read or compared, only modules that just put text in front of it run for it (the
+-- timestamps); the stored line is found by its event arguments table instead of its text
+local function RunSecretLineModules(chatFrame, text, ...)
+    local eventArgs = select(8, ...)
+    if type(eventArgs) ~= "table" then
+        return
+    end
+
+    local newText
+    for _, module in ipairs(lineModules) do
+        if module.secretLines and IsEnabled(module) then
+            newText = module.onLine(chatFrame, newText or text, ...) or newText
+        end
+    end
+    if not newText then
+        return
+    end
+
+    local done = false
+    chatFrame:TransformMessages(function(_, _, _, _, _, _, _, _, args)
+        if not done and args == eventArgs then
+            done = true
+            return true
+        end
+    end, function(_, ...)
+        return newText, ...
+    end)
+end
+
 local function RunLineModules(chatFrame, text, ...)
-    if GW.IsSecretValue(text) or type(text) ~= "string" then
+    if GW.IsSecretValue(text) then
+        RunSecretLineModules(chatFrame, text, ...)
+        return
+    end
+    if type(text) ~= "string" then
         return
     end
 

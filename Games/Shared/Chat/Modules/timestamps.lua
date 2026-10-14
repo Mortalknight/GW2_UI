@@ -26,8 +26,11 @@ GW.RegisterChatModule({
             C_CVar.SetCVar("showTimestamps", "none")
         end
     end,
+    -- npc lines in instances come secret, a stamp in front of them still works
+    secretLines = true,
     onLine = function(_, text, _, _, _, _, accessID)
-        if GW.IsSecretValue(accessID) or not (accessID or GW.settings.chat.timestampAll) or strmatch(text, "^%s*$") then
+        local isChatMessage = GW.IsSecretValue(accessID) or accessID
+        if not (isChatMessage or GW.settings.chat.timestampAll) or (GW.NotSecretValue(text) and strmatch(text, "^%s*$")) then
             return
         end
         return FormatStamp(time()) .. text

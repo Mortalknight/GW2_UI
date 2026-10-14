@@ -17,6 +17,7 @@
     <Script file = "moveableFrameHandler.lua"/>
     <Script file = "settingsUtils.lua"/>
     <Script file = "settingsWindow.lua"/>
+    <Script file = "settingsWindowCredits.lua"/>
     <Script file = "settingsWindowOverviewTab.lua"/>
     <Script file = "settingsWindowProfilesTab.lua"/>
     <Script file = "settingsWindowSettingsTab.lua"/>
