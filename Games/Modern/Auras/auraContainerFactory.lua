@@ -250,21 +250,6 @@ GW.ForEachAuraContainerButton = ForEachContainerButton
 
 local PANDEMIC_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/pandemic-glow.png"
 
--- 12.1.0 compat, remove with 12.1.5: up to 12.1.0 Add* returns a list index and Remove* takes one, a stored
--- index would go stale, so it is looked up at removal time; 12.1.5 removes by region
-local function RemoveDispelTypeTextureByIdentity(button, texture, indexed)
-    if not indexed then
-        button:RemoveDispelTypeTexture(texture)
-        return
-    end
-    for i = button:GetDispelTypeTextureCount(), 1, -1 do
-        if button:GetDispelTypeTexture(i) == texture then
-            button:RemoveDispelTypeTexture(i)
-            return
-        end
-    end
-end
-
 -- registered regions have a secret Shown state, so the opt out de-registers them and clears their
 -- texture instead of hiding them; registering twice errors since 12.1.5, hence the own flags
 local function ApplyAuraOptionRegions(button)
@@ -301,13 +286,11 @@ local function ApplyAuraOptionRegions(button)
     if dispelIcon then
         if button.gwDispelIconEnabled() then
             if not button.gwDispelIconRegistered then
-                local index = button:AddDispelTypeTexture(dispelIcon, button.gwDispelIconOptions)
+                button:AddDispelTypeTexture(dispelIcon, button.gwDispelIconOptions)
                 button.gwDispelIconRegistered = true
-                button.gwDispelIconIndexed = index ~= nil -- 12.1.0 compat, remove with 12.1.5
             end
         elseif button.gwDispelIconRegistered then
-            -- 12.1.0 compat, with 12.1.5: button:RemoveDispelTypeTexture(dispelIcon)
-            RemoveDispelTypeTextureByIdentity(button, dispelIcon, button.gwDispelIconIndexed)
+            button:RemoveDispelTypeTexture(dispelIcon)
             button.gwDispelIconRegistered = nil
             dispelIcon:SetTexture()
         end
@@ -335,10 +318,8 @@ function GW.AddPandemicHighlight(button, anchor, isEnabled, textureParent)
 end
 
 -- the zoom in of a new aura, played by the engine the first time an aura shows on the button;
--- isEnabled nil = always. 12.1.0 compat: the check, the API comes with 12.1.5
+-- isEnabled nil = always.
 function GW.AddAuraShownAnimation(button, target, isEnabled, scaleFrom)
-    if not button.AddAuraShownAnimation then return end
-
     local zoom = target:CreateAnimationGroup()
     local fade = zoom:CreateAnimation("Alpha")
     fade:SetFromAlpha(0.85)
@@ -642,10 +623,7 @@ local function ApplyLayout(container)
         local maxFrameCount = group.maxFrameCount or math.huge
         if InputsChanged(group, "maxFrameCount", maxFrameCount) then
             container:SetAuraGroupMaxFrameCount(group.key, maxFrameCount)
-            -- 12.1.5 stops processing a disabled group entirely; 12.1.0 compat, the check goes with 12.1.5
-            if container.SetAuraGroupEnabled then
-                container:SetAuraGroupEnabled(group.key, maxFrameCount > 0)
-            end
+            container:SetAuraGroupEnabled(group.key, maxFrameCount > 0)
         end
 
         local sortMethod = group.sortMethod or AuraContainerSortMethod.Default
