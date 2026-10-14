@@ -50,10 +50,11 @@ local function profButton_OnEnter(self)
     GameTooltip:Show()
 end
 
--- by the spellbook item like blizzards book; a profession has a spell id per rank, a pickup by id can miss
+-- the same spell the click casts; the spellbook item puts something on the bar that does not open the profession
 local function profButton_OnDragStart(self)
-    if self.spellbookIndex then
-        C_SpellBook.PickupSpellBookItem(self.spellbookIndex, self.booktype)
+    local spellID = self:GetAttribute("spell")
+    if spellID then
+        C_Spell.PickupSpell(spellID)
     end
 end
 
