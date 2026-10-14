@@ -348,6 +348,17 @@ local function setUpPaging(self, targetPage)
         local currentPage = 1
         local neededContainers = self:GetAttribute("neededContainers")
 
+        if type(value) == "number" then -- jump to a page
+            for i = 1, maxNumberOfContainers do
+                if i == value then
+                    self:GetFrameRef("container" .. i):Show()
+                else
+                    self:GetFrameRef("container" .. i):Hide()
+                end
+            end
+            currentPage = value
+        end
+
         if value == "left" then -- container -1
             for i = maxNumberOfContainers, 1, -1 do
                 container = self:GetFrameRef("container" .. i)
@@ -400,12 +411,7 @@ local function setUpPaging(self, targetPage)
             left:Show()
         end
     ]=]))
-    self.attrDummy:SetAttribute("page", "left")
-
-    targetPage = math.max(1, math.min(targetPage or 1, self.tabs or 1))
-    for _ = 2, targetPage do
-        self.attrDummy:SetAttribute("page", "right")
-    end
+    self.attrDummy:SetAttribute("page", math.max(1, math.min(targetPage or 1, self.tabs or 1)))
 end
 
 local function resetSpellbookPages(self)

@@ -305,7 +305,17 @@ local function getPagingContainer(container, pagingID)
     return page
 end
 
-local function setUpPaging(self)
+local function getCurrentPage(container)
+    for i = 1, getNumPages(container) do
+        if container["container" .. i]:IsShown() then
+            return i
+        end
+    end
+
+    return 1
+end
+
+local function setUpPaging(self, targetPage)
     self.left:SetFrameRef("tab", self.attrDummy)
     self.left:SetAttribute("_onclick", [=[
         self:GetFrameRef("tab"):SetAttribute("page", "left")
@@ -337,6 +347,17 @@ local function setUpPaging(self)
 
         local currentPage = 1
         local neededContainers = self:GetAttribute("neededContainers")
+
+        if type(value) == "number" then -- jump to a page
+            for i = 1, maxNumberOfContainers do
+                if i == value then
+                    self:GetFrameRef("container" .. i):Show()
+                else
+                    self:GetFrameRef("container" .. i):Hide()
+                end
+            end
+            currentPage = value
+        end
 
         if value == "left" then -- container -1
             for i = maxNumberOfContainers, 1, -1 do
@@ -390,7 +411,7 @@ local function setUpPaging(self)
             left:Show()
         end
     ]=]))
-    self.attrDummy:SetAttribute("page", "left")
+    self.attrDummy:SetAttribute("page", math.max(1, math.min(targetPage or 1, self.tabs or 1)))
 end
 
 local function resetSpellbookPages(self)
@@ -434,6 +455,11 @@ local function updateSpellbookTab(self)
     end
 
     local showAllRanks = GetCVarBool("ShowAllSpellRanks")
+    local currentPages = {}
+
+    for spellBookTab = 1, 5 do
+        currentPages[spellBookTab] = getCurrentPage(self.container[spellBookTab])
+    end
 
     resetSpellbookPages(self)
 
@@ -538,8 +564,9 @@ local function updateSpellbookTab(self)
                 lastName = nameSpell
                 lastButton = button
             end
-            setUpPaging(container)
         end
+
+        setUpPaging(container, currentPages[spellBookTab])
     end
 
     self.spellbookDirty = false
