@@ -131,7 +131,7 @@ local function ApplyClassTrainerSkin()
     ClassTrainerFrame.gwHeader.windowIcon:ClearAllPoints()
     ClassTrainerFrame.gwHeader.windowIcon:SetPoint("CENTER", ClassTrainerFrame.gwHeader, "BOTTOMLEFT", 30, 19)
     ClassTrainerFrame:HookScript("OnShow", function(self)
-        local isPetTrainer = C_Trainer.GetTrainerType and Enum.TrainerType and C_Trainer.GetTrainerType() == Enum.TrainerType.Pet
+        local isPetTrainer = C_Trainer and C_Trainer.GetTrainerType and Enum.TrainerType and C_Trainer.GetTrainerType() == Enum.TrainerType.Pet
         GW.SetHeaderPortrait(self.gwHeader, isPetTrainer and "pet" or "npc")
     end)
 
