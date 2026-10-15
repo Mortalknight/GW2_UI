@@ -193,3 +193,18 @@ function GW.TrackActionBarChanges()
 
     fmActionbar.gw_IsEnabled = true
 end
+
+-- after a reconnect blizzards bar toggles can arrive after our load, so login and reload read them again
+local loginWatcher = CreateFrame("Frame")
+loginWatcher:SetScript("OnEvent", function(self, _, isInitialLogin, isReloadingUi)
+    if isInitialLogin or isReloadingUi then
+        self:UnregisterAllEvents()
+        GW.TrackActionBarChanges()
+    end
+end)
+
+function GW.WatchActionBarChanges()
+    hooksecurefunc("SetActionBarToggles", function() C_Timer.After(1, GW.TrackActionBarChanges) end)
+    loginWatcher:RegisterEvent("PLAYER_ENTERING_WORLD")
+    GW.TrackActionBarChanges()
+end

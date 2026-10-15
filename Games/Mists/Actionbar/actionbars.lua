@@ -939,9 +939,8 @@ local function LoadActionBars(lm)
     GW.RegisterScaleFrame(fmActionbar)
 
     -- hook existing multibars to track settings changes
+    GW.WatchActionBarChanges()
     hooksecurefunc(SpellFlyout, "Toggle", GW.ChangeFlyoutStyle)
-    hooksecurefunc("SetActionBarToggles", function() C_Timer.After(1, GW.TrackActionBarChanges) end)
-    GW.TrackActionBarChanges()
 
     -- do stuff to other pieces of the blizz UI
     hideBlizzardsActionbars()
