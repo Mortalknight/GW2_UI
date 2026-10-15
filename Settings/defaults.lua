@@ -338,7 +338,7 @@ GW.globalDefault = {
             },
             hideInCombat = {
                 enabled = false,
-                units = "ALL",
+                units = {FRIENDLY = true, NEUTRAL = true, HOSTILE = true},
                 overrideKey = "NONE",
             },
             item = {

@@ -74,7 +74,7 @@ local function LoadGroupAuraPanels(p)
     p_indicator:AddOptionSlider(L["Indicator Bar Width"], nil, { getterSetter = "groupFrames.indicators.barWidth", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 1, max = 5, decimalNumbers = 0, step = 1, dependence = {["groupFrames.enabled"] = true}, group = "indicatorSize"})
 
     local function BuildIndicatorAuraOptions()
-        local auraKeys, auraVals = {0}, {NONE_KEY}
+        local auraKeys, auraVals = {0}, {NONE}
         for spellID, _ in pairs(GW.AURAS_INDICATORS[GW.myclass] or {}) do
             local spellInfo = C_Spell.GetSpellInfo(spellID)
             if spellInfo then

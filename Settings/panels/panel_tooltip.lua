@@ -30,21 +30,13 @@ local function LoadTooltipPanel(sWindow)
     p:AddOption(L["Show premade group info"], L["Add LFG group info to tooltip."], {getterSetter = "tooltip.unit.premadeGroupInfo", dependence = {["tooltip.enabled"] = true}, incompatibleAddons = "LfgInfo", hidden = not GW.Retail})
     p:AddOption(L["Shorten Health Bar Text"], nil, {getterSetter = "tooltip.healthBar.shortValues", dependence = {["tooltip.enabled"] = true}})
     p:AddOptionDropdown(L["Health Bar Position"], nil, { getterSetter = "tooltip.healthBar.position", optionsList = {"BOTTOM", "TOP", "DISABLED"}, optionNames = {L["Bottom"], L["Top"], GARRISON_DEACTIVATE_FOLLOWER}, dependence = {["tooltip.enabled"] = true}})
-    p:AddOptionDropdown(L["Health Bar Values"], nil, { getterSetter = "tooltip.healthBar.values", optionsList = {"RAW", "PERCENTAGE", "BOTH", "NONE"}, optionNames = {STATUS_TEXT_VALUE, STATUS_TEXT_PERCENT, STATUS_TEXT_BOTH, NONE}, dependence = {["tooltip.enabled"] = true}})
-    p:AddOptionDropdown(L["Combat Override Key"], L["Modifier to hold to show the tooltip in combat."], { getterSetter = "tooltip.hideInCombat.overrideKey", optionsList = {"ALWAYS", "NONE", "SHIFT", "CTRL", "ALT"}, optionNames = {ALWAYS, NONE, SHIFT_KEY, CTRL_KEY, ALT_KEY}, dependence = {["tooltip.enabled"] = true, ["tooltip.hideInCombat.enabled"] = true}})
+    p:AddOptionDropdown(L["Health Bar Values"], nil, { getterSetter = "tooltip.healthBar.values", optionsList = {"NONE", "RAW", "PERCENTAGE", "BOTH"}, optionNames = {NONE, STATUS_TEXT_VALUE, STATUS_TEXT_PERCENT, STATUS_TEXT_BOTH}, dependence = {["tooltip.enabled"] = true}})
+    p:AddOptionDropdown(L["Combat Override Key"], L["Modifier to hold to show the tooltip in combat."], { getterSetter = "tooltip.hideInCombat.overrideKey", optionsList = {"NONE", "ALWAYS", "SHIFT", "CTRL", "ALT"}, optionNames = {NONE, ALWAYS, SHIFT_KEY, CTRL_KEY, ALT_KEY}, dependence = {["tooltip.enabled"] = true, ["tooltip.hideInCombat.enabled"] = true}})
     p:AddOptionDropdown(L["Hide Units"], L["Only hide unit tooltips of the selected reactions."], {
         getterSetter = "tooltip.hideInCombat.units",
-        optionsList = {"NONE", "FRIENDLY", "HOSTILE", "NEUTRAL", "FRIENDLY_NEUTRAL", "FRIENDLY_HOSTILE", "HOSTILE_NEUTRAL", "ALL"},
-        optionNames = {
-            NONE,
-            FRIENDLY,
-            HOSTILE,
-            FACTION_STANDING_LABEL4,
-            FRIENDLY .. " & " .. FACTION_STANDING_LABEL4,
-            FRIENDLY .. " & " .. HOSTILE,
-            HOSTILE .. " & " .. FACTION_STANDING_LABEL4,
-            ALL
-        },
+        optionsList = {"FRIENDLY", "NEUTRAL", "HOSTILE"},
+        optionNames = {FRIENDLY, FACTION_STANDING_LABEL4, HOSTILE},
+        checkbox = true,
         dependence = {["tooltip.enabled"] = true, ["tooltip.hideInCombat.enabled"] = true}
     })
     p:AddOptionDropdown(L["Modifier for IDs"], nil, { getterSetter = "tooltip.idModifier", callback = function()
@@ -52,7 +44,7 @@ local function LoadTooltipPanel(sWindow)
         if GW.UpdateAuraTooltipIDCVar then
             GW.UpdateAuraTooltipIDCVar()
         end
-    end, optionsList = {"ALWAYS", "NONE", "SHIFT", "CTRL", "ALT"}, dependence = {["tooltip.enabled"] = true}, optionNames = {ALWAYS, NONE, SHIFT_KEY, CTRL_KEY, ALT_KEY}})
+    end, optionsList = {"NONE", "ALWAYS", "SHIFT", "CTRL", "ALT"}, dependence = {["tooltip.enabled"] = true}, optionNames = {NONE, ALWAYS, SHIFT_KEY, CTRL_KEY, ALT_KEY}})
     p:AddOptionDropdown(L["Item Count"], L["Display how many of a certain item you have in your possession."], { getterSetter = "tooltip.item.count", optionsList = {"Bag", "Bank", "Stack"}, optionNames = {INVTYPE_BAG, BANK, L["Stack Size"]}, dependence = {["tooltip.enabled"] = true}, checkbox = true})
     p:AddOption(L["Include Reagents"], nil, {getterSetter = "tooltip.item.countIncludeReagents", dependence = {["tooltip.enabled"] = true}, hidden = not GW.Retail})
     p:AddOption(L["Include Warband"], nil, {getterSetter = "tooltip.item.countIncludeWarband", dependence = {["tooltip.enabled"] = true}, hidden = not GW.Retail})

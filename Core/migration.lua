@@ -172,6 +172,17 @@ local function MigrateProfileSettings(profile)
             end
         end
     end
+    -- the reactions that hide unit tooltips in combat were one string of combinations, now one switch each
+    local hideInCombat = type(profile.tooltip) == "table" and profile.tooltip.hideInCombat
+    if type(hideInCombat) == "table" and type(hideInCombat.units) == "string" then
+        local units = hideInCombat.units
+        hideInCombat.units = {
+            FRIENDLY = units == "ALL" or strfind(units, "FRIENDLY", 1, true) ~= nil,
+            NEUTRAL = units == "ALL" or strfind(units, "NEUTRAL", 1, true) ~= nil,
+            HOSTILE = units == "ALL" or strfind(units, "HOSTILE", 1, true) ~= nil,
+        }
+    end
+
     if type(profile.Minimap) == "table" and next(profile.Minimap) == nil then
         profile.Minimap = nil
     end

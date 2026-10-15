@@ -94,7 +94,7 @@ local function LoadActionbarPanel(sWindow)
     })
     mainBar:AddOptionSlider(L["Button Spacing"], nil, { getterSetter = "actionbars.mainbarMargin", callback = function() GW.UpdateMainBarHot() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = (function() local t = {["actionbars.enabled"] = true} if GW.isModern then t["actionbars.barLayout"] = true end return t end)(), group = "buttonAppearance"})
 
-    mainBar:AddOptionDropdown(L["Main Bar Range Indicator"], nil, { getterSetter = "actionbars.rangeIndicator", callback = GW.UpdateMainBarHot, optionsList = {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"}, optionNames = {L["%s Indicator"]:format(RED_GEM), L["Red Overlay"], STATUS_TEXT_BOTH, NONE}, dependence = {["actionbars.enabled"] = true}, incompatibleAddons = "Actionbars", group = "buttonAppearance"})
+    mainBar:AddOptionDropdown(L["Main Bar Range Indicator"], nil, { getterSetter = "actionbars.rangeIndicator", callback = GW.UpdateMainBarHot, optionsList = {"NONE", "RED_INDICATOR", "RED_OVERLAY", "BOTH"}, optionNames = {NONE, L["%s Indicator"]:format(RED_GEM), L["Red Overlay"], STATUS_TEXT_BOTH}, dependence = {["actionbars.enabled"] = true}, incompatibleAddons = "Actionbars", group = "buttonAppearance"})
     mainBar:AddOptionDropdown(BINDING_HEADER_ACTIONBAR .. SHOW, nil, { getterSetter = "actionbars.mainBar.fade", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = (function() local t = {["actionbars.enabled"] = true} if GW.isModern then t["actionbars.barLayout"] = true end return t end)(), incompatibleAddons = "Actionbars", group = "barVisibility"})
 
     --EXTRABARS

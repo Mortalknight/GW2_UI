@@ -66,7 +66,7 @@ local function LoadGeneralPanel(sWindow)
     general:AddOptionSlider(L["Extended Vendor"], L["The number of pages shown in the merchant frame. Set 1 to disable."], { getterSetter = "bags.extendedVendorPages", callback = function() GW.ShowRlPopup = true end, min = 1, max = 6, decimalNumbers = 0, step = 1})
 
     general:AddGroupHeader(L["Automation"])
-    general:AddOptionDropdown(L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], { getterSetter = "general.autoRepair", optionsList = {"NONE", "PLAYER", "GUILD"}, optionNames = {NONE_KEY, PLAYER, GUILD}})
+    general:AddOptionDropdown(L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], { getterSetter = "general.autoRepair", optionsList = {"NONE", "PLAYER", "GUILD"}, optionNames = {NONE, PLAYER, GUILD}})
     general:AddOption(L["Sell junk automatically"], L["Automatically sell poor quality items when visiting a merchant."], {getterSetter = "bags.vendorGrays", callback = GW.SetupVendorJunk})
     general:AddOption(L["Accept group invites"], L["Accepts group invites from friends and guild members, not while you are queued."], {getterSetter = "general.autoAcceptInvite"})
     general:AddOption(L["Set role from specialization"], L["Sets your group role to the role of your current specialization."], {getterSetter = "general.autoSetRole"})

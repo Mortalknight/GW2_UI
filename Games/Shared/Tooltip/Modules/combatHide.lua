@@ -14,11 +14,7 @@ local function ShouldHide(tooltip)
         return false
     end
     local units = settings.units
-    return units == "ALL"
-        or strfind(units, "HOSTILE", 1, true) and reaction <= 3
-        or strfind(units, "NEUTRAL", 1, true) and reaction == 4
-        or strfind(units, "FRIENDLY", 1, true) and reaction >= 5
-        or false
+    return reaction <= 3 and units.HOSTILE or reaction == 4 and units.NEUTRAL or reaction >= 5 and units.FRIENDLY or false
 end
 
 -- what hovering would have shown: the world unit at the default anchor (over the world there is no
