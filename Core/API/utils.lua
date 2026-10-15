@@ -1707,6 +1707,17 @@ local function ApplyLayoutChanges()
 end
 GW.ApplyLayoutChanges = ApplyLayoutChanges
 
+-- blizzard always shows the empty slots, our empty slot alpha hides them and shows them while something is
+-- dragged; blizzards own hiding does not come back on our main bar during a drag
+local EMPTY_SLOT_BARS = {"MainActionBar", "MultiBarBottomLeft", "MultiBarBottomRight", "MultiBarRight", "MultiBarLeft", "MultiBar5", "MultiBar6", "MultiBar7"}
+local function SetAlwaysShowButtons()
+    for _, name in ipairs(EMPTY_SLOT_BARS) do
+        if _G[name] then
+            GW.Libs.LEMO:SetFrameSetting(_G[name], Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
+        end
+    end
+end
+
 -- NOTE: no skip-when-unchanged shortcut here! An earlier optimization compared the saved
 -- layout values and skipped ApplyChanges when they matched — but the saved values say
 -- nothing about what the client actually APPLIED this session, and skipping the apply
@@ -1749,6 +1760,7 @@ local function AddGw2Layout(init)
 
         -- PossessActionBar
         GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainActionBar, "TOP", -110, 40)
+        SetAlwaysShowButtons()
         ApplyLayoutChanges()
     end
 
@@ -1778,34 +1790,6 @@ local function LoadEditModeLayout()
     end
 end
 GW.LoadEditModeLayout = LoadEditModeLayout
-
-local function MakeActionbuttonsVisible()
-    if not GW.Libs.LEMO:IsReady() then
-        GW.Notice("LEMO not ready, cannot make action buttons visible")
-        return
-    end
-
-    GW.Libs.LEMO:LoadLayouts()
-
-    if GW.Libs.LEMO:DoesLayoutExist("GW2_Layout")then
-        GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
-
-        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
-        GW.Libs.LEMO:SetFrameSetting(MultiBarBottomLeft, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
-        GW.Libs.LEMO:SetFrameSetting(MultiBarBottomRight, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
-        GW.Libs.LEMO:SetFrameSetting(MultiBarRight, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
-        GW.Libs.LEMO:SetFrameSetting(MultiBarLeft, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
-        GW.Libs.LEMO:SetFrameSetting(MultiBar5, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
-        GW.Libs.LEMO:SetFrameSetting(MultiBar6, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
-        GW.Libs.LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
-        ApplyLayoutChanges()
-
-        GW.Notice("Making action buttons visible via LEMO")
-    else
-        GW.Notice("Could not make action buttons visible via LEMO, GW2_Layout not found")
-    end
-end
-GW.MakeActionbuttonsVisible = MakeActionbuttonsVisible
 
 local function GetDebuffScaleBasedOnPrio()
     local scale = 1

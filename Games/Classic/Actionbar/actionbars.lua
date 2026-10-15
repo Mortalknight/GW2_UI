@@ -94,6 +94,7 @@ local function changeVertexColorActionbars(btn)
 end
 
 local function updateActionbarBorders(btn)
+    if btn.gw_ShowGrid then return end
     local texture = GetActionTexture(btn.action)
     if texture then
         local shouldShowHotKey = GW.settings.actionbars.buttonAssignments
@@ -871,11 +872,7 @@ local function LoadActionBars(lm)
     GW.CreateStanceBar()
     setLeaveVehicleButton()
 
-   -- hook hotkey update calls so we can override styling changes
-    local hotkeyEventTrackerFrame = CreateFrame("Frame")
-    hotkeyEventTrackerFrame:RegisterEvent("UPDATE_BINDINGS")
-
-    local function UpdateAllHotkeys()
+    local function ForEachActionbarButton(handler)
         local bars = { fmActionbar }
         for y = 1, 7 do
             bars[#bars + 1] = fmActionbar["gw_Bar" .. y]
@@ -885,14 +882,47 @@ local function LoadActionBars(lm)
             local fmMultiBar = bars[y]
             if fmMultiBar and fmMultiBar.gw_IsEnabled then
                 for i = 1, 12 do
-                    GW.UpdateHotkey(fmMultiBar.gw_Buttons[i])
-                    GW.FixHotKeyPosition(fmMultiBar.gw_Buttons[i], false, false, y == 1)
+                    handler(fmMultiBar.gw_Buttons[i], y == 1)
                 end
             end
         end
     end
 
-    hotkeyEventTrackerFrame:SetScript("OnEvent", UpdateAllHotkeys)
+    local function UpdateAllHotkeys()
+        ForEachActionbarButton(function(btn, isMain)
+            GW.UpdateHotkey(btn)
+            GW.FixHotKeyPosition(btn, false, false, isMain)
+        end)
+    end
+
+    -- hook hotkey update calls so we can override styling changes; while something is dragged the empty
+    -- slots show fully, an empty slot alpha of 0 hides them otherwise
+    local hotkeyEventTrackerFrame = CreateFrame("Frame")
+    hotkeyEventTrackerFrame:RegisterEvent("UPDATE_BINDINGS")
+    hotkeyEventTrackerFrame:RegisterEvent("ACTIONBAR_SHOWGRID")
+    hotkeyEventTrackerFrame:RegisterEvent("ACTIONBAR_HIDEGRID")
+    hotkeyEventTrackerFrame:SetScript("OnEvent", function(_, event)
+        if event == "UPDATE_BINDINGS" then
+            UpdateAllHotkeys()
+            return
+        end
+        local showGrid = event == "ACTIONBAR_SHOWGRID"
+        local alpha = showGrid and 1 or tonumber(GW.settings.actionbars.backgroundAlpha)
+        ForEachActionbarButton(function(btn)
+            local backdrop = btn.gwBackdrop
+            if not backdrop then return end
+            btn.gw_ShowGrid = showGrid
+            backdrop.bg:SetAlpha(alpha)
+            if showGrid then
+                backdrop.border1:SetAlpha(1)
+                backdrop.border2:SetAlpha(1)
+                backdrop.border3:SetAlpha(1)
+                backdrop.border4:SetAlpha(1)
+            else
+                updateActionbarBorders(btn)
+            end
+        end)
+    end)
     -- trigger the hotkeyfix after login for loading issues
     C_Timer.After(7, UpdateAllHotkeys)
 end

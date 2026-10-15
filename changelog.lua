@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
+    {GW.Enum.ChangelogType.change, [=[Action bars: empty slots hidden in Blizzard's Edit Mode come back on login, the fix button is gone; "Empty Slots Alpha" at 0% hides them and they show up while you drag something onto the bars]=]},
     {GW.Enum.ChangelogType.bug, [=[Action bars no longer flicker between the override bar and the normal bar, fewer "action blocked" errors from the micro menu]=]},
     {GW.Enum.ChangelogType.bug, [=[Classic clients: multi action bars no longer stay hidden after logging in again following a disconnect]=]},
     {GW.Enum.ChangelogType.change, [=[Hero panel: the Pawn button shows the Pawn tooltip with the values of your equipped items]=]},
