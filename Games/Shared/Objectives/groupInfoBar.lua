@@ -14,7 +14,7 @@ local SATED_SPELL_IDS = {
 }
 local ICON_SIZE = 13
 local BAR_HEIGHT = 20
--- the chest times of the timer only fill the left side, the bar moves up into that row
+-- the chest times of a shown timer only fill the left side, the bar moves up into that row
 local BAR_OVERLAP = 12
 local MASK = "Interface/CHARACTERFRAME/TempPortraitAlphaMask"
 
@@ -229,16 +229,19 @@ function GwGroupInfoBarMixin:UpdateState()
     if active ~= self:IsShown() then
         self:SetShown(active)
         self:SetHeight(active and BAR_HEIGHT or 0.1)
-        self:ClearAllPoints()
-        self:SetPoint("TOPRIGHT", self.container.timerBlock, "BOTTOMRIGHT", 0, active and BAR_OVERLAP or 0)
         self.container:QueueUpdateLayout()
     end
     self:Layout()
 end
 
--- the height the bar adds to the scenario container
+-- the height the bar adds to the scenario container; without a timer, like in a raid fight, it stays
+-- below the boss frames
 function GwGroupInfoBarMixin:GetLayoutHeight()
-    return self:IsShown() and BAR_HEIGHT - BAR_OVERLAP or 0
+    if not self:IsShown() then return 0 end
+    local overlap = self.container.timerBlock.timer:IsShown() and BAR_OVERLAP or 0
+    self:ClearAllPoints()
+    self:SetPoint("TOPRIGHT", self.container.timerBlock, "BOTTOMRIGHT", 0, overlap)
+    return BAR_HEIGHT - overlap
 end
 
 function GwGroupInfoBarMixin:SetTest(test)
