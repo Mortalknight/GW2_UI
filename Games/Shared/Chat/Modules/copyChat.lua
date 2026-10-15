@@ -44,6 +44,8 @@ local function CreateWindow()
     resizer:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
     resizer:SetScript("OnMouseDown", function() window:StartSizing("BOTTOMRIGHT") end)
     resizer:SetScript("OnMouseUp", function() window:StopMovingOrSizing() end)
+    resizer:SetScript("OnEnter", GW.ShowResizeHandleTooltip)
+    resizer:SetScript("OnLeave", GameTooltip_Hide)
 
     local text = CreateFrame("Frame", nil, window, "ScrollingEditBoxTemplate")
     text:SetPoint("TOPLEFT", 8, -30)

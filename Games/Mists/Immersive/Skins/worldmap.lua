@@ -174,11 +174,23 @@ local function worldMapSkin()
     scaleMouse:SetFrameLevel(WorldMapFrame:GetFrameLevel() + 20)
     scaleMouse:SetAllPoints(scaleHandle)
     scaleMouse:EnableMouse(true)
-    scaleMouse:SetScript("OnEnter", function() scaleHandle.t:SetDesaturated(false) end)
-    scaleMouse:SetScript("OnLeave", function() scaleHandle.t:SetDesaturated(true) end)
+    scaleMouse:SetScript("OnEnter", function(self)
+        scaleHandle.t:SetDesaturated(false)
+        GW.ShowScaleHandleTooltip(self)
+    end)
+    scaleMouse:SetScript("OnLeave", function()
+        scaleHandle.t:SetDesaturated(true)
+        GameTooltip_Hide()
+    end)
 
     -- Click handlers
-    scaleMouse:SetScript("OnMouseDown",function(frame)
+    -- the right button like the other scale handles, the mouse up stores scale and position
+    scaleMouse:SetScript("OnMouseDown",function(frame, button)
+        if button ~= "RightButton" then return end
+        if IsShiftKeyDown() then
+            WorldMapFrame:SetScale(1)
+            return
+        end
         mapLeft, mapTop = WorldMapFrame:GetLeft(), WorldMapFrame:GetTop()
         mapNormalScale = WorldMapFrame:GetScale()
         mapX, mapY = mapLeft, mapTop - (UIParent:GetHeight() / mapNormalScale)

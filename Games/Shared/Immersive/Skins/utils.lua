@@ -1,6 +1,22 @@
 ---@class GW2
 local GW = select(2, ...)
 
+-- the two corner handles look alike: one scales the whole window with the right button, the other drags the size
+function GW.ShowScaleHandleTooltip(owner)
+    GameTooltip:SetOwner(owner, "ANCHOR_BOTTOMRIGHT", 10, 30)
+    GameTooltip:ClearLines()
+    GameTooltip_SetTitle(GameTooltip, GW.L["Scale with Right Click"])
+    GameTooltip:AddLine(GW.L["Shift + Right Click resets the scale."], 1, 1, 1)
+    GameTooltip:Show()
+end
+
+function GW.ShowResizeHandleTooltip(owner)
+    GameTooltip:SetOwner(owner, "ANCHOR_BOTTOMRIGHT", 10, 30)
+    GameTooltip:ClearLines()
+    GameTooltip_SetTitle(GameTooltip, GW.L["Drag to resize"])
+    GameTooltip:Show()
+end
+
 -- a coin amount in the font and color of our bag money; coin is "Gold", "Silver" or "Copper"
 function GW.StyleMoneyText(text, coin, sizeType)
     text:GwSetFontTemplate(UNIT_NAME_FONT, sizeType or GW.Enum.TextSizeType.Normal)

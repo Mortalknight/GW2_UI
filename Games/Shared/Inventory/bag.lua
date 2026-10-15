@@ -972,6 +972,8 @@ local function LoadBag(helpers)
     f.sizer.onResizeStop = onBagResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
+    f.sizer:SetScript("OnEnter", GW.ShowResizeHandleTooltip)
+    f.sizer:SetScript("OnLeave", GameTooltip_Hide)
 
     -- setup bagheader stuff; the template ships headers for every section any flavor
     -- has (bags, reagent bag, keyring), the ones a flavor does not use never show

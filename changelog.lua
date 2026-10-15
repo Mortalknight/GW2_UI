@@ -27,6 +27,7 @@ addChange("12.0.1", {
     {GW.Enum.ChangelogType.change, [=[New credits page: the creator and the lead developer on their own cards, every role with its names and a thank you to the community]=]},
     {GW.Enum.ChangelogType.change, [=[English texts reviewed: consistent capitalization of option names, punctuation, spelling and wording in the settings]=]},
     {GW.Enum.ChangelogType.change, [=[Settings: the reactions that hide unit tooltips in combat are checkboxes now, "None" is always the first choice of a dropdown]=]},
+    {GW.Enum.ChangelogType.change, [=[Scale handles of the hero panel, friends and world map work the same: drag with the right button, Shift + right click resets the scale; size handles show a tooltip]=]},
     {GW.Enum.ChangelogType.change, [=[Escape closes the hero panel together with the other open windows, in combat it still closes the hero panel first]=]},
     {GW.Enum.ChangelogType.change, [=[Track reputation automatically: losses no longer switch the bar, a faction that keeps gaining stays tracked, otherwise the biggest gain is shown]=]},
 })

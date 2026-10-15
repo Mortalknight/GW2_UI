@@ -128,10 +128,7 @@ function GW.LoadSocialUIFrame()
     SocialUIFrame.sizer.texture:SetDesaturated(true)
     SocialUIFrame.sizer:SetScript("OnEnter", function(self)
         self.texture:SetDesaturated(false)
-        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 10, 30)
-        GameTooltip:ClearLines()
-        GameTooltip_SetTitle(GameTooltip, GW.L["Scale with Right Click"])
-        GameTooltip:Show()
+        GW.ShowScaleHandleTooltip(self)
     end)
     SocialUIFrame.sizer:SetScript("OnLeave", function(self)
         self.texture:SetDesaturated(true)
@@ -141,6 +138,11 @@ function GW.LoadSocialUIFrame()
     SocialUIFrame.sizer:SetFrameLevel(SocialUIFrame:GetFrameLevel() + 15)
     SocialUIFrame.sizer:SetScript("OnMouseDown", function(self, btn)
         if btn ~= "RightButton" then
+            return
+        end
+        -- the mouse up stores scale and position
+        if IsShiftKeyDown() then
+            SocialUIFrame:SetScale(1)
             return
         end
         socialFrameLeft, socialFrameTop = SocialUIFrame:GetLeft(), SocialUIFrame:GetTop()

@@ -274,10 +274,7 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
     frame.sizer.texture:SetDesaturated(true)
     frame.sizer:SetScript("OnEnter", function(self)
         frame.sizer.texture:SetDesaturated(false)
-        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 10, 30)
-        GameTooltip:ClearLines()
-        GameTooltip_SetTitle(GameTooltip, L["Scale with Right Click"])
-        GameTooltip:Show()
+        GW.ShowScaleHandleTooltip(self)
     end)
     frame.sizer:SetScript("OnLeave", function()
         frame.sizer.texture:SetDesaturated(true)
@@ -292,6 +289,11 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
         if InCombatLockdown() then
             -- SetScale / SetPoint on the protected window are blocked in combat
             GW.Notice(ERR_NOT_IN_COMBAT)
+            return
+        end
+        -- the mouse up stores scale and position
+        if IsShiftKeyDown() then
+            frame:SetScale(1)
             return
         end
 

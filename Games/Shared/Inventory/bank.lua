@@ -547,6 +547,8 @@ local function LoadBank(helpers)
     f.sizer.onResizeStop = onBankResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
+    f.sizer:SetScript("OnEnter", GW.ShowResizeHandleTooltip)
+    f.sizer:SetScript("OnLeave", GameTooltip_Hide)
 
     -- setup bagheader stuff; the template ships headers for the largest flavor,
     -- flavors with fewer bank bags simply never show the leftover ones

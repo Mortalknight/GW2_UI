@@ -332,6 +332,8 @@ local function LoadBank(helpers)
     f.sizer.onResizeStop = onBankResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
+    f.sizer:SetScript("OnEnter", GW.ShowResizeHandleTooltip)
+    f.sizer:SetScript("OnLeave", GameTooltip_Hide)
 
     -- take the original search box
     inv.reskinSearchBox(BankItemSearchBox)

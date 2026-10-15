@@ -430,6 +430,8 @@ local function LoadBank(helpers)
     f.sizer.onResizeStop = OnBankResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
+    f.sizer:SetScript("OnEnter", GW.ShowResizeHandleTooltip)
+    f.sizer:SetScript("OnLeave", GameTooltip_Hide)
 
     local headerIndex = 0
     while f["bagHeader" .. headerIndex] do
