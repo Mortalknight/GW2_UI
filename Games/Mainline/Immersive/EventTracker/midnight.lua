@@ -469,7 +469,7 @@ ET:RegisterEvent("CursedSurges", {
             [8940] = { 0.467, 0.628 },
         },
         duration = 5 * 60,
-        interval = 45 * 60,
+        interval = 30 * 60,
         eventName = L["Cursed Surges"],
         label = L["Cursed Surges"],
         location = ET.GetMapName(CURSED_SURGE_MAP),
