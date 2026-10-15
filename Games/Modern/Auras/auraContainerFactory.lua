@@ -223,6 +223,27 @@ local function RegisterAuraContainer(container, refreshFunc)
 end
 GW.RegisterAuraContainer = RegisterAuraContainer
 
+local function ApplyPendingSizes()
+    if GW.IsRestrictedAuras() then return end
+    -- the layout writes secure attributes, an encounter can end inside combat
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("gw_aura_pending_sizes", ApplyPendingSizes)
+        return
+    end
+    for _, entry in ipairs(containerRegistry) do
+        if entry.container.gwSizesPending then
+            entry.container.gwSizesPending = nil
+            entry.container:GwUpdateLayout()
+        end
+    end
+end
+
+if C_EventUtils.IsEventValid("ADDON_RESTRICTION_STATE_CHANGED") then
+    local restrictionWatcher = CreateFrame("Frame")
+    restrictionWatcher:RegisterEvent("ADDON_RESTRICTION_STATE_CHANGED")
+    restrictionWatcher:SetScript("OnEvent", ApplyPendingSizes)
+end
+
 -- for callers that change a filter table in place and re-apply through their own settings callback
 function GW.BumpAuraContainerSettingsGeneration()
     settingsGeneration = settingsGeneration + 1
@@ -648,13 +669,17 @@ local function ApplyLayout(container)
             })
         end
 
-        -- the flow layout only anchors; sizes are best effort, buttons that fail while auras are secret
-        -- keep their size until the next pass
-        ForEachGroupButton(container, group.key, function(button)
-            if button.gwAppliedSize ~= group.size or button.gwAppliedTextPad ~= textPad then
-                pcall(SetAuraButtonSize, button, group.size, textPad)
-            end
-        end)
+        -- the flow layout only anchors; while auras are restricted the buttons deny access, their sizes
+        -- follow once the restriction ends
+        if GW.IsRestrictedAuras() then
+            container.gwSizesPending = true
+        else
+            ForEachGroupButton(container, group.key, function(button)
+                if button.gwAppliedSize ~= group.size or button.gwAppliedTextPad ~= textPad then
+                    pcall(SetAuraButtonSize, button, group.size, textPad)
+                end
+            end)
+        end
     end
 end
 

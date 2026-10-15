@@ -17,13 +17,13 @@ local CREATOR = "Aethelwulf"
 local LEAD = "Glow"
 -- the languages come from the git history and the curseforge localization page
 local SECTIONS = {
-    {key = "developer", title = L["Developed by"], gold = true, names = {"Nezroy", "Shoodox", "Shrugal"}},
-    {key = "contribution", title = L["With Contributions by"], names = {"Hatdragon", "Zoelie"}},
-    {key = "localization", title = L["Localised by"], names = {
+    {key = "developer", title = L["Developers"], gold = true, names = {"Nezroy", "Shoodox", "Shrugal"}},
+    {key = "contribution", title = L["Contributors"], names = {"Hatdragon", "Zoelie"}},
+    {key = "localization", title = L["Translators"], names = {
         {"aSlightDrizzle", "esES"}, "AxelVader", {"Calcifer", "itIT"}, {"Crisll", "esES"}, "Dololo",
         {"Glow", "deDE"}, {"Kitto", "frFR"}, "Murak", {"Pyrefox", "esES ptBR"}, "RickCiotti", "Throli", {"Zelrog", "ruRU"},
     }},
-    {key = "testing", title = L["QA Testing by"], names = {"Belazor", "Crohnleuchter", "KYZ", "Ultrachocobo", "Zoelie"}},
+    {key = "testing", title = L["QA Testers"], names = {"Belazor", "Crohnleuchter", "KYZ", "Ultrachocobo", "Zoelie"}},
 }
 
 -- every name once, the grid preview borrows them as test names
@@ -176,8 +176,7 @@ function GW.CreateCreditsPage(parent, onDiscordClick)
     local page = CreateFrame("Frame", nil, parent)
     page:Hide()
 
-    local createdBy = strtrim((L["Created by: "]:gsub(":", "")))
-    page.creator = CreateHeroCard(page, "owner", createdBy, CREATOR, L["Created GW2 UI in 2015, inspired by the interface of Guild Wars 2."])
+    page.creator = CreateHeroCard(page, "owner", L["Founder"], CREATOR, L["Created GW2 UI in 2015, inspired by the interface of Guild Wars 2."])
     page.lead = CreateHeroCard(page, "developer", L["Lead developer"], LEAD, L["Part of GW2 UI since 2016, lead developer since 2020."])
 
     page.cards = {}

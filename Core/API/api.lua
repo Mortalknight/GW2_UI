@@ -383,17 +383,36 @@ function GW.CheckRestrictionState(which)
 
     return state
 end
+function GW.IsRestrictedAuras()
+    return GW.IsRestrictedChallengeMode() or GW.IsRestrictedEncounter() or GW.IsRestrictedCombat() or GW.IsRestrictedPvPMatch()
+end
 
-function GW.IsPaperDollStatsRestricted()
-    return GW.CheckRestrictionState("ChallengeMode") > 1 or GW.CheckRestrictionState("Encounter") > 1 or GW.CheckRestrictionState("Combat") > 1 or GW.CheckRestrictionState("PvPMatch") > 1
+function GW.IsRestrictedInstance()
+    return GW.IsRestrictedChallengeMode() or GW.IsRestrictedEncounter()
+end
+
+function GW.IsRestrictedPvPMatch()
+    return C_CVar.GetCVarBool("addonPvPMatchRestrictionsForced") or GW.CheckRestrictionState("PvPMatch") > 1
+end
+
+function GW.IsRestrictedCombat()
+    return C_CVar.GetCVarBool("addonCombatRestrictionsForced") or GW.CheckRestrictionState("Combat") > 1
+end
+
+function GW.IsRestrictedEncounter()
+    return C_CVar.GetCVarBool("addonEncounterRestrictionsForced") or GW.CheckRestrictionState("Encounter") > 1
+end
+
+function GW.IsRestrictedChallengeMode()
+    return C_CVar.GetCVarBool("addonChallengeModeRestrictionsForced") or GW.CheckRestrictionState("ChallengeMode") > 1
+end
+
+function GW.IsRestrictedMap()
+    return C_CVar.GetCVarBool("addonMapRestrictionsForced") or GW.CheckRestrictionState("Map") > 1
 end
 
 function GW.IsChatRestricted()
     return C_CVar.GetCVarBool("addonChatRestrictionsForced") or GW.CheckRestrictionState("Chat") > 1
-end
-
-function GW.IsRestrictedInstance()
-    return C_CVar.GetCVarBool("addonChallengeModeRestrictionsForced") or GW.CheckRestrictionState("ChallengeMode") > 1 or  GetCVarBool("addonEncounterRestrictionsForced") or GW.CheckRestrictionState("Encounter") > 1
 end
 
 function GW.UnregisterGameEvent(event)

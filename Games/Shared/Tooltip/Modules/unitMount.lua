@@ -5,7 +5,7 @@ local Tooltip = GW.Tooltip
 -- the mount a player rides, ctrl adds where it comes from
 local function AddMount(tooltip, unit)
     local index = 1
-    local aura = C_UnitAuras.GetBuffDataByIndex(unit, index, "HELPFUL")
+    local aura = C_UnitAuras.GetBuffDataByIndex(unit, index)
     while aura and GW.NotSecretValue(aura.spellId) do
         local source = Tooltip.GetMountSource(aura.spellId)
         if source then
@@ -24,13 +24,13 @@ local function AddMount(tooltip, unit)
             return
         end
         index = index + 1
-        aura = C_UnitAuras.GetBuffDataByIndex(unit, index, "HELPFUL")
+        aura = C_UnitAuras.GetBuffDataByIndex(unit, index)
     end
 end
 
 -- other players out of combat; shift shows the item level instead
 local function OnUnitTooltip(tooltip, data)
-    if tooltip ~= GameTooltip or not GW.settings.tooltip.unit.mount or IsShiftKeyDown() or InCombatLockdown() or GW.IsRestrictedInstance() then
+    if tooltip ~= GameTooltip or not GW.settings.tooltip.unit.mount or IsShiftKeyDown() or InCombatLockdown() or GW.IsRestrictedAuras() then
         return
     end
     local unit = Tooltip.GetUnit(tooltip, data)

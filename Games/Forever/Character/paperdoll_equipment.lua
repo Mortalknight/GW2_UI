@@ -128,7 +128,7 @@ end
 local function updateStats(self)
     PDE.UpdateItemLevel(self)
 
-    if InCombatLockdown() or GW.IsPaperDollStatsRestricted() then
+    if InCombatLockdown() or GW.IsRestrictedAuras() then
         GW.CombatQueue:Queue("update character stats", updateStats, {self})
         return
     end

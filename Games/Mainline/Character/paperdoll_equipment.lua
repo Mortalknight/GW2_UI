@@ -206,7 +206,7 @@ local function updateStats(self)
 
     local primaryStat = select(6, C_SpecializationInfo.GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
 
-    if InCombatLockdown() or GW.IsPaperDollStatsRestricted() then
+    if InCombatLockdown() or GW.IsRestrictedAuras() then
         GW.CombatQueue:Queue("update character stats", updateStats, {self})
         return
     end
