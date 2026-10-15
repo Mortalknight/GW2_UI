@@ -974,6 +974,7 @@ local function LoadPaperDoll(tabContainer)
         name = "Pawn",
         setting = GW.settings.windows.character.enabled,
         showFunction = function() PawnUIShow() end,
+        onEnter = function(self) PawnUI_InventoryPawnButton_OnEnter(self) end,
         hideOurFrame = false,
     })
 

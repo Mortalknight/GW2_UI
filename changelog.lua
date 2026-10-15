@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
+    {GW.Enum.ChangelogType.change, [=[Hero panel: the Pawn button shows the Pawn tooltip with the values of your equipped items]=]},
     {GW.Enum.ChangelogType.bug, [=[Reputation: the session gain shows for renown factions too]=]},
     {GW.Enum.ChangelogType.bug, [=[Possible taint from the equipment flyout of the hero panel]=]},
     {GW.Enum.ChangelogType.bug, [=[Forever: a profession dragged from the hero panel to the action bars opens the profession again]=]},

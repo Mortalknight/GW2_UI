@@ -27,7 +27,7 @@ local function LoadDressUpFrameSkin()
 
     DressUpFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(DressUpFrame, DressUpFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {}, nil, false, true)
-    DressUpFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    DressUpFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
 
     -- framed player portrait in the header like the inspect and merchant frames; blizzard refreshes
     -- its own portrait on every show, so it stays hidden and ours follows
