@@ -81,7 +81,7 @@ local function SkinWindow(regions, headerText)
         header.BGRIGHT:ClearAllPoints()
         header.BGRIGHT:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, 0)
         header.BGRIGHT:SetPoint("TOPLEFT", header, "TOPLEFT", 0, 0)
-        headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+        headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
     end
 
     MacroFrameBg:Hide()

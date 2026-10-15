@@ -125,7 +125,7 @@ local function ApplyClassTrainerSkin()
     ClassTrainerFrame.Bg:Hide()
 
     GW.CreateFrameHeaderWithBody(ClassTrainerFrame, ClassTrainerFrame:GetTitleText(), "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon.png", nil, nil, nil, true)
-    ClassTrainerFrame:GetTitleText():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    ClassTrainerFrame:GetTitleText():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
 
     ClassTrainerFrame.gwHeader.windowIcon:SetSize(48, 48)
     ClassTrainerFrame.gwHeader.windowIcon:ClearAllPoints()

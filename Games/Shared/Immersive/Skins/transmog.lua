@@ -565,7 +565,7 @@ local function SkinWindow(frame)
     header.windowIcon:ClearAllPoints()
     header.windowIcon:SetPoint("CENTER", header, "BOTTOMLEFT", 30, 19)
     if header.headerText then
-        header.headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+        header.headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
     end
     frame:HookScript("OnShow", function()
         GW.SetHeaderPortrait(header, "npc")

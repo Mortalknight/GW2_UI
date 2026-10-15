@@ -70,7 +70,7 @@ local function LoadDressUpFrameSkin()
     -- the template brings a second, empty DressUpFrameTitleText; the frame's own title carries the text
     local title = DressUpFrame.TitleText or DressUpFrameTitleText
     GW.CreateFrameHeaderWithBody(DressUpFrame, title, WINDOW_ICON, {}, nil, false, true)
-    title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
     -- blizzard centers it in a fixed width, our header starts it on the left
     title:SetJustifyH("LEFT")
     if DressUpFrame.TitleContainer then

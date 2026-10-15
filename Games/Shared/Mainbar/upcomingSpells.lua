@@ -531,7 +531,7 @@ end
 local function LoadUpcomingSpells()
     local upcomingSpellsFrame = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")
 
-    upcomingSpellsFrame.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    upcomingSpellsFrame.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
     upcomingSpellsFrame.header:SetText(L["Upcoming Level Rewards"])
 
     upcomingSpellsFrame.hint:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)

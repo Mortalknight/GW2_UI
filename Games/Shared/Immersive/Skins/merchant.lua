@@ -133,7 +133,7 @@ local function SkinHeader()
     icon:SetSize(48, 48)
     icon:ClearAllPoints()
     icon:SetPoint("CENTER", MerchantFrame.gwHeader, "BOTTOMLEFT", 30, 19)
-    title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
 end
 
 local function SkinBuyback()

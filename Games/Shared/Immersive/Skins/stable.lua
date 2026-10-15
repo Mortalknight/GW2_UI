@@ -23,7 +23,7 @@ end
 -- header with the stable master as portrait, like blizzard the player when there is none
 local function SkinWindow(frame, title)
     GW.CreateFrameHeaderWithBody(frame, title, nil, nil, nil, nil, true)
-    title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
     title:SetJustifyH("LEFT")
     frame.gwHeader.windowIcon:SetSize(48, 48)
     frame.gwHeader.windowIcon:ClearAllPoints()
