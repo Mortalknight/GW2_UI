@@ -296,6 +296,8 @@ local function AddProfile(name, addNewProfile, importProfileString)
         local currentProfile = GW.globalSettings:GetCurrentProfile()
         GW.globalSettings:SetProfile(name)
         GW.globalSettings:ResetProfile(nil, true)
+        GW.globalSettings.profile.profileCreatedCharacter = GW.myname .. " - " .. GW.myrealm
+        GW.globalSettings.profile.profileCreatedDate = date(L["TimeStamp m/d/y h:m:s"])
         GW.CreateProfileLayout()
         GW.globalSettings:SetProfile(currentProfile)
     end
@@ -342,8 +344,8 @@ local function InitButton(button, elementData)
     end
 
     local prof = GW.globalSettings.profiles[profileName] or {}
-    prof.profileCreatedDate = prof.profileCreatedDate or UNKNOWN
-    prof.profileCreatedCharacter = prof.profileCreatedCharacter or UNKNOWN
+    if prof.profileCreatedDate == UNKNOWN then prof.profileCreatedDate = nil end
+    if prof.profileCreatedCharacter == UNKNOWN then prof.profileCreatedCharacter = nil end
     prof.profileIcon = prof.profileIcon or ICONS[random(1, #ICONS > 0 and #ICONS or 1)]
     GW.globalSettings.profiles[profileName] = prof -- ensure back
 
@@ -353,12 +355,15 @@ local function InitButton(button, elementData)
         button.activateButton.icon:SetTexture("INTERFACE/ICONS/" .. tostring(prof.profileIcon))
     end
 
-    local lastUpdate = prof.profileChangedDate and (L["Last updated: "] .. prof.profileChangedDate) or ""
-    button.desc:SetText(
-        L["Created: "] .. prof.profileCreatedDate .. "\n" ..
-        L["Created by: "] .. prof.profileCreatedCharacter .. "\n" ..
-        lastUpdate
-    )
+    local lines = {}
+    if prof.profileCreatedDate then
+        tinsert(lines, L["Created: "] .. prof.profileCreatedDate)
+    end
+    tinsert(lines, L["Created by: "] .. (prof.profileCreatedCharacter or GW.globalDefault.profile.profileCreatedCharacter))
+    if prof.profileChangedDate then
+        tinsert(lines, L["Last updated: "] .. prof.profileChangedDate)
+    end
+    button.desc:SetText(table.concat(lines, "\n"))
 end
 
 ------------------------------------------------------------
