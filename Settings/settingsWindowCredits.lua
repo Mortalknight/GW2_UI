@@ -177,7 +177,7 @@ function GW.CreateCreditsPage(parent, onDiscordClick)
     page:Hide()
 
     page.creator = CreateHeroCard(page, "owner", L["Founder"], CREATOR, L["Created GW2 UI in 2015, inspired by the interface of Guild Wars 2."])
-    page.lead = CreateHeroCard(page, "developer", L["Lead developer"], LEAD, L["Part of GW2 UI since 2016, lead developer since 2020."])
+    page.lead = CreateHeroCard(page, "developer", L["Lead Developer"], LEAD, L["Part of GW2 UI since 2016, lead developer since 2020."])
 
     page.cards = {}
     for _, section in ipairs(SECTIONS) do

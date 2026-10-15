@@ -229,6 +229,6 @@ local function LoadActionbarPanel(sWindow)
         incompatibleAddons = "Actionbars"
     })
 
-    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, ACTIONBARS_SUBTEXT, {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars},  {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}, {name = L["Totem Bar"], frame = totemBar}})
+    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, L["Edit action bar settings."], {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars},  {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}, {name = L["Totem Bar"], frame = totemBar}})
 end
 GW.LoadActionbarPanel = LoadActionbarPanel
