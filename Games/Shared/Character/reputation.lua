@@ -38,6 +38,12 @@ local IsMajorFaction = C_Reputation and C_Reputation.IsMajorFaction or GW.NoOp
 -- ctrl + right click); the gain is simply current total minus baseline
 local function GetFactionTotalStanding(data)
     local total = data.currentStanding or 0
+    if data.factionID and IsMajorFaction(data.factionID) and C_MajorFactions then
+        local major = C_MajorFactions.GetMajorFactionData(data.factionID)
+        if major then
+            total = (major.renownLevel or 0) * (major.renownLevelThreshold or 0) + (major.renownReputationEarned or 0)
+        end
+    end
     if data.factionID and C_Reputation and C_Reputation.IsFactionParagonForCurrentPlayer and C_Reputation.IsFactionParagonForCurrentPlayer(data.factionID) then
         local currentValue = C_Reputation.GetFactionParagonInfo(data.factionID)
         total = total + (currentValue or 0)

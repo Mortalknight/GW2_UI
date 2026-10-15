@@ -846,9 +846,6 @@ function PDE.CreateBagList(fmMenu, parent, flavorOptions)
     end)
 
     EquipmentFlyoutFrame:GwKill()
-    EquipmentFlyoutFrame:SetScript("OnUpdate", nil)
-    EquipmentFlyoutFrame:SetScript("OnShow", nil)
-    EquipmentFlyoutFrame:SetScript("OnLoad", nil)
 
     GW.SetPaperDollModelPosition(fmPD3M)
 

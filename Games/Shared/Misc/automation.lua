@@ -64,8 +64,19 @@ local function TrackBiggestGain()
     TrackFaction(bestID)
 end
 
+local function IsListed(factionID)
+    for i = 1, GetNumFactions() do
+        local data = GW.GetFactionDataByIndex(i)
+        if data and data.factionID == factionID then
+            return true
+        end
+    end
+end
+
 local function OnStandingChanged(factionID, standing)
     local previous = standings[factionID]
+    -- blizzard also reports hidden factions, like the paragon of renown factions, only the reputation list counts
+    if not previous and not IsListed(factionID) then return end
     standings[factionID] = standing
     -- a faction not known before counts as a gain, it was not in the list at login
     if not GW.settings.general.autoTrackReputation or factionID == GUILD_FACTION_ID or (previous and standing <= previous) then return end
