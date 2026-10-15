@@ -21,6 +21,7 @@ addChange("12.0.1", {
     {GW.Enum.ChangelogType.bug, [=[Chat: lines of NPCs in instances get a timestamp again]=]},
     {GW.Enum.ChangelogType.bug, [=[Chat: no more error from the quick join message in combat]=]},
     {GW.Enum.ChangelogType.bug, [=[Profiles: new profiles remember the character that created them]=]},
+    {GW.Enum.ChangelogType.bug, [=[World map: closing it no longer causes an "action blocked" error]=]},
     {GW.Enum.ChangelogType.bug, [=[Window titles have the same size everywhere, among them friends, merchant, trainer and stable]=]},
     {GW.Enum.ChangelogType.bug, [=[Minimap: switched off coordinates no longer show up when hovering the minimap]=]},
     {GW.Enum.ChangelogType.bug, [=[Tooltips of players in a guild with "level" in its name show the level line correctly]=]},

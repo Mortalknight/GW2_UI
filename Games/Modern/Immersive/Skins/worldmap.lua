@@ -251,7 +251,7 @@ local function worldMapSkin()
 
     local QuestMapFrame = _G.QuestMapFrame
     QuestMapFrame.VerticalSeparator:Hide()
-    QuestMapFrame:SetScript("OnHide", WorldMap_QuestMapHide)
+    QuestMapFrame:HookScript("OnHide", WorldMap_QuestMapHide)
 
     QuestMapFrame.DetailsFrame:GwStripTextures(true)
 
