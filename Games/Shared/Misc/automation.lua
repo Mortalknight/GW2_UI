@@ -20,71 +20,40 @@ local function IsQueued()
     return queueButton and queueButton:IsShown()
 end
 
-local function TrackFaction(factionID)
-    local watched = GW.GetWatchedFactionInfo()
-    if factionID == GUILD_FACTION_ID or (watched and watched.factionID == factionID) then return end
-    if C_Reputation and C_Reputation.SetWatchedFactionByID then
-        C_Reputation.SetWatchedFactionByID(factionID)
-        return
-    end
-    for i = 1, GetNumFactions() do
-        local data = GW.GetFactionDataByIndex(i)
-        if data and data.factionID == factionID then
-            SetWatchedFactionByIndex(i)
-            return
-        end
-    end
-end
-
 -- a kill can change several reputations at once: losses never switch the bar, the watched faction stays when it
--- gained as well, otherwise the biggest gain wins; the standings before are needed to tell gains from losses
+-- gained as well, otherwise the biggest gain wins; renown and paragon gains are reported for hidden factions, so the
+-- totals of the reputation list are compared instead of the reported factions
 local standings = {}
-local gains
+local scanPending = false
 
-local function RememberStandings()
+local function ScanStandings(track)
+    scanPending = false
+    local watched = track and GW.GetWatchedFactionInfo()
+    local bestIndex, bestGain
     for i = 1, GetNumFactions() do
         local data = GW.GetFactionDataByIndex(i)
         if data and data.factionID and data.factionID > 0 then
-            standings[data.factionID] = data.currentStanding
+            local total = GW.GetFactionTotalStanding(data)
+            local previous = standings[data.factionID]
+            standings[data.factionID] = total
+            if previous and total > previous and data.factionID ~= GUILD_FACTION_ID then
+                if watched and watched.factionID == data.factionID then
+                    track = false
+                elseif not bestGain or total - previous > bestGain then
+                    bestIndex, bestGain = i, total - previous
+                end
+            end
         end
+    end
+    if track and bestIndex then
+        SetWatchedFactionByIndex(bestIndex)
     end
 end
 
-local function TrackBiggestGain()
-    local pending = gains
-    gains = nil
-    local watched = GW.GetWatchedFactionInfo()
-    if watched and pending[watched.factionID] then return end
-    local bestID, bestGain
-    for factionID, gain in pairs(pending) do
-        if not bestGain or gain > bestGain then
-            bestID, bestGain = factionID, gain
-        end
-    end
-    TrackFaction(bestID)
-end
-
-local function IsListed(factionID)
-    for i = 1, GetNumFactions() do
-        local data = GW.GetFactionDataByIndex(i)
-        if data and data.factionID == factionID then
-            return true
-        end
-    end
-end
-
-local function OnStandingChanged(factionID, standing)
-    local previous = standings[factionID]
-    -- blizzard also reports hidden factions, like the paragon of renown factions, only the reputation list counts
-    if not previous and not IsListed(factionID) then return end
-    standings[factionID] = standing
-    -- a faction not known before counts as a gain, it was not in the list at login
-    if not GW.settings.general.autoTrackReputation or factionID == GUILD_FACTION_ID or (previous and standing <= previous) then return end
-    if not gains then
-        gains = {}
-        C_Timer.After(0, TrackBiggestGain)
-    end
-    gains[factionID] = (gains[factionID] or 0) + standing - (previous or standing)
+local function OnStandingChanged()
+    if not GW.settings.general.autoTrackReputation or scanPending then return end
+    scanPending = true
+    C_Timer.After(0, function() ScanStandings(true) end)
 end
 
 local function SetRoleFromSpec()
@@ -158,9 +127,9 @@ frame:SetScript("OnEvent", function(_, event, ...)
             SetRoleFromSpec()
         end
     elseif event == "FACTION_STANDING_CHANGED" then
-        OnStandingChanged(...)
+        OnStandingChanged()
     elseif event == "PLAYER_ENTERING_WORLD" then
-        RememberStandings()
+        ScanStandings(false)
     elseif event == "DELETE_ITEM_CONFIRM" then
         if settings.autoFillDelete then
             FillDeleteConfirmation()

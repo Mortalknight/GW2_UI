@@ -50,6 +50,7 @@ local function GetFactionTotalStanding(data)
     end
     return total
 end
+GW.GetFactionTotalStanding = GetFactionTotalStanding
 
 local sessionBaseline = {}
 
