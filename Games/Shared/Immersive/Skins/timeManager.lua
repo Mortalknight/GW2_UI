@@ -116,6 +116,7 @@ local function SkinTimeManagerFrame()
 
     frame:SetSize(250, 258)
     MakeFrameMovable(frame)
+    tinsert(UISpecialFrames, "TimeManagerFrame")
     frame:GwStripTextures()
     frame:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
