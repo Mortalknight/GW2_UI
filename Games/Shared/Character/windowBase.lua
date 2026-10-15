@@ -725,6 +725,10 @@ local function CreateAddonMenuButton(options)
         end
         self:CallMethod("ui_show")
     ]=])
+    if options.onEnter then
+        button:HookScript("OnEnter", options.onEnter)
+        button:HookScript("OnLeave", GameTooltip_Hide)
+    end
     if options.onCreated then
         options.onCreated(button)
     end
