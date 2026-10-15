@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
+    {GW.Enum.ChangelogType.bug, [=[Action bars no longer flicker between the override bar and the normal bar, fewer "action blocked" errors from the micro menu]=]},
     {GW.Enum.ChangelogType.bug, [=[Classic clients: multi action bars no longer stay hidden after logging in again following a disconnect]=]},
     {GW.Enum.ChangelogType.change, [=[Hero panel: the Pawn button shows the Pawn tooltip with the values of your equipped items]=]},
     {GW.Enum.ChangelogType.bug, [=[Reputation: the session gain shows for renown factions too]=]},
