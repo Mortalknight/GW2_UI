@@ -744,6 +744,12 @@ function GW.LoadMinimap()
         MinimapCluster.BorderTop:GwStripTextures()
     end
 
+    -- retail and forever have coordinates of their own now, ours stay; the cvar stays the players choice
+    local blizzardCoords = MinimapCluster.MinimapContainer and MinimapCluster.MinimapContainer.PlayerCoords
+    if blizzardCoords then
+        blizzardCoords:GwKill()
+    end
+
     if MinimapCluster.Tracking then
         MinimapCluster.Tracking.Background:GwStripTextures()
     end
