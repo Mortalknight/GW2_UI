@@ -62,6 +62,16 @@ local function SkinSlot(button)
         button.Checked:SetTexture(CHECKED)
         button.Checked:SetAllPoints()
     end
+    for _, key in ipairs({"lockedBackground", "unlockedBackground", "currentBackground", "currentGlow"}) do
+        if button[key] then
+            button[key]:SetAlpha(0)
+        end
+    end
+    if button.lockIcon then
+        button.lockIcon:SetTexture(LOCK)
+        button.lockIcon:SetScale(1)
+        button.lockIcon:SetSize(24, 24)
+    end
 end
 
 -- the number of slots differs from client to client, the buttons are named after their place
@@ -73,10 +83,36 @@ local function SkinSlots(prefix)
     end
 end
 
-local function SkinStatusBar(bar)
-    bar:GwStripTextures()
-    bar:SetStatusBarTexture(STATUSBAR)
+local PET_XP_COLOR = {240 / 255, 240 / 255, 155 / 255}
+local function SkinColoredProgressBar(bar)
+    for _, region in ipairs({bar:GetRegions()}) do
+        if region:GetObjectType() == "Texture" and region ~= bar.Fill then
+            region:SetAlpha(0)
+        end
+    end
+    bar:SetHeight(14)
+    bar.FillArea:ClearAllPoints()
+    bar.FillArea:SetAllPoints()
+    bar.Fill:RemoveMaskTexture(bar.Mask)
+    local function SetFill()
+        bar.Fill:SetTexture(STATUSBAR)
+        bar.Fill:SetVertexColor(unpack(PET_XP_COLOR))
+        bar.Fill:SetHeight(bar:GetHeight())
+    end
+    SetFill()
+    if bar.SetFillTextureByColorType then
+        hooksecurefunc(bar, "SetFillTextureByColorType", SetFill)
+    end
+    hooksecurefunc(bar, "SetFillWidth", function(_, width)
+        bar.Fill:SetShown(width > 0)
+    end)
+    local background = bar:CreateTexture(nil, "BACKGROUND", nil, -1)
+    background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
+    background:SetPoint("TOPLEFT", -2, 2)
+    background:SetPoint("BOTTOMRIGHT", 2, -2)
     GW.AddStatusBarFrame(bar)
+    bar.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    bar.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 end
 
 -- retail: the list of stabled pets
@@ -294,22 +330,6 @@ local function SkinMoneyFrame(money)
     end
 end
 
--- a small square badge like the happiness icon instead of the boss ring
-local function SkinLoyaltyLevel(loyalty, anchor)
-    for _, region in ipairs({loyalty:GetRegions()}) do
-        if region:GetObjectType() == "Texture" then
-            region:SetAlpha(0)
-        end
-    end
-    loyalty:SetSize(anchor:GetHeight(), anchor:GetHeight())
-    loyalty:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-    loyalty.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
-    loyalty.levelText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    loyalty.levelText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    loyalty:ClearAllPoints()
-    loyalty:SetPoint("TOPLEFT", anchor, "TOPRIGHT", 6, 0)
-end
-
 local function SetLabelColor(text)
     text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -346,6 +366,8 @@ local function SkinSlotsAndMoney()
     SkinSlotLabels(PetStableStabledPet1)
     PetStableCostLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     PetStableCostLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    PetStableSlotText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    PetStableSlotText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     PetStableCostMoneyFrame:ClearAllPoints()
     PetStableCostMoneyFrame:SetPoint("LEFT", PetStableCostLabel, "RIGHT", 6, 0)
     SkinMoneyFrame(PetStableCostMoneyFrame)
@@ -365,10 +387,14 @@ local function SkinForeverStable()
     modelScene.Inset:SetAlpha(0)
     modelScene.Background:SetTexture(PET_BG)
     modelScene.Background:SetAlpha(1)
-    -- blizzard keeps room above the model for the title, that now sits in the header
+    -- blizzard keeps room above the model for the title, that now sits in the header; below it the slots
+    -- and the question for the next slot
     modelScene:ClearAllPoints()
     modelScene:SetPoint("TOPLEFT", frame, "TOPLEFT", 7, -42)
-    modelScene:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 140)
+    modelScene:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 150)
+    for _, art in pairs({frame.TopDividerFrame, frame.BottomDividerFrame, TopBackground, BottomBackground, frame.insideFrameBottom}) do
+        art:Hide()
+    end
     modelScene:HookScript("OnSizeChanged", function(self) FitPetBackground(self.Background, self) end)
     FitPetBackground(modelScene.Background, modelScene)
     GW.HandleModelSceneControlFrame(modelScene.ControlFrame)
@@ -377,12 +403,10 @@ local function SkinForeverStable()
     if diet and diet.UpdateHappiness then
         hooksecurefunc(diet, "UpdateHappiness", UpdateHappinessIcon)
         UpdateHappinessIcon(diet)
-        -- both values of the pet together in the corner of the model
-        SkinLoyaltyLevel(frame.loyaltyLevel, diet)
-        frame.loyaltyLevel:SetFrameLevel(diet:GetFrameLevel())
     end
-    SkinStatusBar(frame.expBar.StatusBar)
-    frame.expBar.overlay:GwStripTextures()
+    SkinColoredProgressBar(frame.expBar)
+    -- it shares the level of the model, whose shadow overlay darkens the track
+    frame.expBar:SetFrameLevel(modelScene:GetFrameLevel() + 2)
 
     SkinSlot(PetStableCurrentPet)
     SkinSlots("PetStableStabledPet")
@@ -391,6 +415,10 @@ local function SkinForeverStable()
     frame.purchaseButton:GwSkinButton(false, true)
     frame.purchaseButton:ClearAllPoints()
     frame.purchaseButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 30)
+    PetStableCostLabel:ClearAllPoints()
+    PetStableCostLabel:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 20, 35)
+    PetStableSlotText:ClearAllPoints()
+    PetStableSlotText:SetPoint("BOTTOMLEFT", PetStableCostLabel, "TOPLEFT", 0, 6)
     PetStableMoneyFrame.Border:SetAlpha(0)
 end
 

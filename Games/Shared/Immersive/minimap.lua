@@ -214,6 +214,23 @@ local function minimap_OnHide()
     end
 end
 
+local CALENDAR_TEXTURE = "Interface/AddOns/GW2_UI/textures/icons/calendar.png"
+local calendarMirrored = false
+local function UpdateCalendarIcon()
+    local left, right = calendarMirrored and 1 or 0, calendarMirrored and 0 or 1
+    if GameTimeFrame.StateTexture then
+        for _, texture in ipairs({GameTimeFrame.StateTexture, GameTimeFrame.AddTexture}) do
+            texture:SetTexture(CALENDAR_TEXTURE)
+            texture:ClearAllPoints()
+            texture:SetAllPoints()
+            texture:SetTexCoord(left, right, 0, 1)
+        end
+    else
+        for _, texture in pairs({GameTimeFrame:GetNormalTexture(), GameTimeFrame:GetHighlightTexture(), GameTimeFrame:GetPushedTexture()}) do
+            texture:SetTexCoord(left, right, 0, 1)
+        end
+    end
+end
 
 local function setMinimapButtons(side)
     Minimap.sidePanel:ClearAllPoints()
@@ -226,11 +243,6 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
-        if GW.isModern then
-            GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
-            GameTimeFrame:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
-            GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
-        end
     else
         Minimap.sidePanel:SetPoint("TOPLEFT", Minimap.gwBorder, "TOPRIGHT")
         Minimap.sidePanel:SetPoint("BOTTOMLEFT", Minimap.gwBorder, "BOTTOMRIGHT")
@@ -239,11 +251,10 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
-        if GW.isModern then
-            GameTimeFrame:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
-            GameTimeFrame:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
-            GameTimeFrame:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
-        end
+    end
+    if GW.isModern then
+        calendarMirrored = side ~= "left"
+        UpdateCalendarIcon()
     end
 end
 
@@ -729,7 +740,10 @@ function GW.LoadMinimap()
         MinimapCluster.IndicatorFrame
     }
 
-    MinimapCluster.BorderTop:GwStripTextures()
+    if MinimapCluster.BorderTop then
+        MinimapCluster.BorderTop:GwStripTextures()
+    end
+
     if MinimapCluster.Tracking then
         MinimapCluster.Tracking.Background:GwStripTextures()
     end
@@ -822,12 +836,16 @@ function GW.LoadMinimap()
     GameTimeFrame:SetHitRectInsets(0, 0, 0, 0)
     GameTimeFrame:SetSize(32, 32)
 
-    if GameTimeFrame_SetDate then
+    if GameTimeFrame.StateTexture then
+        hooksecurefunc(GameTimeFrame, "OnButtonStateChanged", UpdateCalendarIcon)
+        UpdateCalendarIcon()
+    elseif GameTimeFrame_SetDate then
         hooksecurefunc("GameTimeFrame_SetDate", function()
             GameTimeFrame:GwStripTextures()
-            GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/calendar.png")
-            GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/calendar.png")
-            GameTimeFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/calendar.png")
+            GameTimeFrame:SetNormalTexture(CALENDAR_TEXTURE)
+            GameTimeFrame:SetPushedTexture(CALENDAR_TEXTURE)
+            GameTimeFrame:SetHighlightTexture(CALENDAR_TEXTURE)
+            UpdateCalendarIcon()
         end)
     end
 
