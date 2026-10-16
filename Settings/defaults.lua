@@ -1753,6 +1753,7 @@ GW.globalDefault = {
             },
             lootRoll = {
                 enabled = true,
+                scale = 1,
             },
             deathRecap = {
                 enabled = true,

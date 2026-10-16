@@ -127,6 +127,7 @@ end
 local function CreateBar()
     local bar = CreateFrame("Frame", nil, UIParent)
     bar:SetSize(BAR_WIDTH, BAR_HEIGHT)
+    bar:SetScale(GW.settings.skins.lootRoll.scale)
     bar:SetFrameStrata("DIALOG")
     bar:Hide()
 
@@ -221,6 +222,13 @@ local function StartRoll(rollID, rollTime)
     LayoutButtons(bar)
 
     bar:Show()
+    LayoutBars()
+end
+
+function GW.UpdateLootRollBarsScale()
+    for _, bar in ipairs(bars) do
+        bar:SetScale(GW.settings.skins.lootRoll.scale)
+    end
     LayoutBars()
 end
 

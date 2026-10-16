@@ -1214,6 +1214,7 @@ L["Colors the tooltip border in the quality color of the item."] = true
 L["Currency cap"] = true
 L["A toast when a currency reaches 90% of its weekly or total cap."] = true
 L["Loot roll bars"] = "Loot Roll Bars"
+L["Loot Roll Bars Scale"] = true
 L["Replaces the group loot roll frames with bars that show a timer and the item level."] = true
 L["Right-click: switch specialization or loadout"] = true
 L["  /gw2 test lootroll  -> Show test loot roll bars"] = true

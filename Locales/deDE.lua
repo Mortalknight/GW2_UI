@@ -1242,6 +1242,7 @@ L["Colors the tooltip border in the quality color of the item."] = "Färbt den T
 L["Currency cap"] = "Währungslimit"
 L["A toast when a currency reaches 90% of its weekly or total cap."] = "Ein Hinweis, wenn eine Währung 90% ihres Wochen- oder Gesamtlimits erreicht."
 L["Loot roll bars"] = "Würfelleisten für Beute"
+L["Loot Roll Bars Scale"] = "Würfelleisten Skalierung"
 L["Replaces the group loot roll frames with bars that show a timer and the item level."] = "Ersetzt die Würfelfenster für Gruppenbeute durch Leisten mit Timer und Itemlevel."
 L["Right-click: switch specialization or loadout"] = "Rechtsklick: Spezialisierung oder Loadout wechseln"
 L["  /gw2 test lootroll  -> Show test loot roll bars"] = "  /gw2 test lootroll  -> Zeigt Test-Würfelleisten"
