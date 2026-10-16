@@ -71,7 +71,7 @@ end)
 
 button:HookScript("OnEnter", function()
     if GameTooltip:IsOwned(button) then
-        GameTooltip:AddLine(L["Right click: switch specialization or loadout"], 1, 1, 1)
+        GameTooltip:AddLine(L["Right-click: switch specialization or loadout"], 1, 1, 1)
         GameTooltip:Show()
     end
 end)

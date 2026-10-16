@@ -92,6 +92,7 @@ local function ApplyClassTrainerSkin()
     ClassTrainerCancelButton:GwSkinButton(false, true)
     if frame.FilterDropdown then
         frame.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 100)
+        frame.FilterDropdown:GwNudgePoint(0, -4)
     end
 
     -- list and details: our scroll bars, our arrows on the headers, our hover and selection;

@@ -175,7 +175,7 @@ local function MapCoordsMiniMap_OnClick(self, button)
 end
 
 
--- the fade shows its frame, a detail that is switched off (like the coordinates) stays hidden
+-- blizzards fade shows its frame, a detail that is switched off (like the coordinates) stays hidden
 local function hoverMiniMapIn()
     for k, v in pairs(GW.settings.minimap.alwaysShowHoverDetails) do
         local frame = v == false and minimapDetails[k] and _G[minimapDetails[k]]
@@ -188,8 +188,9 @@ end
 
 local function hoverMiniMapOut()
     for k, v in pairs(GW.settings.minimap.alwaysShowHoverDetails) do
-        if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
-            UIFrameFadeOut(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 0)
+        local frame = v == false and minimapDetails[k] and _G[minimapDetails[k]]
+        if frame and frame:IsShown() then
+            UIFrameFadeOut(frame, 0.2, frame:GetAlpha(), 0)
         end
     end
 end

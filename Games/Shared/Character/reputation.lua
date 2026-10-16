@@ -445,7 +445,7 @@ local function detailsShowAsBar_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:ClearLines()
     GameTooltip:SetText(REPUTATION_SHOW_AS_XP, nil, nil, nil, nil, true)
-    GameTooltip:AddLine(L["Right click a faction to toggle this directly."], 0.8, 0.8, 0.8, true)
+    GameTooltip:AddLine(L["Right-click a faction to toggle this directly."], 0.8, 0.8, 0.8, true)
     GameTooltip:Show()
 end
 

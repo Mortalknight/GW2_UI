@@ -309,7 +309,7 @@ local function Setup(stats, dressingRoom, refresh)
         GameTooltip:AddLine(L["Click a stat to hide or show it"], nil, nil, nil, true)
         GameTooltip:AddLine(L["Drag a stat to change the order"], nil, nil, nil, true)
         if stats.gwEditMode then
-            GameTooltip:AddLine(L["Right click to reset to the defaults"], nil, nil, nil, true)
+            GameTooltip:AddLine(L["Right-click to reset to the defaults"], nil, nil, nil, true)
         end
         GameTooltip:Show()
     end)

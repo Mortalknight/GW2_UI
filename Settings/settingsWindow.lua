@@ -62,6 +62,31 @@ local function BuildSettingsWindow()
     settingsContainer.versionString:SetFont(UNIT_NAME_FONT, 12)
     settingsContainer.versionString:SetText(GW.GetVersionString() .. " (DB " .. (GW.settings.settingsVersion or 0) .. ")")
 
+    local versionButton = CreateFrame("Button", nil, settingsContainer)
+    versionButton:SetPoint("CENTER", settingsContainer.versionString)
+    versionButton:SetSize(settingsContainer.versionString:GetStringWidth() + 10, 18)
+    versionButton:SetScript("OnEnter", function(self)
+        settingsContainer.versionString:SetTextColor(1, 1, 1)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+        GameTooltip:SetText(L["Click to copy the version for bug reports."], 1, 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    versionButton:SetScript("OnLeave", function()
+        settingsContainer.versionString:SetTextColor(1, 0.93, 0.73)
+        GameTooltip_Hide()
+    end)
+    versionButton:SetScript("OnClick", function()
+        local clientVersion, clientBuild = GetBuildInfo()
+        GW.ShowPopup({text = L["Ctrl+C copies the version."],
+            hasEditBox = true,
+            hideOnEscape = true,
+            EditBoxOnEnterPressed = function(popup) popup:Hide() end,
+            EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+            button2 = CLOSE,
+            inputText = format("GW2 UI %s | %s %s.%s | %s", settingsContainer.versionString:GetText(), GW.GetClientFlavorName(), clientVersion, clientBuild, GetLocale()),
+        })
+    end)
+
     settingsContainer.flavorString = settingsContainer:CreateFontString(nil, "OVERLAY")
     settingsContainer.flavorString:SetFont(UNIT_NAME_FONT, 11)
     settingsContainer.flavorString:SetPoint("BOTTOM", settingsContainer.brandSeparator, "TOP", 0, 3)
