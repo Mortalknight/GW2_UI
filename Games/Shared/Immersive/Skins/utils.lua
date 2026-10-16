@@ -926,14 +926,21 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
         end
         RevealBackground()
 
-        local shownAlpha, fadingIn = 1, false
+        -- the alpha to fade to is read on the first step, after every OnShow script: some set their own (map opacity)
+        local shownAlpha, fadingIn, readAlpha = 1, false, false
         frame:HookScript("OnShow",function()
-        if not fadingIn and frame:GetAlpha() > 0 then
-            shownAlpha = frame:GetAlpha()
+        if not fadingIn then
+            readAlpha = true
         end
         fadingIn = true
         GW.AddToAnimation((frame.GetDebugName and frame:GetDebugName() or tostring(frame)) .. "_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
             function(p)
+                if readAlpha then
+                    readAlpha = false
+                    if frame:GetAlpha() > 0 then
+                        shownAlpha = frame:GetAlpha()
+                    end
+                end
                 frame:SetAlpha(p * shownAlpha)
                 -- the mask lives on UIParent, so its offset is in UIParent units
                 local width = frame.tex:GetWidth() * frame:GetEffectiveScale() / UIParent:GetEffectiveScale()
