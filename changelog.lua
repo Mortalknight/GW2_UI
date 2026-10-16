@@ -14,6 +14,8 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
+    {GW.Enum.ChangelogType.bug, [=[Forever: a tracked recipe opens the hero panel again, in combat right after the fight without an "action blocked" error]=]},
+    {GW.Enum.ChangelogType.change, [=[Forever: the numbers on the skill bars of the hero panel are easier to read]=]},
     {GW.Enum.ChangelogType.feature, [=[Chat: name in chat, puts a name like (Tom) in front of your messages in the selected chats, like the addon Name2Chat]=]},
     {GW.Enum.ChangelogType.change, [=[Action bars: empty slots hidden in Blizzard's Edit Mode come back on login, the fix button is gone; "Empty Slots Alpha" at 0% hides them and they show up while you drag something onto the bars]=]},
     {GW.Enum.ChangelogType.bug, [=[Action bars no longer flicker between the override bar and the normal bar, fewer "action blocked" errors from the micro menu]=]},

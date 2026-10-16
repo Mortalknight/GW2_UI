@@ -270,6 +270,10 @@ local fmOverview
 local fmMenu
 
 local function ShowOverviewView()
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("gw_professions_view", ShowOverviewView)
+        return
+    end
     craftingContainer:Hide()
     fmOverview:Show()
     fmMenu.overviewMenu.activeTexture:Show()
@@ -279,6 +283,10 @@ local function ShowOverviewView()
 end
 
 local function ShowCraftingView()
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("gw_professions_view", ShowCraftingView)
+        return
+    end
     fmOverview:Hide()
     craftingContainer:Show()
     fmMenu.overviewMenu.activeTexture:Hide()
@@ -289,17 +297,32 @@ local function ShowCraftingView()
     end
 end
 
+local function SetContainerParent(frame, container)
+    frame:SetParent(container)
+end
+
+local function SetContainerPoints(frame, container)
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", container, "TOPLEFT", 0, 0)
+    frame:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", 0, 0)
+end
+
 local function KeepInContainer(frame, container)
+    local function Keep(self, func, key)
+        if InCombatLockdown() and self:IsProtected() then
+            GW.CombatQueue:Queue(key, func, {self, container})
+        else
+            func(self, container)
+        end
+    end
     hooksecurefunc(frame, "SetParent", function(self, parent)
         if parent ~= container then
-            self:SetParent(container)
+            Keep(self, SetContainerParent, "gw_professions_parent")
         end
     end)
     hooksecurefunc(frame, "SetPoint", function(self, _, relativeTo)
         if relativeTo ~= container then
-            self:ClearAllPoints()
-            self:SetPoint("TOPLEFT", container, "TOPLEFT", 0, 0)
-            self:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", 0, 0)
+            Keep(self, SetContainerPoints, "gw_professions_points")
         end
     end)
 end
@@ -731,7 +754,11 @@ local function EmbedProfessionsFrame()
     end)
 
     local function BringCraftingViewUp()
-        if not craftingContainer:GetParent():IsShown() and not InCombatLockdown() then
+        if InCombatLockdown() then
+            GW.CombatQueue:Queue("gw_professions_view", BringCraftingViewUp)
+            return
+        end
+        if not craftingContainer:GetParent():IsVisible() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "professions")
         end
         ShowCraftingView()
