@@ -189,8 +189,22 @@ function lib:LoadLayouts()
   layoutInfo.layouts = tmp
 end
 
+-- GW2: a second anchor without its points (seen on forever 1.60.1) makes SaveLayouts reject the whole save;
+-- without it the system keeps its first anchor, like every frame with a single point
+local function RemoveIncompleteSecondAnchors()
+  for _, layout in ipairs(layoutInfo.layouts) do
+    for _, system in ipairs(layout.systems or {}) do
+      local anchor = system.anchorInfo2
+      if anchor and (not anchor.point or not anchor.relativePoint or not anchor.relativeTo) then
+        system.anchorInfo2 = nil
+      end
+    end
+  end
+end
+
 function lib:SaveOnly()
   assert(layoutInfo, LOAD_ERROR)
+  RemoveIncompleteSecondAnchors()
   C_EditMode.SaveLayouts(layoutInfo)
   if activeLayoutPending then
     C_EditMode.SetActiveLayout(layoutInfo.activeLayout)

@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
+    {GW.Enum.ChangelogType.bug, [=[Forever: no error when the action bar layout is saved to Edit Mode with the new patch]=]},
     {GW.Enum.ChangelogType.change, [=[Loot roll bars: new scale setting]=]},
     {GW.Enum.ChangelogType.feature, [=[Forever: class quests have their own section at the top of the quest tracker, named after your class]=]},
     {GW.Enum.ChangelogType.change, [=[Minimap: Blizzard's new coordinates below the minimap are hidden, the GW2 UI coordinates stay]=]},
