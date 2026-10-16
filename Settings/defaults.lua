@@ -414,6 +414,14 @@ GW.globalDefault = {
                 size = 100,
             },
             timeStampFormat = "NONE",
+            nameInChat = {
+                enabled = false,
+                name = "",
+                channels = {GUILD = true, PARTY = false, RAID = false, INSTANCE = false},
+                channel = "",
+                hideOwnName = true,
+                ignoreCommands = true,
+            },
         },
 
         minimap = {

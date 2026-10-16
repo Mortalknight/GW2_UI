@@ -31,6 +31,19 @@ local function LoadChatPanel(sWindow)
     chatBubbles.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     chatBubbles.breadcrumb:SetText(CHAT_BUBBLES_TEXT)
 
+    local nameInChat = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    nameInChat.panelId = "chat_name"
+    nameInChat.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    nameInChat.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    nameInChat.header:SetText(CHAT)
+    nameInChat.sub:SetFont(UNIT_NAME_FONT, 12)
+    nameInChat.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    nameInChat.sub:SetText(L["Put a name in front of your own messages."])
+    nameInChat.header:SetWidth(nameInChat.header:GetStringWidth())
+    nameInChat.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    nameInChat.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    nameInChat.breadcrumb:SetText(L["Name in Chat"])
+
     general:AddOption(ENABLE, L["Enable the improved chat window."], {getterSetter = "chat.enabled", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Chat", isMasterToggle = true})
     general:AddOption(L["GW2 Chat Message Style"], L["Changes the chat font, timestamp color and name display"], { getterSetter = "chat.gw2Style", callback = GW.UpdateChatSettings, dependence = {["chat.enabled"] = true}})
     general:AddOption(L["Fade Chat"], L["Allow the chat to fade when not in use."], { getterSetter = "chat.fade", callback = GW.UpdateChatSettings, dependence = {["chat.enabled"] = true}})
@@ -69,6 +82,14 @@ local function LoadChatPanel(sWindow)
     chatBubbles:AddOption(ENABLE, L["Replace the default UI chat bubbles. (Only in not protected areas)"], {getterSetter = "chat.bubbles.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
     chatBubbles:AddOptionSlider(L["Chatbubble Scale"], nil, { getterSetter = "chat.bubbles.scale", isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["chat.bubbles.enabled"] = true}})
 
-    sWindow:AddSettingsPanel(p, CHAT, L["Edit chat settings."], {{name = GENERAL, frame = general}, {name = CHAT_BUBBLES_TEXT, frame = chatBubbles}})
+    local nameDependence = {["chat.enabled"] = true, ["chat.nameInChat.enabled"] = true}
+    nameInChat:AddOption(ENABLE, L["Put the name in front of your messages in the selected chats."], {getterSetter = "chat.nameInChat.enabled", dependence = {["chat.enabled"] = true}, isMasterToggle = true})
+    nameInChat:AddOptionText(NAME, L["Shown in parentheses in front of your message, like (Tom): Hello"], {getterSetter = "chat.nameInChat.name", dependence = nameDependence})
+    nameInChat:AddOptionDropdown(CHANNELS, nil, {getterSetter = "chat.nameInChat.channels", optionsList = {"GUILD", "PARTY", "RAID", "INSTANCE"}, optionNames = {GUILD, PARTY, RAID, INSTANCE_CHAT}, checkbox = true, dependence = nameDependence})
+    nameInChat:AddOptionText(CHANNEL, L["Name of a chat channel that gets the name as well."], {getterSetter = "chat.nameInChat.channel", dependence = nameDependence})
+    nameInChat:AddOption(L["Hide name if it matches your character's name"], L["If the name above matches your character's name, it is not added."], {getterSetter = "chat.nameInChat.hideOwnName", dependence = nameDependence})
+    nameInChat:AddOption(L["Ignore messages starting with !"], L["Messages that begin with an exclamation mark (!) get no name. Useful for addon commands like !keys."], {getterSetter = "chat.nameInChat.ignoreCommands", dependence = nameDependence})
+
+    sWindow:AddSettingsPanel(p, CHAT, L["Edit chat settings."], {{name = GENERAL, frame = general}, {name = CHAT_BUBBLES_TEXT, frame = chatBubbles}, {name = L["Name in Chat"], frame = nameInChat}})
 end
 GW.LoadChatPanel = LoadChatPanel

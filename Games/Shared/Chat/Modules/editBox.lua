@@ -11,11 +11,15 @@ local function GetHistory()
     return GW.private.ChatEditHistory
 end
 
--- what was sent, across sessions; secure commands are not kept
+-- what was sent, across sessions; secure commands are not kept, the name in front of a message neither
 local function RememberLine(editBox, line)
     local text = line and strtrim(line)
     if not text or text == "" then
         return
+    end
+    local prefix = GW.GetChatNamePrefix(editBox, text)
+    if prefix and strsub(text, 1, #prefix) == prefix then
+        text = strsub(text, #prefix + 1)
     end
     local command = strmatch(text, "^/%w+")
     if command and IsSecureCmd(command) then
@@ -59,13 +63,15 @@ local function CloseOnRepeatedKeys(editBox, userInput)
     end
 end
 
--- links count with their visible text only, like the server counts them
+-- links count with their visible text only, like the server counts them; the name in front of the message
+-- counts as well
 local function UpdateCharacterCount(editBox)
     local counter = editBox.characterCount
     if counter then
         local text = editBox:GetText()
         local visible = gsub(text, "|c[^|]*|H.-|h(.-)|h|r", "%1")
-        counter:SetText(text ~= "" and (CHAT_LIMIT - strlen(visible)) or "")
+        local prefix = GW.GetChatNamePrefix(editBox, text)
+        counter:SetText(text ~= "" and (CHAT_LIMIT - strlen(visible) - (prefix and strlen(prefix) or 0)) or "")
     end
 end
 

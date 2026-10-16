@@ -15,6 +15,7 @@
     <Script file ="socialQueue.lua"/>
     <Script file ="linkTooltips.lua"/>
     <Script file ="scrolling.lua"/>
+    <Script file ="nameInChat.lua"/>
     <Script file ="editBox.lua"/>
     <Script file ="copyChat.lua"/>
     <!-- the last one on the line stage -->

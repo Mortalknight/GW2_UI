@@ -2031,14 +2031,21 @@ local function SettingsInitOptionWidget(of, v, panel)
     elseif v.optionType == "text" then
         GW.SkinEditBox(of.inputFrame.input)
         of.inputFrame.input:SetText(of.get() or "")
-        of.inputFrame.input:SetScript("OnEnterPressed", function(self)
+        of.inputFrame.input:SetScript("OnEnterPressed", of.inputFrame.input.ClearFocus)
+        of.inputFrame.input:SetScript("OnEscapePressed", function(self)
+            self:SetText(of.get() or "")
+            self:ClearFocus()
+        end)
+        of.inputFrame.input:HookScript("OnEditFocusLost", function(self)
+            if self:GetText() == (of.get() or "") then
+                return
+            end
             if ShouldHandleIncompatibility(v) then
                 if not HandleIncompatibility(v, nil, not v.isIncompatibleAddonLoadedButOverride) then
                     self:SetText(of.get() or "")
                     return
                 end
             end
-            self:ClearFocus()
             of.set(self:GetText())
             if v.callback then
                 v.callback(self)
