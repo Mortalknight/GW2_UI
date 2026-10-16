@@ -15,6 +15,22 @@ local function IsQuestFrequency(q)
     return isFreq
 end
 
+local function IsClassQuest(questID)
+    local headerIndex = C_QuestLog.GetHeaderIndexForQuest and C_QuestLog.GetHeaderIndexForQuest(questID)
+    local info = headerIndex and C_QuestLog.GetInfo(headerIndex)
+    local title = info and info.title
+    return title ~= nil and (title == GW.myLocalizedClass or title == LOCALIZED_CLASS_NAMES_MALE[GW.myclass]
+        or title == LOCALIZED_CLASS_NAMES_FEMALE[GW.myclass])
+end
+
+local function IsTopContainerQuest(q)
+    return q:IsCampaign() or (GW.Forever and IsClassQuest(q.questID))
+end
+GW.IsTopContainerQuest = IsTopContainerQuest
+
+local TOP_CONTAINER_TITLE = GW.Forever and GW.myLocalizedClass or TRACKER_HEADER_CAMPAIGN_QUESTS
+GW.QuestTrackerTopContainerTitle = TOP_CONTAINER_TITLE
+
 local function BrightenColor(r, g, b, factor)
     factor = factor or 0.3
     return
@@ -493,7 +509,7 @@ function GwQuestLogMixin:UpdateLayout()
     for _, curQuestId in ipairs(watchedQuestIDs) do
         if curQuestId then
             local q = QuestCache:Get(curQuestId)
-            local isCampaign = q:IsCampaign()
+            local isCampaign = IsTopContainerQuest(q)
             if (isCampaign and self.isCampaignContainer) or (not isCampaign and not self.isCampaignContainer) then
                 if shouldShowHeader then
                     self.header:Show()
@@ -558,7 +574,7 @@ function GwQuestLogMixin:UpdateLayout()
     self:LayoutBlocks(counterQuest)
 
     local headerCounterText = " (" .. counterQuest .. ")"
-    self.header.title:SetText(self.isCampaignContainer and TRACKER_HEADER_CAMPAIGN_QUESTS .. headerCounterText or TRACKER_HEADER_QUESTS .. headerCounterText)
+    self.header.title:SetText((self.isCampaignContainer and TOP_CONTAINER_TITLE or TRACKER_HEADER_QUESTS) .. headerCounterText)
 
     self.isUpdating = false
 end
@@ -578,7 +594,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
 
     local questWatchId = self:GetQuestWatchId(questID)
     local q = QuestCache:Get(questID)
-    local isCampaign = q:IsCampaign()
+    local isCampaign = IsTopContainerQuest(q)
     if self.collapsed or ((isCampaign and not self.isCampaignContainer) or (not isCampaign and self.isCampaignContainer)) or questWatchId == nil or not questWatchId then
         self.isUpdating = false
         return
@@ -613,7 +629,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
     self.numQuests = counterQuest
 
     local headerCounterText = " (" .. counterQuest .. ")"
-    self.header.title:SetText(self.isCampaignContainer and TRACKER_HEADER_CAMPAIGN_QUESTS .. headerCounterText or TRACKER_HEADER_QUESTS .. headerCounterText)
+    self.header.title:SetText((self.isCampaignContainer and TOP_CONTAINER_TITLE or TRACKER_HEADER_QUESTS) .. headerCounterText)
 
     if block and block.hasItem then
         GW.CombatQueue:Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
@@ -712,7 +728,7 @@ function GwObjectivesQuestContainerMixin:InitModule()
     if self.isCampaignContainer then
         self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:GetRGB())
         self.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
-        self.header.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
+        self.header.title:SetText(TOP_CONTAINER_TITLE)
     else
         self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:GetRGB())
         self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)

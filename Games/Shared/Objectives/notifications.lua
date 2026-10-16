@@ -191,7 +191,7 @@ local function getNearestQuestPOIRetail()
     if not poiX then return nil end
 
     local questData = QuestCache:Get(closestQuestID)
-    local isCampaign = questData:IsCampaign()
+    local isCampaign = GW.IsTopContainerQuest and GW.IsTopContainerQuest(questData) or questData:IsCampaign()
     local isFrequent = questData.frequency and questData.frequency > 0
     local objectiveText = isWQ and GW.ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
 

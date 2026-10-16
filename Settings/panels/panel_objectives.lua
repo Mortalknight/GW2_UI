@@ -8,7 +8,7 @@ local function GetObjectiveTrackerModuleOrderOptions()
     local types = GW.Enum.ObjectivesNotificationType
     local modules = {
         {key = "Achievement", label = ACHIEVEMENTS, color = types.Achievement, load = not (GW.Classic or GW.TBC)},
-        {key = "Campaign", label = TRACKER_HEADER_CAMPAIGN_QUESTS, color = types.Campaign, load = GW.Retail},
+        {key = "Campaign", label = GW.QuestTrackerTopContainerTitle or TRACKER_HEADER_CAMPAIGN_QUESTS, color = types.Campaign, load = GW.isModern},
         {key = "Quests", label = TRACKER_HEADER_QUESTS or QUESTS_LABEL, color = types.Quest, load = true},
         {key = "Bonus", label = EVENTS_LABEL, color = types.Event, load = GW.isModern},
         {key = "Recipe", label = PROFESSIONS_TRACKER_HEADER_PROFESSION, color = types.Recipe, load = GW.isModern},

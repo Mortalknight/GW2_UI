@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
+    {GW.Enum.ChangelogType.feature, [=[Forever: class quests have their own section at the top of the quest tracker, named after your class]=]},
     {GW.Enum.ChangelogType.change, [=[Minimap: Blizzard's new coordinates below the minimap are hidden, the GW2 UI coordinates stay]=]},
     {GW.Enum.ChangelogType.bug, [=[Forever: a tracked recipe opens the hero panel again, in combat right after the fight without an "action blocked" error]=]},
     {GW.Enum.ChangelogType.change, [=[Forever: the numbers on the skill bars of the hero panel are easier to read]=]},
