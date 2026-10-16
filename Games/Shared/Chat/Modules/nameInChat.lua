@@ -9,7 +9,7 @@ local CHAT_TYPES = {GUILD = "GUILD", PARTY = "PARTY", RAID = "RAID", INSTANCE_CH
 local function GetChatNamePrefix(editBox, text)
     local settings = GW.settings.chat.nameInChat
     local name = strtrim(settings.name or "")
-    if not GW.settings.chat.enabled or not settings.enabled or name == "" or GW.IsChatRestricted() then
+    if not settings.enabled or name == "" or GW.IsChatRestricted() then
         return
     end
     if settings.hideOwnName and strlower(name) == strlower(GW.myname) then
@@ -45,11 +45,24 @@ local function AddName(editBox)
     end
 end
 
-GW.RegisterChatModule({
-    onFrame = function(chatFrame)
-        local editBox = chatFrame.editBox or _G[chatFrame:GetName() .. "EditBox"]
-        if editBox and editBox.OnPreSendText then
+-- works without our chat as well: the edit boxes of all chat windows, the whisper windows opened later included
+local hookedEditBoxes = {}
+local function HookChatEditBoxes()
+    for _, frameName in ipairs(CHAT_FRAMES) do
+        local editBox = _G[frameName .. "EditBox"]
+        if editBox and editBox.OnPreSendText and not hookedEditBoxes[editBox] then
+            hookedEditBoxes[editBox] = true
             hooksecurefunc(editBox, "OnPreSendText", AddName)
         end
-    end,
-})
+    end
+end
+
+local loader = CreateFrame("Frame")
+loader:RegisterEvent("PLAYER_LOGIN")
+loader:SetScript("OnEvent", function(self)
+    self:UnregisterAllEvents()
+    HookChatEditBoxes()
+    if FCF_OpenTemporaryWindow then
+        hooksecurefunc("FCF_OpenTemporaryWindow", HookChatEditBoxes)
+    end
+end)
