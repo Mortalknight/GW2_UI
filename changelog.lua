@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
+    {GW.Enum.ChangelogType.feature, [=[Minimap: the side of the buttons can be set, the buttons (calendar, addon compartment, addons, group finder) can be ordered and hidden, the others close the gap; the expansion landing page button can be hidden]=]},
     {GW.Enum.ChangelogType.bug, [=[Forever: no error when the action bar layout is saved to Edit Mode with the new patch]=]},
     {GW.Enum.ChangelogType.change, [=[Loot roll bars: new scale setting]=]},
     {GW.Enum.ChangelogType.feature, [=[Forever: class quests have their own section at the top of the quest tracker, named after your class]=]},

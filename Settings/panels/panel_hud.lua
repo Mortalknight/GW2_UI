@@ -231,7 +231,22 @@ local function LoadHudPanel(sWindow)
 
     --MINIMAP
     minimap:AddOption(ENABLE, L["Use the GW2 UI Minimap frame."], {getterSetter = "minimap.enabled", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Minimap", isMasterToggle = true})
-    minimap:AddOption(L["Addon Compartment"], nil, {getterSetter = "minimap.addonCompartment", callback = GW.HandleAddonCompartmentButton, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap", hidden = not GW.Retail})
+    minimap:AddOptionDropdown(L["Button Side"], L["The side of the minimap the buttons are on. Automatic puts them away from the nearer screen edge."], {getterSetter = "minimap.buttonSide", callback = GW.UpdateMinimapSideButtons, optionsList = {"AUTO", "LEFT", "RIGHT"}, optionNames = {L["Automatic"], L["Left"], L["Right"]}, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap"})
+    minimap:AddOptionSortableList(L["Minimap Buttons"], L["Set the order of the buttons next to the minimap, uncheck a button to hide it. Hidden buttons leave no gap."], {
+        getterSetter = "minimap.sideButtonOrder",
+        callback = GW.UpdateMinimapSideButtons,
+        -- the addon compartment exists on retail and forever only, vanilla and tbc have no calendar button
+        optionsList = GW.isModern and {"CALENDAR", "COMPARTMENT", "ADDONS", "QUEUE"} or (GW.Classic or GW.TBC) and {"ADDONS", "QUEUE"} or {"CALENDAR", "ADDONS", "QUEUE"},
+        optionNames = GW.isModern and {L["Calendar"], L["Addon Compartment"], ADDONS, LFG_TITLE} or (GW.Classic or GW.TBC) and {ADDONS, LFG_TITLE} or {L["Calendar"], ADDONS, LFG_TITLE},
+        toggle = {
+            get = function(key) return GW.settings.minimap.sideButtons[key] end,
+            set = function(key, enabled) GW.settings.minimap.sideButtons[key] = enabled end,
+        },
+        maxVisibleRows = 4,
+        dependence = {["minimap.enabled"] = true},
+        incompatibleAddons = "Minimap"
+    })
+    minimap:AddOption(L["Expansion Landing Page"], nil, {getterSetter = "minimap.sideButtons.EXPANSION", callback = GW.UpdateMinimapSideButtons, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap", hidden = not GW.isModern})
     minimap:AddOption(L["Always show AddOn flyout button"], L["Always show the minimap AddOns flyout button, even when only one AddOn button is available."], {getterSetter = "minimap.addonFlyoutAlways", callback = function() GW.UpdateMinimapButtonsSack() end, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap"})
     minimap:AddOption(L["Show FPS on minimap"], L["Shows the frames per second on the minimap."], {getterSetter = "minimap.fps", callback = GW.ToogleMinimapFpsLable, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap"})
     minimap:AddOption(L["Disable FPS tooltip"], nil, {getterSetter = "minimap.fpsTooltipDisabled", dependence = {["minimap.enabled"] = true, ["minimap.fps"] = true}, incompatibleAddons = "Minimap"})

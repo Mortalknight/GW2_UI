@@ -7,7 +7,9 @@ local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailIcon
 MAP_FRAMES_HIDE[2] = MiniMapTracking
 MAP_FRAMES_HIDE[3] = MinimapToggleButton
-MAP_FRAMES_HIDE[4] = not GW.isModern and GameTimeFrame
+-- vanilla and tbc have only the day and night icon there, the calendar button came with wrath
+local HAS_CALENDAR = not (GW.Classic or GW.TBC)
+MAP_FRAMES_HIDE[4] = not HAS_CALENDAR and GameTimeFrame
 MAP_FRAMES_HIDE[5] = MinimapCluster.DielFrame
 
 local M = CreateFrame("Frame")
@@ -129,13 +131,7 @@ GW.SetMinimapHover = SetMinimapHover
 local function hideMiniMapIcons()
     for _, v in pairs(MAP_FRAMES_HIDE) do
         if v then
-            v:Hide()
-            v:SetScript(
-                "OnShow",
-                function(self)
-                    self:Hide()
-                end
-            )
+            v:GwKill()
         end
     end
 end
@@ -235,7 +231,7 @@ end
 local function setMinimapButtons(side)
     Minimap.sidePanel:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
-    if side == "left" then
+    if side == "LEFT" then
         Minimap.sidePanel:SetPoint("TOPRIGHT", Minimap.gwBorder, "TOPLEFT", 5, 0)
         Minimap.sidePanel:SetPoint("BOTTOMRIGHT", Minimap.gwBorder, "BOTTOMLEFT", 5, 0)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
@@ -252,20 +248,18 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
     end
-    if GW.isModern then
-        calendarMirrored = side ~= "left"
+    if HAS_CALENDAR then
+        calendarMirrored = side ~= "LEFT"
         UpdateCalendarIcon()
     end
 end
 
-local function MinimapPostDrag(self)
-    local x = self.gwMover:GetCenter()
-    local screenWidth = UIParent:GetRight()
-    if x > (screenWidth / 2) then
-        setMinimapButtons("left")
-    else
-        setMinimapButtons("right")
+local function UpdateButtonSide()
+    local side = GW.settings.minimap.buttonSide
+    if side == "AUTO" then
+        side = Minimap:GetCenter() > UIParent:GetRight() / 2 and "LEFT" or "RIGHT"
     end
+    setMinimapButtons(side)
 end
 
 local function UpdateMinimapCoordsTicker(self)
@@ -553,14 +547,7 @@ local function SetUpLfgFrame()
     end)
     MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
 
-    -- check on which side we need to set the buttons
-    local x = Minimap:GetCenter()
-    local screenWidth = UIParent:GetRight()
-    if x > (screenWidth / 2) then
-        setMinimapButtons("left")
-    else
-        setMinimapButtons("right")
-    end
+    UpdateButtonSide()
 end
 
 
@@ -593,12 +580,76 @@ function GW.HandleAddonCompartmentButton()
             GW.MixinHideDuringPetAndOverride(AddonCompartmentFrame)
         end
 
-        if GW.settings.minimap.addonCompartment then
-            AddonCompartmentFrame:SetParent(UIParent)
-        else
-            AddonCompartmentFrame:SetParent(GW.HiddenFrame)
+        AddonCompartmentFrame:SetParent(GW.settings.minimap.sideButtons.COMPARTMENT and UIParent or GW.HiddenFrame)
+    end
+end
+
+local SIDE_BUTTON_SPACING = 2
+local queueAnchor
+local function GetSideButton(key)
+    if key == "CALENDAR" then
+        return HAS_CALENDAR and GameTimeFrame, GameTimeFrame, -5
+    elseif key == "COMPARTMENT" then
+        return GW.isModern and AddonCompartmentFrame, AddonCompartmentFrame, -4
+    elseif key == "ADDONS" then
+        return GwAddonToggle, GwAddonToggle, -5
+    elseif key == "QUEUE" then
+        if GW.isModern then
+            return queueAnchor, QueueStatusButton, -5
+        end
+        return MiniMapBattlefieldFrame, MiniMapBattlefieldFrame, -7
+    end
+end
+
+-- the saved order first, buttons that came later after it
+local function GetSideButtonOrder()
+    local order, seen = {}, {}
+    for _, list in ipairs({GW.settings.minimap.sideButtonOrder, GW.globalDefault.profile.minimap.sideButtonOrder}) do
+        for _, key in ipairs(list) do
+            if not seen[key] then
+                seen[key] = true
+                tinsert(order, key)
+            end
         end
     end
+    return order
+end
+
+local function LayoutSideButtons()
+    if not Minimap.sidePanel then return end
+    local buttons = GW.settings.minimap.sideButtons
+    local y = 0
+    for _, key in ipairs(GetSideButtonOrder()) do
+        local anchor, frame, x = GetSideButton(key)
+        if anchor and frame and buttons[key] and frame:IsShown() then
+            anchor:ClearAllPoints()
+            anchor:SetPoint("TOP", Minimap.sidePanel, "TOP", x, -y)
+            y = y + frame:GetHeight() + SIDE_BUTTON_SPACING
+        end
+    end
+end
+
+local function SetSideButtonShown(frame, shown)
+    if not frame then return end
+    frame.gwParent = frame.gwParent or frame:GetParent()
+    frame:SetParent(shown and frame.gwParent or GW.HiddenFrame)
+end
+
+function GW.UpdateMinimapSideButtons()
+    local buttons = GW.settings.minimap.sideButtons
+    if HAS_CALENDAR then
+        SetSideButtonShown(GameTimeFrame, buttons.CALENDAR)
+    end
+    if GW.isModern then
+        SetSideButtonShown(ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton, buttons.EXPANSION)
+        SetSideButtonShown(QueueStatusButton, buttons.QUEUE)
+        GW.HandleAddonCompartmentButton()
+    else
+        SetSideButtonShown(MiniMapBattlefieldFrame, buttons.QUEUE)
+    end
+    SetSideButtonShown(GwAddonToggle, buttons.ADDONS)
+    LayoutSideButtons()
+    UpdateButtonSide()
 end
 
 do
@@ -631,7 +682,7 @@ function GW.LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = GetMinimapShape
 
-    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "minimap", "Blizzard,Map", {Minimap:GetSize()}, nil, nil, MinimapPostDrag)
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "minimap", "Blizzard,Map", {Minimap:GetSize()}, nil, nil, UpdateButtonSide)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("CENTER", Minimap.gwMover)
 
@@ -846,6 +897,10 @@ function GW.LoadMinimap()
         hooksecurefunc(GameTimeFrame, "OnButtonStateChanged", UpdateCalendarIcon)
         UpdateCalendarIcon()
     elseif GameTimeFrame_SetDate then
+        local dayText = GameTimeFrame:GetFontString()
+        if dayText then
+            dayText:SetAlpha(0)
+        end
         hooksecurefunc("GameTimeFrame_SetDate", function()
             GameTimeFrame:GwStripTextures()
             GameTimeFrame:SetNormalTexture(CALENDAR_TEXTURE)
@@ -867,57 +922,40 @@ function GW.LoadMinimap()
     if GW.isModern then
         local expButton = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
         QueueStatusButton:ClearAllPoints()
-        GameTimeFrame:ClearAllPoints()
         expButton:ClearAllPoints()
-        AddonCompartmentFrame:ClearAllPoints()
-
-        GameTimeFrame:SetPoint("TOP", Minimap.sidePanel, "TOP", -5, 0)
-        AddonCompartmentFrame:SetPoint("TOP", GameTimeFrame, "BOTTOM", 1, 0)
-        GwAddonToggle:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, -20)
         expButton:SetPoint("BOTTOMRIGHT", Minimap.sidePanel, "BOTTOMLEFT", 0, -3)
 
-        QueueStatusButton:SetPoint("TOP", GwAddonToggle, "BOTTOM", 0, 0)
-        QueueStatusButton.SetPoint = GW.NoOp
-        QueueStatusButton.SetParent = GW.NoOp
-        QueueStatusButton.ClearAllPoints = GW.NoOp
-        hooksecurefunc(QueueStatusButton, "SetPoint", function(_, _, parent)
-            if parent ~= GwAddonToggle then
-                QueueStatusButton:ClearAllPoints()
-                QueueStatusButton:SetParent(UIParent)
-                QueueStatusButton:SetPoint("TOP", GwAddonToggle, "BOTTOM", 0, 0)
+        queueAnchor = CreateFrame("Frame", nil, Minimap.sidePanel)
+        queueAnchor:SetSize(1, 1)
+
+        QueueStatusButton:SetParent(UIParent)
+        QueueStatusButton:SetPoint("TOP", queueAnchor, "TOP", 0, 0)
+        hooksecurefunc(QueueStatusButton, "SetPoint", function(self, _, relativeTo)
+            if relativeTo ~= queueAnchor then
+                self:ClearAllPoints()
+                self:SetPoint("TOP", queueAnchor, "TOP", 0, 0)
+            end
+        end)
+        hooksecurefunc(QueueStatusButton, "SetParent", function(self, parent)
+            local target = GW.settings.minimap.sideButtons.QUEUE and UIParent or GW.HiddenFrame
+            if parent ~= target then
+                self:SetParent(target)
             end
         end)
         if QueueStatusButton.UpdatePosition then
-            hooksecurefunc(QueueStatusButton, "UpdatePosition", function()
-                local x = Minimap:GetCenter()
-                local screenWidth = UIParent:GetRight()
-                if x > (screenWidth / 2) then
-                    setMinimapButtons("left")
-                else
-                    setMinimapButtons("right")
-                end
-            end)
+            hooksecurefunc(QueueStatusButton, "UpdatePosition", UpdateButtonSide)
         end
     elseif GW.TBC or GW.Wrath or GW.Mists or GW.Classic then
         MiniMapBattlefieldFrame:ClearAllPoints()
+    end
 
-        GwAddonToggle:SetPoint("TOP", MiniMapBattlefieldFrame, "BOTTOM", 0, -20)
-        MiniMapBattlefieldFrame:SetPoint("TOP", Minimap.sidePanel, "TOP", -7, 0)
+    for _, frame in ipairs({GwAddonToggle, GW.isModern and QueueStatusButton or MiniMapBattlefieldFrame}) do
+        frame:HookScript("OnShow", LayoutSideButtons)
+        frame:HookScript("OnHide", LayoutSideButtons)
     end
 
     GwAddonToggle.container:ClearAllPoints()
     GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
-
-    -- check on which side we need to set the buttons
-    local x = Minimap:GetCenter()
-    local screenWidth = UIParent:GetRight()
-    if x > (screenWidth / 2) then
-        setMinimapButtons("left")
-    else
-        setMinimapButtons("right")
-    end
-
-    GW.HandleAddonCompartmentButton()
 
     if Minimap.SetPlayerTexture then
         Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
@@ -959,5 +997,6 @@ function GW.LoadMinimap()
         end)
     end
 
+    GW.UpdateMinimapSideButtons()
     GW.UpdateMinimapSize()
 end

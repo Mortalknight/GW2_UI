@@ -183,6 +183,14 @@ local function MigrateProfileSettings(profile)
         }
     end
 
+    -- the addon compartment switch joined the other buttons next to the minimap
+    local minimapSettings = type(profile.minimap) == "table" and profile.minimap
+    if minimapSettings and minimapSettings.addonCompartment ~= nil then
+        minimapSettings.sideButtons = minimapSettings.sideButtons or {}
+        minimapSettings.sideButtons.COMPARTMENT = minimapSettings.addonCompartment
+        minimapSettings.addonCompartment = nil
+    end
+
     if type(profile.Minimap) == "table" and next(profile.Minimap) == nil then
         profile.Minimap = nil
     end
