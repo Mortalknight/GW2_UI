@@ -268,9 +268,10 @@ local function BuildMenu(_, root)
     local inviteMenu = root:CreateButton(INVITE)
     local whisperMenu = root:CreateButton(CHAT_MSG_WHISPER_INFORM)
     local statusMenu = root:CreateButton(PLAYER_STATUS)
-    statusMenu:CreateButton(GREEN_FONT_COLOR:WrapTextInColorCode(AVAILABLE), SetChatStatus)
-    statusMenu:CreateButton(YELLOW_FONT_COLOR:WrapTextInColorCode(DND), SetChatStatus, "DND")
-    statusMenu:CreateButton(RED_FONT_COLOR:WrapTextInColorCode(AFK), SetChatStatus, "AFK")
+    local colors = GW.Colors.PlayerStatusColors
+    statusMenu:CreateButton(colors.Available:WrapTextInColorCode(AVAILABLE), SetChatStatus)
+    statusMenu:CreateButton(colors.Busy:WrapTextInColorCode(GW.Social.BUSY_TEXT), SetChatStatus, "DND")
+    statusMenu:CreateButton(colors.Away:WrapTextInColorCode(AFK), SetChatStatus, "AFK")
     root:CreateButton(BN_BROADCAST_TOOLTIP, ShowBroadcastPopup)
 
     for _, info in ipairs(GetOnlineFriends()) do

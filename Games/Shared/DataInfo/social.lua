@@ -10,8 +10,9 @@ Social.OTHER_PLACE_COLOR = CreateColor(0.65, 0.65, 0.65)
 Social.IN_GROUP_MARK = "|cffaaaaaa*|r"
 Social.TIMERUNNING_ICON = CreateAtlasMarkup("timerunning-glues-icon-small", 12, 10)
 
-local AFK_TAG = " |cffff9900<" .. AFK .. ">|r"
-local DND_TAG = " |cffff3333<" .. DND .. ">|r"
+Social.BUSY_TEXT = FRIENDS_LIST_BUSY or DND
+local AFK_TAG = " " .. GW.Colors.PlayerStatusColors.Away:WrapTextInColorCode("<" .. AFK .. ">")
+local DND_TAG = " " .. GW.Colors.PlayerStatusColors.Busy:WrapTextInColorCode("<" .. Social.BUSY_TEXT .. ">")
 
 function Social.GetStatusTag(isAFK, isDND)
     return isAFK and AFK_TAG or isDND and DND_TAG or ""

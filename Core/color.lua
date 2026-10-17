@@ -200,6 +200,12 @@ GW.Colors.PetHappinessColors = {
     CreateColor(0.3, 0.64, 0.18),
 }
 
+GW.Colors.PlayerStatusColors = {
+    Available = CreateColor(0.3, 1, 0.3),
+    Away = CreateColor(1, 0.6, 0),
+    Busy = CreateColor(1, 0.2, 0.2),
+}
+
 GW.Colors.FactionColors = {
     Horde = CreateColor(163 / 255, 46 / 255, 54 / 255), --Horde
     Alliance = CreateColor(57 / 255, 115 / 255, 186 / 255) --Alliance

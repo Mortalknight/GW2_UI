@@ -2,8 +2,6 @@
 local GW = select(2, ...)
 local Tooltip = GW.Tooltip
 
-local AFK_TAG = " |cffff9900<" .. AFK .. ">|r"
-local DND_TAG = " |cffff3333<" .. DND .. ">|r"
 local GUILD_COLOR = "|cff00ff10"
 local CLASSIFICATIONS = {
     worldboss = format(" |cffaf5050%s|r", BOSS),
@@ -121,7 +119,7 @@ local function SetGuildLine(tooltip, unit, levelLine)
 end
 
 local function SetPlayerLines(tooltip, unit, color)
-    local awayTag = GW.UnitIsAFK(unit) and AFK_TAG or GW.UnitIsDND(unit) and DND_TAG or ""
+    local awayTag = GW.Social.GetStatusTag(GW.UnitIsAFK(unit), GW.UnitIsDND(unit))
     local staffIcon = GW.GetStaffIcon and GW.GetStaffIcon(unit)
     GameTooltipTextLeft1:SetText((staffIcon and staffIcon .. " " or "") .. color:WrapTextInColorCode(GetPlayerName(unit) or UNKNOWN) .. awayTag)
 
