@@ -1,5 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="Actionbar\Load.xml"/>
-    <Include file ="Objectives\Load.xml"/>
     <Include file ="Character\Load.xml"/>
 </Ui>

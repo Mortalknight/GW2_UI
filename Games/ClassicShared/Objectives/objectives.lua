@@ -1,5 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
+-- Mists has its own
+if GW.Mists then return end
 local questWatchDB -- GW.private.questWatch, set in InitModule
 
 local lastAQW = GetTime()
@@ -22,19 +24,20 @@ local function AddTomTomWaypoint(questId, objective)
     end
 end
 
+-- quest links exist from wrath on, before that questie has its own format
 local function LinkQuestIntoChat(title, questId)
-    if not ChatFrame1EditBox:IsVisible() then
-        if Questie and Questie.started then
-            ChatFrame_OpenChat("[" .. title .. " (" .. questId .. ")]")
-        else
-            ChatFrame_OpenChat(gsub(title, " *(.*)", "%1"))
-        end
+    local link
+    if GW.Wrath then
+        link = GetQuestLink(questId)
+    elseif Questie and Questie.started then
+        link = "[" .. title .. " (" .. questId .. ")]"
     else
-        if Questie and Questie.started then
-            ChatEdit_InsertLink("[" .. title .. " (" .. questId .. ")]")
-        else
-            ChatEdit_InsertLink(gsub(title, " *(.*)", "%1"))
-        end
+        link = gsub(title, " *(.*)", "%1")
+    end
+    if not ChatFrame1EditBox:IsVisible() then
+        ChatFrame_OpenChat(link)
+    else
+        ChatEdit_InsertLink(link)
     end
 end
 
@@ -51,7 +54,11 @@ local function UntrackQuest(questLogIndex)
         questWatchDB.AutoUntrackedQuests[questID] = true
     end
     RemoveQuestWatch(questLogIndex)
-    QuestWatch_Update()
+    if GW.Wrath then
+        WatchFrame_Update()
+    else
+        QuestWatch_Update()
+    end
     QuestLog_Update()
 end
 
@@ -60,7 +67,8 @@ local function AddQuestInfos(questId, id)
     local sourceItemId = nil
     local isFailed = false
 
-    if Questie and Questie.started then
+    -- vanilla has no quest items in the quest log, questie knows them
+    if GW.Classic and Questie and Questie.started then
         local questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
         if questieQuest and questieQuest.sourceItemId then
             sourceItemId = questieQuest.sourceItemId
@@ -573,7 +581,9 @@ function GwObjectivesQuestContainerMixin:InitModule()
     self.header.title:SetText(TRACKER_HEADER_QUESTS)
 
     --hook functions
-    hooksecurefunc("AutoQuestWatch_Insert", function(questIndex) self:_AQW_Insert(questIndex) end)
+    if not GW.Wrath then
+        hooksecurefunc("AutoQuestWatch_Insert", function(questIndex) self:_AQW_Insert(questIndex) end)
+    end
     hooksecurefunc("AddQuestWatch", function(questIndex) self:_AQW_Insert(questIndex) end)
     hooksecurefunc("RemoveQuestWatch", function(questIndex) self:_RemoveQuestWatch(questIndex) end)
 
@@ -606,7 +616,11 @@ function GwObjectivesQuestContainerMixin:InitModule()
         else
             if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
                 self:_AQW_Insert(questLogLineIndex)
-                QuestWatch_Update()
+                if GW.Wrath then
+                    WatchFrame_Update()
+                else
+                    QuestWatch_Update()
+                end
                 QuestLog_SetSelection(questLogLineIndex)
                 QuestLog_Update()
             else

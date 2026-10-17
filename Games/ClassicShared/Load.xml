@@ -10,4 +10,5 @@
     <Include file ="Mainbar\mirrortimer.xml"/>
     <Script file ="Mainbar\mirrortimer.lua"/>
     <Script file ="Immersive\Skins\worldmap.lua"/>
+    <Script file ="Objectives\objectives.lua"/>
 </Ui>
