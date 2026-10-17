@@ -77,7 +77,7 @@ local function BuildSettingsWindow()
     end)
     versionButton:SetScript("OnClick", function()
         local clientVersion, clientBuild = GetBuildInfo()
-        GW.ShowPopup({text = L["Ctrl+C copies the version."],
+        GW.ShowPopup({text = L["Ctrl + C copies the version."],
             hasEditBox = true,
             hideOnEscape = true,
             EditBoxOnEnterPressed = function(popup) popup:Hide() end,

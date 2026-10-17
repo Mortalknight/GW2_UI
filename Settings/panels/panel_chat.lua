@@ -83,11 +83,11 @@ local function LoadChatPanel(sWindow)
     chatBubbles:AddOptionSlider(L["Chatbubble Scale"], nil, { getterSetter = "chat.bubbles.scale", isPercent = true, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["chat.bubbles.enabled"] = true}})
 
     nameInChat:AddOption(ENABLE, L["Put the name in front of your messages in the selected chats."], {getterSetter = "chat.nameInChat.enabled", isMasterToggle = true})
-    nameInChat:AddOptionText(NAME, L["Shown in parentheses in front of your message, like (Tom): Hello"], {getterSetter = "chat.nameInChat.name", dependence = {["chat.nameInChat.enabled"] = true}})
+    nameInChat:AddOptionText(NAME, L["Shown in parentheses in front of your message, e.g, '(Tom): Hello'."], {getterSetter = "chat.nameInChat.name", dependence = {["chat.nameInChat.enabled"] = true}})
     nameInChat:AddOptionDropdown(CHANNELS, nil, {getterSetter = "chat.nameInChat.channels", optionsList = {"GUILD", "PARTY", "RAID", "INSTANCE"}, optionNames = {GUILD, PARTY, RAID, INSTANCE_CHAT}, checkbox = true, dependence = {["chat.nameInChat.enabled"] = true}})
     nameInChat:AddOptionText(CHANNEL, L["Name of a chat channel that gets the name as well."], {getterSetter = "chat.nameInChat.channel", dependence = {["chat.nameInChat.enabled"] = true}})
-    nameInChat:AddOption(L["Hide name if it matches your character's name"], L["If the name above matches your character's name, it is not added."], {getterSetter = "chat.nameInChat.hideOwnName", dependence = {["chat.nameInChat.enabled"] = true}})
-    nameInChat:AddOption(L["Ignore messages starting with !"], L["Messages that begin with an exclamation mark (!) get no name. Useful for addon commands like !keys."], {getterSetter = "chat.nameInChat.ignoreCommands", dependence = {["chat.nameInChat.enabled"] = true}})
+    nameInChat:AddOption(L["Hide Name if it Matches Your Character's Name"], L["If the name above matches your character's name, it is not added."], {getterSetter = "chat.nameInChat.hideOwnName", dependence = {["chat.nameInChat.enabled"] = true}})
+    nameInChat:AddOption(L["Ignore Messages Starting with '!'"], L["Messages that begin with an exclamation mark (!) get no name. Useful for addon commands like !keys."], {getterSetter = "chat.nameInChat.ignoreCommands", dependence = {["chat.nameInChat.enabled"] = true}})
 
     sWindow:AddSettingsPanel(p, CHAT, L["Edit chat settings."], {{name = GENERAL, frame = general}, {name = CHAT_BUBBLES_TEXT, frame = chatBubbles}, {name = L["Name in Chat"], frame = nameInChat}})
 end

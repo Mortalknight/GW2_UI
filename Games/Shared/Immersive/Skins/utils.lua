@@ -5,7 +5,7 @@ local GW = select(2, ...)
 function GW.ShowScaleHandleTooltip(owner)
     GameTooltip:SetOwner(owner, "ANCHOR_BOTTOMRIGHT", 10, 30)
     GameTooltip:ClearLines()
-    GameTooltip_SetTitle(GameTooltip, GW.L["Scale with Right-click"])
+    GameTooltip_SetTitle(GameTooltip, GW.L["Scale with Right-Click"])
     GameTooltip:AddLine(GW.L["Shift + Right-click resets the scale."], 1, 1, 1)
     GameTooltip:Show()
 end
@@ -13,7 +13,7 @@ end
 function GW.ShowResizeHandleTooltip(owner)
     GameTooltip:SetOwner(owner, "ANCHOR_BOTTOMRIGHT", 10, 30)
     GameTooltip:ClearLines()
-    GameTooltip_SetTitle(GameTooltip, GW.L["Drag to resize"])
+    GameTooltip_SetTitle(GameTooltip, GW.L["Drag to Resize"])
     GameTooltip:Show()
 end
 

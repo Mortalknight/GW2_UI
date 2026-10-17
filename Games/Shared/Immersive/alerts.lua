@@ -634,7 +634,7 @@ local function GW2_UIAlertFrame_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
     GameTooltip:SetText(self.vignetteName, 1, 1, 1)
     GameTooltip:AddLine(format("|cFF888888ID %d|r", self.vignetteID))
-    GameTooltip:AddLine(L["Shift + right click: ignore this rare"], 1, 0.82, 0)
+    GameTooltip:AddLine(L["Shift + Right-Click: ignore this rare"], 1, 0.82, 0)
     GameTooltip:Show()
 end
 

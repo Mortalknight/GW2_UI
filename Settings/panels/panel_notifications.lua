@@ -48,8 +48,8 @@ local function LoadNotificationsPanel(sWindow)
     p:AddOptionDropdown(nil, nil, {getterSetter = "notifications.rare.sound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["notifications.enabled"] = true, ["notifications.rare.enabled"] = true}, hasSound = true, noNewLine = true, hidden = not GW.Retail, group = "rare"})
     p:AddOption(L["Rare position in chat"], L["Adds a chat line with a clickable map pin link to the position of the rare."], {getterSetter = "notifications.rare.chat", dependence = {["notifications.enabled"] = true, ["notifications.rare.enabled"] = true}, hidden = not GW.Retail, group = "rare", forceNewLine = true})
 
-    p:AddOptionNote(L["Rares on this list get no toast. Shift + right click on a rare toast adds it, the toast tooltip shows the ID."], {group = "rare", hidden = not GW.Retail})
-    p:AddOptionIDList(L["Ignored rares"], L["Rares on this list get no toast. Shift + right click on a rare toast adds it, the toast tooltip shows the ID."], {
+    p:AddOptionNote(L["Rares on this list get no toast. Shift + Right-Click on a rare toast adds it, the toast tooltip shows the ID."], {group = "rare", hidden = not GW.Retail})
+    p:AddOptionIDList(L["Ignored rares"], L["Rares on this list get no toast. Shift + Right-Click on a rare toast adds it, the toast tooltip shows the ID."], {
         getterSetter = "notifications.rare.ignored",
         dependence = {["notifications.enabled"] = true, ["notifications.rare.enabled"] = true},
         hidden = not GW.Retail,
