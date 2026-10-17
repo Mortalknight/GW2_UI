@@ -516,11 +516,14 @@ local function lfgAnimPvP(_, elapse)
     MiniMapBattlefieldIcon:SetTexCoord(unpack(GW.TexCoords))
 end
 
+local LayoutSideButtons
+local lfgFrameSetUp = false
 local function SetUpLfgFrame()
-    if not LFGMinimapFrame then return end
+    if not LFGMinimapFrame or lfgFrameSetUp then return end
+    lfgFrameSetUp = true
 
-    LFGMinimapFrame:ClearAllPoints()
-    LFGMinimapFrame:SetPoint("TOP", GwAddonToggle, "BOTTOM", 0, 0)
+    LFGMinimapFrame:HookScript("OnShow", LayoutSideButtons)
+    LFGMinimapFrame:HookScript("OnHide", LayoutSideButtons)
 
     local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", LFGMinimapFrame, "GwLfgQueueIcon")
     GwLfgQueueIcon:SetAllPoints(LFGMinimapFrame)
@@ -547,7 +550,7 @@ local function SetUpLfgFrame()
     end)
     MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
 
-    UpdateButtonSide()
+    GW.UpdateMinimapSideButtons()
 end
 
 
@@ -586,18 +589,18 @@ end
 
 local SIDE_BUTTON_SPACING = 2
 local queueAnchor
-local function GetSideButton(key)
+local function GetSideButtons(key)
     if key == "CALENDAR" then
-        return HAS_CALENDAR and GameTimeFrame, GameTimeFrame, -5
+        return HAS_CALENDAR and {{GameTimeFrame, GameTimeFrame, -5}}
     elseif key == "COMPARTMENT" then
-        return GW.isModern and AddonCompartmentFrame, AddonCompartmentFrame, -4
+        return GW.isModern and {{AddonCompartmentFrame, AddonCompartmentFrame, -4}}
     elseif key == "ADDONS" then
-        return GwAddonToggle, GwAddonToggle, -5
+        return {{GwAddonToggle, GwAddonToggle, -5}}
     elseif key == "QUEUE" then
         if GW.isModern then
-            return queueAnchor, QueueStatusButton, -5
+            return {{queueAnchor, QueueStatusButton, -5}}
         end
-        return MiniMapBattlefieldFrame, MiniMapBattlefieldFrame, -7
+        return {{MiniMapBattlefieldFrame, MiniMapBattlefieldFrame, -7}, {LFGMinimapFrame, LFGMinimapFrame, -5}}
     end
 end
 
@@ -615,16 +618,18 @@ local function GetSideButtonOrder()
     return order
 end
 
-local function LayoutSideButtons()
+LayoutSideButtons = function()
     if not Minimap.sidePanel then return end
     local buttons = GW.settings.minimap.sideButtons
     local y = 0
     for _, key in ipairs(GetSideButtonOrder()) do
-        local anchor, frame, x = GetSideButton(key)
-        if anchor and frame and buttons[key] and frame:IsShown() then
-            anchor:ClearAllPoints()
-            anchor:SetPoint("TOP", Minimap.sidePanel, "TOP", x, -y)
-            y = y + frame:GetHeight() + SIDE_BUTTON_SPACING
+        for _, entry in ipairs(buttons[key] and GetSideButtons(key) or {}) do
+            local anchor, frame, x = entry[1], entry[2], entry[3]
+            if anchor and frame and frame:IsShown() then
+                anchor:ClearAllPoints()
+                anchor:SetPoint("TOP", Minimap.sidePanel, "TOP", x, -y)
+                y = y + frame:GetHeight() + SIDE_BUTTON_SPACING
+            end
         end
     end
 end
@@ -646,6 +651,7 @@ function GW.UpdateMinimapSideButtons()
         GW.HandleAddonCompartmentButton()
     else
         SetSideButtonShown(MiniMapBattlefieldFrame, buttons.QUEUE)
+        SetSideButtonShown(LFGMinimapFrame, buttons.QUEUE)
     end
     SetSideButtonShown(GwAddonToggle, buttons.ADDONS)
     LayoutSideButtons()
