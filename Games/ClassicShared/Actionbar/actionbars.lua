@@ -1,5 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
+-- Mists has its own
+if GW.Mists then return end
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Wait = GW.Wait
 local Self_Hide = GW.Self_Hide
@@ -515,7 +517,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
     fmMultibar.gw_IsGwFrame = true -- our own frame, so it may carry the fade state attribute
     if actionPage ~= nil then
-       fmMultibar:SetAttribute("_onstate-actionpage", [[
+        fmMultibar:SetAttribute("_onstate-actionpage", [[
             self:SetAttribute("actionpage", tonumber(newstate))
         ]])
         RegisterStateDriver(fmMultibar, "actionpage", tostring(actionPage))

@@ -1,5 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
+-- Classic has its own
+if GW.Classic then return end
 
 GwObjectivesItemButtonMixin = {}
 

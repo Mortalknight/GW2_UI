@@ -1,5 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
+-- Mists has its own
+if GW.Mists then return end
 local _G, _M = getfenv(0), {}
 setfenv(1, setmetatable(_M, {__index=_G}))
 

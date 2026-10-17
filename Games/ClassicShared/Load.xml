@@ -1,0 +1,13 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="Misc\versionApi.lua"/>
+    <Script file ="Mixin\ObjectivesItemButtonMixin.lua"/>
+    <Include file ="Actionbar\Binding.xml"/>
+    <Script file ="Actionbar\actionbars.lua"/>
+    <Script file ="Actionbar\Binding.lua"/>
+    <Include file ="Inventory\lootframe.xml"/>
+    <Script file ="Inventory\lootframe.lua"/>
+    <Script file ="Inventory\sort.lua"/>
+    <Include file ="Mainbar\mirrortimer.xml"/>
+    <Script file ="Mainbar\mirrortimer.lua"/>
+    <Script file ="Character\advanced_stats.lua"/>
+</Ui>
