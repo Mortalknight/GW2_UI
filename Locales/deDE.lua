@@ -410,25 +410,8 @@ L["Set Raid Unit Width"] = "Breite der Schlachtzugseinheiten"
 L["Set the grow direction for raid frames."] = "Bestimme die Wachstumsrichtung der Schlachtzugsfenster."
 L["Set the growth direction of the stance bar."] = "Setze die Wachstumsrichtung der Haltungsleiste"
 L["Set the height of the raid units."] = "Setze die Höhe der Schlachtzugseinheiten."
-L[ [=[Set the maximum height that the raid frames can be displayed.
-
-This will cause unit frames to shrink or move to the next column.]=] ] = [=[Setze die maximale Höhe des Schlachtzugcontainers.
-
-Schlachtzugeinheiten werden verkleinert oder in die nächste Spalte verschoben.]=]
 L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "Setze die maximale Anzahl an Zeilen, die im 'Chat-Kopieren-Fenster' angezeigt werden."
-L[ [=[Set the maximum width that the raid frames can be displayed.
-
-This will cause unit frames to shrink or move to the next row.]=] ] = [=[Setze die maximale Breite des Schlachtzugcontainers.
-
-Schlachtzugeinheiten werden verkleinert oder in die nächste Zeile verschoben.]=]
 L["Set the width of the raid units."] = "Setze die Breite der Schlachtzugseinheiten."
-L[ [=[Set where the raid frame container should be anchored.
-
-By position: Always the same as the container's position on screen.
-By growth: Always opposite to the growth direction.]=] ] = [=[Bestimme wo der Schlachtzugcontainer verankert sein soll.
-
-Nach Position: Immer so wie seine Position auf dem Bildschirm.
-Nach Wachstum: Immer entgegen seiner der Wachstumsrichtung.]=]
 L["Settings are not available in combat!"] = "Einstellungen sind im Kampf nicht verfügbar!"
 L["Setup Chat"] = "Chateinstellungen"
 L["Setup CVars"] = "Installiere CVars"
@@ -565,11 +548,6 @@ L["Vertical"] = "Vertikal"
 L["Weekly Reset"] = "Wöchentlicher Reset"
 L["Welcome"] = "Willkommen"
 L["Welcome to GW2 UI"] = "Willkommen beim GW2-UI"
-L[ [=[What is 'Pixel Perfect'?
-
-GW2 UI has a built-in setting called 'Pixel Perfect Mode'. What this means for you is that your user interface will look as was intended, with crisper textures and better scaling. Of course, you can toggle this off in the settings menu should you prefer.]=] ] = [=[Was ist 'Pixel Perfection'?
-
-GW2 UI verfügt über eine integrierte Einstellung namens 'Pixel Perfection Mode'. Das bedeutet für dich, dass das UI wie vorgesehen aussieht, mit gestochen scharfen Texturen und einer besseren Skalierung. Natürlich kannst du dies in den Einstellungen ausschalten, falls du dies vorziehst.]=]
 L["When in a raid group, show if anyone in your raid is targeting the current tooltip unit."] = "Zeige ob jemand aus deiner Gruppe/Schlachtzug die Tooltip-Einheit ins Ziel genommen hat."
 L["When you go AFK, display the AFK screen."] = "AFK Bildschirm anzeigen wenn du AFK bist."
 L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."] = "Zeigt eine schwebende Leiste an, die dir die Rollenzusammensetzung deiner Gruppe oder deines Schlachtzugs anzeigt. Diese kann über die 'Move HUD'-Oberfläche verschoben werden."
