@@ -518,6 +518,26 @@ function GW.GetQuestRewardXP(questID)
     end
 end
 
+-- the tag text from GetQuestLogTitle is translated, the tag id is not
+function GW.GetQuestTagID(questID)
+    if C_QuestLog.GetQuestTagInfo then
+        local info = C_QuestLog.GetQuestTagInfo(questID)
+        return info and info.tagID
+    end
+    return (GetQuestTagInfo(questID))
+end
+
+function GW.GetQuestLevelPrefix(level, tagID)
+    if tagID == Enum.QuestTag.Group then
+        return "[" .. level .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t] "
+    elseif tagID == Enum.QuestTag.Dungeon then
+        return "[" .. level .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t] "
+    elseif tagID then
+        return "[" .. level .. "+] "
+    end
+    return "[" .. level .. "] "
+end
+
 -- the quest log groups the quests under zone headers, sort by those and then by level
 function GW.SortQuestsByZone(quests)
     local zoneByIndex, zone = {}, ""

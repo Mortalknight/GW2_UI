@@ -14,6 +14,8 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
+    {GW.Enum.ChangelogType.feature, [=[Quest tracker: PvP quests are red]=]},
+    {GW.Enum.ChangelogType.bug, [=[Quest tracker (Classic, TBC, Wrath, Mists): the elite and dungeon icons in front of the quest title work in every language]=]},
     {GW.Enum.ChangelogType.bug, [=[Minimap: the instance difficulty no longer sometimes shows only 0 after entering a dungeon, and the first letter of the difficulty works in every language]=]},
     {GW.Enum.ChangelogType.change, [=[Quest tracker (Classic, TBC, Wrath, Mists): sorting by zone and the quest XP no longer need Questie, they come straight from the quest log; on Wrath, linking a quest into chat posts a real quest link]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest tracker: daily and weekly quests are blue on every client, on Classic, TBC and Wrath straight from the quest log instead of through Questie, on Mists dailies too]=]},

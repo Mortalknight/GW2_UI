@@ -42,6 +42,7 @@ GW.Enum.ObjectivesNotificationType = {
     Dead = 14,
     LegendaryQuest = 15,
     ImportantQuest = 16,
+    PvPQuest = 17,
 }
 
 GW.Enum.DispelType = {

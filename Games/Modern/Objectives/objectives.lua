@@ -46,6 +46,10 @@ local function GetQuestColorKey(questID, isCampaignContainer, isFrequency)
         return GW.Enum.ObjectivesNotificationType.Campaign
     end
 
+    if GW.GetQuestTagID(questID) == Enum.QuestTag.PvP then
+        return GW.Enum.ObjectivesNotificationType.PvPQuest
+    end
+
     local classification = C_QuestInfoSystem and C_QuestInfoSystem.GetQuestClassification and C_QuestInfoSystem.GetQuestClassification(questID)
     local classifications = Enum.QuestClassification
 

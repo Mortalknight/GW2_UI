@@ -141,6 +141,7 @@ GW.Colors.ObjectivesTypeColors = {
     [GW.Enum.ObjectivesNotificationType.Dead] = CreateColor(255 / 255, 255 / 255, 255 / 255),
     [GW.Enum.ObjectivesNotificationType.LegendaryQuest] = CreateColor(255 / 255, 128 / 255, 0 / 255),
     [GW.Enum.ObjectivesNotificationType.ImportantQuest] = CreateColor(186 / 255, 96 / 255, 240 / 255),
+    [GW.Enum.ObjectivesNotificationType.PvPQuest] = CreateColor(230 / 255, 90 / 255, 75 / 255),
 }
 
 GW.Colors.FactionBarColors = {

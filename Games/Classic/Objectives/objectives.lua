@@ -56,7 +56,7 @@ local function UntrackQuest(questLogIndex)
 end
 
 local function AddQuestInfos(questId, id)
-    local title, level, group, _, _, isComplete, frequency, _, startEvent = GetQuestLogTitle(id)
+    local title, level, _, _, _, isComplete, frequency, _, startEvent = GetQuestLogTitle(id)
     local sourceItemId = nil
     local isFailed = false
 
@@ -81,7 +81,7 @@ local function AddQuestInfos(questId, id)
         questWatchedId = id or 0,
         questLogIndex = id,
         questLevel = level,
-        questGroup = group,
+        tagID = GW.GetQuestTagID(questId),
         title = title,
         isComplete = isComplete,
         startEvent = startEvent,
@@ -125,7 +125,7 @@ local function BuildQuestBlockSignature(quest, colorKey)
     AddSignaturePart(quest.questId)
     AddSignaturePart(quest.title)
     AddSignaturePart(quest.questLevel)
-    AddSignaturePart(quest.questGroup)
+    AddSignaturePart(quest.tagID)
     AddSignaturePart(colorKey)
     AddSignaturePart(GW.ObjectivesTrackerState.layoutGeneration)
     AddSignaturePart(GW.settings.objectives.showCompleted)
@@ -169,16 +169,7 @@ local function UpdateBlockInternal(self, parent, quest, signature)
     end
 
     self.title = quest.title
-    local text = ""
-    if quest.questGroup == "Elite" then
-        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t] "
-    elseif quest.questGroup == "Dungeon" then
-        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t] "
-    elseif quest.questGroup then
-        text = "[" .. quest.questLevel .. "+] "
-    else
-        text = "[" .. quest.questLevel .. "] "
-    end
+    local text = GW.GetQuestLevelPrefix(quest.questLevel, quest.tagID)
 
     self.questID = quest.questId
     self.questLogIndex = quest.questLogIndex
@@ -331,7 +322,7 @@ function GwQuestLogMixin:UpdateLayout()
                 counterQuest = counterQuest + 1
 
                 local isFrequency = quest.isFrequency
-                local colorKey = isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
+                local colorKey = quest.tagID == Enum.QuestTag.PvP and GW.Enum.ObjectivesNotificationType.PvPQuest or isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
                 local signature = BuildQuestBlockSignature(quest, colorKey)
                 local block = self.blocks and self.blocks[counterQuest]
 

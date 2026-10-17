@@ -37,7 +37,7 @@ local function UntrackQuest(questLogIndex)
 end
 
 local function AddQuestInfos(questLogIndex, id)
-    local title, level, questTag, _, _, isComplete, frequency, questId, startEvent = GetQuestLogTitle(questLogIndex)
+    local title, level, _, _, _, isComplete, frequency, questId, startEvent = GetQuestLogTitle(questLogIndex)
     if title and questId then
         local isFailed = false
         local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
@@ -70,7 +70,7 @@ local function AddQuestInfos(questLogIndex, id)
             questWatchedId = id or 0,
             questLogIndex = questLogIndex,
             questLevel = level,
-            questTag = questTag,
+            tagID = GW.GetQuestTagID(questId),
             title = title,
             isComplete = isComplete,
             startEvent = startEvent,
@@ -113,7 +113,7 @@ local function BuildQuestBlockSignature(quest, colorKey)
     AddSignaturePart(quest.questId)
     AddSignaturePart(quest.title)
     AddSignaturePart(quest.questLevel)
-    AddSignaturePart(quest.questTag)
+    AddSignaturePart(quest.tagID)
     AddSignaturePart(colorKey)
     AddSignaturePart(GW.ObjectivesTrackerState.layoutGeneration)
     AddSignaturePart(GW.settings.objectives.showCompleted)
@@ -161,16 +161,7 @@ local function UpdateBlockInternal(self, parent, quest, signature)
     end
 
     self.title = quest.title
-    local text = ""
-    if quest.questTag == "Elite" then
-        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t] "
-    elseif quest.questTag == "Dungeon" then
-        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t] "
-    elseif quest.questTag == "Group" then
-        text = "[" .. quest.questLevel .. "+] "
-    else
-        text = "[" .. quest.questLevel .. "] "
-    end
+    local text = GW.GetQuestLevelPrefix(quest.questLevel, quest.tagID)
 
     self.questID = quest.questId
     self.questLogIndex = quest.questLogIndex
@@ -343,7 +334,7 @@ function GwQuestLogMixin:UpdateLayout()
         if shouldShowHeader then
             self.header:Show()
             counterQuest = counterQuest + 1
-            local colorKey = quest.isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
+            local colorKey = quest.tagID == Enum.QuestTag.PvP and GW.Enum.ObjectivesNotificationType.PvPQuest or quest.isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
             local signature = BuildQuestBlockSignature(quest, colorKey)
             local block = self.blocks and self.blocks[counterQuest]
 
