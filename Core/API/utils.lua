@@ -287,8 +287,7 @@ local function SecureGameMenuLogoutButtons()
                 overlay.menuButton = button
                 overlay:ClearAllPoints()
                 overlay:SetAllPoints(button)
-                overlay:SetFrameStrata(menu:GetFrameStrata())
-                overlay:SetFrameLevel(button:GetFrameLevel() + 1)
+                overlay:SetFrameStrata("FULLSCREEN_DIALOG")
                 overlay:SetShown(button:IsEnabled())
             end
         end
