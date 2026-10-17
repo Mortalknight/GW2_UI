@@ -2,10 +2,11 @@
 local GW = select(2, ...)
 local Tooltip = GW.Tooltip
 
--- the unit tooltips the setting hides in combat, by reaction: hostile, neutral, friendly or all
+-- the unit tooltips the setting hides in combat, by reaction: hostile, neutral, friendly or all; the player is
+-- in combat already when the lockdown starts right after PLAYER_REGEN_DISABLED
 local function ShouldHide(tooltip)
     local settings = GW.settings.tooltip.hideInCombat
-    if not settings.enabled or Tooltip.IsModifierDown(settings.overrideKey) then
+    if not settings.enabled or not (InCombatLockdown() or UnitAffectingCombat("player")) or Tooltip.IsModifierDown(settings.overrideKey) then
         return false
     end
     local unit = select(2, tooltip:GetUnit())
@@ -36,7 +37,7 @@ end
 GW.RegisterTooltipModule({
     onLoad = function()
         GameTooltip:HookScript("OnShow", function(tooltip)
-            if InCombatLockdown() and ShouldHide(tooltip) then
+            if ShouldHide(tooltip) then
                 tooltip:Hide()
             end
         end)
