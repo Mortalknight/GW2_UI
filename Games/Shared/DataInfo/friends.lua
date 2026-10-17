@@ -270,8 +270,8 @@ local function BuildMenu(_, root)
     local statusMenu = root:CreateButton(PLAYER_STATUS)
     local colors = GW.Colors.PlayerStatusColors
     statusMenu:CreateButton(colors.Available:WrapTextInColorCode(AVAILABLE), SetChatStatus)
-    statusMenu:CreateButton(colors.Busy:WrapTextInColorCode(GW.Social.BUSY_TEXT), SetChatStatus, "DND")
     statusMenu:CreateButton(colors.Away:WrapTextInColorCode(AFK), SetChatStatus, "AFK")
+    statusMenu:CreateButton(colors.Busy:WrapTextInColorCode(GW.Social.BUSY_TEXT), SetChatStatus, "DND")
     root:CreateButton(BN_BROADCAST_TOOLTIP, ShowBroadcastPopup)
 
     for _, info in ipairs(GetOnlineFriends()) do
