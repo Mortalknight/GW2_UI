@@ -933,6 +933,7 @@ function GW.LoadMinimap()
 
         queueAnchor = CreateFrame("Frame", nil, Minimap.sidePanel)
         queueAnchor:SetSize(1, 1)
+        queueAnchor:SetPoint("TOP", Minimap.sidePanel, "TOP")
 
         QueueStatusButton:SetParent(UIParent)
         QueueStatusButton:SetPoint("TOP", queueAnchor, "TOP", 0, 0)
