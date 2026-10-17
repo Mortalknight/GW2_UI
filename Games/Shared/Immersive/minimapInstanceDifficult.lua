@@ -26,83 +26,43 @@ local difficulties = {
     [24] = "time",    -- Timewalking
 }
 
-local colors = {
-    ["lfr"]      = { r = 0.32, g = 0.91, b = 0.25 },  -- grün
-    ["normal"]   = { r = 0.09, g = 0.51, b = 0.82 },  -- blau
-    ["heroic"]   = { r = 0.67, g = 0.15, b = 0.94 },  -- lila
-    ["challenge"]= { r = 0.9,  g = 0.89, b = 0.27 },  -- gelb/gold
-    ["mythic"]   = { r = 0.82, g = 0.42, b = 0.16 },  -- orange
-    ["time"]     = { r = 0.41, g = 0.80, b = 0.94 }   -- hellblau
-}
-
-local function InstanceCheck()
-    local isInstance, InstanseType = IsInInstance()
-    return isInstance and InstanseType ~= "pvp" and InstanseType ~= "arena"
-end
-
-local function GetColor(dif)
-    if dif and difficulties[dif] then
-        local color = colors[difficulties[dif]]
-        return color.r * 255, color.g * 255, color.b * 255
-    else
-        return 255, 255, 255
-    end
-end
+local sizeOnly = {[3] = true, [4] = true, [5] = true, [6] = true, [7] = true, [9] = true}
 
 local function GuildEmblem()
-    if guild and guild.Emblem and IsInGuild() then
-        local texCoord = { guild.Emblem:GetTexCoord() }
-        return ("|TInterface/GuildFrame/GuildEmblems_01:16:16:0:0:32:32:%d:%d:%d:%d|t"):format(
-            texCoord[1] * 32, texCoord[7] * 32, texCoord[2] * 32, texCoord[8] * 32
-        )
-    else
+    if not (guild and guild.Emblem and IsInGuild()) then
         return ""
     end
+    local left, top, _, _, _, _, right, bottom = guild.Emblem:GetTexCoord()
+    return ("|TInterface/GuildFrame/GuildEmblems_01:16:16:0:0:32:32:%d:%d:%d:%d|t"):format(left * 32, right * 32, top * 32, bottom * 32)
 end
 
-local function InstanceDifficultOnEvent(self, _, inGuildGroup)
+local function Update(self)
+    self.text:SetText("")
     self.icon:SetText("")
 
-    if not InstanceCheck() then
-        self.text:SetText("")
+    local isInstance, instanceType = IsInInstance()
+    if not isInstance or instanceType == "pvp" or instanceType == "arena" then
         return
     end
 
     local _, _, diff, difficultyName, _, _, _, _, instanceGroupSize = GetInstanceInfo()
-    local isChallengeMode = select(4, GetDifficultyInfo(diff))
-    local r, g, b = GetColor(diff)
-    local text
-
-    if (diff >= 3 and diff <= 7) or diff == 9 then
-        text = format("|cff%02x%02x%02x%s|r", r, g, b, instanceGroupSize)
+    local color = GW.Colors.InstanceDifficultyColors[difficulties[diff]] or GW.Colors.FallbackWhite
+    if sizeOnly[diff] then
+        self.text:SetText(color:WrapTextInColorCode(instanceGroupSize))
     else
-        if difficultyName then
-            if GW.mylocal == "zhCN" or GW.mylocal == "zhTW" then
-                difficultyName = string.sub(difficultyName, 1, 3)
-            else
-                difficultyName = string.sub(difficultyName, 1, 1)
-            end
-        else
-            difficultyName = ""
-        end
-        text = format("%d |cff%02x%02x%02x%s|r", instanceGroupSize, r, g, b, difficultyName)
+        self.text:SetText(instanceGroupSize .. " " .. color:WrapTextInColorCode(difficultyName and string.utf8sub(difficultyName, 1, 1) or ""))
     end
 
-    self.text:SetText(text)
-
-    if inGuildGroup and not isChallengeMode then
+    if self.inGuildGroup and not select(4, GetDifficultyInfo(diff)) then
         self.icon:SetText(GuildEmblem())
     end
+end
 
-    if instance then
-        instance:Hide()
+local function OnEvent(self, event, ...)
+    if event == "GUILD_PARTY_STATE_UPDATED" then
+        self.inGuildGroup = ...
     end
-    if guild then
-        guild:Hide()
-    end
-    if challenge then
-        challenge:Hide()
-    end
+    Update(self)
 end
 
 local function HideBlizzardIcon(self)
@@ -123,25 +83,20 @@ function GW.SkinMinimapInstanceDifficult()
     d.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     d.icon:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
 
-    d:RegisterEvent("LOADING_SCREEN_DISABLED")
-    d:RegisterEvent("GROUP_ROSTER_UPDATE")
-    d:RegisterEvent("GUILD_PARTY_STATE_UPDATED")
-    d:SetScript("OnEvent", InstanceDifficultOnEvent)
+    -- the instance info is often not there yet at the loading screen, the last three events bring it
+    for _, event in ipairs({"LOADING_SCREEN_DISABLED", "GROUP_ROSTER_UPDATE", "GUILD_PARTY_STATE_UPDATED", "PLAYER_DIFFICULTY_CHANGED", "INSTANCE_GROUP_SIZE_CHANGED", "UPDATE_INSTANCE_INFO"}) do
+        if C_EventUtils.IsEventValid(event) then
+            d:RegisterEvent(event)
+        end
+    end
+    d:SetScript("OnEvent", OnEvent)
 
-    if instance then
-        instance:HookScript("OnShow", HideBlizzardIcon)
-        instance:Hide()
-    end
-    if guild then
-        guild:HookScript("OnShow", HideBlizzardIcon)
-        guild:Hide()
-    end
-    if challenge then
-        challenge:HookScript("OnShow", HideBlizzardIcon)
-        challenge:Hide()
+    for _, frame in pairs({instance, guild, challenge}) do
+        frame:HookScript("OnShow", HideBlizzardIcon)
+        frame:Hide()
     end
 
     if MinimapCluster.InstanceDifficulty then
-        hooksecurefunc(MinimapCluster.InstanceDifficulty, "Update", function() InstanceDifficultOnEvent(d) end)
+        hooksecurefunc(MinimapCluster.InstanceDifficulty, "Update", function() Update(d) end)
     end
 end

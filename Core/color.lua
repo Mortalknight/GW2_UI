@@ -206,6 +206,15 @@ GW.Colors.PlayerStatusColors = {
     Busy = CreateColor(1, 0.2, 0.2),
 }
 
+GW.Colors.InstanceDifficultyColors = {
+    lfr = CreateColor(0.32, 0.91, 0.25),
+    normal = CreateColor(0.09, 0.51, 0.82),
+    heroic = CreateColor(0.67, 0.15, 0.94),
+    challenge = CreateColor(0.9, 0.89, 0.27),
+    mythic = CreateColor(0.82, 0.42, 0.16),
+    time = CreateColor(0.41, 0.80, 0.94),
+}
+
 GW.Colors.FactionColors = {
     Horde = CreateColor(163 / 255, 46 / 255, 54 / 255), --Horde
     Alliance = CreateColor(57 / 255, 115 / 255, 186 / 255) --Alliance

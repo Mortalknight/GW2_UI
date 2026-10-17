@@ -501,7 +501,18 @@ end
 
 function GW.GetQuestRewardXP(questID)
     if not GW.settings.objectives.showXp or GW.mylevel >= GetMaxPlayerLevel() then return end
-    local xp = GetQuestLogRewardXP and GetQuestLogRewardXP(questID)
+    local xp
+    if GW.isModern then
+        xp = GetQuestLogRewardXP(questID)
+    else
+        -- the classic clients ignore the questID and read the selected quest log entry
+        local questLogIndex = GetQuestLogIndexByID(questID)
+        if not questLogIndex or questLogIndex == 0 then return end
+        local selected = GetQuestLogSelection()
+        SelectQuestLogEntry(questLogIndex)
+        xp = GetQuestLogRewardXP()
+        SelectQuestLogEntry(selected)
+    end
     if xp and xp > 0 then
         return xp
     end
