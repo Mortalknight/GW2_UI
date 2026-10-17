@@ -56,16 +56,8 @@ local function UntrackQuest(questLogIndex)
 end
 
 local function AddQuestInfos(questId, id)
-    local title, level, group, _, _, isComplete, _, _, startEvent = GetQuestLogTitle(id)
-    local sourceItemId = nil
+    local title, level, group, _, _, isComplete, frequency, _, startEvent = GetQuestLogTitle(id)
     local isFailed = false
-
-    if Questie and Questie.started then
-        local questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
-        if questieQuest and questieQuest.sourceItemId then
-            sourceItemId = questieQuest.sourceItemId
-        end
-    end
 
     if isComplete == nil then
         isComplete = false
@@ -88,17 +80,9 @@ local function AddQuestInfos(questId, id)
         numObjectives = GetNumQuestLeaderBoards(id),
         requiredMoney = GetQuestLogRequiredMoney(questId),
         isAutoComplete = false,
-        sourceItemId = sourceItemId,
-        isFailed = isFailed
+        isFailed = isFailed,
+        isFrequency = GW.IsRepeatableQuestFrequency(frequency)
     }
-end
-
-local function IsQuestFrequency(questId)
-    -- if questie is loaded check for daily quest
-    if Questie and Questie.started then
-        return QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(questId)
-    end
-    return false
 end
 
 -- AddObjective keeps no reference to its options table (field reads only), so one
@@ -189,7 +173,6 @@ local function UpdateBlockInternal(self, parent, quest, signature)
     self.questID = quest.questId
     self.questLogIndex = quest.questLogIndex
     self.gwSignature = signature or BuildQuestBlockSignature(quest, self.gwColorKey)
-    self.sourceItemId = quest.sourceItemId
     self.title = quest.title
     self.Header:SetText(text .. quest.title)
 
@@ -326,44 +309,7 @@ function GwQuestLogMixin:UpdateLayout()
             return a and b and a.questLevel < b.questLevel
         end)
     elseif GW.settings.objectives.sorting == "ZONE" then
-        -- Sort by Zone
-        if Questie and Questie.started and QuestieLoader then
-            local QuestieTrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
-            local QuestieDB = QuestieLoader:ImportModule("QuestieDB")
-            if QuestieTrackerUtils and QuestieDB then
-                table.sort(sorted, function(a, b)
-                    local qA = QuestieDB.GetQuest(a.questId)
-                    local qB = QuestieDB.GetQuest(b.questId)
-                    local qAZone, qBZone
-                    if qA and qA.zoneOrSort > 0 then
-                        qAZone = QuestieTrackerUtils:GetZoneNameByID(qA.zoneOrSort)
-                    elseif qA and qA.zoneOrSort < 0 then
-                        qAZone = QuestieTrackerUtils:GetCategoryNameByID(qA.zoneOrSort)
-                    else
-                        qAZone = tostring(qA and qA.zoneOrSort or "")
-                    end
-
-                    if qB and qB.zoneOrSort > 0 then
-                        qBZone = QuestieTrackerUtils:GetZoneNameByID(qB.zoneOrSort)
-                    elseif qB and qB.zoneOrSort < 0 then
-                        qBZone = QuestieTrackerUtils:GetCategoryNameByID(qB.zoneOrSort)
-                    else
-                        qBZone = tostring(qB and qB.zoneOrSort or "")
-                    end
-
-                    -- Sort by Zone then by Level to mimic QuestLog sorting
-                    if qAZone == qBZone then
-                        return qA.level < qB.level
-                    else
-                        if qAZone ~= nil and qBZone ~= nil then
-                            return qAZone < qBZone
-                        else
-                            return qAZone and qBZone
-                        end
-                    end
-                end)
-            end
-        end
+        GW.SortQuestsByZone(sorted)
     end
 
     wipe(self.trackedQuests)
@@ -373,7 +319,7 @@ function GwQuestLogMixin:UpdateLayout()
                 self.header:Show()
                 counterQuest = counterQuest + 1
 
-                local isFrequency = IsQuestFrequency(quest.questId)
+                local isFrequency = quest.isFrequency
                 local colorKey = isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
                 local signature = BuildQuestBlockSignature(quest, colorKey)
                 local block = self.blocks and self.blocks[counterQuest]
@@ -387,11 +333,10 @@ function GwQuestLogMixin:UpdateLayout()
                     else
                         self.watchMoneyReasons = self.watchMoneyReasons - 1
                     end
-                    if block.questLogIndex ~= quest.questLogIndex or block.sourceItemId ~= quest.sourceItemId then
-                        -- both feed the quest item button, they shift when other quests
+                    if block.questLogIndex ~= quest.questLogIndex then
+                        -- feeds the quest item button, it shifts when other quests
                         -- come and go without our content changing
                         block.questLogIndex = quest.questLogIndex
-                        block.sourceItemId = quest.sourceItemId
                         GW.CombatQueue:Queue("update_tracker_actionbutton_" .. frameName .. block.index, block.UpdateObjectiveActionButton, {block})
                     end
                 else
@@ -409,7 +354,6 @@ function GwQuestLogMixin:UpdateLayout()
                 if block then
                     block.questID = nil
                     block.questLogIndex = 0
-                    block.sourceItemId = nil
                     block:Hide()
                     GW.CombatQueue:Queue("update_tracker_" .. counterQuest, block.UpdateObjectiveActionButton, {block})
                 end
@@ -424,7 +368,6 @@ function GwQuestLogMixin:UpdateLayout()
         local block = self.blocks[i]
         block.questID = nil
         block.questLogIndex = 0
-        block.sourceItemId = nil
         block:Hide()
         GW.CombatQueue:Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
     end

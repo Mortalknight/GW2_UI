@@ -78,7 +78,7 @@ local function AddQuestInfos(questLogIndex, id)
             requiredMoney = GetQuestLogRequiredMoney(questLogIndex),
             isAutoComplete = GetQuestLogIsAutoComplete(questLogIndex),
             isFailed = isFailed,
-            isFrequency = frequency and frequency > 1
+            isFrequency = GW.IsRepeatableQuestFrequency(frequency)
         }
     end
 end
@@ -335,44 +335,7 @@ function GwQuestLogMixin:UpdateLayout()
             return a and b and a.questLevel < b.questLevel
         end)
     elseif GW.settings.objectives.sorting == "ZONE" then
-        -- Sort by Zone
-        if Questie and Questie.started and QuestieLoader then
-            local QuestieTrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
-            local QuestieDB = QuestieLoader:ImportModule("QuestieDB")
-            if QuestieTrackerUtils and QuestieDB then
-                table.sort(sorted, function(a, b)
-                    local qA = QuestieDB.GetQuest(a.questId)
-                    local qB = QuestieDB.GetQuest(b.questId)
-                    local qAZone, qBZone
-                    if qA and qA.zoneOrSort > 0 then
-                        qAZone = QuestieTrackerUtils:GetZoneNameByID(qA.zoneOrSort)
-                    elseif qA and qA.zoneOrSort < 0 then
-                        qAZone = QuestieTrackerUtils:GetCategoryNameByID(qA.zoneOrSort)
-                    else
-                        qAZone = tostring(qA and qA.zoneOrSort or "")
-                    end
-
-                    if qB and qB.zoneOrSort > 0 then
-                        qBZone = QuestieTrackerUtils:GetZoneNameByID(qB.zoneOrSort)
-                    elseif qB and qB.zoneOrSort < 0 then
-                        qBZone = QuestieTrackerUtils:GetCategoryNameByID(qB.zoneOrSort)
-                    else
-                        qBZone = tostring(qB and qB.zoneOrSort or "")
-                    end
-
-                    -- Sort by Zone then by Level to mimic QuestLog sorting
-                    if qAZone == qBZone then
-                        return qA.level < qB.level
-                    else
-                        if qAZone ~= nil and qBZone ~= nil then
-                            return qAZone < qBZone
-                        else
-                            return qAZone and qBZone
-                        end
-                    end
-                end)
-            end
-        end
+        GW.SortQuestsByZone(sorted)
     end
 
     wipe(self.trackedQuests)

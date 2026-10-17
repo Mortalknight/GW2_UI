@@ -56,7 +56,7 @@ local function UntrackQuest(questLogIndex)
 end
 
 local function AddQuestInfos(questId, id)
-    local title, level, group, _, _, isComplete, _, _, startEvent = GetQuestLogTitle(id)
+    local title, level, group, _, _, isComplete, frequency, _, startEvent = GetQuestLogTitle(id)
     local sourceItemId = nil
     local isFailed = false
 
@@ -89,16 +89,9 @@ local function AddQuestInfos(questId, id)
         requiredMoney = GetQuestLogRequiredMoney(questId),
         isAutoComplete = false,
         sourceItemId = sourceItemId,
-        isFailed = isFailed
+        isFailed = isFailed,
+        isFrequency = GW.IsRepeatableQuestFrequency(frequency)
     }
-end
-
-local function IsQuestFrequency(questId)
-    -- if questie is loaded check for daily quest
-    if Questie and Questie.started then
-        return QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(questId)
-    end
-    return false
 end
 
 -- AddObjective keeps no reference to its options table (field reads only), so one
@@ -327,44 +320,7 @@ function GwQuestLogMixin:UpdateLayout()
             return a and b and a.questLevel < b.questLevel
         end)
     elseif GW.settings.objectives.sorting == "ZONE" then
-        -- Sort by Zone
-        if Questie and Questie.started and QuestieLoader then
-            local QuestieTrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
-            local QuestieDB = QuestieLoader:ImportModule("QuestieDB")
-            if QuestieTrackerUtils and QuestieDB then
-                table.sort(sorted, function(a, b)
-                    local qA = QuestieDB.GetQuest(a.questId)
-                    local qB = QuestieDB.GetQuest(b.questId)
-                    local qAZone, qBZone
-                    if qA and qA.zoneOrSort > 0 then
-                        qAZone = QuestieTrackerUtils:GetZoneNameByID(qA.zoneOrSort)
-                    elseif qA and qA.zoneOrSort < 0 then
-                        qAZone = QuestieTrackerUtils:GetCategoryNameByID(qA.zoneOrSort)
-                    else
-                        qAZone = tostring(qA and qA.zoneOrSort or "")
-                    end
-
-                    if qB and qB.zoneOrSort > 0 then
-                        qBZone = QuestieTrackerUtils:GetZoneNameByID(qB.zoneOrSort)
-                    elseif qB and qB.zoneOrSort < 0 then
-                        qBZone = QuestieTrackerUtils:GetCategoryNameByID(qB.zoneOrSort)
-                    else
-                        qBZone = tostring(qB and qB.zoneOrSort or "")
-                    end
-
-                    -- Sort by Zone then by Level to mimic QuestLog sorting
-                    if qAZone == qBZone then
-                        return qA.level < qB.level
-                    else
-                        if qAZone ~= nil and qBZone ~= nil then
-                            return qAZone < qBZone
-                        else
-                            return qAZone and qBZone
-                        end
-                    end
-                end)
-            end
-        end
+        GW.SortQuestsByZone(sorted)
     end
 
     wipe(self.trackedQuests)
@@ -374,7 +330,7 @@ function GwQuestLogMixin:UpdateLayout()
                 self.header:Show()
                 counterQuest = counterQuest + 1
 
-                local isFrequency = IsQuestFrequency(quest.questId)
+                local isFrequency = quest.isFrequency
                 local colorKey = isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
                 local signature = BuildQuestBlockSignature(quest, colorKey)
                 local block = self.blocks and self.blocks[counterQuest]

@@ -90,6 +90,11 @@ function GW.GetWatchedFactionInfo()
     end
 end
 
+-- nil guard: on a client without LE_QUEST_FREQUENCY_WEEKLY a nil frequency would match
+function GW.IsRepeatableQuestFrequency(frequency)
+    return frequency ~= nil and (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
+end
+
 function GW.IsPlayerSpell(spellID)
     if C_SpellBook and C_SpellBook.IsSpellKnown then
         return C_SpellBook.IsSpellKnown(spellID, Enum.SpellBookSpellBank.Player)
@@ -500,9 +505,26 @@ function GW.GetQuestRewardXP(questID)
     if xp and xp > 0 then
         return xp
     end
-    if Questie and Questie.started then
-        return QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(questID, false)
+end
+
+-- the quest log groups the quests under zone headers, sort by those and then by level
+function GW.SortQuestsByZone(quests)
+    local zoneByIndex, zone = {}, ""
+    for i = 1, GetNumQuestLogEntries() do
+        local title, _, _, isHeader = GetQuestLogTitle(i)
+        if isHeader then
+            zone = title or ""
+        else
+            zoneByIndex[i] = zone
+        end
     end
+    table.sort(quests, function(a, b)
+        local zoneA, zoneB = zoneByIndex[a.questLogIndex] or "", zoneByIndex[b.questLogIndex] or ""
+        if zoneA == zoneB then
+            return a.questLevel < b.questLevel
+        end
+        return zoneA < zoneB
+    end)
 end
 
 -- our popup with the wowhead link of a quest, achievement, ...; questie's own popup only exists with questie

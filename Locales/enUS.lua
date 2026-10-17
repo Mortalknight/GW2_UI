@@ -932,7 +932,6 @@ L["External Defensives"] = true
 L["Calendar"] = true
 L["Auto"] = true
 L[" For Retail: Not used for secret numbers."] = true
-L[" |cFF888888(required Questie)|r"] = " |cFF888888(Questie required)|r"
 L["%s Achievements cleared"] = true
 L["Abundance"] = true
 L["Add space for Healthglobe"] = true
