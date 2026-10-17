@@ -587,6 +587,7 @@ local function updateMainBar()
     -- position the main action bar
     fmActionbar:SetSize(btn_padding, used_height)
     fmActionbar.gw_Width = btn_padding
+    GW.KeepMainBarWidth(fmActionbar, used_height)
 
     -- event/update handlers
     AddUpdateCB(actionBar_OnUpdate, fmActionbar, 1 / 60)

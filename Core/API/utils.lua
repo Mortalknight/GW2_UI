@@ -1783,6 +1783,14 @@ local function ApplyEditModeLayout()
     end
 end
 
+function GW.KeepMainBarWidth(bar, height)
+    hooksecurefunc(bar, "UpdateGridLayout", function(self)
+        if self.gw_Width and not self.gw_IsSkinOnly then
+            GW.CombatQueue:Queue("gw_mainbar_size", self.SetSize, {self, self.gw_Width, height})
+        end
+    end)
+end
+
 local function LoadEditModeLayout()
     if GW.settings.actionbars.enabled and GW.settings.actionbars.barLayout and not GW.IsGamepadInterface() then
         C_Timer.After(0, ApplyEditModeLayout)

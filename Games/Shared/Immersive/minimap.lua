@@ -577,6 +577,14 @@ function GW.HandleAddonCompartmentButton()
             AddonCompartmentFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
             AddonCompartmentFrame.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
             AddonCompartmentFrame:SetSize(18, 18)
+            if AddonCompartmentFrame.StateTexture then
+                local function HideStateTextures(self)
+                    self.StateTexture:SetAlpha(0)
+                    self.AddTexture:SetAlpha(0)
+                end
+                hooksecurefunc(AddonCompartmentFrame, "OnButtonStateChanged", HideStateTextures)
+                HideStateTextures(AddonCompartmentFrame)
+            end
             AddonCompartmentFrame.gw2Handled = true
 
 
