@@ -1,10 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="character.xml"/>
-    <Include file ="spellbook.xml"/>
-    <Include file ="talents.xml"/>
-    <Script file ="stats.lua"/>
     <Script file ="character.lua"/>
-    <Script file ="spellbook.lua"/>
-    <Script file ="talents.lua"/>
     <Script file ="windowManager.lua"/>
 </Ui>

@@ -1,7 +1,5 @@
 ---@class GW2
 local GW = select(2, ...)
--- Classic and Mists have their own
-if not (GW.TBC or GW.Wrath) then return end
 
 local function updateValues(self)
     local attackspeed, tt1, tt2 = GW.stats.getAttackSpeed()

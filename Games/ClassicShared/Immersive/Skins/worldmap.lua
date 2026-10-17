@@ -1,5 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
+-- Wrath and Mists have their own
+if not (GW.Classic or GW.TBC) then return end
 
 local moveDistance, mapX, mapY, mapLeft, mapTop, mapNormalScale, mapEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 

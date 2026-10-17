@@ -1,15 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="character.xml"/>
-    <Include file ="spellbook.xml"/>
-    <Include file ="talents.xml"/>
     <Include file ="pvp.xml"/>
     <Include file ="glyphs.xml"/>
     <Include file ="gearSets.xml"/>
-    <Script file ="stats.lua"/>
     <Script file ="glyphData.lua"/>
     <Script file ="character.lua"/>
-    <Script file ="spellbook.lua"/>
-    <Script file ="talents.lua"/>
     <Script file ="pvp.lua"/>
     <Script file ="glyphs.lua"/>
     <Script file ="gearSets.lua"/>

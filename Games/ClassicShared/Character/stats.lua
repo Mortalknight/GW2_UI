@@ -1,7 +1,20 @@
 ---@class GW2
 local GW = select(2, ...)
 
+-- the labels have different globals on TBC and Wrath
+local ATTACK_SPEED_TEXT = GW.TBC and ATTACK_SPEED_COLON or ATTACK_SPEED_SECONDS
+local DAMAGE_TEXT = GW.TBC and DAMAGE_COLON or DAMAGE
+
 GW.stats = {}
+
+-- the wrath text also shows the armor penetration rating
+local function FormatHitTooltip(text, ratingBonus)
+    if GW.Wrath then
+        return format(text, UnitLevel("player"), ratingBonus, GetCombatRating(CR_ARMOR_PENETRATION), GetArmorPenetration())
+    end
+    return format(text, UnitLevel("player"), ratingBonus, GetArmorPenetration())
+end
+
 local PRIMARY_STATS={
     [1] ="STRENGTH",
     [2] ="AGILITY",
@@ -228,10 +241,10 @@ local function getDamage(unit, prefix)
     local colorPos = "|cff20ff20"
     local colorNeg = "|cffff2020"
 
-    	-- epsilon check
-	if ( totalBonus < 0.1 and totalBonus > -0.1 ) then
-		totalBonus = 0.0;
-	end
+    -- epsilon check
+    if totalBonus < 0.1 and totalBonus > -0.1 then
+        totalBonus = 0
+    end
 
     if totalBonus == 0 then
         if displayMin < 100 and displayMax < 100 then
@@ -292,15 +305,15 @@ local function getDamage(unit, prefix)
 
     local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. INVTYPE_WEAPONMAINHAND .. FONT_COLOR_CODE_CLOSE
 
-    local tooltip2 = ATTACK_SPEED_SECONDS .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", speed) .. FONT_COLOR_CODE_CLOSE .. "\n"
-    tooltip2 = tooltip2 .. DAMAGE .. HIGHLIGHT_FONT_COLOR_CODE .. damageTooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
+    local tooltip2 = ATTACK_SPEED_TEXT .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", speed) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    tooltip2 = tooltip2 .. DAMAGE_TEXT .. HIGHLIGHT_FONT_COLOR_CODE .. damageTooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
     tooltip2 = tooltip2 .. DAMAGE_PER_SECOND .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.1F", damagePerSecond) .. FONT_COLOR_CODE_CLOSE .. "\n"
 
     if offhandSpeed then
         tooltip2 = tooltip2 .."\n"
         tooltip2 = tooltip2 .. HIGHLIGHT_FONT_COLOR_CODE .. INVTYPE_WEAPONOFFHAND .. FONT_COLOR_CODE_CLOSE .. "\n"
-        tooltip2 = tooltip2 .. ATTACK_SPEED_SECONDS .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", offhandSpeed) .. FONT_COLOR_CODE_CLOSE .. "\n"
-        tooltip2 = tooltip2 .. DAMAGE .. HIGHLIGHT_FONT_COLOR_CODE .. offhandDamageTooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
+        tooltip2 = tooltip2 .. ATTACK_SPEED_TEXT .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", offhandSpeed) .. FONT_COLOR_CODE_CLOSE .. "\n"
+        tooltip2 = tooltip2 .. DAMAGE_TEXT .. HIGHLIGHT_FONT_COLOR_CODE .. offhandDamageTooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
         tooltip2 = tooltip2 .. DAMAGE_PER_SECOND .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.1F", offhandDamagePerSecond) .. FONT_COLOR_CODE_CLOSE .. "\n"
         tooltip2 = tooltip2 .."\n"
         tooltip2 = tooltip2 .. TOTAL .. " " .. DAMAGE .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.1F", (damagePerSecond + offhandDamagePerSecond)) .. FONT_COLOR_CODE_CLOSE
@@ -384,9 +397,9 @@ local function getRating(ratingIndex)
     local tooltip, tooltip2 = HIGHLIGHT_FONT_COLOR_CODE .. statName .. " " .. rating .. FONT_COLOR_CODE_CLOSE, nil
     -- Can probably axe this if else tree if all rating tooltips follow the same format
     if ( ratingIndex == CR_HIT_MELEE ) then
-        tooltip2 = format(CR_HIT_MELEE_TOOLTIP, UnitLevel("player"), ratingBonus, GetCombatRating(CR_ARMOR_PENETRATION), GetArmorPenetration());
+        tooltip2 = FormatHitTooltip(CR_HIT_MELEE_TOOLTIP, ratingBonus)
     elseif ( ratingIndex == CR_HIT_RANGED ) then
-        tooltip2 = format(CR_HIT_RANGED_TOOLTIP, UnitLevel("player"), ratingBonus, GetCombatRating(CR_ARMOR_PENETRATION), GetArmorPenetration());
+        tooltip2 = FormatHitTooltip(CR_HIT_RANGED_TOOLTIP, ratingBonus)
     elseif ( ratingIndex == CR_DODGE ) then
         tooltip2 = format(CR_DODGE_TOOLTIP, ratingBonus);
     elseif ( ratingIndex == CR_PARRY ) then
@@ -600,8 +613,8 @@ local function getRangedDamage(unit, prefix)
         end
     end
 
-    local tooltip2 = ATTACK_SPEED_SECONDS .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", rangedAttackSpeed) .. FONT_COLOR_CODE_CLOSE .. "\n"
-    tooltip2 = tooltip2 .. DAMAGE .. HIGHLIGHT_FONT_COLOR_CODE .. tooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
+    local tooltip2 = ATTACK_SPEED_TEXT .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", rangedAttackSpeed) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    tooltip2 = tooltip2 .. DAMAGE_TEXT .. HIGHLIGHT_FONT_COLOR_CODE .. tooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
     tooltip2 = tooltip2 .. DAMAGE_PER_SECOND .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.1F", damagePerSecond) .. FONT_COLOR_CODE_CLOSE .. "\n"
     tooltip = HIGHLIGHT_FONT_COLOR_CODE .. INVTYPE_RANGED..FONT_COLOR_CODE_CLOSE
     return stat, tooltip, tooltip2

@@ -1,7 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
--- Default 8 but none uses 8 talent rows in classic
-local MAX_NUM_TALENT_TIERS = 11
+local MAX_NUM_TALENT_TIERS = GW.TBC and 9 or 11
 
 local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
@@ -521,7 +520,7 @@ local function LoadTalents(tabContainer)
         GwCharacterWindow:SetAttribute("keytoggle", true)
         GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
     end)
- 
+
     loadTalentsFrames(talentFrame)
 end
 GW.LoadTalents = LoadTalents

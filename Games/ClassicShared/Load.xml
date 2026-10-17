@@ -9,5 +9,5 @@
     <Script file ="Inventory\sort.lua"/>
     <Include file ="Mainbar\mirrortimer.xml"/>
     <Script file ="Mainbar\mirrortimer.lua"/>
-    <Script file ="Character\advanced_stats.lua"/>
+    <Script file ="Immersive\Skins\worldmap.lua"/>
 </Ui>
