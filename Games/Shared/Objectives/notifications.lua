@@ -234,7 +234,7 @@ local function getNearestQuestPOIClassic()
         return nil
     end
 
-    local closestQuestID
+    local closestQuest
     local minDist = math.huge
     local spawnInfo
     local questieQuest
@@ -262,7 +262,7 @@ local function getNearestQuestPOIClassic()
                             local distance = _GetDistanceToClosestObjective(spawn, zone, name)
                             if distance and distance < minDist then
                                 minDist = distance
-                                closestQuestID = quest.questId
+                                closestQuest = quest
                                 spawnInfo = spawn
                             end
                         end
@@ -273,23 +273,21 @@ local function getNearestQuestPOIClassic()
     end
 
     local poiX, poiY = nil, nil
-    if closestQuestID and spawnInfo and spawnInfo[1] then
+    if closestQuest and spawnInfo and spawnInfo[1] then
         poiX, poiY = spawnInfo[1] / 100, spawnInfo[2] / 100
     end
 
     if not poiX then return nil end
 
-    local isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(closestQuestID)
-
     return {
         x = poiX,
         y = poiY,
-        desc = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
-        title = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID)),
-        type = isDaily and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
-        id = closestQuestID,
+        desc = getQuestPOIText(closestQuest.questLogIndex),
+        title = closestQuest.title,
+        type = closestQuest.isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
+        id = closestQuest.questId,
         compass = true,
-        questID = closestQuestID
+        questID = closestQuest.questId
     }
 end
 

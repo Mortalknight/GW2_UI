@@ -18,7 +18,7 @@ addChange("12.0.1", {
     {GW.Enum.ChangelogType.bug, [=[Quest tracker (Classic, TBC, Wrath, Mists): the elite and dungeon icons in front of the quest title work in every language]=]},
     {GW.Enum.ChangelogType.bug, [=[Minimap: the instance difficulty no longer sometimes shows only 0 after entering a dungeon, and the first letter of the difficulty works in every language]=]},
     {GW.Enum.ChangelogType.change, [=[Quest tracker (Classic, TBC, Wrath, Mists): sorting by zone and the quest XP no longer need Questie, they come straight from the quest log; on Wrath, linking a quest into chat posts a real quest link]=]},
-    {GW.Enum.ChangelogType.bug, [=[Quest tracker: daily and weekly quests are blue on every client, on Classic, TBC and Wrath straight from the quest log instead of through Questie, on Mists dailies too]=]},
+    {GW.Enum.ChangelogType.bug, [=[Quest tracker and compass: daily and weekly quests are blue on every client, on Classic, TBC and Wrath straight from the quest log instead of through Questie, on Mists dailies too]=]},
     {GW.Enum.ChangelogType.bug, [=[Tooltips: with "Hide in combat" on, unit tooltips no longer disappear out of combat when a modifier key is pressed]=]},
     {GW.Enum.ChangelogType.feature, [=[Minimap: the side of the buttons can be set, the buttons (calendar, addon compartment, addons, group finder) can be ordered and hidden, the others close the gap; the expansion landing page button can be hidden]=]},
     {GW.Enum.ChangelogType.bug, [=[Forever: no error when the action bar layout is saved to Edit Mode with the new patch]=]},
