@@ -46,11 +46,18 @@ local function AddGivenID(tooltip, id, spaced)
     end
 end
 
+local function GetQuestIDForLogIndex(questLogIndex)
+    if C_QuestLog.GetQuestIDForLogIndex then
+        return C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
+    end
+    return select(8, GetQuestLogTitle(questLogIndex))
+end
+
 local function AddQuestID(frame)
     if GameTooltip:IsForbidden() or not Tooltip.IsModifierDown() then
         return
     end
-    local questID = frame.questLogIndex and C_QuestLog.GetQuestIDForLogIndex(frame.questLogIndex) or frame.questID
+    local questID = frame.questLogIndex and GetQuestIDForLogIndex(frame.questLogIndex) or frame.questID
     if questID then
         Tooltip.AddID(GameTooltip, questID)
     end

@@ -41,8 +41,17 @@ local function worldMapSkin()
     WorldMapTrackQuest:GwSkinCheckButton(false, 15)
     WorldMapTrackQuestText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
-    QuestMapFrame.DetailsFrame.ScrollFrame:GwSkinScrollFrame()
-    QuestMapFrame.DetailsFrame.ScrollFrame.ScrollBar:GwSkinScrollBar()
+    -- quest text and rewards below the map, each on our details background
+    local details = QuestMapFrame.DetailsFrame
+    QuestMapDetailsScrollFrameTrack:Hide()
+    GW.SkinSlimScrollFrame(details.ScrollFrame, details)
+    local textBg = GW.CreateDetailsBackgroundTexture(details)
+    textBg:SetPoint("TOPLEFT", details, "TOPLEFT", -4, 4)
+    textBg:SetPoint("BOTTOMRIGHT", details, "BOTTOMRIGHT", 0, -4)
+    local rewardsBg = GW.CreateDetailsBackgroundTexture(details)
+    rewardsBg:SetPoint("TOPLEFT", details, "TOPRIGHT", 8, 4)
+    rewardsBg:SetPoint("BOTTOMLEFT", details, "BOTTOMRIGHT", 8, -4)
+    rewardsBg:SetPoint("RIGHT", WorldMapFrame.ScrollContainer, "RIGHT")
 
     GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar)
     GW.HandleScrollControls(QuestScrollFrame)
