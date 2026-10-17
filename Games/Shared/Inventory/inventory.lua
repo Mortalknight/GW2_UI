@@ -49,6 +49,28 @@ local BANK_ITEM_SPACING_Y_CONFIG = {
 local CONTAINER_FRAME_SIDE_PADDING = 5
 local CONTAINER_FRAME_RIGHT_PADDING = 5
 
+local OVERLAY_BASE_SIZE = 40
+local JUNK_ATLAS = C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo("bags-junkcoin")
+local ITEM_OVERLAYS = {
+    {key = "IconQuestTexture", width = 25, height = 25},
+    {key = "junkIcon", width = JUNK_ATLAS and JUNK_ATLAS.width or 16, height = JUNK_ATLAS and JUNK_ATLAS.height or 16},
+    {key = "scrapIcon", width = 14, height = 12},
+    {key = "UpgradeIcon", width = 15, height = 15},
+}
+
+local function ScaleItemOverlays(b, iconSize)
+    local scale = iconSize / OVERLAY_BASE_SIZE
+    if b.gwOverlayScale == scale then return end
+    b.gwOverlayScale = scale
+    b.gwNewItem:SetScale(0.8 * scale)
+    for _, overlay in ipairs(ITEM_OVERLAYS) do
+        local texture = b[overlay.key]
+        if texture then
+            texture:SetSize(overlay.width * scale, overlay.height * scale)
+        end
+    end
+end
+
 -- reskins an ItemButton to use GW2_UI styling; one central version for every flavor,
 -- retail only parts are capability guarded
 local function reskinItemButton(b, overrideIconSize)
@@ -116,7 +138,6 @@ local function reskinItemButton(b, overrideIconSize)
     if b.IconQuestTexture then
         b.IconQuestTexture:ClearAllPoints()
         b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
-        b.IconQuestTexture:SetSize(25, 25)
         b.IconQuestTexture:SetPoint("TOPLEFT", -7, 1)
         b.IconQuestTexture:SetVertexColor(221 / 255, 198 / 255, 68 / 255)
         b.IconQuestTexture:SetAlpha(1)
@@ -135,19 +156,20 @@ local function reskinItemButton(b, overrideIconSize)
         b.flash:SetAllPoints(b)
     end
 
-    -- the bottom left corner is the only one no other overlay uses
     if not b.gwNewItem then
-        b.gwNewItem = b:CreateTexture(nil, "OVERLAY", nil, 2)
-        b.gwNewItem:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
-        b.gwNewItem:SetVertexColor(221 / 255, 198 / 255, 68 / 255, 1)
-        b.gwNewItem:SetSize(8, 8)
-        b.gwNewItem:SetPoint("BOTTOMLEFT", 1, 1)
+        b.gwNewItem = CreateFrame("Frame", nil, b, "NewFeatureLabelNoAnimateTemplate")
+        b.gwNewItem:SetPoint("BOTTOMLEFT", b, "BOTTOMLEFT", 2, 2)
+        b.gwNewItem:SetFrameLevel(b:GetFrameLevel() + 5)
+        b.gwNewItem.Label:ClearAllPoints()
+        b.gwNewItem.Label:SetPoint("BOTTOMLEFT")
+        b.gwNewItem.BGLabel:ClearAllPoints()
+        b.gwNewItem.BGLabel:SetPoint("BOTTOMLEFT", 0.5, -0.5)
         b.gwNewItem:Hide()
     end
 
     if not b.junkIcon then
         b.junkIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
-        b.junkIcon:SetAtlas("bags-junkcoin", true)
+        b.junkIcon:SetAtlas("bags-junkcoin")
         b.junkIcon:SetPoint("TOPLEFT", -3, 3)
         b.junkIcon:Hide()
     end
@@ -156,7 +178,6 @@ local function reskinItemButton(b, overrideIconSize)
     if C_Item.CanScrapItem and not b.scrapIcon then
         b.scrapIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
         b.scrapIcon:SetAtlas("bags-icon-scrappable")
-        b.scrapIcon:SetSize(14, 12)
         b.scrapIcon:SetPoint("TOPLEFT", 0, 0)
         b.scrapIcon:Hide()
     end
@@ -166,7 +187,7 @@ local function reskinItemButton(b, overrideIconSize)
         b.UpgradeIcon:SetPoint("TOPRIGHT", 7, -1)
         b.UpgradeIcon:Hide()
     end
-    b.UpgradeIcon:SetSize(15, 15)
+    ScaleItemOverlays(b, iconSize)
 
     if not b.itemlevel then
         b.itemlevel = b:CreateFontString(nil, "OVERLAY")
@@ -225,11 +246,12 @@ local function updateItemVisuals(b, overrideIconSize)
         b.Count:SetJustifyH("RIGHT")
     end
 
+    -- blizzard may size the quest texture again, then all overlays are set once more
+    if b.IconQuestTexture and math.abs(b.IconQuestTexture:GetWidth() - 25 * iconSize / OVERLAY_BASE_SIZE) > 0.5 then
+        b.gwOverlayScale = nil
+    end
+    ScaleItemOverlays(b, iconSize)
     if b.IconQuestTexture then
-        local w, h = b.IconQuestTexture:GetSize()
-        if w ~= 25 or h ~= 25 then
-            b.IconQuestTexture:SetSize(25, 25)
-        end
         point, _, _, x, y = b.IconQuestTexture:GetPoint()
         if point ~= "TOPLEFT" or x ~= -7 or y ~= 1 then
             b.IconQuestTexture:ClearAllPoints()
@@ -477,12 +499,10 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
     -- slots too: without that the marker of a sold, moved or used up item kept sitting on the now
     -- empty slot, since nothing else ever hides it. Only our own container buttons carry a real
     -- bag id and slot id here, the (stolen) bag bar buttons also have the gw backdrop
-    if button.gwNewItem then
-        local ownSlot = button.gwOwnItemButton and C_NewItems
-        local isNew = ownSlot and itemIDOrLink and GW.settings.bags.items.newItemGlow
-            and C_NewItems.IsNewItem and C_NewItems.IsNewItem(bag_id, button:GetID())
+    if button.gwOwnItemButton then
+        local isNew = itemIDOrLink and GW.settings.bags.items.newItemGlow and C_NewItems.IsNewItem(bag_id, button:GetID())
         button.gwNewItem:SetShown(isNew == true)
-        if ownSlot and not itemIDOrLink and C_NewItems.RemoveNewItem then
+        if not itemIDOrLink then
             -- drop the state as well, or the next item landing in this slot inherits the marker
             C_NewItems.RemoveNewItem(bag_id, button:GetID())
         end
