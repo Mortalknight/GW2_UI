@@ -309,34 +309,116 @@ local function FormatObjectiveNumbers(text)
 end
 GW.FormatObjectiveNumbers = FormatObjectiveNumbers
 
-GwObjectivesTrackerMixin = {}
-function GwObjectivesTrackerMixin:LayoutChanged()
-    -- the secure item buttons anchor to the scroll child, so the scroll frames
-    -- size is combat protected along the anchor chain — re-run with fresh values
-    -- once combat ends (keyed: repeated layout changes collapse into one run)
-    if InCombatLockdown() then
-        GW.CombatQueue:Queue("GwQuestTrackerScrollLayout", self.LayoutChanged, {self})
-        return
+local function GetStickyBackground(header)
+    if not header.gwStickyBackground then
+        header:SetFrameLevel(header:GetParent():GetFrameLevel() + 10)
+        local bg = header:CreateTexture(nil, "BACKGROUND", nil, -8)
+        bg:SetColorTexture(GW.Colors.Fallback:GetRGBA())
+        bg:SetPoint("TOPLEFT", header, "TOPLEFT", -40, 4)
+        bg:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, -4)
+        local fade = header:CreateTexture(nil, "BACKGROUND", nil, -8)
+        fade:SetColorTexture(GW.Colors.FallbackWhite:GetRGBA())
+        fade:SetGradient("VERTICAL", GW.Colors.Transparent, GW.Colors.Fallback)
+        fade:SetPoint("TOPLEFT", bg, "BOTTOMLEFT")
+        fade:SetPoint("TOPRIGHT", bg, "BOTTOMRIGHT")
+        fade:SetHeight(16)
+        header.gwStickyBackground = {bg, fade}
+    end
+    return header.gwStickyBackground
+end
+
+local function UpdateScrollIndicator(scrollFrame, scroll)
+    local track = scrollFrame.gwScrollTrack
+    if not track then
+        track = CreateFrame("Frame", nil, scrollFrame)
+        track:SetFrameLevel(scrollFrame.Child:GetFrameLevel() + 20)
+        track:SetPoint("TOPRIGHT")
+        track:SetWidth(4)
+        local rail = track:CreateTexture(nil, "BACKGROUND")
+        rail:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
+        rail:SetAlpha(0.15)
+        rail:SetAllPoints()
+        track.thumb = track:CreateTexture(nil, "OVERLAY")
+        track.thumb:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
+        track.thumb:SetAlpha(0.7)
+        scrollFrame.gwScrollTrack = track
     end
 
-    -- adjust scrolframe height
-    local scrollContentHeight = 0
-    local trackerHeight = GW.settings.objectives.height
-    local scroll = 0
+    local visible, maxScroll = scrollFrame.visibleHeight or 0, scrollFrame.maxScroll
+    if maxScroll <= 0 or visible <= 0 then
+        track:Hide()
+        return
+    end
+    track:SetHeight(visible)
+    local height = math.max(20, visible * visible / (visible + maxScroll))
+    local y = (visible - height) * math.min(1, scroll / maxScroll)
+    track.thumb:SetHeight(height)
+    track.thumb:SetPoint("TOPLEFT", 0, -y)
+    track.thumb:SetPoint("TOPRIGHT", 0, -y)
+    track:Show()
+end
 
+local function UpdateScrollView()
+    local scrollFrame = GwQuestTracker and GwQuestTracker.ScrollFrame
+    local childTop = scrollFrame and scrollFrame.Child:GetTop()
+    if not childTop then return end
+    local scroll = scrollFrame:GetVerticalScroll()
+    UpdateScrollIndicator(scrollFrame, scroll)
+
+    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
+        local header, top = container.header, container:GetTop()
+        if header and top then
+            local offset = 0
+            if header:IsShown() then
+                offset = math.max(0, math.min(scroll - (childTop - top), container:GetHeight() - header:GetHeight()))
+            end
+            if offset ~= (header.gwStickyOffset or 0) then
+                header.gwStickyOffset = offset
+                header:ClearAllPoints()
+                header:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, -offset)
+                for _, texture in ipairs(GetStickyBackground(header)) do
+                    texture:SetShown(offset > 0)
+                end
+            end
+        end
+    end
+end
+
+function GW.ScrollObjectivesTrackerToContainer(container)
+    local scrollFrame = GwQuestTracker.ScrollFrame
+    local childTop, top = scrollFrame.Child:GetTop(), container:GetTop()
+    if not (childTop and top) then return end
+    scrollFrame:SetVerticalScroll(math.max(0, childTop - top))
+    GwQuestTracker:AdjustItemButtonPositions()
+    UpdateScrollView()
+end
+
+GwObjectivesTrackerMixin = {}
+function GwObjectivesTrackerMixin:LayoutChanged()
+    local scrollContentHeight = 0
     for _, container in pairs(GW.QuestTrackerScrollableContainer) do
         scrollContentHeight = scrollContentHeight + container:GetHeight()
     end
 
+    -- the visible part is the tracker height below the fixed containers
+    local visibleHeight = self:GetHeight()
     for _, container in pairs(GW.QuestTrackerFixedContainer) do
-        trackerHeight = trackerHeight - container:GetHeight()
+        visibleHeight = visibleHeight - container:GetHeight()
     end
-
-    if scrollContentHeight > tonumber(trackerHeight) then
-        scroll = math.abs(trackerHeight - scrollContentHeight)
-    end
+    local scroll = math.max(0, scrollContentHeight - visibleHeight)
+    self.ScrollFrame.visibleHeight = visibleHeight
     self.ScrollFrame.maxScroll = scroll
+    -- shrunk content, a collapsed section for example, must not leave the view scrolled into nothing
+    if self.ScrollFrame:GetVerticalScroll() > scroll then
+        self.ScrollFrame:SetVerticalScroll(scroll)
+        self:AdjustItemButtonPositions()
+    end
+    UpdateScrollView()
 
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("GwQuestTrackerScrollLayout", self.LayoutChanged, {self})
+        return
+    end
     self.ScrollFrame:SetSize(self:GetWidth(), scrollContentHeight)
 end
 
@@ -416,6 +498,7 @@ function GwObjectivesTrackerMixin:CreateTrackerScrollFrame(name, height)
             s = math.min(frame.maxScroll, s)
         end
         frame:SetVerticalScroll(s)
+        UpdateScrollView()
         -- the item buttons are anchored to the static tracker (never to the scroll
         -- child, see UpdateObjectiveActionButtonPosition) - follow the scroll manually
         GwQuestTracker:AdjustItemButtonPositions()
@@ -643,6 +726,7 @@ local function LoadObjectivesTracker()
     GW.RegisterMovableFrame(objectivesTracker, OBJECTIVES_TRACKER_LABEL, "objectives", ALL, nil, {GW.MoverOption.Scale, GW.MoverOption.Height})
     objectivesTracker:ClearAllPoints()
     objectivesTracker:SetPoint("TOPLEFT", objectivesTracker.gwMover)
+    hooksecurefunc(objectivesTracker, "SetHeight", objectivesTracker.LayoutChanged)
     objectivesTracker:SetHeight(GW.settings.objectives.height)
 end
 GW.LoadObjectivesTracker = LoadObjectivesTracker

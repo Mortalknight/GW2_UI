@@ -104,7 +104,11 @@ function GwObjectivesContainerMixin:SetCollapsed(collapsed, source)
 end
 
 function GwObjectivesContainerMixin:ToggleCollapsed()
+    local wasSticky = self.header and (self.header.gwStickyOffset or 0) > 0
     self:SetCollapsed(not self.collapsed)
+    if wasSticky then
+        GW.ScrollObjectivesTrackerToContainer(self)
+    end
 end
 
 function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
