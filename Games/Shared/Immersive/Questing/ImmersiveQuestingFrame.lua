@@ -221,7 +221,12 @@ function GwImmersiveQuestFrameMixin:showQuestFrame()
 
     self.container.floaty.title:SetText(GetTitleText())
 
-    local npc_name = GetUnitName("questnpc")
+    local npc_name, _ = UnitName("questnpc")
+    if canaccessvalue and not canaccessvalue(npc_name) then
+        -- in some situations we cannot read this secret value, everything that
+        -- checks this should have functional (though sometimes ugly) fallbacks
+        npc_name = "Secret Value"
+    end
     local is_self = UnitIsUnit("questnpc", "player")
     local is_dead = UnitIsDead("questnpc")
 

@@ -137,7 +137,7 @@ GW.immersiveQuesting.modelTweaks = {
     [4081379] = -37.5, -- tomul
     --[4207724] = -28.5, -- vaskarn
     [4498203] = -40, -- emberthal
-    [123698] = {['sf'] = -52.4, ['x'] = -200}, -- tarindrella, female dryads
+    [123698] = {['sf'] = -52.4, ['x'] = -50}, -- tarindrella, female dryads
     [4186587] = -37.5, -- rowie
     [3947971] = -50, -- nostwin
     [3950118] = -37.5, -- honeypelt
@@ -192,7 +192,7 @@ GW.immersiveQuesting.modelTweaks = {
     [2448981] = {['sf'] = -45, ['x'] = -20}, -- mekkatorque
     [571311] = {['sf'] = -40, ['x'] = -40, ['z'] = 20}, -- huo
     [579259] = {['sf'] = -33, ['x'] = -50, ['z'] = 20}, -- dafeng
-    [124495] = {['sf'] = -40, ['x'] = -250}, -- human male child
+    [124495] = {['sf'] = -52, ['x'] = -50}, -- human male child
     [1806321] = {['sf'] = -50, ['x'] = -200}, -- hidden treasure chest
     [1348273] = {['sf'] = 30}, -- lightspawn
     [319484] = {['sf'] = -50, ['x'] = -250, ['f'] = -0.8}, -- danger sign
@@ -228,6 +228,7 @@ GW.immersiveQuesting.modelTweaks = {
     [6647866] = -47, -- haranir child female (nayeli)
     [1719397] = -47, -- tortollan child (trishe)
     [1721534] = 20, -- cyclone construct
+    [125796] = 10, -- zenn foulhoof
 }
 
 -- NPC (creatureID) tweaks; takes priority over model tweaks
