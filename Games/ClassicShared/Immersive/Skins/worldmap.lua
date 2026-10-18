@@ -77,7 +77,6 @@ local function LoadWorldMapSkin()
         end
     end)
 
-    WorldMapFrameCloseButton:SetFrameLevel(WorldMapFrameCloseButton:GetFrameLevel() + 2)
 
     WorldMapFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
 
@@ -112,8 +111,9 @@ local function LoadWorldMapSkin()
     header:RegisterForDrag("LeftButton")
     header:SetScript("OnDragStart", function() WorldMapFrame:GetScript("OnDragStart")(WorldMapFrame) end)
     header:SetScript("OnDragStop", function() WorldMapFrame:GetScript("OnDragStop")(WorldMapFrame) end)
+    header:SetFrameLevel(WorldMapTitleButton:GetFrameLevel() + 1)
     WorldMapFrame.MaximizeMinimizeFrame:SetFrameLevel(header:GetFrameLevel() + 1)
-    -- it also covers blizzards title button of the mini mode, which has the options menu
+    WorldMapFrameCloseButton:SetFrameLevel(header:GetFrameLevel() + 1)
     header:SetScript("OnMouseUp", function(_, button)
         if button == "RightButton" and WorldMapTitleButton:IsShown() then
             WorldMapTitleButton:Click("RightButton")
