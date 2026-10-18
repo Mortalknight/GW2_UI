@@ -166,10 +166,8 @@ local function SkinRow(row)
     row.gwSkinned = true
 end
 
-local function ScrollBoxUpdate(self)
-    if not self.ForEachFrame then return end
-
-    self:ForEachFrame(SkinRow)
+local function OnInitializedFrame(_, frame)
+    SkinRow(frame)
 end
 
 local function HandleScrollBoxes(window)
@@ -181,9 +179,8 @@ local function HandleScrollBoxes(window)
 
     local ScrollBox = window.GetScrollBox and window:GetScrollBox()
     if ScrollBox and not ScrollBox.gwSkinned then
-        hooksecurefunc(ScrollBox, "Update", ScrollBoxUpdate)
-
-        ScrollBoxUpdate(ScrollBox)
+        ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnInitializedFrame, OnInitializedFrame, ScrollBox)
+        ScrollBox:ForEachFrame(SkinRow)
 
         ScrollBox.gwSkinned = true
     end
