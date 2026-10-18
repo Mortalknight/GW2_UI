@@ -3,12 +3,12 @@ local GW = select(2, ...)
 
 local ITEM_BORDER = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
 
--- repair and junk buttons: the icon crop of their modern Icon, else of the classic region
+-- repair and junk buttons: the modern clients have a full icon each, the classic ones a crop of the repair sheet
 local REPAIR_BUTTONS = {
-    { name = "MerchantRepairItemButton", iconCoords = { 0.07, 0.93, 0.07, 0.93 }, classicCoords = { 0.04, 0.24, 0.06, 0.5 } },
-    { name = "MerchantGuildBankRepairButton", iconCoords = { 0.61, 0.82, 0.1, 0.52 }, classicCoords = { 0.04, 0.24, 0.06, 0.5 } },
-    { name = "MerchantRepairAllButton", iconCoords = { 0.07, 0.93, 0.07, 0.93 } },
-    { name = "MerchantSellAllJunkButton", iconCoords = { 0.07, 0.93, 0.07, 0.93 } },
+    { name = "MerchantRepairItemButton", classicCoords = { 0.04, 0.24, 0.06, 0.5 } },
+    { name = "MerchantGuildBankRepairButton", classicCoords = { 0.6, 0.8, 0.06, 0.5 } },
+    { name = "MerchantRepairAllButton" },
+    { name = "MerchantSellAllJunkButton" },
 }
 
 local skinned = false
@@ -143,10 +143,10 @@ end
 local function SkinBuyback()
     MerchantBuyBackItem:SetPoint("TOPLEFT", MerchantItem10, "BOTTOMLEFT", 0, -50)
     MerchantBuyBackItem:GwStripTextures(true)
-    MerchantBuyBackItem:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 6, 6)
-    MerchantBuyBackItem.backdrop:SetFrameLevel(MerchantBuyBackItem:GetFrameLevel())
-    MerchantBuyBackItem.backdrop:SetPoint("TOPLEFT", -6, 6)
-    MerchantBuyBackItem.backdrop:SetPoint("BOTTOMRIGHT", 6, -6)
+    local detailsBackground = GW.CreateDetailsBackgroundTexture(MerchantBuyBackItem)
+    detailsBackground:SetPoint("TOPLEFT", -6, 6)
+    detailsBackground:SetPoint("BOTTOMLEFT", -6, -6)
+    detailsBackground:SetPoint("RIGHT", MerchantItem10, "RIGHT", 6, 0)
 
     local button = MerchantBuyBackItemItemButton
     button:GwStripTextures()
@@ -154,6 +154,8 @@ local function SkinBuyback()
     local frame = CreateFrame("Frame", nil, button, "GwActionButtonBackdropTmpl")
     frame:SetPoint("TOPLEFT", -frameSize, frameSize)
     frame:SetPoint("BOTTOMRIGHT", frameSize, -frameSize)
+    frame:SetFrameLevel(MerchantBuyBackItem:GetFrameLevel() + 1)
+    button:SetFrameLevel(frame:GetFrameLevel() + 1)
     button.gwBackdrop = frame
     if UndoFrame then
         UndoFrame.Arrow:SetPoint("CENTER", button, "CENTER")
@@ -178,7 +180,7 @@ local function SkinButtons()
             button:GwSkinButton(false, false, true)
             button:GetRegions():GwSetInside()
             if button.Icon then
-                button.Icon:SetTexCoord(unpack(info.iconCoords))
+                button.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
             elseif info.classicCoords then
                 button:GetRegions():SetTexCoord(unpack(info.classicCoords))
             end
