@@ -379,6 +379,7 @@ GW.globalDefault = {
             fade = true,
             hideEditBox = true,
             buttonsPosition = "LEFT",
+            savedLayout = {},
             maxCopyLines = 100,
             gw2Style = true,
             scrollMessages = 3,

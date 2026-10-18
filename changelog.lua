@@ -14,6 +14,8 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.0", {
+    {GW.Enum.ChangelogType.bug, [=[Damage meter skin: the bar backgrounds stay transparent after login and in the details, not only after a reload]=]},
+    {GW.Enum.ChangelogType.feature, [=[Chat: save the chat tabs into the profile and apply them on another character, with name, messages, channels, colors and position; tabs that are not in the layout are closed]=]},
     {GW.Enum.ChangelogType.feature, [=[Minimap: the AddOn flyout closes after a left click on one of its buttons; optionally also when the mouse left it]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest tracker: the scroll range is recalculated right after a resize in the move mode and also when quests change in combat]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: while scrolling, the header of the current section stays at the top until the next section pushes it out; a slim bar at the right edge shows that and where the tracker scrolls]=]},
