@@ -373,7 +373,7 @@ local function LayoutRowLog()
     SkinTrackToggle()
 
     -- the details only show their scroll bar when the text is longer than the pane
-    QuestLogDetailScrollFrame.scrollBarHideable = 1
+    GW.HideScrollBarWhenUnneeded(QuestLogDetailScrollFrame)
 end
 
 -- the npc model beside the log in our frames, the name above it and the text in a slim scroll frame

@@ -393,6 +393,18 @@ function GW.SkinSlimScrollBar(scrollBar)
 end
 
 -- the classic clients still give their text boxes the old panel slider, it makes way for mainlines minimal bar
+-- the classic panel scroll frames only hide their bar when the scroll range changes; a short text right on the first
+-- show changed nothing and kept the bar, so the range is checked again once the shown text is laid out
+function GW.HideScrollBarWhenUnneeded(scrollFrame)
+    scrollFrame.scrollBarHideable = 1
+    scrollFrame:HookScript("OnShow", function(self)
+        C_Timer.After(0, function()
+            self:UpdateScrollChildRect()
+            ScrollFrame_OnScrollRangeChanged(self)
+        end)
+    end)
+end
+
 function GW.SkinSlimScrollFrame(scrollFrame, parent)
     local scrollBar = scrollFrame.ScrollBar
     if scrollBar:IsObjectType("Slider") then

@@ -205,7 +205,7 @@ local function LoadQuestFrameSkin()
             scrollBar:Update()
         else
             scrollBar:GwSkinScrollBar()
-            scrollFrame.scrollBarHideable = 1
+            GW.HideScrollBarWhenUnneeded(scrollFrame)
         end
     end
 

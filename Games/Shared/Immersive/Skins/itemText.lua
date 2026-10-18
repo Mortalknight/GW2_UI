@@ -32,7 +32,7 @@ local function SkinScrollFrame()
     else
         scrollBar:GwSkinScrollBar()
         ItemTextScrollFrame:GwSkinScrollFrame()
-        ItemTextScrollFrame.scrollBarHideable = 1
+        GW.HideScrollBarWhenUnneeded(ItemTextScrollFrame)
     end
 end
 
