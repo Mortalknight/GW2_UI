@@ -326,6 +326,7 @@ local function updateActiveSpec(self)
                     button:EnableMouse(isActiveSpec and isCurrentSpec)
 
                     local isPassive = IsPassiveSpell(talentInfo.spellID)
+                    GW.UpdateOffGcdIndicator(button, talentInfo.spellID, isPassive)
                     if isPassive then
                         button.legendaryHighlight:SetTexture(passiveHighlight)
                         button.highlight:SetTexture(passiveHighlight)
@@ -478,6 +479,7 @@ local function TalentButtonOnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
     GameTooltip:SetTalent(self.talentID)
+    GW.AddOffGcdTooltipLine(self)
     GameTooltip:Show()
 end
 

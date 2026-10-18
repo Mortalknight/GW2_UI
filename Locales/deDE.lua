@@ -1167,3 +1167,4 @@ L["No chat layout saved in this profile."] = "In diesem Profil ist kein Chat-Lay
 L["The chat layout can't be changed right now."] = "Das Chat-Layout kann gerade nicht geändert werden."
 L["Chat layout applied, these channels are not joined on this character: %s"] = "Chat-Layout übernommen, diese Kanäle hat dieser Charakter nicht betreten: %s"
 L["Chat layout applied."] = "Chat-Layout übernommen."
+L["Not on the global cooldown"] = "Nicht auf der globalen Abklingzeit"

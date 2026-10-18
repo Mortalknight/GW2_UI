@@ -62,6 +62,7 @@ local function spell_buttonOnEnter(self)
             GameTooltip:AddDoubleLine(COSTS_LABEL, GW.FormatMoneyForChat(self.money))
         end
     end
+    GW.AddOffGcdTooltipLine(self)
     GameTooltip:Show()
 end
 
@@ -153,6 +154,7 @@ local function setButtonStyle(ispassive, spellID, skillType, icon, spellbookInde
     btn.spellId = spellID
     btn.requiredLevel = level
     btn.icon:SetTexture(icon)
+    GW.UpdateOffGcdIndicator(btn, not btn.isFlyout and spellID or nil, ispassive)
     btn:SetAlpha(1)
     btn:SetAttribute("ispickable", false)
 

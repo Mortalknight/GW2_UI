@@ -54,6 +54,7 @@ local function spell_buttonOnEnter(self)
             end
         end
     end
+    GW.AddOffGcdTooltipLine(self)
     GameTooltip:Show()
 end
 
@@ -183,6 +184,7 @@ local function setButtonStyle(btn, isPassive, spellID, slotType, icon, spellbook
     btn:EnableMouse(true)
     btn.spellId = spellID
     btn.icon:SetTexture(icon)
+    GW.UpdateOffGcdIndicator(btn, not btn.isFlyout and spellID or nil, isPassive)
     btn:SetAlpha(1)
     btn:SetAttribute("ispickable", false)
 

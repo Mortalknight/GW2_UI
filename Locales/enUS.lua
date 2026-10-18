@@ -1157,3 +1157,4 @@ L["No chat layout saved in this profile."] = true
 L["The chat layout can't be changed right now."] = true
 L["Chat layout applied, these channels are not joined on this character: %s"] = true
 L["Chat layout applied."] = true
+L["Not on the global cooldown"] = true

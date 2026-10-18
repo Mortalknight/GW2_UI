@@ -42,6 +42,8 @@ local function talentBunnton_OnEnter(self)
     local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
     if talentInfo then
         GameTooltip:SetTalent(talentInfo.talentID, false, isPetTalents, openSpec)
+        GW.AddOffGcdTooltipLine(self)
+        GameTooltip:Show()
     end
 
     self.UpdateTooltip = talentBunnton_OnEnter
@@ -341,6 +343,7 @@ local function updateTalentTrees(self)
                     end
 
                     button.icon:SetTexture(talentInfo.icon)
+                    GW.UpdateOffGcdIndicator(button, talentInfo.spellID)
                     button.points:SetText(displayRank .. " / " .. talentInfo.maxRank)
                     button.textBG:Show()
                     button.talentid = i

@@ -518,6 +518,35 @@ function GW.GetQuestRewardXP(questID)
     end
 end
 
+-- spells that do not trigger the global cooldown get a small mark in our spellbook and talent panels
+function GW.UpdateOffGcdIndicator(button, spellID, isPassive)
+    local offGcd = false
+    if spellID and spellID > 0 and GetSpellBaseCooldown then
+        if isPassive == nil then
+            isPassive = C_Spell.IsSpellPassive(spellID)
+        end
+        if not isPassive then
+            local _, gcd = GetSpellBaseCooldown(spellID)
+            offGcd = gcd == 0
+        end
+    end
+    if offGcd and not button.gwOffGcd then
+        button.gwOffGcd = button:CreateTexture(nil, "OVERLAY", nil, 7)
+        button.gwOffGcd:SetTexture("Interface/AddOns/GW2_UI/textures/icons/clock.png")
+        button.gwOffGcd:SetSize(14, 14)
+        button.gwOffGcd:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2)
+    end
+    if button.gwOffGcd then
+        button.gwOffGcd:SetShown(offGcd)
+    end
+end
+
+function GW.AddOffGcdTooltipLine(button)
+    if button.gwOffGcd and button.gwOffGcd:IsShown() then
+        GameTooltip:AddLine(GW.L["Not on the global cooldown"], GW.Colors.TextColors.LightHeader:GetRGB())
+    end
+end
+
 -- the tag text from GetQuestLogTitle is translated, the tag id is not
 function GW.GetQuestTagID(questID)
     if C_QuestLog.GetQuestTagInfo then
