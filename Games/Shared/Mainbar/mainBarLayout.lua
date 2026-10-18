@@ -120,13 +120,16 @@ local onstate_Barlayout = [=[
     local petX = self:GetAttribute("petXOfs")
     local petY = self:GetAttribute("petYOfs")
     local petYRaised = self:GetAttribute("petYRaisedOfs")
+    -- a bar hidden only for the fight or until hovered keeps its space
+    local mblShown = mbl and (mbl:IsShown() or mbl:GetAttribute("gw_KeepSpace"))
+    local mbrShown = mbr and (mbr:IsShown() or mbr:GetAttribute("gw_KeepSpace"))
 
-    if mbl and mbl:IsShown() and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
+    if mblShown and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
         if newstate == "incombat" then
             petmover:ClearAllPoints()
             petmover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", petX, petYRaised)
         else
-            if mbl and mbl:IsShown() then
+            if mblShown then
                 if mbl:GetAttribute("gw_FadeShowing") then
                     petmover:ClearAllPoints()
                     petmover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", petX, petYRaised)
@@ -141,7 +144,7 @@ local onstate_Barlayout = [=[
     -- only set the dbarmover frame to the correct position, based on scaling
     if newstate == "outcombat" and dbarmover and bbar and not dbar:GetAttribute("isMoved") and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
         local buff_action = "none"
-        if mbr:IsShown() and mbr:GetAttribute("gw_FadeShowing") then
+        if mbrShown and mbr:GetAttribute("gw_FadeShowing") then
             buff_action = "high"
         end
         local y_off = (buff_action == "high" and 200 or 100)
@@ -165,7 +168,7 @@ local onstate_Barlayout = [=[
         local buff_action = "none"
         if newstate == "incombat" or newstate == "outcombat" then
             buff_action = "low"
-            if mbr:IsShown() then
+            if mbrShown then
                 if newstate == "outcombat" then
                     if mbr:GetAttribute("gw_FadeShowing") then
                         buff_action = "high"

@@ -77,8 +77,28 @@ function GW.UpdateHotkey(self)
     FitHotKeyText(self)
 end
 
+-- per position: the point on the button, the direction of the pet and stance offset, the two points of the main bar
+local HOTKEY_POINTS = {
+    TOP = {"TOP", -1, "TOPLEFT", "TOPRIGHT"},
+    CENTER = {"CENTER", 0, "LEFT", "RIGHT"},
+    BOTTOM = {"BOTTOM", 1, "BOTTOMLEFT", "BOTTOMRIGHT"},
+}
+local MACRO_NAME_POINTS = {TOP = "TOPLEFT", CENTER = "LEFT", BOTTOM = "BOTTOMLEFT"}
+local hotkeyButtons = {}
+
+-- the extra bars have their own text settings, main bar, pet, stance and extra buttons use the main bar ones
+local function GetTextSettings(button)
+    local parent = button:GetParent()
+    local key = parent and (parent.originalBarName or parent:GetName())
+    return key and GW.settings.actionbars.bars[key] or GW.settings.actionbars.mainBar
+end
+
 function GW.FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
     button.gwHotKeyIsStance, button.gwHotKeyIsPet, button.gwHotKeyIsMainBar = isStanceButton, isPetButton, isMainBar
+    hotkeyButtons[button] = true
+    local settings = GetTextSettings(button)
+    local anchor = HOTKEY_POINTS[settings.hotkeyPosition] or HOTKEY_POINTS.BOTTOM
+    local x, y = settings.hotkeyX, settings.hotkeyY
     if not button.gwHotKeyHooked and button.UpdateHotkeys then
         button.gwHotKeyHooked = true
         hooksecurefunc(button, "UpdateHotkeys", function(btn)
@@ -90,28 +110,37 @@ function GW.FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
     button.HotKey:ClearAllPoints()
     if isPetButton or isStanceButton then
         button.HotKey:SetSize(0, 0)
-        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 5)
+        button.HotKey:SetPoint("CENTER", button, anchor[1], x, y + 5 * anchor[2])
         button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
         button.HotKey:SetTextColor(1, 1, 1)
     elseif isMainBar then
         button.HotKey:SetHeight(1)
-        button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
-        button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+        button.HotKey:SetPoint(anchor[3], button, anchor[3], x, y)
+        button.HotKey:SetPoint(anchor[4], button, anchor[4], x, y)
         button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
         button.HotKey:SetTextColor(1, 1, 1)
     else
         button.HotKey:SetSize(0, 0)
-        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
+        button.HotKey:SetPoint("CENTER", button, anchor[1], x, y)
         button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
         button.HotKey:SetTextColor(1, 1, 1)
     end
     button.HotKey:SetJustifyH("CENTER")
 end
 
+function GW.UpdateHotkeyPositions()
+    for button in pairs(hotkeyButtons) do
+        GW.FixHotKeyPosition(button, button.gwHotKeyIsStance, button.gwHotKeyIsPet, button.gwHotKeyIsMainBar)
+    end
+end
+
 function GW.UpdateMacroName(self)
     if self.Name then
         if self.gw_ShowMacroName then
-            self.Name:SetPoint("TOPLEFT", self, "TOPLEFT")
+            local settings = GetTextSettings(self)
+            local point = MACRO_NAME_POINTS[settings.macroNamePosition] or MACRO_NAME_POINTS.TOP
+            self.Name:ClearAllPoints()
+            self.Name:SetPoint(point, self, point, settings.macroNameX, settings.macroNameY)
             self.Name:SetJustifyH("LEFT")
             self.Name:SetWidth(self:GetWidth())
             local font, fontHeight = self.Name:GetFont()

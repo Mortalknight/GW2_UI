@@ -542,7 +542,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
     fmMultibar.gw_IsGwFrame = true -- our own frame, so it may carry the fade state attribute
-    GW.MixinHideDuringPetAndOverride(fmMultibar)
+    fmMultibar.gw_HideForOverride = true
     if actionPage ~= nil then
         fmMultibar:SetAttribute("_onstate-actionpage", [[
             self:SetAttribute("actionpage", tonumber(newstate))
@@ -554,6 +554,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     fmMultibar:SetFrameLevel(20)
     fmMultibar.gw_Buttons = {}
     fmMultibar.originalBarName = barName
+    GW.UpdateMultibarVisibility(fmMultibar)
 
     if settings.invert then
         for row = totalRows - 1, 0, -1 do

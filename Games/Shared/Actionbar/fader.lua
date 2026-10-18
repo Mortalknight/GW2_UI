@@ -69,6 +69,137 @@ local function actionBarFrameHide(f, instant)
     end
 end
 
+local HasBonusActionBar = C_ActionBar and C_ActionBar.HasBonusActionBar or HasBonusActionBar
+local HasVehicleActionBar = C_ActionBar and C_ActionBar.HasVehicleActionBar or HasVehicleActionBar
+local HasOverrideActionBar = C_ActionBar and C_ActionBar.HasOverrideActionBar or HasOverrideActionBar
+local IsPossessBarVisible = C_ActionBar and C_ActionBar.IsPossessBarVisible or IsPossessBarVisible
+
+-- the main bar carries the skyriding, vehicle and possess abilities, it only hides on its normal page
+local function IsMainBarHiddenWhileMounted()
+    local settings = GW.settings.actionbars.mainBar
+    if not settings.hideMounted or not (IsMounted() or UnitInVehicle("player")) then
+        return false
+    end
+    if settings.hideSkyriding and C_PlayerInfo.GetGlidingInfo and select(2, C_PlayerInfo.GetGlidingInfo()) then
+        return true
+    end
+    return not (HasBonusActionBar() or HasVehicleActionBar() or HasOverrideActionBar() or IsPossessBarVisible())
+end
+
+-- our multibars show and hide through a secure driver: blizzards override, vehicle and pet battle bars where the
+-- client has them, per bar combat and mounts, and "hover" for the mouse over modes. A hidden bar takes no clicks,
+-- so a hover bar is shown by a secure detector below it and hidden again by blizzards secure auto hide.
+-- "combathide" and "hover" keep the space of the bar in the bar layout
+local VISIBILITY_SNIPPET = [=[
+    local detector = self:GetFrameRef("gw_HoverDetector")
+    if newstate == "show" then
+        self:UnregisterAutoHide()
+        self:SetAttribute("gw_KeepSpace", false)
+        if self:GetAttribute("gw_WasShowing") then
+            self:Show()
+        end
+    else
+        if self:IsShown() then
+            self:SetAttribute("gw_WasShowing", true)
+            self:Hide()
+        end
+        self:SetAttribute("gw_KeepSpace", (newstate == "combathide" or newstate == "hover") and self:GetAttribute("gw_WasShowing") == true)
+    end
+    if newstate == "hover" and self:GetAttribute("gw_WasShowing") then
+        detector:Show()
+    else
+        detector:Hide()
+    end
+]=]
+
+local HOVER_SNIPPET = [=[
+    local bar = self:GetFrameRef("gw_Bar")
+    if bar:GetAttribute("state-gwvisibility") == "hover" and bar:GetAttribute("gw_WasShowing") then
+        bar:Show()
+        bar:RegisterAutoHide(0.5)
+        bar:AddToAutoHide(self)
+    end
+]=]
+
+-- the flyout hangs on its button, outside the bar; blizzard lays it out before it shows, so a hover bar can take
+-- its area into the auto hide right away. Leaving both hides the bar, and the flyout closes with it
+local FLYOUT_SNIPPET = [=[
+    local button = self:GetParent()
+    local bar = button and button:GetParent()
+    if bar and bar:GetAttribute("state-gwvisibility") == "hover" and bar:IsShown() then
+        bar:RegisterAutoHide(0.5)
+        bar:AddToAutoHide(bar:GetFrameRef("gw_HoverDetector"))
+        bar:AddToAutoHide(self)
+    end
+]=]
+
+local flyoutWrapped = false
+local function WrapSpellFlyout()
+    if flyoutWrapped or not SpellFlyout then
+        return
+    end
+    flyoutWrapped = true
+    SecureHandlerWrapScript(SpellFlyout, "OnShow", CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate"), FLYOUT_SNIPPET)
+end
+
+local function RefreshMultibarVisibility(bar)
+    -- a reload in combat leaves the bar without its driver until now
+    if not bar.gw_HoverDetector then
+        GW.UpdateMultibarVisibility(bar)
+        return
+    end
+    bar:Execute(format("local newstate = %q\n", bar:GetAttribute("state-gwvisibility") or "show") .. VISIBILITY_SNIPPET)
+end
+
+function GW.UpdateMultibarVisibility(bar)
+    if InCombatLockdown() or not bar.gw_IsGwFrame then
+        return
+    end
+    local settings = GW.settings.actionbars.bars[bar.originalBarName]
+    local conditions = bar.gw_HideForOverride and "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [possessbar,@vehicle,exists] hide; " or ""
+    if settings.fade == "HIDE_IN_COMBAT" then
+        conditions = conditions .. "[combat] combathide; "
+    end
+    if settings.hideMounted then
+        conditions = conditions .. "[mounted] hide; [@vehicle,exists] hide; "
+    end
+    if settings.fade == "INCOMBAT" then
+        conditions = conditions .. "[combat] show; hover"
+    elseif settings.fade == "MOUSE_OVER" then
+        conditions = conditions .. "hover"
+    else
+        conditions = conditions .. "show"
+    end
+
+    if not bar.gw_HoverDetector then
+        WrapSpellFlyout()
+        local detector = CreateFrame("Frame", nil, UIParent, "SecureHandlerEnterLeaveTemplate")
+        detector:SetAllPoints(bar)
+        detector:SetFrameStrata(bar:GetFrameStrata())
+        detector:SetFrameLevel(math.max(0, bar:GetFrameLevel() - 1))
+        detector:EnableMouse(true)
+        detector:Hide()
+        detector:SetFrameRef("gw_Bar", bar)
+        detector:SetAttribute("_onenter", HOVER_SNIPPET)
+        bar:SetFrameRef("gw_HoverDetector", detector)
+        bar.gw_HoverDetector = detector
+        bar:SetAttribute("gw_WasShowing", bar:IsShown())
+        bar:SetAttribute("_onstate-gwvisibility", VISIBILITY_SNIPPET)
+    end
+    RegisterStateDriver(bar, "gwvisibility", conditions)
+    RefreshMultibarVisibility(bar)
+end
+
+function GW.UpdateAllMultibarVisibility()
+    local fmActionbar = MainActionBar
+    for i = 1, 7 do
+        local bar = fmActionbar and fmActionbar["gw_Bar" .. i]
+        if bar then
+            GW.UpdateMultibarVisibility(bar)
+        end
+    end
+end
+
 -- gw_DirtySetting - set on load and by TrackActionBarChanges; indicates we are pending changes; handled out of combat and then reset
 -- bar.gw_IsEnabled - set by TrackActionBarChanges; directly tracks if bars are enabled or not; disabled bars never show
 function GW.ActionBarFadeCheck(self, forceCombat)
@@ -91,11 +222,19 @@ function GW.ActionBarFadeCheck(self, forceCombat)
         if f then
             if isDirty and not inLockdown and f ~= self then
                 -- this should only be set after a bar setting change (including initial load)
+                if f.gw_IsGwFrame then
+                    -- the visibility driver decides when an enabled bar shows
+                    f:SetAttribute("gw_WasShowing", f.gw_IsEnabled == true)
+                    if not f.gw_IsEnabled then
+                        GW.SetSecureShown(f, false)
+                    end
+                    RefreshMultibarVisibility(f)
+                else
+                    GW.SetSecureShown(f, f.gw_IsEnabled == true)
+                end
                 if f.gw_IsEnabled then
-                    GW.SetSecureShown(f, true)
                     actionBarFrameShow(f, true)
                 else
-                    GW.SetSecureShown(f, false)
                     actionBarFrameHide(f, true)
                 end
 
@@ -116,10 +255,10 @@ function GW.ActionBarFadeCheck(self, forceCombat)
                 local curAlpha = f:GetAlpha()
                 local busy = (f.gw_FadeIn:IsPlaying() or f.gw_FadeOut:IsPlaying())
                 local forceHide = false
-                if not f.gw_IsEnabled then
+                if not f.gw_IsEnabled or (fadeOption == "HIDE_IN_COMBAT" and inCombat) or (f == self and IsMainBarHiddenWhileMounted()) then
                     forceHide = true
                 end
-                if f:IsShown() and not forceHide and ((inFocus and (fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT") and not inCombat) or (inFocus or (inCombat and fadeOption == "INCOMBAT")) or isFlyout or fadeOption == "ALWAYS") then
+                if f:IsShown() and not forceHide and ((inFocus and (fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT") and not inCombat) or (inFocus or (inCombat and fadeOption == "INCOMBAT")) or isFlyout or fadeOption == "ALWAYS" or fadeOption == "HIDE_IN_COMBAT") then
                     -- should be showing
                     if not busy and curAlpha < 1.0 then
                         actionBarFrameShow(f)

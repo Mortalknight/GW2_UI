@@ -1141,3 +1141,8 @@ L["Releases your spirit when you die in a battleground, not while a soulstone or
 L["Train all button"] = "Train All Button"
 L["Adds a button to trainers that learns everything you can afford."] = true
 L["Train all"] = "Train All"
+L["Action Button Labels Position"] = true
+L["Macro Name Position"] = true
+L["Hide while mounted or in a vehicle"] = true
+L["The main bar stays while it shows the skyriding, vehicle or possess abilities."] = true
+L["Also while skyriding"] = true
