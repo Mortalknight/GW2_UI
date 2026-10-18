@@ -809,9 +809,11 @@ local function bagHeader_OnClick(self, btn)
         if HAS_KEYRING and headerIndex == KEYRING_HEADER then
             setKeyringOpen(self:GetParent(), not isKeyringOpen())
         else
-            self:GetParent().ItemFrame.Containers[headerIndex].shouldShow = not self.icon:IsShown()
-            self.icon:SetShown(not self.icon:IsShown())
-            self.icon2:SetShown(not self.icon:IsShown())
+            local open = not self.icon:IsShown()
+            self:GetParent().ItemFrame.Containers[headerIndex].shouldShow = open
+            self.icon:SetShown(open)
+            self.icon2:SetShown(not open)
+            PlaySound(open and SOUNDKIT.IG_BACKPACK_OPEN or SOUNDKIT.IG_BACKPACK_CLOSE)
         end
 
         layoutItems(self:GetParent())
