@@ -522,8 +522,9 @@ function GW.SkinAddFriendFrame()
     if AddFriendInfoFrame then
         AddFriendInfoFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
         SkinCloseButton(AddFriendInfoFrame)
-        if AddFriendInfoFrame.OkayButton then
-            AddFriendInfoFrame.OkayButton:GwSkinButton(false, true)
+        local continueButton = AddFriendInfoFrame.OkayButton or AddFriendInfoFrameContinueButton
+        if continueButton then
+            continueButton:GwSkinButton(false, true)
         end
     end
     AddFriendEntryFrameAcceptButton:GwSkinButton(false, true)
