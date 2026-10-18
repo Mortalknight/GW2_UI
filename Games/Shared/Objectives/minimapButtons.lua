@@ -187,6 +187,33 @@ local function UnlockButton(self)
     end
 end
 
+local function CloseFlyout(toggle)
+    if toggle.container:IsShown() then
+        UIFrameFadeOut(toggle.container, 0.2, 1, 0)
+        C_Timer.After(0.2, function() toggle.container:Hide() end)
+    end
+end
+
+local function AddonButton_OnClick(button, mouseButton)
+    local toggle = GwAddonToggle
+    if mouseButton == "LeftButton" and button:GetParent() == toggle.container then
+        CloseFlyout(toggle)
+    end
+end
+
+local LEAVE_DELAY = 1.5
+local function Container_OnUpdate(container, elapsed)
+    if container:IsMouseOver() or container:GetParent():IsMouseOver() then
+        container.gwAwayTime = 0
+        return
+    end
+    container.gwAwayTime = (container.gwAwayTime or 0) + elapsed
+    if container.gwAwayTime > LEAVE_DELAY then
+        container.gwAwayTime = 0
+        CloseFlyout(container:GetParent())
+    end
+end
+
 local function UpdateButtons(self)
     if InCombatLockdown() or (C_PetBattles and C_PetBattles.IsInBattle()) then
         GW.CombatQueue:Queue("StackMinimapButtons", function() UpdateButtons(self) end)
@@ -234,6 +261,10 @@ local function UpdateButtons(self)
 
         button:SetParent(self.container)
         button:ClearAllPoints()
+        if not button.gwFlyoutCloseHooked then
+            button.gwFlyoutCloseHooked = true
+            button:HookScript(button:HasScript("OnClick") and "OnClick" or "OnMouseUp", AddonButton_OnClick)
+        end
         local xOffset = -5 - (frameIndex * 27)
         button:SetPoint("RIGHT", self.container, "RIGHT", xOffset, 0)
         frameIndex = frameIndex + 1
@@ -280,8 +311,7 @@ end
 local function OnClick(self)
     SkinMinimapButtons(self)
     if self.container:IsShown() then
-        UIFrameFadeOut(self.container, 0.2, 1, 0)
-        C_Timer.After(0.2, function() self.container:Hide() end)
+        CloseFlyout(self)
     else
         UIFrameFadeIn(self.container, 0.2, 0, 1)
     end
@@ -294,6 +324,13 @@ local function CreateMinimapButtonsSack()
     minimapButton:RegisterEvent("PLAYER_ENTERING_WORLD")
     minimapButton:SetFrameStrata("MEDIUM")
     minimapButton.container:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    minimapButton.container:SetScript("OnShow", function(container)
+        container.gwAwayTime = 0
+        container:SetScript("OnUpdate", GW.settings.minimap.addonFlyoutCloseOnLeave and Container_OnUpdate or nil)
+    end)
+    minimapButton.container:SetScript("OnHide", function(container)
+        container:SetScript("OnUpdate", nil)
+    end)
     minimapButton.gw_Showing = false
 end
 GW.CreateMinimapButtonsSack = CreateMinimapButtonsSack

@@ -1146,3 +1146,4 @@ L["Macro Name Position"] = true
 L["Hide While Mounted or in a Vehicle"] = true
 L["The main bar stays while it shows the skyriding, vehicle or possess abilities."] = true
 L["Also while skyriding"] = true
+L["Close AddOn flyout when the mouse leaves it"] = true

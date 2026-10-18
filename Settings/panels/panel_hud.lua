@@ -247,6 +247,7 @@ local function LoadHudPanel(sWindow)
         incompatibleAddons = "Minimap"
     })
     minimap:AddOption(L["Expansion Landing Page"], nil, {getterSetter = "minimap.sideButtons.EXPANSION", callback = GW.UpdateMinimapSideButtons, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap", hidden = not GW.isModern})
+    minimap:AddOption(L["Close AddOn flyout when the mouse leaves it"], nil, {getterSetter = "minimap.addonFlyoutCloseOnLeave", dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap"})
     minimap:AddOption(L["Always show AddOn flyout button"], L["Always show the minimap AddOns flyout button, even when only one AddOn button is available."], {getterSetter = "minimap.addonFlyoutAlways", callback = function() GW.UpdateMinimapButtonsSack() end, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap"})
     minimap:AddOption(L["Show FPS on minimap"], L["Shows the frames per second on the minimap."], {getterSetter = "minimap.fps", callback = GW.ToogleMinimapFpsLable, dependence = {["minimap.enabled"] = true}, incompatibleAddons = "Minimap"})
     minimap:AddOption(L["Disable FPS tooltip"], nil, {getterSetter = "minimap.fpsTooltipDisabled", dependence = {["minimap.enabled"] = true, ["minimap.fps"] = true}, incompatibleAddons = "Minimap"})

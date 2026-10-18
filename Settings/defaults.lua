@@ -447,6 +447,7 @@ GW.globalDefault = {
             sideButtons = {CALENDAR = true, COMPARTMENT = true, ADDONS = true, QUEUE = true, EXPANSION = true},
             sideButtonOrder = {"CALENDAR", "COMPARTMENT", "ADDONS", "QUEUE"},
             addonFlyoutAlways = false,
+            addonFlyoutCloseOnLeave = false,
             heightPercentage = 100,
             keepSizeRatio = true,
         },

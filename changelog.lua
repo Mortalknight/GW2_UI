@@ -13,7 +13,8 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-addChange("12.0.1", {
+addChange("12.1.0", {
+    {GW.Enum.ChangelogType.feature, [=[Minimap: the AddOn flyout closes after a left click on one of its buttons; optionally also when the mouse left it]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest tracker: the scroll range is recalculated right after a resize in the move mode and also when quests change in combat]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: while scrolling, the header of the current section stays at the top until the next section pushes it out; a slim bar at the right edge shows that and where the tracker scrolls]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest frame (Classic, TBC, Wrath, Mists): quest texts and the required items label are always readable, Blizzard colored them dark for quests with a parchment background]=]},
