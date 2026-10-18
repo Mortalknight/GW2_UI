@@ -1143,6 +1143,6 @@ L["Adds a button to trainers that learns everything you can afford."] = true
 L["Train all"] = "Train All"
 L["Action Button Labels Position"] = true
 L["Macro Name Position"] = true
-L["Hide while mounted or in a vehicle"] = true
+L["Hide While Mounted or in a Vehicle"] = true
 L["The main bar stays while it shows the skyriding, vehicle or possess abilities."] = true
 L["Also while skyriding"] = true

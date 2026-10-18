@@ -1153,6 +1153,6 @@ L["Adds a button to trainers that learns everything you can afford."] = "Fügt L
 L["Train all"] = "Alles lernen"
 L["Action Button Labels Position"] = "Position der Aktionsbuttonzuweisungen"
 L["Macro Name Position"] = "Position des Makronamens"
-L["Hide while mounted or in a vehicle"] = "Auf Reittieren und in Fahrzeugen ausblenden"
+L["Hide While Mounted or in a Vehicle"] = "Auf Reittieren und in Fahrzeugen ausblenden"
 L["The main bar stays while it shows the skyriding, vehicle or possess abilities."] = "Die Hauptleiste bleibt sichtbar, solange sie die Fähigkeiten für Himmelsreiten, Fahrzeuge oder Gedankenkontrolle zeigt."
 L["Also while skyriding"] = "Auch beim Himmelsreiten"

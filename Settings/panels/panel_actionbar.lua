@@ -134,8 +134,8 @@ local function LoadActionbarPanel(sWindow)
     mainBar:AddOptionSlider(L["Button Spacing"], nil, { getterSetter = "actionbars.mainbarMargin", callback = function() GW.UpdateMainBarHot() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = barDependence, group = "buttonAppearance"})
 
     mainBar:AddOptionDropdown(L["Main Bar Range Indicator"], nil, { getterSetter = "actionbars.rangeIndicator", callback = GW.UpdateMainBarHot, optionsList = {"NONE", "RED_INDICATOR", "RED_OVERLAY", "BOTH"}, optionNames = {NONE, L["%s Indicator"]:format(RED_GEM), L["Red Overlay"], STATUS_TEXT_BOTH}, dependence = {["actionbars.enabled"] = true}, incompatibleAddons = "Actionbars", group = "buttonAppearance"})
-    mainBar:AddOptionDropdown(BINDING_HEADER_ACTIONBAR .. SHOW, nil, { getterSetter = "actionbars.mainBar.fade", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = barDependence, incompatibleAddons = "Actionbars", group = "barVisibility"})
-    mainBar:AddOption(L["Hide while mounted or in a vehicle"], L["The main bar stays while it shows the skyriding, vehicle or possess abilities."], { getterSetter = "actionbars.mainBar.hideMounted", dependence = barDependence, incompatibleAddons = "Actionbars", group = "barVisibility"})
+    mainBar:AddOptionDropdown(BINDING_HEADER_ACTIONBAR .. ": " .. SHOW, nil, { getterSetter = "actionbars.mainBar.fade", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = barDependence, incompatibleAddons = "Actionbars", group = "barVisibility"})
+    mainBar:AddOption(L["Hide While Mounted or in a Vehicle"], L["The main bar stays while it shows the skyriding, vehicle or possess abilities."], { getterSetter = "actionbars.mainBar.hideMounted", dependence = barDependence, incompatibleAddons = "Actionbars", group = "barVisibility"})
     local skyridingDependence = CopyTable(barDependence)
     skyridingDependence["actionbars.mainBar.hideMounted"] = true
     mainBar:AddOption(L["Also while skyriding"], nil, { getterSetter = "actionbars.mainBar.hideSkyriding", dependence = skyridingDependence, incompatibleAddons = "Actionbars", hidden = not GW.Retail, group = "barVisibility"})
@@ -150,7 +150,7 @@ local function LoadActionbarPanel(sWindow)
         local key = "actionbars.bars." .. barName .. "."
         extraBars:AddGroupHeader(header)
         extraBars:AddOptionDropdown(SHOW, nil, { getterSetter = key .. "fade", callback = GW.UpdateAllMultibarVisibility, optionsList = {"ALWAYS", "INCOMBAT", "HIDE_IN_COMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, HUD_EDIT_MODE_SETTING_ACTION_BAR_VISIBLE_SETTING_OUT_OF_COMBAT, L["Only on Mouse Over"]}, dependence = barDependence, groupHeaderName = header, incompatibleAddons = "Actionbars"})
-        extraBars:AddOption(L["Hide while mounted or in a vehicle"], nil, { getterSetter = key .. "hideMounted", callback = GW.UpdateAllMultibarVisibility, dependence = barDependence, groupHeaderName = header, incompatibleAddons = "Actionbars"})
+        extraBars:AddOption(L["Hide While Mounted or in a Vehicle"], nil, { getterSetter = key .. "hideMounted", callback = GW.UpdateAllMultibarVisibility, dependence = barDependence, groupHeaderName = header, incompatibleAddons = "Actionbars"})
         if hasWidth then
             extraBars:AddOptionDropdown(L["Width"], L["Number of columns in the two extra right-hand action bars."], { getterSetter = key .. "ButtonsPerRow", callback = GW.UpdateMultibarButtons, optionsList = {1, 2, 3, 4, 6, 12}, optionNames = {"1", "2", "3", "4", "6", "12"}, dependence = barDependence, groupHeaderName = header, incompatibleAddons = "Actionbars"})
         end
