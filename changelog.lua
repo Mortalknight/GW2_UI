@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.0.1", {
+    {GW.Enum.ChangelogType.bug, [=[Merchant: the last two buyback slots are skinned too when the extended vendor is off]=]},
     {GW.Enum.ChangelogType.feature, [=[Action bars: extra bars can show only out of combat; extra bars that are hidden by their show option (in combat, mouse over, out of combat) are really hidden and take no clicks, mouse over still shows them; every bar can hide while mounted or in a vehicle (the main bar keeps skyriding and vehicle abilities, on Retail it can also hide while skyriding); position and offset of keybinds and macro names per bar, pet, stance and extra buttons follow the main bar]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: PvP quests are red]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest tracker (Classic, TBC, Wrath, Mists): the elite and dungeon icons in front of the quest title work in every language]=]},

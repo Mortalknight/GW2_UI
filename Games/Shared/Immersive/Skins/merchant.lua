@@ -44,9 +44,13 @@ local function SkinMerchantFrameItemButton(index)
 end
 GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
 
+local function GetNumItemSlots()
+    return max(MERCHANT_ITEMS_PER_PAGE, BUYBACK_ITEMS_PER_PAGE)
+end
+
 -- prices sit next to the item; a second currency follows the gold price
 local function PlacePrices()
-    for index = 1, MERCHANT_ITEMS_PER_PAGE do
+    for index = 1, GetNumItemSlots() do
         local button = _G["MerchantItem" .. index .. "ItemButton"]
         local money = _G["MerchantItem" .. index .. "MoneyFrame"]
         local currency = _G["MerchantItem" .. index .. "AltCurrencyFrame"]
@@ -248,7 +252,7 @@ local function LoadMerchantFrameSkin()
     MerchantFrame:SetWidth(360)
 
     MerchantItem1:SetPoint("TOPLEFT", MerchantFrame, "TOPLEFT", 24, -69)
-    for index = 1, MERCHANT_ITEMS_PER_PAGE do
+    for index = 1, GetNumItemSlots() do
         SkinMerchantFrameItemButton(index)
     end
     SkinBuyback()
