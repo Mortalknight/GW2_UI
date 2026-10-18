@@ -80,13 +80,6 @@ local function SkinModernQuestParts()
         hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
         GW.QuestInfo_Display_hooked = true
     end
-    hooksecurefunc("QuestFrame_SetTextColor", function(fontString)
-        fontString:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    end)
-    hooksecurefunc("QuestFrameProgressItems_Update", function()
-        QuestProgressRequiredItemsText:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
-        QuestProgressRequiredMoneyText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    end)
     hooksecurefunc("QuestInfo_ShowRequiredMoney", function()
         local requiredMoney = GetQuestLogRequiredMoney()
         if requiredMoney > 0 then
@@ -225,6 +218,15 @@ local function LoadQuestFrameSkin()
             fontString:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
         end)
     end
+
+    -- blizzard colors the texts for the background material of the quest, dark on parchment
+    hooksecurefunc("QuestFrame_SetTextColor", function(fontString)
+        fontString:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    end)
+    hooksecurefunc("QuestFrameProgressItems_Update", function()
+        QuestProgressRequiredItemsText:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
+        QuestProgressRequiredMoneyText:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    end)
 
     QuestFrameGreetingPanel:HookScript("OnShow", GreetingPanel_OnShow)
     QuestFrame:HookScript("OnShow", QuestFrame_OnShow)

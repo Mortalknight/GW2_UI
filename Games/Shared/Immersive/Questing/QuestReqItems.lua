@@ -29,22 +29,20 @@ function GwImmersiveQuestingReqItemsFrameMixin:UpdateFrame()
         f.objectType = "item"
         f:SetID(i)
         SetItemButtonCount(f, r.count)
+        SetItemButtonTexture(f, r.icon)
+        f.Name:SetText(r.name)
+        f:Show()
+        f.gwRequiredItem = r
 
-        if (not r.name or r.name == "") and r.id then
-            -- if item not cached but we have an ID to use then do a modern lookup
-            GW.Debug("doing fancy modern item lookup for id:", r.id)
-            local item = Item:CreateFromItemID(r.id)
+        -- an item that is not cached yet has no name; the classic clients give no item id here, only the link
+        if (not r.name or r.name == "") and (r.id or r.link) then
+            local item = r.id and Item:CreateFromItemID(r.id) or Item:CreateFromItemLink(r.link)
             item:ContinueOnItemLoad(function()
-                GW.Debug("in item load callback for id:", r.id)
-                SetItemButtonTexture(f, item:GetItemIcon())
-                f.Name:SetText(item:GetItemName())
-                f:Show()
+                if f.gwRequiredItem == r then
+                    SetItemButtonTexture(f, item:GetItemIcon())
+                    f.Name:SetText(item:GetItemName())
+                end
             end)
-        else
-            -- otherwise, take what we've got
-            SetItemButtonTexture(f, r.icon)
-            f.Name:SetText(r.name)
-            f:Show()
         end
     end
 
@@ -92,7 +90,7 @@ function GwImmersiveQuestingReqItemsFrameMixin:UpdateInfo()
     for i = 1, GetNumQuestItems() do
         if (IsQuestItemHidden(i) == 0) then
             local name, icon, count, _, _, item_id = GetQuestItemInfo("required", i)
-            self.questReq.stuff[item_idx] = {id = item_id, name = name, icon = icon, count = count}
+            self.questReq.stuff[item_idx] = {id = item_id, link = GetQuestItemLink("required", i), name = name, icon = icon, count = count}
             GW.Debug("quest item req - id:", item_id, "| name:", name, "| count:", count)
             item_idx = item_idx + 1
         end
