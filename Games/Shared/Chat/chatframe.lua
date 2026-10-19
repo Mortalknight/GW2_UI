@@ -841,7 +841,7 @@ local function styleChatWindow(frame)
 
     --emote bar button
     if GW.settings.chat.keywords.emoji and (id ~= 2 and id ~= 3) then
-        frame.buttonEmote = CreateFrame("Frame", "BUTTON_EMOTE", frame)
+        frame.buttonEmote = CreateFrame("Button", "BUTTON_EMOTE", frame)
         frame.buttonEmote:EnableMouse(true)
         frame.buttonEmote:SetAlpha(0.35)
         frame.buttonEmote:SetSize(12, 12)

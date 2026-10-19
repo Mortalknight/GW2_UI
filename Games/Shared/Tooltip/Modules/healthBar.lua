@@ -86,7 +86,7 @@ GW.RegisterTooltipModule({
             end
         end)
         hooksecurefunc("GameTooltip_SetDefaultAnchor", function(tooltip)
-            if not tooltip:IsForbidden() and tooltip:GetAnchorType() == "ANCHOR_NONE" then
+            if not tooltip:IsForbidden() and tooltip.GetAnchorType and tooltip:GetAnchorType() == "ANCHOR_NONE" then
                 PlaceBar(tooltip)
             end
         end)

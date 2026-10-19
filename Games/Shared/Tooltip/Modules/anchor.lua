@@ -12,7 +12,7 @@ end
 
 -- default anchored tooltips follow the cursor or sit at the mover
 local function OnSetDefaultAnchor(tooltip, parent)
-    if tooltip:IsForbidden() or tooltip:GetAnchorType() ~= "ANCHOR_NONE" then
+    if tooltip:IsForbidden() or not tooltip.GetAnchorType or tooltip:GetAnchorType() ~= "ANCHOR_NONE" then
         return
     end
     -- the classic clients lose the item comparison on default anchored tooltips

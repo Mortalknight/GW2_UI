@@ -508,6 +508,7 @@ local function evPlayerLogin(self)
         return
     end
     GW.LoadFonts()
+    GW.loadedWithGamepadInterface = GW.IsGamepadInterface() or false
 
     if GW.CheckForPasteAddon() and GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
         GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
@@ -980,6 +981,16 @@ local function gw_OnEvent(self, event, ...)
         evNeutralFactionSelectResult()
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
         evPlayerSpecializationChanged()
+    elseif event == "INPUT_DEVICE_INTERFACE_TRANSITION" then
+        -- action bars and micro menu are set up for the interface style of the login
+        local isGamepad = ... == Enum.InputDeviceInterfaceType.Gamepad
+        if isGamepad ~= GW.loadedWithGamepadInterface then
+            GW.ShowPopup({text = L["One or more of the changes you have made require a UI reload."],
+                OnAccept = function() C_UI.Reload() end,
+                button1 = ACCEPT,
+                button2 = CANCEL}
+            )
+        end
     elseif event == "ADDON_LOADED" then
         local loadedAddonName = ...
         evAddonLoaded(self, loadedAddonName)
@@ -995,6 +1006,9 @@ end
 
 l:SetScript("OnEvent", gw_OnEvent)
 l:RegisterEvent("PLAYER_LOGIN")
+if C_EventUtils.IsEventValid("INPUT_DEVICE_INTERFACE_TRANSITION") then
+    l:RegisterEvent("INPUT_DEVICE_INTERFACE_TRANSITION")
+end
 l:RegisterEvent("PLAYER_LEAVING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
