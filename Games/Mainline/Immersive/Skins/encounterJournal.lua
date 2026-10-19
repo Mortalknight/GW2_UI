@@ -331,9 +331,6 @@ local function SkinEncounterInfo(info)
     loot.filter:SetPoint("RIGHT", difficulty, "LEFT", -120, 0)
     loot.filter:GwHandleDropDownBox(nil, false, nil, 120)
     loot.slotFilter:GwHandleDropDownBox(nil, false, nil, 100)
-    for _, toggle in ipairs({EncounterJournalEncounterFrameInfoFilterToggle, EncounterJournalEncounterFrameInfoSlotFilterToggle}) do
-        SkinLightButton(toggle, true)
-    end
 
     SkinScrollBar(info, "BossesScrollBar")
     SkinScrollBar(EncounterJournalEncounterFrameInstanceFrame, "LoreScrollBar")
@@ -765,7 +762,6 @@ local function encounterJournalSkin()
             { EJ.raidsTab, GameRulesUtil.EJShouldShowRaids },
             { EJ.LootJournalTab, GameRulesUtil.EJShouldShowItemSets },
             { EJ.TutorialsTab, GameRulesUtil.EJShouldShowTutorials },
-            { EJ.DelvesTab, function() return EJ.DelvesTab end },
         }
 
         local previousTab

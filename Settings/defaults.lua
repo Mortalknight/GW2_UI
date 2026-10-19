@@ -1972,9 +1972,6 @@ GW.globalDefault = {
             battlefieldMap = {
                 enabled = true,
             },
-            majorFaction = {
-                enabled = true,
-            },
             cooldownManager = {
                 enabled = true,
             },

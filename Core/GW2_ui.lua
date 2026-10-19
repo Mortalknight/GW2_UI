@@ -915,7 +915,6 @@ local function evLoadSkins()
         GW.LoadWeeklyRewardsSkin()
         GW.LoadPerksProgramSkin()
         GW.LoadAdventureMapSkin()
-        GW.LoadMajorFactionsFrameSkin()
         GW.LoadTalkingHeadSkin()
     elseif not GW.Forever then
         GW.LoadQuestLogFrameSkin()

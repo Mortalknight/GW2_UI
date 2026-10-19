@@ -135,13 +135,12 @@ local function SkinLookingForGroupFrames()
         { name = "GroupFinderFrame", addon = nil },
         { name = "PVPUIFrame", addon = "Blizzard_PVPUI" },
         { name = "ChallengesFrame", addon = "Blizzard_ChallengesUI", check = function() return UnitLevel("player") >= GetMaxLevelForPlayerExpansion(); end, hideLeftInset = true },
-        { name = "DelvesDashboardFrame", addon = "Blizzard_DelvesDashboardUI", check = function() return GetExpansionLevel() >= LE_EXPANSION_WAR_WITHIN end, hideLeftInset = true },
     }
 
-    local tabs = {PVEFrameTab1, PVEFrameTab2, PVEFrameTab3, PVEFrameTab4}
+    local tabs = {PVEFrameTab1, PVEFrameTab2, PVEFrameTab3}
     for idx, tab in pairs(tabs) do
         if not tab.gwSkinned then
-            local id = idx == 1 and "dungeon" or idx == 2 and "pvp" or idx == 3 and "mythic" or idx == 4 and "delve" or "dungeon"
+            local id = idx == 1 and "dungeon" or idx == 2 and "pvp" or idx == 3 and "mythic" or "dungeon"
             local iconTexture = "Interface/AddOns/GW2_UI/Textures/Groups/tabicon_" .. id .. ".png"
 
 
@@ -153,8 +152,6 @@ local function SkinLookingForGroupFrames()
                     PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/pvp-window-icon.png")
                 elseif idx == 3 then
                     PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/mythic-window-icon.png")
-                elseif idx == 4 then
-                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/delve-window-icon.png")
                 end
             end)
 
@@ -166,30 +163,6 @@ local function SkinLookingForGroupFrames()
         tab:SetParent(PVEFrame.LeftSidePanel)
         tab:SetSize(64, 40)
     end
-
-    -- copy from blizzard and modified
-    PVEFrame:HookScript("OnShow", function(self)
-        -- If timerunning enabled, hide PVP and M+, and re-anchor delves to Dungeons tab
-        if TimerunningUtil.TimerunningEnabledForPlayer() then
-            self.tab2:Hide()
-            self.tab3:Hide()
-            if self.tab4 and self.tab4:IsShown() then
-                self.tab4:ClearAllPoints()
-                self.tab4:SetPoint("TOPRIGHT", self.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * (2 - 1))) -- 4 = index but here 2 because 2 and 3 are hidden
-            end
-        else
-        -- Otherwise, anchor Delves tab to PVP if M+ hidden, or to M+ if both are shown - to prevent a gap if the player is ineligible for M+ and we hide the tab
-            if self.tab4 and self.tab4:IsShown() then
-                if self.tab2:IsShown() and not self.tab3:IsShown() then
-                    self.tab4:ClearAllPoints()
-                    self.tab4:SetPoint("TOPRIGHT", self.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * (3 - 1))) -- 4 = index but here 3 because 3 is hidden
-                elseif self.tab2:IsShown() and self.tab3:IsShown() then
-                    self.tab4:ClearAllPoints()
-                    self.tab4:SetPoint("TOPRIGHT", self.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * (4 - 1))) -- 4 = index
-                end
-            end
-        end
-    end)
 
     PVEFrame.gwHeader.windowIcon:ClearAllPoints()
     PVEFrame.gwHeader.windowIcon:SetPoint("CENTER", PVEFrame.gwHeader, "BOTTOMLEFT", -26, 35)
@@ -1161,14 +1134,6 @@ local function ApplyChallengesUISkin()
     end)
 end
 
-local function ApplyDelvesDashboardUISkin()
-    if not GW.settings.skins.lfg.enabled then return end
-
-    DelvesDashboardFrame.DashboardBackground:SetAlpha(0)
-    DelvesDashboardFrame.ButtonPanelLayoutFrame.CompanionConfigButtonPanel.CompanionConfigButton:GwSkinButton(false, true)
-    hooksecurefunc(DelvesDashboardFrame.ButtonPanelLayoutFrame.CompanionConfigButtonPanel.CompanionConfigButton.ButtonText, "SetTextColor", GW.LockBlackButtonColor)
-end
-
 local function ApplyDelvesDifficultyPickerSkin()
     if not GW.settings.skins.lfg.enabled then return end
 
@@ -1214,7 +1179,6 @@ end
 local function LoadLFGSkin()
     GW.RegisterLoadHook(ApplyChallengesUISkin, "Blizzard_ChallengesUI", ChallengesFrame)
     GW.RegisterLoadHook(ApplyPvPUISkin, "Blizzard_PVPUI", PVPUIFrame)
-    GW.RegisterLoadHook(ApplyDelvesDashboardUISkin, "Blizzard_DelvesDashboardUI", DelvesDashboardFrame)
     GW.RegisterLoadHook(ApplyDelvesDifficultyPickerSkin, "Blizzard_DelvesDifficultyPicker", DelvesDifficultyPickerFrame)
 
     SkinLookingForGroupFrames()

@@ -299,7 +299,6 @@ GW.SettingsMigrationMap = {
     ["MULTIBAR_RIGHT_COLS_4"] = "actionbars.bars.MultiBar6.ButtonsPerRow",
     ["MULTIBAR_RIGHT_COLS_5"] = "actionbars.bars.MultiBar7.ButtonsPerRow",
     ["MaintankGroupByClassOrder"] = "groupFrames.maintank.groupByClassOrder",
-    ["MajorFactionSkinEnabled"] = "skins.majorFaction.enabled",
     ["MicromenuPos"] = "micromenu.pos",
     ["MicromenuPos_scale"] = "micromenu.scale",
     ["MinimapPos"] = "minimap.pos",

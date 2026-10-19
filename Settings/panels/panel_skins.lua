@@ -84,7 +84,6 @@ local function LoadSkinsPanel(sWindow)
     gameFrames:AddOption(ADVENTURE_MAP_TITLE, nil, {getterSetter = "skins.adventureMap.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     gameFrames:AddOption(TALENTS, nil, {getterSetter = "skins.playerSpells.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.isModern})
     gameFrames:AddOption(AUCTIONS, nil, {getterSetter = "skins.auctionHouse.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.isModern})
-    gameFrames:AddOption(L["Major Factions"], nil, {getterSetter = "skins.majorFaction.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     gameFrames:AddOption((DAMAGE_METER_LABEL or ""), nil, {getterSetter = "skins.damageMeter.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.isModern})
     gameFrames:AddOption(L["Calendar"], nil, {getterSetter = "skins.calendar.enabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.isModern})
 

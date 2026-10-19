@@ -15,7 +15,6 @@
     <Script file="expansionLandingPage.lua"/>
     <Script file="genericTraintUI.lua"/>
     <Script file="adventureMap.lua"/>
-    <Script file="majorFaction.lua"/>
     <Script file="addons\immersion.lua"/>
     <Script file="addons\WorldQuestTracker.lua"/>
     <Script file="addons\petTracker.lua"/>

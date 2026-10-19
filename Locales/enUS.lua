@@ -735,7 +735,6 @@ L["Shorten shield values"] = true
 L["Shorten value prefix style"] = "Shorten Value Prefix Style"
 L["Shorten values decimal length"] = "Shorten Values Decimal Length"
 L["Controls the amount of decimals used for shorted values"] = "Controls the amount of decimals used for shortened values."
-L["Major Factions"] = true
 L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes, Group members"] = "Adjust the scale of the minimap and also the pins, e.g., quests, resource nodes, group members, etc."
 L["Minimap Size"] = true
 L["Reset Zoom"] = true
