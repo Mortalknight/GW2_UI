@@ -179,6 +179,7 @@ local function SkinButtons()
         if button then
             button:GwSkinButton(false, false, true)
             button:GetRegions():GwSetInside()
+            button:SetFrameLevel(MerchantBuyBackItem:GetFrameLevel() + 1)
             if button.Icon then
                 button.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
             elseif info.classicCoords then
@@ -191,6 +192,17 @@ local function SkinButtons()
         MerchantRepairAllIcon:SetTexCoord(0.34, 0.1, 0.34, 0.535, 0.535, 0.1, 0.535, 0.535)
     end
     MerchantGuildBankRepairButton:SetPoint("LEFT", MerchantRepairAllButton, "RIGHT", 5, 0)
+
+    local repairBackground = CreateFrame("Frame", nil, MerchantRepairAllButton)
+    repairBackground:SetFrameLevel(MerchantBuyBackItem:GetFrameLevel())
+    repairBackground:SetPoint("TOP", MerchantBuyBackItem, "TOP", 0, 6)
+    repairBackground:SetPoint("BOTTOM", MerchantBuyBackItem, "BOTTOM", 0, -6)
+    repairBackground:SetPoint("LEFT", MerchantRepairItemButton, "LEFT", -6, 0)
+    repairBackground:SetPoint("RIGHT", MerchantItem9, "RIGHT", 6, 0)
+    GW.CreateDetailsBackgroundTexture(repairBackground):SetAllPoints()
+    if MerchantRepairText then
+        MerchantRepairText:SetParent(repairBackground)
+    end
 
     for _, button in ipairs({ MerchantNextPageButton, MerchantPrevPageButton }) do
         GW.HandleNextPrevButton(button, nil, true)
