@@ -328,7 +328,7 @@ local function LoadCurrency(tabContainer)
     item.ToggleMe = GW.CreateBossTimesPage(curwin_outer)
     item:SetScript("OnClick", menuItem_OnClick)
     item:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
-    item:SetText(GW.L["Boss times"])
+    item:SetText(GW.L["Boss Times"])
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu.items.raidinfo, "BOTTOMLEFT")
     fmMenu.items.bossTimes = item

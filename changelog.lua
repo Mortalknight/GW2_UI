@@ -17,7 +17,7 @@ addChange("12.1.0", {
     {GW.Enum.ChangelogType.feature, [=[Action bars: extra bars can show only out of combat; bars hidden by their show option are really hidden and take no clicks; bars can hide while mounted or in a vehicle, on Retail also while skyriding; keybind and macro name position per bar]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: section headers stay at the top while scrolling, a slim bar shows the scroll position; PvP quests are red; Forever: class quests get their own section]=]},
     {GW.Enum.ChangelogType.feature, [=[Minimap: side, order and visibility of the side buttons can be set; the AddOn flyout closes after a click, optionally also when the mouse leaves it]=]},
-    {GW.Enum.ChangelogType.feature, [=[Chat: name in chat puts a name like (Tom) in front of your messages, like Name2Chat; the chat tabs can be saved to the profile and applied on another character]=]},
+    {GW.Enum.ChangelogType.feature, [=[Chat: name in chat puts a name like (Tom) in front of your messages, like Name2Chat; the chat tabs can be saved to the profile and applied on another character; with chat fading, hovering the chat shows the faded messages again]=]},
     {GW.Enum.ChangelogType.feature, [=[Classic clients: spellbook and talents mark spells that are not on the global cooldown]=]},
     {GW.Enum.ChangelogType.change, [=[Quest tracker (Classic clients): zone sorting, quest XP and the daily and weekly color work without Questie; Wrath posts real quest links]=]},
     {GW.Enum.ChangelogType.change, [=[Action bars: empty slots hidden in Edit Mode come back on login, "Empty Slots Alpha" at 0% hides them until you drag something onto the bars]=]},
@@ -42,7 +42,7 @@ addChange("12.1.0", {
 addChange("12.0.0", {
     {GW.Enum.ChangelogType.feature, [=[Support for World of Warcraft: Forever, with its own hero panel, bank, swing timer and skins for its new windows]=]},
     {GW.Enum.ChangelogType.change, [=[One addon for every game version; large parts of GW2 UI are rewritten to be faster and use less memory]=]},
-    {GW.Enum.ChangelogType.feature, [=[Quest tracker: the quest level is back, a group info bar for Mythic+ and raid bosses (deaths, battle res, bloodlust) and boss times with Mythic+ splits, compared to your best, in a new "Boss times" page]=]},
+    {GW.Enum.ChangelogType.feature, [=[Quest tracker: the quest level is back, a group info bar for Mythic+ and raid bosses (deaths, battle res, bloodlust) and boss times with Mythic+ splits, compared to your best, in a new "Boss Times" page]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker boss and arena frames: a slim cast bar and, on Retail and Forever, the most important auras; preview them in the settings]=]},
     {GW.Enum.ChangelogType.feature, [=[Own loot roll bars with timer and item level]=]},
     {GW.Enum.ChangelogType.feature, [=[Guild bank in the look of the GW2 bank and an optional bind type label on items]=]},

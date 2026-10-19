@@ -135,7 +135,7 @@ local function LoadObjectivesPanel(sWindow)
         end
     end, dependence = {["objectives.enabled"] = true}, forceNewLine = true, hidden = GW.Classic})
 
-    p:AddGroupHeader(L["Boss times"])
+    p:AddGroupHeader(L["Boss Times"])
     p:AddOption(L["Mythic+ split times"], L["Shows when each boss died since the key started, compared to your best time on this key level."], {getterSetter = "objectives.encounterTimes.mythicPlus", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not (GW.Retail or GW.Mists)})
     p:AddOption(L["Dungeon fight times"], L["Shows how long each boss fight took, compared to your best time on this difficulty."], {getterSetter = "objectives.encounterTimes.dungeon", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
     p:AddOption(L["Raid fight times"], L["Shows how long each boss fight took, compared to your best time on this difficulty."], {getterSetter = "objectives.encounterTimes.raid", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})

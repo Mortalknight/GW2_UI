@@ -326,7 +326,7 @@ local function LoadCurrency(tabContainer)
     item = CreateFrame("Button", nil, fmMenu, "GwCharacterPanelMenuButtonTemplate")
     item.ToggleMe = GW.CreateBossTimesPage(curwin_outer)
     item:SetScript("OnClick", menuItem_OnClick)
-    item:SetText(GW.L["Boss times"])
+    item:SetText(GW.L["Boss Times"])
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu.items.raidinfo, "BOTTOMLEFT")
     fmMenu.items.bossTimes = item

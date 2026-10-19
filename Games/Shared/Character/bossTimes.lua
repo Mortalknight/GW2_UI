@@ -174,7 +174,7 @@ function GW.UpdateBossTimesPage()
     local dataProvider, numGroups = BuildDataProvider(page.searchText, page.filter)
     page.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
     local hasTimes = next(GW.private.encounterTimes or {}) ~= nil
-    page.empty:SetText(hasTimes and L["No matching boss times."] or L["No boss times yet."])
+    page.empty:SetText(hasTimes and L["No matching Boss Times."] or L["No Boss Times yet."])
     page.empty:SetShown(numGroups == 0)
 end
 
