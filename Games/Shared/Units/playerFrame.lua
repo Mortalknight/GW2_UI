@@ -10,7 +10,7 @@ function GwPlayerUnitFrameMixin:OnEvent(event, ...)
         self:UnitFrameData()
         self:UpdateHealthBar()
         self.powerbar:UpdatePowerData()
-    elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
+    elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED") then
         self:UnitFrameData()
         if event == "PLAYER_LEVEL_UP" then
             local level = ...
@@ -185,6 +185,7 @@ local function LoadPlayerFrame()
     frame:RegisterEvent("PLAYER_LEVEL_UP")
     frame:RegisterEvent("GROUP_ROSTER_UPDATE")
     frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "player")
+    frame:RegisterEvent("PORTRAITS_UPDATED")
     frame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     frame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")

@@ -36,7 +36,7 @@ addChange("12.1.0", {
     {GW.Enum.ChangelogType.bug, [=[Forever: tracked recipes and professions dragged to the action bars open again, without "action blocked" in combat; easier to read skill bar numbers]=]},
     {GW.Enum.ChangelogType.bug, [=[Hero panel: possible taint from the equipment flyout; reputation shows the session gain for renown factions]=]},
     {GW.Enum.ChangelogType.bug, [=[World map: no "action blocked" when closing it; Classic and TBC apply the map opacity right after login]=]},
-    {GW.Enum.ChangelogType.bug, [=[Smaller fixes: group leader crown on target and focus, Delve tier in the boss times, new profiles remember their character, same title size in all windows]=]},
+    {GW.Enum.ChangelogType.bug, [=[Smaller fixes: unit frame portraits no longer turn black now and then, group leader crown on target and focus, Delve tier in the boss times, new profiles remember their character, same title size in all windows]=]},
 })
 
 addChange("12.0.0", {

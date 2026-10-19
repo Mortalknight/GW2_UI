@@ -860,6 +860,10 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         end
     elseif event == "UNIT_THREAT_LIST_UPDATE" and self.showThreat then
         self:UpdateThreatValues()
+    elseif IsIn(event, "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED") then
+        if not self.activePortrait then
+            self:SetUnitPortrait()
+        end
     elseif GW.UnitIsUnit(unit, self.gwUnit) then
         if event == "UNIT_AURA" then
             GW.UpdateBuffLayout(self, event, unit, ...)
@@ -1239,6 +1243,8 @@ local function LoadUnitFrame(unit, frameInvert)
     end
 
     unitframe:RegisterUnitEvent("UNIT_FACTION", unit)
+    unitframe:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", unit)
+    unitframe:RegisterEvent("PORTRAITS_UPDATED")
     if unit == "target" then
         unitframe:RegisterEvent("PLAYER_TARGET_CHANGED")
         unitframe:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", unit)

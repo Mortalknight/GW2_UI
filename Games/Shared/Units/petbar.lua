@@ -173,7 +173,7 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         end
     elseif event == "UNIT_AURA" then
         GW.UpdateBuffLayout(self, event, unit, ...)
-    elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+    elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" or event == "PORTRAITS_UPDATED" then
         SetPortraitTexture(self.portrait, "pet")
     elseif event == "PLAYER_REGEN_ENABLED" then
         for i = 1, NUM_PET_ACTION_SLOTS do
@@ -503,6 +503,7 @@ local function LoadPetFrame(lm)
     end
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
+    playerPetFrame:RegisterEvent("PORTRAITS_UPDATED")
     playerPetFrame:RegisterEvent("PET_UI_UPDATE")
     playerPetFrame:RegisterEvent("PET_BAR_UPDATE")
     playerPetFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
