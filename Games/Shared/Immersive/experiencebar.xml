@@ -54,7 +54,7 @@
         </Layers>
         <Frames>
             <Button parentKey="rightButton">
-                <Size x="128" y="32"></Size>
+                <Size x="90" y="32"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>

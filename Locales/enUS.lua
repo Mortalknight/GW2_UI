@@ -241,6 +241,7 @@ L["Left"] = true
 L["Upcoming Level Rewards"] = true
 L["Trainable Now"] = true
 L["Next Levels"] = true
+L["Click to show the upcoming level rewards"] = true
 L["No matching rewards."] = true
 L["Visit a pet trainer once, then GW2 UI lists everything he teaches your pet."] = true
 L["Visit your class trainer once, then GW2 UI lists everything he teaches you."] = true

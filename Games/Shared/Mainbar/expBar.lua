@@ -688,11 +688,25 @@ local function LoadXPBar()
                 p.NextLevel.oldColor = {}
                 p.NextLevel.oldColor.r, p.NextLevel.oldColor.g, p.NextLevel.oldColor.b = p.NextLevel:GetTextColor()
                 p.NextLevel:SetTextColor(p.NextLevel.oldColor.r * 2, p.NextLevel.oldColor.g * 2, p.NextLevel.oldColor.b * 2)
+
+                if HAS_LEVEL_REWARDS and not IsAtMaxLevel() then
+                    local trainable, upcoming = GW.GetUpcomingSpellCounts()
+                    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                    GameTooltip:ClearLines()
+                    local label, value = GW.Colors.TextColors.LightHeader, GW.Colors.FallbackWhite
+                    GameTooltip:AddLine(L["Upcoming Level Rewards"], value:GetRGB())
+                    GameTooltip:AddDoubleLine(L["Trainable Now"], trainable, label.r, label.g, label.b, value:GetRGB())
+                    GameTooltip:AddDoubleLine(L["Next Levels"], upcoming, label.r, label.g, label.b, value:GetRGB())
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(GW.Colors.SkinColors.Disabled:WrapTextInColorCode(L["Click to show the upcoming level rewards"]), nil, nil, nil, true)
+                    GameTooltip:Show()
+                end
             end
         )
         experiencebar.rightButton:SetScript(
             "OnLeave",
             function(self)
+                GameTooltip_Hide()
                 local p = self:GetParent()
                 if p.NextLevel.oldColor == nil then
                     return

@@ -334,6 +334,12 @@ local function IsUpcomingSpellAvalible()
 end
 GW.IsUpcomingSpellAvalible = IsUpcomingSpellAvalible
 
+function GW.GetUpcomingSpellCounts()
+    EnsureUpcomingSpells()
+
+    return #trainableRewards, #upcomingLevelRewards
+end
+
 local function GetRewardDisplay(elementData)
     local icon, name = elementData.icon, elementData.name
 
