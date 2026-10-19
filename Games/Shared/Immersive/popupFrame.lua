@@ -126,7 +126,9 @@ local function ShowPopup(info, data)
     else
         popup.input:Hide()
     end
+    popup.hasFixedPosition = info.hasFixedPosition
     if info.hasFixedPosition then
+        popup:ClearAllPoints()
         popup:SetPoint(unpack(info.point))
     end
 

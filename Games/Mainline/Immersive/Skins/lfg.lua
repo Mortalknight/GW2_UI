@@ -996,7 +996,7 @@ local function ApplyPvPUISkin()
     local function GetPvPReward(itemRewards, currencyRewards)
         for _, reward in ipairs(currencyRewards or {}) do
             local info = C_CurrencyInfo.GetCurrencyInfo(reward.id)
-            if info and info.quality == ITEMQUALITY_ARTIFACT then
+            if info and info.quality == Enum.ItemQuality.Artifact then
                 local _, texture, _, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(reward.id, reward.quantity, info.name, info.iconFileID, info.quality)
                 return texture, quality
             end

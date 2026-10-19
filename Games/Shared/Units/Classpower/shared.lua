@@ -566,7 +566,7 @@ end
 -- COMBO POINTS (multi class use)
 local function powerCombo(self, event, ...)
     local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "COMBO_POINTS" then
+    if event ~= "CLASS_POWER_INIT" and event ~= "PLAYER_TARGET_CHANGED" and pType ~= "COMBO_POINTS" then
         return
     end
 
@@ -672,6 +672,9 @@ local function setComboBar(f)
     powerCombo(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    if not GW.isModern then
+        f:RegisterEvent("PLAYER_TARGET_CHANGED")
+    end
 end
 
 CP.HandleUnitAuraEvent = HandleUnitAuraEvent

@@ -103,13 +103,16 @@ local function UpdateAuraArtVisibility(self)
     end
 end
 
+-- same ids on every client, blizzards constant names differ (BEAR_FORM, DRUID_BEAR_FORM)
+local CAT_FORM_ID, BEAR_FORM_ID = 1, 5
+
 local function GetDruidFormArt()
     if GW.myClassID ~= GW.Enum.ClassIndex.Druid then return end
 
     local form = GetShapeshiftFormID()
-    if form == BEAR_FORM then
+    if form == BEAR_FORM_ID then
         return GetArt("BEAR")
-    elseif form == CAT_FORM then
+    elseif form == CAT_FORM_ID then
         return GetArt("CAT")
     end
 end

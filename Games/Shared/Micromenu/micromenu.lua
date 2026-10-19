@@ -1842,6 +1842,7 @@ local function LoadMicroMenu()
         proxy:SetAllPoints()
         mbf:SetFrameRef("notificationIcon" .. i, proxy)
     end
+    mbf:SetAttribute("numNotificationIcons", #(mbf.notificationIcons or {}))
 
     mbf:SetAttribute("_onenter", [=[
         local cf = self:GetFrameRef("cf")
@@ -1854,7 +1855,7 @@ local function LoadMicroMenu()
         cf:CallMethod("fadeIn", cf)
         cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
         -- the notification icons hang next to the container, hovering them keeps the bar shown
-        for i = 1, 3 do
+        for i = 1, self:GetAttribute("numNotificationIcons") or 0 do
             local icon = self:GetFrameRef("notificationIcon" .. i)
             if icon then
                 cf:AddToAutoHide(icon)

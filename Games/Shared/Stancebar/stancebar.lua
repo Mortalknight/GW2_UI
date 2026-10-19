@@ -63,9 +63,8 @@ end
 function GwStanceBarMixin:UpdateCooldown()
     local numForms = GetNumShapeshiftForms()
     for i = 1, NUM_STANCE_SLOTS do
-        if i <= numForms then
-            local button = self.buttons[i]
-            local cooldown = button and button.cooldown
+        local cooldown = i <= numForms and self.buttons[i] and self.buttons[i].cooldown
+        if cooldown then
             local start, duration, active = GetShapeshiftFormCooldown(i)
             if (active and active ~= 0) and start > 0 and duration > 0 then
                 cooldown:SetCooldown(start, duration)

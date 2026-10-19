@@ -7,6 +7,7 @@ local CP = GW.ClassPowers
 
 local function selectType(f)
     f:SetScript("OnEvent", nil)
+    f:SetScript("OnUpdate", nil)
     EventRegistry:UnregisterCallback("GW2_UI.ClasspowerPlayerUnitAura", "GW2_UI")
     f:UnregisterAllEvents()
 

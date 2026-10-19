@@ -529,9 +529,10 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
     if isMiss then
         local missType, spellId
         if event:find("RANGE", 1, true) or event:find("SPELL", 1, true) then
-            spellId = 6603
+            spellId = ...
             missType = select(4, ...)
         elseif event:find("SWING", 1, true) then
+            spellId = 6603 -- auto attack
             missType = ...
         elseif not isGuardianOrPet then
             spellId, _, _, missType = ...

@@ -426,7 +426,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         if GW.Retail and not self.isSkyridingBar then -- skyriding is not secret
             self:UpdateRetailFill()
         else
-            if spellChargeInfo.cooldownStartTime and spellChargeInfo.cooldownStartTime ~= 0 and spellChargeInfo.cooldownDuration and spellChargeInfo.cooldownDuration ~= 0 then
+            if spellChargeInfo and spellChargeInfo.cooldownStartTime and spellChargeInfo.cooldownStartTime ~= 0 and spellChargeInfo.cooldownDuration and spellChargeInfo.cooldownDuration ~= 0 then
                 self:UpdateAnim(spellChargeInfo.cooldownStartTime, spellChargeInfo.cooldownDuration, spellChargeInfo.currentCharges, spellChargeInfo.maxCharges)
             end
         end

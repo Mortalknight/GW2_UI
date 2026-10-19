@@ -17,6 +17,7 @@ function GW:FixBlizzardIssues()
                         if newsRequireUpdate then
                             CommunitiesGuildNewsFrame_OnEvent(frame, event)
                         end
+                        newsRequireUpdate = false
                         newsTimer = nil
                     end)
                 end

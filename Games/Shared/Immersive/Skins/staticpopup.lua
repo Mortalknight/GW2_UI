@@ -240,7 +240,7 @@ local function gwSetStaticPopupSize()
         else
             StaticPopup.ItemFrame.NameFrame:SetTexture(nil)
             StaticPopup.ItemFrame.Item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-            StaticPopup.ItemFrame.Item.icon:SetTexCoord(0.9, 0.1, 0.9, 0.1)
+            StaticPopup.ItemFrame.Item.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             StaticPopup.ItemFrame.Item.icon:GwSetInside()
         end
         StaticPopup.CloseButton:GwSkinButton(true)
@@ -337,11 +337,11 @@ local function LoadStaticPopupSkin()
 
         if _G["StaticPopup" .. i .. "ItemFrameNameFrame"] then
             _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:GwKill()
-            _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.9, 0.1, 0.9, 0.1)
+            _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:GwSetInside()
         else
             StaticPopup.ItemFrame.NameFrame:GwKill()
-            StaticPopup.ItemFrame.Item.icon:SetTexCoord(0.9, 0.1, 0.9, 0.1)
+            StaticPopup.ItemFrame.Item.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             StaticPopup.ItemFrame.Item.icon:GwSetInside()
         end
 

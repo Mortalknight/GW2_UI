@@ -110,8 +110,12 @@ local function CreateButton(chatFrame)
     button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png")
     button:GetNormalTexture():SetAlpha(0.35)
     button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    button:SetScript("OnClick", function()
-        ToggleWindow(chatFrame)
+    button:SetScript("OnClick", function(self, mouseButton)
+        if mouseButton == "RightButton" and chatFrame == ChatFrame1 then
+            OpenChatMenu(self)
+        else
+            ToggleWindow(chatFrame)
+        end
     end)
     button:SetScript("OnEnter", function(self) self:GetNormalTexture():SetAlpha(1) end)
     button:SetScript("OnLeave", function(self) self:GetNormalTexture():SetAlpha(0.35) end)

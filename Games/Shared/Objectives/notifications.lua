@@ -314,7 +314,7 @@ local function getNearestQuestPOIMists()
         if questID and isOnMap and hasLocalPOI then
             local _, poiX, poiY = QuestPOIGetIconInfo(questID)
 
-            local distance = CalculateDistance(x, y, poiX, poiY)
+            local distance = poiX and poiY and CalculateDistance(x, y, poiX, poiY)
             if distance and distance < minDistSqr then
                 minDistSqr = distance
                 closestQuestID = questID
@@ -654,10 +654,21 @@ local function CompassOnMouseUp(self, button)
 end
 
 local currentCompassData
+
+-- the radar ticker runs 20 times a second, it has to stop with the compass
+local function StopCompass(self)
+    self.compass:Hide()
+    if self.compass.Timer then
+        self.compass.Timer:Cancel()
+        self.compass.Timer = nil
+    end
+end
+
 function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
     if not GW.settings.objectives.compass then
         self.shouldDisplay = false
         self.compassQuestID = nil
+        StopCompass(self)
         return
     end
 
@@ -675,6 +686,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
     if not data then
         self.shouldDisplay = false
         self.compassQuestID = nil
+        StopCompass(self)
         return
     end
 
@@ -737,11 +749,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
 
         self.iconFrame.icon:SetTexture(nil)
     else
-        self.compass:Hide()
-        if self.compass.Timer then
-            self.compass.Timer:Cancel()
-            self.compass.Timer = nil
-        end
+        StopCompass(self)
     end
 
     local titleText = data.title or ""

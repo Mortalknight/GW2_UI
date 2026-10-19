@@ -24,10 +24,10 @@ local function VoidMetamorphosisGetCurrentMinMaxPower(self)
 end
 
 local function counterVoidMetamorphosis(self)
-    local inVoidMetamorphosis = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_SPELL_ID)
+    self.inVoidMetamorphosis = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_SPELL_ID) ~= nil
     self.currentPoints = 0
 
-    if inVoidMetamorphosis then
+    if self.inVoidMetamorphosis then
         local silenceTheWhispersAura = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.SILENCE_THE_WHISPERS_SPELL_ID)
         if silenceTheWhispersAura then
 			self.currentPoints = silenceTheWhispersAura.applications;

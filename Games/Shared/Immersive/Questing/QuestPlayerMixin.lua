@@ -127,7 +127,8 @@ function GwImmersiveQuestingPlayerModelMixin:SetAction(action)
             self:SetAnimation(emotes.IdleRead)
             self:ApplySpellVisualKit(29521, false)
         else
-            local frame = NO_KIT_FRAMES[self.race_id][self.body_type]
+            local raceFrames = NO_KIT_FRAMES[self.race_id]
+            local frame = raceFrames and raceFrames[self.body_type] or 180
             if frame < 0 then
                 self:FreezeAnimation(emotes.Sheath, 0, -frame)
             else

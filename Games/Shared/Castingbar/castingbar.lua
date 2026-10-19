@@ -593,7 +593,7 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
         return
     end
 
-    if IsIn(event, "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
+    if IsIn(event, "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_UPDATE", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
         if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
             spell, _, icon, startTime, endTime, isTradeSkill, _, spellID, isEmpowered, numStages = UnitChannelInfo(self.unit)
             if isEmpowered then
@@ -635,9 +635,9 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
         self.max = self.endTime - self.startTime
 
         if self.isChanneling then
-            self.duration = endTime - GetTime()
+            self.duration = self.endTime - GetTime()
         else
-            self.duration = GetTime() - startTime
+            self.duration = GetTime() - self.startTime
         end
 
         self.highlight:Hide()

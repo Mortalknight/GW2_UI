@@ -874,7 +874,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             self:StartCastbar()
         elseif GW.isModern and IsIn(event, "UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "UNIT_SPELLCAST_INTERRUPTIBLE") then
-            self:CastInterruptible()
+            self:CastInterruptible(event)
         elseif IsIn(event, "UNIT_SPELLCAST_DELAYED", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
             self:StartCastbar()
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
@@ -1225,6 +1225,7 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", unit)
+    unitframe:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTIBLE", unit)
     unitframe:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
     unitframe:RegisterUnitEvent("UNIT_DISPLAYPOWER", unit)
 

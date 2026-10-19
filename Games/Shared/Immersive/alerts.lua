@@ -684,9 +684,10 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
     KeepVisible(frame)
     frame.backdrop:SetBackdrop(levelup and constBackdropLevelUpAlertFrame or constBackdropAlertFrame)
 
-    if not InCombatLockdown() and targetName then
-        frame:SetAttribute("type", "macro")
-        frame:SetAttribute("macrotext", "/target " .. targetName)
+    -- the toast frames are reused, a toast without target must not target the last one
+    if not InCombatLockdown() then
+        frame:SetAttribute("type", targetName and "macro" or nil)
+        frame:SetAttribute("macrotext", targetName and ("/target " .. targetName) or nil)
     end
 
     if icon and C_Texture.GetAtlasInfo(icon) then

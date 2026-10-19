@@ -176,12 +176,13 @@ function GW.LoadPDTitles(parent, fmMenu)
         "OnEvent",
         function()
             if GW.inWorld then
-                saveKnowenTitles(titlewin)
+                local text = titlewin.input:GetText()
+                saveKnowenTitles(titlewin, text ~= "" and text or nil)
             end
         end
     )
     titlewin:RegisterEvent("KNOWN_TITLES_UPDATE")
-    titlewin:RegisterEvent("UNIT_NAME_UPDATE")
+    titlewin:RegisterUnitEvent("UNIT_NAME_UPDATE", "player")
 
     fmMenu:SetupBackButton(titlewin.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
 

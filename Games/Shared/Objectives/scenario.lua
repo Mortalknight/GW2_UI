@@ -1230,8 +1230,9 @@ local function SetupProvingGroundTimer(self, timerID, duration)
         self.pgTimerThrottle = 0
 
         local _, elapsedTime = GetWorldElapsedTime(timerID)
-        self.timer:SetValue(1 - (elapsedTime / duration))
-        self.timerString:SetText(SecondsToClock(duration - elapsedTime))
+        local remaining = math.max(0, duration - elapsedTime)
+        self.timer:SetValue(remaining)
+        self.timerString:SetText(SecondsToClock(remaining))
     end)
     self.timer:Show()
     self.needToShowTimer = true

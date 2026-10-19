@@ -341,38 +341,11 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
 end
 GW.setActionButtonStyle = setActionButtonStyle
 
-local function helper_RangeUpdate(slot, inRange, checkRange)
-    local btn = nil
-    local indicator = "RED_OVERLAY"
-    local barPrefix = "Gw"
-    if slot <= 24 then
-        btn = MainActionBar.gw_Buttons[slot]
-        indicator = GW.settings.actionbars.rangeIndicator
-        -- 13 to 24 is page 2
-    elseif slot <= 36 then
-        btn = _G[barPrefix .. "MultiBarRight"].gw_Buttons[slot - 24]
-    elseif slot <= 48 then
-        btn = _G[barPrefix .. "MultiBarLeft"].gw_Buttons[slot - 36]
-    elseif slot <= 60 then
-        btn = _G[barPrefix .. "MultiBarBottomRight"].gw_Buttons[slot - 48]
-    elseif slot <= 72 then
-        btn = _G[barPrefix .. "MultiBarBottomLeft"].gw_Buttons[slot - 60]
-    elseif slot <= 144 then
-        -- not sure where the 73-144 range gets used?
-    elseif slot <= 156 then
-        btn = _G[barPrefix .. "MultiBar5"].gw_Buttons[slot - 144]
-    elseif slot <= 168 then
-        btn = _G[barPrefix .. "MultiBar6"].gw_Buttons[slot - 156]
-    elseif slot <= 180 then
-        btn = _G[barPrefix .. "MultiBar7"].gw_Buttons[slot - 168]
-    end
+local RANGE_MULTIBARS = {"MultiBarRight", "MultiBarLeft", "MultiBarBottomRight", "MultiBarBottomLeft", "MultiBar5", "MultiBar6", "MultiBar7"}
 
-    if not btn then
-        return
-    end
-
-    if checkRange and not inRange then
-        btn.gw_IsOutOfRange = true
+local function SetOutOfRange(btn, indicator, outOfRange)
+    btn.gw_IsOutOfRange = outOfRange
+    if outOfRange then
         if indicator == "RED_INDICATOR" or indicator == "BOTH" then
             btn.gw_RangeIndicator:Show()
         end
@@ -380,12 +353,33 @@ local function helper_RangeUpdate(slot, inRange, checkRange)
             btn.icon:SetVertexColor(out_R, out_G, out_B, 1, true)
         end
     else
-        btn.gw_IsOutOfRange = false
         if btn.gw_RangeIndicator then
             btn.gw_RangeIndicator:Hide()
         end
         local vc = btn.icon.gw_SavedVertexColor
         btn.icon:SetVertexColor(vc.r, vc.g, vc.b, vc.a, true)
+    end
+end
+
+-- pages, stances and override bars change the action of a button, so it is matched by its current one
+local function helper_RangeUpdate(slot, inRange, checkRange)
+    local outOfRange = checkRange and not inRange
+    for _, btn in pairs(MainActionBar.gw_Buttons) do
+        if tonumber(btn.action) == slot then
+            SetOutOfRange(btn, GW.settings.actionbars.rangeIndicator, outOfRange)
+        end
+    end
+
+    local barPrefix = "Gw"
+    for _, barName in ipairs(RANGE_MULTIBARS) do
+        local bar = _G[barPrefix .. barName]
+        if bar and bar.gw_Buttons then
+            for _, btn in pairs(bar.gw_Buttons) do
+                if tonumber(btn.action) == slot then
+                    SetOutOfRange(btn, "RED_OVERLAY", outOfRange)
+                end
+            end
+        end
     end
 end
 

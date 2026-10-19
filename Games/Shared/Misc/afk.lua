@@ -178,7 +178,9 @@ local function CheckAFK(self)
 
     local inPetBattle = C_PetBattles and C_PetBattles.IsInBattle()
     if GW.UnitIsAFK("player") and not inPetBattle then
-        ShowAFKScreen(self)
+        if not self.isAFK then
+            ShowAFKScreen(self)
+        end
     elseif self.isAFK then
         HideAFKScreen(self)
     end

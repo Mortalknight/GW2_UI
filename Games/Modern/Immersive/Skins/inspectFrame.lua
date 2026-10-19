@@ -235,6 +235,7 @@ local function SkinTabs()
     end
 
     hooksecurefunc("PanelTemplates_SelectTab", function(tab)
+        if tab:GetParent() ~= InspectFrame then return end
         local name = tab:GetName()
         local text = tab.Text or (name and _G[name .. "Text"])
         if text then

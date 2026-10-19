@@ -191,7 +191,7 @@ end
 
 local default_map = "Misc/default"
 local function getMapBackground(self)
-    local map_id = self.mapID or C_Map.GetBestMapForUnit("player") or 0
+    local map_id = (self.mapId ~= 0 and self.mapId) or C_Map.GetBestMapForUnit("player") or 0
     if map_id == 0 then
         GW.Debug("map - no id:", map_id)
         return default_map

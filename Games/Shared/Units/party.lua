@@ -540,10 +540,13 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
         ForceUpdateAuras(self)
     elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
         self:UpdateAwayData()
+        if event == "UNIT_PHASE" then
+            self:UpdatePortrait()
+        end
     elseif event == "UNIT_CONNECTION" then
         self:UpdateAwayData()
         self:UpdatePortrait()
-    elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
+    elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" then
         self:UpdatePortrait()
     elseif event == "UNIT_NAME_UPDATE" or event == "PLAYER_ROLES_ASSIGNED" then
         self:UpdateFrame()
@@ -635,6 +638,27 @@ local function UpdatePetVisibility(alwaysHide)
 end
 GW.UpdatePartyPetVisibility = UpdatePetVisibility
 
+local FRAME_UNIT_EVENTS = { "UNIT_AURA", "UNIT_LEVEL", "UNIT_PHASE", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_POWER_FREQUENT", "UNIT_MAXPOWER", "UNIT_NAME_UPDATE", "UNIT_MODEL_CHANGED", "UNIT_HEAL_PREDICTION", "UNIT_THREAT_SITUATION_UPDATE", "UNIT_PORTRAIT_UPDATE", "UNIT_CONNECTION" }
+local PET_UNIT_EVENTS = { "UNIT_AURA", "UNIT_LEVEL", "UNIT_PHASE", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_POWER_FREQUENT", "UNIT_MAXPOWER", "UNIT_NAME_UPDATE", "UNIT_HEAL_PREDICTION" }
+
+-- RegisterUnitEvent replaces the unit of an event, so this also moves a frame to another unit
+local function RegisterPartyUnitEvents(frame, events, unit)
+    for _, ev in ipairs(events) do
+        if ev ~= "UNIT_AURA" or not GW.isModern then -- on Retail the AuraContainer handles aura updates itself
+            frame:RegisterUnitEvent(ev, unit)
+        end
+    end
+    if GW.isModern or GW.Mists then
+        frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", unit)
+        frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", unit)
+    elseif GW.Classic then
+        frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
+    end
+    if frame.aurasContainer then
+        frame.aurasContainer:SetUnit(unit)
+    end
+end
+
 local function UpdatePlayerInPartySetting(alwaysHide)
     for i, frame in ipairs(partyFrames) do
         local petFrame = frame.PetFrame
@@ -643,12 +667,15 @@ local function UpdatePlayerInPartySetting(alwaysHide)
         frame.gwUnit = unit
         frame.guid = UnitGUID(unit)
         frame:SetAttribute("unit", unit)
+        RegisterPartyUnitEvents(frame, FRAME_UNIT_EVENTS, unit)
         frame:OnEvent("load")
 
         local petUnit = GetPartyPetUnit(i)
         petFrame.gwUnit = petUnit
         petFrame.guid = UnitGUID(petUnit)
         petFrame:SetAttribute("unit", petUnit)
+        petFrame:RegisterUnitEvent("UNIT_PET", unit)
+        RegisterPartyUnitEvents(petFrame, PET_UNIT_EVENTS, petUnit)
         petFrame:OnEvent("load")
 
         if alwaysHide then
@@ -892,7 +919,7 @@ local function CreatePartyFrame(i, isPlayer)
     petFrame:SetScript("OnLeave", GameTooltip_Hide)
     petFrame:SetScript("OnEnter", function()
         GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
-        GameTooltip:SetUnit(petUnit)
+        GameTooltip:SetUnit(petFrame.gwUnit)
         GameTooltip:Show()
     end)
     GW.AddToClique(petFrame)
@@ -903,19 +930,8 @@ local function CreatePartyFrame(i, isPlayer)
         petFrame:RegisterEvent(ev)
     end
     petFrame:RegisterUnitEvent("UNIT_PET", registerUnit)
-    for _, ev in ipairs({ "UNIT_AURA", "UNIT_LEVEL", "UNIT_PHASE", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_POWER_UPDATE", "UNIT_MAXPOWER", "UNIT_NAME_UPDATE", "UNIT_HEAL_PREDICTION" }) do
-        if ev ~= "UNIT_AURA" or not GW.isModern then -- on Retail the AuraContainer handles aura updates itself
-            petFrame:RegisterUnitEvent(ev, petUnit)
-        end
-    end
+    RegisterPartyUnitEvents(petFrame, PET_UNIT_EVENTS, petUnit)
     petFrame:OnEvent("load")
-
-    if GW.isModern or GW.Mists then
-        petFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", petUnit)
-        petFrame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", petUnit)
-    elseif GW.Classic then
-        petFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", petUnit)
-    end
 
     -- Speichere den Pet-Frame im Party-Frame
     frame.PetFrame = petFrame
@@ -967,7 +983,7 @@ local function CreatePartyFrame(i, isPlayer)
     frame:SetScript("OnLeave", GameTooltip_Hide)
     frame:SetScript("OnEnter", function()
         GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
-        GameTooltip:SetUnit(registerUnit)
+        GameTooltip:SetUnit(frame.gwUnit)
         GameTooltip:Show()
     end)
     GW.AddToClique(frame)
@@ -975,22 +991,11 @@ local function CreatePartyFrame(i, isPlayer)
     for _, ev in ipairs({ "GROUP_ROSTER_UPDATE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED", "PLAYER_TARGET_CHANGED", "INCOMING_RESURRECT_CHANGED", "PORTRAITS_UPDATED", "PLAYER_ENTERING_WORLD", "PLAYER_ROLES_ASSIGNED" }) do
         frame:RegisterEvent(ev)
     end
-    for _, ev in ipairs({ "UNIT_AURA", "UNIT_LEVEL", "UNIT_PHASE", "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_POWER_FREQUENT", "UNIT_MAXPOWER", "UNIT_NAME_UPDATE", "UNIT_MODEL_CHANGED", "UNIT_HEAL_PREDICTION", "UNIT_THREAT_SITUATION_UPDATE", "UNIT_PORTRAIT_UPDATE", "UNIT_CONNECTION" }) do
-        if ev ~= "UNIT_AURA" or not GW.isModern then -- on Retail the AuraContainer handles aura updates itself
-            frame:RegisterUnitEvent(ev, registerUnit)
-        end
-    end
+    RegisterPartyUnitEvents(frame, FRAME_UNIT_EVENTS, registerUnit)
     frame:SetScript("OnEvent", frame.OnEvent)
 
     if GW.isModern then
         frame:RegisterEvent("INCOMING_SUMMON_CHANGED")
-    end
-
-    if GW.isModern or GW.Mists then
-        frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
-        frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", registerUnit)
-    elseif GW.Classic then
-        frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
     end
 
     -- 12.1: private auras no longer need their own anchors —
