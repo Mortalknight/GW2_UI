@@ -393,13 +393,12 @@ local function LoadStaticPopupSkin()
             self.CloseDialog.Border:Hide()
 
             local tex = self.CloseDialog:CreateTexture(nil, "BACKGROUND")
-            tex:SetPoint("TOPLEFT", self.closeDialog, "TOPLEFT", 0, 0)
-            tex:SetPoint("BOTTOMRIGHT", self.closeDialog, "BOTTOMRIGHT", 0, 0)
+            tex:SetAllPoints(self.CloseDialog)
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
             self.CloseDialog.tex = tex
 
-            self.CloseDialog.ConfirmButton:GwSkinButton(false, true)
-            self.CloseDialog.ResumeButton:GwSkinButton(false, true)
+            self.CloseDialog.Buttons.ConfirmButton:GwSkinButton(false, true)
+            self.CloseDialog.Buttons.ResumeButton:GwSkinButton(false, true)
         end
     end)
 end

@@ -156,7 +156,7 @@ local function rename_OnClick(self)
             GW.globalSettings:SetProfile(newName)
             GW.globalSettings:CopyProfile(oldName, true)
             GW.globalSettings:DeleteProfile(oldName, true)
-            GW.globalSettings:SetProfile(currentProfile)
+            GW.globalSettings:SetProfile(currentProfile == oldName and newName or currentProfile)
 
             local oldLayoutName = L["Profiles"] .. " - " .. oldName
             local newLayoutName = L["Profiles"] .. " - " .. newName

@@ -299,11 +299,22 @@ function GwImmersiveQuestFrameMixin:clearQuestReq()
     self.container.cancelButton:Hide()
 end
 
+-- the dialog only takes the keyboard out of combat: in combat the key propagation can't be switched,
+-- the dialog would keep the keys of the player
+local function EnableDialogKeys(self, enable)
+    self:EnableKeyboard(enable)
+    if enable then
+        self:SetPropagateKeyboardInput(true)
+    end
+end
+
 function GwImmersiveQuestFrameMixin:OnShow()
     if _G.GwImmersiveQuestDebugFrame then
         _G.GwImmersiveQuestDebugFrame:Show()
     end
-    self:EnableKeyboard(true)
+    if not InCombatLockdown() then
+        EnableDialogKeys(self, true)
+    end
     self:SetScript("OnKeyDown", self.OnKeyDown)
     if self.was_showing then
         -- this was just a temporary hide from the load/cinematic handler, don't setup
@@ -514,10 +525,8 @@ function GwImmersiveQuestFrameMixin:OnKeyDown(key)
             self:SetPropagateKeyboardInput(false)
         end
         self:prevGossip()
-    else
-        if not inCombat then
-            self:SetPropagateKeyboardInput(true)
-        end
+    elseif not inCombat then
+        self:SetPropagateKeyboardInput(true)
     end
 end
 
@@ -606,6 +615,10 @@ function GwImmersiveQuestFrameMixin:OnEvent(event, ...)
     elseif event == "CINEMATIC_STOP" then
         self.in_cine = false
         deferredShow(self)
+    elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
+        if self:IsShown() then
+            EnableDialogKeys(self, event == "PLAYER_REGEN_ENABLED")
+        end
     elseif event == "PLAYER_CHOICE_CLOSE" then
         self.recent_player_choice = true
         C_Timer.After(2, function () self.recent_player_choice = false end)
@@ -677,6 +690,8 @@ function GW.LoadImmersiveQuesting()
     frame:RegisterEvent("QUEST_PROGRESS")
     frame:RegisterEvent("CINEMATIC_START")
     frame:RegisterEvent("CINEMATIC_STOP")
+    frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    frame:RegisterEvent("PLAYER_REGEN_ENABLED")
     if GW.Retail then
         frame:RegisterEvent("PLAYER_CHOICE_CLOSE")
         frame:RegisterEvent("PLAYER_CHOICE_UPDATE")

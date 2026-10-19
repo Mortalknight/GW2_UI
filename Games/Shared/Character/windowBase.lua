@@ -525,7 +525,7 @@ function GW.LoadCharacter()
     end
 
     if InCombatLockdown() then
-        GW.CombatQueue:Queue("load_character_window", GW.LoadCharacterWindowsFromList, {config.windowsList, config.charSecure_OnClick, config.charSecure_OnAttributeChanged})
+        GW.CombatQueue:Queue("load_character_window", GW.LoadCharacter)
         return
     end
 

@@ -745,7 +745,7 @@ end
 function GwUnitFrameMixin:UpdateThreatValues()
     self.threatValue = select(3, UnitDetailedThreatSituation("player", self.gwUnit))
 
-    if self.threatValue == nil then
+    if GW.IsSecretValue(self.threatValue) or self.threatValue == nil then
         self.threatString:SetText("")
         self.threattabbg:SetAlpha(0.0)
     else

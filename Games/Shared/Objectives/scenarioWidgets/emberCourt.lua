@@ -3,11 +3,12 @@ local GW = select(2, ...)
 
 local function addEmberCourtData(container)
     if GW.Location.GetMapID() == 1644 then
-        if BottomScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
+        local BottomScenarioWidgetContainerBlock = ScenarioObjectiveTracker and ScenarioObjectiveTracker.BottomWidgetContainerBlock
+        if BottomScenarioWidgetContainerBlock and BottomScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
             container.block.numObjectives = container.block.numObjectives + 1
             local objectiveBlock = container.block:GetObjectiveBlock(container.block.numObjectives)
             BottomScenarioWidgetContainerBlock.gwBlock = objectiveBlock
-            objectiveBlock:SetHeight(max(BottomScenarioWidgetContainerBlock.height, BottomScenarioWidgetContainerBlock.WidgetContainer:GetHeight()))
+            objectiveBlock:SetHeight(max(BottomScenarioWidgetContainerBlock.height or 0, BottomScenarioWidgetContainerBlock.WidgetContainer:GetHeight()))
             BottomScenarioWidgetContainerBlock.SetParent = nil
             BottomScenarioWidgetContainerBlock.ClearAllPoints = nil
             BottomScenarioWidgetContainerBlock.SetPoint = nil

@@ -190,7 +190,7 @@ function GwHealthglobeRepairMixin:OnEvent(event)
     self:SetShown(needRepair)
 end
 
-function GwHealthglobeRepairMixin:RepairOnEnter()
+function GwHealthglobeRepairMixin:OnEnter()
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
     if self.gearBroken then

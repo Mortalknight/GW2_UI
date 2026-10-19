@@ -77,11 +77,10 @@ end
 -- Main logic
 local function Update(resultID)
     local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-    local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1], nil, searchResultInfo.isWarMode);
-
-    if not searchResultInfo then
-        GW.Debug("debug", "cache not updated correctly, the number of results is nil.")
+    if not searchResultInfo or GW.IsSecretValue(searchResultInfo.numMembers) then
+        return false
     end
+    local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1], nil, searchResultInfo.isWarMode);
 
     if not searchResultInfo.numMembers or searchResultInfo.numMembers == 0 then
         GW.Debug("debug", "cache not updated correctly, the number of result.numMembers is nil or 0.")
@@ -92,7 +91,7 @@ local function Update(resultID)
     for i = 1, searchResultInfo.numMembers do
         local memberInfo = C_LFGList.GetSearchResultPlayerInfo(resultID, i)
         if memberInfo and memberInfo.assignedRole then
-            AddPlayer(memberInfo.assignedRole, memberInfo.classFilename, memberInfo.specName)
+            AddPlayer(memberInfo.assignedRole, memberInfo.classFilename, memberInfo.specName or "")
         end
     end
 

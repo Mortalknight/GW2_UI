@@ -694,7 +694,7 @@ end
 
 function GW.LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
-    GetMinimapShape = GetMinimapShape
+    _G.GetMinimapShape = GetMinimapShape
 
     GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "minimap", "Blizzard,Map", {Minimap:GetSize()}, nil, nil, UpdateButtonSide)
     Minimap:ClearAllPoints()

@@ -718,8 +718,7 @@ local function AdoptProfessionTab(tab)
 end
 
 local function EmbedProfessionsFrame()
-    -- without the UI panel layout ShowUIPanel/HideUIPanel are plain Show/Hide
-    ProfessionsFrame:SetAttribute("UIPanelLayout-defined", false)
+    ProfessionsFrame:SetAttribute("UIPanelLayout-defined", true)
     ProfessionsFrame:SetAttribute("UIPanelLayout-enabled", false)
     ProfessionsFrame:SetAttribute("UIPanelLayout-area", nil)
 

@@ -15,10 +15,6 @@ local animations = GW.animations
 
 local l = CreateFrame("Frame") -- Main event frame
 
-if GW.CheckForPasteAddon() and GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
-    GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
-end
-
 local loaded = false
 local forcedMABags = false
 
@@ -512,6 +508,10 @@ local function evPlayerLogin(self)
         return
     end
     GW.LoadFonts()
+
+    if GW.CheckForPasteAddon() and GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
+        GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
+    end
 
     -- Remove old debuffs from db
     GW.RemoveOldRaidDebuffsFormProfiles()

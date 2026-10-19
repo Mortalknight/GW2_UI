@@ -42,6 +42,27 @@ local function DisplayHoverBinding()
         end)
         hooksecurefunc(GameTooltip, "Hide", function(self) for _, tt in pairs(self.shoppingTooltips) do tt:Hide() end end)
 
+        -- once the spell tooltip hides, it shows the bindings of the hovered button instead
+        GameTooltip:HookScript("OnHide", function(self)
+            local binding = bind.tooltipBinding
+            if not binding then return end
+            bind.tooltipBinding = nil
+
+            self:SetOwner(bind, "ANCHOR_NONE")
+            self:SetPoint("BOTTOM", bind, "TOP", 0, 1)
+            self:AddLine(bind.button.name, 1, 1, 1)
+            bind.button.bindings = {GetBindingKey(binding)}
+            if #bind.button.bindings == 0 then
+                self:AddLine(NOT_BOUND, .6, .6, .6)
+            else
+                self:AddDoubleLine(KEY_BINDING, L['Key'], .6, .6, .6, .6, .6, .6)
+                for i = 1, #bind.button.bindings do
+                    self:AddDoubleLine(i, bind.button.bindings[i])
+                end
+            end
+            self:Show()
+        end)
+
         bind:SetScript("OnEvent", function(self) self:Deactivate(false) end)
         bind:SetScript("OnLeave", function(self) self:HideFrame() end)
         bind:SetScript("OnKeyUp", function(self, key) self:Listener(key) end)
@@ -52,6 +73,7 @@ local function DisplayHoverBinding()
             if not self.enabled or InCombatLockdown() then return end
             self.button = b
             self.spellmacro = spellmacro
+            self.tooltipBinding = nil
 
             self:ClearAllPoints()
             self:SetAllPoints(b)
@@ -65,22 +87,7 @@ local function DisplayHoverBinding()
 
                 GameTooltip:AddLine(L['Trigger'])
                 GameTooltip:Show()
-                GameTooltip:SetScript("OnHide", function(self)
-                    self:SetOwner(bind, "ANCHOR_NONE")
-                    self:SetPoint("BOTTOM", bind, "TOP", 0, 1)
-                    self:AddLine(bind.button.name, 1, 1, 1)
-                    bind.button.bindings = {GetBindingKey(spellmacro .. " " .. bind.button.name)}
-                    if #bind.button.bindings == 0 then
-                        self:AddLine(NOT_BOUND, .6, .6, .6)
-                    else
-                        self:AddDoubleLine(KEY_BINDING, L['Key'], .6, .6, .6, .6, .6, .6)
-                        for i = 1, #bind.button.bindings do
-                            self:AddDoubleLine(i, bind.button.bindings[i])
-                        end
-                    end
-                    self:Show()
-                    self:SetScript("OnHide", nil)
-                end)
+                bind.tooltipBinding = self.button.name and (spellmacro .. " " .. self.button.name)
             elseif spellmacro == "MACRO" then
                 self.button.id = self.button:GetID()
 
@@ -116,22 +123,7 @@ local function DisplayHoverBinding()
 
                 GameTooltip:AddLine(L['Trigger'])
                 GameTooltip:Show()
-                GameTooltip:SetScript("OnHide", function(self)
-                    self:SetOwner(bind, "ANCHOR_NONE")
-                    self:SetPoint("BOTTOM", bind, "TOP", 0, 1)
-                    self:AddLine(bind.button.name, 1, 1, 1)
-                    bind.button.bindings = {GetBindingKey(bind.button.bindstring)}
-                    if #bind.button.bindings == 0 then
-                        self:AddLine(NOT_BOUND, .6, .6, .6)
-                    else
-                        self:AddDoubleLine(KEY_BINDING, L['Key'], .6, .6, .6, .6, .6, .6)
-                        for i = 1, #bind.button.bindings do
-                            self:AddDoubleLine(i, bind.button.bindings[i])
-                        end
-                    end
-                    self:Show()
-                    self:SetScript("OnHide", nil)
-                end)
+                bind.tooltipBinding = self.button.bindstring
             else
                 self.button.action = tonumber(b.action)
                 self.button.name = b:GetName()
@@ -157,22 +149,7 @@ local function DisplayHoverBinding()
 
                 GameTooltip:AddLine(L['Trigger'])
                 GameTooltip:Show()
-                GameTooltip:SetScript("OnHide", function(self)
-                    self:SetOwner(bind, "ANCHOR_NONE")
-                    self:SetPoint("BOTTOM", bind, "TOP", 0, 1)
-                    self:AddLine(bind.button.name, 1, 1, 1)
-                    bind.button.bindings = {GetBindingKey(bind.button.bindstring)}
-                    if #bind.button.bindings == 0 then
-                        self:AddLine(NOT_BOUND, .6, .6, .6)
-                    else
-                        self:AddDoubleLine(KEY_BINDING, L['Key'], .6, .6, .6, .6, .6, .6)
-                        for i = 1, #bind.button.bindings do
-                            self:AddDoubleLine(i, bind.button.bindings[i])
-                        end
-                    end
-                    self:Show()
-                    self:SetScript("OnHide", nil)
-                end)
+                bind.tooltipBinding = self.button.bindstring
             end
         end
 
@@ -224,6 +201,7 @@ local function DisplayHoverBinding()
             self:RegisterEvent("PLAYER_REGEN_DISABLED")
         end
         function bind:Deactivate(save)
+            self.tooltipBinding = nil
             if save then
                 SaveBindings(GetCurrentBindingSet())
                 DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L['All key bindings have been saved.'])

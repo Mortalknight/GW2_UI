@@ -700,7 +700,7 @@ local function SkinLookingForGroupFrames()
 
                 local result = C_LFGList.GetSearchResultInfo(button.resultID)
 
-                if not result then
+                if not result or GW.IsSecretValue(result.numMembers) then
                     return
                 end
 
