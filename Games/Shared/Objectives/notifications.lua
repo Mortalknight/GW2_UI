@@ -158,7 +158,7 @@ local function getNearestQuestPOIRetail()
     if not closestQuestID then
         for questLogIndex = 1, numQuests do
             local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
-            local questData = QuestCache:Get(questID)
+            local questData = GW.QuestCache:Get(questID)
             local isOnMap, hasLocalPOI = questData:IsOnMap()
             if isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
                 local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
@@ -190,7 +190,7 @@ local function getNearestQuestPOIRetail()
 
     if not poiX then return nil end
 
-    local questData = QuestCache:Get(closestQuestID)
+    local questData = GW.QuestCache:Get(closestQuestID)
     local isCampaign = GW.IsTopContainerQuest and GW.IsTopContainerQuest(questData) or questData:IsCampaign()
     local isFrequent = questData.frequency and questData.frequency > 0
     local objectiveText = isWQ and GW.ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))

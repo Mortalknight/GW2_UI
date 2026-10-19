@@ -216,8 +216,8 @@ local MODULES = {
     { setting = "unitframes.party.enabled", name = PARTY },
     { setting = "groupFrames.party.enabled", name = USE_RAID_STYLE_PARTY_FRAMES },
     { setting = "groupFrames.enabled", name = RAID_FRAMES_LABEL or RAID },
-    { setting = "actionbars.enabled", name = BINDING_HEADER_ACTIONBAR },
-    { setting = "micromenu.enabled", name = L["Micro Bar"] },
+    { setting = "actionbars.enabled", name = BINDING_HEADER_ACTIONBAR, gamepadReplaced = true },
+    { setting = "micromenu.enabled", name = L["Micro Bar"], gamepadReplaced = true },
     { setting = "hud.xpBar", name = XPBAR_LABEL },
     { setting = "minimap.enabled", name = MINIMAP_LABEL or MINIMAP_ZOOM },
     { setting = "bags.enabled", name = INVENTORY_TOOLTIP },
@@ -233,6 +233,11 @@ local MODULES = {
     { setting = "immersiveQuesting.enabled", name = L["Immersive Questing"] },
     { setting = "tooltip.enabled", name = L["Tooltips"] },
 }
+
+-- the gamepad interface brings its own action bars and micro menu
+local function IsModuleShown(module)
+    return not module.hidden and not (module.gamepadReplaced and GW.IsGamepadInterface())
+end
 
 -- flavor gated steps drop out entirely, the progress dots follow #STEPS
 local function RemoveHiddenSteps(steps)
@@ -421,7 +426,7 @@ STEPS = RemoveHiddenSteps({
         buildContent = function(content, step)
             local shown = {}
             for _, module in ipairs(MODULES) do
-                if not module.hidden then
+                if IsModuleShown(module) then
                     tinsert(shown, module)
                 end
             end
@@ -472,7 +477,7 @@ STEPS = RemoveHiddenSteps({
         onNext = function(_, step)
             local enabled, total, names = 0, 0, {}
             for _, module in ipairs(MODULES) do
-                if not module.hidden then
+                if IsModuleShown(module) then
                     total = total + 1
                     if GetModuleValue(module.setting) then
                         enabled = enabled + 1

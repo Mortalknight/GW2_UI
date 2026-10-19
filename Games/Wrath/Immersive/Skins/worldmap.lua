@@ -77,8 +77,6 @@ local function LoadWorldMapSkin()
 
 
     WorldMapFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
-
-    --ShowUIPanel(WorldMapFrame)
     WorldMapFrame:SetAttribute("UIPanelLayout-area", "center")
     WorldMapFrame:SetAttribute("UIPanelLayout-enabled", false)
     WorldMapFrame:SetAttribute("UIPanelLayout-allowOtherPanels", true)

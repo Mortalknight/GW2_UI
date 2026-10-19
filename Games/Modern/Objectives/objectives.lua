@@ -512,7 +512,7 @@ function GwQuestLogMixin:UpdateLayout()
 
     for _, curQuestId in ipairs(watchedQuestIDs) do
         if curQuestId then
-            local q = QuestCache:Get(curQuestId)
+            local q = GW.QuestCache:Get(curQuestId)
             local isCampaign = IsTopContainerQuest(q)
             if (isCampaign and self.isCampaignContainer) or (not isCampaign and not self.isCampaignContainer) then
                 if shouldShowHeader then
@@ -597,7 +597,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
     self.isUpdating = true
 
     local questWatchId = self:GetQuestWatchId(questID)
-    local q = QuestCache:Get(questID)
+    local q = GW.QuestCache:Get(questID)
     local isCampaign = IsTopContainerQuest(q)
     if self.collapsed or ((isCampaign and not self.isCampaignContainer) or (not isCampaign and self.isCampaignContainer)) or questWatchId == nil or not questWatchId then
         self.isUpdating = false
@@ -652,7 +652,7 @@ function GwQuestLogMixin:BlockOnClick(button)
         if IsModifiedClick("QUESTWATCHTOGGLE") then
             C_QuestLog.RemoveQuestWatch(questID)
         else
-            local quest = QuestCache:Get(questID)
+            local quest = GW.QuestCache:Get(questID)
             if quest.isAutoComplete and quest:IsComplete() then
                 RemoveAutoQuestPopUp(questID)
                 ShowQuestComplete(questID)

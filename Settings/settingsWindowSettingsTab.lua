@@ -928,7 +928,7 @@ end
 function GwSettingsWindowSettingsTabMixin:OpenSettingsToPanel(panelId)
     SelectMenuItem(FindMenuItemByPanelId(panelId))
     if not GwSettingsWindow:IsShown() then
-        ShowUIPanel(GwSettingsWindow)
+        GwSettingsWindow:Show()
     end
     GwSettingsWindow:SwitchTab(settingsWindowFrame.name)
 end
@@ -1390,7 +1390,7 @@ local function LoadSettingsTab(container)
             local subBtn = settingsTab.menu.ScrollBox:FindFrame(firstSub)
             if subBtn and not menuItemSelectionBehavior:IsSelected(subBtn) then menuItemSelectionBehavior:Select(subBtn) end
         end)
-    end)
+    end, settingsTab)
 
     settingsTab.menu.ScrollBox:SetDataProvider(CreateDataProvider(BuildFlatMenuData()), ScrollBoxConstants.RetainScrollPosition)
     GW.HandleTrimScrollBar(settingsTab.menu.ScrollBar)

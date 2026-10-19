@@ -7,17 +7,9 @@ local UI_WIDGET_TYPE_STATUS_BAR = 2
 local UI_WIDGET_TYPE_DOUBLE_STATUS_BAR = 3
 local UI_WIDGET_TYPE_SCENARIO_CURRENCIES = 11
 
--- Blizzards ShouldShowMawBuffs reads MAW auras unguarded, which throws when our
--- taint sits on the calling chain while auras are secret. And it periodically
--- does: the trackers dirty updates run through RunNextFrame (DirtiableMixin), and
--- timer callbacks inherit the taint of whoever SCHEDULED them — whenever a GW
--- action is the first to dirty the tracker in a frame (edit mode anchor ripples
--- etc.), the whole next layout runs tainted from its first instruction. That is
--- unavoidable from our side, so the global gets the guarded version below: on a
--- failed read it falls back to slot enumeration — GetAuraSlots hands out handles
--- without touching aura data and works on secret auras. The taint the override
--- itself puts on every layout is covered: the only known downstream victim, the
--- spell button cooldown, is handled via duration objects (see next block).
+-- Blizzards ShouldShowMawBuffs reads MAW auras unguarded and throws on secret auras, so the guarded
+-- version below replaces it on retail. Only there: the replaced global taints blizzards tracker layout
+-- and on forever that reaches the gamepad ui
 if ShouldShowMawBuffs then
     -- our tracker renders its own Maw buff button: mute Blizzards container in
     -- the hidden default tracker — its display loop compares secret aura data
@@ -67,7 +59,9 @@ if ShouldShowMawBuffs then
         return auras
     end
 
-    ShouldShowMawBuffs = GW.ShouldShowMawBuffs
+    if GW.Retail then
+        ShouldShowMawBuffs = GW.ShouldShowMawBuffs
+    end
 end
 
 GwObjectivesScenarioContainerWidgetMixin = {}

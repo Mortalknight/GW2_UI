@@ -1278,7 +1278,7 @@ local function skinAchevement()
         end
     end
 
-    AchievementFrameCategories.ScrollBox:RegisterCallback(ScrollBoxListViewMixin.Event.OnAcquiredFrame, OnCategoriesFrameViewAcquiredFrame)
+    AchievementFrameCategories.ScrollBox:RegisterCallback(ScrollBoxListViewMixin.Event.OnAcquiredFrame, OnCategoriesFrameViewAcquiredFrame, AchievementFrameCategories)
 
     ----SUMMARY
     AchievementFrameSummaryAchievements:ClearAllPoints()

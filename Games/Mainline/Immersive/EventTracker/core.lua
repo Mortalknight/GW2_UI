@@ -620,9 +620,9 @@ function GW.LoadWorldEventTimer()
     AddWorldMapFrame()
     UpdateTrackers()
 
-    EventRegistry:RegisterCallback("WorldMapOnShow", UpdateTrackers)
-    EventRegistry:RegisterCallback("WorldMapMinimized", function() C_Timer.After(0.1, UpdateTrackers) end)
-    EventRegistry:RegisterCallback("WorldMapMaximized", function() C_Timer.After(0.1, UpdateTrackers) end)
+    EventRegistry:RegisterCallback("WorldMapOnShow", UpdateTrackers, "GW2_UI")
+    EventRegistry:RegisterCallback("WorldMapMinimized", function() C_Timer.After(0.1, UpdateTrackers) end, "GW2_UI")
+    EventRegistry:RegisterCallback("WorldMapMaximized", function() C_Timer.After(0.1, UpdateTrackers) end, "GW2_UI")
     QuestMapFrame:HookScript("OnShow", UpdateTrackers)
     QuestMapFrame:HookScript("OnHide", UpdateTrackers)
 end

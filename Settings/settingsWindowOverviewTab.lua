@@ -4,7 +4,7 @@ local GW = select(2, ...)
 local L = GW.L
 
 local welcome_OnClick = function()
-    HideUIPanel(GwSettingsWindow)
+    GwSettingsWindow:Hide()
     GW.ShowWelcomePanel()
 end
 
@@ -17,7 +17,7 @@ local function ShowDiscordPopup()
 end
 
 local statusReport_OnClick = function()
-    HideUIPanel(GwSettingsWindow)
+    GwSettingsWindow:Hide()
     GW.ShowStatusReport()
 end
 
@@ -570,7 +570,7 @@ function GW.LoadSettingsOverview(container)
             GW.Notice(L["Settings are not available in combat!"])
             return
         end
-        ShowUIPanel(GwSettingsWindow)
+        GwSettingsWindow:Show()
         GwSettingsWindow:SwitchTab("GwSettingsOverview")
         ShowChangelog(settingsOverview.ScrollBox)
     end

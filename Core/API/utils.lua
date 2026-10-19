@@ -943,6 +943,27 @@ function GW.IsGamepadInterface()
     return InputUtil and InputUtil.IsGamepadUIEnabled and InputUtil.IsGamepadUIEnabled()
 end
 
+-- the gamepad focus frame follows blizzards window shapes, around our skins it looks broken. Blizzard applies
+-- its opacity setting only when it changes, never to new frames, so we set it on the frames ourselves
+local function ApplyGamepadFocusOpacity(glow)
+    glow:SetAlpha(tonumber(C_CVar.GetCVar("GamepadFocusStateOpacity")) or 1)
+end
+
+function GW.HideGamepadFocusFrames()
+    if not FrameGlowMixin then return end
+    if tonumber(C_CVar.GetCVar("GamepadFocusStateOpacity")) ~= 0 then
+        C_CVar.SetCVar("GamepadFocusStateOpacity", "0")
+    end
+    hooksecurefunc(FrameGlowMixin, "OnLoad", ApplyGamepadFocusOpacity)
+    local frame = EnumerateFrames()
+    while frame do
+        if not frame:IsForbidden() and frame.glowTextures and frame.GlowTexture then
+            ApplyGamepadFocusOpacity(frame)
+        end
+        frame = EnumerateFrames(frame)
+    end
+end
+
 local function MixinHideDuringPetAndOverride(f)
     if not f then return end
     if f:IsProtected() then
@@ -1041,7 +1062,7 @@ local function LoadItemAsync(itemInput, callback)
     if not itemID then return end
 
     local item = Item:CreateFromItemID(itemID)
-    item:ContinueOnItemLoad(function()
+    GW.ContinueOnItemLoad(item, function()
         local _, resolvedLink = C_Item.GetItemInfo(itemID)
         if resolvedLink then
             callback(resolvedLink)
@@ -1091,7 +1112,7 @@ local function SetItemLevel(button, quality, itemInput, slot, minItemLevel)
         local color = GW.GetQualityColor(quality or 0)
         local item = Item:CreateFromItemLink(itemLink)
 
-        item:ContinueOnItemLoad(function()
+        GW.ContinueOnItemLoad(item, function()
             -- our own bag buttons carry the id as gwBagID, foreign buttons still as bagID
             local buttonBagID = button.gwBagID or button.bagID
             if buttonBagID and button:GetID() or button.itemLocation then

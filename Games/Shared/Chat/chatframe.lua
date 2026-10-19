@@ -1020,8 +1020,10 @@ local function LoadChat()
 
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
-        -- possible fix for chatframe floating max error
-        frame.oldAlpha = frame.oldAlpha and frame.oldAlpha or DEFAULT_CHATFRAME_ALPHA
+        -- the classic fade code runs max() on oldAlpha without a fallback; on modern clients writing it taints the chat and the gamepad ui
+        if not GW.isModern then
+            frame.oldAlpha = frame.oldAlpha or DEFAULT_CHATFRAME_ALPHA
+        end
         styleChatWindow(frame)
         FCFTab_UpdateAlpha(frame)
         frame:SetTimeVisible(100)

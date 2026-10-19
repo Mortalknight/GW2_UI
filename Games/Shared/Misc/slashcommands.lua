@@ -25,7 +25,7 @@ local function LoadSlashCommands()
                 GW.Notice(L["Settings are not available in combat!"])
                 return
             end
-            ShowUIPanel(GwSettingsWindow)
+            GwSettingsWindow:Show()
             --UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
         elseif msg == "reset windows" then
             GW.settings.bags.bag.pos = nil

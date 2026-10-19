@@ -598,3 +598,94 @@ function GW.ShowWowheadUrlPopup(linkType, id)
         inputText = GW.GetWowheadLinkForLanguage() .. linkType .. "=" .. id,
     })
 end
+
+-- our own quest objects with the fields and methods of blizzards QuestCache: what we put into the shared
+-- QuestCache counts as tainted, and blizzards tracker reads it back during PLAYER_ENTERING_WORLD
+do
+    local QuestObject = {}
+
+    function QuestObject:GetID()
+        return self.questID
+    end
+
+    function QuestObject:GetQuestLogIndex()
+        return C_QuestLog.GetLogIndexForQuestID(self.questID)
+    end
+
+    function QuestObject:IsComplete()
+        return C_QuestLog.IsComplete(self.questID)
+    end
+
+    function QuestObject:IsOnMap()
+        return C_QuestLog.IsOnMap(self.questID)
+    end
+
+    function QuestObject:IsCampaign()
+        if self.campaignID == nil then
+            self.campaignID = C_CampaignInfo.GetCampaignID(self.questID)
+        end
+        return self.campaignID ~= 0
+    end
+
+    -- the log info only exists while the quest is in the log, it is read until it was there once
+    function QuestObject:Refresh()
+        if self.hasQuestLogInfo then return end
+        local questLogIndex = C_QuestLog.GetLogIndexForQuestID(self.questID)
+        local info = questLogIndex and C_QuestLog.GetInfo(questLogIndex)
+        if info then
+            self.hasQuestLogInfo = true
+            Mixin(self, info)
+            -- dynamic data that would go stale, like blizzard drops it
+            self.questLogIndex, self.isOnMap, self.isCollapsed, self.hasLocalPOI = nil, nil, nil, nil
+        end
+    end
+
+    local objects = {}
+    GW.QuestCache = {
+        Get = function(_, questID)
+            local quest = objects[questID]
+            if not quest then
+                quest = CreateFromMixins(QuestObject)
+                quest.questID = questID
+                quest.title = ""
+                quest.requiredMoney = C_QuestLog.GetRequiredMoney(questID) or 0
+                objects[questID] = quest
+            end
+            quest:Refresh()
+            return quest
+        end,
+    }
+end
+
+-- ItemMixin:ContinueOnItemLoad with our own listener: blizzards ItemEventListener is shared, what we put
+-- into it counts as tainted once blizzard requests the same item
+do
+    local pending = {}
+    local listener = CreateFrame("Frame")
+    listener:RegisterEvent("ITEM_DATA_LOAD_RESULT")
+    listener:SetScript("OnEvent", function(_, _, itemID)
+        local callbacks = pending[itemID]
+        if not callbacks then return end
+        pending[itemID] = nil
+        for _, callback in ipairs(callbacks) do
+            xpcall(callback, geterrorhandler())
+        end
+    end)
+
+    function GW.ContinueOnItemLoad(item, callback)
+        if item:IsItemEmpty() then return end
+        if item:IsItemDataCached() then
+            callback()
+            return
+        end
+        local itemID = item:GetItemID()
+        if pending[itemID] then
+            tinsert(pending[itemID], callback)
+            return
+        end
+        -- the load result can fire right inside the request, so the callback is in place before it
+        pending[itemID] = {callback}
+        C_Item.RequestLoadItemDataByID(itemID)
+    end
+end
+

@@ -468,9 +468,14 @@ local function DisableBlizzardsObjevtiveTracker()
         -- anyway. Only this one event is muted: the module keeps running for its
         -- banners and toasts
         if ScenarioObjectiveTracker then
-            ScenarioObjectiveTracker:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
-            hooksecurefunc(ScenarioObjectiveTracker, "SetContainer", function(module)
-                module:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
+            -- on our own OnUpdate once the module is set up: a hook on SetContainer runs inside blizzards
+            -- event and taints the rest of it, up to the gamepad bindings
+            local muter = CreateFrame("Frame")
+            muter:SetScript("OnUpdate", function(self)
+                if ScenarioObjectiveTracker.init then
+                    ScenarioObjectiveTracker:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
+                    self:SetScript("OnUpdate", nil)
+                end
             end)
         end
     elseif GW.Mists or GW.Wrath then

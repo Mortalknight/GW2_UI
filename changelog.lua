@@ -33,7 +33,7 @@ addChange("12.1.0", {
     {GW.Enum.ChangelogType.bug, [=[Chat: NPC lines in instances get a timestamp again, no quick join error in combat]=]},
     {GW.Enum.ChangelogType.bug, [=[Damage meter skin: bar backgrounds stay transparent after login and in the details]=]},
     {GW.Enum.ChangelogType.bug, [=[Merchant: all buyback slots are skinned without the extended vendor]=]},
-    {GW.Enum.ChangelogType.bug, [=[Forever: tracked recipes and professions dragged to the action bars open again, without "action blocked" in combat; easier to read skill bar numbers]=]},
+    {GW.Enum.ChangelogType.bug, [=[Forever: tracked recipes and professions dragged to the action bars open again, without "action blocked" in combat; easier to read skill bar numbers; no "action blocked" errors with the gamepad interface, whose action bar and micro bar settings are greyed out and whose focus frame no longer shows around the windows]=]},
     {GW.Enum.ChangelogType.bug, [=[Hero panel: possible taint from the equipment flyout; reputation shows the session gain for renown factions]=]},
     {GW.Enum.ChangelogType.bug, [=[World map: no "action blocked" when closing it; Classic and TBC apply the map opacity right after login]=]},
     {GW.Enum.ChangelogType.bug, [=[Classic clients: shift-click in the quest log tracks the right quest, quests show their required gold, the character window opens again after closing it with escape, Wrath glyph icons and pet talents, Mists quest sharing and untracking from the tracker, inspected talents on Mists, window titles of the macro and merchant frames on Wrath and Mists]=]},

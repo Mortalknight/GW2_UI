@@ -6,6 +6,7 @@ local ResetToDefault = GW.ResetToDefault
 local ICONS = {}
 local ProfileWin
 local IconSelectionFrame
+local iconSelectionParent
 
 local function ConvertImportedValuesToNumbers(tbl)
     for key, value in next, tbl do
@@ -112,8 +113,48 @@ local function export_OnClick(self)
 end
 
 
+-- created on first use: the template registers with blizzards gamepad transitions in its OnLoad and,
+-- in gamepad mode, sets the gamepad up right away; from our login that taints blizzards gamepad bindings
+local function CreateIconSelectionFrame()
+    IconSelectionFrame = CreateFrame("Frame", nil, iconSelectionParent, "IconSelectorPopupFrameTemplate")
+    IconSelectionFrame:Hide()
+    IconSelectionFrame:OnLoad()
+    IconSelectionFrame:EnableMouse(true)
+    IconSelectionFrame:SetScript("OnShow", function(self)
+        self:OnShow()
+        self.iconDataProvider = CreateAndInitFromMixin(IconDataProviderMixin, IconDataProviderExtraType.Equipment)
+        self:SetIconFilter(IconSelectorPopupFrameIconFilterTypes.All)
+        self:Update()
+
+        self.IconSelector:SetSelectedCallback(function(selectionIndex, icon)
+            self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(icon)
+            self.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetText(ICON_SELECTION_CLICK)
+            self.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetFontObject(GameFontHighlightSmall)
+        end)
+
+        if not self.gwSkinned then
+            GW.HandleIconSelectionFrame(self)
+        end
+    end)
+    IconSelectionFrame:SetScript("OnHide", IconSelectionFrame.OnHide)
+    IconSelectionFrame:SetScript("OnEvent", IconSelectionFrame.OnEvent)
+    IconSelectionFrame.BorderBox.IconSelectorEditBox:Hide()
+    IconSelectionFrame.Update = function(self, texture)
+        self.IconSelector:SetSelectedIndex(self:GetIndexOfIcon(texture))
+        self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(texture)
+        local getSelection = GenerateClosure(self.GetIconByIndex, self)
+        local getNumSelections = GenerateClosure(self.GetNumIcons, self)
+        self.IconSelector:SetSelectionsDataProvider(getSelection, getNumSelections)
+        self.IconSelector:ScrollToSelectedIndex()
+        self:SetSelectedIconText()
+        self.BorderBox.OkayButton:Enable()
+    end
+end
+
 local function changeIcon_OnClick(btn)
-    if not IconSelectionFrame then return end
+    if not IconSelectionFrame then
+        CreateIconSelectionFrame()
+    end
     IconSelectionFrame.OkayButton_OnClick = function()
         local iconTexture = IconSelectionFrame.BorderBox.SelectedIconArea.SelectedIconButton:GetIconTexture()
         if iconTexture then
@@ -821,39 +862,7 @@ local function LoadSettingsProfileTab(container)
         })
     end)
 
-    IconSelectionFrame = CreateFrame("Frame", nil, settingsProfile, "IconSelectorPopupFrameTemplate")
-    IconSelectionFrame:Hide()
-    IconSelectionFrame:OnLoad()
-    IconSelectionFrame:EnableMouse(true)
-    IconSelectionFrame:SetScript("OnShow", function(self)
-        self:OnShow()
-        self.iconDataProvider = CreateAndInitFromMixin(IconDataProviderMixin, IconDataProviderExtraType.Equipment)
-        self:SetIconFilter(IconSelectorPopupFrameIconFilterTypes.All)
-        self:Update()
-
-        self.IconSelector:SetSelectedCallback(function(selectionIndex, icon)
-            self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(icon)
-            self.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetText(ICON_SELECTION_CLICK)
-            self.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetFontObject(GameFontHighlightSmall)
-        end)
-
-        if not self.gwSkinned then
-            GW.HandleIconSelectionFrame(self)
-        end
-    end)
-    IconSelectionFrame:SetScript("OnHide", IconSelectionFrame.OnHide)
-    IconSelectionFrame:SetScript("OnEvent", IconSelectionFrame.OnEvent)
-    IconSelectionFrame.BorderBox.IconSelectorEditBox:Hide()
-    IconSelectionFrame.Update = function(self, texture)
-        self.IconSelector:SetSelectedIndex(self:GetIndexOfIcon(texture))
-        self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(texture)
-        local getSelection = GenerateClosure(self.GetIconByIndex, self)
-        local getNumSelections = GenerateClosure(self.GetNumIcons, self)
-        self.IconSelector:SetSelectionsDataProvider(getSelection, getNumSelections)
-        self.IconSelector:ScrollToSelectedIndex()
-        self:SetSelectedIconText()
-        self.BorderBox.OkayButton:Enable()
-    end
+    iconSelectionParent = settingsProfile
 
     -- Build import/export frame last (needs fonts/colors already loaded)
 

@@ -80,7 +80,6 @@ local function LoadWorldMapSkin()
 
     WorldMapFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
 
-    --ShowUIPanel(WorldMapFrame)
     WorldMapFrame:SetAttribute("UIPanelLayout-area", "center")
     WorldMapFrame:SetAttribute("UIPanelLayout-enabled", false)
     WorldMapFrame:SetAttribute("UIPanelLayout-allowOtherPanels", true)
@@ -89,8 +88,6 @@ local function LoadWorldMapSkin()
     WorldMapFrame.HandleUserActionToggleSelf = function()
         if WorldMapFrame:IsShown() then WorldMapFrame:Hide() else WorldMapFrame:Show() end
     end
-
-    --HideUIPanel(WorldMapFrame)
 
     table.insert(UISpecialFrames, "WorldMapFrame")
     WorldMapFrame:SetScale(GW.settings.skins.worldmap.scale)

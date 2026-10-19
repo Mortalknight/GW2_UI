@@ -150,7 +150,7 @@ local function ResolveDependenceValue(settingName)
     end
 
     local currentVal = widget.get and widget.get()
-    if widget.isIncompatibleAddonLoaded and not widget.isIncompatibleAddonLoadedButOverride then
+    if (widget.isIncompatibleAddonLoaded and not widget.isIncompatibleAddonLoadedButOverride) or widget.gamepadReplaced then
         currentVal = false
     end
 
@@ -330,6 +330,7 @@ local function CreateOption(optionType, panel, name, desc, values)
         incompatibleAddonsType = values.incompatibleAddons,
         isIncompatibleAddonLoaded = false,
         isIncompatibleAddonLoadedButOverride = false,
+        gamepadReplaced = values.gamepadReplaced and GW.IsGamepadInterface(), -- forever's gamepad interface replaces the module
         groupHeaderName = values.groupHeaderName,
         group = values.group, -- groups options visually (extra spacing) without rendering a header
         startsGroup = values.startsGroup, -- forces the group spacing before this option
@@ -373,6 +374,10 @@ local function CreateOption(optionType, panel, name, desc, values)
             opt.isIncompatibleAddonLoaded = isLoaded
             opt.isIncompatibleAddonLoadedButOverride = isOverride
         end
+    end
+
+    if opt.gamepadReplaced then
+        opt.desc = opt.desc .. "\n\n|cffffedba" .. L["The gamepad interface is active and brings its own version of this, so it is disabled."] .. "|r"
     end
 
     return opt
@@ -604,7 +609,9 @@ end
 
 -- one widget: its enabled state and the dependency lines of its tooltip
 local function UpdateWidgetDependencies(v)
-    if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+    if v.gamepadReplaced then
+        setDependenciesOption(v, false)
+    elseif v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
         setDependenciesOption(v, false, v.isIncompatibleAddonLoaded, v.isIncompatibleAddonLoadedButOverride)
     elseif v.dependence then
         local allDepsMet = true

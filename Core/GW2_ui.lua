@@ -509,6 +509,9 @@ local function evPlayerLogin(self)
     end
     GW.LoadFonts()
     GW.loadedWithGamepadInterface = GW.IsGamepadInterface() or false
+    if GW.loadedWithGamepadInterface then
+        GW.HideGamepadFocusFrames()
+    end
 
     if GW.CheckForPasteAddon() and GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
         GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
@@ -790,7 +793,7 @@ local function evPlayerLogin(self)
     if GW.private.GW2_UI_VERSION == "WELCOME" then
         GW.ShowWelcomePanel()
     elseif GW.private.GW2_UI_VERSION ~= GW.GetVersionString() then
-        ShowUIPanel(GwSettingsWindow)
+        GwSettingsWindow:Show()
         HideUIPanel(GameMenuFrame)
     end
     GW.private.GW2_UI_VERSION = GW.GetVersionString()

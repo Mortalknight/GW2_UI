@@ -62,16 +62,6 @@ local function outfitEquipButton_OnClick()
 end
 
 
-local function GearSetButton_Edit(self)
-    GwGearManagerPopupFrame.mode = IconSelectorPopupFrameModes.Edit
-    PaperDollFrame.EquipmentManagerPane.selectedSetID = self.setID
-    GwGearManagerPopupFrame.setID = self.setID
-    GwGearManagerPopupFrame.origName = self.setName
-    GwGearManagerPopupFrame.listButton = self
-    GwGearManagerPopupFrame:Show()
-    GwGearManagerPopupFrame:OnShow()
-end
-
 local function UpdateScrollBox(self)
     local numSets = C_EquipmentSet.GetNumEquipmentSets()
     local id_table = C_EquipmentSet.GetEquipmentSetIDs()
@@ -81,6 +71,34 @@ local function UpdateScrollBox(self)
         dataProvider:Insert({index = i, setId = id_table[i]})
     end
     self.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
+end
+
+-- created on first use, the icon selector taints the gamepad ui when it is built at login
+local function GetGearManagerPopupFrame()
+    if not GwGearManagerPopupFrame then
+        GwGearManagerPopupFrame = CreateFrame("Frame", "GwGearManagerPopupFrame", GwDressingRoom, "IconSelectorPopupFrameTemplate")
+        Mixin(GwGearManagerPopupFrame, GearManagerPopupFrameMixin)
+        GwGearManagerPopupFrame:Hide()
+        GwGearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
+        hooksecurefunc(GwGearManagerPopupFrame, "OnShow", function(frame)
+            if not frame.gwSkinned then
+                GW.HandleIconSelectionFrame(frame)
+            end
+        end)
+        hooksecurefunc(GwGearManagerPopupFrame, "OkayButton_OnClick", function() UpdateScrollBox(GwPaperDollOutfits) end)
+    end
+    return GwGearManagerPopupFrame
+end
+
+local function GearSetButton_Edit(self)
+    local popup = GetGearManagerPopupFrame()
+    popup.mode = IconSelectorPopupFrameModes.Edit
+    PaperDollFrame.EquipmentManagerPane.selectedSetID = self.setID
+    popup.setID = self.setID
+    popup.origName = self.setName
+    popup.listButton = self
+    popup:Show()
+    popup:OnShow()
 end
 
 local function outfitSaveButton_OnClick(self)
@@ -240,21 +258,15 @@ end
 
 local function LoadPDEquipset(fmMenu, parent)
     local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", parent, "GwPaperDollOutfits")
-    GwGearManagerPopupFrame = CreateFrame("Frame", "GwGearManagerPopupFrame", GwDressingRoom, "IconSelectorPopupFrameTemplate")
-    Mixin(GwGearManagerPopupFrame, GearManagerPopupFrameMixin)
-    GwGearManagerPopupFrame:Hide()
-
-    GwGearManagerPopupFrame:SetParent(GwDressingRoom)
-    GwGearManagerPopupFrame:ClearAllPoints()
-    GwGearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
     local fnGPDO_newOutfit_OnClick = function()
         if C_EquipmentSet.GetNumEquipmentSets() >= MAX_EQUIPMENT_SETS_PER_PLAYER  then
             UIErrorsFrame:AddMessage(EQUIPMENT_SETS_TOO_MANY, 1.0, 0.1, 0.1, 1.0)
         else
-            GwGearManagerPopupFrame.mode = IconSelectorPopupFrameModes.New
+            local popup = GetGearManagerPopupFrame()
+            popup.mode = IconSelectorPopupFrameModes.New
             PaperDollFrame.EquipmentManagerPane.selectedSetID = nil
-            GwGearManagerPopupFrame:Show()
-            GwGearManagerPopupFrame:OnShow()
+            popup:Show()
+            popup:OnShow()
             PaperDollEquipmentManagerPane_Update(true)
 
             -- Ignore shirt and tabard by default
@@ -265,12 +277,6 @@ local function LoadPDEquipset(fmMenu, parent)
     fmGPDO.newOutfit:SetText(PAPERDOLL_NEWEQUIPMENTSET)
     fmGPDO.newOutfit:SetScript("OnClick", fnGPDO_newOutfit_OnClick)
     fmMenu:SetupBackButton(fmGPDO.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
-
-    hooksecurefunc(GwGearManagerPopupFrame, "OnShow", function(frame)
-        if not frame.gwSkinned then
-            GW.HandleIconSelectionFrame(frame)
-        end
-    end)
 
     local view = CreateScrollBoxListLinearView()
     view:SetElementInitializer("GwPaperDollOutfitsButtonTemplate", function(button, elementData)
@@ -309,8 +315,6 @@ local function LoadPDEquipset(fmMenu, parent)
         end
     )
     UpdateScrollBox(fmGPDO)
-
-    hooksecurefunc(GwGearManagerPopupFrame, "OkayButton_OnClick", function() UpdateScrollBox(fmGPDO) end)
 
     return fmGPDO
 end

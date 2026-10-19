@@ -332,7 +332,7 @@ local function SkinRewardButton(button)
     if quality then
         ApplyRewardQuality(button, quality)
     else
-        Item:CreateFromItemID(itemID):ContinueOnItemLoad(function()
+        GW.ContinueOnItemLoad(Item:CreateFromItemID(itemID), function()
             local loadedQuality = C_Item.GetItemQualityByID(itemID)
             if button.itemID == itemID and loadedQuality then
                 ApplyRewardQuality(button, loadedQuality)

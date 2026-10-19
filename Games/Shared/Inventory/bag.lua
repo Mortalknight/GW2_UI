@@ -651,10 +651,18 @@ end
 -- Blizzards bag functions only drive our frame, we never open or close its container frames
 -- ourselves: done from our code that would taint them, and escape reads them in combat.
 -- Blizzards open state can therefore differ from ours, so a toggle goes by our frame and runs
--- after the open or close blizzard did on the way; the last change in the queue wins.
+-- after the open or close blizzard did on the way; the last change wins. Next frame by our own
+-- OnUpdate: a C_Timer started inside blizzards bag functions taints the gamepad interface.
+local bagShownDriver = CreateFrame("Frame")
+bagShownDriver:Hide()
+bagShownDriver:SetScript("OnUpdate", function(self)
+    self:Hide()
+    GwBagFrame:SetShown(self.shown)
+end)
+
 local function setBagShown(shown)
-    local f = GwBagFrame
-    C_Timer.After(0, function() f:SetShown(shown) end)
+    bagShownDriver.shown = shown
+    bagShownDriver:Show()
 end
 
 local function hookOpenBag(bag_id)

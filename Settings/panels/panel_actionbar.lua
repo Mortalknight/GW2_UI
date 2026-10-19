@@ -120,7 +120,7 @@ local function LoadActionbarPanel(sWindow)
     end
 
     -- GENERAL
-    general:AddOption(ENABLE, L["Use the GW2 UI improved action bars."], {getterSetter = "actionbars.enabled", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Actionbars", isMasterToggle = true})
+    general:AddOption(ENABLE, L["Use the GW2 UI improved action bars."], {getterSetter = "actionbars.enabled", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Actionbars", isMasterToggle = true, gamepadReplaced = true})
     general:AddOption(L["Automatic Bar Layout"], L["Enable or disable the automatic layout management of the primary action bars and associated frames (pet, buffs); required for auto bar fading and some other features"], { getterSetter = "actionbars.barLayout", callback = function() GW.ShowRlPopup = true end, dependence = {["actionbars.enabled"] = true}, incompatibleAddons = "Actionbars", hidden = not GW.isModern, group = "autoLayout"})
     general:AddOption(L["Add space for Healthglobe"], nil, { getterSetter = "actionbars.healthGlobeSpace", callback = function() GW.ShowRlPopup = true end, dependence = {["actionbars.enabled"] = true, ["actionbars.barLayout"] = false}, incompatibleAddons = "Actionbars", hidden = not GW.isModern, group = "autoLayout"})
     general:AddOption(L["Action Button Labels"], L["Enable or disable the action button assignment text"], { getterSetter = "actionbars.buttonAssignments", callback = function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, dependence = {["actionbars.enabled"] = true}, incompatibleAddons = "Actionbars", group = "buttonText"})

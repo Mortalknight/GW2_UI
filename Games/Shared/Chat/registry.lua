@@ -302,7 +302,7 @@ function GW.LoadChatModules()
     end
     loaded = true
 
-    EventRegistry:RegisterCallback("SetItemRef", OnSetItemRef)
+    EventRegistry:RegisterCallback("SetItemRef", OnSetItemRef, "GW2_UI")
     for _, module in ipairs(modules) do
         HookModule(module)
     end

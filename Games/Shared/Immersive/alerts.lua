@@ -1001,7 +1001,7 @@ end
 
 local function WithItem(itemID, callback)
     local item = Item:CreateFromItemID(itemID)
-    item:ContinueOnItemLoad(function() callback(item:GetItemLink()) end)
+    GW.ContinueOnItemLoad(item, function() callback(item:GetItemLink()) end)
 end
 
 local BLIZZARD_PREVIEWS = {

@@ -37,7 +37,7 @@ function GwImmersiveQuestingReqItemsFrameMixin:UpdateFrame()
         -- an item that is not cached yet has no name; the classic clients give no item id here, only the link
         if (not r.name or r.name == "") and (r.id or r.link) then
             local item = r.id and Item:CreateFromItemID(r.id) or Item:CreateFromItemLink(r.link)
-            item:ContinueOnItemLoad(function()
+            GW.ContinueOnItemLoad(item, function()
                 if f.gwRequiredItem == r then
                     SetItemButtonTexture(f, item:GetItemIcon())
                     f.Name:SetText(item:GetItemName())

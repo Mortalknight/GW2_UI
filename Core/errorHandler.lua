@@ -179,7 +179,7 @@ local function CreateErrorHandler()
             if error then
                 errorFrame:OnError(error.message, error.stack, error.locals ~= "InCombatSkipped" and error.locals or "")
             end
-        end)
+        end, errorFrame)
     else
         local origHandler = geterrorhandler()
         seterrorhandler(function (msg, lvl)

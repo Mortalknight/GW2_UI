@@ -276,7 +276,7 @@ function GW.TestLootRolls()
     for index, test in ipairs(TEST_ITEMS) do
         CancelRoll(-index)
         local item = Item:CreateFromItemID(test.itemID)
-        item:ContinueOnItemLoad(function()
+        GW.ContinueOnItemLoad(item, function()
             local rollID = -index
             testRolls[rollID] = {
                 texture = item:GetItemIcon(),

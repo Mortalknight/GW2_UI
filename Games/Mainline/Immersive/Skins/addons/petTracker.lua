@@ -193,8 +193,8 @@ function GwPetTrackerContainerMixin:InitModule()
 
     self:SetScript("OnEvent", self.UpdateLayout)
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    EventRegistry:RegisterCallback("PetTracker.COLLECTION_CHANGED", function() self:UpdateLayout() end)
-    EventRegistry:RegisterCallback("PetTracker.OPTIONS_CHANGED", function() self:UpdateLayout() end)
+    EventRegistry:RegisterCallback("PetTracker.COLLECTION_CHANGED", function() self:UpdateLayout() end, self)
+    EventRegistry:RegisterCallback("PetTracker.OPTIONS_CHANGED", function() self:UpdateLayout() end, self)
 
     self:UpdateLayout()
 end

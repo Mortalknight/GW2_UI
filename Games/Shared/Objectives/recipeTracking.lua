@@ -100,17 +100,28 @@ function GwObjectivesRecipeContainerMixin:ProcessUpdate()
 end
 
 function GwObjectivesRecipeContainerMixin:UpdateLayout()
-    if self.continuableContainer then
-        self.continuableContainer:Cancel()
+    -- the reagents load through our own item listener: blizzards ContinuableContainer uses the shared
+    -- ItemEventListener, and what we put there counts as tainted for blizzards own requests
+    self.loadGeneration = (self.loadGeneration or 0) + 1
+    local generation = self.loadGeneration
+    local missing = 0
+
+    local function OnItemLoaded()
+        missing = missing - 1
+        if missing == 0 and generation == self.loadGeneration then
+            self:UpdateLayout()
+        end
     end
 
-    self.continuableContainer = ContinuableContainer:Create()
     local function LoadItems(recipes)
         for _, recipeID in ipairs(recipes) do
-            local reagents = ProfessionsUtil.CreateRecipeReagentsForAllBasicReagents(recipeID)
-            for _, reagent in ipairs(reagents) do
+            for _, reagent in ipairs(ProfessionsUtil.CreateRecipeReagentsForAllBasicReagents(recipeID)) do
                 if reagent.itemID then
-                    self.continuableContainer:AddContinuable(Item:CreateFromItemID(reagent.itemID))
+                    local item = Item:CreateFromItemID(reagent.itemID)
+                    if not item:IsItemDataCached() then
+                        missing = missing + 1
+                        GW.ContinueOnItemLoad(item, OnItemLoaded)
+                    end
                 end
             end
         end
@@ -120,20 +131,10 @@ function GwObjectivesRecipeContainerMixin:UpdateLayout()
     LoadItems(C_TradeSkillUI.GetRecipesTracked(IsRecrafting))
     LoadItems(C_TradeSkillUI.GetRecipesTracked(not IsRecrafting))
 
-    -- We can continue to layout each of the blocks if every item is loaded, otherwise
-    -- we need to wait until the items load, then notify the objective tracker to try again.
-    local allLoaded = true
-    local function OnItemsLoaded()
-        if allLoaded then
-            self:ProcessUpdate()
-        else
-            self:UpdateLayout()
-        end
+    -- with every item loaded the blocks are laid out now, otherwise once the last one arrived
+    if missing == 0 then
+        self:ProcessUpdate()
     end
-    -- The assignment of allLoaded is only meaningful if false. If and when the callback
-    -- is invoked later, it will force an update. If the value was true, the callback would have
-    -- already been invoked prior to returning.
-    allLoaded = self.continuableContainer:ContinueOnLoad(OnItemsLoaded)
 end
 
 local function UntrackRecipeIfUnlearned()

@@ -267,9 +267,9 @@ local function LoadPDBagList(fmMenu, parent)
     fmGDR.stats:SetScript("OnEvent", stats_OnEvent)
     RegisterStatsEvents(fmGDR.stats)
 
+    -- blizzards ammo OnShow hides the border again, only our part restores it: its slot update called from here taints the gamepad ui
     CharacterAmmoSlot:SetShown(UnitUsesAmmo("player"))
-    CharacterAmmoSlot:HookScript("OnShow", PaperDollItemSlotButton_Update)
-    PaperDollItemSlotButton_Update(CharacterRangedSlot)
+    CharacterAmmoSlot:HookScript("OnShow", PDE.UpdateItemSlot)
 
     return fmGDR, fmGPDBIL
 end

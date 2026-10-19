@@ -509,7 +509,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
     if GW.isModern or GW.Mists or GW.TBC or GW.Wrath then
         if self.questLogIndex then
             local link, item, charges, showWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
-            local isComplete = GW.isModern and (self.questID and QuestCache:Get(self.questID):IsComplete()) or self.isComplete
+            local isComplete = GW.isModern and (self.questID and GW.QuestCache:Get(self.questID):IsComplete()) or self.isComplete
             if item and (not isComplete or showWhenComplete) then
                 self.hasItem = true
                 btn.questLogIndex = self.questLogIndex

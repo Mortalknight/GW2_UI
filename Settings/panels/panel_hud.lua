@@ -134,7 +134,7 @@ local function LoadHudPanel(sWindow)
     general:AddOption(L["Toggle the borders around the screen"], nil, {getterSetter = "hud.screenBorder", callback = GW.ToggleHudBackground})
 
     -- MICRO BAR
-    microBar:AddOption(ENABLE, L["Micro Bar"], {getterSetter = "micromenu.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
+    microBar:AddOption(ENABLE, L["Micro Bar"], {getterSetter = "micromenu.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true, gamepadReplaced = true})
     microBar:AddOption(L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], {
         getterSetter = "micromenu.fade",
         callback = function(value)

@@ -36,8 +36,11 @@ local function ToggleGw2Settings()
         return
     end
     if not GW.InMoveHudMode then
-        ShowUIPanel(GwSettingsWindow)
-        HideUIPanel(GameMenuFrame)
+        GwSettingsWindow:Show()
+        -- hiding the game menu from addon code taints the gamepad interface's window focus
+        if not GW.IsGamepadInterface() then
+            HideUIPanel(GameMenuFrame)
+        end
     end
 end
 GW.ToggleGw2Settings = ToggleGw2Settings
