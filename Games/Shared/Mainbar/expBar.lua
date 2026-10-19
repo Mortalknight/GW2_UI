@@ -15,13 +15,14 @@ local experiencebarAnimation = 0
 local houseInfoCache = {}
 local queueTimer
 
-local STATUSBAR_COLORS = {
-    Xp = {r = 0.83, g = 0.57, b = 0},
-    PetXpBattle = {r = 0.58, g = 0, b = 0.55},
-    PetXp = {r = 240 / 255, g = 240 / 255, b = 155 / 255},
-    Honor = {r = 1, g = 0.2, b = 0.2},
-    House = {r = 0.85, g = 0.7, b = 0.43},
-}
+local STATUSBAR_COLORS = GW.Colors.StatusBarColors
+
+-- a square of the bar texture in the bar color in front of a tooltip line, like a chart legend;
+-- the texture is tinted yellow, a plain white square would not match the bar
+local function BarSwatch(color)
+    local r, g, b = color:GetRGBAsBytes()
+    return format("|TInterface/AddOns/GW2_UI/textures/hud/xpbarcandy.png:10:10:0:0:128:16:56:72:0:16:%d:%d:%d|t ", r, g, b)
+end
 
 local function IsAtMaxLevel()
     if IsPlayerAtEffectiveMaxLevel then
@@ -151,11 +152,11 @@ local function UpdateXPValues(self)
     self.ExpBar:SetStatusBarColor(color.r, color.g, color.b)
 
     if not IsAtMaxLevel() then
-        tinsert(self.tooltip, COMBAT_XP_GAIN .. " " .. FormatNumber(valCurrent) .. " / " ..
+        tinsert(self.tooltip, BarSwatch(color) .. COMBAT_XP_GAIN .. " " .. FormatNumber(valCurrent) .. " / " ..
             FormatNumber(valMax) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r")
 
         if rested > 0 then
-            tinsert(self.tooltip, L["Rested "] .. FormatNumber(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r")
+            tinsert(self.tooltip, BarSwatch(STATUSBAR_COLORS.Rested) .. L["Rested "] .. FormatNumber(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r")
         end
     end
 
@@ -176,7 +177,7 @@ local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
         currentValue = currentValue % maxValueParagon
         valPrecRepu = (maxValueParagon > 0) and (currentValue / maxValueParagon) or 0
         tinsert(self.tooltip, string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-            data.name, REPUTATION,
+            BarSwatch(GW.Colors.FactionBarColors[9]) .. data.name, REPUTATION,
             FormatNumber(currentValue), FormatNumber(maxValueParagon), math.floor(valPrecRepu * 100)))
         self.RepuBar:SetStatusBarColor(GW.Colors.FactionBarColors[9]:GetRGB())
         isParagon = true
@@ -186,14 +187,14 @@ local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
             valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) /
                             (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
             tinsert(self.tooltip, string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-                friendReputationInfo.name, REPUTATION,
+                BarSwatch(GW.Colors.FactionBarColors[5]) .. friendReputationInfo.name, REPUTATION,
                 FormatNumber(friendReputationInfo.standing - friendReputationInfo.reactionThreshold),
                 FormatNumber(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold),
                 math.floor(valPrecRepu * 100)))
         else
             valPrecRepu = 1
             tinsert(self.tooltip, string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-                friendReputationInfo.name, REPUTATION,
+                BarSwatch(GW.Colors.FactionBarColors[5]) .. friendReputationInfo.name, REPUTATION,
                 FormatNumber(friendReputationInfo.maxRep), FormatNumber(friendReputationInfo.maxRep), 100))
         end
         self.RepuBar:SetStatusBarColor(GW.Colors.FactionBarColors[5]:GetRGB())
@@ -209,7 +210,7 @@ local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
                 valPrecRepu = (majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold
             end
             tinsert(self.tooltip, string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-                data.name, REPUTATION,
+                BarSwatch(GW.Colors.FactionBarColors[11]) .. data.name, REPUTATION,
                 FormatNumber(majorFactionData.renownReputationEarned or 0),
                 FormatNumber(majorFactionData.renownLevelThreshold),
                 math.floor(valPrecRepu * 100)))
@@ -220,18 +221,19 @@ local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
         local currentStanding = data.currentStanding or 0
         local currentThreshold = data.currentReactionThreshold or 0
         local nextThreshold = data.nextReactionThreshold or 0
+        local reaction = data.reaction or 1
+        local name = BarSwatch(GW.Colors.FactionBarColors[reaction]) .. data.name
         if (currentStanding - currentThreshold) == 0 then
             valPrecRepu = 1
-            tinsert(self.tooltip, string.format("%s %s 21,000 / 21,000 |cffa6a6a6 (%d%%)|r", data.name, REPUTATION, 100))
+            tinsert(self.tooltip, string.format("%s %s 21,000 / 21,000 |cffa6a6a6 (%d%%)|r", name, REPUTATION, 100))
         else
             valPrecRepu = (currentStanding - currentThreshold) / (nextThreshold - currentThreshold)
             tinsert(self.tooltip, string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-                data.name, REPUTATION,
+                name, REPUTATION,
                 FormatNumber(currentStanding - currentThreshold),
                 FormatNumber(nextThreshold - currentThreshold),
                 math.floor(valPrecRepu * 100)))
         end
-        local reaction = data.reaction or 1
         self.RepuBar:SetStatusBarColor(GW.Colors.FactionBarColors[reaction]:GetRGB())
         isNormal = true
     end
@@ -273,7 +275,7 @@ local function UpdateHouseXP(self, data)
     local valPrec = (max > 0) and (math.min(cur, max) / max) or 0
 
     tinsert(self.tooltip, string.format("%s (%s): %s / %s |cffa6a6a6 (%d%%)|r",
-        format(HOUSING_DASHBOARD_OWNERS_HOUSE, data.houseName or GW.myname),
+        BarSwatch(STATUSBAR_COLORS.House) .. format(HOUSING_DASHBOARD_OWNERS_HOUSE, data.houseName or GW.myname),
         format(LEVEL .. " %s", data.houseLevel),
         math.min(max, cur), max,
         math.floor(valPrec * 100)
@@ -295,7 +297,7 @@ local function UpdateHonor(self)
     local maxHonor = UnitHonorMax("player")
     local valPrec = (maxHonor > 0) and (currentHonor / maxHonor) or 0
 
-    tinsert(self.tooltip, HONOR .. " " .. FormatNumber(currentHonor) .. " / " .. FormatNumber(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r")
+    tinsert(self.tooltip, BarSwatch(STATUSBAR_COLORS.Honor) .. HONOR .. " " .. FormatNumber(currentHonor) .. " / " .. FormatNumber(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r")
 
     local color = STATUSBAR_COLORS.Honor
     self.ExpBar:SetStatusBarColor(color.r, color.g, color.b)
@@ -314,7 +316,7 @@ local function UpdatePetXPClassic(self)
     local currXP, nextXP = GetPetExperience()
     local valPrecPet = (nextXP > 0) and (currXP / nextXP) or 0
 
-    tinsert(self.tooltip, PET .. " " .. FormatNumber(currXP) .. " / " .. FormatNumber(nextXP) .. " |cffa6a6a6 (" .. math.floor(valPrecPet * 100) .. "%)|r")
+    tinsert(self.tooltip, BarSwatch(STATUSBAR_COLORS.PetXp) .. PET .. " " .. FormatNumber(currXP) .. " / " .. FormatNumber(nextXP) .. " |cffa6a6a6 (" .. math.floor(valPrecPet * 100) .. "%)|r")
 
     local color = STATUSBAR_COLORS.PetXp
     self.PetBar:SetStatusBarColor(color.r, color.g, color.b)

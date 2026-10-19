@@ -144,6 +144,16 @@ GW.Colors.ObjectivesTypeColors = {
     [GW.Enum.ObjectivesNotificationType.PvPQuest] = CreateColor(230 / 255, 90 / 255, 75 / 255),
 }
 
+-- experience bar colors, the tooltip marks its lines with them
+GW.Colors.StatusBarColors = {
+    Xp = CreateColor(0.83, 0.57, 0),
+    Rested = CreateColor(0.5, 0, 0.5), -- set in experiencebar.xml, here for the tooltip
+    PetXpBattle = CreateColor(0.58, 0, 0.55),
+    PetXp = CreateColor(240 / 255, 240 / 255, 155 / 255),
+    Honor = CreateColor(1, 0.2, 0.2),
+    House = CreateColor(0.85, 0.7, 0.43),
+}
+
 GW.Colors.FactionBarColors = {
     [1] = CreateColor(0.8, 0.3, 0.22),
     [2] = CreateColor(0.8, 0.3, 0.22),
