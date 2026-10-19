@@ -26,7 +26,7 @@ function GW.Gw2ClassColorNotify(_, changed)
 end
 
 function GW.Gw2ClassColorClassToken(_, className)
-    return GW:UnlocalizedClassName(className)
+    return GW.UnlocalizedClassName(className)
 end
 
 local meta = {

@@ -829,7 +829,6 @@ local function evPlayerLoginLate()
         if GW.isModern then
             if GW.settings.actionbars.barLayout then
                 GW.LoadActionBars(mainbarLM, false)
-                --GW.ExtraAB_BossAB_Setup() -- Test
             else
                 GW.LoadActionBars(mainbarLM, true)
             end

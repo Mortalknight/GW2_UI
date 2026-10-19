@@ -201,7 +201,7 @@ local function ReplaceGossipFormat(button, textFormat, text, skip)
 end
 
 local function ReplaceGossipText(button, text)
-    if not text and text == "" then return end
+    if not text or text == "" then return end
     local startText = text
 
     local iconText, iconCount = gsub(text, ":32:32:0:0", ":32:32:0:0:64:64:5:59:5:59")

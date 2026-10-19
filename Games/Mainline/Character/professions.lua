@@ -337,17 +337,17 @@ local function overview_OnUpdate(self, elapsed)
 
     self:SetScript("OnUpdate", nil)
 
-    if self.onlyKnowledgePoints then
-        UpdateUnusedKnowledgePoints(self)
-    else
+    if not self.onlyKnowledgePoints then
         updateOverview(self)
     end
+    UpdateUnusedKnowledgePoints(self)
     self.queuedUpdate = false
 end
 
 
 local function queueUpdate(fm, delay, onlyKnowledgePoints)
     if fm.queuedUpdate then
+        fm.onlyKnowledgePoints = fm.onlyKnowledgePoints and onlyKnowledgePoints
         return
     end
 

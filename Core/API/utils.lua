@@ -519,7 +519,7 @@ function GW.GetUnitBattlefieldFaction(unit)
     if unit ~= "player" or not GW.Retail then
         return faction, localizedFaction
     end
-    if C_PvP.IsRatedBattleground() or IsWargame() then
+    if C_PvP.IsRatedBattleground() or (IsWargame and IsWargame()) then
         faction = PLAYER_FACTION_GROUP[GetBattlefieldArenaFaction()]
     elseif UnitIsMercenary(unit) then
         faction = faction == "Alliance" and "Horde" or "Alliance"

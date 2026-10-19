@@ -2,5 +2,4 @@
     <Script file ="Bindings.lua"/>
     <Include file ="actionbars.xml"/>
     <Script file ="actionbars.lua"/>
-    <Script file ="extraAB_bossAB.lua"/>
 </Ui>

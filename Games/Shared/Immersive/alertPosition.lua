@@ -23,7 +23,11 @@ local function StackSubSystem(subSystem, relative)
         return relative
     end
 
-    local frame = subSystem.anchorFrame or subSystem.alertFrame
+    if subSystem.anchorFrame then
+        return relative
+    end
+
+    local frame = subSystem.alertFrame
     if frame and frame:IsShown() then
         return PlaceNext(frame, relative)
     end

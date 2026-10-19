@@ -1160,19 +1160,11 @@ local function ApplyDelvesDifficultyPickerSkin()
     GW.HandleTrimScrollBar(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.ScrollBar)
     GW.HandleScrollControls(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame)
 
-    hooksecurefunc(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame, "SetRewards", function(self)
-        C_Timer.After(0, function()
-            for rewardFrame in self.rewardPool:EnumerateActive() do
-                if not rewardFrame.gwSkinned then
-                    rewardFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-                    rewardFrame.NameFrame:SetAlpha(0)
-                    rewardFrame.IconBorder:SetAlpha(0)
-                    GW.HandleIcon(rewardFrame.Icon)
-
-                    rewardFrame.gwSkinned = true
-                end
-            end
-        end)
+    GW.SkinScrollBoxFrames(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.ScrollBox, function(rewardFrame)
+        rewardFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+        rewardFrame.NameFrame:SetAlpha(0)
+        rewardFrame.IconBorder:SetAlpha(0)
+        GW.HandleIcon(rewardFrame.Icon)
     end)
 end
 

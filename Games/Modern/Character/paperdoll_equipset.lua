@@ -289,8 +289,8 @@ local function LoadPDEquipset(fmMenu, parent)
     g_selectionBehavior:RegisterCallback(SelectionBehaviorMixin.Event.OnSelectionChanged, function(o, elementData, selected)
         local button = fmGPDO.ScrollBox:FindFrame(elementData)
 
-        ToggleButton(button, selected)
         if button then
+            ToggleButton(button, selected)
             button:SetSelected(selected)
         end
     end, fmGPDO)

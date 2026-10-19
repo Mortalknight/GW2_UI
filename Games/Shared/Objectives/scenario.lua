@@ -130,9 +130,9 @@ function GwObjectivesScenarioContainerWidgetMixin:RemoveAllWidgets()
     self.timerWidgets = {}
     self.numTimers = 0
 
-    if self.timerBlock.ticker then
-        self.timerBlock.ticker:Cancel()
-        self.timerBlock.ticker = nil
+    if self.ticker then
+        self.ticker:Cancel()
+        self.ticker = nil
     end
 
     self.widgetPools:ReleaseAll()
@@ -142,8 +142,9 @@ function GwObjectivesScenarioContainerWidgetMixin:RegisterTimerWidget(widgetID, 
     if not self.timerWidgets[widgetID] then
         -- New timer added
         self.timerWidgets[widgetID] = widgetFrame
-        if not self.timerBlock.ticker then
-            self.timerBlock.ticker = C_Timer.NewTicker(1,
+        -- the timer and the status bar manager share a timer block, each runs its own ticker
+        if not self.ticker then
+            self.ticker = C_Timer.NewTicker(1,
                 function()
                     for id, widget in pairs(self.timerWidgets) do
                         self:ProcessWidget(id, widget.widgetType)
@@ -162,9 +163,9 @@ function GwObjectivesScenarioContainerWidgetMixin:UnregisterTimerWidget(widgetID
 
         self.numTimers = self.numTimers - 1
 
-        if self.numTimers == 0 and self.timerBlock.ticker then
-            self.timerBlock.ticker:Cancel()
-            self.timerBlock.ticker = nil
+        if self.numTimers == 0 and self.ticker then
+            self.ticker:Cancel()
+            self.ticker = nil
         end
 
         if self.numTimers == 0 and self.layoutFunc and self.container then

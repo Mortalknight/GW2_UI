@@ -292,7 +292,7 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         function(p)
             if not frame.anchorFrame or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
-                classicPositionGrid(frame.anchorFrame)
+                gridIndex, x, y = classicPositionGrid(frame.anchorFrame)
             end
             if p < 0.05 and not frame.periodic then
                 frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * critModifier, frame.dynamicScaleAdd, p / 0.05)))
@@ -321,7 +321,7 @@ local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
         function(p)
             if not frame.anchorFrame or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
-                classicPositionGrid(frame.anchorFrame)
+                gridIndex, x, y = classicPositionGrid(frame.anchorFrame)
             end
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
             if p < 0.10 and not frame.periodic then
@@ -553,7 +553,7 @@ end
 
 
 local function freeClassicGrid(namePlate)
-    local grid = namePlateClassicGrid[namePlate]
+    local grid = namePlate and namePlateClassicGrid[namePlate]
     if grid then wipe(grid) end
 end
 
@@ -571,7 +571,7 @@ local function onNamePlateRemoved(_, _, unitID)
     if not guid then return end
     unitToGuid[unitID] = nil
     guidToUnit[guid] = nil
-    freeClassicGrid(unitID)
+    freeClassicGrid(C_NamePlate.GetNamePlateForUnit(unitID))
     if GW.settings.combatText.style == formats.Classic or GW.settings.combatText.style == formats.Default then
         return
     end

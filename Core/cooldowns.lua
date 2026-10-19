@@ -216,7 +216,7 @@ local function OnResumeCooldown(self)
     if timer and timer.paused then
         -- calcuate time since paused
         local now = Cooldown_UnbuggedTime(timer)
-		timer.endTime = timer.start + timer.duration + (now - timer.paused)
+        timer.endTime = timer.endTime + (now - timer.paused)
         timer.endCooldown = timer.endTime - 0.05
         timer.paused = nil
         Cooldown_TimerUpdate(self.timer)
