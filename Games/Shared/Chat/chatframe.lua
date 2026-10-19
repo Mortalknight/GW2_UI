@@ -394,6 +394,7 @@ local function handleChatFrameFadeIn(chatFrame, force)
         return
     end
 
+    chatFrame:ResetAllFadeTimes()
     setChatBackgroundColor(chatFrame)
     local frameName = chatFrame:GetName()
     for _, v in pairs(CHAT_FRAME_TEXTURES) do
