@@ -24,8 +24,58 @@ local function GetFreePrivateLayoutIndex()
 end
 
 local function IsLayoutLocked(layout)
+    if layout and layout.gamepadLayout then return true end
     if not layout or not layout.profileLayout then return false end
     return layout.profileName ~= nil and GW.globalSettings.profiles[layout.profileName] ~= nil
+end
+
+-- built in layout for forever's gamepad interface, the hud sits around blizzards gamepad action bar.
+-- It can be picked on every client and can not be deleted, only reset
+local GAMEPAD_LAYOUT_NAME = "Gamepad"
+local GAMEPAD_POINTS = {
+    ["unitframes.healthGlobe"] = {point = "BOTTOM", relativePoint = "BOTTOM", xOfs = 0, yOfs = 12},
+    ["unitframes.pet"] = {point = "BOTTOMRIGHT", relativePoint = "BOTTOM", xOfs = -210, yOfs = 17},
+    powerBar = {point = "BOTTOMLEFT", relativePoint = "BOTTOM", xOfs = 180, yOfs = 40},
+    classpower = {point = "BOTTOMLEFT", relativePoint = "BOTTOM", xOfs = 180, yOfs = 62},
+    castingbar = {point = "BOTTOM", relativePoint = "BOTTOM", xOfs = 0, yOfs = 385},
+    ["playerAuras.buffs"] = {point = "BOTTOMLEFT", relativePoint = "BOTTOM", xOfs = 320, yOfs = 150},
+    ["playerAuras.debuffs"] = {point = "BOTTOMLEFT", relativePoint = "BOTTOM", xOfs = 320, yOfs = 255},
+    ["unitframes.player"] = {point = "BOTTOMRIGHT", relativePoint = "BOTTOM", xOfs = -210, yOfs = 275},
+    ["groupFrames.party"] = {point = "TOPLEFT", relativePoint = "TOPLEFT", xOfs = 20, yOfs = -150},
+    ["groupFrames.raid10"] = {point = "TOPLEFT", relativePoint = "TOPLEFT", xOfs = 20, yOfs = -150},
+    ["groupFrames.raid25"] = {point = "TOPLEFT", relativePoint = "TOPLEFT", xOfs = 20, yOfs = -150},
+}
+
+-- the gw defaults, for the gamepad layout with its positions on top
+local function FillLayoutWithDefaults(layout)
+    wipe(layout.frames)
+    for _, mover in ipairs(GW.MOVABLE_FRAMES) do
+        local default = GW.GetSettingDefault(mover.setting)
+        local point = (layout.gamepadLayout and GAMEPAD_POINTS[mover.setting]) or (default and default.pos)
+        if point and point.point then
+            layout.frames[#layout.frames + 1] = {settingName = mover.setting, point = GW.CopyTable(point)}
+        end
+    end
+end
+
+local function GetGamepadLayout()
+    local layout = GW.GetLayoutByName(GAMEPAD_LAYOUT_NAME)
+    if not layout then
+        layout = {name = GAMEPAD_LAYOUT_NAME, frames = {}, gamepadLayout = true}
+        FillLayoutWithDefaults(layout)
+        GW.GetAllLayouts()[GAMEPAD_LAYOUT_NAME] = layout
+    end
+    return layout
+end
+
+-- layouts that can not be deleted (profile and gamepad layouts) show a reset button in place of delete
+local function UpdateLayoutButtons(layout)
+    local view = GwSmallSettingsContainer.layoutView
+    local locked = IsLayoutLocked(layout)
+    view.delete:SetShown(not locked)
+    view.reset:SetShown(locked)
+    view.delete:SetEnabled(layout ~= nil)
+    view.rename:SetEnabled(layout ~= nil and not locked)
 end
 
 local function RefreshSpecsDropdown()
@@ -81,9 +131,7 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
         RefreshSpecsDropdown()
 
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.setByUpdateFramePositionForLayout = true
-
-        GwSmallSettingsContainer.layoutView.delete:SetEnabled(not IsLayoutLocked(layout))
-        GwSmallSettingsContainer.layoutView.rename:SetEnabled(not IsLayoutLocked(layout))
+        UpdateLayoutButtons(layout)
     end
 
     local points = {}
@@ -224,6 +272,17 @@ local function CreateNewLayout(self)
     })
 end
 
+local function ResetSelectedLayout()
+    GW.ShowPopup({text = L["Reset the selected layout to its default positions?"],
+        OnAccept = function()
+            local layout = GW.GetLayoutByName(GW.private.Layouts.currentSelected)
+            if not layout then return end
+            FillLayoutWithDefaults(layout)
+            UpdateFramePositionForLayout(layout)
+        end}
+    )
+end
+
 local function DeleteSelectedLayout(self)
     GW.ShowPopup({text = L["Are you sure you want to delete the selected layout?"],
         OnAccept = function()
@@ -238,8 +297,7 @@ local function DeleteSelectedLayout(self)
             GW.private.Layouts.currentSelected = nil
             view.savedLayoutDropDown:GenerateMenu()
             RefreshSpecsDropdown()
-            view.delete:Disable()
-            view.rename:Disable()
+            UpdateLayoutButtons(nil)
         end}
     )
 end
@@ -297,7 +355,10 @@ local function specSwitchHandlerOnEvent(self, event)
     end)
 
     local layoutToUse = layoutNameToUse and GW.GetLayoutByName(layoutNameToUse)
-    if layoutToUse then
+    -- with forever's gamepad interface the gamepad layout wins over spec and profile layouts
+    if GW.loadedWithGamepadInterface then
+        layoutToUse = GetGamepadLayout()
+    elseif layoutToUse then
         GW.Debug("Spec switch detected!", "Switch to Layout ", layoutNameToUse)
     else
         local profileName = GW.globalSettings:GetCurrentProfile()
@@ -325,7 +386,9 @@ local function specSwitchHandlerOnEvent(self, event)
     end
 
     if layoutToUse and (GW.private.Layouts.currentSelected ~= layoutToUse.name or event == "PLAYER_ENTERING_WORLD") then
-        UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true, event == "PLAYER_ENTERING_WORLD")
+        -- a switch at login saves the new positions like any switch, otherwise the next login follows the old ones
+        local startUp = event == "PLAYER_ENTERING_WORLD" and GW.private.Layouts.currentSelected == layoutToUse.name
+        UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true, startUp)
     end
 
     if event == "PLAYER_ENTERING_WORLD" then
@@ -378,6 +441,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     --create or get profile layout
     C_Timer.After(3, function()
         CreateProfileLayouts()
+        GetGamepadLayout()
         smallSettingsFrame.layoutView.savedLayoutDropDown:GenerateMenu()
         if not smallSettingsFrame.layoutView.savedLayoutDropDown.setByUpdateFramePositionForLayout then
             -- get the current profile layout
@@ -389,9 +453,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
                 GW.private.Layouts.currentSelected = allLayouts[name].name
                 smallSettingsFrame.layoutView.savedLayoutDropDown:GenerateMenu()
                 UpdateFramePositionForLayout(GW.GetLayoutByName(GW.private.Layouts.currentSelected))
-
-                GwSmallSettingsContainer.layoutView.delete:Disable()
-                GwSmallSettingsContainer.layoutView.rename:Disable()
+                UpdateLayoutButtons(GW.GetLayoutByName(GW.private.Layouts.currentSelected))
             end
         end
     end)
@@ -410,11 +472,8 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
         GW.private.Layouts.currentSelected = layoutName
 
         RefreshSpecsDropdown()
-        -- prevent profile layouts from deletion
         local layout = GW.GetLayoutByName(layoutName)
-        local canEdit = not IsLayoutLocked(layout)
-        GwSmallSettingsContainer.layoutView.delete:SetEnabled(canEdit)
-        GwSmallSettingsContainer.layoutView.rename:SetEnabled(canEdit)
+        UpdateLayoutButtons(layout)
 
         -- load layout
         UpdateFramePositionForLayout(layout)
@@ -500,6 +559,8 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     smallSettingsFrame.layoutView.delete:SetScript("OnClick", DeleteSelectedLayout)
     smallSettingsFrame.layoutView.delete:GwSkinNegativeButton()
     smallSettingsFrame.layoutView.rename:SetScript("OnClick", RenameSelectedLayout)
+    smallSettingsFrame.layoutView.reset:SetScript("OnClick", ResetSelectedLayout)
+    smallSettingsFrame.layoutView.reset:GwSkinNegativeButton()
 
     -- specswitch detaction things
     local specSwitchHandler = CreateFrame("Frame")

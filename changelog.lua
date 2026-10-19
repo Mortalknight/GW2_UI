@@ -19,6 +19,7 @@ addChange("12.1.0", {
     {GW.Enum.ChangelogType.feature, [=[Minimap: side, order and visibility of the side buttons can be set; the AddOn flyout closes after a click, optionally also when the mouse leaves it]=]},
     {GW.Enum.ChangelogType.feature, [=[Chat: name in chat puts a name like (Tom) in front of your messages, like Name2Chat; the chat tabs can be saved to the profile and applied on another character; with chat fading, hovering the chat shows the faded messages again]=]},
     {GW.Enum.ChangelogType.feature, [=[Classic clients: spellbook and talents mark spells that are not on the global cooldown]=]},
+    {GW.Enum.ChangelogType.feature, [=[Layouts: the new layout "Gamepad" places the HUD around the gamepad bars of Forever and is picked there automatically; profile and gamepad layouts can be reset to their default positions]=]},
     {GW.Enum.ChangelogType.change, [=[Quest tracker (Classic clients): zone sorting, quest XP and the daily and weekly color work without Questie; Wrath posts real quest links]=]},
     {GW.Enum.ChangelogType.change, [=[Action bars: empty slots hidden in Edit Mode come back on login, "Empty Slots Alpha" at 0% hides them until you drag something onto the bars]=]},
     {GW.Enum.ChangelogType.change, [=[New scale setting for the loot roll bars; the Pawn button of the hero panel shows the Pawn tooltip; Blizzard's own coordinates below the minimap are hidden]=]},

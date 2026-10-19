@@ -76,16 +76,19 @@ local function SkinDropDownList()
     end)
 end
 
--- blizzards menu frames come from a pool and lose their art again on every open; the backdrop is
--- created once per frame and kept here, not on the frame
+-- blizzards menu frames come from a pool and lose their art again on every open. The backdrop is an own
+-- frame behind the menu, no child of it and nothing written onto it: the menu lays out its children and
+-- reads its fields, from our code that taints it and with it the gamepad window focus
 local menuBackdrops = {}
 
 local function SkinMenuFrame(menu)
     menu:GwStripTextures()
     local backdrop = menuBackdrops[menu]
     if not backdrop then
-        menu:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        backdrop = menu.backdrop
+        backdrop = CreateFrame("Frame", nil, UIParent)
+        backdrop:SetAllPoints(menu)
+        backdrop:GwCreateBackdrop(GW.BackdropTemplates.Default)
+        menu:HookScript("OnHide", function() backdrop:Hide() end)
         menuBackdrops[menu] = backdrop
         -- long menus scroll, with the slim bar of our windows
         if menu.ScrollBar then
@@ -93,7 +96,9 @@ local function SkinMenuFrame(menu)
         end
     end
     -- submenus open above their parent, the backdrop follows the level of its menu
-    backdrop:SetFrameLevel(math.max(0, menu:GetFrameLevel() - 1))
+    backdrop:SetFrameStrata(menu:GetFrameStrata())
+    backdrop:SetFrameLevel(math.max(1, menu:GetFrameLevel() - 1))
+    backdrop:Show()
 end
 
 -- the opened menu, and every submenu it opens later

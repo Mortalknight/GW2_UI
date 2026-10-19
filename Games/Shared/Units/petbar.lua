@@ -255,7 +255,7 @@ function GwPlayerPetFrameMixin:ToggleAuraPosition()
     if self.auraPositionUnder then
         self.auras:SetPoint("TOPLEFT", self.powerbar, "BOTTOMLEFT", 0, -5)
     else
-        self.auras:SetPoint("TOPRIGHT", self.Background, "BOTTOMRIGHT", -3, 100)
+        self.auras:SetPoint("TOPRIGHT", self.Background, "BOTTOMRIGHT", -3, GW.IsGamepadInterface() and 24 or 100)
     end
 
     if GW.isModern and self.aurasContainer then
@@ -529,18 +529,23 @@ local function LoadPetFrame(lm)
     playerPetFrame:ClearAllPoints()
     playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
 
-    -- Pet Actionbuttons here
-    for i = 1, NUM_PET_ACTION_SLOTS do
-        local button = _G["PetActionButton" .. i]
-        button:Show()
-        playerPetFrame.buttons[i] = button
+    -- pet action buttons; the gamepad interface brings its own, there only portrait and bars are ours
+    local ownPetButtons = not GW.IsGamepadInterface()
+    if ownPetButtons then
+        for i = 1, NUM_PET_ACTION_SLOTS do
+            local button = _G["PetActionButton" .. i]
+            button:Show()
+            playerPetFrame.buttons[i] = button
+        end
     end
     playerPetFrame:TogglePortraitSide()
     playerPetFrame:SetActionButtonPositionAndStyle()
 
-    PetActionBar.ignoreFramePositionManager = true
-    PetActionBar:GwKillEditMode()
-    PetActionBar:SetParent(GW.HiddenFrame)
+    if ownPetButtons then
+        PetActionBar.ignoreFramePositionManager = true
+        PetActionBar:GwKillEditMode()
+        PetActionBar:SetParent(GW.HiddenFrame)
+    end
 
     hooksecurefunc(PetActionBar, "Update", function()
         playerPetFrame:Update()

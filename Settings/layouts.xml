@@ -55,6 +55,12 @@
                     <Anchor point="LEFT" relativeKey="$parent.new" relativePoint="RIGHT" x="5" y="0"/>
                 </Anchors>
             </Button>
+            <Button parentKey="reset" inherits="GwStandardButton" text="RESET" hidden="true">
+                <Size x="69" y="15" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.new" relativePoint="RIGHT" x="5" y="0"/>
+                </Anchors>
+            </Button>
 
             <DropdownButton parentKey="specsDropDown" inherits="WowStyle1DropdownTemplate">
                 <Size x="150" y="25"/>

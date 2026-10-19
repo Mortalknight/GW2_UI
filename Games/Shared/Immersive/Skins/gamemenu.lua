@@ -37,10 +37,9 @@ local function ToggleGw2Settings()
     end
     if not GW.InMoveHudMode then
         GwSettingsWindow:Show()
-        -- hiding the game menu from addon code taints the gamepad interface's window focus
-        if not GW.IsGamepadInterface() then
-            HideUIPanel(GameMenuFrame)
-        end
+        -- with forever's gamepad interface this taints the gamepad window focus (blizzard bug, addon code
+        -- can not close the game menu cleanly); left as it is until blizzard fixes it
+        HideUIPanel(GameMenuFrame)
     end
 end
 GW.ToggleGw2Settings = ToggleGw2Settings

@@ -989,6 +989,7 @@ function GW.LoadMinimap()
     end
 
     if QueueStatusButton then
+        QueueStatusButton:GwKillEditMode()
         QueueStatusButton:SetSize(26, 26)
         QueueStatusButtonIcon:GwKill()
         QueueStatusButtonIcon.texture:SetTexture(nil)

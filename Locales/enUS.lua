@@ -490,6 +490,7 @@ L["Maximum lines of 'Copy Chat Frame'"] = "Maximum Lines of 'Copy Chat Frame'"
 L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "Set the maximum number of lines displayed in the 'Copy Chat Frame'."
 L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] = true
 L["The gamepad interface is active and brings its own version of this, so it is disabled."] = true
+L["Reset the selected layout to its default positions?"] = true
 L["Set the growth direction of the stance bar."] = true
 L["Ctrl + Click to toggle override"] = true
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = true
