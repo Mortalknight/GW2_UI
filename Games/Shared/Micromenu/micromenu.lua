@@ -233,14 +233,16 @@ do
             if num ~= SendRecieveGroupSize then
                 if num > 1 and num > SendRecieveGroupSize then
                     if not SendMessageWaiting then
-                        SendMessageWaiting = C_Timer.After(10, SendMessage)
+                        SendMessageWaiting = true
+                        C_Timer.After(10, SendMessage)
                     end
                 end
                 SendRecieveGroupSize = num
             end
         elseif event == "PLAYER_ENTERING_WORLD" then
             if not SendMessageWaiting then
-                SendMessageWaiting = C_Timer.After(10, SendMessage)
+                SendMessageWaiting = true
+                C_Timer.After(10, SendMessage)
             end
             -- a version seen in an earlier session keeps the icon until the addon is updated
             RefreshUpdateIcon(false)

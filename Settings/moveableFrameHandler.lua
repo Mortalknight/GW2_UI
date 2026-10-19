@@ -581,19 +581,10 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
     mf.parent:SetAttribute("isMoved", new_point.hasMoved)
 
     if mf.setting == "playerAuras.buffs" or mf.setting == "playerAuras.debuffs" then
-        -- reset also the settings frame values
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".Seperate", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".SortDir", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".SortMethod", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".IconSize", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".IconHeight", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".KeepSizeRatio", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".GrowDirection", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".HorizontalSpacing", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".VerticalSpacing", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".MaxWraps", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".WrapAfter", nil, nil, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. ".NewAuraAnimation", nil, nil, true)
+        -- the aura settings go back to their defaults too
+        for _, key in ipairs({"Seperate", "Sort", "IconSize", "IconHeight", "KeepSizeRatio", "GrowDirection", "HorizontalSpacing", "VerticalSpacing", "MaxWraps", "WrapAfter", "NewAuraAnimation"}) do
+            GW.updateSettingsFrameSettingsValue(mf.setting .. "." .. key, nil, true, true)
+        end
         GW.UpdateAuraHeader(mf.parent)
     elseif mf.setting == "micromenu" then
         -- bar art and button offset follow the (default) position
