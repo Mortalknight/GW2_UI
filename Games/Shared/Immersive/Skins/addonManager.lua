@@ -43,9 +43,8 @@ local function LoadAddonListSkin()
     if not GW.settings.skins.addonList.enabled then return end
     GW.HandlePortraitFrame(AddonList)
 
-    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {AddonList.ScrollBox}, nil, false, true)
+    GW.CreateFrameHeaderWithBody(AddonList, AddonList:GetTitleText(), "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {AddonList.ScrollBox}, nil, false, true)
 
-    AddonListTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
     AddonList.CloseButton:GwSkinButton(true)
     AddonList.EnableAllButton:GwSkinButton(false, true)
     AddonList.DisableAllButton:GwSkinButton(false, true)
@@ -61,6 +60,8 @@ local function LoadAddonListSkin()
     for _, region in next, { AddonList.ForceLoad:GetRegions() } do
         if region:IsObjectType("FontString") then
             region:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+            region:ClearAllPoints()
+            region:SetPoint("LEFT", AddonList.ForceLoad, "RIGHT", 6, 0)
         end
     end
 
