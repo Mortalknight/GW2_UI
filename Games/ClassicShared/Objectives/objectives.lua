@@ -94,7 +94,7 @@ local function AddQuestInfos(questId, id)
         isComplete = isComplete,
         startEvent = startEvent,
         numObjectives = GetNumQuestLeaderBoards(id),
-        requiredMoney = GetQuestLogRequiredMoney(questId),
+        requiredMoney = GetQuestLogRequiredMoney(id),
         isAutoComplete = false,
         sourceItemId = sourceItemId,
         isFailed = isFailed,
@@ -399,9 +399,9 @@ function GwQuestLogMixin:BlockOnClick(button)
             rootDescription:CreateTitle(self.title)
 
             if Questie and Questie.started then
-                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID) or {}
+                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID)
 
-                if QuestieQuest:IsComplete() == 0 then
+                if QuestieQuest and QuestieQuest:IsComplete() == 0 then
                     local submenuObjectives = rootDescription:CreateButton(OBJECTIVES_TRACKER_LABEL)
 
                     for _, objective in pairs(QuestieQuest.Objectives) do
@@ -608,7 +608,7 @@ function GwObjectivesQuestContainerMixin:InitModule()
     local baseQLTB_OnClick = QuestLogTitleButton_OnClick
     QuestLogTitleButton_OnClick = function(btn, button) -- I wanted to use hooksecurefunc but this needs to be a pre-hook to work properly unfortunately
         if (not btn) or btn.isHeader or not IsShiftKeyDown() then baseQLTB_OnClick(btn, button) return end
-        local questLogLineIndex = self:GetID()
+        local questLogLineIndex = btn:GetID() + FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
 
         if ( IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() ) then
             local questId = GetQuestIDFromLogIndex(questLogLineIndex)

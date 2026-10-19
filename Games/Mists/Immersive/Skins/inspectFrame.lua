@@ -40,7 +40,7 @@ local function UpdateGlyph(glyph)
 end
 
 local function UpdateTalentButtons()
-    local query = { groupIndex = 1, isInspect = false, target = INSPECTED_UNIT }
+    local query = { groupIndex = 1, isInspect = true, target = INSPECTED_UNIT }
     for _, entry in ipairs(talentButtons) do
         query.tier, query.column = entry.tier, entry.column
         local info = C_SpecializationInfo.GetTalentInfo(query)

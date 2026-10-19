@@ -40,15 +40,11 @@ local function UpdateSelectorButtons(scrollBox)
     end
 end
 
--- the window title is the second font string on the classic clients, the first everywhere else
+-- the window title is a plain font string, its place among the regions differs per client
 local function GetHeaderText(regions)
-    local wanted, found = (GW.Classic or GW.TBC or GW.Wrath) and 2 or 1, 0
     for _, region in pairs(regions) do
-        if region:GetObjectType() == "FontString" then
-            found = found + 1
-            if found == wanted then
-                return region
-            end
+        if region:GetObjectType() == "FontString" and region:GetText() == CREATE_MACROS then
+            return region
         end
     end
 end

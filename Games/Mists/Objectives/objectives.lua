@@ -464,7 +464,7 @@ function GwQuestLogMixin:BlockOnClick(button)
 
             if GetQuestLogPushable(self.questLogIndex) and IsInGroup()then
 				rootDescription:CreateButton(SHARE_QUEST, function()
-					WatchFrame_ShareQuest(button, self.questLogIndex)
+					QuestLogPushQuest(self.questLogIndex)
 				end)
 			end
 
@@ -481,7 +481,7 @@ function GwQuestLogMixin:BlockOnClick(button)
         if button == "LeftButton" then
             AddTomTomWaypoint(self.questID, nil)
         else
-            WatchFrame_StopTrackingQuest(self, self.questWatchedId)
+            UntrackQuest(self.questLogIndex)
         end
         return
     end

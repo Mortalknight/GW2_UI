@@ -430,14 +430,14 @@ local function resetSpellbookPages(self)
     end
 end
 
-local function buildSubSpellName(spellIndex, specName, isPassive, subSpellName)
+local function buildSubSpellName(spellIndex, bookType, specName, isPassive, subSpellName)
     if subSpellName ~= "" then
         return subSpellName
     end
     if specName and specName ~= "" then
         return isPassive and (specName .. ", " .. SPELL_PASSIVE_SECOND) or specName
     end
-    if IsTalentSpell(spellIndex, BOOKTYPE) then
+    if IsTalentSpell(spellIndex, bookType) then
         return isPassive and TALENT_PASSIVE or TALENT
     end
     if isPassive then
@@ -537,7 +537,7 @@ local function updateSpellbookTab(self)
                     local specName = table.concat(specs, PLAYER_LIST_DELIMITER)
                     local spell = Spell:CreateFromSpellID(spellID)
                     spell:ContinueOnSpellLoad(function()
-                        local subSpellName = buildSubSpellName(spellIndex, specName, isPassive, spell:GetSpellSubtext())
+                        local subSpellName = buildSubSpellName(spellIndex, BOOKTYPE, specName, isPassive, spell:GetSpellSubtext())
 
                         local rank = showAllRanks and subSpellName:find(RANK, 1, true) and subSpellName:match("%d+")
                         button.rank:SetText(rank or "")

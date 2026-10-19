@@ -355,7 +355,7 @@ local function updateTalentTrees(self)
                     -- If player has no talent points or this is the inactive talent group then show only talents with points in them
                     forceDesaturated = (container.talentPoints <= 0 or not isActiveTalentGroup) and displayRank == 0;
                     -- If the player has spent at least 5 talent points in the previous tier
-                    local tierUnlocked = (talentInfo.tier - 1) * (container.pet and PET_TALENTS_PER_TIER or PLAYER_TALENTS_PER_TIER) <= container.pointsSpent
+                    local tierUnlocked = (talentInfo.tier - 1) * (isPetTalents and PET_TALENTS_PER_TIER or PLAYER_TALENTS_PER_TIER) <= container.pointsSpent
 
                     local ispassive = not talentInfo.isExceptional
                     local Prereqs = TalentFrame_SetPrereqs(container, talentInfo.tier, talentInfo.column, forceDesaturated, tierUnlocked, preview, GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
@@ -492,7 +492,7 @@ local function LoadTalents(tabContainer)
 
     talentFrame.bottomBar.dualSpecActiveTalentGroupe:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
 
-    talentFrame.bottomBar.talentPreview.checkbutton:SetChecked(GetCVarBool("previewTalents"))
+    talentFrame.bottomBar.talentPreview.checkbutton:SetChecked(GetCVarBool("previewTalentsOption"))
 
 
     talentFrame:RegisterEvent("PLAYER_TALENT_UPDATE")

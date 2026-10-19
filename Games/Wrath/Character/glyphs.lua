@@ -1,7 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
 
-CHACHED_CLASSGLYPHS = {}
+local CHACHED_CLASSGLYPHS = {}
 
 local function glyphItem_onEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 0, 0)
@@ -14,7 +14,7 @@ local function GlyphFrameGlyph_UpdateSlot_Hook(self)
     local id = self:GetID()
     local frame = _G["GwGlyphesContainerGlyph" .. id]
 
-	local enabled, _, glyphSpell, iconFilename = GetGlyphSocketInfo(id, GetActiveTalentGroup())
+	local enabled, _, _, glyphSpell, iconFilename = GetGlyphSocketInfo(id, GetActiveTalentGroup())
 
 	if ( not enabled ) then
 		--Locked glyph slot
@@ -66,7 +66,7 @@ end
 local function getClassGlyphsInBag()
     local classGlyphs = GW.GlyphData[GW.myclass].glyphs
 
-    local index = 0
+    local index = 1
     local found
     wipe(CHACHED_CLASSGLYPHS)
     for itemID, _glyphType in pairs(classGlyphs) do

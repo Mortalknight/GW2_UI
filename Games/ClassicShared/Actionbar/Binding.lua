@@ -254,8 +254,10 @@ local function DisplayHoverBinding()
         end
 
         if not C_AddOns.IsAddOnLoaded("Blizzard_MacroUI") then
+            -- blizzard calls LoadAddOn on every opening of the macro frame
             hooksecurefunc(C_AddOns, "LoadAddOn", function(addon)
-                if addon == "Blizzard_MacroUI" then
+                if addon == "Blizzard_MacroUI" and not bind.macrosRegistered then
+                    bind.macrosRegistered = true
                     registermacro()
                 end
             end)

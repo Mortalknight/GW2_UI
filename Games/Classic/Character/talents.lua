@@ -344,7 +344,7 @@ local function updateTalentTrees(self)
                 button.active = true
 
                 -- If player has no talent points or this is the inactive talent group then show only talents with points in them
-                if (container.talentPoints <= 0 or not openSpec == activeTalentGroup) and (preview and talentInfo.previewRank or talentInfo.rank) == 0 then
+                if (container.talentPoints <= 0 or openSpec ~= activeTalentGroup) and (preview and talentInfo.previewRank or talentInfo.rank) == 0 then
                     forceDesaturated = 1
                 else
                     forceDesaturated = nil

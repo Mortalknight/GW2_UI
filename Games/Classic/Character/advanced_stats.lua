@@ -302,7 +302,7 @@ end
 local function _HasSetBonusModifierMP5()
     if GW.myClassID == GW.Enum.ClassIndex.Priest then
         return IsSetBonusActive("Vestments of Transcendence", 3)
-    elseif GW.myClassID == GW.Enum.ClassIndex.DRUID then
+    elseif GW.myClassID == GW.Enum.ClassIndex.Druid then
         return IsSetBonusActive("Stormrage Raiment", 3)
     end
 
@@ -320,7 +320,7 @@ end
 
 local function HasSetBonusModifierNatureCrit()
     if GW.myClassID == GW.Enum.ClassIndex.Shaman then
-        return IsSetBonusActive("The Then Storms", 5)
+        return IsSetBonusActive("The Ten Storms", 5)
     end
 
     return false
@@ -653,7 +653,7 @@ end
 local function _GetSetBonus(school)
     local bonus = 0
 
-    if schools == schools.nature and HasSetBonusModifierNatureCrit() then
+    if school == schools.nature and HasSetBonusModifierNatureCrit() then
         bonus = 3 -- 3% Nature Crit Shame T2
     end
 

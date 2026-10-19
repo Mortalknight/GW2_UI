@@ -119,7 +119,7 @@ end
 
 local function PaperDollStats_OnEvent(self, event, ...)
     local unit = ...
-    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MODEL_CHANGED" or event=="UNIT_NAME_UPDATE" or event=="PLAYER_PVP_RANK_CHANGED" and unit == "player" then
+    if event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_PVP_RANK_CHANGED" or ((event == "UNIT_MODEL_CHANGED" or event == "UNIT_NAME_UPDATE") and unit == "player") then
         GwDressingRoom.model:SetUnit("player", false)
         PaperDollUpdateUnitData()
         return
@@ -466,6 +466,10 @@ function GwToggleCharacter(tab, onlyShow)
     if InCombatLockdown() then
         return
     end
+    -- closed with escape or the close button, the next toggle of the same tab opens it again
+    if not GwCharacterWindow:IsShown() then
+        CHARACTER_PANEL_OPEN = nil
+    end
 
     local CHARACTERFRAME_DEFAULTFRAMES= {}
 
@@ -617,6 +621,11 @@ local function LoadPaperDoll(tabContainer)
     GwCharacterWindow:SetHeroPanelMenu(heroPanelMenu)
 
     dressingRoom.stats:SetScript("OnEvent", PaperDollStats_OnEvent)
+    for _, event in ipairs({"PLAYER_TALENT_UPDATE", "ACTIVE_TALENT_GROUP_CHANGED"}) do
+        if C_EventUtils.IsEventValid(event) then
+            dressingRoom.stats:RegisterEvent(event)
+        end
+    end
     dressingRoomPet.stats:SetScript("OnEvent", PaperDollPetStats_OnEvent)
 
     heroPanelMenu.SetupBackButton = menu_SetupBackButton

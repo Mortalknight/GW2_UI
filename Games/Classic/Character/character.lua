@@ -128,7 +128,7 @@ end
 
 local function PaperDollStats_OnEvent(self, event, ...)
     local unit = ...
-    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MODEL_CHANGED" or event=="UNIT_NAME_UPDATE" or event=="PLAYER_PVP_RANK_CHANGED" and unit == "player" then
+    if event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_PVP_RANK_CHANGED" or ((event == "UNIT_MODEL_CHANGED" or event == "UNIT_NAME_UPDATE") and unit == "player") then
         GwDressingRoom.model:SetUnit("player", false)
         PaperDollUpdateUnitData()
         return
@@ -715,6 +715,10 @@ local CHARACTER_PANEL_OPEN = ""
 function GwToggleCharacter(tab, onlyShow)
     if InCombatLockdown() then
         return
+    end
+    -- closed with escape or the close button, the next toggle of the same tab opens it again
+    if not GwCharacterWindow:IsShown() then
+        CHARACTER_PANEL_OPEN = nil
     end
 
     local CHARACTERFRAME_DEFAULTFRAMES= {}

@@ -450,7 +450,7 @@
                 self.bottomBar.dualSpecActiveTalentGroupe:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
                 self.bottomBar.dualSpecActiveTalentGroupe:SetTextColor(0.85, 0.70, 0.29, 1)
 
-                self.bottomBar.talentPreview.checkbutton:SetChecked(GetCVarBool("previewTalents"))
+                self.bottomBar.talentPreview.checkbutton:SetChecked(GetCVarBool("previewTalentsOption"))
 
                 self:RegisterEvent("UNIT_MODEL_CHANGED")
                 self:RegisterEvent("UNIT_LEVEL")

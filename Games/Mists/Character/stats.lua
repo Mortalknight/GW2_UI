@@ -281,7 +281,6 @@ local function getMastery()
 	end
 
 	local mastery = GetMastery();
-    local _, class = UnitClass("player")
 	local masteryBonus = GetCombatRatingBonus(CR_MASTERY)
     local tooltip, tooltip2
 	local title = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_MASTERY).." "..format("%.2F", mastery)..FONT_COLOR_CODE_CLOSE;
@@ -289,30 +288,10 @@ local function getMastery()
 		title = title..HIGHLIGHT_FONT_COLOR_CODE.." ("..format("%.2F", mastery-masteryBonus)..FONT_COLOR_CODE_CLOSE..GREEN_FONT_COLOR_CODE.."+"..format("%.2F", masteryBonus)..FONT_COLOR_CODE_CLOSE..HIGHLIGHT_FONT_COLOR_CODE..")";
 	end
 	tooltip = title
-
-    -- Class mastery spells are not used in MoP.
-	local isClassMasteryKnownOrUnused = ClassicExpansionAtLeast(LE_EXPANSION_MISTS_OF_PANDARIA) or GW.IsSpellKnown(CLASS_MASTERY_SPELLS[class]);
-	local primaryTalentTree = C_SpecializationInfo.GetSpecialization();
-	if (isClassMasteryKnownOrUnused and primaryTalentTree) then
-		local masterySpells = C_SpecializationInfo.GetSpecializationMasterySpells(primaryTalentTree)
-        local hasAddedAnyMasterySpell = false
-        for i, masterySpell in ipairs(masterySpells) do
-			if hasAddedAnyMasterySpell then
-				GameTooltip:AddLine(" ")
-			end
-			GameTooltip:AddSpellByID(masterySpell)
-			hasAddedAnyMasterySpell = true
-		end
-		GameTooltip:AddLine(" ");
-		GameTooltip:AddLine(format(STAT_MASTERY_TOOLTIP, GetCombatRating(CR_MASTERY), masteryBonus), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
-	else
-		GameTooltip:AddLine(format(STAT_MASTERY_TOOLTIP, GetCombatRating(CR_MASTERY), masteryBonus), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
-		GameTooltip:AddLine(" ");
-		if (isClassMasteryKnownOrUnused) then
-			GameTooltip:AddLine(STAT_MASTERY_TOOLTIP_NO_TALENT_SPEC, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true);
-		else
-			GameTooltip:AddLine(STAT_MASTERY_TOOLTIP_NOT_KNOWN, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true);
-		end
+	-- the stat tooltip shows these lines on hover, not while the stats refresh
+	tooltip2 = format(STAT_MASTERY_TOOLTIP, GetCombatRating(CR_MASTERY), masteryBonus)
+	if not C_SpecializationInfo.GetSpecialization() then
+		tooltip2 = tooltip2 .. "\n\n" .. GRAY_FONT_COLOR:WrapTextInColorCode(STAT_MASTERY_TOOLTIP_NO_TALENT_SPEC)
 	end
 
     return format("%.2F", mastery), tooltip, tooltip2

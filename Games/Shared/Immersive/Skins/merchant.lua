@@ -117,20 +117,8 @@ local function OnMerchantInfoUpdate()
 end
 
 local function SkinHeader()
-    -- the classic frame has no title key, its second font string is the title
-    local title = MerchantFrameTitleText
-    if not GW.Retail then
-        local found = 0
-        for _, region in ipairs({ MerchantFrame:GetRegions() }) do
-            if region:GetObjectType() == "FontString" then
-                found = found + 1
-                if found == 2 then
-                    title = region
-                    break
-                end
-            end
-        end
-    end
+    -- the classic clients write the merchant name into their own font string, not into the frame title
+    local title = GW.isModern and MerchantFrame:GetTitleText() or MerchantNameText
 
     GW.CreateFrameHeaderWithBody(MerchantFrame, title, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png", { MerchantFrameInset, MerchantMoneyInset }, nil, false, true)
     local icon = MerchantFrame.gwHeader.windowIcon
