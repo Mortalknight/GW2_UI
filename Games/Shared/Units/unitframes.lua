@@ -489,6 +489,12 @@ function GwUnitFrameMixin:SetUnitPortrait()
     self.activePortrait = nil
 end
 
+-- colored for every unit, like in the tooltip
+function GwUnitFrameMixin:UpdateLevelColor(lvl)
+    local color = GW.GetUnitLevelColor(self.gwUnit, lvl)
+    self.levelString:SetVertexColor(color.r, color.g, color.b)
+end
+
 function GwUnitFrameMixin:UnitFrameData(lvl)
     local level = lvl or UnitLevel(self.gwUnit)
     local name = GW.GetUnitDisplayName(self.gwUnit)
@@ -512,15 +518,7 @@ function GwUnitFrameMixin:UnitFrameData(lvl)
         self:UpdateHealthbarColor()
     end
 
-    if not GW.Retail then
-        if UnitCanAttack("player", self.gwUnit) then
-            if level == "??" then level = 99 end
-            local color = GetCreatureDifficultyColor(level)
-            self.levelString:SetVertexColor(color.r, color.g, color.b)
-        else
-            self.levelString:SetVertexColor(1, 1, 1)
-        end
-    end
+    self:UpdateLevelColor(lvl)
 
     self:SetUnitPortrait()
     self:SetUnitPortraitFrame()
@@ -881,6 +879,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             self:HideCastBar()
         elseif event == "UNIT_FACTION" then
             self:UpdateHealthbarColor()
+            self:UpdateLevelColor()
         end
     end
 end

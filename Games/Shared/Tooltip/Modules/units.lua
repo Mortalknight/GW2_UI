@@ -63,8 +63,8 @@ local function HideFactionLines(tooltip)
     end
 end
 
-local function GetLevelText(level, realLevel)
-    local color = GetCreatureDifficultyColor(level)
+local function GetLevelText(unit, level, realLevel)
+    local color = GW.GetUnitLevelColor(unit, level)
     local text = GW.RGBToHex(color.r, color.g, color.b) .. (level > 0 and level or "??") .. "|r"
     if realLevel and level < realLevel then
         text = text .. " |cffffffff(" .. realLevel .. ")|r"
@@ -142,7 +142,7 @@ local function SetPlayerLines(tooltip, unit, color)
     end
     local gender = GW.settings.tooltip.unit.gender and GENDERS[UnitSex(unit)]
 
-    local text = GetLevelText(UnitEffectiveLevel(unit), UnitLevel(unit)) .. " " .. (gender and gender .. " " or "") .. race
+    local text = GetLevelText(unit, UnitEffectiveLevel(unit), UnitLevel(unit)) .. " " .. (gender and gender .. " " or "") .. race
     if CLASS_IN_LEVEL_LINE then
         text = text .. " " .. color:WrapTextInColorCode(UnitClass(unit))
     elseif specLine then
@@ -169,7 +169,7 @@ local function SetCreatureLines(tooltip, unit, color)
             local levelColor = teamLevel and GetRelativeDifficultyColor(teamLevel, level) or GetCreatureDifficultyColor(level)
             levelText = GW.RGBToHex(levelColor.r, levelColor.g, levelColor.b) .. level .. "|r"
         else
-            levelText = GetLevelText(UnitEffectiveLevel(unit))
+            levelText = GetLevelText(unit, UnitEffectiveLevel(unit))
         end
 
         local isPvP = UnitIsPVP(unit)

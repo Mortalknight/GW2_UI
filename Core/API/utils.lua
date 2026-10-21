@@ -938,6 +938,18 @@ local function MixinHideDuringOverride(f)
 end
 GW.MixinHideDuringOverride = MixinHideDuringOverride
 
+local GetContentDifficultyCreatureForPlayer = C_PlayerInfo and C_PlayerInfo.GetContentDifficultyCreatureForPlayer
+function GW.GetUnitLevelColor(unit, level)
+    if GetContentDifficultyCreatureForPlayer and GetDifficultyColor then
+        local difficulty = GetContentDifficultyCreatureForPlayer(unit)
+        if difficulty then
+            return GetDifficultyColor(difficulty)
+        end
+    end
+    level = level or UnitEffectiveLevel(unit)
+    return GetCreatureDifficultyColor(level > 0 and level or 99)
+end
+
 -- forever's gamepad interface replaces the action bars and the micro menu; switching it reloads the ui
 function GW.IsGamepadInterface()
     return InputUtil and InputUtil.IsGamepadUIEnabled and InputUtil.IsGamepadUIEnabled()
