@@ -50,13 +50,13 @@ local function HandleWarning(frame)
     frame.ExtraBG:Hide()
 end
 
--- border color tells the state: gold = selected, epic = unlocked reward, dark = locked / none
+-- border color tells the state: gold = selected, light grey = unlocked, dark = locked; the epic color stays on the item
 local function SetStateBorder(frame, selected, unlocked)
     if not frame.backdrop then return end
     if selected then
-        frame.backdrop:SetBackdropBorderColor(1, 0.8, 0)
+        frame.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.QuestGold:GetRGB())
     elseif unlocked then
-        frame.backdrop:SetBackdropBorderColor(epicColor.r, epicColor.g, epicColor.b)
+        frame.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.CardBorder:GetRGB())
     else
         frame.backdrop:SetBackdropBorderColor(GW.Colors.Fallback:GetRGB())
     end
@@ -67,6 +67,11 @@ local function UpdateActivityState(frame)
     local unlocked = frame.CompletedIcon:IsShown()
     if frame.gwLock then
         frame.gwLock:SetShown(not unlocked)
+    end
+    -- the check mark alone shows the unlock, blizzard colors both texts gold and green
+    if unlocked then
+        frame.Threshold:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        frame.Progress:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
     end
     SetStateBorder(frame, frame.SelectedTexture:IsShown(), unlocked)
 end
@@ -82,6 +87,11 @@ local function SkinActivity(frame)
     end
     frame.SelectedTexture:SetAlpha(0)
     frame.UnselectedFrame:SetAlpha(0)
+    -- the glows and the unlock burst are drawn for that art, our border shows the state
+    frame.SelectionGlow:SetAlpha(0)
+    frame.RewardGenerated:SetAlpha(0)
+    frame.ItemGlow:GwKill()
+    frame.UncollectedGlow:GwKill()
     frame:GwCreateBackdrop("Transparent")
 
     -- own lock for locked slots, sits where the reward item appears later
@@ -93,10 +103,14 @@ local function SkinActivity(frame)
     frame.gwLock:SetAlpha(0.5)
 
     frame.Threshold:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    frame.Progress:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    frame.Progress:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
     if frame.ItemFrame then
         hooksecurefunc(frame.ItemFrame, "SetDisplayedItem", SkinRewardIcon)
+        -- the item level centered under the item instead of in the corner of the slot
+        frame.Progress:ClearAllPoints()
+        frame.Progress:SetPoint("TOP", frame.ItemFrame, "BOTTOM", 0, -4)
+        frame.Progress:SetJustifyH("CENTER")
     end
     hooksecurefunc(frame, "Refresh", UpdateActivityState)
     hooksecurefunc(frame, "SetSelectionState", UpdateActivityState)
@@ -114,6 +128,7 @@ local function SkinActivityType(frame)
 
     -- the artwork fills the frame, the gw2 border frames it
     frame:GwCreateBackdrop("Transparent")
+    frame.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.CardBorder:GetRGB())
     frame.Background:ClearAllPoints()
     frame.Background:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
     frame.Background:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
@@ -133,8 +148,38 @@ local function SkinActivityType(frame)
 end
 
 ---------- concessions ("or take the currency") ----------
+-- lines left and right of the "or", over the width of the concession row like the line under the intro
+local OR_LINE_GAP = 12
+
+local function UpdateOrLines(concessions)
+    local header = concessions.HeaderText
+    local width = math.max(0, (concessions:GetWidth() - header:GetStringWidth()) / 2 - OR_LINE_GAP)
+    concessions.gwLeftLine:SetWidth(width)
+    concessions.gwRightLine:SetWidth(width)
+end
+
+local function AddOrLines(concessions)
+    local header = concessions.HeaderText
+    for _, side in ipairs({"Left", "Right"}) do
+        local line = concessions:CreateTexture(nil, "ARTWORK")
+        line:SetColorTexture(GW.Colors.SkinColors.HeaderBorder:GetRGBA())
+        line:SetHeight(1)
+        if side == "Left" then
+            line:SetPoint("RIGHT", header, "LEFT", -OR_LINE_GAP, 0)
+        else
+            line:SetPoint("LEFT", header, "RIGHT", OR_LINE_GAP, 0)
+        end
+        concessions["gw" .. side .. "Line"] = line
+    end
+    concessions:HookScript("OnShow", UpdateOrLines)
+    UpdateOrLines(concessions)
+end
+
 local function UpdateConcessionState(frame)
-    SetStateBorder(frame, frame.SelectedTexture:IsShown(), true)
+    if frame.unlocked then
+        frame.RewardsFrame.Label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    end
+    SetStateBorder(frame, frame.SelectedTexture:IsShown(), frame.unlocked)
 end
 
 local function SkinConcession(frame)
@@ -155,6 +200,7 @@ local function SkinConcession(frame)
         end
     end
 
+    hooksecurefunc(frame, "Refresh", UpdateConcessionState)
     hooksecurefunc(frame, "SetSelectionState", UpdateConcessionState)
     UpdateConcessionState(frame)
 end
@@ -232,6 +278,7 @@ local function ApplyWeeklyRewardsSkin()
     if concessions.HeaderText then
         concessions.HeaderText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         concessions.HeaderText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        AddOrLines(concessions)
     end
     if concessions.Rewards then
         if concessions.Rewards.Text then
