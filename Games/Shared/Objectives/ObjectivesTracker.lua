@@ -309,22 +309,63 @@ local function FormatObjectiveNumbers(text)
 end
 GW.FormatObjectiveNumbers = FormatObjectiveNumbers
 
+local STICKY_HEADER_PADDING = 4
+
+-- covers the end of the quest above, which lies under the sticky header
 local function GetStickyBackground(header)
     if not header.gwStickyBackground then
         header:SetFrameLevel(header:GetParent():GetFrameLevel() + 10)
         local bg = header:CreateTexture(nil, "BACKGROUND", nil, -8)
         bg:SetColorTexture(GW.Colors.Fallback:GetRGBA())
-        bg:SetPoint("TOPLEFT", header, "TOPLEFT", -40, 4)
-        bg:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, -4)
-        local fade = header:CreateTexture(nil, "BACKGROUND", nil, -8)
-        fade:SetColorTexture(GW.Colors.FallbackWhite:GetRGBA())
-        fade:SetGradient("VERTICAL", GW.Colors.Transparent, GW.Colors.Fallback)
-        fade:SetPoint("TOPLEFT", bg, "BOTTOMLEFT")
-        fade:SetPoint("TOPRIGHT", bg, "BOTTOMRIGHT")
-        fade:SetHeight(16)
-        header.gwStickyBackground = {bg, fade}
+        bg:SetPoint("TOPLEFT", header, "TOPLEFT", -40, STICKY_HEADER_PADDING)
+        bg:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, -STICKY_HEADER_PADDING)
+        header.gwStickyBackground = bg
     end
     return header.gwStickyBackground
+end
+
+local SCROLL_STEP = 15
+local MIN_SCROLL_STOP_DISTANCE = 5
+
+local function GetScrollStops(scrollFrame)
+    local stops = {}
+    local childTop = scrollFrame.Child:GetTop()
+    if not childTop then return stops end
+    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
+        local top = container:IsShown() and container:GetTop()
+        if top then
+            stops[#stops + 1] = childTop - top
+            local header = container.header
+            local headerSpace = header and header:IsShown() and (header:GetHeight() + STICKY_HEADER_PADDING) or 0
+            for _, block in ipairs(container.blocks or {}) do
+                local blockTop = block:IsShown() and block:GetTop()
+                if blockTop then
+                    stops[#stops + 1] = childTop - blockTop - headerSpace
+                end
+            end
+        end
+    end
+    table.sort(stops)
+    return stops
+end
+
+local function GetNextScroll(scrollFrame, delta)
+    local current = scrollFrame:GetVerticalScroll()
+    local stops = GetScrollStops(scrollFrame)
+    local target
+    if delta < 0 then
+        for i = 1, #stops do
+            if stops[i] > current + MIN_SCROLL_STOP_DISTANCE then target = stops[i] break end
+        end
+    else
+        for i = #stops, 1, -1 do
+            if stops[i] < current - MIN_SCROLL_STOP_DISTANCE then target = stops[i] break end
+        end
+    end
+    if not target or math.abs(target - current) > (scrollFrame.visibleHeight or 0) then
+        target = current - delta * SCROLL_STEP
+    end
+    return math.max(0, math.min(scrollFrame.maxScroll or 0, target))
 end
 
 local function UpdateScrollIndicator(scrollFrame, scroll)
@@ -376,9 +417,7 @@ local function UpdateScrollView()
                 header.gwStickyOffset = offset
                 header:ClearAllPoints()
                 header:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, -offset)
-                for _, texture in ipairs(GetStickyBackground(header)) do
-                    texture:SetShown(offset > 0)
-                end
+                GetStickyBackground(header):SetShown(offset > 0)
             end
         end
     end
@@ -497,12 +536,7 @@ function GwObjectivesTrackerMixin:CreateTrackerScrollFrame(name, height)
     local scrollFrame = CreateFrame("ScrollFrame", name, self, "GwQuestTrackerScroll")
     scrollFrame:SetHeight(height)
     scrollFrame:SetScript("OnMouseWheel", function(frame, delta)
-        delta = -delta * 15
-        local s = math.max(0, frame:GetVerticalScroll() + delta)
-        if frame.maxScroll then
-            s = math.min(frame.maxScroll, s)
-        end
-        frame:SetVerticalScroll(s)
+        frame:SetVerticalScroll(GetNextScroll(frame, delta))
         UpdateScrollView()
         -- the item buttons are anchored to the static tracker (never to the scroll
         -- child, see UpdateObjectiveActionButtonPosition) - follow the scroll manually
