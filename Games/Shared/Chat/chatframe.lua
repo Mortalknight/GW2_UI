@@ -872,7 +872,9 @@ local function UpdateSettings()
         if frame and frame:IsShown() then
             frame:SetFading(GW.settings.chat.fade)
             if GW.settings.chat.fade then
-                handleChatFrameFadeOut(frame, true)
+                if not frame.hasBeenFaded then
+                    handleChatFrameFadeOut(frame, true)
+                end
             else
                 handleChatFrameFadeIn(frame, true)
             end
@@ -1101,17 +1103,6 @@ local function LoadChat()
     end
     hooksecurefunc("FCF_FadeOutChatFrame", handleChatFrameFadeOut)
     hooksecurefunc("FCF_FadeInChatFrame", handleChatFrameFadeIn)
-
-    for _, frameName in ipairs(CHAT_FRAMES) do
-        local frame = _G[frameName]
-        if frame and frame:IsShown() then
-            if GW.settings.chat.fade then
-                handleChatFrameFadeOut(frame, true)
-            else
-                handleChatFrameFadeIn(frame, true)
-            end
-        end
-    end
 
     for _, frameName in pairs(CHAT_FRAMES) do
         _G[frameName .. "Tab"]:SetScript("OnDoubleClick", nil)
