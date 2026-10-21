@@ -17,7 +17,8 @@ local M = CreateFrame("Frame")
 local minimapDetails = {
     ["ZONE"] = "GwMapGradient",
     ["CLOCK"] = "GwMapTime",
-    ["COORDS"] = "GwMapCoords"
+    ["COORDS"] = "GwMapCoords",
+    ["LAYER"] = "GwMapLayer",
 }
 
 local expansionLandingPageTable = {
@@ -286,6 +287,34 @@ function GW.ToogleMinimapCoordsLable()
         GwMapCoords:SetScript("OnLeave", nil)
     end
     UpdateMinimapCoordsTicker(GwMapCoords)
+end
+
+-- the classic realms put the layer into the guid of every creature, the zone part; it needs an npc nearby
+local function UpdateLayer(self, event, unit)
+    if event == "PLAYER_ENTERING_WORLD" then
+        self.text:SetText(L["Layer"] .. ": ?")
+        return
+    end
+    if IsInInstance() then return end
+    unit = event == "PLAYER_TARGET_CHANGED" and "target" or event == "UPDATE_MOUSEOVER_UNIT" and "mouseover" or unit
+    local unitType, _, _, _, zoneUID = strsplit("-", UnitGUID(unit) or "")
+    if unitType == "Creature" and zoneUID then
+        self.text:SetText(L["Layer"] .. ": " .. zoneUID)
+    end
+end
+
+local function CreateLayerLabel()
+    local layer = CreateFrame("Frame", "GwMapLayer", Minimap.gwBorder)
+    layer:SetSize(100, 14)
+    layer:SetPoint("TOP", Minimap.location, "BOTTOM", 0, -2)
+    layer.text = layer:CreateFontString(nil, "OVERLAY")
+    layer.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
+    layer.text:SetPoint("CENTER")
+    for _, event in ipairs({"PLAYER_ENTERING_WORLD", "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT", "NAME_PLATE_UNIT_ADDED"}) do
+        layer:RegisterEvent(event)
+    end
+    layer:SetScript("OnEvent", UpdateLayer)
+    UpdateLayer(layer, "PLAYER_ENTERING_WORLD")
 end
 
 function GW.ToogleMinimapFpsLable()
@@ -902,6 +931,11 @@ function GW.LoadMinimap()
     GwMapFPS.fps:SetTextColor(1, 1, 1)
     GwMapFPS.fps:SetText(NOT_APPLICABLE)
     GW.ToogleMinimapFpsLable()
+
+    -- the modern clients have no layers
+    if not GW.isModern then
+        CreateLayerLabel()
+    end
 
     --CalenderIcon
     GameTimeFrame:SetHitRectInsets(0, 0, 0, 0)

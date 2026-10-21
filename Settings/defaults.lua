@@ -435,7 +435,7 @@ GW.globalDefault = {
                 hasMoved = false,
             },
             scale = 1.2,
-            alwaysShowHoverDetails = {CLOCK = false, ZONE = false, COORDS = false,},
+            alwaysShowHoverDetails = {CLOCK = false, ZONE = false, COORDS = false, LAYER = false,},
             size = 170,
             resetZoom = 0,
             fps = false,

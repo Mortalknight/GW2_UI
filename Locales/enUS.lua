@@ -269,6 +269,7 @@ L["Reported by"] = true
 L["Click to open the changelog"] = true
 L["Update available: %s (installed: %s)"] = true
 L["Coordinates"] = true
+L["Layer"] = true
 L["Show Coordinates on Minimap"] = true
 L["Use the GW2 UI Minimap frame."] = true
 L["Show FPS on minimap"] = "Show FPS on Minimap"
