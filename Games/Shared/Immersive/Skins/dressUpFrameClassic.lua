@@ -88,19 +88,6 @@ local function LoadDressUpFrameSkin()
         GW.SetHeaderPortrait(DressUpFrame.gwHeader, "player")
     end)
 
-    -- blizzard hangs the hint below the title, which now lives in our header, and the model starts right
-    -- below it; the free spot is left of the two buttons
-    local hint = DressUpFrameDescriptionText
-    if hint then
-        hint:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        hint:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
-        hint:SetJustifyH("LEFT")
-        hint:ClearAllPoints()
-        hint:SetPoint("BOTTOMLEFT", DressUpFrame, "BOTTOMLEFT", 10, 4)
-        hint:SetPoint("RIGHT", DressUpFrameResetButton, "LEFT", -6, 0)
-        hint:SetHeight(28)
-    end
-
     DressUpFrameCloseButton:GwSkinButton(true)
     DressUpFrameCloseButton:SetSize(20, 20)
     DressUpFrameCloseButton:ClearAllPoints()
@@ -111,6 +98,17 @@ local function LoadDressUpFrameSkin()
     local model = DressUpModelFrame
     if model then
         SkinRotateButtons(model)
+    end
+
+    local hint = DressUpFrameDescriptionText
+    if hint then
+        hint:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        hint:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
+        hint:SetJustifyH("LEFT")
+        hint:ClearAllPoints()
+        hint:SetPoint("LEFT", DressUpModelFrameRotateLeftButton, "RIGHT", 8, 0)
+        hint:SetPoint("RIGHT", DressUpFrame, "RIGHT", -10, 0)
+        hint:SetHeight(28)
     end
 
     MakeMovable()

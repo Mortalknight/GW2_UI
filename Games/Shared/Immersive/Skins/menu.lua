@@ -1,6 +1,14 @@
 ---@class GW2
 local GW = select(2, ...)
 
+local SEPARATOR = "Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png"
+
+local function SetSeparator(texture)
+    texture:SetTexture(SEPARATOR)
+    texture:SetTexCoord(0.2, 0.8, 0, 1)
+    texture:SetHeight(2)
+end
+
 local function SkinUIDropDownMenu()
     hooksecurefunc("UIDropDownMenu_CreateFrames", function(level, index)
         local listFrame = _G["DropDownList" .. level]
@@ -70,8 +78,7 @@ local function SkinDropDownList()
 
     hooksecurefunc("UIDropDownMenu_SetIconImage", function(icon, texture)
         if texture:find("Divider") then
-            icon:SetColorTexture(1, 0.93, 0.73, 0.45)
-            icon:SetHeight(1)
+            SetSeparator(icon)
         end
     end)
 end
@@ -107,6 +114,15 @@ local function SkinOpenedMenu(manager, _, description)
     if menu then
         SkinMenuFrame(menu)
         description:AddMenuAcquiredCallback(SkinMenuFrame)
+    end
+end
+
+-- the divider is the only texture of its entry, blizzard hands it back to the initializer and not to the hook
+local function SkinDivider(frame)
+    for _, region in ipairs({frame:GetRegions()}) do
+        if region:IsObjectType("Texture") and region:IsShown() then
+            SetSeparator(region)
+        end
     end
 end
 
@@ -168,6 +184,13 @@ hooksecurefunc(MenuVariants, "CreateHighlight", function(frame)
     end
 end)
 
+local function UpdateHighlightEnabled(frame, enabled)
+    local highlight = frame.highlight
+    if highlight and highlight:IsShown() then
+        highlight:SetAlpha(enabled and 1 or MenuVariants.DisabledHighlightOpacity)
+    end
+end
+
 local function SkinVoiceLevels(frame)
     local slider = frame.Slider
     if slider and not slider.gwSkinned then
@@ -191,6 +214,8 @@ local function LoadDropDownSkin()
     hooksecurefunc(MenuVariants, "CreateSubmenuArrow", SkinSubmenuArrow)
     hooksecurefunc(MenuVariants, "CreateCheckbox", SkinCheckbox)
     hooksecurefunc(MenuVariants, "CreateRadio", SkinRadio)
+    hooksecurefunc(MenuVariants, "CreateDivider", SkinDivider)
+    hooksecurefunc(MenuTemplates, "SetHierarchyEnabled", UpdateHighlightEnabled)
     if UnitPopupVoiceLevelsMixin then
         hooksecurefunc(UnitPopupVoiceLevelsMixin, "OnAttach", SkinVoiceLevels)
     end
