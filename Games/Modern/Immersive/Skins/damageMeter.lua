@@ -90,7 +90,7 @@ end
 local function HandleSessionDropdown(window, dropdown)
     if not dropdown or dropdown.gwSkinned then return end
 
-    dropdown:GwSkinButton(false, true)
+    dropdown:GwSkinButton(false, false, false, true, false, true)
 
     dropdown:GwNudgePoint(nil, -3)
     dropdown:SetHeight(20)
@@ -107,7 +107,7 @@ local function HandleSessionDropdown(window, dropdown)
         dropdown.ResetButton:GwSkinButton(true)
     end
     if dropdown.SessionName then
-        dropdown.SessionName:SetTextColor(GW.Colors.Fallback:GetRGB())
+        dropdown.SessionName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     end
 
 end
@@ -145,8 +145,7 @@ local function HandleStatusBar(self)
     if not StatusBar then return end
 
     if StatusBar.Background then
-        StatusBar.Background:SetTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white.png")
-        StatusBar.Background:SetVertexColor(GW.Colors.Transparent:GetRGBA())
+        StatusBar.Background:SetTexture(nil)
     end
 
     if StatusBar.BackgroundEdge then
@@ -156,18 +155,15 @@ local function HandleStatusBar(self)
     StatusBar:GetStatusBarTexture():SetTexture("Interface/Addons/GW2_UI/textures/addonSkins/details_statusbar.png")
 end
 
--- blizzard only resets the bar art when a row changes its style, so every row is hooked once
+-- blizzard sets the bar art again on every style update; rows made later get the hooked mixin function,
+-- the rows that exist already are hooked one by one
 local function SkinRow(row)
     if row.gwSkinned then return end
     HandleStatusBar(row)
-    if row.UpdateStyle then
+    if row.UpdateStyle ~= DamageMeterEntryMixin.UpdateStyle then
         hooksecurefunc(row, "UpdateStyle", HandleStatusBar)
     end
     row.gwSkinned = true
-end
-
-local function OnInitializedFrame(_, frame)
-    SkinRow(frame)
 end
 
 local function HandleScrollBoxes(window)
@@ -178,11 +174,8 @@ local function HandleScrollBoxes(window)
     end
 
     local ScrollBox = window.GetScrollBox and window:GetScrollBox()
-    if ScrollBox and not ScrollBox.gwSkinned then
-        ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnInitializedFrame, OnInitializedFrame, ScrollBox)
+    if ScrollBox then
         ScrollBox:ForEachFrame(SkinRow)
-
-        ScrollBox.gwSkinned = true
     end
 end
 
@@ -218,8 +211,10 @@ local function HandleLocalPlayerEntry(self)
     local entry = self.MinimizeContainer.LocalPlayerEntry
     if not entry then return end
     HandleStatusBar(entry)
-    if entry.StatusBar and entry.StatusBar.Background then
-        entry.StatusBar.Background:SetAlpha(1)
+    local background = entry.StatusBar and entry.StatusBar.Background
+    if background then
+        background:SetTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white.png")
+        background:SetVertexColor(GW.Colors.Fallback:GetRGBA())
     end
 end
 
@@ -282,6 +277,7 @@ end
 local function ApplyDamageMeterSkin()
     if not GW.settings.skins.damageMeter.enabled then return end
 
+    hooksecurefunc(DamageMeterEntryMixin, "UpdateStyle", HandleStatusBar)
     hooksecurefunc(DamageMeter, "SetupSessionWindow", SetupSessionWindow)
     SetupSessionWindow()
 end

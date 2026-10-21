@@ -157,6 +157,11 @@ end
 
 local function SkinRadio(_, frame)
     SkinSelection(frame, "Interface/AddOns/GW2_UI/textures/uistuff/radio-selected.png", "Interface/AddOns/GW2_UI/textures/uistuff/radio-unselected.png")
+    local box = frame.leftTexture1
+    if box and frame.fontString then
+        box:SetPoint("LEFT", 2, 0)
+        frame.fontString:SetPoint("LEFT", box, "RIGHT", 7, 0)
+    end
 end
 
 local HOVER_STRENGTH = GW.Colors.SkinColors.HighlightWhite.a
