@@ -1740,7 +1740,11 @@ local function SettingsInitOptionWidget(of, v, panel)
             local text
             for _, selection in ipairs(selections) do
                 if not selection:IsSelectionIgnored() then
-                    table.insert(texts, MenuUtil.GetElementText(selection))
+                    local entryText = MenuUtil.GetElementText(selection)
+                    if v.triState and of.get(selection:GetData().option) == 1 then
+                        entryText = L["Not %s"]:format(entryText)
+                    end
+                    table.insert(texts, entryText)
                 end
             end
             if #texts > 0 then
@@ -1819,11 +1823,9 @@ local function SettingsInitOptionWidget(of, v, panel)
                             -- of the check; the menu re-runs this initializer on every click
                             if v.triState and button.leftTexture2 then
                                 if of.get(option) == 1 then
-                                    button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png")
-                                    button.leftTexture2:SetVertexColor(1, 0.25, 0.25)
+                                    button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxcrossed.png")
                                 else
                                     button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
-                                    button.leftTexture2:SetVertexColor(1, 1, 1)
                                 end
                             end
                         else

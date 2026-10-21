@@ -17,26 +17,14 @@ local function HandleAddonEntry(entry, treeNode)
         GW.AddListItemChildHoverTexture(entry)
         entry.gwSkinned = true
     end
-    local addonIndex = treeNode:GetData().addonIndex
-    local checkstate = C_AddOns.GetAddOnEnableState(addonIndex)
-    if checkstate == 2 then
-        entry.Status:SetTextColor(0.7, 0.7, 0.7)
-    else
-        entry.Status:SetTextColor(0.4, 0.4, 0.4)
-    end
-
-    local _, _, _, _, reason = C_AddOns.GetAddOnInfo(addonIndex)
+    local state = entry.Enabled.state
+    local statusColor = state == Enum.AddOnEnableState.All and GW.Colors.SkinColors.SubText or GW.Colors.SkinColors.Disabled
+    entry.Status:SetTextColor(statusColor:GetRGB())
+    local _, _, _, _, reason = C_AddOns.GetAddOnInfo(treeNode:GetData().addonIndex)
     local checktex = entry.Enabled:GetCheckedTexture()
-    if reason == "DEP_DISABLED" then
-        checktex:SetVertexColor(0.3, 0.3, 0.3)
-        checktex:SetDesaturated(true)
-    elseif checkstate == 1 then
-        checktex:SetVertexColor(1, 0.93, 0.73)
-        checktex:SetDesaturated(false)
-    elseif checkstate == 2 then
-        checktex:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
-        checktex:SetDesaturated(false)
-    end
+    checktex:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
+    checktex:SetDesaturated(false)
+    checktex:SetAlpha((reason == "DEP_DISABLED" or state == Enum.AddOnEnableState.Some) and 0.4 or 1)
 end
 
 local function LoadAddonListSkin()

@@ -781,6 +781,7 @@ L["%s - Active"] = true
 L["Edit Icon"] = true
 L["More than 5 options selected (#%s)"] = "More than 5 Options Selected (#%s)"
 L["No option selected"] = "No Option Selected"
+L["Not %s"] = "Not %s"
 L["Talking Head Scale"] = true
 L["Number format"] = "Number Format"
 L["Will be used for the most numbers"] = "Will be used for most numbers."
