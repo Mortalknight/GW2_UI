@@ -4,7 +4,7 @@ local GW = select(2, ...)
 GW.ActionHouseTabsAdded = 0
 
 local function HandleSearchBarFrame(Frame)
-	Frame.FilterButton:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, Frame.FilterButton:GetWidth())
+	Frame.FilterButton:GwHandleDropDownBox(nil, true, nil, Frame.FilterButton:GetWidth())
 	Frame.FilterButton:SetHeight(23)
 	Frame.FilterButton.ClearFiltersButton:GwSkinButton(true)
 	Frame.FilterButton:ClearAllPoints()

@@ -1,8 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local moveDistance, socialFrameX, socialFrameY, socialFrameLeft, socialFrameTop, socialFrameNormalScale, socialFrameEffectiveScale = 0, 0, 0, 0, 0, 1, 0
-
 local function HandleTabs(self)
     local sortedTabs = {}
     for tab in self:EnumerateTabs() do
@@ -117,63 +115,7 @@ function GW.LoadSocialUIFrame()
         SocialUIFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     end)
 
-    SocialUIFrame.sizer = CreateFrame("Frame", nil, SocialUIFrame)
-    SocialUIFrame.sizer:EnableMouse(true)
-    SocialUIFrame.sizer:SetSize(32, 32)
-    SocialUIFrame.sizer:SetPoint("BOTTOMRIGHT", SocialUIFrame, "BOTTOMRIGHT", 2, -2)
-    SocialUIFrame.sizer.texture = SocialUIFrame.sizer:CreateTexture(nil, "OVERLAY")
-    SocialUIFrame.sizer.texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
-    SocialUIFrame.sizer.texture:SetSize(32, 32)
-    SocialUIFrame.sizer.texture:SetPoint("BOTTOMRIGHT", SocialUIFrame.sizer, "BOTTOMRIGHT", 0, 0)
-    SocialUIFrame.sizer.texture:SetDesaturated(true)
-    SocialUIFrame.sizer:SetScript("OnEnter", function(self)
-        self.texture:SetDesaturated(false)
-        GW.ShowScaleHandleTooltip(self)
-    end)
-    SocialUIFrame.sizer:SetScript("OnLeave", function(self)
-        self.texture:SetDesaturated(true)
-        GameTooltip_Hide()
-    end)
-    SocialUIFrame.sizer:SetFrameStrata(SocialUIFrame:GetFrameStrata())
-    SocialUIFrame.sizer:SetFrameLevel(SocialUIFrame:GetFrameLevel() + 15)
-    SocialUIFrame.sizer:SetScript("OnMouseDown", function(self, btn)
-        if btn ~= "RightButton" then
-            return
-        end
-        -- the mouse up stores scale and position
-        if IsShiftKeyDown() then
-            SocialUIFrame:SetScale(1)
-            return
-        end
-        socialFrameLeft, socialFrameTop = SocialUIFrame:GetLeft(), SocialUIFrame:GetTop()
-        socialFrameNormalScale = SocialUIFrame:GetScale()
-        socialFrameX, socialFrameY = socialFrameLeft, socialFrameTop - (UIParent:GetHeight() / socialFrameNormalScale)
-        socialFrameEffectiveScale = SocialUIFrame:GetEffectiveScale()
-        moveDistance = GW.GetScaledCursorDistance(socialFrameLeft, socialFrameTop, socialFrameEffectiveScale)
-        self:SetScript("OnUpdate", function()
-            local scale = GW.GetScaledCursorDistance(socialFrameLeft, socialFrameTop, socialFrameEffectiveScale) / moveDistance * socialFrameNormalScale
-            if scale < 0.2 then scale = 0.2 elseif scale > 3.0 then scale = 3.0 end
-            SocialUIFrame:SetScale(scale)
-            local s = socialFrameNormalScale / SocialUIFrame:GetScale()
-            local x = socialFrameX * s
-            local y = socialFrameY * s
-            SocialUIFrame:ClearAllPoints()
-            SocialUIFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
-        end)
-    end)
-    SocialUIFrame.sizer:SetScript("OnMouseUp", function(self)
-        self:SetScript("OnUpdate", nil)
-        GW.settings.windows.social.scale = SocialUIFrame:GetScale()
-        -- Save hero frame position
-        local pos = GW.settings.windows.social.pos
-        if pos then
-            wipe(pos)
-        else
-            pos = {}
-        end
-        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = SocialUIFrame:GetPoint()
-        GW.settings.windows.social.pos = pos
-    end)
+    GW.AddScaleHandle(SocialUIFrame, GW.settings.windows.social)
 
     GW.SkinSocialUIFriendList()
     GW.SkinSocialContactsView(SocialUIFrame.FriendRequestsList)

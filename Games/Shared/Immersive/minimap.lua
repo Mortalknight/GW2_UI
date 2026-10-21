@@ -304,11 +304,13 @@ local function UpdateLayer(self, event, unit)
 end
 
 local function CreateLayerLabel()
-    local layer = CreateFrame("Frame", "GwMapLayer", Minimap.gwBorder)
+    local layer = CreateFrame("Frame", "GwMapLayer", Minimap)
     layer:SetSize(100, 14)
-    layer:SetPoint("TOP", Minimap.location, "BOTTOM", 0, -2)
+    layer:SetPoint("TOP", Minimap.location, "BOTTOM", 0, 2)
     layer.text = layer:CreateFontString(nil, "OVERLAY")
     layer.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
+    layer.text:SetIgnoreParentScale(true)
+    layer.text:SetScale(1)
     layer.text:SetPoint("CENTER")
     for _, event in ipairs({"PLAYER_ENTERING_WORLD", "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT", "NAME_PLATE_UNIT_ADDED"}) do
         layer:RegisterEvent(event)

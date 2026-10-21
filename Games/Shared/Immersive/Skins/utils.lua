@@ -10,6 +10,60 @@ function GW.ShowScaleHandleTooltip(owner)
     GameTooltip:Show()
 end
 
+-- right click on the corner scales a window, its top left corner stays in place; settings keeps scale and pos.
+-- the position goes to the settings before SetPoint, movable helpers put the window back there on every SetPoint
+function GW.AddScaleHandle(frame, settings)
+    local function SetPosition(x, y)
+        local pos = settings.pos
+        pos.point, pos.relativePoint, pos.xOfs, pos.yOfs = "TOPLEFT", "TOPLEFT", x, y
+        frame:ClearAllPoints()
+        frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
+    end
+
+    local sizer = CreateFrame("Frame", nil, frame)
+    sizer:EnableMouse(true)
+    sizer:SetSize(32, 32)
+    sizer:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 2, -2)
+    sizer:SetFrameStrata(frame:GetFrameStrata())
+    sizer:SetFrameLevel(frame:GetFrameLevel() + 15)
+    sizer.texture = sizer:CreateTexture(nil, "OVERLAY")
+    sizer.texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
+    sizer.texture:SetAllPoints()
+    sizer.texture:SetDesaturated(true)
+    sizer:SetScript("OnEnter", function(self)
+        self.texture:SetDesaturated(false)
+        GW.ShowScaleHandleTooltip(self)
+    end)
+    sizer:SetScript("OnLeave", function(self)
+        self.texture:SetDesaturated(true)
+        GameTooltip_Hide()
+    end)
+    sizer:SetScript("OnMouseDown", function(self, button)
+        if button ~= "RightButton" then return end
+        -- the mouse up stores scale and position
+        if IsShiftKeyDown() then
+            frame:SetScale(1)
+            return
+        end
+        local left, top, normalScale = frame:GetLeft(), frame:GetTop(), frame:GetScale()
+        local x, y = left, top - (UIParent:GetHeight() / normalScale)
+        local effectiveScale = frame:GetEffectiveScale()
+        local moveDistance = GW.GetScaledCursorDistance(left, top, effectiveScale)
+        self:SetScript("OnUpdate", function()
+            local scale = GW.GetScaledCursorDistance(left, top, effectiveScale) / moveDistance * normalScale
+            frame:SetScale(math.min(3, math.max(0.2, scale)))
+            local factor = normalScale / frame:GetScale()
+            SetPosition(x * factor, y * factor)
+        end)
+    end)
+    sizer:SetScript("OnMouseUp", function(self)
+        self:SetScript("OnUpdate", nil)
+        settings.scale = frame:GetScale()
+        SetPosition(frame:GetLeft(), frame:GetTop() - UIParent:GetHeight() / frame:GetScale())
+    end)
+    frame.sizer = sizer
+end
+
 function GW.ShowResizeHandleTooltip(owner)
     GameTooltip:SetOwner(owner, "ANCHOR_BOTTOMRIGHT", 10, 30)
     GameTooltip:ClearLines()
@@ -1162,6 +1216,37 @@ function GW.SkinTalentButton(button)
     end
 end
 
+-- our animated hover over a list row; parts are the frames that get the mouse, by default the row itself
+function GW.AddRowHover(row, texture, parts, drawLayer)
+    local hover = row:CreateTexture(nil, drawLayer or "ARTWORK", nil, 1)
+    hover:SetTexture(texture)
+    hover:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
+    hover:SetPoint("LEFT")
+    hover:SetPoint("TOP")
+    hover:SetPoint("BOTTOM")
+    hover:SetPoint("RIGHT", row, "LEFT")
+    hover:Hide()
+    row.gwHover = hover
+    row.limitHoverStripAmount = 1
+    local function OnEnter()
+        hover:Show()
+        GW.TriggerButtonHoverAnimation(row, hover)
+    end
+    local function OnLeave()
+        hover:Hide()
+    end
+    for _, part in ipairs(parts or {row}) do
+        part:HookScript("OnEnter", OnEnter)
+        part:HookScript("OnLeave", OnLeave)
+    end
+end
+
+-- our arrow for collapsible entries, to the right while collapsed
+function GW.SetCollapseArrow(texture, collapsed)
+    texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
+    texture:SetRotation(collapsed and math.pi / 2 or 0)
+end
+
 local function SkinSideTabButton(self, iconTexture, tooltipText)
     self.gwSkinned = true
     self:GwStripTextures()
@@ -1213,6 +1298,21 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
     end
 end
 GW.SkinSideTabButton = SkinSideTabButton
+
+-- blizzards large side tabs (LargeSideTabButtonTemplate) as our tabs on the left panel of the window
+function GW.SkinLargeSideTabs(frame, tabs, icons)
+    for index, tab in ipairs(tabs) do
+        SkinSideTabButton(tab, icons[index], tab.tooltipText)
+        tab.Icon:SetAlpha(0)
+        tab:SetParent(frame.LeftSidePanel)
+        tab:ClearAllPoints()
+        tab:SetPoint("TOPRIGHT", frame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * (index - 1)))
+        tab:SetSize(64, 40)
+        hooksecurefunc(tab, "SetChecked", function(self, checked)
+            self.icon:SetTexCoord(checked and 0 or 0.51, checked and 0.5 or 1, 0, 0.625)
+        end)
+    end
+end
 
 local function LockBlackButtonColor(button, r, g, b)
     if r ~= 0 or g ~= 0 or b ~= 0 then

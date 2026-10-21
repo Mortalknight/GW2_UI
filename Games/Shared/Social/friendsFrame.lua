@@ -1,8 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-
-local moveDistance, socialFrameX, socialFrameY, socialFrameLeft, socialFrameTop, socialFrameNormalScale, socialFrameEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 -- icon per blizzard tab name; the set differs per client: classic has friends/who/guild/raid, retail
 -- friends/who/raid/quick join, forever ships without the who tab (FriendsFrameTab2) and numbers the
 -- remaining tabs by array position, so every tab is looked up by its global name and may be missing
@@ -141,63 +139,7 @@ function GW.LoadSocialFrame()
         FriendsFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     end)
 
-    FriendsFrame.sizer = CreateFrame("Frame", nil, FriendsFrame)
-    FriendsFrame.sizer:EnableMouse(true)
-    FriendsFrame.sizer:SetSize(32, 32)
-    FriendsFrame.sizer:SetPoint("BOTTOMRIGHT", FriendsFrame, "BOTTOMRIGHT", 2, -2)
-    FriendsFrame.sizer.texture = FriendsFrame.sizer:CreateTexture(nil, "OVERLAY")
-    FriendsFrame.sizer.texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
-    FriendsFrame.sizer.texture:SetSize(32, 32)
-    FriendsFrame.sizer.texture:SetPoint("BOTTOMRIGHT", FriendsFrame.sizer, "BOTTOMRIGHT", 0, 0)
-    FriendsFrame.sizer.texture:SetDesaturated(true)
-    FriendsFrame.sizer:SetScript("OnEnter", function(self)
-        self.texture:SetDesaturated(false)
-        GW.ShowScaleHandleTooltip(self)
-    end)
-    FriendsFrame.sizer:SetScript("OnLeave", function(self)
-        self.texture:SetDesaturated(true)
-        GameTooltip_Hide()
-    end)
-    FriendsFrame.sizer:SetFrameStrata(FriendsFrame:GetFrameStrata())
-    FriendsFrame.sizer:SetFrameLevel(FriendsFrame:GetFrameLevel() + 15)
-    FriendsFrame.sizer:SetScript("OnMouseDown", function(self, btn)
-        if btn ~= "RightButton" then
-            return
-        end
-        -- the mouse up stores scale and position
-        if IsShiftKeyDown() then
-            FriendsFrame:SetScale(1)
-            return
-        end
-        socialFrameLeft, socialFrameTop = FriendsFrame:GetLeft(), FriendsFrame:GetTop()
-        socialFrameNormalScale = FriendsFrame:GetScale()
-        socialFrameX, socialFrameY = socialFrameLeft, socialFrameTop - (UIParent:GetHeight() / socialFrameNormalScale)
-        socialFrameEffectiveScale = FriendsFrame:GetEffectiveScale()
-        moveDistance = GW.GetScaledCursorDistance(socialFrameLeft, socialFrameTop, socialFrameEffectiveScale)
-        self:SetScript("OnUpdate", function()
-            local scale = GW.GetScaledCursorDistance(socialFrameLeft, socialFrameTop, socialFrameEffectiveScale) / moveDistance * socialFrameNormalScale
-            if scale < 0.2 then scale = 0.2 elseif scale > 3.0 then scale = 3.0 end
-            FriendsFrame:SetScale(scale)
-            local s = socialFrameNormalScale / FriendsFrame:GetScale()
-            local x = socialFrameX * s
-            local y = socialFrameY * s
-            FriendsFrame:ClearAllPoints()
-            FriendsFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
-        end)
-    end)
-    FriendsFrame.sizer:SetScript("OnMouseUp", function(self)
-        self:SetScript("OnUpdate", nil)
-        GW.settings.windows.social.scale = FriendsFrame:GetScale()
-        -- Save hero frame position
-        local pos = GW.settings.windows.social.pos
-        if pos then
-            wipe(pos)
-        else
-            pos = {}
-        end
-        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = FriendsFrame:GetPoint()
-        GW.settings.windows.social.pos = pos
-    end)
+    GW.AddScaleHandle(FriendsFrame, GW.settings.windows.social)
 
     GW.SkinFriendList()
     GW.SkinIgnoreList()

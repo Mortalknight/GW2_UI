@@ -1511,7 +1511,7 @@ local function MakeFrameMovable(frame, target, skin, moveFrameOnShow)
     frame:SetScript("OnMouseUp", function()
         target:StopMovingOrSizing()
 
-        local x, y = target:GetLeft(), target:GetTop() - UIParent:GetTop()
+        local x, y = target:GetLeft(), target:GetTop() - UIParent:GetTop() / target:GetScale()
 
         moveFrameToPosition(target, x, y)
     end)

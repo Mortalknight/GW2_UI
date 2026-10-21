@@ -252,7 +252,7 @@ local function SkinRetailStable()
     modelScene.Inset:SetAlpha(0)
     GW.HandleModelSceneControlFrame(modelScene.ControlFrame)
     local petInfo = modelScene.PetInfo
-    petInfo.Specialization:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+    petInfo.Specialization:GwHandleDropDownBox(nil, true)
     petInfo.NameBox.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader)
     petInfo.NameBox.Name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     local editButton = petInfo.NameBox.EditButton
@@ -290,7 +290,7 @@ local function SkinRetailStable()
     -- our dropdown is wider than blizzards, both share the width of the list
     GW.SkinEditBox(filterBar.SearchBox, {search = true})
     filterBar.SearchBox:SetWidth(160)
-    filterBar.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 100)
+    filterBar.FilterDropdown:GwHandleDropDownBox(nil, true, nil, 100)
     filterBar.FilterDropdown:SetHeight(filterBar.SearchBox:GetHeight())
 
     local activeList = frame.ActivePetList

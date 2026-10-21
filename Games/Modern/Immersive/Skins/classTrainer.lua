@@ -142,7 +142,7 @@ local function ApplyClassTrainerSkin()
     trainButton:GwSkinButton(false, true)
     SkinTrainAllButton()
     ClassTrainerFrame:HookScript("OnShow", SkinTrainAllButton)
-    ClassTrainerFrame.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 100)
+    ClassTrainerFrame.FilterDropdown:GwHandleDropDownBox(nil, true, nil, 100)
     local moneyPanel = CreateFrame("Frame", nil, ClassTrainerFrame)
     local moneyFrame = ClassTrainerFrame.money or ClassTrainerFrameMoneyFrame
     moneyPanel:SetFrameLevel(math.max(0, moneyFrame:GetFrameLevel() - 1))

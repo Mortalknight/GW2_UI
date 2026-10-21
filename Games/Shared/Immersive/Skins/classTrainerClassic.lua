@@ -91,7 +91,7 @@ local function ApplyClassTrainerSkin()
     ClassTrainerTrainButton:GwSkinButton(false, true)
     ClassTrainerCancelButton:GwSkinButton(false, true)
     if frame.FilterDropdown then
-        frame.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 100)
+        frame.FilterDropdown:GwHandleDropDownBox(nil, true, nil, 100)
         frame.FilterDropdown:GwNudgePoint(0, -4)
     end
 

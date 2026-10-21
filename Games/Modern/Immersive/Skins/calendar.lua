@@ -164,7 +164,7 @@ local function ApplyCalendarFrameSkin()
     CalendarFrame:DisableDrawLayer("BORDER")
     GW.CreateFrameHeaderWithBody(CalendarFrame, nil, "Interface/AddOns/GW2_UI/textures/character/calendar_window_icon.png", nil, nil, nil, true)
     CalendarFrameHeader:SetFrameLevel(0)
-    CalendarFrame.FilterButton:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 85)
+    CalendarFrame.FilterButton:GwHandleDropDownBox(nil, true, nil, 85)
     CalendarFrame.FilterButton:SetPoint("TOPRIGHT", CalendarFrame, "TOPRIGHT", -4, -34)
     CalendarFrameModalOverlay:SetAlpha(0.25)
 

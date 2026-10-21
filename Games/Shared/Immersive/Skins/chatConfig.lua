@@ -245,7 +245,7 @@ local function SkinTextToSpeech()
 
     local panel = TextToSpeechFrame.PanelContainer
     for _, dropdown in ipairs({panel.TtsVoiceDropdown, panel.TtsVoiceAlternateDropdown}) do
-        dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, dropdown:GetWidth())
+        dropdown:GwHandleDropDownBox(nil, true, nil, dropdown:GetWidth())
     end
     panel.PlaySampleButton:GwSkinButton(false, true)
     panel.PlaySampleAlternateButton:GwSkinButton(false, true)

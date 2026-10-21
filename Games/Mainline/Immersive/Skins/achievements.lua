@@ -1178,7 +1178,7 @@ local function skinAchevement()
     end
 
     local filterDropdown = AchievementFrame.HeaderDetails.Filters.FilterDropdown
-    filterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+    filterDropdown:GwHandleDropDownBox(nil, true)
     filterDropdown:ClearAllPoints()
     filterDropdown:SetPoint("BOTTOMLEFT", searchBox, "TOPLEFT", 0, 5)
     filterDropdown:SetPoint("BOTTOMRIGHT", searchBox, "TOPRIGHT", 0, 5)

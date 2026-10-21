@@ -44,30 +44,6 @@ local function SkinProgressBar(bar)
     GW.AddStatusBarFrame(bar)
 end
 
-local function SetArrow(texture, collapsed)
-    texture:SetTexture(ARROW)
-    texture:SetRotation(collapsed and math.pi / 2 or 0)
-end
-
-local function AddRowHover(row, texture)
-    row.gwHover = row:CreateTexture(nil, "ARTWORK", nil, 1)
-    row.gwHover:SetTexture(texture)
-    row.gwHover:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
-    row.gwHover:SetPoint("LEFT", row, "LEFT")
-    row.gwHover:SetPoint("TOP", row, "TOP")
-    row.gwHover:SetPoint("BOTTOM", row, "BOTTOM")
-    row.gwHover:SetPoint("RIGHT", row, "LEFT")
-    row.gwHover:Hide()
-    row.limitHoverStripAmount = 1
-    row:HookScript("OnEnter", function(self)
-        self.gwHover:Show()
-        GW.TriggerButtonHoverAnimation(self, self.gwHover)
-    end)
-    row:HookScript("OnLeave", function(self)
-        self.gwHover:Hide()
-    end)
-end
-
 ---------- challenges ----------
 
 -- the list mixes headers and leaf entries in one pooled row, so the art follows the row state
@@ -92,13 +68,13 @@ local function SkinCategoryRow(row)
     row.gwBackground = row:CreateTexture(nil, "BACKGROUND")
     row.gwBackground:SetAllPoints(row)
     row.gwBackground:SetTexture(MENU_BG)
-    AddRowHover(row, MENU_HOVER)
+    GW.AddRowHover(row, MENU_HOVER)
 
     local collapse = row.CollapseButton
     collapse:SetSize(16, 16)
-    SetArrow(collapse.Icon, collapse.collapsed)
+    GW.SetCollapseArrow(collapse.Icon, collapse.collapsed)
     hooksecurefunc(collapse, "UpdateCollapsedState", function(self, collapsed)
-        SetArrow(self.Icon, collapsed)
+        GW.SetCollapseArrow(self.Icon, collapsed)
         self:SetHighlightTexture(ARROW, "ADD")
         self:GetHighlightTexture():SetAlpha(0.3)
     end)
@@ -128,7 +104,7 @@ local function SkinChallengeCard(card)
         card[key]:SetAlpha(0)
     end
     GW.AddDetailsBackground(card)
-    AddRowHover(card, ROW_HOVER)
+    GW.AddRowHover(card, ROW_HOVER)
 
     card.Label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     card.Label:GwLockTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
@@ -139,9 +115,9 @@ local function SkinChallengeCard(card)
 
     card.PlusMinus:SetSize(16, 16)
     hooksecurefunc(card.PlusMinus, "SetAtlas", function(self, atlas)
-        SetArrow(self, atlas and atlas:find("plus") ~= nil)
+        GW.SetCollapseArrow(self, atlas and atlas:find("plus") ~= nil)
     end)
-    SetArrow(card.PlusMinus, (card.PlusMinus:GetAtlas() or "plus"):find("plus") ~= nil)
+    GW.SetCollapseArrow(card.PlusMinus, (card.PlusMinus:GetAtlas() or "plus"):find("plus") ~= nil)
 
     card.Shield.Points:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
     card.Shield.CheckBackground:SetAlpha(0)
@@ -158,7 +134,7 @@ local function SkinCategoryList(list)
     GW.SkinEditBox(search, {search = true})
 
     local dropdown = list.FilterDropdown
-    dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 80)
+    dropdown:GwHandleDropDownBox(nil, true, nil, 80)
     dropdown:SetSize(80, CONTROL_HEIGHT)
     dropdown:ClearAllPoints()
     dropdown:SetPoint("TOPRIGHT", list, "TOPRIGHT", -(SCROLLBAR_INSET + 4), -6)
@@ -421,16 +397,8 @@ end
 ---------- window ----------
 
 local function SkinTabs(frame)
+    GW.SkinLargeSideTabs(frame, frame.Tabs, TAB_ICONS)
     for index, tab in ipairs(frame.Tabs) do
-        GW.SkinSideTabButton(tab, TAB_ICONS[index], tab.tooltipText)
-        tab.Icon:SetAlpha(0)
-        tab:SetParent(frame.LeftSidePanel)
-        tab:ClearAllPoints()
-        tab:SetPoint("TOPRIGHT", frame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * (index - 1)))
-        tab:SetSize(64, 40)
-        hooksecurefunc(tab, "SetChecked", function(self, checked)
-            self.icon:SetTexCoord(checked and 0 or 0.51, checked and 0.5 or 1, 0, 0.625)
-        end)
         tab:SetChecked(index == frame.currentPage)
     end
 end

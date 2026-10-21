@@ -67,7 +67,7 @@ local function SkinDropdown(dropdown, width)
         local current = dropdown:GetWidth()
         width = current > 1 and current or nil
     end
-    dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, width)
+    dropdown:GwHandleDropDownBox(nil, true, nil, width)
     dropdown:SetHeight(CONTROL_HEIGHT)
     if dropdown.backdrop then
         dropdown.backdrop:ClearAllPoints()

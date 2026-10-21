@@ -110,10 +110,12 @@ local function SkinSocialContactsView(view, cardContentHandler)
     if FilterBar then
         if FilterBar.SearchBar then
             GW.SkinEditBox(FilterBar.SearchBar, {search = true})
+            FilterBar.SearchBar:SetHeight(28)
         end
         if FilterBar.SearchFilterDropdown then
             FilterBar.SearchFilterDropdown.OnButtonStateChanged = GW.NoOp
             FilterBar.SearchFilterDropdown:GwHandleDropDownBox()
+            FilterBar.SearchFilterDropdown:SetHeight(28)
         end
     end
 

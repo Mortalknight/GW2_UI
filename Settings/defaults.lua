@@ -1941,6 +1941,7 @@ GW.globalDefault = {
                     xOfs = 70,
                     yOfs = -150,
                 },
+                scale = 1,
             },
             orderHallTalents = {
                 enabled = true,

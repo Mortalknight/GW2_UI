@@ -467,7 +467,7 @@ local function worldMapSkin()
             SkinQuestMapTab(WQT_QuestMapTab, lastTab)
 
             FML:GwHandleDropDownBox()
-            WQT_ListContainer.TopBar.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+            WQT_ListContainer.TopBar.FilterDropdown:GwHandleDropDownBox(nil, true)
             WQT_ListContainer.TopBar.FilterDropdown:SetWidth(125)
             GW.HandleTrimScrollBar(WQT_ListContainer.ScrollBar)
             GW.HandleScrollControls(WQT_ListContainer)

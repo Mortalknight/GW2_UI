@@ -927,6 +927,7 @@ local function evLoadSkins()
 
     if GW.Forever then
         GW.LoadLegacySystemSkin()
+        GW.LoadGroupFinderSkin()
     end
 
     -- skins of the systems both modern clients share (Games/Modern)

@@ -565,7 +565,7 @@ local function SkinCraftingPage(page)
     search:SetSize(160, CONTROL_HEIGHT)
 
     local dropdown = list.FilterDropdown
-    dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, 90)
+    dropdown:GwHandleDropDownBox(nil, true, nil, 90)
     dropdown:SetSize(90, CONTROL_HEIGHT)
     dropdown.backdrop:ClearAllPoints()
     dropdown.backdrop:SetPoint("TOPLEFT", dropdown, "TOPLEFT", 0, 0)

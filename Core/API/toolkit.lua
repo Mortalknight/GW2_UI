@@ -678,7 +678,7 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdown
         text:SetJustifyV("MIDDLE")
     end
 
-    if hookLayout or not GW.Retail then
+    if hookLayout or not GW.isModern then
         HandleBlizzardRegions(frame)
     end
 end
@@ -817,6 +817,15 @@ end
 local FONT_ALPHABETS = {"roman", "korean", "simplifiedchinese", "traditionalchinese", "russian"}
 local fontFamilies, fontFamilyCount = {}, 0
 
+-- our fonts have no korean and chinese letters; names of such players use blizzards fonts for their alphabet,
+-- only those let the engine switch per letter. The alphabet of the own client keeps our font
+local ALPHABET_FALLBACK_FONTS = {
+    korean = "Fonts/2002.TTF",
+    simplifiedchinese = "Fonts/ARKai_T.ttf",
+    traditionalchinese = "Fonts/blei00d.TTF",
+}
+local CLIENT_ALPHABETS = {koKR = "korean", zhCN = "simplifiedchinese", zhTW = "traditionalchinese"}
+
 local function GetFontFamily(prefix, font, size, style, shadow)
     local key = font .. "|" .. size .. "|" .. style .. (shadow and "|shadow" or "")
     local family = fontFamilies[key]
@@ -826,7 +835,8 @@ local function GetFontFamily(prefix, font, size, style, shadow)
 
     local members = {}
     for i, alphabet in ipairs(FONT_ALPHABETS) do
-        members[i] = {alphabet = alphabet, file = font, height = size, flags = style}
+        local file = alphabet ~= CLIENT_ALPHABETS[GW.mylocal] and ALPHABET_FALLBACK_FONTS[alphabet] or font
+        members[i] = {alphabet = alphabet, file = file, height = size, flags = style}
     end
     fontFamilyCount = fontFamilyCount + 1
     family = CreateFontFamily(prefix .. fontFamilyCount, members)

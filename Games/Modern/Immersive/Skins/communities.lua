@@ -495,7 +495,7 @@ local function SkinButtons()
 
     for _, key in ipairs({"StreamDropdown", "GuildMemberListDropdown", "CommunityMemberListDropdown", "CommunitiesListDropdown"}) do
         local dropdown = CommunitiesFrame[key]
-        dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, dropdown:GetWidth())
+        dropdown:GwHandleDropDownBox(nil, true, nil, dropdown:GetWidth())
     end
 
     -- the roster column dropdowns sit 27 below the frame top, which is inside our header
@@ -603,7 +603,7 @@ local function SkinNotificationSettingsDialog(dialog)
     dialog.Selector.CancelButton:GwSkinButton(false, true)
     local scrollFrame = dialog.ScrollFrame
     local dropdown = dialog.CommunitiesListDropdown
-    dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, dropdown:GetWidth())
+    dropdown:GwHandleDropDownBox(nil, true, nil, dropdown:GetWidth())
     dropdown:ClearAllPoints()
     dropdown:SetPoint("BOTTOMRIGHT", scrollFrame, "TOPRIGHT", 2, DETAILS_OFFSET + 4)
 
@@ -659,8 +659,8 @@ local function SkinPreferredPlaySettings(frame)
     GW.AddDetailsBackground(frame)
     SkinPanelTitle(frame.Title)
     SkinDialogLabels({frame.LocaleLabel, frame.DatacenterLabel})
-    frame.LocaleDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
-    frame.DatacenterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+    frame.LocaleDropdown:GwHandleDropDownBox(nil, true)
+    frame.DatacenterDropdown:GwHandleDropDownBox(nil, true)
     frame.LocaleApplyButton:GwSkinButton(false, true)
     frame.DatacenterApplyButton:GwSkinButton(false, true)
 end
@@ -785,7 +785,7 @@ local function SkinGuildMemberDetail(detail)
     detail.GroupInviteButton:SetPoint("LEFT", detail.RemoveButton, "RIGHT", MEMBER_DETAIL_BUTTON_GAP, 0)
 
     local rankDropdown = detail.RankDropdown
-    rankDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, rankDropdown:GetWidth())
+    rankDropdown:GwHandleDropDownBox(nil, true, nil, rankDropdown:GetWidth())
 end
 
 -- blizzards checkboxes are 32 wide with their label 30 to 35 right of the box, ours are 15
@@ -799,7 +799,7 @@ end
 local function SkinClubFinderPostingDropdowns(dialog)
     for _, key in ipairs({"ClubFocusDropdown", "LookingForDropdown", "LanguageDropdown"}) do
         local dropdown = dialog[key]
-        dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, dropdown:GetWidth())
+        dropdown:GwHandleDropDownBox(nil, true, nil, dropdown:GetWidth())
         if dropdown.Label then
             SetLightHeader(dropdown.Label)
         end
@@ -909,7 +909,7 @@ local function SkinTicketManager(dialog)
     end
     GW.HandleNextPrevButton(dialog.MaximizeButton, "down")
     for _, dropdown in ipairs({dialog.ExpiresDropdown, dialog.UsesDropdown}) do
-        dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, dropdown:GetWidth())
+        dropdown:GwHandleDropDownBox(nil, true, nil, dropdown:GetWidth())
     end
 
     local manager = dialog.InviteManager
@@ -1049,7 +1049,7 @@ end
 local function SkinFinderOptions(options)
     for _, key in ipairs({"ClubFilterDropdown", "ClubSizeDropdown", "SortByDropdown"}) do
         local dropdown = options[key]
-        dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, dropdown:GetWidth())
+        dropdown:GwHandleDropDownBox(nil, true, nil, dropdown:GetWidth())
         SetLightHeader(dropdown.Label)
     end
 

@@ -170,7 +170,7 @@ end
 
 -- the filter template relayouts itself on hover, the dropdown helper needs the layout hook for it
 local function SkinFilterDropdown(dropdown, anchorTo, rightEdge)
-    dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, FILTER_WIDTH)
+    dropdown:GwHandleDropDownBox(nil, true, nil, FILTER_WIDTH)
     dropdown:SetSize(FILTER_WIDTH, CONTROL_HEIGHT)
     dropdown.backdrop:ClearAllPoints()
     dropdown.backdrop:SetPoint("TOPLEFT", dropdown, "TOPLEFT", 0, 0)
@@ -196,7 +196,7 @@ local function SkinDropdowns(...)
         local dropdown = select(i, ...)
         -- a dropdown without a size yet keeps the helper default instead of collapsing to 0
         local width = dropdown:GetWidth()
-        dropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, nil, width > 1 and width or nil)
+        dropdown:GwHandleDropDownBox(nil, true, nil, width > 1 and width or nil)
         dropdown:SetHeight(CONTROL_HEIGHT)
         dropdown.backdrop:ClearAllPoints()
         dropdown.backdrop:SetPoint("TOPLEFT", dropdown, "TOPLEFT", 0, 0)
