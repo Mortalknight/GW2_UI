@@ -803,6 +803,7 @@ local function GwStyleButton(button, noHover, noPushed, noChecked)
 end
 
 local function GwKillEditMode(object)
+    if not object.Selection then return end
     object.Selection:SetScript("OnDragStart", nil)
     object.Selection:SetScript("OnDragStop", nil)
     object.Selection:SetScript("OnMouseDown", nil)
