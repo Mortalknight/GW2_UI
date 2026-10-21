@@ -395,6 +395,7 @@ local function handleChatFrameFadeIn(chatFrame, force)
     end
 
     chatFrame:ResetAllFadeTimes()
+    chatFrame:SetFading(false)
     setChatBackgroundColor(chatFrame)
     local frameName = chatFrame:GetName()
     for _, v in pairs(CHAT_FRAME_TEXTURES) do
@@ -452,6 +453,7 @@ local function handleChatFrameFadeOut(chatFrame, force)
         handleChatFrameFadeIn(chatFrame)
         return
     end
+    chatFrame:SetFading(GW.settings.chat.fade)
 
     local chatAlpha = select(6, GetChatWindowInfo(chatFrame:GetID()))
     local frameName = chatFrame:GetName()
