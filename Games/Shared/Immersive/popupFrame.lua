@@ -146,6 +146,7 @@ local function ShowPopup(info, data)
             Resize(popup)
         end
     end)
+    return popup
 end
 GW.ShowPopup = ShowPopup
 

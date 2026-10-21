@@ -120,7 +120,13 @@ local function BuildSettingsWindow()
     reloadIndicator:Hide()
     settingsContainer.reloadIndicator = reloadIndicator
 
-    settingsContainer:HookScript("OnShow", GW.UpdateReloadIndicator)
+    local reloadPopup, reloadPopupInfo
+    settingsContainer:HookScript("OnShow", function()
+        GW.UpdateReloadIndicator()
+        if reloadPopup and reloadPopup:IsShown() and reloadPopup.info == reloadPopupInfo then
+            reloadPopup:Hide()
+        end
+    end)
 
     settingsContainer:SetScript("OnHide", function()
         GW.CloseActiveSettingsPreview()
@@ -128,11 +134,11 @@ local function BuildSettingsWindow()
             -- the pending list is NOT cleared here: if the reload is declined, the
             -- changes still require one - the hint stays and toggling a setting
             -- back to its original state still clears it correctly
-            GW.ShowPopup({text = L["One or more of the changes you have made require a UI reload."],
+            reloadPopupInfo = {text = L["One or more of the changes you have made require a UI reload."],
                 OnAccept = function() C_UI.Reload() end,
                 button1 = ACCEPT,
                 button2 = CANCEL}
-            )
+            reloadPopup = GW.ShowPopup(reloadPopupInfo)
         end
     end)
     settingsContainer:SetScript("OnEvent", function(self, event)

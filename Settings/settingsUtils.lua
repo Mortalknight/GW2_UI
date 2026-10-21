@@ -239,6 +239,16 @@ function GW.ClearPendingReloadSettings()
     UpdateReloadIndicator()
 end
 
+local function GetReloadSettingName(opt)
+    local panel, path = opt.gwPanel, {}
+    for _, text in ipairs({panel and panel.header and panel.header:GetText(), panel and panel.breadcrumb and panel.breadcrumb:GetText()}) do
+        if text and text ~= "" and text ~= path[#path] then
+            path[#path + 1] = text
+        end
+    end
+    return #path > 0 and (table.concat(path, " > ") .. ": " .. opt.name) or opt.name
+end
+
 local function TrackReloadSetting(opt, oldValue)
     local key = opt.optionName or opt.name or tostring(opt)
     local hasValue = opt.get ~= nil
@@ -252,9 +262,9 @@ local function TrackReloadSetting(opt, oldValue)
         end
     elseif not hasValue or type(oldValue) == "table" or type(currentValue) == "table" then
         -- no comparable value: keep it pending until the reload happens
-        pendingReloadSettings[key] = {name = opt.name, sticky = true}
+        pendingReloadSettings[key] = {name = GetReloadSettingName(opt), sticky = true}
     elseif not ReloadValuesEqual(oldValue, currentValue) then
-        pendingReloadSettings[key] = {name = opt.name, baseline = oldValue}
+        pendingReloadSettings[key] = {name = GetReloadSettingName(opt), baseline = oldValue}
     end
 
     GW.ShowRlPopup = next(pendingReloadSettings) ~= nil
@@ -323,6 +333,7 @@ local function CreateOption(optionType, panel, name, desc, values)
         seenKey = seenKey,
         legacyNew = legacyNew,
         optionName = values.getterSetter, -- forbidden for addons
+        gwPanel = panel,
         optionType = optionType,
         callback = values.callback,
         dependence = values.dependence,
