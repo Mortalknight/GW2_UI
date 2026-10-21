@@ -133,18 +133,24 @@ function GW.StylePopupButton(button)
     button.gwPopupStyled = true
 end
 
+local function ClassifyPopupButton(button)
+    local fontString = button:GetFontString()
+    local text = fontString and fontString:GetText()
+    if not text or text == "" then return "neutral" end
+    text = gsub(text, "%s*%(.-%)$", "")
+    return BUTTON_TEXT_SCHEMES[strlower(strtrim(text))] or "neutral"
+end
+
+local function UpdateButtonScheme(button)
+    GW.SetPopupButtonScheme(button, ClassifyPopupButton(button))
+end
+
 local function StyleStaticPopupButton(button)
     if not button or button.gwPopupStyled then return end
 
     button:GwSkinButton(false, true)
     GW.StylePopupButton(button)
-end
-
-local function ClassifyPopupButton(button)
-    local fontString = button:GetFontString()
-    local text = fontString and fontString:GetText()
-    if not text or text == "" then return "neutral" end
-    return BUTTON_TEXT_SCHEMES[strlower(strtrim(text))] or "neutral"
+    hooksecurefunc(button, "SetText", UpdateButtonScheme)
 end
 
 local function UpdatePopupButtonSchemes(popup)
@@ -153,7 +159,7 @@ local function UpdatePopupButtonSchemes(popup)
 
     -- color each button from its label: negative (Cancel/No) red, affirmative (Yes/Okay) green
     for _, button in ipairs(buttons) do
-        GW.SetPopupButtonScheme(button, ClassifyPopupButton(button))
+        UpdateButtonScheme(button)
     end
 end
 
@@ -164,7 +170,7 @@ local function SkinInsertedFrame(popup)
     for _, child in ipairs({inserted:GetChildren()}) do
         if child:IsObjectType("Button") and child.Left and child.Middle and child.Right then
             StyleStaticPopupButton(child)
-            GW.SetPopupButtonScheme(child, ClassifyPopupButton(child))
+            UpdateButtonScheme(child)
         elseif child.CheckedTexture and child.Border and child.Label then
             if not child.gwSkinned then
                 child.gwSkinned = true
