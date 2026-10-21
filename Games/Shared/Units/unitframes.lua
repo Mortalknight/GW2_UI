@@ -490,8 +490,12 @@ function GwUnitFrameMixin:SetUnitPortrait()
 end
 
 -- colored for every unit, like in the tooltip
+-- white like our other texts, blizzards color only where it says more than the yellow of an even level
 function GwUnitFrameMixin:UpdateLevelColor(lvl)
     local color = GW.GetUnitLevelColor(self.gwUnit, lvl)
+    if color == QuestDifficultyColors.difficult then
+        color = GW.Colors.FallbackWhite
+    end
     self.levelString:SetVertexColor(color.r, color.g, color.b)
 end
 
