@@ -657,7 +657,8 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdown
         frame:GwCreateBackdrop(backdropTemplate, true)
         frame.backdrop:SetBackdropColor(0, 0, 0)
     else
-        frame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder) -- was StatusBar
+        frame:GwCreateBackdrop()
+        GW.AddEditBoxBackground(frame.backdrop, 0)
     end
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.backdrop:SetPoint("TOPLEFT", 3, 0)
