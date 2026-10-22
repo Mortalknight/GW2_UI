@@ -504,7 +504,7 @@ local function LoadPowerBar()
     playerPowerBar:ToggleSettings()
     playerPowerBar:ToggleBar()
 
-    if (GW.Classic or GW.TBC or GW.Wrath) and GW.settings.unitframes.player.energyManaTick then
+    if (GW.Classic or GW.TBC or GW.Wrath or GW.Forever) and GW.settings.unitframes.player.energyManaTick then
         GW.Load5SR()
     end
 end

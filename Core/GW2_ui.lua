@@ -664,7 +664,7 @@ local function evPlayerLogin(self)
     elseif GW.settings.unitframes.healthGlobe.enabled and GW.settings.unitframes.player.enabled then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
-        if (GW.Classic or GW.TBC or GW.Wrath) and GW.settings.unitframes.player.energyManaTick then
+        if (GW.Classic or GW.TBC or GW.Wrath or GW.Forever) and GW.settings.unitframes.player.energyManaTick then
             GW.Load5SR(hg)
         end
     end
