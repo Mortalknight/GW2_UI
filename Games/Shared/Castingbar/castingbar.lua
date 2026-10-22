@@ -308,7 +308,7 @@ function GW.SetInterruptText(fontString, interruptedBy)
     end
 
     local color = GW.GWGetClassColor(select(2, UnitClassFromGUID(interruptedBy)), true)
-    fontString:SetFormattedText(gsub(SPELL_INTERRUPTED_BY, "%%s", "|c" .. color:GenerateHexColor() .. "%%s|r"), name)
+    fontString:SetFormattedText(SPELL_INTERRUPTED_BY, color:WrapTextInColorCode(name))
 end
 
 function GwCastingBarMixin:AddInterruptFeedback()
