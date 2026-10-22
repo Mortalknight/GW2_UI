@@ -154,7 +154,7 @@ local function CreateRaidControlFrame()
     local fnGGRC_OnClick = function()
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         if GW.isModern and InCombatLockdown() then return end
-        DoReadyCheck()
+        C_PartyInfo.DoReadyCheck()
     end
     GwGroupManage.inGroup.readyCheck:SetScript("OnClick", fnGGRC_OnClick)
     GwGroupManage.inGroup.readyCheck.hover:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover.png")

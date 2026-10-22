@@ -264,7 +264,7 @@ function GwGroupInfoBarMixin:OnEvent(event)
     elseif event == "ENCOUNTER_END" then
         self.inRaidEncounter = false
     else
-        self.inRaidEncounter = IsEncounterInProgress and IsEncounterInProgress() and select(2, GetInstanceInfo()) == "raid"
+        self.inRaidEncounter = C_InstanceEncounter.IsEncounterInProgress() and select(2, GetInstanceInfo()) == "raid"
     end
     self:UpdateState()
 end

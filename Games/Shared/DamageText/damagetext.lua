@@ -499,8 +499,8 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
     if not destGUID then return end
 
     local isMine = GW.myguid == sourceGUID
-    local isPet = bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0
-    local isGuardianOrPet = isPet and (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0)
+    local isPet = bit.band(sourceFlags, Enum.CombatLogObject.AffiliationMine) > 0
+    local isGuardianOrPet = isPet and (bit.band(sourceFlags, Enum.CombatLogObject.TypeGuardian) > 0 or bit.band(sourceFlags, Enum.CombatLogObject.TypePet) > 0)
     if not isMine and not isGuardianOrPet then
         return
     end

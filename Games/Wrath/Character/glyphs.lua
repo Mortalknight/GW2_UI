@@ -14,7 +14,7 @@ local function GlyphFrameGlyph_UpdateSlot_Hook(self)
     local id = self:GetID()
     local frame = _G["GwGlyphesContainerGlyph" .. id]
 
-	local enabled, _, _, glyphSpell, iconFilename = GetGlyphSocketInfo(id, GetActiveTalentGroup())
+	local enabled, _, _, glyphSpell, iconFilename = GetGlyphSocketInfo(id, C_SpecializationInfo.GetActiveSpecGroup())
 
 	if ( not enabled ) then
 		--Locked glyph slot
@@ -37,7 +37,7 @@ local function GlyphFrameGlyph_UpdateSlot_Hook(self)
 end
 
 local function loadGlyphSlot(self)
-    local _, glyphType = GetGlyphSocketInfo(self:GetID(), GetActiveTalentGroup())
+    local _, glyphType = GetGlyphSocketInfo(self:GetID(), C_SpecializationInfo.GetActiveSpecGroup())
 
     if glyphType == GLYPHTYPE_MINOR then
         GlyphFrameGlyph_SetGlyphType(self, GLYPHTYPE_MINOR)
@@ -187,7 +187,7 @@ end
 
 local function GlyphFrameOnUpdateTimer()
     for i = 1, 6 do
-        local enabled = GetGlyphSocketInfo(i, GetActiveTalentGroup());
+        local enabled = GetGlyphSocketInfo(i, C_SpecializationInfo.GetActiveSpecGroup());
 
         if enabled and GlyphMatchesSocket(i) then
             _G["GwGlyphesContainerGlyph" .. i].selectable:Show()
@@ -267,7 +267,7 @@ local function GlyphFrameGlyph_OnEnter(self) -- copy from blizzard with littel t
 	local glyphName = GetSpellInfo(glyphSpellID)
 
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:SetGlyph(self:GetID(), GetActiveTalentGroup())
+	GameTooltip:SetGlyph(self:GetID(), C_SpecializationInfo.GetActiveSpecGroup())
 
 	EventRegistry:TriggerEvent("GlyphFrameGlyph.MouseOver", self, glyphName, glyphSpellID)
 	GameTooltip:Show();

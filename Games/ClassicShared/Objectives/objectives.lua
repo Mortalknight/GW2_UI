@@ -35,9 +35,9 @@ local function LinkQuestIntoChat(title, questId)
         link = gsub(title, " *(.*)", "%1")
     end
     if not ChatFrame1EditBox:IsVisible() then
-        ChatFrame_OpenChat(link)
+        ChatFrameUtil.OpenChat(link)
     else
-        ChatEdit_InsertLink(link)
+        ChatFrameUtil.InsertLink(link)
     end
 end
 
@@ -460,7 +460,7 @@ function GwQuestLogMixin:BlockOnClick(button)
         return
     end
 
-    if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
+    if IsShiftKeyDown() and ChatFrameUtil.GetActiveWindow() then
         if button == "LeftButton" then
             LinkQuestIntoChat(self.title, self.questID)
         end
@@ -610,9 +610,9 @@ function GwObjectivesQuestContainerMixin:InitModule()
         if (not btn) or btn.isHeader or not IsShiftKeyDown() then baseQLTB_OnClick(btn, button) return end
         local questLogLineIndex = btn:GetID() + FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
 
-        if ( IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() ) then
+        if ( IsModifiedClick("CHATLINK") and ChatFrameUtil.GetActiveWindow() ) then
             local questId = GetQuestIDFromLogIndex(questLogLineIndex)
-            ChatEdit_InsertLink("["..gsub(btn:GetText(), " *(.*)", "%1").." ("..questId..")]")
+            ChatFrameUtil.InsertLink("["..gsub(btn:GetText(), " *(.*)", "%1").." ("..questId..")]")
         else
             if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
                 self:_AQW_Insert(questLogLineIndex)

@@ -24,9 +24,9 @@ end
 
 local function LinkQuestIntoChat(questId)
     if not ChatFrame1EditBox:IsVisible() then
-        ChatFrame_OpenChat(GetQuestLink(questId))
+        ChatFrameUtil.OpenChat(GetQuestLink(questId))
     else
-        ChatEdit_InsertLink(GetQuestLink(questId))
+        ChatFrameUtil.InsertLink(GetQuestLink(questId))
     end
 end
 

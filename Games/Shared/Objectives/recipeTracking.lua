@@ -1,7 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
 
 local IsRecrafting = true
 
@@ -162,10 +161,10 @@ function GwObjectivesRecipeContainerMixin:OnEvent(event, ...)
 end
 
 function GwObjectivesRecipeContainerMixin:BlockOnClick(button)
-    if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
+    if IsModifiedClick("CHATLINK") and ChatFrameUtil.GetActiveWindow() then
         local link = C_TradeSkillUI.GetRecipeLink(GetRecipeID(self))
         if link then
-            ChatEdit_InsertLink(link)
+            ChatFrameUtil.InsertLink(link)
         end
     elseif button ~= "RightButton" then
         if not ProfessionsFrame then

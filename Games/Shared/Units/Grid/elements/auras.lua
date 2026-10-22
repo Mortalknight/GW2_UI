@@ -268,11 +268,11 @@ local function FilterAura(self, unit, data)
         local isPlayerBuff = data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"
 
         if parent.showBuffs then
-            local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(data.spellId, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+            local hasCustom, alwaysShowMine, showForMySpec = C_Spell.GetVisibilityInfo(data.spellId, UnitAffectingCombat("player") and Enum.SpellAuraVisibilityType.RaidInCombat or Enum.SpellAuraVisibilityType.RaidOutOfCombat)
             if hasCustom then
                 shouldDisplay = showForMySpec or (alwaysShowMine and (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"))
             else
-                shouldDisplay = (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle") and (data.canApplyAura or data.isAuraPlayer) and not SpellIsSelfBuff(data.spellId)
+                shouldDisplay = (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle") and (data.canApplyAura or data.isAuraPlayer) and not C_Spell.IsSelfBuff(data.spellId)
             end
 
             if shouldDisplay and parent.ignoredAuraSpellIDs then

@@ -117,8 +117,9 @@ end
 
 local function _IsShapeshifted()
     for i = 1, 40 do
-        local _, _, _, _, _, _, _, _, _, spellId, _ = UnitAura("player", i, "HELPFUL", "PLAYER")
-        if not spellId then break end
+        local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
+        if not aura then break end
+        local spellId = aura.spellId
         if spellId == 5487 or spellId == 9634 or spellId == 768 then
             return true
         end

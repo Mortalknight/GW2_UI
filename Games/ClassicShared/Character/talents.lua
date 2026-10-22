@@ -52,7 +52,7 @@ end
 local function hookTalentButton(talentButton, container, row, index)
     local w = container:GetWidth()
     local h = container:GetHeight()
-    local x = (w / NUM_TALENT_COLUMNS) * (index - 1)
+    local x = (w / Constants.TalentConsts.NumTalentColumns) * (index - 1)
     local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1)
 
     talentButton:RegisterForClicks("AnyUp")
@@ -66,7 +66,7 @@ local function hookTalentButton(talentButton, container, row, index)
             if IsModifiedClick("CHATLINK") then
                 local link = GetTalentLink(self.talentFrameId, self.talentid, false, isPetTalents, openSpec, GetCVarBool("previewTalentsOption"))
                 if link then
-                    ChatEdit_InsertLink(link)
+                    ChatFrameUtil.InsertLink(link)
                 end
             else
                 if GetCVarBool("previewTalentsOption") then
@@ -130,7 +130,7 @@ local function drawLegacyLine(path, container, teir, column, requirementsMet)
     local cCol = column
 
     for i = 1, #path do
-        local x = (w / NUM_TALENT_COLUMNS) * (cCol - 1)
+        local x = (w / Constants.TalentConsts.NumTalentColumns) * (cCol - 1)
         local y = (h / MAX_NUM_TALENT_TIERS) * (cTeir - 1)
         local arrow = getArrow(container, cTeir, cCol, i)
 
@@ -217,14 +217,14 @@ end
 
 -- the flat button list is filled tier by tier, so a grid slot maps to (tier - 1) * columns + column
 local function GetTreeButton(container, tier, column)
-    return container.buttons[(tier - 1) * NUM_TALENT_COLUMNS + column]
+    return container.buttons[(tier - 1) * Constants.TalentConsts.NumTalentColumns + column]
 end
 
 local function CleanUpTalentTrees(self)
     if not self.container then return end
     for i = 1, #self.container do
         for y = 1, MAX_NUM_TALENT_TIERS do
-            for j = 1, NUM_TALENT_COLUMNS do
+            for j = 1, Constants.TalentConsts.NumTalentColumns do
                 local button = GetTreeButton(self.container[i], y, j)
                 if button then
                     button.talentid = nil
@@ -435,7 +435,7 @@ local function loadTalentsFrames(self)
         end)
 
         for y = 1, MAX_NUM_TALENT_TIERS do
-            for j = 1, NUM_TALENT_COLUMNS do
+            for j = 1, Constants.TalentConsts.NumTalentColumns do
                 local talentButton = CreateFrame("Button", "GwLegacyTalentTree" .. i .. "Teir" .. y .. "index" .. j, container.treeContainer, "GwTalentButton")
                 hookTalentButton(talentButton, container.treeContainer, y, j)
                 container.buttons[#container.buttons + 1] = talentButton

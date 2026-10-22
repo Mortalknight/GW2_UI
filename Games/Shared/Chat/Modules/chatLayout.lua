@@ -35,7 +35,7 @@ end
 function GW.SaveChatLayout()
     local layout = {windows = {}, colors = {}, channelColors = {}}
 
-    for index = 1, NUM_CHAT_WINDOWS do
+    for index = 1, Constants.ChatFrameConstants.MaxChatWindows do
         local window = SaveWindow(index)
         if window then
             tinsert(layout.windows, window)
@@ -107,7 +107,7 @@ function GW.ApplyChatLayout()
     end
 
     -- the extra tabs are built again in the saved order, which also gives the saved dock order
-    for index = NUM_CHAT_WINDOWS, COMBAT_LOG_INDEX + 1, -1 do
+    for index = Constants.ChatFrameConstants.MaxChatWindows, COMBAT_LOG_INDEX + 1, -1 do
         local _, _, _, _, _, _, shown, _, docked = GetChatWindowInfo(index)
         if shown or docked then
             FCF_Close(_G["ChatFrame" .. index])

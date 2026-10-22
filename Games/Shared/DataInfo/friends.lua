@@ -255,9 +255,9 @@ local function ShowBroadcastPopup()
         hasEditBox = true,
         maxLetters = 127,
         inputText = select(4, BNGetInfo()),
-        EditBoxOnEnterPressed = function(popup) BNSetCustomMessage(popup.input:GetText()) end,
+        EditBoxOnEnterPressed = function(popup) C_BattleNet.SetCustomMessage(popup.input:GetText()) end,
         EditBoxOnEscapePressed = function(popup) popup:Hide() end,
-        OnAccept = function(popup) BNSetCustomMessage(popup.input:GetText()) end,
+        OnAccept = function(popup) C_BattleNet.SetCustomMessage(popup.input:GetText()) end,
         hideOnEscape = true
     })
 end

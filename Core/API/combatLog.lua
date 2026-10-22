@@ -3,7 +3,7 @@ local GW = select(2, ...)
 
 -- One combat log listener for all of GW2 UI. It only listens while an owner is registered and hands every entry to
 -- the owners whose key is part of its sub event ("_DAMAGE" takes SPELL_DAMAGE, SWING_DAMAGE, ...), the owner first and
--- then the values of CombatLogGetCurrentEventInfo.
+-- then the values of C_CombatLog.GetCurrentEventInfo.
 
 local listeners = {} -- [key][owner] = func
 
@@ -20,7 +20,7 @@ end
 
 local frame = CreateFrame("Frame")
 frame:SetScript("OnEvent", function()
-    Dispatch(CombatLogGetCurrentEventInfo())
+    Dispatch(C_CombatLog.GetCurrentEventInfo())
 end)
 
 local function UpdateListening()

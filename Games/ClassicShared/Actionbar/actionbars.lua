@@ -86,7 +86,7 @@ GW.HookActionBarStateChanges()
 local out_R, out_G, out_B, out_A = RED_FONT_COLOR:GetRGBA()
 local function changeVertexColorActionbars(btn)
     if btn and btn.gw_ChangedColor then
-        local valid = IsActionInRange(btn.action)
+        local valid = C_ActionBar.IsActionInRange(btn.action)
         local checksRange = (valid ~= nil)
         local inRange = checksRange and valid
         if checksRange and not inRange then
@@ -97,7 +97,7 @@ end
 
 local function updateActionbarBorders(btn)
     if btn.gw_ShowGrid then return end
-    local texture = GetActionTexture(btn.action)
+    local texture = C_ActionBar.GetActionTexture(btn.action)
     if texture then
         local shouldShowHotKey = GW.settings.actionbars.buttonAssignments
         if shouldShowHotKey then
@@ -445,7 +445,7 @@ local function updateMainBar()
             btn.gw_ChangedColor = false
             btn.gw_RangeIndicatorSetting = GW.settings.actionbars.rangeIndicator
 
-            if IsEquippedAction(btn.action) then
+            if C_ActionBar.IsEquippedAction(btn.action) then
                 local borname = "ActionButton" .. i .. "Border"
                 if _G[borname] then
                     _G[borname]:SetVertexColor(0, 1, 0, 1)
@@ -592,7 +592,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
                 used_height = btn_padding_y
             end
 
-            if IsEquippedAction(btn.action) then
+            if C_ActionBar.IsEquippedAction(btn.action) then
                 local borname = buttonName .. i .. "Border"
                 if _G[borname] then
                     _G[borname]:SetVertexColor(0, 1, 0, 1)
@@ -769,7 +769,7 @@ actionBarEquipUpdate = function()
         for i = 1, 12 do
             local button = _G[barname .. i]
             if button then
-                if IsEquippedAction(button.action) then
+                if C_ActionBar.IsEquippedAction(button.action) then
                     local borname = barname .. i .. "Border"
                     if _G[borname] then
                         Wait(
