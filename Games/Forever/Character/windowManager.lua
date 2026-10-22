@@ -20,23 +20,6 @@ local windowsList = {
         ]=]
     },
     {
-        OnLoad = "LoadSpellBook",
-        FrameName = "GwSpellbookFrame",
-        window = "spellbook",
-        RefName = "GwSpellbookFrame",
-        TabIcon = "tabicon_spellbook",
-        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon.png",
-        HeaderText = SPELLS,
-        TooltipText = SPELLS,
-        Bindings = {
-            TOGGLESPELLBOOK = "SpellBook",
-            TOGGLEPETBOOK = "PetBook"
-        },
-        OnClick = [=[
-            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "spellbook")
-        ]=]
-    },
-    {
         OnLoad = "LoadProfessions",
         FrameName = "GwProfessionsDetailsFrame",
         window = "profession",
@@ -98,6 +81,27 @@ local windowsList = {
         ]=]
     },
 }
+
+-- with the gamepad interface the spellbook stays blizzards, our skin on it, it has the gamepad navigation
+if not GW.IsGamepadInterface() then
+    tinsert(windowsList, 2, {
+        OnLoad = "LoadSpellBook",
+        FrameName = "GwSpellbookFrame",
+        window = "spellbook",
+        RefName = "GwSpellbookFrame",
+        TabIcon = "tabicon_spellbook",
+        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon.png",
+        HeaderText = SPELLS,
+        TooltipText = SPELLS,
+        Bindings = {
+            TOGGLESPELLBOOK = "SpellBook",
+            TOGGLEPETBOOK = "PetBook"
+        },
+        OnClick = [=[
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "spellbook")
+        ]=]
+    })
+end
 
 local charSecure_OnClick = GW.BuildCharacterWindowClickHandler({
     Currency = "currency",
