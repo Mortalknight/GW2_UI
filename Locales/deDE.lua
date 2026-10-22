@@ -1177,3 +1177,7 @@ L["The chat layout can't be changed right now."] = "Das Chat-Layout kann gerade 
 L["Chat layout applied, these channels are not joined on this character: %s"] = "Chat-Layout übernommen, diese Kanäle hat dieser Charakter nicht betreten: %s"
 L["Chat layout applied."] = "Chat-Layout übernommen."
 L["Not on the global cooldown"] = "Nicht auf der globalen Abklingzeit"
+L["Item Link Info"] = "Gegenstandslinks erweitern"
+L["Show the icon and the item level of items linked in chat."] = "Zeigt das Symbol und die Gegenstandsstufe von Gegenständen, die im Chat verlinkt werden."
+L["Unread Counter"] = "Ungelesen-Zähler"
+L["Show the number of new whisper, guild and group messages on chat tabs that are not shown."] = "Zeigt auf nicht angezeigten Chat-Tabs die Anzahl neuer Flüster-, Gilden- und Gruppennachrichten."

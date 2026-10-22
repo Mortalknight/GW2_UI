@@ -167,6 +167,7 @@ end
 local function SkinTab(tab)
     GW.HandleTabs(tab, "top")
     tab:SetHeight(24)
+    tab:SetNormalFontObject(GameFontHighlightSmall)
 end
 
 local function SkinTabs()
@@ -185,6 +186,7 @@ local function SkinTabs()
             if tab.background then
                 tab.background:SetBlendMode(tab:GetID() == selectedIndex and "MOD" or "BLEND")
             end
+            tab:GetFontString():SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end
     hooksecurefunc(tabManager, "UpdateWidth", function(manager)

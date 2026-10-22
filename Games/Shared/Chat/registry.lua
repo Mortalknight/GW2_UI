@@ -98,6 +98,8 @@ end
 function GW.GetPlainChatLine(text, linksAsText)
     local kept = {}
     text = gsub(text, "|c[^|]*|H.-|h.-|h|r", function(link)
+        -- the item level of the item links module, a link with changed text can not be sent
+        link = gsub(link, "^(|c[^|]*|Hitem:.-|h.-) %(%d+%)%]|h", "%1]|h")
         if linksAsText then
             return link
         end

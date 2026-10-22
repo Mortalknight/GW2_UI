@@ -1167,3 +1167,7 @@ L["The chat layout can't be changed right now."] = true
 L["Chat layout applied, these channels are not joined on this character: %s"] = true
 L["Chat layout applied."] = true
 L["Not on the global cooldown"] = true
+L["Item Link Info"] = true
+L["Show the icon and the item level of items linked in chat."] = true
+L["Unread Counter"] = true
+L["Show the number of new whisper, guild and group messages on chat tabs that are not shown."] = true

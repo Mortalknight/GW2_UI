@@ -501,7 +501,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
         btn.GwNotify:SetSize(18, 18)
         btn.GwNotify:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
         btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop.png")
-        btn.GwNotify:SetVertexColor(1, 0, 0, 1)
+        btn.GwNotify:SetVertexColor(GW.Colors.SkinColors.NotificationBadge:GetRGBA())
         btn.GwNotify:Hide()
 
         btn.GwNotifyDark:SetSize(18, 18)

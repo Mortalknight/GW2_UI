@@ -2,6 +2,7 @@
     <Script file ="channelEvents.lua"/>
     <Script file ="spam.lua"/>
     <Script file ="urls.lua"/>
+    <Script file ="itemLinks.lua"/>
     <Script file ="keywords.lua"/>
     <Script file ="mentions.lua"/>
     <Script file ="smileys.lua"/>
@@ -20,6 +21,7 @@
     <Include file ="copyChat.xml"/>
     <Script file ="copyChat.lua"/>
     <Script file ="chatLayout.lua"/>
+    <Script file ="unreadTabs.lua"/>
     <!-- the last one on the line stage -->
     <Script file ="history.lua"/>
 </Ui>

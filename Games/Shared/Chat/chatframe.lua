@@ -388,6 +388,46 @@ local function HideBlizzardChatBackground(chatFrame)
     end
 end
 
+local function HasUnread(chatFrame)
+    return (chatFrame.gwUnreadCount or 0) > 0
+end
+
+local function DockHasUnread()
+    for _, frame in pairs(FCFDock_GetChatFrames(GENERAL_CHAT_DOCK)) do
+        if HasUnread(frame) then
+            return true
+        end
+    end
+    return false
+end
+
+local dockFadedOut = false
+
+local function FadeDock(fade, duration)
+    local keepUnread = dockFadedOut and DockHasUnread()
+    local function FadeTo(frame, alpha)
+        fade(frame, duration, frame:GetAlpha(), alpha)
+    end
+    FadeTo(GeneralDockManager, (not dockFadedOut or keepUnread) and 1 or 0)
+    for _, frame in pairs(FCFDock_GetChatFrames(GENERAL_CHAT_DOCK)) do
+        local tab = _G[frame:GetName() .. "Tab"]
+        local hide = keepUnread and not HasUnread(frame)
+        if hide then
+            tab.gwDockHidden = true
+            FadeTo(tab, 0)
+        elseif tab.gwDockHidden then
+            tab.gwDockHidden = nil
+            UIFrameFadeRemoveFrame(tab)
+            FCFTab_UpdateAlpha(frame)
+        end
+    end
+end
+
+function GW.UpdateChatDockFade()
+    if dockFadedOut then
+        FadeDock(UIFrameFadeOut, 2)
+    end
+end
 
 -- the parts of a chat window fade together; its background goes to the window alpha of the chat settings
 local function FadeChatFrame(chatFrame, fadeIn)
@@ -408,8 +448,11 @@ local function FadeChatFrame(chatFrame, fadeIn)
         end
     end
     if chatFrame.isDocked == 1 then
+        dockFadedOut = not fadeIn
         for _, v in pairs(gw_fade_frames) do
-            if (v ~= ChatFrameToggleVoiceDeafenButton and v ~= ChatFrameToggleVoiceMuteButton) or v:IsShown() then
+            if v == GeneralDockManager then
+                FadeDock(fade, duration)
+            elseif (v ~= ChatFrameToggleVoiceDeafenButton and v ~= ChatFrameToggleVoiceMuteButton) or v:IsShown() then
                 FadeTo(v, partAlpha)
             end
         end
@@ -428,14 +471,16 @@ local function FadeChatFrame(chatFrame, fadeIn)
     if GW_EmoteFrame and GW_EmoteFrame:IsShown() then
         FadeTo(GW_EmoteFrame, partAlpha)
     end
-    FadeTo(_G[frameName .. "Tab"], partAlpha)
+    if chatFrame.isDocked ~= 1 then
+        FadeTo(_G[frameName .. "Tab"], partAlpha)
+    end
     FadeTo(chatFrame.buttonFrame, partAlpha)
 end
 
 -- blizzard resets these on dock and window changes
 local function ApplyChatFrameFading(frame)
     FCFTab_UpdateAlpha(frame)
-    frame:SetTimeVisible(100)
+    frame:SetTimeVisible(120.0)
     frame:SetFading(GW.settings.chat.fade)
 end
 
@@ -697,6 +742,9 @@ local function styleChatWindow(frame)
     if not tab.Left then tab.Left = _G[name .. "TabLeft"] or _G[name .. "Tab"].Left end
 
     hooksecurefunc(tab, "SetAlpha", function(t, alpha)
+        if t.gwDockHidden then
+            return
+        end
         if alpha ~= 1 and (not t.isDocked or GeneralDockManager.selected:GetID() == t:GetID()) then
             t:SetAlpha(1)
         elseif alpha < 0.6 then
