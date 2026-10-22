@@ -1206,11 +1206,8 @@ local function setupMicroButtons(mbf)
     bref:HookScript("OnLeave", GameTooltip_Hide)
     SetSlotButton("bags", bref)
 
-    -- SpellbookMicroButton
-    if GW.isModern then
-        local spellButton = (PlayerSpellsMicroButton and PlayerSpellsMicroButton.layoutIndex) and PlayerSpellsMicroButton or SpellbookMicroButton or PlayerSpellsMicroButton
-        SetSlotButton("spellbook", spellButton)
-    elseif GW.settings.windows.spellbook.enabled and hasCharacterWindow then
+    -- SpellbookMicroButton (retail keeps blizzards spell book, the others can use ours)
+    if not GW.Retail and GW.settings.windows.spellbook.enabled and hasCharacterWindow then
         local sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, "SecureHandlerClickTemplate")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
@@ -1225,10 +1222,15 @@ local function setupMicroButtons(mbf)
             ]=]
         )
 
-        disableMicroButton(SpellbookMicroButton)
+        if SpellbookMicroButton then
+            disableMicroButton(SpellbookMicroButton)
+        end
         SetSlotButton("spellbook", sref)
         sref:HookScript("OnEnter", GW.Professions_OnEnter)
         sref:HookScript("OnLeave", GameTooltip_Hide)
+    elseif GW.isModern then
+        local spellButton = (PlayerSpellsMicroButton and PlayerSpellsMicroButton.layoutIndex) and PlayerSpellsMicroButton or SpellbookMicroButton or PlayerSpellsMicroButton
+        SetSlotButton("spellbook", spellButton)
     else
         SetSlotButton("spellbook", SpellbookMicroButton)
         SpellbookMicroButton:HookScript("OnEnter", GW.Professions_OnEnter)

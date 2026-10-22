@@ -20,6 +20,23 @@ local windowsList = {
         ]=]
     },
     {
+        OnLoad = "LoadSpellBook",
+        FrameName = "GwSpellbookFrame",
+        window = "spellbook",
+        RefName = "GwSpellbookFrame",
+        TabIcon = "tabicon_spellbook",
+        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon.png",
+        HeaderText = SPELLS,
+        TooltipText = SPELLS,
+        Bindings = {
+            TOGGLESPELLBOOK = "SpellBook",
+            TOGGLEPETBOOK = "PetBook"
+        },
+        OnClick = [=[
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "spellbook")
+        ]=]
+    },
+    {
         OnLoad = "LoadProfessions",
         FrameName = "GwProfessionsDetailsFrame",
         window = "profession",
@@ -86,10 +103,12 @@ local charSecure_OnClick = GW.BuildCharacterWindowClickHandler({
     Currency = "currency",
     Honor = "paperdollhonor",
     PaperDoll = "paperdoll",
+    PetBook = "petbook",
     PetPaperDollFrame = "paperdollpet",
     Professions = "professions",
     Reputation = "reputation",
     Skills = "paperdollskills",
+    SpellBook = "spellbook",
     Statistics = "statistics",
 })
 
@@ -104,6 +123,7 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
         "GwPaperSkills",
         "GwPaperHonor",
         "GwPetContainer",
+        "GwSpellbookFrame",
         "GwProfessionsFrame",
         "GwReputationFrame",
         "GwCurrencyFrame",
@@ -146,6 +166,11 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
             toggleRef = "GwPetContainer",
             requiresAttribute = "HasPetUI",
             showRefs = {"GwPaperDoll", "GwPetContainer"},
+        },
+        {
+            values = {"spellbook", "petbook"},
+            toggleRef = "GwSpellbookFrame",
+            showRefs = {"GwSpellbookFrame"},
         },
         {
             value = "professions",

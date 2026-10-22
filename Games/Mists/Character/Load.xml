@@ -1,7 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="character.xml"/>
     <Include file ="glyphs.xml"/>
-    <Include file ="spellbook.xml"/>
+    <Include file ="..\..\Shared\Character\spellbookTemplates.xml"/>
+    <Include file ="..\..\Shared\Character\spellbook.xml"/>
     <Include file ="talents.xml"/>
     <Include file ="outfit.xml"/>
     <Script file ="advanced_stats.lua"/>
@@ -11,7 +12,8 @@
     <Script file ="paperdoll_equipment.lua"/>
     <Script file ="paperdoll_equipset.lua"/>
     <Script file ="professions.lua"/>
-    <Script file ="spellbook.lua"/>
+    <Script file ="..\..\ClassicShared\Character\spellbookData.lua"/>
+    <Script file ="..\..\Shared\Character\spellbook.lua"/>
     <Script file ="stats.lua"/>
     <Script file ="talents.lua"/>
     <Script file ="windowManager.lua"/>

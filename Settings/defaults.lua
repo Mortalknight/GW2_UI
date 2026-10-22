@@ -236,6 +236,8 @@ GW.globalDefault = {
             },
             spellbook = {
                 enabled = true,
+                markUnbound = true,
+                markOffGcd = true,
             },
             profession = {
                 enabled = true,
