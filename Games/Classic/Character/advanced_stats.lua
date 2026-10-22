@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 local RoundDec = GW.RoundDec
 
-local lastManaReg = 0
+local lastSpiritRegen = 0
 
 local BIZNICK_ENCHANT = 2523 -- 3% ranged hit
 
@@ -287,44 +287,34 @@ local function GetSpellDmg(school)
     return RoundDec(spellDmg, 0)
 end
 
-local function GetMP5FromSpirit()
-    local base, _ = GetManaRegen() -- Returns mana reg per 1 second
+-- the spirit regen is 0 within the five second rule, then the last value outside of it is used
+local function GetSpiritRegen()
+    local base = GetManaRegen()
     if base < 1 then
-        base = lastManaReg
+        base = lastSpiritRegen
     end
-    lastManaReg = base
-    return RoundDec(base * 5, 1)
+    lastSpiritRegen = base
+    return base
+end
+
+local function GetMP5FromSpirit()
+    return RoundDec(GetSpiritRegen() * 5, 1)
 end
 
 local function GetMP5FromItems()
-    local mp5 = _GetMP5ValueOnItems()
-    mp5 = mp5 + GetSetBonusValueMP5()
-
-    return mp5
+    return _GetMP5ValueOnItems() + GetSetBonusValueMP5()
 end
 
+-- blizzard leaves the casting regen at 0: talents, mage armor and set bonuses let a part of the spirit regen go on
 local function GetMP5WhileCasting()
-    local _, casting = GetManaRegen() -- Returns mana reg per 1 second
-    if casting < 1 then
-        casting = lastManaReg
-    end
-    lastManaReg = casting
-
     local mod = _GetTalentModifierMP5()
     if _HasSetBonusModifierMP5() then
         mod = mod + 0.15
     end
     local auraMod, auraValues = _GetAuraModifier()
     mod = mod + auraMod
-    if mod == 0 then
-        casting = 0
-    end
-    casting = casting + mod
 
-    local mp5Items = GetMP5FromItems()
-    casting = (casting * 5) + mp5Items + auraValues
-
-    return RoundDec(casting, 2)
+    return RoundDec(GetSpiritRegen() * mod * 5 + GetMP5FromItems() + auraValues, 2)
 end
 
 local function MeleeMissChance(levelOffset)
@@ -414,6 +404,8 @@ local SPELL_SCHOOLS = {
     {school = schools.physical, label = STRING_SCHOOL_PHYSICAL},
 }
 
+local MISS_CHANCE_BOSS = MISS_CHANCE .. " (" .. LEVEL .. " +3)"
+
 local function AddHeader(text)
     GameTooltip:AddLine(" ")
     GameTooltip:AddLine(text)
@@ -436,16 +428,16 @@ local function showAdvancedChatStats(self)
     AddStat(MELEE_CRIT_CHANCE, Percent(GetCritChance()))
     AddStat(ITEM_MOD_HIT_MELEE_RATING_SHORT, Percent(GetHitModifier() or 0))
     AddStat(ATTACK_POWER_TOOLTIP, GetMeleeAttackPower())
-    AddStat("Miss-Chance", Percent(MeleeMissChance(0)))
-    AddStat("Miss-Chance (Level + 3)", Percent(MeleeMissChance(3)))
+    AddStat(MISS_CHANCE, Percent(MeleeMissChance(0)))
+    AddStat(MISS_CHANCE_BOSS, Percent(MeleeMissChance(3)))
 
     if _IsRangeAttackClass() then
         AddHeader(RANGED)
         AddStat(RANGED_CRIT_CHANCE, Percent(GetRangedCritChance()))
         AddStat(ITEM_MOD_HIT_RANGED_RATING_SHORT, Percent(_GetRangeHitBonus()))
         AddStat(RANGED_ATTACK_TOOLTIP, GetRangeAttackPower())
-        AddStat("Miss-Chance", Percent(RangeMissChance(0)))
-        AddStat("Miss-Chance (Level + 3)", Percent(RangeMissChance(3)))
+        AddStat(MISS_CHANCE, Percent(RangeMissChance(0)))
+        AddStat(MISS_CHANCE_BOSS, Percent(RangeMissChance(3)))
     end
 
     AddHeader(DEFENSE)
@@ -464,8 +456,8 @@ local function showAdvancedChatStats(self)
     AddHeader(STAT_CATEGORY_SPELL)
     AddStat(SPELL_CRIT_CHANCE, Percent(GetSpellCrit(schools.holy)))
     AddStat(ITEM_MOD_HIT_SPELL_RATING_SHORT, Percent(SpellHitBonus()))
-    AddStat("Miss-Chance", Percent(SpellMissChance(4)))
-    AddStat("Miss-Chance (Level + 3)", Percent(SpellMissChance(17)))
+    AddStat(MISS_CHANCE, Percent(SpellMissChance(4)))
+    AddStat(MISS_CHANCE_BOSS, Percent(SpellMissChance(17)))
 
     AddHeader(SPELL_BONUS)
     AddStat(BONUS_HEALING, format("%.2F", GetSpellBonusHealing()))
