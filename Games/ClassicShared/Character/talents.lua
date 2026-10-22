@@ -1,6 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
-local MAX_NUM_TALENT_TIERS = GW.TBC and 9 or 11
+local MAX_NUM_TALENT_TIERS = GW.Wrath and 11 or 9
 
 local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
@@ -409,7 +409,15 @@ local function updateTalentTrees(self)
     end
 end
 
+local talentFramesLoaded = false
 local function loadTalentsFrames(self)
+    -- on era the window loads before the server sent the talent data, the trees follow with the talent events;
+    -- the buttons are secure, so not in combat
+    if talentFramesLoaded or InCombatLockdown() or GetNumTalentTabs(false, isPetTalents) == 0 then
+        return
+    end
+    talentFramesLoaded = true
+
     local mask = UIParent:CreateMaskTexture()
 
     mask:SetPoint("TOPLEFT", GwCharacterWindow, "TOPLEFT", 0, 0)
@@ -501,6 +509,8 @@ local function LoadTalents(tabContainer)
     talentFrame:RegisterEvent("TALENT_GROUP_ROLE_CHANGED")
     talentFrame:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
     talentFrame:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
+    talentFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    talentFrame:RegisterEvent("SPELLS_CHANGED")
 
     talentFrame.bottomBar.talentPreview.checkbutton:SetScript("OnClick", function(self)
         local talentPreview = GetCVarBool("previewTalentsOption") and "0" or "1"
@@ -510,12 +520,14 @@ local function LoadTalents(tabContainer)
     end)
 
     talentFrame:SetScript("OnEvent", function()
+        loadTalentsFrames(talentFrame)
         talentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
         if not talentFrame:IsShown() then return end
         updateTalentTrees(talentFrame)
     end)
     talentFrame:SetScript("OnShow", function()
         if InCombatLockdown() then return end
+        loadTalentsFrames(talentFrame)
         updateTalentTrees(talentFrame)
     end)
     hooksecurefunc("ToggleTalentFrame",function()
