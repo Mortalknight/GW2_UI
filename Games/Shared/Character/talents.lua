@@ -1,6 +1,7 @@
 ---@class GW2
 local GW = select(2, ...)
-local MAX_NUM_TALENT_TIERS = GW.Wrath and 11 or 9
+local Data = GW.TalentData
+local NUM_COLUMNS = 4
 
 local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
@@ -23,25 +24,14 @@ local function UpdateActiveSpec(activeTalentGroup)
 end
 
 local function UpdateTalentPoints()
-    local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
-    local unspentPoints = talentPoints - GetGroupPreviewTalentPointsSpent(isPetTalents ,openSpec);
-
-    return unspentPoints
+    return Data.GetUnspentPoints(isPetTalents, openSpec) - Data.GetPreviewPoints(isPetTalents, openSpec)
 end
 
 local function talentBunnton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
 
-    local talentInfoQuery = {}
-    talentInfoQuery.specializationIndex = self.talentFrameId
-    talentInfoQuery.talentIndex = self.talentid
-    talentInfoQuery.isInspect = false
-    talentInfoQuery.isPet = isPetTalents
-    talentInfoQuery.groupIndex = openSpec
-    local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
-    if talentInfo then
-        GameTooltip:SetTalent(talentInfo.talentID, false, isPetTalents, openSpec)
+    if self.talentid and Data.SetTooltip(self.talentFrameId, self.talentid, isPetTalents, openSpec) then
         GW.AddOffGcdTooltipLine(self)
         GameTooltip:Show()
     end
@@ -52,8 +42,8 @@ end
 local function hookTalentButton(talentButton, container, row, index)
     local w = container:GetWidth()
     local h = container:GetHeight()
-    local x = (w / Constants.TalentConsts.NumTalentColumns) * (index - 1)
-    local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1)
+    local x = (w / NUM_COLUMNS) * (index - 1)
+    local y = (h / Data.NumTiers) * (row - 1)
 
     talentButton:RegisterForClicks("AnyUp")
     talentButton:SetAttribute("useOnKeyDown", false)
@@ -64,29 +54,17 @@ local function hookTalentButton(talentButton, container, row, index)
     talentButton:SetScript("OnClick", function(self, button)
         if button == "LeftButton" and openSpec == activeSpec then
             if IsModifiedClick("CHATLINK") then
-                local link = GetTalentLink(self.talentFrameId, self.talentid, false, isPetTalents, openSpec, GetCVarBool("previewTalentsOption"))
+                local link = Data.GetLink(self.talentFrameId, self.talentid, isPetTalents, openSpec)
                 if link then
                     ChatFrameUtil.InsertLink(link)
                 end
             else
-                if GetCVarBool("previewTalentsOption") then
-                    AddPreviewTalentPoints(self.talentFrameId, self.talentid, 1, isPetTalents, openSpec)
-                else
-                    LearnTalent(self.talentFrameId, self.talentid, isPetTalents, openSpec)
-                end
+                Data.Learn(self.talentFrameId, self.talentid, isPetTalents, openSpec)
             end
-        elseif button == "RightButton" and openSpec == activeSpec  then
-            if GetCVarBool("previewTalentsOption") then
-                AddPreviewTalentPoints(self.talentFrameId, self.talentid, -1, isPetTalents, openSpec)
-            end
+        elseif button == "RightButton" and openSpec == activeSpec then
+            Data.Unlearn(self.talentFrameId, self.talentid, isPetTalents, openSpec)
         end
     end)
-    talentButton:SetScript("OnEvent", function(self)
-        if GameTooltip:IsOwned(self) then
-            GameTooltip:SetTalent(self.talentFrameId, self.talentid)
-        end
-    end)
-    talentButton:RegisterEvent("CHARACTER_POINTS_CHANGED")
 
     local mask = UIParent:CreateMaskTexture()
 
@@ -130,8 +108,8 @@ local function drawLegacyLine(path, container, teir, column, requirementsMet)
     local cCol = column
 
     for i = 1, #path do
-        local x = (w / Constants.TalentConsts.NumTalentColumns) * (cCol - 1)
-        local y = (h / MAX_NUM_TALENT_TIERS) * (cTeir - 1)
+        local x = (w / NUM_COLUMNS) * (cCol - 1)
+        local y = (h / Data.NumTiers) * (cTeir - 1)
         local arrow = getArrow(container, cTeir, cCol, i)
 
         arrow:ClearAllPoints()
@@ -200,37 +178,29 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, container, re
     return drawLegacyLine(path, container, tier, column, requirementsMet)
 end
 
-local function TalentFrame_SetPrereqs(container, buttonTier, buttonColumn, forceDesaturated, tierUnlocked, preview, ...)
-    local requirementsMet = tierUnlocked and not forceDesaturated
+local function TalentFrame_SetPrereqs(container, talent, forceDesaturated)
+    local requirementsMet = talent.available and not forceDesaturated
 
-    for i = 1, select("#", ...), 4 do
-        local tier, column, isLearnable, isPreviewLearnable = select(i, ...)
-        if ( forceDesaturated or
-            (preview and not isPreviewLearnable) or
-            (not preview and not isLearnable) ) then
+    for _, prereq in ipairs(talent.prereqs) do
+        if not prereq.met then
             requirementsMet = false
         end
-        getLinePath(buttonTier, buttonColumn, tier, column, container, requirementsMet)
+        getLinePath(talent.tier, talent.column, prereq.tier, prereq.column, container, requirementsMet)
     end
     return requirementsMet
 end
 
 -- the flat button list is filled tier by tier, so a grid slot maps to (tier - 1) * columns + column
 local function GetTreeButton(container, tier, column)
-    return container.buttons[(tier - 1) * Constants.TalentConsts.NumTalentColumns + column]
+    return container.buttons[(tier - 1) * NUM_COLUMNS + column]
 end
 
 local function CleanUpTalentTrees(self)
     if not self.container then return end
     for i = 1, #self.container do
-        for y = 1, MAX_NUM_TALENT_TIERS do
-            for j = 1, Constants.TalentConsts.NumTalentColumns do
-                local button = GetTreeButton(self.container[i], y, j)
-                if button then
-                    button.talentid = nil
-                    button:Hide()
-                end
-            end
+        for _, button in ipairs(self.container[i].buttons) do
+            button.talentid = nil
+            button:Hide()
         end
 
         for _, arrow in pairs(self.container[i].treeContainer.arrows) do
@@ -240,13 +210,13 @@ local function CleanUpTalentTrees(self)
 end
 
 local function UpdatePreviewControls(self, isPreview)
-    local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
+    local talentPoints = Data.GetUnspentPoints(isPetTalents, openSpec)
 
     if (isPetTalents or openSpec) and talentPoints > 0 and isPreview then
         self.bottomBar.prevLearn:Show()
         self.bottomBar.prevCancel:Show()
         -- enable accept/cancel buttons if preview talent points were spent
-        if GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec) > 0 then
+        if Data.GetPreviewPoints(isPetTalents, openSpec) > 0 then
             self.bottomBar.prevLearn:Enable();
             self.bottomBar.prevCancel:Enable();
         else
@@ -263,10 +233,10 @@ local function updateTalentTrees(self)
     if InCombatLockdown() then return end
     if not self.container or not self.container[1] then return end
 
-    local activeTalentGroup = C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)
-    local hasDualSpec = GetNumTalentGroups(false, false) > 1
-    local hasPetTalents = GetNumTalentGroups(false, true) > 0
-    local preview = GetCVarBool("previewTalentsOption")
+    local activeTalentGroup = Data.GetActiveSpecGroup(isPetTalents)
+    local hasDualSpec = Data.GetNumSpecGroups(false) > 1
+    local hasPetTalents = Data.GetNumSpecGroups(true) > 0
+    local preview = Data.UsesPreview()
     local isActiveTalentGroup = openSpec == activeTalentGroup
 
     -- preview
@@ -303,97 +273,73 @@ local function updateTalentTrees(self)
 
     self.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
 
-    for f = 1, GetNumTalentTabs(false, isPetTalents) do
-        local forceDesaturated
-        local talentPoints = UpdateTalentPoints()
-        local _, name, _, _, _, _, pointsSpent, _, previewPointsSpent = C_SpecializationInfo.GetSpecializationInfo(f, false, isPetTalents, nil, nil, openSpec)
+    for f = 1, Data.GetNumTrees(isPetTalents) do
         local container = self.container[f]
-        container.pointsSpent = pointsSpent + previewPointsSpent
+        if not container then break end
+        local talentPoints = UpdateTalentPoints()
+        local name, icon, pointsSpent, treePoints = Data.GetTreeInfo(f, isPetTalents, openSpec)
 
-        if pointsSpent < 1 then
-            container.background:SetDesaturated(true)
-        else
-            container.background:SetDesaturated(false)
-        end
+        container.background:SetDesaturated(pointsSpent < 1)
         container.talentPoints = talentPoints
         container.talentFrameId = f
 
+        container.info.icon:SetTexture(icon)
         container.info.title:SetText(name)
         container.info.points:SetText(pointsSpent)
 
-        local numTalents = GetNumTalents(f, false, isPetTalents)
-        for i = 1, MAX_NUM_TALENTS do
-            if i <= numTalents then
-                local talentInfoQuery = {}
-                talentInfoQuery.specializationIndex = f
-                talentInfoQuery.talentIndex = i
-                talentInfoQuery.isInspect = false
-                talentInfoQuery.isPet = isPetTalents
-                talentInfoQuery.groupIndex = openSpec
-                local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        for i = 1, Data.GetNumTalents(f, isPetTalents) do
+            local talent = Data.GetTalent(f, i, isPetTalents, openSpec, treePoints)
+            -- talents are indexed in list order, the buttons live in grid order
+            local button = talent and GetTreeButton(container, talent.tier, talent.column)
+            if button then
+                local displayRank = talent.rank
 
-                if talentInfo then
-                    -- talents are indexed in list order, the buttons live in grid order
-                    local button = GetTreeButton(container, talentInfo.tier, talentInfo.column)
-                    local displayRank
-                    if preview then
-                        displayRank = talentInfo.previewRank
-                    else
-                        displayRank = talentInfo.rank
-                    end
+                button.icon:SetTexture(talent.icon)
+                GW.UpdateOffGcdIndicator(button, talent.spellID)
+                button.points:SetText(displayRank .. " / " .. talent.maxRank)
+                button.textBG:Show()
+                button.talentid = i
+                button.talentFrameId = f
+                button.active = true
+                button:Show()
+                button:EnableMouse(true)
 
-                    button.icon:SetTexture(talentInfo.icon)
-                    GW.UpdateOffGcdIndicator(button, talentInfo.spellID)
-                    button.points:SetText(displayRank .. " / " .. talentInfo.maxRank)
-                    button.textBG:Show()
-                    button.talentid = i
-                    button.talentFrameId = f
-                    button.active = true
-                    button:Show()
-                    button:EnableMouse(true)
+                -- If player has no talent points or this is the inactive talent group then show only talents with points in them
+                local forceDesaturated = (container.talentPoints <= 0 or not isActiveTalentGroup) and displayRank == 0
+                local requirementsMet = TalentFrame_SetPrereqs(container, talent, forceDesaturated)
 
-                    -- If player has no talent points or this is the inactive talent group then show only talents with points in them
-                    forceDesaturated = (container.talentPoints <= 0 or not isActiveTalentGroup) and displayRank == 0;
-                    -- If the player has spent at least 5 talent points in the previous tier
-                    local tierUnlocked = (talentInfo.tier - 1) * (isPetTalents and PET_TALENTS_PER_TIER or PLAYER_TALENTS_PER_TIER) <= container.pointsSpent
+                button.talentID = i
+                button.known = displayRank == talent.maxRank
 
-                    local ispassive = not talentInfo.isExceptional
-                    local Prereqs = TalentFrame_SetPrereqs(container, talentInfo.tier, talentInfo.column, forceDesaturated, tierUnlocked, preview, GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
+                if not talent.isExceptional then
+                    button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png")
+                    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png")
+                    button.icon:AddMaskTexture(button.mask)
+                    button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_outline.png")
+                else
+                    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight.png")
+                    button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight.png")
+                    button.icon:RemoveMaskTexture(button.mask)
+                    button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border.png")
+                end
 
-                    button.talentID = i
-                    button.known = displayRank == talentInfo.maxRank
-
-                    if ispassive then
-                        button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png")
-                        button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png")
-                        button.icon:AddMaskTexture(button.mask)
-                        button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_outline.png")
-                    else
-                        button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight.png")
-                        button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight.png")
-                        button.icon:RemoveMaskTexture(button.mask)
-                        button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border.png")
-                    end
-
-                    if Prereqs and ((preview and talentInfo.meetsPreviewPrereq) or (not preview and talentInfo.meetsPrereq)) then
-                        button.icon:SetDesaturated(not isActiveTalentGroup)
-                        button.icon:SetVertexColor(1, 1, 1, 1)
-                        button:SetAlpha(1)
-                        if displayRank < talentInfo.maxRank then
-                            button.highlight:Hide()
-                            button.points:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
-                        else
-                            button.highlight:Show()
-                            button.points:SetText(displayRank.. " / " .. talentInfo.maxRank)
-                            button.points:SetTextColor(0.87, 0.74, 0.29, 1)
-                        end
-                    else
-                        button.icon:SetDesaturated(true)
-                        button.icon:SetVertexColor(1, 1, 1, 0.4)
+                if requirementsMet then
+                    button.icon:SetDesaturated(not isActiveTalentGroup)
+                    button.icon:SetVertexColor(1, 1, 1, 1)
+                    button:SetAlpha(1)
+                    if displayRank < talent.maxRank then
                         button.highlight:Hide()
-                        button.points:SetText("")
-                        button.textBG:Hide()
+                        button.points:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
+                    else
+                        button.highlight:Show()
+                        button.points:SetTextColor(0.87, 0.74, 0.29, 1)
                     end
+                else
+                    button.icon:SetDesaturated(true)
+                    button.icon:SetVertexColor(1, 1, 1, 0.65)
+                    button.highlight:Hide()
+                    button.points:SetText("")
+                    button.textBG:Hide()
                 end
             end
         end
@@ -413,7 +359,7 @@ local talentFramesLoaded = false
 local function loadTalentsFrames(self)
     -- on era the window loads before the server sent the talent data, the trees follow with the talent events;
     -- the buttons are secure, so not in combat
-    if talentFramesLoaded or InCombatLockdown() or GetNumTalentTabs(false, isPetTalents) == 0 then
+    if talentFramesLoaded or InCombatLockdown() or Data.GetNumTrees(isPetTalents) == 0 then
         return
     end
     talentFramesLoaded = true
@@ -426,7 +372,7 @@ local function loadTalentsFrames(self)
 
     self.container = {}
 
-    for i = 1, GetNumTalentTabs(false, isPetTalents) do
+    for i = 1, Data.GetNumTrees(isPetTalents) do
         local container = CreateFrame("Button", "GwLegacyTalentTree" .. i, self, "GwLegacyTalentTree")
         self.container[i] = container
         container.buttons = {}
@@ -442,8 +388,8 @@ local function loadTalentsFrames(self)
             updateTalentTrees(self)
         end)
 
-        for y = 1, MAX_NUM_TALENT_TIERS do
-            for j = 1, Constants.TalentConsts.NumTalentColumns do
+        for y = 1, Data.NumTiers do
+            for j = 1, NUM_COLUMNS do
                 local talentButton = CreateFrame("Button", "GwLegacyTalentTree" .. i .. "Teir" .. y .. "index" .. j, container.treeContainer, "GwTalentButton")
                 hookTalentButton(talentButton, container.treeContainer, y, j)
                 container.buttons[#container.buttons + 1] = talentButton
@@ -458,16 +404,21 @@ local function LoadTalents(tabContainer)
     local talentFrame = CreateFrame("Frame", "GwTalentFrame", tabContainer, "GwLegacyTalentFrame")
 
     talentFrame.bottomBar.prevCancel:SetScript("OnClick", function()
-        ResetGroupPreviewTalentPoints(isPetTalents, openSpec)
+        Data.ResetPreview(isPetTalents, openSpec)
         updateTalentTrees(talentFrame)
     end)
     talentFrame.bottomBar.prevLearn:SetScript("OnClick", function()
-        GW.ShowPopup({text = CONFIRM_LEARN_PREVIEW_TALENTS,
-            button1 = YES,
-            button2 = NO,
-            OnAccept = function() LearnPreviewTalents(isPetTalents) end,
-            hideOnEscape = true}
-        )
+        -- forever applies like blizzard without asking, it has no confirm text
+        if CONFIRM_LEARN_PREVIEW_TALENTS then
+            GW.ShowPopup({text = CONFIRM_LEARN_PREVIEW_TALENTS,
+                button1 = YES,
+                button2 = NO,
+                OnAccept = function() Data.CommitPreview(isPetTalents, openSpec) end,
+                hideOnEscape = true}
+            )
+        else
+            Data.CommitPreview(isPetTalents, openSpec)
+        end
         updateTalentTrees(talentFrame)
     end)
 
@@ -500,17 +451,12 @@ local function LoadTalents(tabContainer)
 
     talentFrame.bottomBar.dualSpecActiveTalentGroupe:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
 
+    talentFrame.bottomBar.talentPreview:SetShown(Data.HasPreviewOption)
     talentFrame.bottomBar.talentPreview.checkbutton:SetChecked(GetCVarBool("previewTalentsOption"))
 
-
-    talentFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
-    talentFrame:RegisterEvent("PET_TALENT_UPDATE")
-    talentFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    talentFrame:RegisterEvent("TALENT_GROUP_ROLE_CHANGED")
-    talentFrame:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
-    talentFrame:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
-    talentFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    talentFrame:RegisterEvent("SPELLS_CHANGED")
+    for _, event in ipairs(Data.Events) do
+        talentFrame:RegisterEvent(event)
+    end
 
     talentFrame.bottomBar.talentPreview.checkbutton:SetScript("OnClick", function(self)
         local talentPreview = GetCVarBool("previewTalentsOption") and "0" or "1"
@@ -521,7 +467,7 @@ local function LoadTalents(tabContainer)
 
     talentFrame:SetScript("OnEvent", function()
         loadTalentsFrames(talentFrame)
-        talentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
+        talentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
         if not talentFrame:IsShown() then return end
         updateTalentTrees(talentFrame)
     end)
@@ -530,11 +476,13 @@ local function LoadTalents(tabContainer)
         loadTalentsFrames(talentFrame)
         updateTalentTrees(talentFrame)
     end)
-    hooksecurefunc("ToggleTalentFrame",function()
-        if InCombatLockdown() then return end
-        GwCharacterWindow:SetAttribute("keytoggle", true)
-        GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
-    end)
+    if ToggleTalentFrame then
+        hooksecurefunc("ToggleTalentFrame", function()
+            if InCombatLockdown() then return end
+            GwCharacterWindow:SetAttribute("keytoggle", true)
+            GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
+        end)
+    end
 
     loadTalentsFrames(talentFrame)
 end

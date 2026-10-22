@@ -1237,7 +1237,7 @@ local function setupMicroButtons(mbf)
     end
 
     -- TalentMicroButton (none retail)
-    if not GW.isModern then
+    if not GW.isModern or (GW.Forever and TalentMicroButton) then
         if GW.settings.windows.talent.enabled and hasCharacterWindow then
             local tref = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate")
             tref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
@@ -1266,9 +1266,6 @@ local function setupMicroButtons(mbf)
         else
             SetSlotButton("talents", TalentMicroButton)
         end
-    elseif GW.Forever and TalentMicroButton then
-        -- forever keeps a talent button next to the spellbook one, blizzards button fills the slot
-        SetSlotButton("talents", TalentMicroButton)
     end
 
     -- AchievementMicroButton

@@ -6,6 +6,7 @@
     <Include file ="currency.xml"/>
     <Include file ="..\..\Shared\Character\spellbookTemplates.xml"/>
     <Include file ="..\..\Shared\Character\spellbook.xml"/>
+    <Include file ="..\..\Shared\Character\talents.xml"/>
     <Script file ="windowManager.lua"/>
     <Script file ="paperdoll_equipment.lua"/>
     <Script file ="skills.lua"/>
@@ -17,4 +18,6 @@
     <Script file ="statistics.lua"/>
     <Script file ="spellbookData.lua"/>
     <Script file ="..\..\Shared\Character\spellbook.lua"/>
+    <Script file ="talentsData.lua"/>
+    <Script file ="..\..\Shared\Character\talents.lua"/>
 </Ui>

@@ -236,9 +236,16 @@
                 <Layers>
                     <Layer level="BACKGROUND"/>
                     <Layer level="BORDER">
+                        <Texture parentKey="icon">
+                            <Size x="22" y="22"/>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="8" y="0"/>
+                            </Anchors>
+                            <TexCoords left="0.08" right="0.92" top="0.08" bottom="0.92"/>
+                        </Texture>
                         <FontString parentKey="title" text="" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="10"/>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="36" y="10"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="10" y="-10"/>
                             </Anchors>
                         </FontString>
@@ -266,7 +273,7 @@
             </OnLoad>
             <OnShow>
                 self:SetScript('OnUpdate', function(self, elapsed)
-                    if MouseIsOver(self) then
+                    if self:IsMouseOver() then
                         local r, g, b, a = self.background:GetVertexColor()
                         r = math.min(0.8, r + (1 * elapsed))
                         self.background:SetVertexColor(r, r, r, r)

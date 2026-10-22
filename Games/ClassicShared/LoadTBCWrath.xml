@@ -1,10 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="..\Shared\Character\spellbookTemplates.xml"/>
     <Include file ="..\Shared\Character\spellbook.xml"/>
-    <Include file ="Character\talents.xml"/>
+    <Include file ="..\Shared\Character\talents.xml"/>
     <Script file ="Character\stats.lua"/>
     <Script file ="Character\advanced_stats.lua"/>
     <Script file ="Character\spellbookData.lua"/>
     <Script file ="..\Shared\Character\spellbook.lua"/>
-    <Script file ="Character\talents.lua"/>
+    <Script file ="Character\talentsData.lua"/>
+    <Script file ="..\Shared\Character\talents.lua"/>
 </Ui>

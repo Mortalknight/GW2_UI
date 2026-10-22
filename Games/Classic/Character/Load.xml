@@ -3,13 +3,14 @@
     <Include file ="sodEngravingFrame.xml"/>
     <Include file ="..\..\Shared\Character\spellbookTemplates.xml"/>
     <Include file ="..\..\Shared\Character\spellbook.xml"/>
-    <Include file ="..\..\ClassicShared\Character\talents.xml"/>
+    <Include file ="..\..\Shared\Character\talents.xml"/>
     <Script file ="stats.lua"/>
     <Script file ="advanced_stats.lua"/>
     <Script file ="character.lua"/>
     <Script file ="sodEngravingFrame.lua"/>
     <Script file ="..\..\ClassicShared\Character\spellbookData.lua"/>
     <Script file ="..\..\Shared\Character\spellbook.lua"/>
-    <Script file ="..\..\ClassicShared\Character\talents.lua"/>
+    <Script file ="..\..\ClassicShared\Character\talentsData.lua"/>
+    <Script file ="..\..\Shared\Character\talents.lua"/>
     <Script file ="windowManager.lua"/>
 </Ui>

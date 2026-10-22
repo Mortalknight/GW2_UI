@@ -82,7 +82,7 @@ local windowsList = {
     },
 }
 
--- with the gamepad interface the spellbook stays blizzards, our skin on it, it has the gamepad navigation
+-- with the gamepad interface spellbook and talents stay blizzards, our skin on it, they have the gamepad navigation
 if not GW.IsGamepadInterface() then
     tinsert(windowsList, 2, {
         OnLoad = "LoadSpellBook",
@@ -101,6 +101,21 @@ if not GW.IsGamepadInterface() then
             self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "spellbook")
         ]=]
     })
+    tinsert(windowsList, 3, {
+        OnLoad = "LoadTalents",
+        FrameName = "GwTalentsFrame",
+        window = "talent",
+        RefName = "GwTalentsFrame",
+        TabIcon = "tabicon-talents",
+        HeaderIcon = "Interface/AddOns/GW2_UI/textures/character/talents-window-icon.png",
+        HeaderText = TALENTS,
+        Bindings = {
+            TOGGLETALENTS = "Talents"
+        },
+        OnClick = [=[
+            self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
+        ]=]
+    })
 end
 
 local charSecure_OnClick = GW.BuildCharacterWindowClickHandler({
@@ -114,6 +129,7 @@ local charSecure_OnClick = GW.BuildCharacterWindowClickHandler({
     Skills = "paperdollskills",
     SpellBook = "spellbook",
     Statistics = "statistics",
+    Talents = "talents",
 })
 
 local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHandler({
@@ -128,6 +144,7 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
         "GwPaperHonor",
         "GwPetContainer",
         "GwSpellbookFrame",
+        "GwTalentsFrame",
         "GwProfessionsFrame",
         "GwReputationFrame",
         "GwCurrencyFrame",
@@ -175,6 +192,11 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
             values = {"spellbook", "petbook"},
             toggleRef = "GwSpellbookFrame",
             showRefs = {"GwSpellbookFrame"},
+        },
+        {
+            value = "talents",
+            toggleRef = "GwTalentsFrame",
+            showRefs = {"GwTalentsFrame"},
         },
         {
             value = "professions",
