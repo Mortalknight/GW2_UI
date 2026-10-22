@@ -3,7 +3,6 @@ local GW = select(2, ...)
 local lerp = GW.lerp
 local TimeCount = GW.TimeCount
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local animations = GW.animations
 local IsIn = GW.IsIn
 
 local castTimeFormatter
@@ -301,6 +300,17 @@ function GwCastingBarMixin:SetEmpowerStage(stage)
     })
 end
 
+function GW.SetInterruptText(fontString, interruptedBy)
+    local name = (GW.IsSecretValue(interruptedBy) or interruptedBy) and UnitNameFromGUID(interruptedBy)
+    if not (GW.IsSecretValue(name) or (name and name ~= "")) then
+        fontString:SetText(INTERRUPTED)
+        return
+    end
+
+    local color = GW.GWGetClassColor(select(2, UnitClassFromGUID(interruptedBy)), true)
+    fontString:SetFormattedText(gsub(SPELL_INTERRUPTED_BY, "%%s", "|c" .. color:GenerateHexColor() .. "%%s|r"), name)
+end
+
 function GwCastingBarMixin:AddInterruptFeedback()
     if settings.interruptSound then
         PlaySound(SOUNDKIT.LFG_DENIED)
@@ -359,7 +369,7 @@ function GwCastingBarMixin:Init(unit, showTradeSkills)
             local barUnit = self.unit or unit
             if self:GetAlpha() <= 0
                 or self:IsFinishAnimating()
-                or animations[self.animationName .. "FadeOut"]
+                or GW.IsAnimating(self.animationName .. "FadeOut")
                 or UnitCastingInfo(barUnit) or UnitChannelInfo(barUnit) then
                 self.gwStuckVisibleSince = nil
                 return
@@ -418,10 +428,7 @@ function GwCastingBarMixin:Reset()
     if self.gwTimeBinding then
         self.gwTimeBinding:Disable()
     end
-    if animations[self.animationName] then
-        animations[self.animationName].completed = true
-        animations[self.animationName].duration = 0
-    end
+    GW.StopAnimation(self.animationName)
     if self.hadTicks and self.unit == "player" then
         self:HideTicks()
         self.hadTicks = false
@@ -545,7 +552,7 @@ function GwCastingBarMixin:OnUpdate(elapsed)
         if self.isCasting then
             self.duration = self.duration + elapsed
             if self.duration >= self.max then
-                if not animations[self.animationName .. "FadeOut"] then
+                if not GW.IsAnimating(self.animationName .. "FadeOut") then
                     self:SetAlpha(0)
                 end
                 self:SetScript("OnUpdate", nil)
@@ -554,7 +561,7 @@ function GwCastingBarMixin:OnUpdate(elapsed)
         else
             self.duration = self.duration - elapsed
             if self.duration <= 0 then
-                if not animations[self.animationName .. "FadeOut"] then
+                if not GW.IsAnimating(self.animationName .. "FadeOut") then
                     self:SetAlpha(0)
                 end
                 self:SetScript("OnUpdate", nil)
@@ -562,7 +569,7 @@ function GwCastingBarMixin:OnUpdate(elapsed)
             end
         end
     else
-        if not animations[self.animationName .. "FadeOut"] then
+        if not GW.IsAnimating(self.animationName .. "FadeOut") then
             self:SetAlpha(0)
         end
         self:SetScript("OnUpdate", nil)
@@ -720,7 +727,13 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
     elseif IsIn(event, "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_EMPOWER_STOP") then
         if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or
            ((event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_EMPOWER_STOP") and (self.isChanneling or self.isEmpowered)) then
-            if not self:IsFinishAnimating() then
+            local interruptedBy = event ~= "UNIT_SPELLCAST_STOP" and select(event == "UNIT_SPELLCAST_EMPOWER_STOP" and 4 or 3, ...)
+            if GW.IsSecretValue(interruptedBy) or interruptedBy then
+                if settings.showName then
+                    GW.SetInterruptText(self.name, interruptedBy)
+                end
+                self:AddFinishAnimation(true)
+            elseif not self:IsFinishAnimating() then
                 self:AddFinishAnimation(false, true)
             end
             self:Reset()
@@ -731,7 +744,11 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
     elseif IsIn(event, "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
         if self:IsShown() and self.isCasting and select(1, ...) == self.castID then
             if settings.showName then
-                self.name:SetText(event == "UNIT_SPELLCAST_FAILED" and FAILED or INTERRUPTED)
+                if event == "UNIT_SPELLCAST_FAILED" then
+                    self.name:SetText(FAILED)
+                else
+                    GW.SetInterruptText(self.name, select(3, ...))
+                end
             end
             self:AddFinishAnimation(true)
             self.isCasting = false

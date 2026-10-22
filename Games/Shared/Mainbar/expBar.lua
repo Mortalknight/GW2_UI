@@ -4,7 +4,6 @@ local L = GW.L
 local CommaValue = GW.CommaValue
 local lerp = GW.lerp
 local Diff = GW.Diff
-local animations = GW.animations
 
 local FormatNumber = GW.GetLocalizedNumber or CommaValue or tostring
 -- clients that teach their spells at the class trainer get the upcoming level rewards
@@ -506,7 +505,7 @@ local function UpdateData(self)
                 self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
                 self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
                 PlaySoundFile("Interface/AddOns/GW2_UI/Sounds/exp_gain_ping.ogg", "SFX")
-                animations.experiencebarAnimation.from = step
+                GW.SetAnimationFrom("experiencebarAnimation", step)
             end
         end)
         GW.AddToAnimation("GwExperienceBarCandy", experiencebarAnimation, valPrec, GetTime(), 0.3, function(p)
@@ -522,10 +521,10 @@ local function UpdateData(self)
             valPrecPet,
             GetTime(),
             animationSpeed,
-            function()
-                self.PetBar.Spark:SetWidth(math.max(8, math.min(9, self.PetBar:GetWidth() * animations.petBarAnimation.progress)))
-                self.PetBar:SetValue(animations.petBarAnimation.progress)
-                self.PetBar.Spark:SetPoint("LEFT", self.PetBar:GetWidth() * animations.petBarAnimation.progress - 8, 0)
+            function(p)
+                self.PetBar.Spark:SetWidth(math.max(8, math.min(9, self.PetBar:GetWidth() * p)))
+                self.PetBar:SetValue(p)
+                self.PetBar.Spark:SetPoint("LEFT", self.PetBar:GetWidth() * p - 8, 0)
             end
         )
         self.PetBar.petBarAnimation = valPrecPet

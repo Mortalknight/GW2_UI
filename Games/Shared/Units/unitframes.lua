@@ -4,7 +4,6 @@ local TimeCount = GW.TimeCount
 local GWGetClassColor = GW.GWGetClassColor
 local TARGET_FRAME_ART = GW.TARGET_FRAME_ART
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local animations = GW.animations
 
 local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
@@ -577,7 +576,50 @@ function GwUnitFrameMixin:ProtectedCastAnimation(powerPrec)
     end
 end
 
+function GwUnitFrameMixin:ClearInterrupt()
+    if self.interruptTimer then
+        self.interruptTimer:Cancel()
+        self.interruptTimer = nil
+    end
+    GW.StopAnimation("GwUnitFrame" .. self.gwUnit .. "Shake")
+    self.interruptShown = nil
+end
+
+-- an interrupted cast stays a moment in red with who interrupted it, after a light shake
+function GwUnitFrameMixin:ShowInterrupt(interruptedBy)
+    if self.interruptShown then return end
+    local bar = self.castingbarNormal
+    if not (self.showInterrupts and bar:IsShown() and (self.casting or self.channeling or self.empowering)) then
+        self:HideCastBar()
+        return
+    end
+
+    self.interruptShown = true
+    self.casting, self.channeling, self.empowering = false, false, false
+    GW.StopAnimation("GwUnitFrame" .. self.gwUnit .. "Cast")
+
+    bar:ClearStages()
+    bar.internalBar:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. GW.CASTINGBAR_TEXTURES.RED.NORMAL .. ".png")
+    if GW.isModern then
+        bar:GetStatusBarTexture():SetDesaturated(false)
+        bar:SetMinMaxValues(0, 1)
+        bar:SetValue(1)
+    else
+        self:NormalCastBarAnimation(1)
+    end
+    bar.castingTimeString:SetText("")
+    GW.SetInterruptText(bar.castingString, interruptedBy)
+
+    local castBG = self.castingbarBackground
+    local x = (self.type == "NormalTarget") and -2 or 0
+    GW.AddToAnimation("GwUnitFrame" .. self.gwUnit .. "Shake", 0, 1, GetTime(), 0.25, function(p)
+        castBG:SetPoint("TOPLEFT", self.powerbar, "BOTTOMLEFT", x + math.sin(p * 42) * 2 * (1 - p), -1)
+    end)
+    self.interruptTimer = C_Timer.NewTimer(1, function() self:HideCastBar() end)
+end
+
 function GwUnitFrameMixin:HideCastBar()
+    self:ClearInterrupt()
     local pb = self.powerbar
     local castBG = self.castingbarBackground
     if castBG then
@@ -602,13 +644,7 @@ function GwUnitFrameMixin:HideCastBar()
 
     self.castingbarNormal:ClearStages()
     self:SetUnitPortrait()
-
-    local animKey = "GwUnitFrame" .. self.gwUnit .. "Cast"
-    local anim = animations[animKey]
-    if anim then
-        anim.completed = true
-        anim.duration = 0
-    end
+    GW.StopAnimation("GwUnitFrame" .. self.gwUnit .. "Cast")
 end
 
 function GwUnitFrameMixin:CastInterruptible(event)
@@ -620,6 +656,7 @@ function GwUnitFrameMixin:CastInterruptible(event)
 end
 
 function GwUnitFrameMixin:StartCastbar(event)
+    self:ClearInterrupt()
     local barTexture = GW.CASTINGBAR_TEXTURES.YELLOW.NORMAL
     local direction, duration
 
@@ -880,7 +917,12 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         elseif IsIn(event, "UNIT_SPELLCAST_DELAYED", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
             self:StartCastbar()
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
-            self:HideCastBar()
+            local interruptedBy = select(event == "UNIT_SPELLCAST_EMPOWER_STOP" and 4 or 3, ...)
+            if event == "UNIT_SPELLCAST_INTERRUPTED" or (IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_EMPOWER_STOP") and (GW.IsSecretValue(interruptedBy) or interruptedBy)) then
+                self:ShowInterrupt(interruptedBy)
+            elseif not self.interruptShown then
+                self:HideCastBar()
+            end
         elseif event == "UNIT_FACTION" then
             self:UpdateHealthbarColor()
             self:UpdateLevelColor()
@@ -985,6 +1027,7 @@ function GwUnitFrameMixin:ToggleSettings()
     self.showAbsorbBar = GW.settings.unitframes[unit].showAbsorbBar
 
     self.showCastingbarName = GW.settings.unitframes[unit].castingbarShowName
+    self.showInterrupts = GW.settings.unitframes[unit].castingbarShowInterrupt
     self.showCastingbarTimer = GW.settings.unitframes[unit].castingbarShowTimer
 
     self.displayBuffs = GW.settings.unitframes[unit].buffFilter == "none" and 0 or 32

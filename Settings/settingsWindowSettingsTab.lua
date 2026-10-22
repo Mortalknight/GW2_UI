@@ -495,10 +495,13 @@ local function CreateOrGetOptionWidget(panel, opt)
     -- subtle hover feedback on every interactive row (master toggles have their own)
     if not of.isMasterToggle and opt.optionType ~= "header" and opt.optionType ~= "subHeader" and opt.optionType ~= "note" then
         local hover = of:CreateTexture(nil, "BACKGROUND")
-        hover:SetColorTexture(GW.Colors.TextColors.LightHeader:GetRGB())
         hover:SetAlpha(0)
         hover:SetAllPoints(of)
-        of:HookScript("OnEnter", function() hover:SetAlpha(0.05) end)
+        of:HookScript("OnEnter", function(self)
+            local blocked = (self.isIncompatibleAddonLoaded and not self.isIncompatibleAddonLoadedButOverride) or self.gamepadReplaced
+            hover:SetColorTexture((blocked and GW.Colors.SkinColors.Negative or GW.Colors.TextColors.LightHeader):GetRGB())
+            hover:SetAlpha(blocked and 0.1 or 0.05)
+        end)
         of:HookScript("OnLeave", function() hover:SetAlpha(0) end)
     end
 

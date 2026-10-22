@@ -914,7 +914,7 @@ local function skinStackSplit()
     StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
 end
 
--- Opens the bag with its interaction window (merchant, mail, auction house, bank, trade)
+-- Opens the bag with its interaction window (merchant, mail, auction house, bank, guild bank, trade)
 -- and closes it again with it. Only what the auto open opened is closed: a bag the player
 -- opened stays, and the ownership dies as soon as the bag is closed by hand (see OnHide).
 local AUTO_OPEN_EVENTS = {
@@ -922,6 +922,7 @@ local AUTO_OPEN_EVENTS = {
     MAIL_SHOW = "mail", MAIL_CLOSED = "mail",
     AUCTION_HOUSE_SHOW = "auctionHouse", AUCTION_HOUSE_CLOSED = "auctionHouse",
     BANKFRAME_OPENED = "bank", BANKFRAME_CLOSED = "bank",
+    GUILDBANKFRAME_OPENED = "guildBank", GUILDBANKFRAME_CLOSED = "guildBank",
     TRADE_SHOW = "trade", TRADE_CLOSED = "trade",
 }
 
@@ -1187,15 +1188,18 @@ local function LoadBag(helpers)
             {key = "mail", label = MAIL_LABEL},
             {key = "auctionHouse", label = AUCTIONS},
             {key = "bank", label = BANK},
+            {key = "guildBank", label = GUILD_BANK, hidden = GW.Classic},
             {key = "trade", label = TRADE},
         }) do
-            local check = autoOpenMenu:CreateCheckbox(context.label,
-                function() return GW.settings.bags.autoOpenContexts[context.key] end,
-                function() GW.settings.bags.autoOpenContexts[context.key] = not GW.settings.bags.autoOpenContexts[context.key] end)
-            check:AddInitializer(function(button, description, menu)
-                GW.BlizzardDropdownCheckButtonInitializer(button, description, menu,
-                    function() return GW.settings.bags.autoOpenContexts[context.key] end)
-            end)
+            if not context.hidden then
+                local check = autoOpenMenu:CreateCheckbox(context.label,
+                    function() return GW.settings.bags.autoOpenContexts[context.key] end,
+                    function() GW.settings.bags.autoOpenContexts[context.key] = not GW.settings.bags.autoOpenContexts[context.key] end)
+                check:AddInitializer(function(button, description, menu)
+                    GW.BlizzardDropdownCheckButtonInitializer(button, description, menu,
+                        function() return GW.settings.bags.autoOpenContexts[context.key] end)
+                end)
+            end
         end
 
         rootDescription:CreateTitle(L["Bag Sections"])

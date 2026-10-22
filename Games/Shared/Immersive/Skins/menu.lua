@@ -179,11 +179,27 @@ function GW.SetMenuEntryNegative(description)
     description:AddInitializer(SetNegative)
 end
 
+-- entries with a colored text get a hover in that color, like the raid markers or the loot threshold;
+-- the text color is only final once the entry is set up, so it is read when the hover shows
+local tintHooked = setmetatable({}, {__mode = "k"})
+local function TintHighlight(highlight)
+    local fontString = highlight:GetParent().fontString
+    if not fontString then return end
+    local r, g, b = fontString:GetTextColor()
+    if r < 0.99 or g < 0.99 or b < 0.99 then
+        highlight:SetVertexColor(r * HOVER_STRENGTH, g * HOVER_STRENGTH, b * HOVER_STRENGTH)
+    end
+end
+
 hooksecurefunc(MenuVariants, "CreateHighlight", function(frame)
     local highlight = frame.highlight
     if GW.settings.skins.dropdown.enabled then
         highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
         highlight:SetVertexColor(HOVER_STRENGTH, HOVER_STRENGTH, HOVER_STRENGTH)
+        if not tintHooked[highlight] then
+            tintHooked[highlight] = true
+            hooksecurefunc(highlight, "Show", TintHighlight)
+        end
     else
         highlight:SetVertexColor(1, 1, 1)
     end

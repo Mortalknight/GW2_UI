@@ -64,13 +64,10 @@ local function UpdateRange(self, unit)
 end
 
 local function ToggleAlpha(self, element, endAlpha)
-    if element.currentAlpha == endAlpha then
-        local running = GW.animations[element.gwAnimationName]
-        if running then
-            if running.to == endAlpha and not running.completed then return end
-        elseif math.abs(self:GetAlpha() - endAlpha) < 0.01 then
-            return
-        end
+    local name = element.gwAnimationName
+    if element.currentAlpha == endAlpha and (GW.IsAnimating(name, endAlpha)
+        or (not GW.IsAnimating(name) and math.abs(self:GetAlpha() - endAlpha) < 0.01)) then
+        return
     end
 
     element:ClearTimers()

@@ -5,7 +5,6 @@ local CP = GW.ClassPowers
 -- DEATH KNIGHT (runes)
 if GW.myClassID ~= GW.Enum.ClassIndex.Deathknight or GW.Classic or GW.TBC or GW.Wrath then return end
 
-local animations = GW.animations
 local RUNETYPE_BLOOD = 1
 local RUNETYPE_FROST = 2
 local RUNETYPE_UNHOLY = 3
@@ -105,10 +104,7 @@ local function powerRune(self)
             if GW.Retail then
                 fFill:SetDesaturated(false)
             end
-            if animations[animId] then
-                animations[animId].completed = true
-                animations[animId].duration = 0
-            end
+            GW.StopAnimation(animId)
         else
             if data.start == 0 then
                 return

@@ -97,15 +97,37 @@ local function AddToAnimation(name, from, to, start, duration, method, easeing, 
 end
 GW.AddToAnimation = AddToAnimation
 
+-- an animation added while the others run waits in the pending list until the next frame
+local function GetAnimation(name)
+    return animations[name] or pendingAnimations[name]
+end
+
 local function StopAnimation(name)
-    if animations[name] then
-        animations[name].completed = true
+    local animation = GetAnimation(name)
+    if animation then
+        animation.completed = true
         return true
     end
 
     return false
 end
 GW.StopAnimation = StopAnimation
+
+-- still running, and with a target given running towards it
+local function IsAnimating(name, to)
+    local animation = GetAnimation(name)
+    return animation ~= nil and not animation.completed and (to == nil or animation.to == to)
+end
+GW.IsAnimating = IsAnimating
+
+-- moves the start value of a running animation, it then continues from there
+local function SetAnimationFrom(name, from)
+    local animation = GetAnimation(name)
+    if animation then
+        animation.from = from
+    end
+end
+GW.SetAnimationFrom = SetAnimationFrom
 
 local function TriggerButtonHoverAnimation(self, hover, to, duration)
     local name = self.animationName or (self.GetDebugName and self:GetDebugName()) or tostring(self)
