@@ -12,6 +12,8 @@ local HAS_CALENDAR = not (GW.Classic or GW.TBC)
 MAP_FRAMES_HIDE[4] = not HAS_CALENDAR and GameTimeFrame
 MAP_FRAMES_HIDE[5] = MinimapCluster.DielFrame
 
+local EVENT_BUTTON = MinimapBackdrop.ExternalEventURLButton
+
 local M = CreateFrame("Frame")
 
 local minimapDetails = {
@@ -635,6 +637,8 @@ local function GetSideButtons(key)
         return GW.isModern and {{AddonCompartmentFrame, AddonCompartmentFrame, -4}}
     elseif key == "ADDONS" then
         return {{GwAddonToggle, GwAddonToggle, -5}}
+    elseif key == "EVENT" then
+        return EVENT_BUTTON and {{EVENT_BUTTON, EVENT_BUTTON, -2}}
     elseif key == "QUEUE" then
         if GW.isModern then
             return {{queueAnchor, QueueStatusButton, -5}}
@@ -692,6 +696,7 @@ function GW.UpdateMinimapSideButtons()
         SetSideButtonShown(MiniMapBattlefieldFrame, buttons.QUEUE)
         SetSideButtonShown(LFGMinimapFrame, buttons.QUEUE)
     end
+    SetSideButtonShown(EVENT_BUTTON, buttons.EVENT)
     SetSideButtonShown(GwAddonToggle, buttons.ADDONS)
     LayoutSideButtons()
     UpdateButtonSide()
@@ -998,6 +1003,41 @@ function GW.LoadMinimap()
         end
     elseif GW.TBC or GW.Wrath or GW.Mists or GW.Classic then
         MiniMapBattlefieldFrame:ClearAllPoints()
+    end
+
+    if EVENT_BUTTON then
+        for _, region in ipairs({EVENT_BUTTON:GetRegions()}) do
+            if region:IsObjectType("MaskTexture") then
+                EVENT_BUTTON.Icon:RemoveMaskTexture(region)
+            end
+        end
+        EVENT_BUTTON.Border:SetAlpha(0)
+        EVENT_BUTTON.SpellEffectModelScene:SetAlpha(0)
+        EVENT_BUTTON:SetSize(24, 24)
+        -- blizzard moves the icon by a pixel while pressed, keep it on the border
+        local function AnchorEventIcon(self)
+            self.Icon:ClearAllPoints()
+            self.Icon:SetAllPoints()
+        end
+        hooksecurefunc(EVENT_BUTTON, "OnButtonStateChanged", AnchorEventIcon)
+        AnchorEventIcon(EVENT_BUTTON)
+        GW.HandleIcon(EVENT_BUTTON.Icon)
+        EVENT_BUTTON.Icon:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true, 1, 1)
+        EVENT_BUTTON.Icon.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.IconBorder:GetRGBA())
+        EVENT_BUTTON:HookScript("OnEnter", function(self) self.Icon:SetBlendMode("ADD") end)
+        EVENT_BUTTON:HookScript("OnLeave", function(self) self.Icon:SetBlendMode("BLEND") end)
+        -- on UIParent like the other side buttons, the minimap scale would stretch its offsets
+        EVENT_BUTTON.gwParent = UIParent
+        EVENT_BUTTON:SetParent(UIParent)
+        hooksecurefunc(EVENT_BUTTON, "SetParent", function(self, parent)
+            local target = GW.settings.minimap.sideButtons.EVENT and UIParent or GW.HiddenFrame
+            if parent ~= target then
+                self:SetParent(target)
+            end
+        end)
+        EVENT_BUTTON:ClearAllPoints()
+        EVENT_BUTTON:HookScript("OnShow", LayoutSideButtons)
+        EVENT_BUTTON:HookScript("OnHide", LayoutSideButtons)
     end
 
     for _, frame in ipairs({GwAddonToggle, GW.isModern and QueueStatusButton or MiniMapBattlefieldFrame}) do
