@@ -56,7 +56,7 @@ local function IsPetTrainerOffer(rewards)
     local hasLearned = false
     for _, reward in ipairs(rewards) do
         if reward.known and reward.spellID then
-            if GW.IsPlayerSpell(reward.spellID) then
+            if C_SpellBook.IsSpellKnown(reward.spellID, Enum.SpellBookSpellBank.Player) then
                 return false
             end
             hasLearned = true
@@ -176,7 +176,7 @@ end
 -- pet trainer spells only teach the pet, so their state is the one of the last visit
 local function IsRewardKnown(reward, isPet)
     if reward.spellID and not isPet then
-        return GW.IsSpellKnown(reward.spellID) or GW.IsPlayerSpell(reward.spellID)
+        return C_SpellBook.IsSpellInSpellBook(reward.spellID, Enum.SpellBookSpellBank.Player, false) or C_SpellBook.IsSpellKnown(reward.spellID, Enum.SpellBookSpellBank.Player)
     end
 
     return reward.known

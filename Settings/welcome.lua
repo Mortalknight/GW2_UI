@@ -76,29 +76,21 @@ local function ApplyChatSetup()
 
     -- keys taken from "ChatTypeGroup" but doesnt add: "OPENING", "TRADESKILLS", "PET_INFO", "COMBAT_MISC_INFO", "COMMUNITIES_CHANNEL", "PET_BATTLE_COMBAT_LOG", "PET_BATTLE_INFO", "TARGETICONS"
     local chatGroup = {"SYSTEM", "CHANNEL", "SAY", "EMOTE", "YELL", "WHISPER", "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "INSTANCE_CHAT", "INSTANCE_CHAT_LEADER", "GUILD", "OFFICER", "MONSTER_SAY", "MONSTER_YELL", "MONSTER_EMOTE", "MONSTER_WHISPER", "MONSTER_BOSS_EMOTE", "MONSTER_BOSS_WHISPER", "ERRORS", "AFK", "DND", "IGNORED", "BG_HORDE", "BG_ALLIANCE", "BG_NEUTRAL", "ACHIEVEMENT", "GUILD_ACHIEVEMENT", "BN_WHISPER", "BN_INLINE_TOAST_ALERT"}
-    local ChatFrame1_RemoveAllMessageGroups = ChatFrame1.RemoveAllMessageGroups or ChatFrame_RemoveAllMessageGroups
-    local ChatFrame1_AddMessageGroup = ChatFrame1.AddMessageGroup or ChatFrame_AddMessageGroup
-    ChatFrame1_RemoveAllMessageGroups(ChatFrame1)
+    ChatFrame1:RemoveAllMessageGroups()
     for _, v in ipairs(chatGroup) do
-        ChatFrame1_AddMessageGroup(ChatFrame1, v)
+        ChatFrame1:AddMessageGroup(v)
     end
 
     -- keys taken from "ChatTypeGroup" which weren't added above to ChatFrame1
     chatGroup = {"PING", "COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT", "CURRENCY", "MONEY"}
-    local ChatFrame4_RemoveAllMessageGroups = ChatFrame4.RemoveAllMessageGroups or ChatFrame_RemoveAllMessageGroups
-    local ChatFrame4_AddMessageGroup = ChatFrame4.AddMessageGroup or ChatFrame_AddMessageGroup
-    ChatFrame4_RemoveAllMessageGroups(ChatFrame4)
+    ChatFrame4:RemoveAllMessageGroups()
     for _, v in ipairs(chatGroup) do
-        ChatFrame4_AddMessageGroup(ChatFrame4, v)
+        ChatFrame4:AddMessageGroup(v)
     end
 
-    local ChatFrame1_AddChannel = ChatFrame1.AddChannel or ChatFrame_AddChannel
-    local ChatFrame1_RemoveChannel = ChatFrame1.RemoveChannel or ChatFrame_RemoveChannel
-    local ChatFrame4_AddChannel = ChatFrame4.AddChannel or ChatFrame_AddChannel
-
-    ChatFrame1_AddChannel(ChatFrame1, GENERAL)
-    ChatFrame1_RemoveChannel(ChatFrame1, TRADE)
-    ChatFrame4_AddChannel(ChatFrame4, TRADE)
+    ChatFrame1:AddChannel(GENERAL)
+    ChatFrame1:RemoveChannel(TRADE)
+    ChatFrame4:AddChannel(TRADE)
 
     -- set the chat groups names in class color to enabled for all chat groups which players names appear
     chatGroup = {"SAY", "EMOTE", "YELL", "WHISPER", "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "INSTANCE_CHAT", "INSTANCE_CHAT_LEADER", "GUILD", "OFFICER", "ACHIEVEMENT", "GUILD_ACHIEVEMENT", "COMMUNITIES_CHANNEL"}

@@ -1,9 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
-local ChatEdit_InsertLink = ChatFrameUtil and ChatFrameUtil.InsertLink or ChatEdit_InsertLink
-
 local MAX_OBJECTIVES = 10
 GwAchievementTrackerBlockMixin = {}
 function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
@@ -108,10 +105,10 @@ function GwAchievementTrackerContainerMixin:BlockOnClick(mouseButton)
             Narci_AchievementFrame:Init()
         end
     end
-    if (IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow()) then
+    if (IsModifiedClick("CHATLINK") and ChatFrameUtil.GetActiveWindow()) then
         local achievementLink = GetAchievementLink(self.id)
         if (achievementLink) then
-            ChatEdit_InsertLink(achievementLink)
+            ChatFrameUtil.InsertLink(achievementLink)
         end
     elseif (mouseButton ~= "RightButton") then
         if (not AchievementFrame) then

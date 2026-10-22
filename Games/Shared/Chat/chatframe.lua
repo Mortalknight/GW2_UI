@@ -2,8 +2,6 @@
 local GW = select(2, ...)
 local L = GW.L
 
-local C_GuildInfo_GetMOTD = C_GuildInfo and C_GuildInfo.GetMOTD or GetGuildRosterMOTD
-
 local EMOTE_BUTTON_ALPHA = 0.35
 
 local CHAT_FRAME_TEXTURES = {
@@ -505,7 +503,7 @@ local function EnsureChatContainer(frame, isDocked)
 end
 
 local function ShowGuildMOTD(try)
-    local motd = not InCombatLockdown() and C_GuildInfo_GetMOTD()
+    local motd = not InCombatLockdown() and C_GuildInfo.GetMOTD()
     if motd and motd ~= "" then
         for _, frameName in ipairs(CHAT_FRAMES) do
             local chatFrame = _G[frameName]

@@ -114,7 +114,7 @@ local function GetChannelTicks(bar)
     end
 
     for talentID, count in pairs(GW.TalentChannelTicks[spellID] or {}) do
-        if GW.IsSpellKnown(talentID) then
+        if C_SpellBook.IsSpellInSpellBook(talentID, Enum.SpellBookSpellBank.Player, false) then
             ticks = count
             break
         end

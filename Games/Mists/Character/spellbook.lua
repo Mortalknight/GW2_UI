@@ -33,11 +33,9 @@ local function spell_buttonOnEnter(self)
     if self.spellId == nil then return end
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
-    local isPet = false
+    local spellBank = self.booktype == "pet" and Enum.SpellBookSpellBank.Pet or Enum.SpellBookSpellBank.Player
 
-    if self.booktype == "pet" then isPet = true end
-
-    if GW.IsSpellKnown(self.spellId, isPet) and self.futureSpellOverrider == nil then
+    if C_SpellBook.IsSpellInSpellBook(self.spellId, spellBank, false) and self.futureSpellOverrider == nil then
          GameTooltip:SetSpellBookItem(self.spellbookIndex, self.booktype)
     elseif self.isFlyout then
         local name, desc = GetFlyoutInfo(self.spellId)

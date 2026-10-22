@@ -42,26 +42,6 @@ end
 CompatibleTooltip(GameTooltip)
 CompatibleTooltip(GW.ScanTooltip)
 
-function GW.IsSpellInSpellBook(spellID, isPet)
-    if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
-        local spellBank = isPet and Enum.SpellBookSpellBank.Pet or Enum.SpellBookSpellBank.Player
-        local includeOverrides = true
-        return C_SpellBook.IsSpellInSpellBook(spellID, spellBank, includeOverrides)
-    else
-        return IsSpellKnownOrOverridesKnown(spellID, isPet)
-    end
-end
-
-function GW.IsSpellKnown(spellID, isPet)
-    if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
-        local spellBank = isPet and Enum.SpellBookSpellBank.Pet or Enum.SpellBookSpellBank.Player
-        local includeOverrides = false
-        return C_SpellBook.IsSpellInSpellBook(spellID, spellBank, includeOverrides)
-    else
-        return IsSpellKnown(spellID, isPet)
-    end
-end
-
 function GW.GetWatchedFactionInfo()
     if C_Reputation and C_Reputation.GetWatchedFactionData then
         return C_Reputation.GetWatchedFactionData()
@@ -93,14 +73,6 @@ end
 -- nil guard: on a client without LE_QUEST_FREQUENCY_WEEKLY a nil frequency would match
 function GW.IsRepeatableQuestFrequency(frequency)
     return frequency ~= nil and (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
-end
-
-function GW.IsPlayerSpell(spellID)
-    if C_SpellBook and C_SpellBook.IsSpellKnown then
-        return C_SpellBook.IsSpellKnown(spellID, Enum.SpellBookSpellBank.Player)
-    else
-        return IsSpellKnown(spellID, false)
-    end
 end
 
 function GW.GetFactionDataByIndex(factionIndex)

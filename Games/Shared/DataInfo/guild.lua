@@ -2,7 +2,6 @@
 local GW = select(2, ...)
 
 local Social = GW.Social
-local GetGuildMOTD = C_GuildInfo and C_GuildInfo.GetMOTD or GetGuildRosterMOTD
 local MAX_MEMBERS_SHOWN = 20
 local CLUB_REFRESH_INTERVAL = 10
 local NOTE_COLOR = CreateColor(1, 0.93, 0.73)
@@ -148,7 +147,7 @@ local function Guild_OnEnter(self)
         GameTooltip:AddLine(rankName, 1, 1, 1)
     end
 
-    local motd = not InCombatLockdown() and GetGuildMOTD()
+    local motd = not InCombatLockdown() and C_GuildInfo.GetMOTD()
     if GW.NotSecretValue(motd) and motd and motd ~= "" then
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa-|r |cffffffff" .. motd, headerColor.r, headerColor.g, headerColor.b, true)

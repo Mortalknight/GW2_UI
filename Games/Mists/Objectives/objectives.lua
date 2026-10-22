@@ -1,8 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
-
 local tomTomWaypoint = nil
 
 local function AddTomTomWaypoint(questId, objective)
@@ -472,7 +470,7 @@ function GwQuestLogMixin:BlockOnClick(button)
         return
     end
 
-    if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
+    if IsShiftKeyDown() and ChatFrameUtil.GetActiveWindow() then
         if button == "LeftButton" then
             LinkQuestIntoChat(self.questID)
         end

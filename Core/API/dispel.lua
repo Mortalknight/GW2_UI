@@ -91,13 +91,9 @@ local BAD_DISPELS = GW.Retail and {
 local myTypes = {}
 
 local function KnowsRow(row)
-    local known
-    if row.talent then
-        known = GW.IsSpellKnown(row.id)
-    else
-        known = GW.IsSpellInSpellBook(row.id, row.pet)
-    end
-    return known and (not row.requires or GW.IsSpellInSpellBook(row.requires))
+    local spellBank = row.pet and Enum.SpellBookSpellBank.Pet or Enum.SpellBookSpellBank.Player
+    local known = C_SpellBook.IsSpellInSpellBook(row.id, spellBank, not row.talent)
+    return known and (not row.requires or C_SpellBook.IsSpellInSpellBook(row.requires, Enum.SpellBookSpellBank.Player, true))
 end
 
 local function UpdateMyTypes(_, event, points)

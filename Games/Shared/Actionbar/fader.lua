@@ -69,11 +69,6 @@ local function actionBarFrameHide(f, instant)
     end
 end
 
-local HasBonusActionBar = C_ActionBar and C_ActionBar.HasBonusActionBar or HasBonusActionBar
-local HasVehicleActionBar = C_ActionBar and C_ActionBar.HasVehicleActionBar or HasVehicleActionBar
-local HasOverrideActionBar = C_ActionBar and C_ActionBar.HasOverrideActionBar or HasOverrideActionBar
-local IsPossessBarVisible = C_ActionBar and C_ActionBar.IsPossessBarVisible or IsPossessBarVisible
-
 -- the main bar carries the skyriding, vehicle and possess abilities, it only hides on its normal page
 local function IsMainBarHiddenWhileMounted()
     local settings = GW.settings.actionbars.mainBar
@@ -83,7 +78,7 @@ local function IsMainBarHiddenWhileMounted()
     if settings.hideSkyriding and C_PlayerInfo.GetGlidingInfo and select(2, C_PlayerInfo.GetGlidingInfo()) then
         return true
     end
-    return not (HasBonusActionBar() or HasVehicleActionBar() or HasOverrideActionBar() or IsPossessBarVisible())
+    return not (C_ActionBar.HasBonusActionBar() or C_ActionBar.HasVehicleActionBar() or C_ActionBar.HasOverrideActionBar() or C_ActionBar.IsPossessBarVisible())
 end
 
 -- our multibars show and hide through a secure driver: blizzards override, vehicle and pet battle bars where the

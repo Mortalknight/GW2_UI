@@ -1,9 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
-
-
 GwObjectivesMonthlyActivitiesBlockMixin = {}
 
 function GwObjectivesMonthlyActivitiesBlockMixin:UpdateBlock(requirements)
@@ -93,7 +90,7 @@ function GwObjectivesMonthlyActivitiesContainerMixin:OnEvent(event, ...)
 end
 
 function GwObjectivesMonthlyActivitiesContainerMixin:BlockOnClick(button)
-    if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
+    if IsModifiedClick("CHATLINK") and ChatFrameUtil.GetActiveWindow() then
 		local perksActivityLink = C_PerksActivities.GetPerksActivityChatLink(self.id)
 		ChatFrameUtil.InsertLink(perksActivityLink)
 	elseif button ~= "RightButton" then

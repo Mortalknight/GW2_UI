@@ -1,9 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
-
-
 GwObjectivesHousingInitiativeBlockMixin = {}
 
 function GwObjectivesHousingInitiativeBlockMixin:UpdateBlock(requirements)
@@ -94,7 +91,7 @@ function GwObjectivesHousingInitiativeContainerMixin:OnEvent(event, ...)
 end
 
 function GwObjectivesHousingInitiativeContainerMixin:BlockOnClick(button)
-    if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
+    if IsModifiedClick("CHATLINK") and ChatFrameUtil.GetActiveWindow() then
 		local initiativeTaskLink = C_NeighborhoodInitiative.GetInitiativeTaskChatLink(self.id)
 		ChatFrameUtil.InsertLink(initiativeTaskLink)
 	elseif button ~= "RightButton" then

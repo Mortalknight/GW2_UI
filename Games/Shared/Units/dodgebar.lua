@@ -5,9 +5,6 @@ local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local FrameFlash = GW.FrameFlash
 local lerp = GW.lerp
 
-local HasVehicleActionBar = C_ActionBar and C_ActionBar.HasVehicleActionBar or HasVehicleActionBar
-local HasOverrideActionBar = C_ActionBar and C_ActionBar.HasOverrideActionBar or HasOverrideActionBar
-
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
 local DODGEBAR_SPELLS = {} -- spell ID used to generate the bar information/tooltip
@@ -292,13 +289,13 @@ function GwDodgeBarMixin:InitBar(pew)
         if not v then return end
         if string.find(v, ",") then
             for _, spell in pairs(GW.splitString(v, ",", true)) do
-                if GW.IsSpellKnown(tonumber(spell)) then
+                if C_SpellBook.IsSpellInSpellBook(tonumber(spell), Enum.SpellBookSpellBank.Player, false) then
                     self.spellId = tonumber(spell)
                     break
                 end
             end
         else
-            self.spellId = GW.IsSpellKnown(tonumber(v)) and tonumber(v) or (DODGEBAR_SPELLS_ATTR[GW.myclass] and tonumber(v)) or nil
+            self.spellId = C_SpellBook.IsSpellInSpellBook(tonumber(v), Enum.SpellBookSpellBank.Player, false) and tonumber(v) or (DODGEBAR_SPELLS_ATTR[GW.myclass] and tonumber(v)) or nil
         end
     end
     Debug("Dodgebar spell for Tooltip: ", self.spellId)
@@ -309,7 +306,7 @@ function GwDodgeBarMixin:InitBar(pew)
             if string.find(v, ",") then
                 local found = false
                 for _, spell in pairs(GW.splitString(v, ",", true)) do
-                    if GW.IsSpellKnown(tonumber(spell)) then
+                    if C_SpellBook.IsSpellInSpellBook(tonumber(spell), Enum.SpellBookSpellBank.Player, false) then
                         self:SetAttribute("spell", tonumber(spell))
                         found = true
                         break
@@ -324,7 +321,7 @@ function GwDodgeBarMixin:InitBar(pew)
             self:SetAttribute("spell", self.spellId)
             Debug("Dodgebar spell for Click: ", self:GetAttribute("spell"))
         end
-        if not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()) and not HasOverrideActionBar() and not HasVehicleActionBar() then
+        if not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()) and not C_ActionBar.HasOverrideActionBar() and not C_ActionBar.HasVehicleActionBar() then
             self:Show()
         end
     end

@@ -28,7 +28,7 @@ end
 local function updateTextureBasedOnCondition(self)
     if GW.myClassID == 9 then           -- Warlock
         -- Hook green fire
-        if GW.IsSpellKnown(101508) then -- check for spell id 101508
+        if C_SpellBook.IsSpellInSpellBook(101508, Enum.SpellBookSpellBank.Player, false) then -- check for spell id 101508
             self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardflare-green.png")
             self.warlock.shardFragment.barFill:SetTexture(
                 "Interface/AddOns/GW2_UI/textures/altpower/soulshardfragmentbarfill-green.png")

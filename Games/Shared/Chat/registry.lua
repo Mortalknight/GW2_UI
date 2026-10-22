@@ -33,9 +33,6 @@ local linkHandlers = {}
 local hookedFrames = {}
 local loaded = false
 
-local AddMessageEventFilter = ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter or ChatFrame_AddMessageEventFilter
-local AddSenderNameFilter = ChatFrameUtil and ChatFrameUtil.AddSenderNameFilter
-
 -- the player written messages, the ones worth decorating
 GW.CHAT_MESSAGE_EVENTS = {
     "CHAT_MSG_SAY", "CHAT_MSG_YELL", "CHAT_MSG_EMOTE", "CHAT_MSG_CHANNEL",
@@ -266,11 +263,11 @@ local function HookModule(module)
     if module.onMessage and module.events then
         local filter = CreateMessageFilter(module)
         for _, event in ipairs(module.events) do
-            AddMessageEventFilter(event, filter)
+            ChatFrameUtil.AddMessageEventFilter(event, filter)
         end
     end
-    if module.onSenderName and AddSenderNameFilter then
-        AddSenderNameFilter(WhenEnabled(module, module.onSenderName))
+    if module.onSenderName then
+        ChatFrameUtil.AddSenderNameFilter(WhenEnabled(module, module.onSenderName))
     end
     if module.onLine then
         tinsert(lineModules, module)
