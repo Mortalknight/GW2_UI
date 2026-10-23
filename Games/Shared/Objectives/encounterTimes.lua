@@ -137,6 +137,7 @@ local function StoreTime(id, seconds, name)
         data.bestDate = time()
     end
     data.last = seconds
+    data.lastDate = time()
     data.kills = data.kills + 1
     return previousBest
 end

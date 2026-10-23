@@ -22,6 +22,7 @@
     <Script file ="copyChat.lua"/>
     <Script file ="chatLayout.lua"/>
     <Script file ="unreadTabs.lua"/>
+    <Script file ="whisperSound.lua"/>
     <!-- the last one on the line stage -->
     <Script file ="history.lua"/>
 </Ui>

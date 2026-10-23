@@ -76,6 +76,11 @@ local function LoadChatPanel(sWindow)
         tinsert(soundKeys, sound)
     end
     general:AddOptionDropdown(L["Keyword Alert"], nil, { getterSetter = "chat.keywords.alertNew", callback = GW.UpdateChatSettings, optionsList = soundKeys, optionNames = soundKeys, dependence = {["chat.enabled"] = true}, hasSound = true})
+    local whisperNames = {}
+    for index, sound in ipairs(soundKeys) do
+        whisperNames[index] = sound == "None" and "Blizzard" or sound
+    end
+    general:AddOptionDropdown(L["Whisper Alert"], L["Plays a sound when you receive a whisper."], { getterSetter = "chat.whisperSound", optionsList = soundKeys, optionNames = whisperNames, dependence = {["chat.enabled"] = true}, hasSound = true})
 
     general:AddOptionSlider(L["Spam Interval"], L["Prevent the same messages from displaying in chat more than once within this set amount of seconds, set to zero to disable."], { getterSetter = "chat.spamInterval", callback = function() GW.UpdateChatSettings(); GW.DisableChatThrottle() end, min = 0, max = 100, decimalNumbers = 0, step = 1, dependence = {["chat.enabled"] = true}})
     general:AddOptionSlider(L["Combat Repeat"], L["Number of repeat characters while in combat before the chat editbox is automatically closed, set to zero to disable."], { getterSetter = "chat.inCombatTextRepeat", callback = function() GW.UpdateChatSettings() end, min = 0, max = 15, decimalNumbers = 0, step = 1, dependence = {["chat.enabled"] = true}})

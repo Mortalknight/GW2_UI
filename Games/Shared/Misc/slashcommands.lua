@@ -94,5 +94,22 @@ local function LoadSlashCommands()
             GW.Notice("\"" .. msg .. "\" is not a valid GW2 UI slash command.")
         end
     end
+
+    -- /tt whispers the target, without a message it opens the whisper to it
+    SLASH_GWTELLTARGET1 = "/tt"
+    function SlashCmdList.GWTELLTARGET(msg)
+        if not UnitIsPlayer("target") then return end
+        local name, realm = UnitName("target")
+        if GW.IsSecretValue(name) or not name then return end
+        if realm and realm ~= "" then
+            name = name .. "-" .. realm
+        end
+        msg = strtrim(msg or "")
+        if msg == "" then
+            ChatFrameUtil.OpenChat("/w " .. name .. " ")
+        else
+            C_ChatInfo.SendChatMessage(msg, "WHISPER", nil, name)
+        end
+    end
 end
 GW.LoadSlashCommands = LoadSlashCommands

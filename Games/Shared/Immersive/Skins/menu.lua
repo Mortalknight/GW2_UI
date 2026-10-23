@@ -102,9 +102,14 @@ local function SkinMenuFrame(menu)
             GW.SkinSlimScrollBar(menu.ScrollBar)
         end
     end
-    -- submenus open above their parent, the backdrop follows the level of its menu
-    backdrop:SetFrameStrata(menu:GetFrameStrata())
-    backdrop:SetFrameLevel(math.max(1, menu:GetFrameLevel() - 1))
+    -- submenus open above their parent, the backdrop follows the level of its menu; menus of secure unit
+    -- frames give both as secrets, then blizzards menu strata and the lowest level
+    local strata, level = menu:GetFrameStrata(), menu:GetFrameLevel()
+    if GW.IsSecretValue(strata) or GW.IsSecretValue(level) then
+        strata, level = "FULLSCREEN_DIALOG", 2
+    end
+    backdrop:SetFrameStrata(strata)
+    backdrop:SetFrameLevel(math.max(1, level - 1))
     backdrop:Show()
 end
 

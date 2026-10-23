@@ -779,6 +779,7 @@ local function evPlayerLogin(self)
     end
 
     GW.LoadAFKAnimation()
+    GW.UpdateCursorGcdRing()
 
     if not GW.ShouldBlockIncompatibleAddon("DynamicCam") then -- Only touch this setting if no other addon for this is loaded
         if GW.settings.general.dynamicCam then
