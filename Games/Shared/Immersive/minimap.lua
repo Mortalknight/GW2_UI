@@ -307,6 +307,8 @@ end
 
 local function CreateLayerLabel()
     local layer = CreateFrame("Frame", "GwMapLayer", Minimap)
+    layer:SetFrameStrata(Minimap.gwBorder.gradient:GetFrameStrata())
+    layer:SetFrameLevel(Minimap.gwBorder.gradient:GetFrameLevel())
     layer:SetSize(100, 14)
     layer:SetPoint("TOP", Minimap.location, "BOTTOM", 0, 2)
     layer.text = layer:CreateFontString(nil, "OVERLAY")
