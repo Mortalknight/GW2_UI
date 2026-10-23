@@ -281,11 +281,7 @@ local function SetCursedSurgeWaypoint(args)
         return
     end
 
-    if C_Map.OpenWorldMap then
-        C_Map.OpenWorldMap(CURSED_SURGE_MAP)
-    elseif WorldMapFrame and WorldMapFrame.SetMapID then
-        WorldMapFrame:SetMapID(CURSED_SURGE_MAP)
-    end
+    C_Map.OpenWorldMap(CURSED_SURGE_MAP)
 
     if C_Map.CanSetUserWaypointOnMap(CURSED_SURGE_MAP) then
         C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(CURSED_SURGE_MAP, position[1], position[2]))

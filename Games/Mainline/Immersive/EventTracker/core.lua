@@ -354,12 +354,11 @@ end
 
 function ET.GetWorldMapIDSetter(idOrFunc)
     return function(...)
-        if not WorldMapFrame or not WorldMapFrame:IsShown() or not WorldMapFrame.SetMapID then
+        if not WorldMapFrame or not WorldMapFrame:IsShown() then
             return
         end
 
-        local id = type(idOrFunc) == "function" and idOrFunc(...) or idOrFunc
-        WorldMapFrame:SetMapID(id)
+        C_Map.OpenWorldMap(type(idOrFunc) == "function" and idOrFunc(...) or idOrFunc)
     end
 end
 
