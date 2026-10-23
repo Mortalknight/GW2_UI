@@ -1328,7 +1328,9 @@ function GwTargetUnitFrameMixin:OnUpdate(elapsed)
     self:UnitFrameData()
     self:UpdateHealthBar(true)
     self:UpdatePowerBar(true)
-    self:StartCastbar()
+    if not self.interruptShown then
+        self:StartCastbar()
+    end
     -- targettarget and focustarget get no unit events, the fader follows the polling too
     local fader = self.Fader
     if fader and fader.enabled and fader.count and fader.count > 0 then
@@ -1336,10 +1338,32 @@ function GwTargetUnitFrameMixin:OnUpdate(elapsed)
     end
 end
 
+-- targettarget and focustarget have no unit events of their own: the interrupts of every unit are checked
+-- against them, channels and empowers only count with an interrupter
+local INTERRUPT_EVENTS = GW.isModern and {"UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_EMPOWER_STOP"} or {"UNIT_SPELLCAST_INTERRUPTED"}
+
+function GwTargetUnitFrameMixin:OnInterruptEvent(event, unit, ...)
+    local interruptedBy = select(event == "UNIT_SPELLCAST_EMPOWER_STOP" and 4 or 3, ...)
+    if event ~= "UNIT_SPELLCAST_INTERRUPTED" and not (GW.IsSecretValue(interruptedBy) or interruptedBy) then
+        return
+    end
+    if GW.UnitIsUnit(unit, self.gwUnit) then
+        self:ShowInterrupt(interruptedBy)
+    end
+end
+
 function GwTargetUnitFrameMixin:ToggleSettings()
     self.classColor = GW.settings.unitframes[self.parentUnitId].classColor
     self.showCastbar = GW.settings.unitframes[self.gwUnit].showCastbar
     self.showAbsorbBar = GW.settings.unitframes[self.gwUnit].showAbsorbBar
+    self.showInterrupts = self.showCastbar and GW.settings.unitframes[self.gwUnit].castingbarShowInterrupt
+    for _, event in ipairs(INTERRUPT_EVENTS) do
+        if self.showInterrupts then
+            self:RegisterEvent(event)
+        else
+            self:UnregisterEvent(event)
+        end
+    end
 
     -- statusbar texture
     local textureKey =  GW.settings.unitframes[self.gwUnit].healthBarTexture
@@ -1442,6 +1466,7 @@ local function LoadTargetOfUnit(unit, parentUnitFrame)
     f.parentUnitId = unit:lower()
 
     f.castingbarNormal.Pips = {}
+    f:SetScript("OnEvent", f.OnInterruptEvent)
 
     RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, "unitframes." .. unitID, "Unitframe")
 

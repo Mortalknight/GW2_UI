@@ -1052,6 +1052,7 @@ GW.globalDefault = {
                 },
                 scale = 1,
                 showCastbar = true,
+                castingbarShowInterrupt = true,
                 showAbsorbBar = true,
                 healthBarSize = {
                     height = 13,
@@ -1074,6 +1075,7 @@ GW.globalDefault = {
                 },
                 scale = 1,
                 showCastbar = true,
+                castingbarShowInterrupt = true,
                 showAbsorbBar = true,
                 healthBarSize = {
                     height = 13,

@@ -343,6 +343,7 @@ local function LoadTargetPanel(sWindow)
     --TARGET OF TARGET
     pTargetOfTarget:AddOption(SHOW_TARGET_OF_TARGET_TEXT, L["Enable the target of target frame."], {getterSetter = "unitframes.targettarget.enabled", callback = function() GwTargetTargetUnitFrame:ToggleUnitFrame() end, dependence = {["unitframes.target.enabled"] = true}})
     pTargetOfTarget:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "unitframes.targettarget.showCastbar", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.target.enabled"] = true, ["unitframes.targettarget.enabled"] = true}})
+    pTargetOfTarget:AddOption(L["Show Interrupts"], L["Shakes the casting bar lightly on an interrupt and shows who interrupted the cast."], {getterSetter = "unitframes.targettarget.castingbarShowInterrupt", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.target.enabled"] = true, ["unitframes.targettarget.enabled"] = true, ["unitframes.targettarget.showCastbar"] = true}})
     pTargetOfTarget:AddOption(L["Show absorb bar"], nil, {getterSetter = "unitframes.targettarget.showAbsorbBar", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.target.enabled"] = true, ["unitframes.targettarget.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
 
     pTargetOfTarget:AddGroupHeader(L["Fader"])
@@ -431,6 +432,7 @@ local function LoadTargetPanel(sWindow)
     --TARGET OF FOCUS
     pTargetOfFocus:AddOption(MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], {getterSetter = "unitframes.focustarget.enabled", callback = function() GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["unitframes.focus.enabled"] = true}, hidden = GW.Classic})
     pTargetOfFocus:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "unitframes.focustarget.showCastbar", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.focus.enabled"] = true, ["unitframes.focustarget.enabled"] = true}, hidden = GW.Classic})
+    pTargetOfFocus:AddOption(L["Show Interrupts"], L["Shakes the casting bar lightly on an interrupt and shows who interrupted the cast."], {getterSetter = "unitframes.focustarget.castingbarShowInterrupt", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.focus.enabled"] = true, ["unitframes.focustarget.enabled"] = true, ["unitframes.focustarget.showCastbar"] = true}, hidden = GW.Classic})
     pTargetOfFocus:AddOption(L["Show absorb bar"], nil, {getterSetter = "unitframes.focustarget.showAbsorbBar", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["unitframes.focus.enabled"] = true, ["unitframes.focustarget.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
 
     pTargetOfFocus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})
