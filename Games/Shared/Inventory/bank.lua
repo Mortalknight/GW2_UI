@@ -605,6 +605,22 @@ local function LoadBank(helpers)
     f:RegisterEvent("BANKFRAME_OPENED")
     f:RegisterEvent("BANKFRAME_CLOSED")
 
+    -- all bank buttons at once made the first open stutter, they are prepared like the bag ones: after
+    -- loading and at the start of every fight; the bank bags once their size is known
+    local prepare = CreateFrame("Frame")
+    prepare:RegisterEvent("PLAYER_ENTERING_WORLD")
+    prepare:RegisterEvent("PLAYER_REGEN_DISABLED")
+    prepare:SetScript("OnEvent", function(self, event)
+        if event == "PLAYER_ENTERING_WORLD" then
+            self:UnregisterEvent(event)
+        end
+        local size = GW.settings.bags.bank.itemSize
+        GW.PrepareOwnContainerItemButtons(f.ItemFrame.Containers[BANK_CONTAINER], BANK_CONTAINER, size, bankSlotButtonOpts, NUM_BANKGENERIC_SLOTS)
+        for bag_id = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+            GW.PrepareOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id, size)
+        end
+    end)
+
     -- setup settings button and its dropdown items
     f.buttonSort:HookScript(
         "OnClick",
@@ -617,10 +633,12 @@ local function LoadBank(helpers)
     )
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BANK)
     EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
+    local newEntries = GW.CreateMenuNewTracker("bank", f.buttonSettings)
     f.buttonSettings:SetupMenu(function(ownerRegion, rootDescription)
+        newEntries:Begin(rootDescription)
 
-        local function addCheck(label, getter, setter)
-            local check = rootDescription:CreateCheckbox(label, getter, setter)
+        local function addCheck(label, getter, setter, key)
+            local check = rootDescription:CreateCheckbox(newEntries:Label(label, key), getter, setter)
             check:AddInitializer(function(button, description, menu)
                 GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
             end)
@@ -628,10 +646,11 @@ local function LoadBank(helpers)
 
         inv.addItemSizeMenuEntries(rootDescription, "BANK")
         addCheck(L["Reverse Bag Order"], function() return GW.settings.bags.bank.reverseSort end,
-                 function() GW.settings.bags.bank.reverseSort = not GW.settings.bags.bank.reverseSort; setBagBarOrder(f.ItemFrame); layoutItems(f); snapFrameSize(f) end)
-        addCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end, function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.bank.reverseSort = not GW.settings.bags.bank.reverseSort; setBagBarOrder(f.ItemFrame); layoutItems(f); snapFrameSize(f) end, "bags.bank.reverseSort")
+        addCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end, function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; GW.UpdateAllOwnBagItemButtons() end, "bags.items.qualityBorder")
         addCheck(L["Separate bags"], function() return GW.settings.bags.bank.separateBags end,
-                 function() local ns = not GW.settings.bags.bank.separateBags; GW.settings.bags.bank.separateBags = ns; layoutItems(f); snapFrameSize(f) end)
+                 function() local ns = not GW.settings.bags.bank.separateBags; GW.settings.bags.bank.separateBags = ns; layoutItems(f); snapFrameSize(f) end, "bags.bank.separateBags")
+        newEntries:Finish()
     end)
 
     -- return a callback that should be called when item size changes

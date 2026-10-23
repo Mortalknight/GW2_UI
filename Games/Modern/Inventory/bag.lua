@@ -98,8 +98,8 @@ GW.RegisterBagModule({
     end,
     onMenu = function(f, rootDescription, addCheck)
         addCheck(L["Show Scrap Icon"], function() return GW.settings.bags.items.scrapIcon end,
-                 function() GW.settings.bags.items.scrapIcon = not GW.settings.bags.items.scrapIcon; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.scrapIcon = not GW.settings.bags.items.scrapIcon; GW.UpdateAllOwnBagItemButtons() end, "bags.items.scrapIcon")
         addCheck(L["Show Equipment Set Icon"], function() return GW.settings.bags.items.equipmentSetIcon end,
-                 function() GW.settings.bags.items.equipmentSetIcon = not GW.settings.bags.items.equipmentSetIcon; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.equipmentSetIcon = not GW.settings.bags.items.equipmentSetIcon; GW.UpdateAllOwnBagItemButtons() end, "bags.items.equipmentSetIcon")
     end,
 })

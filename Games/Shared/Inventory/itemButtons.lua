@@ -220,13 +220,13 @@ GW.UpdateOwnContainerItemButtons = UpdateOwnContainerItemButtons
 
 -- item buttons created in combat get tainted clicks (a Blizzard restriction), so the missing ones
 -- are made up front; they stay hidden until the container is set up
-local function PrepareOwnContainerItemButtons(cf, bagID)
+local function PrepareOwnContainerItemButtons(cf, bagID, iconSize, opts, numSlots)
     if not cf then
         return
     end
     cf.gw_items = cf.gw_items or {}
-    for i = #cf.gw_items + 1, C_Container.GetContainerNumSlots(bagID) do
-        EnsureItemButton(cf, i):Hide()
+    for i = #cf.gw_items + 1, numSlots or C_Container.GetContainerNumSlots(bagID) do
+        EnsureItemButton(cf, i, iconSize, opts):Hide()
     end
 end
 GW.PrepareOwnContainerItemButtons = PrepareOwnContainerItemButtons

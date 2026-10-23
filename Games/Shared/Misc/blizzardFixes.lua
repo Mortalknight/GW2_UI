@@ -2,6 +2,13 @@
 local GW = select(2, ...)
 
 function GW:FixBlizzardIssues()
+    -- classic dialogs with a wide edit box (friend and guild notes) add to their last width on every show
+    if not GW.isModern then
+        for i = 1, 4 do
+            _G["StaticPopup" .. i]:HookScript("OnHide", function(popup) popup:SetWidth(320) end)
+        end
+    end
+
     if self.settings.general.fixGuildNewsSpam then
         -- https://nga.178.com/read.php?tid=42399961
         local newsRequireUpdate, newsTimer

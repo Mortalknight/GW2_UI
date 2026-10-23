@@ -368,6 +368,16 @@ local function GetNextScroll(scrollFrame, delta)
     return math.max(0, math.min(scrollFrame.maxScroll or 0, target))
 end
 
+local function FadeScrollIndicator(track, elapsed)
+    local target = track:GetParent():IsMouseOver() and 1 or 0
+    local alpha = track:GetAlpha()
+    if math.abs(target - alpha) < 0.02 then
+        track:SetAlpha(target)
+    else
+        track:SetAlpha(alpha + (target - alpha) * math.min(1, elapsed * 8))
+    end
+end
+
 local function UpdateScrollIndicator(scrollFrame, scroll)
     local track = scrollFrame.gwScrollTrack
     if not track then
@@ -382,6 +392,8 @@ local function UpdateScrollIndicator(scrollFrame, scroll)
         track.thumb = track:CreateTexture(nil, "OVERLAY")
         track.thumb:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
         track.thumb:SetAlpha(0.7)
+        track:SetAlpha(0)
+        track:SetScript("OnUpdate", FadeScrollIndicator)
         scrollFrame.gwScrollTrack = track
     end
 

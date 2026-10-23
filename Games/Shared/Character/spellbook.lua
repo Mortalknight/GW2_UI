@@ -869,9 +869,12 @@ local function LoadSpellBook(tabContainer)
     settings:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-down.png")
     settings.menuPoint = "TOPRIGHT"
     settings.menuRelativePoint = "BOTTOMRIGHT"
+    local newEntries = GW.CreateMenuNewTracker("spellbook", settings)
     settings:SetupMenu(function(_, rootDescription)
-        local function AddCheck(label, IsSelected, toggle)
-            local check = rootDescription:CreateCheckbox(label, IsSelected, toggle)
+        newEntries:Begin(rootDescription)
+
+        local function AddCheck(label, IsSelected, toggle, key)
+            local check = rootDescription:CreateCheckbox(newEntries:Label(label, key), IsSelected, toggle)
             check:AddInitializer(function(button, description, dropdownMenu)
                 GW.BlizzardDropdownCheckButtonInitializer(button, description, dropdownMenu, IsSelected)
             end)
@@ -882,7 +885,7 @@ local function LoadSpellBook(tabContainer)
             AddCheck(label, function() return GetCVarBool(cvar) ~= (inverted == true) end, function()
                 SetCVar(cvar, not GetCVarBool(cvar))
                 updateSpellbookTab(spellBook)
-            end)
+            end, cvar)
         end
         for _, option in ipairs(Book.GetOptions()) do
             AddCVarOption(option.label, option.cvar, option.inverted)
@@ -895,10 +898,11 @@ local function LoadSpellBook(tabContainer)
             AddCheck(label, function() return GW.settings.windows.spellbook[key] end, function()
                 GW.settings.windows.spellbook[key] = not GW.settings.windows.spellbook[key]
                 RefreshBadges(spellBook)
-            end)
+            end, "windows.spellbook." .. key)
         end
         AddBadgeOption(L["Mark spells not on an action bar"], "markUnbound")
         AddBadgeOption(L["Mark spells off the global cooldown"], "markOffGcd")
+        newEntries:Finish()
     end)
     spellBook.buttonSettings = settings
 

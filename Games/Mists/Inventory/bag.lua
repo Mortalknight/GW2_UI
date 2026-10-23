@@ -73,6 +73,6 @@ GW.RegisterBagModule({
     end,
     onMenu = function(f, rootDescription, addCheck)
         addCheck(L["Show Equipment Set Name"], function() return GW.settings.bags.items.equipmentSetName end,
-                 function() GW.settings.bags.items.equipmentSetName = not GW.settings.bags.items.equipmentSetName; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.equipmentSetName = not GW.settings.bags.items.equipmentSetName; GW.UpdateAllOwnBagItemButtons() end, "bags.items.equipmentSetName")
     end,
 })

@@ -232,7 +232,8 @@ local function SecureGameMenuLogoutButtons()
         local overlay = CreateFrame("Button", "GwGameMenuSecure" .. key .. "Button", UIParent, "SecureActionButtonTemplate")
         overlay:SetAttribute("type", "macro")
         overlay:SetAttribute("macrotext", macroText)
-        overlay:RegisterForClicks("AnyUp", "AnyDown") -- the secure handler picks the one matching the ActionButtonUseKeyDown cvar
+        overlay:RegisterForClicks("LeftButtonUp")
+        overlay:SetAttribute("useOnKeyDown", false)
         overlay.clickSound = clickSound
 
         overlay:SetScript("OnEnter", function(self)
@@ -1629,6 +1630,88 @@ local function BlizzardDropdownCheckButtonInitializer(button, description, menu,
     end
 end
 GW.BlizzardDropdownCheckButtonInitializer = BlizzardDropdownCheckButtonInitializer
+
+-- the entries of our cog menus carry the new sign like the settings until their menu was opened; a menu
+-- that was never opened counts all its entries as seen, but for the ones new in this version
+local NEW_MENUS = {spellbook = true}
+local NEW_MENU_ENTRIES = {["bags.autoOpenContexts.guildBank"] = true}
+
+function GW.CreateMenuNewTracker(menuID, button)
+    local tracker = {keys = {}}
+    local badge = button:CreateTexture(nil, "OVERLAY")
+    badge:SetTexture("Interface/OptionsFrame/UI-OptionsFrame-NewFeatureIcon")
+    badge:SetSize(14, 14)
+    badge:SetPoint("TOPRIGHT", 4, 4)
+    badge:Hide()
+
+    local function GetSeen()
+        GW.global.seenMenuEntries = GW.global.seenMenuEntries or {}
+        return GW.global.seenMenuEntries[menuID]
+    end
+
+    local function IsNew(key)
+        if not key then return false end
+        local seen = GetSeen()
+        if not seen then
+            return NEW_MENUS[menuID] or NEW_MENU_ENTRIES[key] or false
+        end
+        return not seen[key]
+    end
+
+    -- at the start of the menu generator
+    function tracker:Begin(rootDescription)
+        wipe(self.keys)
+        rootDescription:AddMenuReleasedCallback(function()
+            local seen = GetSeen()
+            for _, key in ipairs(self.keys) do
+                seen[key] = true
+            end
+            badge:Hide()
+        end)
+    end
+
+    -- the label of an entry, keys are the settings paths or cvar names, never the localized text
+    function tracker:Label(label, key)
+        if key then
+            tinsert(self.keys, key)
+        end
+        return IsNew(key) and (GW.NewSign .. label) or label
+    end
+
+    -- the label of a submenu, new when one of its entries is
+    function tracker:GroupLabel(label, keys)
+        for _, key in ipairs(keys) do
+            if IsNew(key) then
+                return GW.NewSign .. label
+            end
+        end
+        return label
+    end
+
+    -- at the end of the menu generator: seeds a menu seen for the first time and shows the badge
+    function tracker:Finish()
+        local seen = GetSeen()
+        if not seen then
+            seen = {}
+            GW.global.seenMenuEntries[menuID] = seen
+            if not NEW_MENUS[menuID] then
+                for _, key in ipairs(self.keys) do
+                    seen[key] = not NEW_MENU_ENTRIES[key] or nil
+                end
+            end
+        end
+        local hasNew = false
+        for _, key in ipairs(self.keys) do
+            if not seen[key] then
+                hasNew = true
+                break
+            end
+        end
+        badge:SetShown(hasNew)
+    end
+
+    return tracker
+end
 
 local function BlizzardDropdownButtonInitializer(button, description, menu)
     button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")

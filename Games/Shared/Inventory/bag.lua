@@ -922,19 +922,11 @@ local AUTO_OPEN_EVENTS = {
     MAIL_SHOW = "mail", MAIL_CLOSED = "mail",
     AUCTION_HOUSE_SHOW = "auctionHouse", AUCTION_HOUSE_CLOSED = "auctionHouse",
     BANKFRAME_OPENED = "bank", BANKFRAME_CLOSED = "bank",
-    GUILDBANKFRAME_OPENED = "guildBank", GUILDBANKFRAME_CLOSED = "guildBank",
     TRADE_SHOW = "trade", TRADE_CLOSED = "trade",
 }
 
 local function setupAutoOpenClose(f)
-    local watcher = CreateFrame("Frame")
-    for event in pairs(AUTO_OPEN_EVENTS) do
-        watcher:RegisterEvent(event)
-    end
-    watcher:SetScript("OnEvent", function(_, event)
-        local context = AUTO_OPEN_EVENTS[event]
-        local isOpen = not event:find("_CLOSED", 1, true)
-
+    local function Update(context, isOpen)
         if isOpen then
             -- an already visible bag was opened by someone else, leave it theirs
             if GW.settings.bags.autoOpenContexts[context] and not f:IsShown() then
@@ -945,6 +937,20 @@ local function setupAutoOpenClose(f)
             f.gwAutoOpenedContext = nil
             f:Hide()
         end
+    end
+
+    local watcher = CreateFrame("Frame")
+    for event in pairs(AUTO_OPEN_EVENTS) do
+        watcher:RegisterEvent(event)
+    end
+    watcher:SetScript("OnEvent", function(_, event)
+        Update(AUTO_OPEN_EVENTS[event], not event:find("_CLOSED", 1, true))
+    end)
+
+    -- the classic clients open the guild bank without GUILDBANKFRAME_OPENED, its frame tells it on every client
+    EventUtil.ContinueOnAddOnLoaded("Blizzard_GuildBankUI", function()
+        GuildBankFrame:HookScript("OnShow", function() Update("guildBank", true) end)
+        GuildBankFrame:HookScript("OnHide", function() Update("guildBank", false) end)
     end)
 end
 
@@ -1108,9 +1114,12 @@ local function LoadBag(helpers)
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BAGS)
     EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
 
+    local newEntries = GW.CreateMenuNewTracker("bag", f.buttonSettings)
     f.buttonSettings:SetupMenu(function(ownerRegion, rootDescription)
-        local function addCheck(label, getter, setter)
-            local check = rootDescription:CreateCheckbox(label, getter, setter)
+        newEntries:Begin(rootDescription)
+
+        local function addCheck(label, getter, setter, key)
+            local check = rootDescription:CreateCheckbox(newEntries:Label(label, key), getter, setter)
             check:AddInitializer(function(button, description, menu)
                 GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
             end)
@@ -1120,13 +1129,13 @@ local function LoadBag(helpers)
         rootDescription:CreateTitle(L["Layout"])
         inv.addItemSizeMenuEntries(rootDescription, "BAG")
         addCheck(L["Reverse Bag Order"], function() return GW.settings.bags.bag.reverseSort end,
-                 function() GW.settings.bags.bag.reverseSort = not GW.settings.bags.bag.reverseSort; layoutItems(f); snapFrameSize(f) end)
+                 function() GW.settings.bags.bag.reverseSort = not GW.settings.bags.bag.reverseSort; layoutItems(f); snapFrameSize(f) end, "bags.bag.reverseSort")
 
         rootDescription:CreateTitle(L["Item Display"])
         addCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end,
-                 function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; GW.UpdateAllOwnBagItemButtons() end, "bags.items.qualityBorder")
         local compactCheck = addCheck(L["Hide Empty Slots"], function() return GW.settings.bags.bag.compactEmptySlots end,
-                 function() GW.settings.bags.bag.compactEmptySlots = not GW.settings.bags.bag.compactEmptySlots; layoutItems(f); snapFrameSize(f) end)
+                 function() GW.settings.bags.bag.compactEmptySlots = not GW.settings.bags.bag.compactEmptySlots; layoutItems(f); snapFrameSize(f) end, "bags.bag.compactEmptySlots")
         compactCheck:SetEnabled(function() return not GW.settings.bags.bag.separateBags end)
         compactCheck:SetTooltip(function(tooltip, elementDescription)
             tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
@@ -1134,22 +1143,22 @@ local function LoadBag(helpers)
         end)
         if C_NewItems and C_NewItems.IsNewItem then
             addCheck(L["Mark New Items"], function() return GW.settings.bags.items.newItemGlow end,
-                     function() GW.settings.bags.items.newItemGlow = not GW.settings.bags.items.newItemGlow; GW.UpdateAllOwnBagItemButtons() end)
+                     function() GW.settings.bags.items.newItemGlow = not GW.settings.bags.items.newItemGlow; GW.UpdateAllOwnBagItemButtons() end, "bags.items.newItemGlow")
         end
         addCheck(L["Mark Unusable Items"], function() return GW.settings.bags.items.markUnusable end,
-                 function() GW.settings.bags.items.markUnusable = not GW.settings.bags.items.markUnusable; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.markUnusable = not GW.settings.bags.items.markUnusable; GW.UpdateAllOwnBagItemButtons() end, "bags.items.markUnusable")
         addCheck(L["Grey out Junk"], function() return GW.settings.bags.items.junkDesaturate end,
-                 function() GW.settings.bags.items.junkDesaturate = not GW.settings.bags.items.junkDesaturate; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.junkDesaturate = not GW.settings.bags.items.junkDesaturate; GW.UpdateAllOwnBagItemButtons() end, "bags.items.junkDesaturate")
         addCheck(L["Show Junk Icon"], function() return GW.settings.bags.items.junkIcon end,
-                 function() GW.settings.bags.items.junkIcon = not GW.settings.bags.items.junkIcon; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.junkIcon = not GW.settings.bags.items.junkIcon; GW.UpdateAllOwnBagItemButtons() end, "bags.items.junkIcon")
         addCheck(L["Show Upgrade Icon"], function() return GW.settings.bags.items.upgradeIcon end,
-                 function() GW.settings.bags.items.upgradeIcon = not GW.settings.bags.items.upgradeIcon; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.upgradeIcon = not GW.settings.bags.items.upgradeIcon; GW.UpdateAllOwnBagItemButtons() end, "bags.items.upgradeIcon")
         addCheck(L["Show Profession Bag Coloring"], function() return GW.settings.bags.professionBagColor end,
-                 function() GW.settings.bags.professionBagColor = not GW.settings.bags.professionBagColor; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.professionBagColor = not GW.settings.bags.professionBagColor; GW.UpdateAllOwnBagItemButtons() end, "bags.professionBagColor")
         addCheck(L["Show Quality Color for Profession Bags"], function() return GW.settings.bags.professionBagQualityColor end,
-                 function() GW.settings.bags.professionBagQualityColor = not GW.settings.bags.professionBagQualityColor; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.professionBagQualityColor = not GW.settings.bags.professionBagQualityColor; GW.UpdateAllOwnBagItemButtons() end, "bags.professionBagQualityColor")
         addCheck(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.bags.items.showItemLevel end,
-                 function() GW.settings.bags.items.showItemLevel = not GW.settings.bags.items.showItemLevel; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.showItemLevel = not GW.settings.bags.items.showItemLevel; GW.UpdateAllOwnBagItemButtons() end, "bags.items.showItemLevel")
         GW.AddMenuSliderDescription(rootDescription, {
             title = L["Item Level Threshold"],
             minValue = 0,
@@ -1172,17 +1181,17 @@ local function LoadBag(helpers)
 
         rootDescription:CreateTitle(L["Loot & Sorting"])
         addCheck(L["Loot to leftmost Bag"], function() return GW.settings.bags.bag.reverseNewLoot end,
-                 function() local ns = not GW.settings.bags.bag.reverseNewLoot; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.bags.bag.reverseNewLoot = ns end)
+                 function() local ns = not GW.settings.bags.bag.reverseNewLoot; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.bags.bag.reverseNewLoot = ns end, "bags.bag.reverseNewLoot")
         addCheck(L["Sort to Last Bag"], function() return GW.settings.bags.bag.reverseItemSort end,
-                 function() local ns = not GW.settings.bags.bag.reverseItemSort; if GW.isModern then C_Container.SetSortBagsRightToLeft(ns) end; GW.settings.bags.bag.reverseItemSort = ns end)
+                 function() local ns = not GW.settings.bags.bag.reverseItemSort; if GW.isModern then C_Container.SetSortBagsRightToLeft(ns) end; GW.settings.bags.bag.reverseItemSort = ns end, "bags.bag.reverseItemSort")
 
         addCheck(L["Sort when opening"], function() return GW.settings.bags.autoSortOnOpen end,
-                 function() GW.settings.bags.autoSortOnOpen = not GW.settings.bags.autoSortOnOpen end)
+                 function() GW.settings.bags.autoSortOnOpen = not GW.settings.bags.autoSortOnOpen end, "bags.autoSortOnOpen")
 
 
 
         rootDescription:CreateTitle(L["Behavior"])
-        local autoOpenMenu = rootDescription:CreateButton(L["Open automatically at"])
+        local contexts, contextKeys = {}, {}
         for _, context in ipairs({
             {key = "merchant", label = MERCHANT},
             {key = "mail", label = MAIL_LABEL},
@@ -1192,22 +1201,27 @@ local function LoadBag(helpers)
             {key = "trade", label = TRADE},
         }) do
             if not context.hidden then
-                local check = autoOpenMenu:CreateCheckbox(context.label,
-                    function() return GW.settings.bags.autoOpenContexts[context.key] end,
-                    function() GW.settings.bags.autoOpenContexts[context.key] = not GW.settings.bags.autoOpenContexts[context.key] end)
-                check:AddInitializer(function(button, description, menu)
-                    GW.BlizzardDropdownCheckButtonInitializer(button, description, menu,
-                        function() return GW.settings.bags.autoOpenContexts[context.key] end)
-                end)
+                tinsert(contexts, context)
+                tinsert(contextKeys, "bags.autoOpenContexts." .. context.key)
             end
+        end
+        local autoOpenMenu = rootDescription:CreateButton(newEntries:GroupLabel(L["Open automatically at"], contextKeys))
+        for index, context in ipairs(contexts) do
+            local check = autoOpenMenu:CreateCheckbox(newEntries:Label(context.label, contextKeys[index]),
+                function() return GW.settings.bags.autoOpenContexts[context.key] end,
+                function() GW.settings.bags.autoOpenContexts[context.key] = not GW.settings.bags.autoOpenContexts[context.key] end)
+            check:AddInitializer(function(button, description, menu)
+                GW.BlizzardDropdownCheckButtonInitializer(button, description, menu,
+                    function() return GW.settings.bags.autoOpenContexts[context.key] end)
+            end)
         end
 
         rootDescription:CreateTitle(L["Bag Sections"])
         addCheck(L["Separate bags"], function() return GW.settings.bags.bag.separateBags end,
-                 function() local ns = not GW.settings.bags.bag.separateBags; GW.settings.bags.bag.separateBags = ns; layoutItems(f); snapFrameSize(f) end)
+                 function() local ns = not GW.settings.bags.bag.separateBags; GW.settings.bags.bag.separateBags = ns; layoutItems(f); snapFrameSize(f) end, "bags.bag.separateBags")
         if HAS_KEYRING then
             local keyringCheck = addCheck(L["Separate keyring"], function() return GW.settings.bags.bag.separateKeyring end,
-                     function() local ns = not GW.settings.bags.bag.separateKeyring; GW.settings.bags.bag.separateKeyring = ns; layoutItems(f); snapFrameSize(f) end)
+                     function() local ns = not GW.settings.bags.bag.separateKeyring; GW.settings.bags.bag.separateKeyring = ns; layoutItems(f); snapFrameSize(f) end, "bags.bag.separateKeyring")
             keyringCheck:SetEnabled(function() return not GW.settings.bags.bag.separateBags end)
             keyringCheck:SetTooltip(function(tooltip, elementDescription)
                 tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
@@ -1216,13 +1230,14 @@ local function LoadBag(helpers)
         end
         if HAS_REAGENT_BAG then
             local reagentCheck = addCheck(L["Separate reagent bag"], function() return GW.settings.bags.bag.separateReagentBag end,
-                     function() local ns = not GW.settings.bags.bag.separateReagentBag; GW.settings.bags.bag.separateReagentBag = ns; layoutItems(f); snapFrameSize(f) end)
+                     function() local ns = not GW.settings.bags.bag.separateReagentBag; GW.settings.bags.bag.separateReagentBag = ns; layoutItems(f); snapFrameSize(f) end, "bags.bag.separateReagentBag")
             reagentCheck:SetEnabled(function() return not GW.settings.bags.bag.separateBags end)
             reagentCheck:SetTooltip(function(tooltip, elementDescription)
                 tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
                 tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
             end)
         end
+        newEntries:Finish()
     end)
 
     -- setup money frame

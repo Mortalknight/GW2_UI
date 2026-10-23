@@ -44,6 +44,6 @@ end)
 GW.RegisterBagModule({
     onMenu = function(_, _, addCheck)
         addCheck(L["Show Bind Type"], function() return GW.settings.bags.items.showBindType end,
-                 function() GW.settings.bags.items.showBindType = not GW.settings.bags.items.showBindType; GW.UpdateAllOwnBagItemButtons() end)
+                 function() GW.settings.bags.items.showBindType = not GW.settings.bags.items.showBindType; GW.UpdateAllOwnBagItemButtons() end, "bags.items.showBindType")
     end,
 })

@@ -449,6 +449,9 @@ function GW.SkinFriendList()
     elseif GW.TBC or GW.Wrath then
         FriendsFriendsSendRequestButton:GwSkinButton(false, true)
         FriendsFriendsCloseButton:GwSkinButton(false, true)
+        FriendsFriendsScrollFrame:GwStripTextures()
+        FriendsFriendsScrollFrame:GwSkinScrollFrame()
+        FriendsFriendsScrollFrameScrollBar:GwSkinScrollBar()
 
         button:SetScript("OnClick", function()
         PlaySound(SOUNDKIT.IG_CHAT_EMOTE_BUTTON)

@@ -187,8 +187,11 @@ end
 -- entries with a colored text get a hover in that color, like the raid markers or the loot threshold;
 -- the text color is only final once the entry is set up, so it is read when the hover shows
 local tintHooked = setmetatable({}, {__mode = "k"})
+-- the textures come from a shared pool: a former highlight can come back as an icon (raid markers), that one stays
 local function TintHighlight(highlight)
-    local fontString = highlight:GetParent().fontString
+    local parent = highlight:GetParent()
+    if not parent or parent.highlight ~= highlight then return end
+    local fontString = parent.fontString
     if not fontString then return end
     local r, g, b = fontString:GetTextColor()
     if r < 0.99 or g < 0.99 or b < 0.99 then
