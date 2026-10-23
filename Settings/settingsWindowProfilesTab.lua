@@ -549,10 +549,10 @@ local function StoredData(character)
     local globalSv, privateSv = GW.globalSettings.sv, GW.charSettings.sv
     local data = {}
     if (globalSv.profileKeys and globalSv.profileKeys[key]) or (privateSv.profileKeys and privateSv.profileKeys[key]) then
-        data[#data + 1] = L["Profile assignment"]
+        data[#data + 1] = L["Profile Assignment"]
     end
     if OwnPrivateProfile(key) or (globalSv.char and globalSv.char[key]) or (privateSv.char and privateSv.char[key]) then
-        data[#data + 1] = L["Character settings"]
+        data[#data + 1] = L["Character Settings"]
     end
     local hasSpecProfiles = false
     for _, sv in ipairs({globalSv, privateSv}) do
@@ -561,10 +561,10 @@ local function StoredData(character)
         end
     end
     if hasSpecProfiles then
-        data[#data + 1] = L["Spec profiles"]
+        data[#data + 1] = L["Spec Profiles"]
     end
     if character.money or character.class then
-        data[#data + 1] = L["Gold and character info"]
+        data[#data + 1] = L["Gold and Character Info"]
     end
     return data
 end
