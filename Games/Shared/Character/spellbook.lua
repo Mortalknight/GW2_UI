@@ -108,6 +108,11 @@ local PAGE_WIDTH = 853 - MENU_WIDTH
 local PAGE_HEIGHT = 627 - 37 - 10 - 40
 local ENTRIES_PER_PAGE = NUM_COLUMNS * math.floor(PAGE_HEIGHT / ENTRY_HEIGHT)
 local COLUMN_WIDTH = PAGE_WIDTH / NUM_COLUMNS
+local RANK_STEP = RANK_ICON_SIZE + 3
+local MORE_WIDTH = 26
+local RANK_ROW_WIDTH = COLUMN_WIDTH - 6 - RANK_ROW_LEFT - 4
+local MAX_RANKS = math.floor(RANK_ROW_WIDTH / RANK_STEP)
+local MAX_RANKS_WITH_MORE = math.floor((RANK_ROW_WIDTH - MORE_WIDTH - 4) / RANK_STEP)
 
 local function SetButtonSize(btn, size)
     btn:SetSize(size, size)
@@ -232,6 +237,75 @@ local function SetMainButton(entry, button)
     -- rank numbers only where the ranks of a spell share an entry
     button.rank:SetShown(#entry.ranks > 0)
     UpdateBadges(button)
+end
+
+local function MoreButton_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(format("%s 1-%d", RANK, self.numHidden), 1, 1, 1)
+    GameTooltip:Show()
+end
+
+-- the "+N" button and the bar it opens; the ranks are secure buttons, so the bar is toggled by a secure snippet
+local function GetMoreButton(entry)
+    if entry.moreButton then
+        return entry.moreButton
+    end
+    local flyout = CreateFrame("Frame", nil, entry)
+    flyout:SetPoint("TOPLEFT", entry, "TOPLEFT", RANK_ROW_LEFT - 4, -44)
+    flyout:SetHeight(RANK_ICON_SIZE + 8)
+    flyout:SetFrameLevel(entry:GetFrameLevel() + 20)
+    flyout:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    flyout:Hide()
+
+    local more = CreateFrame("Button", nil, entry, "SecureHandlerClickTemplate")
+    more:SetSize(MORE_WIDTH, RANK_ICON_SIZE)
+    more:SetPoint("TOPLEFT", entry, "TOPLEFT", RANK_ROW_LEFT, -22)
+    more:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+    more.text = more:CreateFontString(nil, "OVERLAY")
+    more.text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
+    more.text:SetTextColor(GW.Colors.SkinColors.QuestGold:GetRGB())
+    more.text:SetPoint("CENTER")
+    more:SetFrameRef("flyout", flyout)
+    more:SetAttribute("_onclick", [=[
+        local flyout = self:GetFrameRef("flyout")
+        if flyout:IsShown() then flyout:Hide() else flyout:Show() end
+    ]=])
+    more:SetScript("OnEnter", MoreButton_OnEnter)
+    more:SetScript("OnLeave", GameTooltip_Hide)
+    more.flyout = flyout
+    entry.moreButton = more
+    return more
+end
+
+-- once all ranks of an entry are known: the highest that fit stay in the row, the rest go into the bar
+local function LayoutRanks(entry)
+    local ranks = entry.ranks
+    local more = entry.moreButton
+    if #ranks <= MAX_RANKS then
+        if more then
+            more:Hide()
+            more.flyout:Hide()
+        end
+        return
+    end
+
+    more = GetMoreButton(entry)
+    local numHidden = #ranks - MAX_RANKS_WITH_MORE
+    more.numHidden = numHidden
+    more.text:SetText("+" .. numHidden)
+    more:Show()
+    more.flyout:Hide()
+    more.flyout:SetWidth(numHidden * RANK_STEP + 5)
+
+    for index, button in ipairs(ranks) do
+        button:ClearAllPoints()
+        if index <= numHidden then
+            button:SetParent(more.flyout)
+            button:SetPoint("TOPLEFT", more.flyout, "TOPLEFT", 4 + (index - 1) * RANK_STEP, -4)
+        else
+            button:SetPoint("TOPLEFT", entry, "TOPLEFT", RANK_ROW_LEFT + MORE_WIDTH + 4 + (index - numHidden - 1) * RANK_STEP, -22)
+        end
+    end
 end
 
 -- a higher rank takes the big icon, the one before moves into the small row under the name
@@ -782,6 +856,10 @@ local function updateSpellbookTab(self)
 
                 lastName = nameSpell
             end
+        end
+
+        for index = 1, container.HeaderIndex - 1 do
+            LayoutRanks(container.headerFrame[index])
         end
 
         setUpPaging(container, currentPages[spellBookTab])
