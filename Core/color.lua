@@ -55,6 +55,7 @@ GW.Colors.SkinColors = {
     CardBorder = CreateColor(0.6, 0.6, 0.6), -- the light grey frame of cards and model previews
     Chip = CreateColor(0, 0, 0, 0.35), -- a small name plate on a card
     NotificationBadge = CreateColor(1, 0, 0, 1), -- the round count of micro buttons and chat tabs
+    TooltipBorder = CreateColor(0.05, 0.05, 0.05, 1), -- the dark frame of our tooltips
 }
 
 -- the coin amounts of our bag money

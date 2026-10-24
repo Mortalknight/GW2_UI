@@ -88,6 +88,18 @@ end
 -- reads its fields, from our code that taints it and with it the gamepad window focus
 local menuBackdrops = {}
 
+local function SyncBackdropLevel(menu)
+    local backdrop = menuBackdrops[menu]
+    if not backdrop or not menu:IsShown() then return end
+    local strata, level = menu:GetFrameStrata(), menu:GetFrameLevel()
+    local offset = (menu.ScrollBar and menu.ScrollBar:IsShown()) and -1 or 19
+    if GW.IsSecretValue(strata) or GW.IsSecretValue(level) then
+        strata, level, offset = "FULLSCREEN_DIALOG", 2, -1
+    end
+    backdrop:SetFrameStrata(strata)
+    backdrop:SetFrameLevel(math.max(1, level + offset))
+end
+
 local function SkinMenuFrame(menu)
     menu:GwStripTextures()
     local backdrop = menuBackdrops[menu]
@@ -102,15 +114,9 @@ local function SkinMenuFrame(menu)
             GW.SkinSlimScrollBar(menu.ScrollBar)
         end
     end
-    -- submenus open above their parent, the backdrop follows the level of its menu; menus of secure unit
-    -- frames give both as secrets, then blizzards menu strata and the lowest level
-    local strata, level = menu:GetFrameStrata(), menu:GetFrameLevel()
-    if GW.IsSecretValue(strata) or GW.IsSecretValue(level) then
-        strata, level = "FULLSCREEN_DIALOG", 2
-    end
-    backdrop:SetFrameStrata(strata)
-    backdrop:SetFrameLevel(math.max(1, level - 1))
     backdrop:Show()
+    SyncBackdropLevel(menu)
+    RunNextFrame(function() SyncBackdropLevel(menu) end)
 end
 
 -- the opened menu, and every submenu it opens later
@@ -184,38 +190,26 @@ function GW.SetMenuEntryNegative(description)
     description:AddInitializer(SetNegative)
 end
 
--- entries with a colored text get a hover in that color, like the raid markers or the loot threshold;
--- the text color is only final once the entry is set up, so it is read when the hover shows
-local tintHooked = setmetatable({}, {__mode = "k"})
--- the textures come from a shared pool: a former highlight can come back as an icon (raid markers), that one stays
-local function TintHighlight(highlight)
-    local parent = highlight:GetParent()
-    if not parent or parent.highlight ~= highlight then return end
-    local fontString = parent.fontString
-    if not fontString then return end
-    local r, g, b = fontString:GetTextColor()
-    if r < 0.99 or g < 0.99 or b < 0.99 then
-        highlight:SetVertexColor(r * HOVER_STRENGTH, g * HOVER_STRENGTH, b * HOVER_STRENGTH)
-    end
-end
-
 hooksecurefunc(MenuVariants, "CreateHighlight", function(frame)
     local highlight = frame.highlight
     if GW.settings.skins.dropdown.enabled then
         highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
         highlight:SetVertexColor(HOVER_STRENGTH, HOVER_STRENGTH, HOVER_STRENGTH)
-        if not tintHooked[highlight] then
-            tintHooked[highlight] = true
-            hooksecurefunc(highlight, "Show", TintHighlight)
-        end
     else
         highlight:SetVertexColor(1, 1, 1)
     end
 end)
 
-local function UpdateHighlightEnabled(frame, enabled)
-    local highlight = frame.highlight
-    if highlight and highlight:IsShown() then
+local function UpdateHighlight(frame, enabled)
+    local highlight, fontString = frame.highlight, frame.fontString
+    if not highlight then return end
+    if fontString then
+        local r, g, b = fontString:GetTextColor()
+        if r < 0.99 or g < 0.99 or b < 0.99 then
+            highlight:SetVertexColor(r * HOVER_STRENGTH, g * HOVER_STRENGTH, b * HOVER_STRENGTH)
+        end
+    end
+    if highlight:IsShown() then
         highlight:SetAlpha(enabled and 1 or MenuVariants.DisabledHighlightOpacity)
     end
 end
@@ -244,7 +238,7 @@ local function LoadDropDownSkin()
     hooksecurefunc(MenuVariants, "CreateCheckbox", SkinCheckbox)
     hooksecurefunc(MenuVariants, "CreateRadio", SkinRadio)
     hooksecurefunc(MenuVariants, "CreateDivider", SkinDivider)
-    hooksecurefunc(MenuTemplates, "SetHierarchyEnabled", UpdateHighlightEnabled)
+    hooksecurefunc(MenuTemplates, "SetHierarchyEnabled", UpdateHighlight)
     if UnitPopupVoiceLevelsMixin then
         hooksecurefunc(UnitPopupVoiceLevelsMixin, "OnAttach", SkinVoiceLevels)
     end

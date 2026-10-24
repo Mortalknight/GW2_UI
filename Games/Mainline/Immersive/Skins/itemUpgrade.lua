@@ -12,6 +12,21 @@ local function FitSlotArt(frame)
 end
 local skinnedFlyoutButtons = {}
 
+local function StylePreview(preview)
+    if preview.NineSlice then
+        preview.NineSlice:SetAlpha(0)
+    end
+    local frame = CreateFrame("Frame", nil, preview, "BackdropTemplate")
+    frame:SetAllPoints()
+    frame:SetFrameLevel(math.max(0, preview:GetFrameLevel() - 1))
+    frame:SetBackdrop({
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
+        edgeSize = GW.Scale(1),
+    })
+    frame:SetBackdropBorderColor(GW.Colors.SkinColors.TooltipBorder:GetRGBA())
+end
+
 local function SkinFlyoutButton(button)
     button:GetNormalTexture():SetAlpha(0)
     button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -84,9 +99,8 @@ local function ApplyItemUpgradeSkin()
     hooksecurefunc(frame, "UpdateUpgradeItemInfo", FitSlotArt)
 
     -- the current and the upgraded item side by side, in our tooltip look
-    for _, preview in ipairs({frame.LeftItemPreviewFrame, frame.RightItemPreviewFrame}) do
-        GW.Tooltip.SetStyle(preview)
-    end
+    StylePreview(frame.LeftItemPreviewFrame)
+    StylePreview(frame.RightItemPreviewFrame)
 
     -- runs on show and on every page change
     hooksecurefunc("EquipmentFlyout_UpdateItems", SkinFlyout)
