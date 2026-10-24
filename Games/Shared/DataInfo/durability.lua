@@ -5,6 +5,8 @@ local GW = select(2, ...)
 local itemSlots, itemPercents = {}, {}
 local lowestPercent = 100
 
+local REPUTATION_DISCOUNTS = {[5] = 0.05, [6] = 0.1, [7] = 0.15, [8] = 0.2}
+
 -- the full tooltip data of an item is costly, so the cost is only asked for when the tooltip shows
 local function GetRepairCost(slot)
     if C_TooltipInfo then
@@ -77,6 +79,23 @@ local function DurabilityTooltip(self)
     if repairCost > 0 then
         GameTooltip:AddLine(" ")
         GameTooltip:AddDoubleLine(REPAIR_COST, GetMoneyString(repairCost), white.r, white.g, white.b, white.r, white.g, white.b)
+
+        local sub = GW.Colors.SkinColors.SubText
+        for standing = 5, 8 do
+            local discount = REPUTATION_DISCOUNTS[standing]
+            GameTooltip:AddDoubleLine(format("  %s (-%d%%)", _G["FACTION_STANDING_LABEL" .. standing], discount * 100),
+                GetMoneyString(floor(repairCost * (1 - discount))), sub.r, sub.g, sub.b, sub.r, sub.g, sub.b)
+        end
+
+        if MerchantFrame and MerchantFrame:IsShown() and CanMerchantRepair() then
+            local merchantCost = GetRepairAllCost()
+            if merchantCost and merchantCost > 0 then
+                local positive = GW.Colors.SkinColors.Positive
+                local discount = Round((1 - merchantCost / repairCost) * 100)
+                GameTooltip:AddDoubleLine(discount > 0 and format("%s (-%d%%)", MERCHANT, discount) or MERCHANT, GetMoneyString(merchantCost),
+                    positive.r, positive.g, positive.b, positive.r, positive.g, positive.b)
+            end
+        end
     end
 
     GameTooltip:Show()
