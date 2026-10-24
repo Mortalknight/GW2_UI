@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 -- trade window: only art and fonts, the trade and cancel buttons keep blizzards scripts;
--- the gold input is a forbidden frame, it keeps blizzards look
+-- the gold input is a forbidden frame on retail, it keeps blizzards look there
 local INSETS = {"TradePlayerItemsInset", "TradeRecipientItemsInset", "TradePlayerEnchantInset", "TradeRecipientEnchantInset", "TradePlayerInputMoneyInset", "TradeRecipientMoneyInset"}
 local HIGHLIGHTS = {"TradeHighlightPlayer", "TradeHighlightRecipient", "TradeHighlightPlayerEnchant", "TradeHighlightRecipientEnchant"}
 local HIDDEN_ART = {"TradeFramePlayerPortrait", "TradeFrameRecipientPortrait", "TradeRecipientPortraitFrame", "TradeRecipientMoneyBg"}
@@ -68,6 +68,15 @@ local function ApplyTradeSkin()
         nameText:ClearAllPoints()
         nameText:SetPoint("BOTTOMLEFT", inset, "TOPLEFT", 2, 6)
         nameText:SetPoint("BOTTOMRIGHT", inset, "TOPRIGHT", -2, 6)
+    end
+
+    local moneyInput = TradePlayerInputMoneyFrame
+    if moneyInput and not moneyInput:IsForbidden() then
+        GW.AddEditBoxBackground(moneyInput.gold, 5, 0, 0)
+        -- the classic coins hang right of the box, the newer template draws them inside
+        local coinOffset = not moneyInput.silver.coinAtlas and -10 or 0
+        GW.AddEditBoxBackground(moneyInput.silver, 5, coinOffset, 0)
+        GW.AddEditBoxBackground(moneyInput.copper, 5, coinOffset, 0)
     end
 
     TradeFrameTradeButton:GwSkinButton(false, true)

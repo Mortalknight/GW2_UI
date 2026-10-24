@@ -724,14 +724,12 @@ local function bag_OnHide(self)
     -- so the matching close event must not re-close it later
     self.gwAutoOpenedContext = nil
     self:UnregisterAllEvents()
-    if C_NewItems and C_NewItems.ClearAll then
-        -- blizzards container frames did this on hide, ours have to now
-        C_NewItems.ClearAll()
-        -- the slot contents did not change, only their new item state, so the remembered
-        -- state has to be dropped for the markers to go on the next open
-        GW.InvalidateOwnBagItemButtonStates()
+    if C_NewItems and C_NewItems.RemoveNewItem then
+        for _, cf in pairs(self.ItemFrame.Containers) do
+            GW.ClearOwnContainerNewItems(cf)
+        end
     end
-    if BagItemSearchBox then
+    if BagItemSearchBox and BagItemSearchBox:GetText() ~= "" then
         -- blizzard leaves the filter active when the bags close, which then hides items
         -- on the next open with no visible reason; SetText drives the templates
         -- OnTextChanged so the item search is really dropped, not just the display
@@ -881,31 +879,36 @@ local function onBagFrameChangeSize(self, _, _, skip)
 end
 
 
--- skins blizzards stack split popup; the modern frame exists on all current clients,
--- every child is guarded anyway in case a flavor differs
+-- skins blizzards stack split popup; classic flavors name the children globally instead of by key
 local function skinStackSplit()
-    if not StackSplitFrame then
+    local frame = StackSplitFrame
+    if not frame then
         return
     end
-    StackSplitFrame:GwStripTextures()
-    StackSplitFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    frame:GwStripTextures()
+    frame:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
-    if StackSplitFrame.OkayButton then
-        StackSplitFrame.OkayButton:GwSkinButton(false, true)
+    local okay = frame.OkayButton or StackSplitOkayButton
+    local cancel = frame.CancelButton or StackSplitCancelButton
+    local right = frame.RightButton or StackSplitRightButton
+    local left = frame.LeftButton or StackSplitLeftButton
+
+    if okay then
+        okay:GwSkinButton(false, true)
     end
-    if StackSplitFrame.CancelButton then
-        StackSplitFrame.CancelButton:GwSkinButton(false, true)
+    if cancel then
+        cancel:GwSkinButton(false, true)
     end
 
-    if StackSplitFrame.RightButton then
-        GW.HandleNextPrevButton(StackSplitFrame.RightButton, "right")
-        StackSplitFrame.RightButton:SetSize(25, 25)
-        StackSplitFrame.RightButton:SetPoint("LEFT", StackSplitFrame, "CENTER", 51, 18)
+    if right then
+        GW.HandleNextPrevButton(right, "right")
+        right:SetSize(25, 25)
+        right:SetPoint("LEFT", frame, "CENTER", 51, 18)
     end
-    if StackSplitFrame.LeftButton then
-        GW.HandleNextPrevButton(StackSplitFrame.LeftButton, "left")
-        StackSplitFrame.LeftButton:SetSize(25, 25)
-        StackSplitFrame.LeftButton:SetPoint("RIGHT", StackSplitFrame, "CENTER", -50, 18)
+    if left then
+        GW.HandleNextPrevButton(left, "left")
+        left:SetSize(25, 25)
+        left:SetPoint("RIGHT", frame, "CENTER", -50, 18)
     end
 
     StackSplitFrame.textboxbg = StackSplitFrame:CreateTexture(nil, "BACKGROUND")

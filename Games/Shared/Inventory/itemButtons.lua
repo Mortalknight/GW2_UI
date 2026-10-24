@@ -338,15 +338,23 @@ local function UpdateOwnContainerSearchResults(cf)
 end
 GW.UpdateOwnContainerSearchResults = UpdateOwnContainerSearchResults
 
--- forgets the remembered slot state of every own item button, so the next content update writes
--- them all again. Needed when something outside the container api changed how a slot has to look
--- while its content stayed the same (C_NewItems.ClearAll on bag close)
-local function InvalidateOwnBagItemButtonStates()
-    for i = 1, #allItemButtons do
-        allItemButtons[i].gw_slotStateSet = nil
+-- slot by slot like blizzards container frames, C_NewItems.ClearAll on close tainted the item upgrade frame
+local function ClearOwnContainerNewItems(cf)
+    if not cf or not cf.gw_items then
+        return
+    end
+    local bagID = cf:GetID()
+    for i = 1, cf.gw_num_slots or 0 do
+        local button = cf.gw_items[i]
+        if button then
+            C_NewItems.RemoveNewItem(bagID, button:GetID())
+            if button.gwNewItem then
+                button.gwNewItem:Hide()
+            end
+        end
     end
 end
-GW.InvalidateOwnBagItemButtonStates = InvalidateOwnBagItemButtonStates
+GW.ClearOwnContainerNewItems = ClearOwnContainerNewItems
 
 -- used by the flavor reskin sweeps to apply size and style setting changes
 local function ForEachOwnBagItemButton(func)
