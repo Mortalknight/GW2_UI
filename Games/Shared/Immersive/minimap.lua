@@ -294,6 +294,7 @@ end
 -- the classic realms put the layer into the guid of every creature, the zone part; it needs an npc nearby
 local function UpdateLayer(self, event, unit)
     if event == "PLAYER_ENTERING_WORLD" then
+        self:SetShown(not IsInInstance())
         self.text:SetText(L["Layer"] .. ": ?")
         return
     end
