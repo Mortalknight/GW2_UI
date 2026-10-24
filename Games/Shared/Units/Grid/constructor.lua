@@ -241,24 +241,27 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
         settingsEventFrame.isSetup = true
     end
 
+    local updateFrames = not onlyHeaderUpdate or updateHeaderAndFrames
+    local updateHeaders = onlyHeaderUpdate or updateHeaderAndFrames
+    local freshHeaders = {}
+
     -- profiles disabled at login have no groups yet — build them once the profile
-    -- gets enabled: the header update materializes the secure children, the
-    -- updateFunc pass right after pushes the current settings onto them (the
-    -- regular pass below is skipped for pure header updates)
+    -- gets enabled: the header update materializes the secure children, the frame
+    -- pass below pushes the current settings onto them; a pure header update has no
+    -- frame pass, the new children get theirs here
     for headerProfile, header in pairs(headers) do
         if profile == "ALL" or headerProfile == profile then
             if EnsureHeaderGroups(headerProfile) then
                 GW.UpdateGridHeader(headerProfile)
-                for i = 1, header.numGroups do
-                    local group = header.groups[i]
-                    if group then
-                        for _, child in ipairs({ group:GetChildren() }) do
-                            -- oUF styles a header child from the secure initialConfigFunction
-                            -- and marks it with its style; a child that never got there
-                            -- (the forever beta cannot run secure snippets) has none of
-                            -- our elements and must be skipped
-                            if child.style then
-                                header.updateFunc(child)
+                freshHeaders[headerProfile] = true
+                if not updateFrames then
+                    for i = 1, header.numGroups do
+                        local group = header.groups[i]
+                        if group then
+                            for _, child in ipairs({ group:GetChildren() }) do
+                                if child.style then
+                                    header.updateFunc(child)
+                                end
                             end
                         end
                     end
@@ -267,7 +270,7 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
         end
     end
 
-    if not onlyHeaderUpdate or updateHeaderAndFrames then
+    if updateFrames then
         if InCombatLockdown() then
             MarkPending(profile)
         end
@@ -291,16 +294,15 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
         end
     end
 
-    if (onlyHeaderUpdate or updateHeaderAndFrames) and (headers[profile] or profile == "ALL") then
+    -- headers built above are up to date already
+    if updateHeaders and (headers[profile] or profile == "ALL") then
         if InCombatLockdown() then
             MarkPending(profile)
         else
-            if profile == "ALL" then
-                for headerProfile, _ in pairs(headers) do
+            for headerProfile in pairs(headers) do
+                if (profile == "ALL" or headerProfile == profile) and not freshHeaders[headerProfile] then
                     GW.UpdateGridHeader(headerProfile)
                 end
-            else
-                GW.UpdateGridHeader(profile)
             end
         end
     end

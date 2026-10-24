@@ -2,7 +2,6 @@ local _, ns = ...
 local oUF = ns.oUF
 
 local MIN_ALPHA, MAX_ALPHA = 0.35, 1
-local onRangeObjects, onRangeFrame = {}
 
 local function GetMouseFocus(self)
     return ns.DoesAncestryIncludeAny(self, GetMouseFoci())
@@ -44,7 +43,7 @@ local function ToggleAlpha(self, element, endAlpha)
     element:ClearTimers()
 
     if element.Smooth then
-        ns.AddToAnimation(self:GetDebugName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
+        ns.AddToAnimation(element.gwAnimationName, self:GetAlpha(), endAlpha, GetTime(), element.Smooth, element.gwSetAlpha, 1)
     else
         self:SetAlpha(endAlpha)
     end
@@ -55,9 +54,8 @@ local function Update(self, event, unit)
     if not self:IsVisible() then return end
     local element = self.Fader
     if self.isForced or (not element or not element.count or element.count <= 0) then
+        if element then element.lastRangeAlpha = nil end
         self:SetAlpha(1)
-        return
-    elseif element.Range and (event ~= "OnRangeUpdate" and event ~= "UNIT_IN_RANGE_UPDATE") then
         return
     end
 
@@ -75,10 +73,11 @@ local function Update(self, event, unit)
         unit = self.__unit
     end
 
-    -- range fader
+    -- range fader, it wins over every other option; the classic clients only fade on a change
     if element.Range then
         UpdateRange(self, unit)
-        if element.RangeAlpha then
+        if element.RangeAlpha and element.RangeAlpha ~= element.lastRangeAlpha then
+            element.lastRangeAlpha = element.RangeAlpha
             ToggleAlpha(self, element, element.RangeAlpha)
         end
 
@@ -106,20 +105,6 @@ local function ForceUpdate(element, event)
     return Update(element.__owner, event or "ForceUpdate", element.__owner.__unit)
 end
 
-local function OnRangeUpdate(frame, elapsed)
-    frame.timer = (frame.timer or 0) + elapsed
-
-    if (frame.timer >= .20) then
-        for _, object in next, onRangeObjects do
-            if object:IsVisible() then
-                object.Fader:ForceUpdate('OnRangeUpdate')
-            end
-        end
-
-        frame.timer = 0
-    end
-end
-
 local function HoverScript(self)
     local fader = self.Fader
     if fader and fader.HoverHooked == 1 then
@@ -139,38 +124,16 @@ local function TargetScript(self)
 end
 
 local options = {
+    -- a new unit on the frame comes through the element update of oUF, the connection through its own event
     Range = {
         enable = function(self)
-            --if oUF.isRetail then
-            --    self:RegisterEvent("UNIT_IN_RANGE_UPDATE", Update)
-            --else
-                if not onRangeFrame then
-                    onRangeFrame = CreateFrame('Frame')
-                    onRangeFrame:SetScript('OnUpdate', OnRangeUpdate)
-                end
-
-                onRangeFrame:Show()
-                tinsert(onRangeObjects, self)
-            --end
+            self:RegisterEvent("UNIT_IN_RANGE_UPDATE", Update)
+            self:RegisterEvent("UNIT_CONNECTION", Update)
         end,
+        events = {"UNIT_IN_RANGE_UPDATE","UNIT_CONNECTION"},
         disable = function(self)
-            --if oUF.isRetail then
-            --    self:UnregisterEvent('UNIT_IN_RANGE_UPDATE', Update)
-            --else
-                if onRangeFrame then
-                    for idx, obj in next, onRangeObjects do
-                        if obj == self then
-                            self.Fader.RangeAlpha = nil
-                            tremove(onRangeObjects, idx)
-                            break
-                        end
-                    end
-
-                    if #onRangeObjects == 0 then
-                        onRangeFrame:Hide()
-                    end
-                end
-            --end
+            self.Fader.RangeAlpha = nil
+            self.Fader.lastRangeAlpha = nil
         end,
     },
     Hover = {
@@ -329,6 +292,9 @@ local function Enable(self)
 
         self.Fader.MinAlpha = MIN_ALPHA
         self.Fader.MaxAlpha = MAX_ALPHA
+        -- the animation key and setter stay the same for the frame, built once
+        self.Fader.gwAnimationName = self.Fader.gwAnimationName or self:GetDebugName()
+        self.Fader.gwSetAlpha = self.Fader.gwSetAlpha or function(p) self:SetAlpha(p) end
 
         return true
     end
@@ -346,8 +312,9 @@ local function Disable(self)
         end
 
         self.Fader.count = nil
+        self.Fader.lastRangeAlpha = nil
         self.Fader:ClearTimers()
-        ns.AddToAnimation(self:GetDebugName(), self:GetAlpha(), 1, GetTime(), 0.33, function(p) self:SetAlpha(p) end, 1)
+        ns.AddToAnimation(self.Fader.gwAnimationName, self:GetAlpha(), 1, GetTime(), 0.33, self.Fader.gwSetAlpha, 1)
     end
 end
-oUF:AddElement("Fader", nil, Enable, Disable)
+oUF:AddElement("Fader", Update, Enable, Disable)

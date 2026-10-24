@@ -34,35 +34,35 @@ local function GridShowBuffIcon(parent, btnIndex, x, y, icon, spellId)
     return btnIndex, x, y
 end
 
+-- one pass over the buffs, then the wanted names are looked up; the dead show nothing
+local presentAuras = {}
 local function Update(self, event)
-	 -- missing buffs
-     if not UnitIsDeadOrGhost(self.__unit) and self.missingAuras then
-        local spellInfo
-        local btnIndex, i, x, y = 1, 0, 0, 0
-        -- do a reset
-        for _, btn in pairs(self.MissingBuffFrame.createdButtons) do
-            btn:Hide()
-        end
-        for mName, _ in pairs(self.missingAuras) do
-            self.missingAuras[mName] = true
-        end
-        for mName, _ in pairs(self.missingAuras) do
-            if AuraUtil.FindAuraByName(mName, self.__unit, "HELPFUL") then
-                self.missingAuras[mName] = false
-            end
-        end
+    local element = self.MissingBuffFrame
+    for _, btn in ipairs(element.createdButtons) do
+        btn:Hide()
+    end
+    if not self.missingAuras or UnitIsDeadOrGhost(self.__unit) then return end
 
-        for mName, v in pairs(self.missingAuras) do
-            if v then
-                if not chachedSpellInfo[mName] then
-                    spellInfo = C_Spell.GetSpellInfo(mName)
-                    if spellInfo then
-                        chachedSpellInfo[spellInfo.name] = {spellId = spellInfo.spellID, iconId = spellInfo.iconID}
-                    end
+    wipe(presentAuras)
+    local index = 1
+    local aura = C_UnitAuras.GetAuraDataByIndex(self.__unit, index, "HELPFUL")
+    while aura do
+        presentAuras[aura.name] = true
+        index = index + 1
+        aura = C_UnitAuras.GetAuraDataByIndex(self.__unit, index, "HELPFUL")
+    end
+
+    local btnIndex, x, y = 1, 0, 0
+    for mName in pairs(self.missingAuras) do
+        if not presentAuras[mName] then
+            if not chachedSpellInfo[mName] then
+                local spellInfo = C_Spell.GetSpellInfo(mName)
+                if spellInfo then
+                    chachedSpellInfo[spellInfo.name] = {spellId = spellInfo.spellID, iconId = spellInfo.iconID}
                 end
-                if chachedSpellInfo[mName] then
-                    i, btnIndex, x, y = i + 1, GridShowBuffIcon(self, btnIndex, x, y, chachedSpellInfo[mName].iconId, chachedSpellInfo[mName].spellId)
-                end
+            end
+            if chachedSpellInfo[mName] then
+                btnIndex, x, y = GridShowBuffIcon(self, btnIndex, x, y, chachedSpellInfo[mName].iconId, chachedSpellInfo[mName].spellId)
             end
         end
     end

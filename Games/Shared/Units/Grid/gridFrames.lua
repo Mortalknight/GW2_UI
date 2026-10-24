@@ -1,15 +1,15 @@
 ---@class GW2
 local GW = select(2, ...)
 
--- the missing buffs element keeps its state in the table, so every frame needs its own; the text is split once
-local missingAurasText, missingAuraNames
+-- the wanted buff names, shared by all frames and only split again when the text changes
+local missingAurasText, missingAuras
 local function GetMissingAuras()
     local text = GW.settings.playerAuras.missingAuras
     if text ~= missingAurasText then
         missingAurasText = text
-        missingAuraNames = {strsplit(",", (text:trim():gsub("%s*,%s*", ",")))}
+        missingAuras = GW.FillTable({}, true, strsplit(",", (text:trim():gsub("%s*,%s*", ","))))
     end
-    return GW.FillTable({}, true, unpack(missingAuraNames))
+    return missingAuras
 end
 
 local function OnEnter(self)
