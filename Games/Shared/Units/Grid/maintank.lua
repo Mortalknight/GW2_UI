@@ -25,6 +25,8 @@ local function GridMaintankStyleRegister(self)
     self.ReadyCheckIndicator = GW.Construct_ReadyCheck(self)
     self.SummonIndicator = GW.Construct_SummonIcon(self)
     self.ResurrectIndicator = GW.Construct_ResurrectionIcon(self)
+    self.PhaseIndicator = GW.Construct_PhaseIcon(self)
+    self.PvPClassificationIndicator = GW.Construct_PvPClassificationIcon(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)

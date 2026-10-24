@@ -12,7 +12,9 @@
 	<Script file="elements\auras.lua"/>
 	<Script file="elements\health.lua"/>
 	<Script file="elements\healthprediction.lua"/>
+	<Script file="elements\phaseindicator.lua"/>
 	<Script file="elements\power.lua"/>
+	<Script file="elements\pvpclassificationindicator.lua"/>
 	<Script file="elements\range.lua"/>
 	<Script file="elements\readycheckindicator.lua"/>
 	<Script file="elements\resurrectindicator.lua"/>

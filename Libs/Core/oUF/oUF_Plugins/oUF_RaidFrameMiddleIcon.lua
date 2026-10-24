@@ -55,7 +55,7 @@ local function Update(self)
     end
 
     local shouldShowIcon = state ~= "none"
-    element:SetShown(shouldShowIcon and not self.readyCheckInProgress and not self.summonInProgress and not self.resurrectionInProgress)
+    element:SetShown(shouldShowIcon and not self.readyCheckInProgress and not self.summonInProgress and not self.resurrectionInProgress and not self.phaseInProgress)
     self._middleIconIsShown = shouldShowIcon
 end
 

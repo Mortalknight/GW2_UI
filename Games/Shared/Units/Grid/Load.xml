@@ -7,6 +7,8 @@
     <Script file ="elements\readyCheck.lua"/>
     <Script file ="elements\summonIcon.lua"/>
     <Script file ="elements\resurrectionIcon.lua"/>
+    <Script file ="elements\phaseIcon.lua"/>
+    <Script file ="elements\pvpClassificationIcon.lua"/>
     <Script file ="elements\healthValueText.lua"/>
     <Script file ="elements\health.lua"/>
     <Script file ="elements\power.lua"/>
