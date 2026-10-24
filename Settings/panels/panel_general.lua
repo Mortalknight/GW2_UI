@@ -55,7 +55,7 @@ local function LoadGeneralPanel(sWindow)
         setter = function(value) C_CVar.SetCVar("scriptErrors", value and "1" or "0") end,
         getDefault = function() return false end,
     })
-    general:AddOption(L["Global cooldown at the cursor"], L["Shows the global cooldown as a ring around the mouse cursor."], {getterSetter = "general.cursorGcdRing", callback = function() GW.UpdateCursorGcdRing() end})
+    general:AddOption(L["Global Cooldown at the Cursor"], L["Shows the global cooldown as a ring around the mouse cursor."], {getterSetter = "general.cursorGcdRing", callback = function() GW.UpdateCursorGcdRing() end})
     general:AddOption(L["Hide error messages in combat"], L["Hides messages like 'Not enough rage' while in combat."], {getterSetter = "general.hideErrorsInCombat"})
     general:AddOption(CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, {getterSetter = "general.dynamicCam",
         callback = function(value)
