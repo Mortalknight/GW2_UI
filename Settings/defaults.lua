@@ -220,6 +220,7 @@ GW.globalDefault = {
                 itemInfo = false,
                 itemInfoMissing = true,
                 itemLevelRelativeColor = false,
+                advancedStats = false,
             },
             social = {
                 enabled = true,

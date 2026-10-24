@@ -78,10 +78,7 @@ local function spell_buttonOnEnter(self)
             end
         end
     end
-    GW.AddOffGcdTooltipLine(self)
-    if self.isUnbound then
-        GameTooltip:AddLine(SPELLBOOK_SPELL_NOT_ON_ACTION_BAR or L["Not on any action bar"], GW.Colors.SkinColors.QuestGold:GetRGB())
-    end
+    GW.AddSpellBadgeTooltipLines(self)
     GameTooltip:Show()
 end
 
@@ -176,11 +173,6 @@ local function GetSpellEntry(self, tab)
     return entry
 end
 
-local function IsSpellOnBars(spellID)
-    local slots = C_ActionBar.FindSpellActionButtons(C_SpellBook.FindBaseSpellByID(spellID) or spellID)
-    return slots ~= nil and #slots > 0
-end
-
 -- a flyout is reachable on the bars as a whole, or with every spell of it that is known on its own; mists has no
 -- search for flyouts and the one of forever also finds their single spells, so the action slots are looked through
 local function IsFlyoutReachable(flyoutID)
@@ -192,7 +184,7 @@ local function IsFlyoutReachable(flyoutID)
     end
     for slot = 1, select(3, GetFlyoutInfo(flyoutID)) or 0 do
         local spellID, _, isKnown = GetFlyoutSlotInfo(flyoutID, slot)
-        if isKnown and not IsSpellOnBars(spellID) then
+        if isKnown and not GW.IsSpellOnBars(spellID) then
             return false
         end
     end
@@ -211,21 +203,13 @@ local function IsMissingFromBars(button)
     if C_Spell.IsAutoAttackSpell(button.spellId) or C_Spell.IsRangedAutoAttackSpell(button.spellId) then
         return false
     end
-    return not IsSpellOnBars(button.spellId)
+    return not GW.IsSpellOnBars(button.spellId)
 end
 
--- the corner badges of the big icon: not on a bar top right, off the global cooldown top left
+-- the rank buttons beside the big icon carry no badges
 local function UpdateBadges(button, isRank)
-    local settings = GW.settings.windows.spellbook
-    button.isUnbound = not isRank and settings.markUnbound and IsMissingFromBars(button)
-    button.unbound:SetShown(button.isUnbound)
-    button.unboundRing:SetShown(button.isUnbound)
-
-    local offGcd = not isRank and settings.markOffGcd and button.isOffGcd
-    if button.gwOffGcd then
-        button.gwOffGcd:SetShown(offGcd)
-    end
-    button.offGcdRing:SetShown(offGcd)
+    local unbound = not isRank and GW.settings.windows.spellbook.markUnbound and IsMissingFromBars(button)
+    GW.UpdateSpellBadges(button, unbound, not isRank and button.isOffGcd)
 end
 
 local function SetMainButton(entry, button)
@@ -355,23 +339,7 @@ local function GetSpellbookActionButton(tab, container, index)
     button.rank:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
     button.rank:SetTextColor(0.9, 0.9, 0.8, 1)
 
-    -- the corner badges are a dark ring with a gold dot or the gcd clock on it
-    local function CreateBadgePart(size, subLevel, color, point, x)
-        local texture = button:CreateTexture(nil, "OVERLAY", nil, subLevel)
-        texture:SetSize(size, size)
-        texture:SetPoint("CENTER", button, point, x, -3)
-        texture:SetColorTexture(color:GetRGB())
-        local mask = button:CreateMaskTexture()
-        mask:SetTexture("Interface/CharacterFrame/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-        mask:SetAllPoints(texture)
-        texture:AddMaskTexture(mask)
-        texture:Hide()
-        return texture
-    end
-    button.unboundRing = CreateBadgePart(13, 6, GW.Colors.Fallback, "TOPRIGHT", -3)
-    button.unbound = CreateBadgePart(9, 7, GW.Colors.SkinColors.QuestGold, "TOPRIGHT", -3)
-    -- the clock of GW.UpdateOffGcdIndicator sits on this ring, the same badge in the other corner
-    button.offGcdRing = CreateBadgePart(15, 6, GW.Colors.Fallback, "TOPLEFT", 3)
+    GW.CreateSpellBadges(button)
 
     button.modifiedClick = SpellButton_OnModifiedClick
     button:RegisterForClicks("AnyUp")
@@ -414,13 +382,7 @@ local function setButtonStyle(btn, isPassive, spellID, slotType, icon, spellbook
     btn:EnableMouse(true)
     btn.spellId = spellID
     btn.icon:SetTexture(icon)
-    GW.UpdateOffGcdIndicator(btn, not btn.isFlyout and spellID or nil, isPassive)
-    btn.isOffGcd = btn.gwOffGcd ~= nil and btn.gwOffGcd:IsShown()
-    if btn.gwOffGcd then
-        btn.gwOffGcd:ClearAllPoints()
-        btn.gwOffGcd:SetPoint("CENTER", btn.offGcdRing)
-        btn.gwOffGcd:SetSize(11, 11)
-    end
+    btn.isOffGcd = not btn.isFlyout and GW.IsOffGcdSpell(spellID, isPassive)
     btn:SetAlpha(1)
     btn:SetAttribute("ispickable", false)
 

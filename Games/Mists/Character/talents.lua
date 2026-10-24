@@ -246,6 +246,16 @@ local function UpdateTrees(self, currentSpec)
     end
 end
 
+local function RefreshBadges(self)
+    for _, container in ipairs(self.specs) do
+        for _, row in ipairs(container.talentButtons) do
+            for _, button in ipairs(row.buttons) do
+                GW.UpdateTalentBadges(button)
+            end
+        end
+    end
+end
+
 local function updateActiveSpec(self)
     if InCombatLockdown() then
         return
@@ -326,7 +336,9 @@ local function updateActiveSpec(self)
                     button:EnableMouse(isActiveSpec and isCurrentSpec)
 
                     local isPassive = IsPassiveSpell(talentInfo.spellID)
-                    GW.UpdateOffGcdIndicator(button, talentInfo.spellID, isPassive)
+                    button.isOffGcd = GW.IsOffGcdSpell(talentInfo.spellID, isPassive)
+                    button.gwBarSpellID = not isPassive and not isPetTalents and isActiveSpec and isCurrentSpec and talentInfo.selected and talentInfo.spellID or nil
+                    GW.UpdateTalentBadges(button)
                     if isPassive then
                         button.legendaryHighlight:SetTexture(passiveHighlight)
                         button.highlight:SetTexture(passiveHighlight)
@@ -479,7 +491,7 @@ local function TalentButtonOnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
     GameTooltip:SetTalent(self.talentID)
-    GW.AddOffGcdTooltipLine(self)
+    GW.AddSpellBadgeTooltipLines(self)
     GameTooltip:Show()
 end
 
@@ -610,6 +622,7 @@ local function LoadTalents(tabContainer)
                 talentButton.mask:SetPoint("CENTER", talentButton, "CENTER", 0, 0)
                 talentButton.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
                 talentButton.mask:SetSize(34, 34)
+                GW.CreateSpellBadges(talentButton)
 
                 talentButton.row = row
                 talentButton.column = index
@@ -655,7 +668,12 @@ local function LoadTalents(tabContainer)
     talentContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
     talentContainer:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
     talentContainer:RegisterEvent("BAG_UPDATE_DELAYED")
+    talentContainer:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
     talentContainer:SetScript('OnEvent', function(_, event)
+        if event == "ACTIONBAR_SLOT_CHANGED" then
+            if talentContainer:IsShown() then RefreshBadges(talentContainer) end
+            return
+        end
         C_Timer.After(0.1, function() talentContainer.topBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player") .. " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon.png:24:24:0:0:0.1875:0.828125:0.1875:0.828125|t") end)
 
         if event == "PLAYER_SPECIALIZATION_CHANGED" then

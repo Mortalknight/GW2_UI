@@ -406,66 +406,131 @@ local SPELL_SCHOOLS = {
 
 local MISS_CHANCE_BOSS = MISS_CHANCE .. " (" .. LEVEL .. " +3)"
 
-local function AddHeader(text)
-    GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(text)
-end
-
-local function AddStat(label, value)
-    local r, g, b = HIGHLIGHT_FONT_COLOR:GetRGB()
-    GameTooltip:AddDoubleLine("   " .. label .. ":", value, r, g, b, r, g, b)
-end
+local ROW_HEIGHT = 17
+local SECTION_HEIGHT = 26
 
 local function Percent(value)
     return format("%.2F%%", value)
 end
 
-local function showAdvancedChatStats(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(ADVANCED_LABEL .. " " .. STAT_CATEGORY_ATTRIBUTES)
-
-    AddHeader(MELEE)
-    AddStat(MELEE_CRIT_CHANCE, Percent(GetCritChance()))
-    AddStat(ITEM_MOD_HIT_MELEE_RATING_SHORT, Percent(GetHitModifier() or 0))
-    AddStat(ATTACK_POWER_TOOLTIP, GetMeleeAttackPower())
-    AddStat(MISS_CHANCE, Percent(MeleeMissChance(0)))
-    AddStat(MISS_CHANCE_BOSS, Percent(MeleeMissChance(3)))
-
+-- the sections fit the class, rows are a label and a function for their value
+local function GetSections()
+    local sections = {}
+    tinsert(sections, {MELEE, {
+        {MELEE_CRIT_CHANCE, function() return Percent(GetCritChance()) end},
+        {ITEM_MOD_HIT_MELEE_RATING_SHORT, function() return Percent(GetHitModifier() or 0) end},
+        {ATTACK_POWER_TOOLTIP, GetMeleeAttackPower},
+        {MISS_CHANCE, function() return Percent(MeleeMissChance(0)) end},
+        {MISS_CHANCE_BOSS, function() return Percent(MeleeMissChance(3)) end},
+    }})
     if _IsRangeAttackClass() then
-        AddHeader(RANGED)
-        AddStat(RANGED_CRIT_CHANCE, Percent(GetRangedCritChance()))
-        AddStat(ITEM_MOD_HIT_RANGED_RATING_SHORT, Percent(_GetRangeHitBonus()))
-        AddStat(RANGED_ATTACK_TOOLTIP, GetRangeAttackPower())
-        AddStat(MISS_CHANCE, Percent(RangeMissChance(0)))
-        AddStat(MISS_CHANCE_BOSS, Percent(RangeMissChance(3)))
+        tinsert(sections, {RANGED, {
+            {RANGED_CRIT_CHANCE, function() return Percent(GetRangedCritChance()) end},
+            {ITEM_MOD_HIT_RANGED_RATING_SHORT, function() return Percent(_GetRangeHitBonus()) end},
+            {RANGED_ATTACK_TOOLTIP, GetRangeAttackPower},
+            {MISS_CHANCE, function() return Percent(RangeMissChance(0)) end},
+            {MISS_CHANCE_BOSS, function() return Percent(RangeMissChance(3)) end},
+        }})
     end
-
-    AddHeader(DEFENSE)
-    AddStat(BLOCK_CHANCE, Percent(GetBlockChance()))
-    AddStat(ITEM_MOD_BLOCK_VALUE_SHORT, GetBlockValue())
-    AddStat(PARRY_CHANCE, Percent(GetParryChance()))
-    AddStat(DODGE_CHANCE, Percent(GetDodgeChance()))
-
-    if UnitPowerType("player") == Enum.PowerType.Mana then
-        AddHeader(MANA_REGEN)
-        AddStat(ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. HELPFRAME_ITEM_TITLE .. ")", format("%.2F", GetMP5FromItems()))
-        AddStat(ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. PLAYERSTAT_SPELL_COMBAT .. ")", format("%.2F", GetMP5WhileCasting()))
-        AddStat(ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. ITEM_MOD_SPIRIT_SHORT .. ")", format("%.2F", GetMP5FromSpirit()))
+    tinsert(sections, {DEFENSE, {
+        {BLOCK_CHANCE, function() return Percent(GetBlockChance()) end},
+        {ITEM_MOD_BLOCK_VALUE_SHORT, GetBlockValue},
+        {PARRY_CHANCE, function() return Percent(GetParryChance()) end},
+        {DODGE_CHANCE, function() return Percent(GetDodgeChance()) end},
+    }})
+    if UnitPowerMax("player", Enum.PowerType.Mana) > 0 then
+        tinsert(sections, {MANA_REGEN, {
+            {ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. HELPFRAME_ITEM_TITLE .. ")", function() return format("%.2F", GetMP5FromItems()) end},
+            {ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. PLAYERSTAT_SPELL_COMBAT .. ")", function() return format("%.2F", GetMP5WhileCasting()) end},
+            {ITEM_MOD_POWER_REGEN0_SHORT .. " (" .. ITEM_MOD_SPIRIT_SHORT .. ")", function() return format("%.2F", GetMP5FromSpirit()) end},
+        }})
     end
-
-    AddHeader(STAT_CATEGORY_SPELL)
-    AddStat(SPELL_CRIT_CHANCE, Percent(GetSpellCrit(schools.holy)))
-    AddStat(ITEM_MOD_HIT_SPELL_RATING_SHORT, Percent(SpellHitBonus()))
-    AddStat(MISS_CHANCE, Percent(SpellMissChance(4)))
-    AddStat(MISS_CHANCE_BOSS, Percent(SpellMissChance(17)))
-
-    AddHeader(SPELL_BONUS)
-    AddStat(BONUS_HEALING, format("%.2F", GetSpellBonusHealing()))
+    tinsert(sections, {STAT_CATEGORY_SPELL, {
+        {SPELL_CRIT_CHANCE, function() return Percent(GetSpellCrit(schools.holy)) end},
+        {ITEM_MOD_HIT_SPELL_RATING_SHORT, function() return Percent(SpellHitBonus()) end},
+        {MISS_CHANCE, function() return Percent(SpellMissChance(4)) end},
+        {MISS_CHANCE_BOSS, function() return Percent(SpellMissChance(17)) end},
+    }})
+    -- one row per school: damage and crit
+    local bonus = {{BONUS_HEALING, function() return format("%.2F", GetSpellBonusHealing()) end}}
     for _, info in ipairs(SPELL_SCHOOLS) do
-        AddStat(info.label .. " " .. DAMAGE, format("%.2F", GetSpellDmg(info.school)))
-        AddStat(info.label .. " " .. CRIT_ABBR, Percent(GetSpellCrit(info.school)))
+        tinsert(bonus, {info.label, function() return format("%.2F  %s", GetSpellDmg(info.school), Percent(GetSpellCrit(info.school))) end})
     end
-
-    GameTooltip:Show()
+    tinsert(sections, {SPELL_BONUS, bonus})
+    return sections
 end
-GW.showAdvancedChatStats = showAdvancedChatStats
+
+local function CreateText(parent, scale)
+    local text = parent:CreateFontString(nil, "ARTWORK", "SystemFont_Outline")
+    if scale then
+        local font, fontHeight, fontFlags = text:GetFont()
+        text:SetFont(font, fontHeight * scale, fontFlags)
+    end
+    return text
+end
+
+local function UpdateValues(self)
+    for _, row in ipairs(self.rows) do
+        row.text:SetText(row.value())
+    end
+end
+
+local function CreateAdvancedCharStats(parent)
+    local as = CreateFrame("Frame", nil, parent)
+    as:SetPoint("TOPLEFT", parent, "TOPRIGHT", 19, 60)
+    as:SetWidth(200)
+    as:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 10, 10)
+
+    as.header = CreateText(as, 1.3)
+    as.header:SetPoint("TOP")
+    as.header:SetText(ADVANCED_LABEL .. " " .. STAT_CATEGORY_ATTRIBUTES)
+
+    as.rows = {}
+    local y = -20
+    for _, section in ipairs(GetSections()) do
+        y = y - SECTION_HEIGHT
+        local title = CreateText(as, 1.1)
+        title:SetPoint("BOTTOMLEFT", as, "TOPLEFT", 0, y + 4)
+        title:SetText(section[1])
+        for _, row in ipairs(section[2]) do
+            local value = CreateText(as)
+            value:SetPoint("TOPRIGHT", -20, y)
+            local label = CreateText(as)
+            label:SetPoint("TOPLEFT", 10, y)
+            label:SetPoint("RIGHT", value, "LEFT", -4, 0)
+            label:SetJustifyH("LEFT")
+            label:SetWordWrap(false)
+            label:SetText(row[1])
+            tinsert(as.rows, {text = value, value = row[2]})
+            y = y - ROW_HEIGHT
+        end
+    end
+    as:SetHeight(-y + 10)
+
+    parent.advancedStatsFrame = as
+    as:SetScript("OnShow", UpdateValues)
+    -- a closed window catches up through OnShow
+    as:SetScript("OnEvent", function(self)
+        if self:IsVisible() then
+            UpdateValues(self)
+        end
+    end)
+    for _, event in ipairs({"CHARACTER_POINTS_CHANGED", "UNIT_LEVEL", "SKILL_LINES_CHANGED", "PLAYER_EQUIPMENT_CHANGED", "SPELL_POWER_CHANGED", "COMBAT_RATING_UPDATE", "PLAYER_DAMAGE_DONE_MODS"}) do
+        as:RegisterEvent(event)
+    end
+    for _, event in ipairs({"UNIT_STATS", "UNIT_ATTACK_POWER", "UNIT_RANGED_ATTACK_POWER", "UNIT_ATTACK", "UNIT_DAMAGE", "UNIT_RESISTANCES", "UNIT_AURA", "UNIT_INVENTORY_CHANGED"}) do
+        as:RegisterUnitEvent(event, "player")
+    end
+    as:Hide()
+end
+
+-- shown nil toggles; the state is kept in the profile and restored when the character window loads
+local function ShowAdvancedCharStats(parent, shown)
+    if not parent.advancedStatsFrame then CreateAdvancedCharStats(parent) end
+    if shown == nil then
+        shown = not parent.advancedStatsFrame:IsShown()
+    end
+    parent.advancedStatsFrame:SetShown(shown)
+    GW.settings.windows.character.advancedStats = shown
+end
+GW.ShowAdvancedCharStats = ShowAdvancedCharStats

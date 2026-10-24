@@ -32,7 +32,7 @@ local function talentBunnton_OnEnter(self)
     GameTooltip:ClearLines()
 
     if self.talentid and Data.SetTooltip(self.talentFrameId, self.talentid, isPetTalents, openSpec) then
-        GW.AddOffGcdTooltipLine(self)
+        GW.AddSpellBadgeTooltipLines(self)
         GameTooltip:Show()
     end
 
@@ -74,6 +74,17 @@ local function hookTalentButton(talentButton, container, row, index)
     talentButton.mask = mask
     talentButton.points:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
     talentButton.points:SetTextColor(1, 1, 1, 1)
+    GW.CreateSpellBadges(talentButton)
+end
+
+local function RefreshBadges(self)
+    for _, container in ipairs(self.container or {}) do
+        for _, button in ipairs(container.buttons) do
+            if button:IsShown() then
+                GW.UpdateTalentBadges(button)
+            end
+        end
+    end
 end
 
 local function getArrow(container, teir, column, i)
@@ -295,7 +306,10 @@ local function updateTalentTrees(self)
                 local displayRank = talent.rank
 
                 button.icon:SetTexture(talent.icon)
-                GW.UpdateOffGcdIndicator(button, talent.spellID)
+                local isPassive = talent.spellID == nil or C_Spell.IsSpellPassive(talent.spellID)
+                button.isOffGcd = GW.IsOffGcdSpell(talent.spellID, isPassive)
+                button.gwBarSpellID = not isPassive and not isPetTalents and isActiveTalentGroup and displayRank > 0 and talent.spellID or nil
+                GW.UpdateTalentBadges(button)
                 button.points:SetText(displayRank .. " / " .. talent.maxRank)
                 button.textBG:Show()
                 button.talentid = i
@@ -465,7 +479,12 @@ local function LoadTalents(tabContainer)
         updateTalentTrees(talentFrame)
     end)
 
-    talentFrame:SetScript("OnEvent", function()
+    talentFrame:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+    talentFrame:SetScript("OnEvent", function(_, event)
+        if event == "ACTIONBAR_SLOT_CHANGED" then
+            if talentFrame:IsShown() then RefreshBadges(talentFrame) end
+            return
+        end
         loadTalentsFrames(talentFrame)
         talentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
         if not talentFrame:IsShown() then return end

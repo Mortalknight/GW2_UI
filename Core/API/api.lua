@@ -490,32 +490,70 @@ function GW.GetQuestRewardXP(questID)
     end
 end
 
--- spells that do not trigger the global cooldown get a small mark in our spellbook and talent panels
-function GW.UpdateOffGcdIndicator(button, spellID, isPassive)
-    local offGcd = false
-    if spellID and spellID > 0 and GetSpellBaseCooldown then
-        if isPassive == nil then
-            isPassive = C_Spell.IsSpellPassive(spellID)
-        end
-        if not isPassive then
-            local _, gcd = GetSpellBaseCooldown(spellID)
-            offGcd = gcd == 0
-        end
-    end
-    if offGcd and not button.gwOffGcd then
-        button.gwOffGcd = button:CreateTexture(nil, "OVERLAY", nil, 7)
-        button.gwOffGcd:SetTexture("Interface/AddOns/GW2_UI/textures/icons/clock.png")
-        button.gwOffGcd:SetSize(14, 14)
-        button.gwOffGcd:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2)
-    end
-    if button.gwOffGcd then
-        button.gwOffGcd:SetShown(offGcd)
-    end
+function GW.IsSpellOnBars(spellID)
+    local slots = C_ActionBar.FindSpellActionButtons(C_SpellBook.FindBaseSpellByID(spellID) or spellID)
+    return slots ~= nil and #slots > 0
 end
 
-function GW.AddOffGcdTooltipLine(button)
+local function CreateBadgePart(button, size, subLevel, color, point, x)
+    local texture = button:CreateTexture(nil, "OVERLAY", nil, subLevel)
+    texture:SetSize(size, size)
+    texture:SetPoint("CENTER", button, point, x, -3)
+    texture:SetColorTexture(color:GetRGB())
+    local mask = button:CreateMaskTexture()
+    mask:SetTexture("Interface/CharacterFrame/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetAllPoints(texture)
+    texture:AddMaskTexture(mask)
+    texture:Hide()
+    return texture
+end
+
+function GW.CreateSpellBadges(button)
+    button.unboundRing = CreateBadgePart(button, 13, 6, GW.Colors.Fallback, "TOPRIGHT", -3)
+    button.unbound = CreateBadgePart(button, 9, 7, GW.Colors.SkinColors.QuestGold, "TOPRIGHT", -3)
+    button.offGcdRing = CreateBadgePart(button, 15, 6, GW.Colors.Fallback, "TOPLEFT", 3)
+    button.gwOffGcd = button:CreateTexture(nil, "OVERLAY", nil, 7)
+    button.gwOffGcd:SetTexture("Interface/AddOns/GW2_UI/textures/icons/clock.png")
+    button.gwOffGcd:SetSize(11, 11)
+    button.gwOffGcd:SetPoint("CENTER", button.offGcdRing)
+    button.gwOffGcd:Hide()
+end
+
+function GW.UpdateSpellBadges(button, unbound, offGcd)
+    local settings = GW.settings.windows.spellbook
+    button.isUnbound = settings.markUnbound and unbound or false
+    button.unbound:SetShown(button.isUnbound)
+    button.unboundRing:SetShown(button.isUnbound)
+    offGcd = settings.markOffGcd and offGcd or false
+    button.gwOffGcd:SetShown(offGcd)
+    button.offGcdRing:SetShown(offGcd)
+end
+
+function GW.UpdateTalentBadges(button)
+    local unbound = button.gwBarSpellID ~= nil and GW.settings.windows.spellbook.markUnbound and not GW.IsSpellOnBars(button.gwBarSpellID)
+    GW.UpdateSpellBadges(button, unbound, button.isOffGcd)
+end
+
+function GW.IsOffGcdSpell(spellID, isPassive)
+    if not spellID or spellID <= 0 or not GetSpellBaseCooldown then
+        return false
+    end
+    if isPassive == nil then
+        isPassive = C_Spell.IsSpellPassive(spellID)
+    end
+    if isPassive then
+        return false
+    end
+    local _, gcd = GetSpellBaseCooldown(spellID)
+    return gcd == 0
+end
+
+function GW.AddSpellBadgeTooltipLines(button)
     if button.gwOffGcd and button.gwOffGcd:IsShown() then
         GameTooltip:AddLine(GW.L["Not on the global cooldown"], GW.Colors.TextColors.LightHeader:GetRGB())
+    end
+    if button.isUnbound then
+        GameTooltip:AddLine(SPELLBOOK_SPELL_NOT_ON_ACTION_BAR or GW.L["Not on any action bar"], GW.Colors.SkinColors.QuestGold:GetRGB())
     end
 end
 

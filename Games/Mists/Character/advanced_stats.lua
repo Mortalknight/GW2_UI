@@ -139,7 +139,7 @@ local function CreateStatsFrame(parent, anchorTo, width, globalName, specialOnEn
     return statFrame
 end
 
-local function CreateAdvancedChatStats(parent)
+local function CreateAdvancedCharStats(parent)
     local as = CreateFrame("Frame", nil, parent)
     as:SetPoint("TOPLEFT", parent, "TOPRIGHT", 19, 60)
     as:SetSize(200, parent:GetHeight() + 170)
@@ -197,7 +197,6 @@ local function CreateAdvancedChatStats(parent)
     as.defenseSection.resilReduction = CreateStatsFrame(as.defenseSection, as.defenseSection.block, 180, "DEFENS_RESIL")
     as.defenseSection.pvpPower = CreateStatsFrame(as.defenseSection, as.defenseSection.resilReduction, 180, "PVP_POWER")
 
-    parent.advancedStatsFrameCreated = true
     parent.advancedStatsFrame = as
     as:SetScript("OnShow", updateValues)
     -- a closed window catches up through OnShow
@@ -232,9 +231,13 @@ local function CreateAdvancedChatStats(parent)
     as:RegisterEvent("UPDATE_INVENTORY_ALERTS")
     as:Hide()
 end
-local function ShowAdvancedChatStats(parent)
-    if not parent.advancedStatsFrameCreated then CreateAdvancedChatStats(parent) end
-
-    parent.advancedStatsFrame:SetShown(not parent.advancedStatsFrame:IsShown())
+-- shown nil toggles; the state is kept in the profile and restored when the character window loads
+local function ShowAdvancedCharStats(parent, shown)
+    if not parent.advancedStatsFrame then CreateAdvancedCharStats(parent) end
+    if shown == nil then
+        shown = not parent.advancedStatsFrame:IsShown()
+    end
+    parent.advancedStatsFrame:SetShown(shown)
+    GW.settings.windows.character.advancedStats = shown
 end
-GW.ShowAdvancedChatStats = ShowAdvancedChatStats
+GW.ShowAdvancedCharStats = ShowAdvancedCharStats

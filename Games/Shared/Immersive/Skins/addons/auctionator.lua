@@ -483,6 +483,14 @@ end
 
 local function LoadAuctionatorAddonSkin()
     if not GW.settings.skins.auctionHouse.enabled or not GW.settings.skins.auctionator.enabled or not Auctionator then return end
-    hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", SkinAuctionator)
+    local displayModeHooked = false
+    hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", function()
+        SkinAuctionator()
+        -- switching from the tsm window back scales the shown auction house up again, it shows no second time
+        if not displayModeHooked then
+            displayModeHooked = true
+            hooksecurefunc(AuctionHouseFrame, "SetDisplayMode", SkinAuctionator)
+        end
+    end)
 end
 GW.LoadAuctionatorAddonSkin = LoadAuctionatorAddonSkin
