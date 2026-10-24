@@ -98,7 +98,8 @@ local function GetGameName(game)
     return title
 end
 
--- our own game icons first, else the chat icon blizzard uses for friend alerts (the battle.net logo for unknown games)
+-- our own game icons first, else the icon the client sends for the game like blizzards friends list (it answers
+-- right away once loaded, the first ask loads it), else the chat icon for friend alerts
 local function GetClientIcon(game, name)
     local isWoW = game.clientProgram == BNET_CLIENT_WOW
     local expansion = isWoW and GW.friendsList.expansionData[game.wowProjectID]
@@ -108,7 +109,13 @@ local function GetClientIcon(game, name)
     if file then
         return "|T" .. file .. ":14:14|t"
     end
-    return BNet_GetClientEmbeddedAtlas(game.clientProgram, 14)
+    local icon
+    C_Texture.GetTitleIconTexture(game.clientProgram, Enum.TitleIconVersion.Small, function(success, texture)
+        if success then
+            icon = "|T" .. texture .. ":14:14|t"
+        end
+    end)
+    return icon or BNet_GetClientEmbeddedAtlas(game.clientProgram, 14)
 end
 
 local function GetSection(sections, key, game, order)
