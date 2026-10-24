@@ -109,10 +109,10 @@ local function UpdateZone()
     -- right after a zone change the game has no map for the player yet
     C_Timer.After(0.1, function()
         state.mapID = C_Map.GetBestMapForUnit("player")
+        UpdateCoords()
     end)
     state.instanceMapID = select(8, GetInstanceInfo())
     state.zoneText = GetRealZoneText() or UNKNOWN
-    UpdateCoords()
 end
 
 local hasSkyriding = C_PlayerInfo.GetGlidingInfo and C_EventUtils.IsEventValid("PLAYER_CAN_GLIDE_CHANGED")
