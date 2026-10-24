@@ -10,7 +10,7 @@ local TOOLTIPS = {
     "GameTooltip", "ShoppingTooltip1", "ShoppingTooltip2", "ShoppingTooltip3",
     "ItemRefTooltip", "ItemRefShoppingTooltip1", "ItemRefShoppingTooltip2", "ItemRefShoppingTooltip3",
     "EmbeddedItemTooltip", "FriendsTooltip", "WarCampaignTooltip", "ReputationParagonTooltip", "QuickKeybindTooltip",
-    "GameSmallHeaderTooltip", "GarrisonShipyardMapMissionTooltip", "EventTraceTooltip", "FrameStackTooltip",
+    "GameSmallHeaderTooltip", "GarrisonShipyardMapMissionTooltip", "EventTraceTooltip", "FrameStackTooltip", "SettingsTooltip",
     "BattlePetTooltip", "FloatingBattlePetTooltip", "PetJournalPrimaryAbilityTooltip", "PetJournalSecondaryAbilityTooltip",
     "PetBattlePrimaryAbilityTooltip", "PetBattlePrimaryUnitTooltip", "FloatingPetBattleAbilityTooltip",
     "WorldMapTooltip", "WorldMapCompareTooltip1", "WorldMapCompareTooltip2", "WorldMapCompareTooltip3",
