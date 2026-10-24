@@ -27,9 +27,16 @@ end
 
 local function LoadTSMAddonSkin()
     if not GW.settings.skins.auctionHouse.enabled or not TSM_API or not AuctionatorAHFrameMixin then return end
-    hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", function()
-        AddTsmTab()
+    local function AddTsmTabLater()
         RunNextFrame(AddTsmTab)
+    end
+    local displayModeHooked = false
+    hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", function()
+        AddTsmTabLater()
+        if not displayModeHooked then
+            displayModeHooked = true
+            hooksecurefunc(AuctionHouseFrame, "SetDisplayMode", AddTsmTabLater)
+        end
     end)
 end
 GW.LoadTSMAddonSkin = LoadTSMAddonSkin
