@@ -12,7 +12,7 @@ end
 
 local function Create_Tags()
     AddTag("GW2_Grid:name", "UNIT_NAME_UPDATE", function(unit, realunit)
-        return GW.GetUnitDisplayName(realunit or unit)
+        return GW.GetUnitDisplayName(realunit or unit, UnitName)
     end)
 
     AddTag("GW2_Grid:leaderIcon", "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)
@@ -70,6 +70,8 @@ local function Create_Tags()
 
     AddTag("GW2_Grid:healtValue", "UNIT_HEALTH UNIT_MAXHEALTH", function(unit, realUnit, ...)
         local healthDisplaySetting, shortendHealthValue = ...
+        -- like the name: config mode hands its made up member in as realUnit
+        unit = realUnit or unit
         local formatFunc
 
         shortendHealthValue = stringtoboolean[shortendHealthValue]

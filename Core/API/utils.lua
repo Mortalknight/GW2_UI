@@ -834,9 +834,10 @@ local function Notice(...)
 end
 GW.Notice = Notice
 
--- forever hands out the surname where the other clients hand out the realm: "First Last" there, the name elsewhere
-local function GetUnitDisplayName(unit)
-    local name, realm = UnitName(unit)
+-- forever hands out the surname where the other clients hand out the realm: "First Last" there, the name elsewhere;
+-- getName lets the grid tags pass the UnitName of their environment (made up members in config mode)
+local function GetUnitDisplayName(unit, getName)
+    local name, realm = (getName or UnitName)(unit)
     if GW.Forever and GW.NotSecretValue(realm) and realm and realm ~= "" then
         return name .. " " .. realm
     end
