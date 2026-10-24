@@ -16,13 +16,7 @@
     <Script file ="elements\tags.lua"/>
     <Script file ="elements\missingAuraIndicator.lua"/>
     <Script file ="elements\fader.lua"/>
-    <Script file ="raid40.lua"/>
-    <Script file ="raid25.lua"/>
-    <Script file ="raid10.lua"/>
-    <Script file ="party.lua"/>
-    <Script file ="partyPet.lua"/>
-    <Script file ="raidPet.lua"/>
-    <Script file ="maintank.lua"/>
+    <Script file ="gridFrames.lua"/>
     <Script file ="constructor.lua"/>
     <Script file ="configEnvironment.lua"/>
 </Ui>

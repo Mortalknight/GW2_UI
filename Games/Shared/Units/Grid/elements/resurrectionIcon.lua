@@ -9,8 +9,3 @@ local function Construct_ResurrectionIcon(frame)
 	return summonIcon
 end
 GW.Construct_ResurrectionIcon = Construct_ResurrectionIcon
-
-local function UpdateResurrectionIconSettings(frame)
-    --nothing atm
-end
-GW.UpdateResurrectionIconSettings = UpdateResurrectionIconSettings

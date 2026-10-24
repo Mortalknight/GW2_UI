@@ -31,7 +31,7 @@ local function LoadGroupAuraPanels(p)
 
     -- the ignored auras moved to per grid spell id lists on the grid settings pages
     -- (panel_raid, CreateAuraFilterSection) — for every game version
-    p_auras:AddOptionText(L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], { getterSetter = "playerAuras.missingAuras", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["groupFrames.enabled"] = true}, hidden = GW.Retail})
+    p_auras:AddOptionText(L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], { getterSetter = "playerAuras.missingAuras", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["groupFrames.enabled"] = true}, hidden = GW.isModern})
 
     local raidDebuffKeys, raidDebuffValues = {}, {}
     local settingstable = GW.settings.groupFrames.raidDebuffs

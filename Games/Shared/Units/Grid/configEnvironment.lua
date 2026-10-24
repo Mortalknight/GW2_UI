@@ -60,8 +60,8 @@ local function ForEachChild(group, func, ...)
     end
 end
 
-local function UpdateChild(child, group, groupName)
-    GW["UpdateGrid" .. group.profileName .. "Frame"](child, groupName)
+local function UpdateChild(child, group)
+    group.updateFunc(child)
 end
 
 -- a stable fake member per slot, spread over classes, roles and power types
@@ -263,7 +263,7 @@ end
 local function UpdateStyledChildren(header, group)
     for _, child in ipairs({ group:GetChildren() }) do
         if child.style then
-            UpdateChild(child, header, header.groupName)
+            UpdateChild(child, header)
         end
     end
 end

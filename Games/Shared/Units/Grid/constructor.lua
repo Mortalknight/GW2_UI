@@ -7,56 +7,49 @@ GW.GridGroupHeaders = headers
 
 local profiles = {
     party = {
+        missingAuras = true,
         name = "Party",
         visibility = "[@raid1,exists][@party1,noexists] hide;show",
-        numGroups = 1,
-        styleFunc = GW.GridPartyStyleRegister,
-        updateFunc = GW.UpdateGridPartyFrame
+        numGroups = 1
     },
     partyPet = {
+        isPet = true,
         name = "PartyPet",
         visibility = "[@raid1,exists][@party1,noexists] hide;show",
-        numGroups = 1,
-        styleFunc = GW.GridPartyPetStyleRegister,
-        updateFunc = GW.UpdateGridPartyPetFrame
+        numGroups = 1
     },
     raidPet = {
+        isPet = true,
         name = "RaidPet",
         visibility = "[@raid1,exists] show; hide",
-        numGroups = 8,
-        styleFunc = GW.GridRaidPetStyleRegister,
-        updateFunc = GW.UpdateGridRaidPetFrame
+        numGroups = 8
     },
     raid40 = {
+        missingAuras = true,
+        masterSwitch = true,
         name = "Raid40",
         size = 40,
         visibility = "[@raid26,noexists] hide; show", -- fallback only, see BuildRaidGridVisibility
-        numGroups = 8,
-        styleFunc = GW.GridRaid40StyleRegister,
-        updateFunc = GW.UpdateGridRaid40Frame
+        numGroups = 8
     },
     raid25 = {
+        missingAuras = true,
         name = "Raid25",
         size = 25,
         visibility = "[@raid11,noexists][@raid26,exists] hide;show", -- fallback only, see BuildRaidGridVisibility
-        numGroups = 5,
-        styleFunc = GW.GridRaid25StyleRegister,
-        updateFunc = GW.UpdateGridRaid25Frame
+        numGroups = 5
     },
     raid10 = {
+        missingAuras = true,
         name = "Raid10",
         size = 10,
         visibility = "[@raid1,noexists][@raid11,exists] hide;show",
-        numGroups = 5,
-        styleFunc = GW.GridRaid10StyleRegister,
-        updateFunc = GW.UpdateGridRaid10Frame
+        numGroups = 5
     },
     maintank = {
         name = "Maintank",
         visibility = "[group:raid] show; hide",
-        numGroups = 1,
-        styleFunc = GW.GridMaintankStyleRegister,
-        updateFunc = GW.UpdateGridMaintankFrame
+        numGroups = 1
     },
 }
 
@@ -319,17 +312,6 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
     end
 end
 GW.UpdateGridSettings = UpdateFramesAndHeader
-
-local function GetGroupHeaderForProfile(profile)
-    for headerProfile, header in pairs(GW.GridGroupHeaders) do
-        if headerProfile == profile then
-            return header
-        end
-    end
-
-    return nil
-end
-GW.GetGroupHeaderForProfile = GetGroupHeaderForProfile
 
 local function CreateRaisedText(raised)
 	local text = raised:CreateFontString(nil, "OVERLAY")
@@ -637,7 +619,6 @@ local function CreateHeader(parent, profile, options, overrideName, groupFilter)
     header.groupName = profile
     header.profileName = options.name
     header.numGroups = options.numGroups
-    header.styleFunc = options.styleFunc
     header.updateFunc = options.updateFunc
 
     header:SetVisibility("custom " .. (GetHeaderVisibility(profile) or options.visibility))
@@ -681,7 +662,8 @@ local function Initialize()
 
     -- create headers (and groups for the enabled profiles)
     for profile, options in pairs(profiles) do
-        GW_UF:RegisterStyle("GW2_Grid" .. options.name, options.styleFunc)
+        options.updateFunc = function(frame) GW.UpdateGridFrame(frame, profile, options) end
+        GW_UF:RegisterStyle("GW2_Grid" .. options.name, function(self) return GW.GridStyleRegister(self, options) end)
 
         -- Create a holding header
         local Header = CreateFrame("Frame", "GW2_" .. options.name .. "GridContainer", UIParent, "SecureHandlerStateTemplate")
@@ -689,7 +671,6 @@ local function Initialize()
         Header.groupName = profile
         Header.numGroups = options.numGroups
         Header.profileName = options.name
-        Header.styleFunc = options.styleFunc
         Header.updateFunc = options.updateFunc
         headers[profile] = Header
 

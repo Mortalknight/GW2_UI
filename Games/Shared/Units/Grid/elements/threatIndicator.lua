@@ -42,8 +42,3 @@ local function Construct_ThreatIndicator(frame)
 	return threatIndicator
 end
 GW.Construct_ThreatIndicator = Construct_ThreatIndicator
-
-local function UpdateThreatIndicatorSettings(frame)
-    -- nothing atm
-end
-GW.UpdateThreatIndicatorSettings = UpdateThreatIndicatorSettings

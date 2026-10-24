@@ -9,8 +9,3 @@ local function Construct_SummonIcon(frame)
 	return summonIcon
 end
 GW.Construct_SummonIcon = Construct_SummonIcon
-
-local function UpdateSummonIconSettings(frame)
-    --nothing atm
-end
-GW.UpdateSummonIconSettings = UpdateSummonIconSettings

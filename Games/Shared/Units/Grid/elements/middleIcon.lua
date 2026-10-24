@@ -9,8 +9,3 @@ local function Construct_MiddleIcon(frame)
 	return middleIcon
 end
 GW.Construct_MiddleIcon = Construct_MiddleIcon
-
-local function UpdateMiddleIconSettings(frame)
-    -- nothing atm
-end
-GW.UpdateMiddleIconSettings = UpdateMiddleIconSettings
