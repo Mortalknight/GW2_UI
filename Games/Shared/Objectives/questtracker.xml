@@ -582,9 +582,9 @@
                     </Layer>
                     <Layer level="OVERLAY">
                         <FontString hidden="true" parentKey="progress" text="100" justifyH="CENTER" justifyV="MIDDLE">
-                            <Size x="280" y="10"></Size>
+                            <Size x="280" y="0"></Size>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                             </Anchors>
                             <Shadow x="-1" y="1"/>
                         </FontString>
