@@ -1,8 +1,7 @@
 local _, ns = ...
 local oUF = ns.oUF
 
-local _FRAMES = {}
-local CheckHighlightFrame
+local hooked = {}
 
 local function Update(self, event)
 	local element = self.highlightBorder
@@ -26,51 +25,50 @@ local function Update(self, event)
     end
 end
 
--- Internal updating method
-local timer = 0
-local function CheckHighlightFrameUpdate(_, elapsed)
-	timer = timer + elapsed
+local polling = {}
 
-	if(timer >= .15) then
-		for _, object in next, _FRAMES do
-			if(object:IsShown()) then
-				Update(object, 'OnUpdate')
-			end
-		end
+-- the mouse on a child with its own mouse handling (an aura) gives the frame its leave already,
+-- leaving the frame from there sends nothing more: checked again until the mouse is gone
+local function CheckMouseLeft(self)
+    if self:IsMouseOver() then
+        C_Timer.After(0.15, function() CheckMouseLeft(self) end)
+    else
+        polling[self] = nil
+        Update(self)
+    end
+end
 
-		timer = 0
-	end
+-- the scripts can not be unhooked, a disabled element ignores them
+local function OnEnter(self)
+    if self:IsElementEnabled('HighlightUnitFrame') then
+        Update(self)
+    end
+end
+
+local function OnLeave(self)
+    if not self:IsElementEnabled('HighlightUnitFrame') then return end
+    Update(self)
+    if self:IsMouseOver() and not polling[self] then
+        polling[self] = true
+        CheckMouseLeft(self)
+    end
 end
 
 local function Enable(self)
     self:RegisterEvent("PLAYER_TARGET_CHANGED", Update, true)
-    self:RegisterEvent("UPDATE_MOUSEOVER_UNIT", Update, true)
 
-    if (not CheckHighlightFrame) then
-        CheckHighlightFrame = CreateFrame('Frame')
-        CheckHighlightFrame:SetScript('OnUpdate', CheckHighlightFrameUpdate)
+    if not hooked[self] then
+        hooked[self] = true
+        self:HookScript("OnEnter", OnEnter)
+        self:HookScript("OnLeave", OnLeave)
     end
-
-    table.insert(_FRAMES, self)
-    CheckHighlightFrame:Show()
 
     return true
 end
 
 local function Disable(self)
     self:UnregisterEvent("PLAYER_TARGET_CHANGED", Update, true)
-    self:UnregisterEvent("UPDATE_MOUSEOVER_UNIT", Update, true)
-
-    for index, frame in next, _FRAMES do
-        if(frame == self) then
-            table.remove(_FRAMES, index)
-            break
-        end
-    end
-
-    if(#_FRAMES == 0) then
-        CheckHighlightFrame:Hide()
-    end
+    self.highlightBorder:SetAlpha(0)
 end
 
-oUF:AddElement('HeighlightUnitFrame', Update, Enable, Disable)
+oUF:AddElement('HighlightUnitFrame', Update, Enable, Disable)
