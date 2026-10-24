@@ -753,11 +753,12 @@ local function encounterJournalSkin()
 
     SkinJourneysTab()
 
-    EJ:HookScript("OnShow", function()
+    local function AnchorTabs()
         local tabInfo = {
             { EJ.JourneysTab, GameRulesUtil.EJShouldShowJourneys },
             { EJ.MonthlyActivitiesTab, GameRulesUtil.EJShouldShowTravelersLog },
             { EJ.suggestTab, GameRulesUtil.EJShouldShowSuggestedContent },
+            { EJ.DelvesTab, function() return true end },
             { EJ.dungeonsTab, GameRulesUtil.EJShouldShowDungeons },
             { EJ.raidsTab, GameRulesUtil.EJShouldShowRaids },
             { EJ.LootJournalTab, GameRulesUtil.EJShouldShowItemSets },
@@ -766,9 +767,11 @@ local function encounterJournalSkin()
 
         local previousTab
         for _, tabData in ipairs(tabInfo) do
-            local tab, shouldShow = unpack(tabData)
-            GW.HandleTabs(tab)
-            if shouldShow() and tab then
+            local tab, shouldShow = tabData[1], tabData[2]
+            if tab then
+                GW.HandleTabs(tab)
+            end
+            if tab and shouldShow() then
                 tab:ClearAllPoints()
                 if previousTab then
                     tab:SetPoint("LEFT", previousTab, "RIGHT", 0, 0)
@@ -778,6 +781,12 @@ local function encounterJournalSkin()
                 previousTab = tab
             end
         end
+    end
+
+    -- the delves tab of DelveCompanion anchors the tabs in its own OnShow hook, ours wins a frame later
+    EJ:HookScript("OnShow", function()
+        AnchorTabs()
+        RunNextFrame(AnchorTabs)
     end)
 
     EJ.TutorialsFrame.Contents.StartButton:GwSkinButton(false, true)
