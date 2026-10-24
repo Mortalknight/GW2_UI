@@ -76,6 +76,7 @@ local function UpdateGridMaintankFrame(frame)
     frame.ignoredAuraSpellIDs = GW.settings.groupFrames.maintank.ignoredAuras -- consumed by the retail containers AND the classic aura filter
     frame.pandemicHighlight = GW.settings.groupFrames.maintank.pandemicHighlight
     frame.showDispelIcon = GW.settings.groupFrames.maintank.dispelIcon
+    frame.showDispelBorder = GW.settings.groupFrames.maintank.dispelBorder
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)

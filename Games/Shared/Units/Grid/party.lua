@@ -79,6 +79,7 @@ local function UpdateGridPartyFrame(frame)
     frame.ignoredAuraSpellIDs = GW.settings.groupFrames.party.ignoredAuras -- consumed by the retail containers AND the classic aura filter
     frame.pandemicHighlight = GW.settings.groupFrames.party.pandemicHighlight
     frame.showDispelIcon = GW.settings.groupFrames.party.dispelIcon
+    frame.showDispelBorder = GW.settings.groupFrames.party.dispelBorder
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)

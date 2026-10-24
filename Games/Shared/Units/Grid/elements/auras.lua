@@ -50,6 +50,28 @@ local function GetIndicatorDataForSpellId(indicators, spellId)
     return DEFAULT_INDICATOR, spellId
 end
 
+-- the dispel border inside the whole grid, drawn by the aura button itself: the aura containers only
+-- color regions of their own buttons, and a debuff that goes takes its border along
+local DISPEL_BORDER_EDGES = {{"TOPLEFT", "TOPRIGHT"}, {"BOTTOMLEFT", "BOTTOMRIGHT"}, {"TOPLEFT", "BOTTOMLEFT"}, {"TOPRIGHT", "BOTTOMRIGHT"}}
+function GW.CreateDispelFrameBorder(parent, frame)
+    local size = GW.Scale(2)
+    local edges = {}
+    for _, points in ipairs(DISPEL_BORDER_EDGES) do
+        local edge = parent:CreateTexture(nil, "OVERLAY", nil, 3)
+        edge:SetColorTexture(1, 1, 1)
+        edge:SetPoint(points[1], frame)
+        edge:SetPoint(points[2], frame)
+        if points[1]:sub(1, 3) == points[2]:sub(1, 3) then
+            edge:SetHeight(size)
+        else
+            edge:SetWidth(size)
+        end
+        edge:Hide()
+        tinsert(edges, edge)
+    end
+    return edges
+end
+
 local function Construct_AuraIcon(self, button)
     button.Count:ClearAllPoints()
     button.Count:SetPoint("TOPLEFT")
@@ -79,6 +101,8 @@ local function Construct_AuraIcon(self, button)
     button.background:SetPoint("BOTTOMRIGHT")
     button.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     button.background:Hide()
+
+    button.gwDispelBorder = GW.CreateDispelFrameBorder(button, self:GetParent())
 end
 GW.Construct_AuraIcon = Construct_AuraIcon
 
@@ -103,6 +127,16 @@ local function PostUpdateButton(self, button, unit, data, position)
             button.background:SetVertexColor(GW.Colors.DebuffColors.None:GetRGB())
         end
 
+        local borderMode = parent.showDispelBorder
+        local showBorder = borderMode == "ALL" or (borderMode == "DISPELLABLE" and isDispellable)
+        local dispelColor = showBorder and data.dispelName and GW.Colors.DebuffColors[data.dispelName] or nil
+        for _, edge in ipairs(button.gwDispelBorder) do
+            if dispelColor then
+                edge:SetVertexColor(dispelColor:GetRGB())
+            end
+            edge:SetShown(dispelColor ~= nil)
+        end
+
         local sizeChanged = button.gwAuraSize ~= size
         button.gwAuraSize = size
         button:SetSize(size, size)
@@ -118,6 +152,9 @@ local function PostUpdateButton(self, button, unit, data, position)
     else
         button.gwAuraSize = nil
         button.background:Hide()
+        for _, edge in ipairs(button.gwDispelBorder) do
+            edge:Hide()
+        end
         button.backdrop:Show()
     end
 
@@ -792,6 +829,7 @@ local function Construct_GridAuraContainers(frame, unit)
         unit = unit or frame.__unit,
         pandemicEnabled = function() return frame.pandemicHighlight end,
         dispelIconEnabled = function() return frame.showDispelIcon end,
+        dispelBorderEnabled = function() return frame.showDispelBorder end,
         tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
         anchorPoint = "BOTTOMRIGHT",
         growLeft = true,

@@ -10,6 +10,7 @@ local GW = select(2, ...)
 --     parent = frame,                        -- default UIParent
 --     cancelButtons = "RightButtonUp, RightButtonDown", -- nil = no right-click cancel
 --     tooltipAnchor = { "ANCHOR_BOTTOMLEFT", -5, -5 },
+--     dispelBorderEnabled = function() end,  -- "OFF"/"ALL"/"DISPELLABLE": outlines the parent in the dispel color
 --     refreshEvents = { "UNIT_PET" },        -- events that trigger UpdateAllAuras
 --     refreshUnit = "player",                -- unit for RegisterUnitEvent (nil = regular events)
 --     onSettingsRefresh = function() end,    -- re-derives the config on a central refresh (default GwUpdateLayout)
@@ -316,6 +317,30 @@ local function ApplyAuraOptionRegions(button)
             dispelIcon:SetTexture()
         end
     end
+
+    local dispelBorder = button.gwDispelBorder
+    if dispelBorder then
+        if button.gwDispelBorderEnabled() then
+            if not button.gwDispelBorderRegistered then
+                for _, edge in ipairs(dispelBorder) do
+                    edge:SetColorTexture(1, 1, 1)
+                    button:AddDispelTypeTexture(edge, {
+                        style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+                        showWhenHarmful = true,
+                        showWithoutDispelType = false,
+                        customDispelColorCurve = GetDebuffColorCurve(),
+                    })
+                end
+                button.gwDispelBorderRegistered = true
+            end
+        elseif button.gwDispelBorderRegistered then
+            for _, edge in ipairs(dispelBorder) do
+                button:RemoveDispelTypeTexture(edge)
+                edge:SetTexture()
+            end
+            button.gwDispelBorderRegistered = nil
+        end
+    end
 end
 
 function GW.UpdateAuraOptionRegions()
@@ -358,7 +383,10 @@ end
 
 function GW.AddDispelTypeIcon(button, anchor, group, isEnabled)
     local size = group.dispelIconSize or 12
-    local dispelIcon = anchor:CreateTexture(nil, "OVERLAY", nil, 2)
+    local layer = CreateFrame("Frame", nil, anchor)
+    layer:SetFrameLevel(anchor:GetFrameLevel() + 3)
+    layer:SetAllPoints(anchor)
+    local dispelIcon = layer:CreateTexture(nil, "OVERLAY", nil, 2)
     dispelIcon:SetSize(size, size)
     dispelIcon:SetPoint("CENTER", anchor, "TOPRIGHT", -1, -1)
 
@@ -561,6 +589,18 @@ local function BuildAuraButton(button, container, group)
             if mode == "ALL" then return true end
             return mode == "DISPELLABLE" and group.showDispelIcon or false
         end)
+    end
+
+    -- the border around the whole host frame, with the same modes as the icon
+    local dispelBorderGetter = cfg.dispelBorderEnabled
+    if dispelBorderGetter and group.isDebuff then
+        button.gwDispelBorder = GW.CreateDispelFrameBorder(visual, cfg.parent)
+        button.gwDispelBorderEnabled = function()
+            local mode = dispelBorderGetter()
+            if mode == "ALL" then return true end
+            return mode == "DISPELLABLE" and group.showDispelIcon or false
+        end
+        ApplyAuraOptionRegions(button)
     end
 
     -- built whenever the host wires the setting, so enabling it later needs no reload
