@@ -1,6 +1,9 @@
 local _, ns = ...
 local oUF = ns.oUF
-local GameVersion = oUF.Private.GameVersion
+-- oUF.Private is gone once oUF finished loading, the plugins check the game themselves
+local isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
+local isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 
 local MIN_ALPHA, MAX_ALPHA = 0.35, 1
 
@@ -61,7 +64,7 @@ local function Update(self, event, unit)
     end
 
     -- stuff for Skyriding
-    if GameVersion.Retail then
+    if isRetail then
         if event == "ForceUpdate" then
             isGliding = C_PlayerInfo.GetGlidingInfo()
         elseif event == "PLAYER_IS_GLIDING_CHANGED" then
@@ -91,9 +94,9 @@ local function Update(self, event, unit)
         (element.Combat and UnitAffectingCombat(unit)) or
         (element.PlayerTarget and ns.UnitExists("target")) or
         (element.UnitTarget and ns.UnitExists(unit .. "target")) or
-        (element.DynamicFlight and GameVersion.Retail and not isGliding) or
+        (element.DynamicFlight and isRetail and not isGliding) or
         (element.Health and ns.NotSecretValue(currentHealth) and (currentHealth < UnitHealthMax(unit))) or
-        (element.Vehicle and (GameVersion.Retail or GameVersion.Mists) and UnitHasVehicleUI(unit)) or
+        (element.Vehicle and (isRetail or isMists) and UnitHasVehicleUI(unit)) or
         (element.Hover and GetMouseFocus(self))
     then
         ToggleAlpha(self, element, element.MaxAlpha)
@@ -193,7 +196,7 @@ local options = {
             self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", Update)
             self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", Update)
 
-            if GameVersion.Retail then
+            if isRetail then
                 self:RegisterEvent("UNIT_SPELLCAST_EMPOWER_START", Update)
                 self:RegisterEvent("UNIT_SPELLCAST_EMPOWER_STOP", Update)
             end
@@ -202,14 +205,14 @@ local options = {
     },
     Health = {
         enable = function(self)
-            if GameVersion.Vanilla then
+            if isVanilla then
                 self:RegisterEvent("UNIT_HEALTH_FREQUENT", Update)
             end
 
             self:RegisterEvent("UNIT_HEALTH", Update)
             self:RegisterEvent("UNIT_MAXHEALTH", Update)
         end,
-        events = GameVersion.Vanilla and {"UNIT_HEALTH_FREQUENT","UNIT_HEALTH","UNIT_MAXHEALTH"} or {"UNIT_HEALTH","UNIT_MAXHEALTH"}
+        events = isVanilla and {"UNIT_HEALTH_FREQUENT","UNIT_HEALTH","UNIT_MAXHEALTH"} or {"UNIT_HEALTH","UNIT_MAXHEALTH"}
     },
     MinAlpha = {
         countIgnored = true,
@@ -226,7 +229,7 @@ local options = {
     Smooth = {countIgnored = true},
 }
 
-if GameVersion.Retail then
+if isRetail then
     tinsert(options.Casting.events, "UNIT_SPELLCAST_EMPOWER_START")
     tinsert(options.Casting.events, "UNIT_SPELLCAST_EMPOWER_STOP")
     options.DynamicFlight = {
@@ -237,7 +240,7 @@ if GameVersion.Retail then
     }
 end
 
-if GameVersion.Retail or GameVersion.Mists then
+if isRetail or isMists then
     options.Vehicle = {
         enable = function(self)
             self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update, true)

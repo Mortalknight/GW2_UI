@@ -1,6 +1,7 @@
 local _, ns = ...
 local oUF = ns.oUF
-local GameVersion = oUF.Private.GameVersion
+-- oUF.Private is gone once oUF finished loading, the plugins check the game themselves
+local isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 
 
 local GetRaidTargetIndex = GetRaidTargetIndex
@@ -77,7 +78,7 @@ local function Enable(self)
         self:RegisterEvent("PLAYER_FLAGS_CHANGED", Update)
         self:RegisterEvent("RAID_TARGET_UPDATE", Update, true)
         self:RegisterEvent("UPDATE_INSTANCE_INFO", Update, true)
-        if GameVersion.Vanilla then
+        if isVanilla then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Update)
         else
             self:RegisterEvent("UNIT_HEALTH", Update)
@@ -96,7 +97,7 @@ local function Disable(self)
         self:UnregisterEvent("RAID_TARGET_UPDATE", Update, true)
         self:UnregisterEvent("UPDATE_INSTANCE_INFO", Update, true)
 
-        if GameVersion.Vanilla then
+        if isVanilla then
 			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Update)
         else
             self:UnregisterEvent("UNIT_HEALTH", Update)
