@@ -6,8 +6,21 @@ GW.Colors.TextColors = {
 }
 
 -- wine red: the dominant tone of the settings panel background (settingspanelbg.png,
--- ~48/24/24) lifted to accent brightness while keeping its 2:1:1 hue
-GW.Colors.Accent = CreateColor(150 / 255, 50 / 255, 50 / 255)
+-- ~48/24/24) lifted to accent brightness while keeping its 2:1:1 hue; the expansion
+-- clients take the color of their expansion so the settings show which client is running
+GW.Colors.Accent = (GW.Classic and CreateColor(190 / 255, 150 / 255, 60 / 255)) -- gold
+    or (GW.TBC and CreateColor(90 / 255, 160 / 255, 40 / 255)) -- fel green
+    or (GW.Wrath and CreateColor(70 / 255, 140 / 255, 190 / 255)) -- ice blue
+    or (GW.Cata and CreateColor(200 / 255, 95 / 255, 35 / 255)) -- fire orange
+    or (GW.Mists and CreateColor(40 / 255, 150 / 255, 120 / 255)) -- jade
+    or (GW.Retail and CreateColor(120 / 255, 70 / 255, 180 / 255)) -- void purple
+    or (GW.Forever and CreateColor(225 / 255, 220 / 255, 205 / 255)) -- milk white
+    or CreateColor(150 / 255, 50 / 255, 50 / 255)
+-- the accent lifted towards white, for light that is added or multiplied onto dark art (logo glow, separators)
+do
+    local r, g, b = GW.Colors.Accent:GetRGB()
+    GW.Colors.AccentLight = CreateColor(r + (1 - r) * 0.4, g + (1 - g) * 0.4, b + (1 - b) * 0.4)
+end
 
 GW.Colors.DebuffColors = {
     [GW.Enum.DispelType.None] = CreateColor(220 / 255, 0, 0),

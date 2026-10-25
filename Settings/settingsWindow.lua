@@ -87,6 +87,7 @@ local function BuildSettingsWindow()
         })
     end)
 
+    settingsContainer.brandSeparator:SetVertexColor(GW.Colors.AccentLight:GetRGB())
     settingsContainer.flavorString = settingsContainer:CreateFontString(nil, "OVERLAY")
     settingsContainer.flavorString:SetFont(UNIT_NAME_FONT, 11)
     settingsContainer.flavorString:SetPoint("BOTTOM", settingsContainer.brandSeparator, "TOP", 0, 3)
