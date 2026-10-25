@@ -102,6 +102,7 @@ The following options are listed by priority. The first check that returns true 
 local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
+local GameVersion = Private.GameVersion
 
 local unitSelectionType = Private.unitSelectionType
 
@@ -130,9 +131,9 @@ local function UpdateColor(self, event, unit)
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
 		color = self.colors.reaction[UnitReaction(unit, 'player')]
 	elseif(element.colorSmooth) then
-		if oUF.isModern and self.colors.health:GetCurve() then
+		if (GameVersion.Retail or GameVersion.Forever) and self.colors.health:GetCurve() then
 			color = UnitHealthPercent(unit, true, self.colors.health:GetCurve())
-		elseif not oUF.isModern then
+		elseif not (GameVersion.Retail or GameVersion.Forever) then
 			r, g, b = self:ColorGradient(element.cur or 1, element.max or 1, unpack(element.smoothGradient or self.colors.smooth))
 		end
 	elseif(element.colorHealth) then
@@ -329,9 +330,9 @@ local function Enable(self, unit)
 		element.SetColorReaction = SetColorReaction
 		element.SetColorThreat = SetColorThreat
 
-		if oUF.isRetail then
+		if GameVersion.Retail then
 			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
-		elseif oUF.isClassic then
+		elseif GameVersion.Vanilla then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
@@ -388,9 +389,9 @@ local function Disable(self)
 	if(element) then
 		element:Hide()
 
-		if oUF.isRetail then
+		if GameVersion.Retail then
 			self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
-		elseif oUF.isClassic then
+		elseif GameVersion.Vanilla then
 			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 

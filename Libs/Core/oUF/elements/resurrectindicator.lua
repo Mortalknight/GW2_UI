@@ -24,6 +24,7 @@ A default texture will be applied if the widget is a Texture and doesn't have a 
 
 local _, ns = ...
 local oUF = ns.oUF
+local GameVersion = oUF.Private.GameVersion
 local RESURRECT_ICON = [[Interface\RaidFrame\Raid-Icon-Rez]]
 local RESURRECT_ATLAS = "RaidFrame-Icon-Rez"
 
@@ -100,7 +101,7 @@ local function Enable(self)
 		self:RegisterEvent('INCOMING_RESURRECT_CHANGED', Path)
 
 		if(element:IsObjectType('Texture') and not element:GetTexture()) then
-			if oUF.isModern then
+			if GameVersion.Retail or GameVersion.Forever then
 				element:SetAtlas(RESURRECT_ATLAS)
 			else
 				element:SetTexture(RESURRECT_ICON)

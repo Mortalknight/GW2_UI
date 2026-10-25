@@ -120,6 +120,8 @@ local _ENV = {
 		return string.format('|cff%02x%02x%02x', r * 255, g * 255, b * 255)
 	end,
 	ColorMixin = ColorMixin, -- not available in restricted env for some reason
+	-- gw2: the classic clients have no secrets
+	issecretvalue = issecretvalue or function() return false end,
 }
 
 local _PROXY = setmetatable(_ENV, {__index = _G})
@@ -208,36 +210,34 @@ local tagStrings = {
 	end]],
 
 	['group'] = [[function(unit)
-		local name, server = UnitName(unit)
-		if(server and server ~= '') then
-			name = string.format('%s-%s', name, server)
-		end
-
-		for i=1, GetNumGroupMembers() do
-			local raidName, _, group = GetRaidRosterInfo(i)
-			if( raidName == name ) then
-				return group
+		if(IsInRaid()) then
+			for index = 1, GetNumGroupMembers() do
+				local raidUnit = 'raid' .. index
+				if(C_Secrets.CanCompareUnitTokens(unit, raidUnit) and UnitIsUnit(unit, raidUnit)) then
+					local _, _, group = GetRaidRosterInfo(index)
+					return group
+				end
 			end
 		end
 	end]],
 
 	['holypower'] = [[function()
-		if(C_SpecializationInfo.GetSpecialization() == SPEC_PALADIN_RETRIBUTION) then
-			local num = UnitPower('player', Enum.PowerType.HolyPower)
-			if(num > 0) then
-				return num
-			end
+		local num = UnitPower('player', Enum.PowerType.HolyPower)
+		if(num > 0) then
+			return num
 		end
 	end]],
 
 	['leader'] = [[function(u)
-		if(UnitIsGroupLeader(u)) then
+		local isLeader = UnitIsGroupLeader(u)
+		if(not issecretvalue(isLeader) and isLeader) then
 			return 'L'
 		end
 	end]],
 
 	['leaderlong']  = [[function(u)
-		if(UnitIsGroupLeader(u)) then
+		local isLeader = UnitIsGroupLeader(u)
+		if(not issecretvalue(isLeader) and isLeader) then
 			return 'Leader'
 		end
 	end]],
@@ -312,15 +312,22 @@ local tagStrings = {
 	end]],
 
 	['pvp'] = [[function(u)
-		if(UnitIsPVP(u)) then
+		local successful, isPVP = pcall(UnitIsPVP, u)
+		if(successful and isPVP) then
 			return 'PvP'
 		end
 	end]],
 
 	['raidcolor'] = [[function(u)
 		local _, class = UnitClass(u)
-		if ns.NotSecretValue(class) and class then
-			return _COLORS.class[class]:GenerateHexColorMarkup()
+		if(class ~= nil) then
+			if(issecretvalue(class)) then
+				-- BUG: we can't use custom colors if the class is secret
+				-- https://github.com/oUF-wow/oUF/issues/873
+				return C_ClassColor.GetClassColor(class):GenerateHexColorMarkup()
+			else
+				return _COLORS.class[class]:GenerateHexColorMarkup()
+			end
 		else
 			local id = u:match('arena(%d)$')
 			if(id) then
@@ -346,25 +353,27 @@ local tagStrings = {
 		end
 	end]],
 
-	['runes'] = [[function()
-		local amount = 0
-
-		for i = 1, 6 do
-			local _, _, ready = GetRuneCooldown(i)
-			if(ready) then
-				amount = amount + 1
+	['runes'] = [[function(u)
+		if(UnitClassBase(u) == 'DEATHKNIGHT') then
+			local amount = 0
+			for i = 1, 6 do
+				local _, _, ready = GetRuneCooldown(i)
+				if(ready) then
+					amount = amount + 1
+				end
 			end
+			return amount
 		end
-
-		return amount
 	end]],
 
 	['sex'] = [[function(u)
-		local s = UnitSex(u)
-		if(s == 2) then
-			return 'Male'
-		elseif(s == 3) then
-			return 'Female'
+		local sex = UnitSex(u)
+		if(not issecretvalue(sex)) then
+			if(sex == 2) then
+				return 'Male'
+			elseif(sex == 3) then
+				return 'Female'
+			end
 		end
 	end]],
 
@@ -526,7 +535,7 @@ local tagEvents = {
 	['missinghp']           = 'UNIT_HEALTH UNIT_MAXHEALTH',
 	['missingpp']           = 'UNIT_MAXPOWER UNIT_POWER_UPDATE',
 	['name']                = 'UNIT_NAME_UPDATE',
-	['offline']             = 'UNIT_HEALTH UNIT_CONNECTION',
+	['offline']             = 'UNIT_HEALTH UNIT_CONNECTION PARTY_MEMBER_ENABLE PARTY_MEMBER_DISABLE',
 	['perhp']               = 'UNIT_HEALTH UNIT_MAXHEALTH',
 	['perpp']               = 'UNIT_MAXPOWER UNIT_POWER_UPDATE',
 	['plus']                = 'UNIT_CLASSIFICATION_CHANGED',
@@ -538,7 +547,7 @@ local tagEvents = {
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
 	['smartlevel']          = 'UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED',
 	['soulshards']          = 'UNIT_POWER_UPDATE',
-	['status']              = 'UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION',
+	['status']              = 'UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION PARTY_MEMBER_ENABLE PARTY_MEMBER_DISABLE',
 	['threat']              = 'UNIT_THREAT_SITUATION_UPDATE',
 	['threatcolor']         = 'UNIT_THREAT_SITUATION_UPDATE',
 }
@@ -851,7 +860,7 @@ local function Tag(self, fs, ts, ...)
 	fs.parent = self
 	fs.UpdateTag = getTagFunc(ts)
 
-	if(self.__eventless or fs.frequentUpdates) then
+	if(self:IsEventless() or fs.frequentUpdates) then
 		local timer = 0.5
 		if(type(fs.frequentUpdates) == 'number') then
 			timer = fs.frequentUpdates

@@ -30,9 +30,13 @@ function Private.unitExists(unit)
 	return unit and (UnitExists(unit) or UnitIsVisible(unit))
 end
 
+function Private.unitIsUnit(unit1, unit2)
+	return C_Secrets.CanCompareUnitTokens(unit1, unit2) and UnitIsUnit(unit1, unit2)
+end
+
 local validator = CreateFrame('Frame')
 
-function Private.validateUnit(unit)
+function Private.validateEventUnit(unit)
 	local isOK, _ = pcall(validator.RegisterUnitEvent, validator, 'UNIT_HEALTH', unit)
 	if(isOK) then
 		_, unit = validator:IsEventRegistered('UNIT_HEALTH')
@@ -72,3 +76,44 @@ function Private.unitSelectionType(unit, considerHostile)
 		return validSelectionTypes[UnitSelectionType(unit, true)]
 	end
 end
+
+local interface = select(4, GetBuildInfo())
+Private.GameVersion = {
+	             PTR = interface >= 120105,
+	         Forever = interface >= 16000 and interface < 20000,
+	         Vanilla = interface < 16000,
+	  BurningCrusade = interface >= 20000 and interface < 30000,
+	           Wrath = interface >= 30000 and interface < 40000,
+	   TitanReforged = interface >= 38000 and interface < 40000,
+	       Cataclysm = interface >= 40000 and interface < 50000,
+	           Mists = interface >= 50000 and interface < 60000,
+	        Warlords = interface >= 60000 and interface < 70000,
+	          Legion = interface >= 70000 and interface < 80000,
+	BattleForAzeroth = interface >= 80000 and interface < 90000,
+	     Shadowlands = interface >= 90000 and interface < 100000,
+	    Dragonflight = interface >= 100000 and interface < 110000,
+	       WarWithin = interface >= 110000 and interface < 120000,
+	        Midnight = interface >= 120000 and interface < 130000,
+	       LastTitan = interface >= 130000 and interface < 140000,
+}
+
+-- map fluctuating game versions
+Private.GameVersion.Retail = Private.GameVersion.Midnight
+Private.GameVersion.Classic = Private.GameVersion.Mists
+Private.GameVersion.Anniversary = Private.GameVersion.BurningCrusade
+
+Private.GameCompatibility = {
+	         Vanilla = interface >= 10000,
+	  BurningCrusade = interface >= 20000,
+	           Wrath = interface >= 30000,
+	       Cataclysm = interface >= 40000,
+	           Mists = interface >= 50000,
+	        Warlords = interface >= 60000,
+	          Legion = interface >= 70000,
+	BattleForAzeroth = interface >= 80000,
+	     Shadowlands = interface >= 90000,
+	    Dragonflight = interface >= 100000,
+	       WarWithin = interface >= 110000,
+	        Midnight = interface >= 120000,
+	       LastTitan = interface >= 130000,
+}

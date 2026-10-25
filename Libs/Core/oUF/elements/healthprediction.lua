@@ -82,6 +82,7 @@ A default texture will be applied to the Texture widgets if they don't have a te
 
 local _, ns = ...
 local oUF = ns.oUF
+local GameVersion = oUF.Private.GameVersion
 
 local function UpdateSize(self, event, unit)
 	local element = self.HealthPrediction
@@ -288,11 +289,11 @@ local function Enable(self)
 		self:RegisterEvent('UNIT_MAXHEALTH', Path)
 		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
 
-		if oUF.isClassic then
+		if GameVersion.Vanilla then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
-		if oUF.isModern or oUF.isMists then
+		if GameVersion.Retail or GameVersion.Forever or GameVersion.Mists then
 			self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 			self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
@@ -393,11 +394,11 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
 
-		if oUF.isClassic then
+		if GameVersion.Vanilla then
 			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
-		if oUF.isModern or oUF.isMists then
+		if GameVersion.Retail or GameVersion.Forever or GameVersion.Mists then
 			self:UnregisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 			self:UnregisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 			self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)

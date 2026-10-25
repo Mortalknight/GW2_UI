@@ -91,6 +91,7 @@ The following options are listed by priority. The first check that returns true 
 local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
+local GameVersion = Private.GameVersion
 
 local unitSelectionType = Private.unitSelectionType
 
@@ -121,7 +122,7 @@ local function UpdateColor(self, event, unit)
 	if(self.__unit ~= unit) then return end
 	local element = self.Power
 
-	local isPlayer = UnitIsPlayer(unit) or (oUF.isRetail and UnitInPartyIsAI(unit))
+	local isPlayer = UnitIsPlayer(unit) or (GameVersion.Retail and UnitInPartyIsAI(unit))
 
 	local r, g, b, color, atlas
 	if(element.colorDisconnected and not UnitIsConnected(unit)) then
@@ -154,7 +155,7 @@ local function UpdateColor(self, event, unit)
 			atlas = color:GetAtlas()
 		end
 
-		if(oUF.isModern and element.colorPowerSmooth and color and color:GetCurve()) then
+		if((GameVersion.Retail or GameVersion.Forever) and element.colorPowerSmooth and color and color:GetCurve()) then
 			color = UnitPowerPercent(unit, nil, true, color:GetCurve())
 		end
 	elseif(element.colorClass and isPlayer)
@@ -231,7 +232,7 @@ local function Update(self, event, unit)
 	end
 
 	local displayType, min
-	if(oUF.isModern and element.displayAltPower) then
+	if((GameVersion.Retail or GameVersion.Forever) and element.displayAltPower) then
 		displayType, min = element:GetDisplayPower(unit)
 	end
 
@@ -435,7 +436,7 @@ local function Enable(self, unit)
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
-		if(oUF.isModern and not element.GetDisplayPower) then
+		if((GameVersion.Retail or GameVersion.Forever) and not element.GetDisplayPower) then
 			element.GetDisplayPower = GetDisplayPower
 		end
 
