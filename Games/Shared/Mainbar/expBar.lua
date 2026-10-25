@@ -74,6 +74,11 @@ local function xpbar_OnEnter(self)
         GameTooltip:AddLine(line, 1, 1, 1)
     end
 
+    if self.RepuBar:IsShown() then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine(GW.Colors.SkinColors.Disabled:WrapTextInColorCode(L["Shift-click the reputation bar to show the faction in your reputations"]), nil, nil, nil, true)
+    end
+
     GameTooltip:Show()
 
     SetStatusBarHover(self.ExpBar, true)
@@ -836,6 +841,12 @@ local function LoadXPBar()
 
     experiencebar.UpdateTooltip = xpbar_OnEnter
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)
+    experiencebar:SetScript("OnMouseUp", function(self, button)
+        if button == "LeftButton" and IsShiftKeyDown() and not InCombatLockdown() and self.RepuBar:IsShown() and self.RepuBar:IsMouseOver() then
+            local data = GW.GetWatchedFactionInfo()
+            GW.ShowReputationFaction(data and data.factionID)
+        end
+    end)
     experiencebar:SetScript(
         "OnLeave",
         function(self)

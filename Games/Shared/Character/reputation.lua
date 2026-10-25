@@ -1041,6 +1041,56 @@ local function InitCategorieButton(button, elementData)
     end
 end
 
+-- opens the category of a faction, selects it with its details and scrolls it into view
+local function ShowFaction(factionID)
+    if not factionID or not g_selectionBehavior then return end
+    if GwPaperReputation.input:GetText() ~= "" then
+        GwPaperReputation.input:SetText("")
+    end
+    isSearchResult = nil
+
+    local categories = CollectFactionData(true)
+    local factionIndex
+    for _, data in ipairs(factionDataCache) do
+        if data.factionID == factionID then
+            factionIndex = data.factionIndex
+            break
+        end
+    end
+    if not factionIndex then return end
+    for _, category in ipairs(categories) do
+        if factionIndex >= category.idx and factionIndex <= category.idxLast then
+            SetSelectedHeaderIndexRange(category.idx, category.idxLast)
+            break
+        end
+    end
+
+    local _, details = CollectFactionData()
+    UpdateCategories(GwPaperReputation.Categories, categories)
+    UpdateDetailsData(GwRepDetailFrame.Details, details)
+
+    local function IsFaction(elementData)
+        return elementData.factionID == factionID
+    end
+    g_selectionBehavior:SelectElementDataByPredicate(IsFaction)
+    GwRepDetailFrame.Details:ScrollToElementDataByPredicate(IsFaction, ScrollBoxConstants.AlignCenter)
+end
+
+-- the reputation tab with the given faction picked; without the gw2 character window blizzards frame opens
+function GW.ShowReputationFaction(factionID)
+    if InCombatLockdown() then return end
+    if not (GwPaperReputation and GwPaperReputation:IsVisible()) then
+        ToggleCharacter("ReputationFrame")
+    end
+    if GwPaperReputation then
+        RunNextFrame(function()
+            if GwPaperReputation:IsVisible() then
+                ShowFaction(factionID)
+            end
+        end)
+    end
+end
+
 function GW.LoadReputation(tabContainer)
     local fmGPR = CreateFrame("Frame", "GwPaperReputation", tabContainer, "GwPaperReputationTemplate")
     local fmDetail = CreateFrame("Frame", "GwRepDetailFrame", tabContainer, "GwRepDetailFrameTemplate")
