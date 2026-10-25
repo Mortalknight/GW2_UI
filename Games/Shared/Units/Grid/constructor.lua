@@ -658,6 +658,21 @@ EnsureHeaderGroups = function(profile)
     return true
 end
 
+function GW.GetGridTextTarget(profile)
+    local isPet = profiles[profile].isPet
+    return {
+        lines = {
+            {key = "nameText", label = GW.L["Name Line"]},
+            {key = "healthText", label = HEALTH},
+        },
+        get = function(line) return GW.GetGridTextBlocks(profile, line, isPet) end,
+        set = function(line, blocks)
+            GW.settings.groupFrames[profile][line] = blocks or false
+            GW.UpdateGridSettings(profile)
+        end,
+    }
+end
+
 local function Initialize()
     GW.CreateRaidControlFrame()
     GW.Create_Tags()

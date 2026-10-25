@@ -405,6 +405,19 @@
         </Layers>
     </Frame>
 
+    <Frame name="GwOptionBoxTagDesignerTmpl" frameStrata="HIGH" virtual="true">
+        <Size x="550" y="420"/>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="title" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+
     <Frame name="GwOptionBoxSubHeader" frameStrata="HIGH" virtual="true">
         <Size x="600" y="40"/>
         <Anchors>

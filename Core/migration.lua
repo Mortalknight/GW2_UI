@@ -25,6 +25,48 @@ local function MergeInto(dst, src)
     end
 end
 
+local GRID_TEXT_OPTIONS = {"showRoleIcon", "showTankIcon", "showLeaderIcon", "unitFlags", "unitHealth", "shortHealthValues"}
+local GRID_PROFILES = {party = false, raid10 = false, raid25 = false, raid40 = false, maintank = false, partyPet = true, raidPet = true}
+
+local function MigrateGridTexts(db, isPet)
+    local found = false
+    for _, key in ipairs(GRID_TEXT_OPTIONS) do
+        found = found or db[key] ~= nil
+    end
+    if not found then return end
+
+    local function Value(key, default)
+        if db[key] == nil then return default end
+        return db[key]
+    end
+
+    if db.nameText == nil then
+        local blocks = {}
+        if Value("showTankIcon", not isPet) then tinsert(blocks, {k = "mainTankIcon"}) end
+        if Value("showLeaderIcon", not isPet) then
+            tinsert(blocks, {k = "leaderIcon"})
+            tinsert(blocks, {k = "assistIcon"})
+        end
+        if Value("showRoleIcon", not isPet) then tinsert(blocks, {k = "roleIcon"}) end
+        tinsert(blocks, {k = "name"})
+        local flags = Value("unitFlags", "NONE")
+        if flags ~= "NONE" then
+            tinsert(blocks, {k = "space"})
+            tinsert(blocks, {k = "realmFlag", mode = flags})
+        end
+        db.nameText = blocks
+    end
+
+    if db.healthText == nil then
+        local health = Value("unitHealth", "NONE")
+        db.healthText = health ~= "NONE" and {{k = "healthValue", mode = health, short = Value("shortHealthValues", false)}} or {}
+    end
+
+    for _, key in ipairs(GRID_TEXT_OPTIONS) do
+        db[key] = nil
+    end
+end
+
 local function ConvertLegacyValues(profile)
     profile.updateFramePositionMigrationDone = nil
     profile.chatTimeStampMigrationDone = nil
@@ -189,6 +231,14 @@ local function MigrateProfileSettings(profile)
         minimapSettings.sideButtons = minimapSettings.sideButtons or {}
         minimapSettings.sideButtons.COMPARTMENT = minimapSettings.addonCompartment
         minimapSettings.addonCompartment = nil
+    end
+
+    if type(profile.groupFrames) == "table" then
+        for grid, isPet in pairs(GRID_PROFILES) do
+            if type(profile.groupFrames[grid]) == "table" then
+                MigrateGridTexts(profile.groupFrames[grid], isPet)
+            end
+        end
     end
 
     if type(profile.Minimap) == "table" and next(profile.Minimap) == nil then

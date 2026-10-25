@@ -195,25 +195,12 @@ local function LoadRaid10Profile(panel)
     raid10:AddOption(L["Hide class icon"], nil, {getterSetter = "groupFrames.raid10.hideClassIcon", callback = function() GW.UpdateGridSettings("raid10") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true, ["groupFrames.raid10.classColor"] = false}, group = "gridClass"})
 
     raid10:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "groupFrames.raid10.unitMarkers", callback = function() GW.UpdateGridSettings("raid10") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, group = "gridIcons"})
-    raid10:AddOption(L["Role Icon"], nil, {getterSetter = "groupFrames.raid10.showRoleIcon", callback = function() GW.UpdateGridSettings("raid10") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, group = "gridIcons"})
-    raid10:AddOption(L["Tank Icon"], nil, {getterSetter = "groupFrames.raid10.showTankIcon", callback = function() GW.UpdateGridSettings("raid10") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, group = "gridIcons"})
-    raid10:AddOption(L["Leader/Assist Icon"], nil, {getterSetter = "groupFrames.raid10.showLeaderIcon", callback = function() GW.UpdateGridSettings("raid10") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, group = "gridIcons"})
 
-    raid10:AddOption(L["Shorten health values"], nil, {getterSetter = "groupFrames.raid10.shortHealthValues", callback = function() GW.UpdateGridSettings("raid10") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, hidden = not GW.Retail, group = "gridBars"})
-    raid10:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.raid10.showAbsorbBar", callback = function() GW.UpdateGridSettings("raid10") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "gridBars"})
-    raid10:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, {
-        getterSetter = "groupFrames.raid10.unitHealth",
-        callback = function() GW.UpdateGridSettings("raid10") end,
-        optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
-        optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH},
-        dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true},
-        group = "gridBars"
-    })
+    raid10:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.raid10.showAbsorbBar", callback = function() GW.UpdateGridSettings("raid10") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, hidden = GW.Classic or GW.TBC, group = "gridBars"})
     raid10:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "groupFrames.raid10.showPowerBar", callback = function() GW.UpdateGridSettings("raid10") end, optionsList = {"NONE", "HEALER", "ALL"}, optionNames = {NONE, HEALER, ALL}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, group = "gridBars"})
     raid10:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "groupFrames.raid10.healthBarTexture", callback = function() GW.UpdateGridSettings("raid10") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, group = "gridBars"})
 
     raid10:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "groupFrames.raid10.auraTooltipInCombat", callback = function() GW.UpdateGridSettings("raid10") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, group = "gridMisc"})
-    raid10:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "groupFrames.raid10.unitFlags", callback = function() GW.UpdateGridSettings("raid10") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE, L["Different Than Own"], ALL}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, hidden = not GW.Retail, group = "gridMisc"})
 
     raid10:AddOption(L["Start Near Center"], L["The initial group will start near the center and grow out."], {getterSetter = "groupFrames.raid10.anchorFromCenter", callback = function() GW.UpdateGridSettings("raid10", true) end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}, group = "gridLayout"})
 
@@ -272,6 +259,9 @@ local function LoadRaid10Profile(panel)
     raid10:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "groupFrames.raid10.sortMethod", callback = function() UpdateGridSettingsAndRefreshPreview("raid10", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true, ["groupFrames.raid10.groupBy"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
 
     CreateClassSortebalList(raid10, "groupFrames.raid10.groupByClassOrder", "groupFrames.raid10.groupBy")
+
+    raid10:AddGroupHeader(L["Design Texts"])
+    raid10:AddOptionTagDesigner(L["Design Texts"], L["Build the name line and the health text from blocks."], {target = GW.GetGridTextTarget("raid10"), dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid10.enabled"] = true}})
     return raid10
 end
 
@@ -310,25 +300,12 @@ local function LoadRaid25Profile(panel)
     raid25:AddOption(L["Hide class icon"], nil, {getterSetter = "groupFrames.raid25.hideClassIcon", callback = function() GW.UpdateGridSettings("raid25") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true, ["groupFrames.raid25.classColor"] = false}, group = "gridClass"})
 
     raid25:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "groupFrames.raid25.unitMarkers", callback = function() GW.UpdateGridSettings("raid25") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, group = "gridIcons"})
-    raid25:AddOption(L["Role Icon"], nil, {getterSetter = "groupFrames.raid25.showRoleIcon", callback = function() GW.UpdateGridSettings("raid25") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, group = "gridIcons"})
-    raid25:AddOption(L["Tank Icon"], nil, {getterSetter = "groupFrames.raid25.showTankIcon", callback = function() GW.UpdateGridSettings("raid25") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, group = "gridIcons"})
-    raid25:AddOption(L["Leader/Assist Icon"], nil, {getterSetter = "groupFrames.raid25.showLeaderIcon", callback = function() GW.UpdateGridSettings("raid25") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, group = "gridIcons"})
 
-    raid25:AddOption(L["Shorten health values"], nil, {getterSetter = "groupFrames.raid25.shortHealthValues", callback = function() GW.UpdateGridSettings("raid25") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, hidden = not GW.Retail, group = "gridBars"})
-    raid25:AddOption(L["Show absorb bar"] , nil, {getterSetter = "groupFrames.raid25.showAbsorbBar", callback = function() GW.UpdateGridSettings("raid25") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "gridBars"})
-    raid25:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, {
-        getterSetter = "groupFrames.raid25.unitHealth",
-        callback = function() GW.UpdateGridSettings("raid25") end,
-        optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
-        optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH},
-        dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true},
-        group = "gridBars"
-    })
+    raid25:AddOption(L["Show absorb bar"] , nil, {getterSetter = "groupFrames.raid25.showAbsorbBar", callback = function() GW.UpdateGridSettings("raid25") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, hidden = GW.Classic or GW.TBC, group = "gridBars"})
     raid25:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "groupFrames.raid25.showPowerBar", callback = function() GW.UpdateGridSettings("raid25") end, optionsList = {"NONE", "HEALER", "ALL"}, optionNames = {NONE, HEALER, ALL}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, group = "gridBars"})
     raid25:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "groupFrames.raid25.healthBarTexture", callback = function() GW.UpdateGridSettings("raid25") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, group = "gridBars"})
 
     raid25:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "groupFrames.raid25.auraTooltipInCombat", callback = function() GW.UpdateGridSettings("raid25") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, group = "gridMisc"})
-    raid25:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "groupFrames.raid25.unitFlags", callback = function() GW.UpdateGridSettings("raid25") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE, L["Different Than Own"], ALL}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, hidden = not GW.Retail, group = "gridMisc"})
 
     raid25:AddOption(L["Start Near Center"], L["The initial group will start near the center and grow out."], {getterSetter = "groupFrames.raid25.anchorFromCenter", callback = function() GW.UpdateGridSettings("raid25", true) end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}, group = "gridLayout"})
 
@@ -387,6 +364,9 @@ local function LoadRaid25Profile(panel)
     raid25:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "groupFrames.raid25.sortMethod", callback = function() UpdateGridSettingsAndRefreshPreview("raid25", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true, ["groupFrames.raid25.groupBy"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
 
     CreateClassSortebalList(raid25, "groupFrames.raid25.groupByClassOrder", "groupFrames.raid25.groupBy")
+
+    raid25:AddGroupHeader(L["Design Texts"])
+    raid25:AddOptionTagDesigner(L["Design Texts"], L["Build the name line and the health text from blocks."], {target = GW.GetGridTextTarget("raid25"), dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid25.enabled"] = true}})
     return raid25
 end
 
@@ -425,20 +405,12 @@ local function LoadRaid40Profile(panel)
     raid40:AddOption(L["Hide class icon"], nil, {getterSetter = "groupFrames.raid40.hideClassIcon", callback = function() GW.UpdateGridSettings("raid40") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true, ["groupFrames.raid40.classColor"] = false}, group = "gridClass"})
 
     raid40:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "groupFrames.raid40.unitMarkers", callback = function() GW.UpdateGridSettings("raid40") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, group = "gridIcons"})
-    raid40:AddOption(L["Role Icon"], nil, {getterSetter = "groupFrames.raid40.showRoleIcon", callback = function() GW.UpdateGridSettings("raid40") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, group = "gridIcons"})
-    raid40:AddOption(L["Tank Icon"], nil, {getterSetter = "groupFrames.raid40.showTankIcon", callback = function() GW.UpdateGridSettings("raid40") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, group = "gridIcons"})
-    raid40:AddOption(L["Leader/Assist Icon"], nil, {getterSetter = "groupFrames.raid40.showLeaderIcon", callback = function() GW.UpdateGridSettings("raid40") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, group = "gridIcons"})
 
-    raid40:AddOption(L["Shorten health values"], nil, {getterSetter = "groupFrames.raid40.shortHealthValues", callback = function() GW.UpdateGridSettings("raid40") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, hidden = not GW.Retail, group = "gridBars"})
-    raid40:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.raid40.showAbsorbBar", callback = function() GW.UpdateGridSettings("raid40") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "gridBars"})
-    raid40:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, {
-        getterSetter = "groupFrames.raid40.unitHealth", callback = function() GW.UpdateGridSettings("raid40") end, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, group = "gridBars"
-    })
+    raid40:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.raid40.showAbsorbBar", callback = function() GW.UpdateGridSettings("raid40") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, hidden = GW.Classic or GW.TBC, group = "gridBars"})
     raid40:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "groupFrames.raid40.showPowerBar", callback = function() GW.UpdateGridSettings("raid40") end, optionsList = {"NONE", "HEALER", "ALL"}, optionNames = {NONE, HEALER, ALL}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, group = "gridBars"})
     raid40:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "groupFrames.raid40.healthBarTexture", callback = function() GW.UpdateGridSettings("raid40") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, group = "gridBars"})
 
     raid40:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "groupFrames.raid40.auraTooltipInCombat", callback = function() GW.UpdateGridSettings("raid40") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, group = "gridMisc"})
-    raid40:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "groupFrames.raid40.unitFlags", callback = function() GW.UpdateGridSettings("raid40") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE, L["Different Than Own"], ALL}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, hidden = not GW.Retail, group = "gridMisc"})
 
     raid40:AddOption(L["Start Near Center"], L["The initial group will start near the center and grow out."], {getterSetter = "groupFrames.raid40.anchorFromCenter", callback = function() GW.UpdateGridSettings("raid40", true) end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}, group = "gridLayout"})
 
@@ -499,6 +471,9 @@ local function LoadRaid40Profile(panel)
     raid40:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "groupFrames.raid40.sortDirection", callback = function() UpdateGridSettingsAndRefreshPreview("raid40", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}})
     raid40:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "groupFrames.raid40.sortMethod", callback = function() UpdateGridSettingsAndRefreshPreview("raid40", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true, ["groupFrames.raid40.groupBy"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
     CreateClassSortebalList(raid40, "groupFrames.raid40.groupByClassOrder", "groupFrames.raid40.groupBy")
+
+    raid40:AddGroupHeader(L["Design Texts"])
+    raid40:AddOptionTagDesigner(L["Design Texts"], L["Build the name line and the health text from blocks."], {target = GW.GetGridTextTarget("raid40"), dependence = {["groupFrames.enabled"] = true, ["groupFrames.raid40.enabled"] = true}})
     return raid40
 end
 
@@ -537,24 +512,11 @@ local function LoadMaintankProfile(panel)
     tank:AddOption(L["Hide class icon"], nil, {getterSetter = "groupFrames.maintank.hideClassIcon", callback = function() GW.UpdateGridSettings("maintank") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true, ["groupFrames.maintank.classColor"] = false}, group = "gridClass"})
 
     tank:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "groupFrames.maintank.unitMarkers", callback = function() GW.UpdateGridSettings("maintank") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, group = "gridIcons"})
-    tank:AddOption(L["Role Icon"], nil, {getterSetter = "groupFrames.maintank.showRoleIcon", callback = function() GW.UpdateGridSettings("maintank") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, group = "gridIcons"})
-    tank:AddOption(L["Tank Icon"], nil, {getterSetter = "groupFrames.maintank.showTankIcon", callback = function() GW.UpdateGridSettings("maintank") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, group = "gridIcons"})
-    tank:AddOption(L["Leader/Assist Icon"], nil, {getterSetter = "groupFrames.maintank.showLeaderIcon", callback = function() GW.UpdateGridSettings("maintank") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, group = "gridIcons"})
 
-    tank:AddOption(L["Shorten health values"], nil, {getterSetter = "groupFrames.maintank.shortHealthValues", callback = function() GW.UpdateGridSettings("maintank") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, hidden = not GW.Retail, group = "gridBars"})
-    tank:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.maintank.showAbsorbBar", callback = function() GW.UpdateGridSettings("maintank") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "gridBars"})
-    tank:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, {
-        getterSetter = "groupFrames.maintank.unitHealth",
-        callback = function() GW.UpdateGridSettings("maintank") end,
-        optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
-        optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH},
-        dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true},
-        group = "gridBars"
-    })
+    tank:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.maintank.showAbsorbBar", callback = function() GW.UpdateGridSettings("maintank") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, hidden = GW.Classic or GW.TBC, group = "gridBars"})
     tank:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "groupFrames.maintank.healthBarTexture", callback = function() GW.UpdateGridSettings("maintank") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, group = "gridBars"})
 
     tank:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "groupFrames.maintank.auraTooltipInCombat", callback = function() GW.UpdateGridSettings("maintank") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, group = "gridMisc"})
-    tank:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "groupFrames.maintank.unitFlags", callback = function() GW.UpdateGridSettings("maintank") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE, L["Different Than Own"], ALL}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}, hidden = not GW.Retail, group = "gridMisc"})
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do
@@ -606,6 +568,8 @@ local function LoadMaintankProfile(panel)
     tank:AddOptionSlider(L["Horizontal Spacing"], nil, { getterSetter = "groupFrames.maintank.horizontalSpacing", callback = function() UpdateGridSettingsThrottled("maintank", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}})
     tank:AddOptionSlider(L["Vertical Spacing"], nil, { getterSetter = "groupFrames.maintank.verticalSpacing", callback = function() UpdateGridSettingsThrottled("maintank", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}})
 
+    tank:AddGroupHeader(L["Design Texts"])
+    tank:AddOptionTagDesigner(L["Design Texts"], L["Build the name line and the health text from blocks."], {target = GW.GetGridTextTarget("maintank"), dependence = {["groupFrames.enabled"] = true, ["groupFrames.maintank.enabled"] = true}})
     return tank
 end
 
@@ -642,16 +606,7 @@ local function LoadRaidPetProfile(panel)
     p:AddOption(ENABLE, L["Show a separate grid for raid pets"], {getterSetter = "groupFrames.raidPet.enabled", isMasterToggle = true, callback = function(value) p.preview:SetEnabled(value); GW.UpdateGridSettings("raidPet", nil, true) end, dependence = {["groupFrames.enabled"] = true}})
     p:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "groupFrames.raidPet.unitMarkers", callback = function() GW.UpdateGridSettings("raidPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}, group = "gridIcons"})
 
-    p:AddOption(L["Shorten health values"], nil, {getterSetter = "groupFrames.raidPet.shortHealthValues", callback = function() GW.UpdateGridSettings("raidPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}, hidden = not GW.Retail, group = "gridBars"})
-    p:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.raidPet.showAbsorbBar", callback = function() GW.UpdateGridSettings("raidPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "gridBars"})
-    p:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, {
-        getterSetter = "groupFrames.raidPet.unitHealth",
-        callback = function() GW.UpdateGridSettings("raidPet") end,
-        optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
-        optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH},
-        dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true},
-        group = "gridBars"
-    })
+    p:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.raidPet.showAbsorbBar", callback = function() GW.UpdateGridSettings("raidPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}, hidden = GW.Classic or GW.TBC, group = "gridBars"})
     p:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "groupFrames.raidPet.healthBarTexture", callback = function() GW.UpdateGridSettings("raidPet") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}, group = "gridBars"})
 
     p:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "groupFrames.raidPet.auraTooltipInCombat", callback = function() GW.UpdateGridSettings("raidPet") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}, group = "gridMisc"})
@@ -708,6 +663,8 @@ local function LoadRaidPetProfile(panel)
     p:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "groupFrames.raidPet.sortDirection", callback = function() UpdateGridSettingsAndRefreshPreview("raidPet", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
     p:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "groupFrames.raidPet.sortMethod", callback = function() UpdateGridSettingsAndRefreshPreview("raidPet", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
 
+    p:AddGroupHeader(L["Design Texts"])
+    p:AddOptionTagDesigner(L["Design Texts"], L["Build the name line and the health text from blocks."], {target = GW.GetGridTextTarget("raidPet"), dependence = {["groupFrames.enabled"] = true, ["groupFrames.raidPet.enabled"] = true}})
     return p
 end
 local function LoadPartyProfile(panel)
@@ -768,25 +725,12 @@ local function LoadPartyProfile(panel)
     party:AddOption(L["Hide class icon"], nil, {getterSetter = "groupFrames.party.hideClassIcon", callback = function() GW.UpdateGridSettings("party") end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true, ["groupFrames.party.classColor"] = false}, group = "gridClass"})
 
     party:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "groupFrames.party.unitMarkers", callback = function() GW.UpdateGridSettings("party") end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridIcons"})
-    party:AddOption(L["Role Icon"], nil, {getterSetter = "groupFrames.party.showRoleIcon", callback = function() GW.UpdateGridSettings("party") end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridIcons"})
-    party:AddOption(L["Tank Icon"], nil, {getterSetter = "groupFrames.party.showTankIcon", callback = function() GW.UpdateGridSettings("party") end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridIcons"})
-    party:AddOption(L["Leader/Assist Icon"], nil, {getterSetter = "groupFrames.party.showLeaderIcon", callback = function() GW.UpdateGridSettings("party") end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridIcons"})
 
-    party:AddOption(L["Shorten health values"], nil, {getterSetter = "groupFrames.party.shortHealthValues", callback = function() GW.UpdateGridSettings("party") end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, hidden = not GW.Retail, group = "gridBars"})
-    party:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.party.showAbsorbBar", callback = function() GW.UpdateGridSettings("party") end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "gridBars"})
-    party:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, {
-        getterSetter = "groupFrames.party.unitHealth",
-        callback = function() GW.UpdateGridSettings("party") end,
-        optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
-        optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH},
-        dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true},
-        group = "gridBars"
-    })
+    party:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.party.showAbsorbBar", callback = function() GW.UpdateGridSettings("party") end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, hidden = GW.Classic or GW.TBC, group = "gridBars"})
     party:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "groupFrames.party.showPowerBar", callback = function() GW.UpdateGridSettings("party") end, optionsList = {"NONE", "HEALER", "ALL"}, optionNames = {NONE, HEALER, ALL}, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridBars"})
     party:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "groupFrames.party.healthBarTexture", callback = function() GW.UpdateGridSettings("party") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridBars"})
 
     party:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "groupFrames.party.auraTooltipInCombat", callback = function() GW.UpdateGridSettings("party") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridMisc"})
-    party:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "groupFrames.party.unitFlags", callback = function() GW.UpdateGridSettings("party") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE, L["Different Than Own"], ALL}, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, hidden = not GW.Retail, group = "gridMisc"})
 
     party:AddOption(L["Start Near Center"], L["The initial group will start near the center and grow out."], {getterSetter = "groupFrames.party.anchorFromCenter", callback = function() GW.UpdateGridSettings("party", true) end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridLayout"})
     party:AddOption(L["Player frame in group"], L["Show your player frame as part of the group"], {getterSetter = "groupFrames.party.showPlayer", callback = function() GW.UpdateGridSettings("party", true) end, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridLayout"})
@@ -847,6 +791,9 @@ local function LoadPartyProfile(panel)
     party:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "groupFrames.party.sortDirection", callback = function() UpdateGridSettingsAndRefreshPreview("party", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}})
     party:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "groupFrames.party.sortMethod", callback = function() UpdateGridSettingsAndRefreshPreview("party", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true, ["groupFrames.party.groupBy"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
     CreateClassSortebalList(party, "groupFrames.party.groupByClassOrder", "groupFrames.party.groupBy")
+
+    party:AddGroupHeader(L["Design Texts"])
+    party:AddOptionTagDesigner(L["Design Texts"], L["Build the name line and the health text from blocks."], {target = GW.GetGridTextTarget("party"), dependence = {["groupFrames.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}})
     return party
 end
 
@@ -883,16 +830,7 @@ local function LoadPartyPetProfile(panel)
     p:AddOption(ENABLE, L["Show a separate grid for party pets"], {getterSetter = "groupFrames.partyPet.enabled", isMasterToggle = true, callback = function(value) p.preview:SetEnabled(value); GW.UpdateGridSettings("partyPet", nil, true) end, dependence = {["groupFrames.enabled"] = true}})
     p:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "groupFrames.partyPet.unitMarkers", callback = function() GW.UpdateGridSettings("partyPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridIcons"})
 
-    p:AddOption(L["Shorten health values"], nil, {getterSetter = "groupFrames.partyPet.shortHealthValues", callback = function() GW.UpdateGridSettings("partyPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, hidden = not GW.Retail, group = "gridBars"})
-    p:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.partyPet.showAbsorbBar", callback = function() GW.UpdateGridSettings("partyPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath, group = "gridBars"})
-    p:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, {
-        getterSetter = "groupFrames.partyPet.unitHealth",
-        callback = function() GW.UpdateGridSettings("partyPet") end,
-        optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
-        optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH},
-        dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true},
-        group = "gridBars"
-    })
+    p:AddOption(L["Show absorb bar"], nil, {getterSetter = "groupFrames.partyPet.showAbsorbBar", callback = function() GW.UpdateGridSettings("partyPet") end, dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, hidden = GW.Classic or GW.TBC, group = "gridBars"})
     p:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "groupFrames.partyPet.healthBarTexture", callback = function() GW.UpdateGridSettings("partyPet") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}, group = "gridBars"})
 
     p:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "groupFrames.partyPet.auraTooltipInCombat", callback = function() GW.UpdateGridSettings("partyPet") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true}, group = "gridMisc"})
@@ -952,6 +890,8 @@ local function LoadPartyPetProfile(panel)
     p:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "groupFrames.partyPet.sortDirection", callback = function() UpdateGridSettingsAndRefreshPreview("partyPet", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true}})
     p:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "groupFrames.partyPet.sortMethod", callback = function() UpdateGridSettingsAndRefreshPreview("partyPet", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true,  ["PARTY_GRID_ACTIVE"] = true}})
 
+    p:AddGroupHeader(L["Design Texts"])
+    p:AddOptionTagDesigner(L["Design Texts"], L["Build the name line and the health text from blocks."], {target = GW.GetGridTextTarget("partyPet"), dependence = {["groupFrames.enabled"] = true, ["groupFrames.partyPet.enabled"] = true, ["PARTY_GRID_ACTIVE"] = true}})
     return p
 end
 

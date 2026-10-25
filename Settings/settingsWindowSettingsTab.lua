@@ -48,6 +48,7 @@ local optionTypes = {
     header      = {template = "GwOptionBoxHeader", frame = "Frame", newLine = true},
     subHeader   = {template = "GwOptionBoxSubHeader", frame = "Frame", newLine = true},
     note        = {template = "GwOptionBoxNote", frame = "Frame", newLine = true},
+    tagDesigner = {template = "GwOptionBoxTagDesignerTmpl", frame = "Frame", newLine = true},
 }
 
 GwSettingsWindowSettingsTabMixin = {}
@@ -113,6 +114,10 @@ local function GetOptionRowExtent(opt)
         local visibleRows = tonumber(opt.maxVisibleRows) or 5
 
         return math.max(DEFAULT_ROW_EXTENT, ROW_PAD_Y * 2 + 30 + (visibleRows * entryHeight))
+    end
+
+    if opt and opt.optionType == "tagDesigner" then
+        return ROW_PAD_Y * 2 + GW.TAG_DESIGNER_HEIGHT
     end
 
     return DEFAULT_ROW_EXTENT
@@ -493,7 +498,8 @@ local function CreateOrGetOptionWidget(panel, opt)
     SetupMasterToggleStyle(of)
 
     -- subtle hover feedback on every interactive row (master toggles have their own)
-    if not of.isMasterToggle and opt.optionType ~= "header" and opt.optionType ~= "subHeader" and opt.optionType ~= "note" then
+    if not of.isMasterToggle and opt.optionType ~= "header" and opt.optionType ~= "subHeader" and opt.optionType ~= "note"
+        and opt.optionType ~= "tagDesigner" then
         local hover = of:CreateTexture(nil, "BACKGROUND")
         hover:SetAlpha(0)
         hover:SetAllPoints(of)

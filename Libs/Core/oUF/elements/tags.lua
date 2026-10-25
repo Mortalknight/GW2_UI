@@ -185,15 +185,17 @@ local tagStrings = {
 	end]],
 
 	['cpoints'] = [[function(u)
-		local cp = UnitPower(u, Enum.PowerType.ComboPoints)
-
-		if(cp > 0) then
-			return cp
-		end
+		-- gw2: secret on group members in combat, TruncateWhenZero takes secrets
+		return C_StringUtil.TruncateWhenZero(UnitPower(u, Enum.PowerType.ComboPoints))
 	end]],
 
 	['creature'] = [[function(u)
-		return UnitCreatureFamily(u) or UnitCreatureType(u)
+		-- gw2: a secret can not be tested
+		local family = UnitCreatureFamily(u)
+		if(issecretvalue(family) or family) then
+			return family
+		end
+		return UnitCreatureType(u)
 	end]],
 
 	['curmana'] = [[function(unit)
@@ -228,8 +230,13 @@ local tagStrings = {
 	end]],
 
 	['happiness'] = [[function(u)
-		if(GameVersion.Forever and u == 'pet') then
-			local happiness = C_PetInfo.GetPetHappiness()
+		if(u == 'pet') then
+			local happiness
+			if(GameVersion.Forever) then
+				happiness = C_PetInfo.GetPetHappiness()
+			elseif(GetPetHappiness) then -- gw2: the classic clients have the old api, retail has none
+				happiness = GetPetHappiness()
+			end
 			if(happiness == 1) then
 				return ':<'
 			elseif(happiness == 2) then
@@ -336,7 +343,7 @@ local tagStrings = {
 
 	['pvp'] = [[function(u)
 		local successful, isPVP = pcall(UnitIsPVP, u)
-		if(successful and isPVP) then
+		if(successful and not issecretvalue(isPVP) and isPVP) then -- gw2: secret check
 			return 'PvP'
 		end
 	end]],
@@ -459,6 +466,7 @@ local tagStrings = {
 
 	['threat'] = [[function(u)
 		local s = UnitThreatSituation(u)
+		if(issecretvalue(s)) then return end -- gw2: secret check
 		if(s == 1) then
 			return '++'
 		elseif(s == 2) then
@@ -469,7 +477,9 @@ local tagStrings = {
 	end]],
 
 	['threatcolor'] = [[function(u)
-		return _COLORS.threat[UnitThreatSituation(u) or 0]:GenerateHexColorMarkup()
+		local s = UnitThreatSituation(u)
+		if(issecretvalue(s)) then return end -- gw2: secret check
+		return _COLORS.threat[s or 0]:GenerateHexColorMarkup()
 	end]],
 }
 

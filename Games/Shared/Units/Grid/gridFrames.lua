@@ -12,6 +12,19 @@ local function GetMissingAuras()
     return missingAuras
 end
 
+local DEFAULT_TEXT_BLOCKS = {
+    nameText = {{k = "mainTankIcon"}, {k = "leaderIcon"}, {k = "assistIcon"}, {k = "roleIcon"}, {k = "name"}},
+    healthText = {},
+}
+local DEFAULT_PET_TEXT_BLOCKS = {
+    nameText = {{k = "name"}},
+    healthText = {},
+}
+
+function GW.GetGridTextBlocks(profile, line, isPet)
+    return GW.settings.groupFrames[profile][line] or (isPet and DEFAULT_PET_TEXT_BLOCKS or DEFAULT_TEXT_BLOCKS)[line]
+end
+
 local function OnEnter(self)
     GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
     GameTooltip:SetUnit(self.__unit)
@@ -56,8 +69,6 @@ function GW.UpdateGridFrame(frame, profile, options)
     frame.useClassColor = settings.classColor
     frame.hideClassIcon = settings.hideClassIcon
     frame.showResscoureBar = settings.showPowerBar
-    frame.showRealmFlags = settings.unitFlags
-    frame.healthStringFormat = settings.unitHealth
     frame.showTargetmarker = settings.unitMarkers
     frame.unitWidth = tonumber(settings.width)
     frame.unitHeight = tonumber(settings.height)
@@ -67,7 +78,6 @@ function GW.UpdateGridFrame(frame, profile, options)
     frame.showBuffs = settings.showBuffs
     frame.showAuraTooltipInCombat = settings.auraTooltipInCombat
     frame.missingAuras = options.missingAuras and GetMissingAuras() or nil
-    frame.shortendHealthValue = settings.shortHealthValues
     frame.showAbsorbBar = settings.showAbsorbBar
 
     frame.raidIndicators = {}
@@ -81,9 +91,8 @@ function GW.UpdateGridFrame(frame, profile, options)
     frame.raidIndicatorBarWidth = GW.settings.groupFrames.indicators.barWidth
     frame.raidDebuffScale = GW.settings.groupFrames.raidDebuffsScale
     frame.raidDispelDebuffScale = GW.settings.groupFrames.dispelDebuffsScale
-    frame.showRoleIcon = settings.showRoleIcon
-    frame.showTankIcon = settings.showTankIcon
-    frame.showLeaderAssistIcon = settings.showLeaderIcon
+    frame.nameTagString = GW.BuildTagString(GW.GetGridTextBlocks(profile, "nameText", options.isPet))
+    frame.healthTagString = GW.BuildTagString(GW.GetGridTextBlocks(profile, "healthText", options.isPet))
     frame.healthBarTexture = settings.healthBarTexture
 
     -- retail filtering

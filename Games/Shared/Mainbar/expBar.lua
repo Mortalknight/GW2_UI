@@ -74,9 +74,9 @@ local function xpbar_OnEnter(self)
         GameTooltip:AddLine(line, 1, 1, 1)
     end
 
-    if self.RepuBar:IsShown() then
+    if self.RepuBar:IsShown() and GwPaperReputation then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(GW.Colors.SkinColors.Disabled:WrapTextInColorCode(L["Shift-click the reputation bar to show the faction in your reputations"]), nil, nil, nil, true)
+        GameTooltip:AddLine(GW.Colors.SkinColors.Disabled:WrapTextInColorCode(L["Shift-click the Reputation bar to show the Faction in your Reputations"]), nil, nil, nil, true)
     end
 
     GameTooltip:Show()

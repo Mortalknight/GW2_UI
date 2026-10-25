@@ -17,6 +17,7 @@
     <Include file ="Classpower\Load.xml"/>
     <Include file ="party.xml"/>
     <Script file ="party.lua"/>
+    <Script file ="tagTexts.lua"/>
     <Include file ="Grid\Load.xml"/>
 
 </Ui>

@@ -21,6 +21,7 @@
     <Script file = "settingsWindowOverviewTab.lua"/>
     <Script file = "settingsWindowProfilesTab.lua"/>
     <Script file = "settingsWindowSettingsTab.lua"/>
+    <Script file = "tagDesigner.lua"/>
 
     <Include file = "panels/Load.xml"/>
 </Ui>

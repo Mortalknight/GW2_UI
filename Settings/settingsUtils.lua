@@ -442,6 +442,15 @@ function GwSettingsPanelMixin:AddOptionNote(text, values)
     return CreateOption("note", self, text, nil, values)
 end
 
+function GwSettingsPanelMixin:AddOptionTagDesigner(name, desc, values)
+    local opt = CreateOption("tagDesigner", self, name, desc, values)
+    if not opt then return end
+
+    opt.target = values.target
+
+    return opt
+end
+
 function GwSettingsPanelMixin:AddOptionColorPicker(name, desc, values)
     return CreateOption("colorPicker", self, name, desc, values)
 end
@@ -2146,6 +2155,11 @@ local function SettingsInitOptionWidget(of, v, panel)
         of.title:SetTextColor(0.95, 0.85, 0.65, 1)
         of.title:SetWordWrap(true)
         of.title:SetText(v.name or "")
+    elseif v.optionType == "tagDesigner" then
+        of.title:Hide()
+        of:SetScript("OnEnter", nil)
+        of:SetScript("OnLeave", nil)
+        GW.CreateTagDesigner(of, v.target, v.desc)
     end
 end
 GW.SettingsInitOptionWidget = SettingsInitOptionWidget
