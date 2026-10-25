@@ -118,10 +118,9 @@ local function CreateClassPowerTextPreview(parent, lines)
     local y = -8
     for _, line in ipairs(lines) do
         local bar = CreateFrame("StatusBar", nil, preview, "GwStatusPowerBarModernTemplate")
-        bar.bar = bar
         bar:SetSize(313, line.key == "littleManaText" and 5 or 14)
         bar:SetPoint("TOPLEFT", 0, y)
-        bar:SetPowerBarVisuals(Enum.PowerType.Mana, "MANA")
+        bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/mana.png")
         bar:SetMinMaxValues(0, 1)
         bar:SetValue(0.84)
         bar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, line.key == "littleManaText" and GW.Enum.TextSizeType.Small
