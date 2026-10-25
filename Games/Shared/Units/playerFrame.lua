@@ -12,10 +12,6 @@ function GwPlayerUnitFrameMixin:OnEvent(event, ...)
         self.powerbar:UpdatePowerData()
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE", "PORTRAITS_UPDATED") then
         self:UnitFrameData()
-        if event == "PLAYER_LEVEL_UP" then
-            local level = ...
-            self:UnitFrameData(level)
-        end
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         self:UpdateHealthBar()
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
@@ -30,6 +26,37 @@ function GwPlayerUnitFrameMixin:OnEvent(event, ...)
     elseif event == "RESURRECT_REQUEST" then
         PlaySound(SOUNDKIT.UI_70_BOOST_THANKSFORPLAYING_SMALLER, "Master")
     end
+end
+
+-- sizes and anchors of the bars from the settings, shared by the frame and its text preview
+function GwPlayerUnitFrameMixin:ApplyBarLayout()
+    self.healthContainer:SetSize(GW.settings.unitframes.player.healthBarSize.width, GW.settings.unitframes.player.healthBarSize.height)
+    self.powerbarContainer:SetSize(GW.settings.unitframes.player.healthBarSize.width, GW.settings.unitframes.player.powerBarSize.height) -- width is shared
+    if self.fsrMana then
+        self.fsrMana:UpdateWidth(GW.settings.unitframes.player.healthBarSize.width) -- width is shared
+    end
+    if self.fsrEnergy then
+        self.fsrEnergy:UpdateWidth(GW.settings.unitframes.player.healthBarSize.width) -- width is shared
+    end
+    self.powerbar.spark:SetHeight(GW.settings.unitframes.player.powerBarSize.height)
+    self.healthString:ClearAllPoints()
+    self.healthString:SetPoint("LEFT", self.health, "LEFT", GW.settings.unitframes.player.healthBarTextOffset.x, GW.settings.unitframes.player.healthBarTextOffset.y)
+
+    local powerHeight = self.powerbarContainer:GetHeight()
+    local yOffset = (powerHeight + 1) / 2
+
+    self.healthContainer:ClearAllPoints()
+    self.healthContainer:SetPoint("LEFT", self.portrait, "RIGHT", 4, yOffset)
+
+    self.powerbarContainer:ClearAllPoints()
+    self.powerbarContainer:SetPoint("TOPLEFT", self.healthContainer, "BOTTOMLEFT", 0, -1)
+
+    self.healthbarBackground:ClearAllPoints()
+    self.healthbarBackground:SetPoint("TOPLEFT", self.healthContainer, "TOPLEFT", 0, 0)
+    self.healthbarBackground:SetSize(self.healthContainer:GetWidth(), self.healthContainer:GetHeight())
+
+    self:SetHeight(40 + self.healthContainer:GetHeight() + self.powerbarContainer:GetHeight())
+    self:SetWidth(90 + self.healthContainer:GetWidth())
 end
 
 function GwPlayerUnitFrameMixin:ToggleSettings()
@@ -54,44 +81,12 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
         self.absorbbg:SetStatusBarColor(248/255, 232/255, 159/255, 0.66)
     end
 
-    self.shortendHealthValues = GW.settings.unitframes.healthGlobe.shortHealthValues
-    self.showHealthValue = GW.settings.unitframes.healthGlobe.healthValue == "VALUE" or GW.settings.unitframes.healthGlobe.healthValue == "BOTH"
-    self.showHealthPrecentage = GW.settings.unitframes.healthGlobe.healthValue == "PREC" or GW.settings.unitframes.healthGlobe.healthValue == "BOTH"
     self.classColor = GW.settings.unitframes.player.classColor
     self.showAbsorbBar = GW.settings.unitframes.player.showAbsorbBar
-    self.powerbar.showBarValues = GW.settings.classpower.showValue
 
     self:SetScale(GW.settings.unitframes.player.scale)
-    self.healthContainer:SetSize(GW.settings.unitframes.player.healthBarSize.width, GW.settings.unitframes.player.healthBarSize.height)
-    self.powerbarContainer:SetSize(GW.settings.unitframes.player.healthBarSize.width, GW.settings.unitframes.player.powerBarSize.height) -- width is shared
-    if self.fsrMana then
-        self.fsrMana:UpdateWidth(GW.settings.unitframes.player.healthBarSize.width) -- width is shared
-    end
-    if self.fsrEnergy then
-        self.fsrEnergy:UpdateWidth(GW.settings.unitframes.player.healthBarSize.width) -- width is shared
-    end
-    self.powerbar.spark:SetHeight(GW.settings.unitframes.player.powerBarSize.height)
-    self.powerbar.label:SetShown(GW.settings.unitframes.player.powerBarSize.height >= 10)
-    self.healthString:ClearAllPoints()
-    self.healthString:SetPoint("LEFT", self.health, "LEFT", GW.settings.unitframes.player.healthBarTextOffset.x, GW.settings.unitframes.player.healthBarTextOffset.y)
-    self.powerbar.label:ClearAllPoints()
-    self.powerbar.label:SetPoint("LEFT", self.powerbar, "LEFT", GW.settings.unitframes.player.powerBarTextOffset.x, GW.settings.unitframes.player.powerBarTextOffset.y)
-
-    local powerHeight = self.powerbarContainer:GetHeight()
-    local yOffset = (powerHeight + 1) / 2
-
-    self.healthContainer:ClearAllPoints()
-    self.healthContainer:SetPoint("LEFT", self.portrait, "RIGHT", 4, yOffset)
-
-    self.powerbarContainer:ClearAllPoints()
-    self.powerbarContainer:SetPoint("TOPLEFT", self.healthContainer, "BOTTOMLEFT", 0, -1)
-
-    self.healthbarBackground:ClearAllPoints()
-    self.healthbarBackground:SetPoint("TOPLEFT", self.healthContainer, "TOPLEFT", 0, 0)
-    self.healthbarBackground:SetSize(self.healthContainer:GetWidth(), self.healthContainer:GetHeight())
-
-    self:SetHeight(40 + self.healthContainer:GetHeight() + self.powerbarContainer:GetHeight())
-    self:SetWidth(90 + self.healthContainer:GetWidth())
+    self:ApplyBarLayout()
+    self:ApplyTextTags()
 
     local frameFaderSettings = GW.settings.unitframes.player.fader
     if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget then

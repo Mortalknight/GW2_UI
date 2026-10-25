@@ -11,12 +11,6 @@ local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
 local arenaFrames = {}
 local arenaPrepFrames = {}
 
-local FractionIcon = {
-    Alliance = "|TInterface/AddOns/GW2_UI/textures/battleground/alliance.png:16:16:0:0|t ",
-    Horde    = "|TInterface/AddOns/GW2_UI/textures/battleground/horde.png:16:16:0:0|t ",
-    NONE     = ""
-}
-
 local TEST_OPPONENTS = {
     {name = "Lightbringer", spec = "Holy", role = "HEALER", class = "PALADIN", classIndex = 2, health = 0.63, power = 0.55, powerToken = "MANA", cast = "Flash of Light", castTime = 1.5, auras = {{spellID = 118, dispelType = GW.Enum.DispelType.Magic}}},
     {name = "Shadowstep", spec = "Subtlety", role = "DAMAGER", class = "ROGUE", classIndex = 4, health = 0.88, power = 0.7, powerToken = "ENERGY", auras = {{spellID = 1022}}},
@@ -25,40 +19,9 @@ local TEST_OPPONENTS = {
 
 GwArenaFrameMixin = CreateFromMixins(GwObjectivesUnitFrameMixin)
 
+-- the name line is a tag of the text designer, a new opponent behind the token needs a push
 function GwArenaFrameMixin:UpdateName()
-    local inArena = C_PvP.GetZonePVPInfo()
-    local inBG = UnitInBattleground("player")
-    local name = GW.GetUnitDisplayName(self.gwUnit) or UNKNOWNOBJECT
-    local nameString = UNKNOWNOBJECT
-
-    if inArena == "arena" then
-        local specID = GetArenaOpponentSpec(self.id)
-        -- 12.1.5 hands out the opponent spec as a secret, blizzards display helper still resolves the name
-        if GW.IsSecretValue(specID) then
-            nameString = format("%s - %s", name, UnitFrameUtil.GetArenaOpponentSpecDisplayInfo(self.id).specName)
-        elseif specID and specID > 0 then
-            local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.gwUnit))
-            if role and nameRoleIcon[role] and specName and name then
-                nameString = nameRoleIcon[role] .. name .. " - " .. specName
-            else
-                nameString = name
-            end
-        else
-            nameString = name
-        end
-    elseif inBG then
-        local role = UnitGroupRolesAssigned(self.gwUnit)
-        local englishFaction = UnitFactionGroup(self.gwUnit)
-        if GW.NotSecretValue(role) and role and nameRoleIcon[role] and englishFaction and FractionIcon[englishFaction] and name then
-            nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. name
-        else
-            nameString = name
-        end
-    else
-        nameString = name
-    end
-
-    self.name:SetText(nameString)
+    self:UpdateTextTags()
     self.class = select(2, UnitClass(self.gwUnit))
     self.classIndex = select(3, UnitClass(self.gwUnit))
     if self.class then
@@ -100,6 +63,7 @@ function GwArenaFrameMixin:OnEvent(event, unitId)
 end
 
 function GwArenaFrameMixin:ApplySettings()
+    self:ApplyTextTags()
     self:ApplyAuraSettings(GW.settings.objectives.arenaFrames.auras)
     if self:IsShown() and not self.gwTest then
         self:UpdateCastbar(GW.settings.objectives.arenaFrames.castbar)
@@ -109,12 +73,14 @@ end
 function GwArenaFrameMixin:StartTest(data)
     UnregisterUnitWatch(self)
     self.gwTest = true
-    self.name:SetText(nameRoleIcon[data.role] .. data.name .. " - " .. data.spec)
+    -- the lines of the text designer with the values of the test opponent, as in an arena
+    local unit = {name = data.name, role = data.role, spec = data.spec, inBattleground = false,
+        health = data.health * 1000000, maxHealth = 1000000, power = data.power * 100, maxPower = 100}
+    self:SetTestTexts(unit)
     SetClassIcon(self.icon, data.classIndex)
     local color = GWGetClassColor(data.class, true)
     self.health:SetMinMaxValues(0, 1)
     self.health:SetValue(data.health)
-    self.health.value:SetText(GW.RoundInt(data.health * 100) .. "%")
     self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
     self.power:SetMinMaxValues(0, 1)
     self.power:SetValue(data.power)
@@ -262,11 +228,28 @@ function GwObjectivesArenaContainerMixin:SetUpFramePosition()
     end
 end
 
-function GwObjectivesArenaContainerMixin:RegisterFrame(i)
-    local arenaFrame = CreateFrame("Button", "GwArenaFrame" .. i, GwQuestTracker, GW.isModern and "GwQuestTrackerArenaFramePingableTemplate" or "GwQuestTrackerArenaFrameTemplate")
+-- the look of an arena frame, shared by the frames and their text preview; the texts come from the text designer
+local function CreateArenaFrameLook(name, parent)
+    local arenaFrame = CreateFrame("Button", name, parent, GW.isModern and "GwQuestTrackerArenaFramePingableTemplate" or "GwQuestTrackerArenaFrameTemplate")
     GW.SetFrameRoleset(arenaFrame, "arenaFrames")
-    local unit = "arena" .. i
     Mixin(arenaFrame, GwArenaFrameMixin)
+    arenaFrame:InitTexts("arena")
+    arenaFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
+    return arenaFrame
+end
+
+-- the made up shaman of the preview
+GW.SetUnitFrameTextPreviewBuilder("arena", function()
+    local frame = CreateArenaFrameLook("GwArenaFrameTextPreview")
+    frame.gwUnit = "arena"
+    SetClassIcon(frame.icon, 7)
+    frame:Show()
+    return frame
+end)
+
+function GwObjectivesArenaContainerMixin:RegisterFrame(i)
+    local arenaFrame = CreateArenaFrameLook("GwArenaFrame" .. i, GwQuestTracker)
+    local unit = "arena" .. i
 
     arenaFrame.gwUnit = unit
     arenaFrame.id = i
@@ -282,12 +265,6 @@ function GwObjectivesArenaContainerMixin:RegisterFrame(i)
     RegisterUnitWatch(arenaFrame)
     arenaFrame:EnableMouse(true)
     arenaFrame:RegisterForClicks("AnyDown")
-
-    arenaFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
-    arenaFrame.marker:Hide()
-    arenaFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
-
-    arenaFrame.power.value:Hide()
 
     -- crowd control on the opponent first, then the important buffs (defensives, trinket effects)
     arenaFrame:InitCastbarAndAuras({ "ARENA_OPPONENT_UPDATE", "PLAYER_ENTERING_WORLD" }, {

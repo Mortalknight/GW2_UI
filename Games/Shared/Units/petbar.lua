@@ -166,6 +166,7 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
         SetPortraitTexture(self.portrait, "pet")
+        self:UpdateTextTags()
         self:UpdateHealthBar()
         self:UpdatePowerBar(true)
         if GetPetHappinessInfo then
@@ -187,6 +188,7 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
     elseif GW.IsIn(event, "PLAYER_TARGET_CHANGED", "PET_BAR_UPDATE_USABLE", "PET_UI_UPDATE", "PET_BAR_UPDATE", "PLAYER_CONTROL_GAINED", "PLAYER_CONTROL_LOST", "PLAYER_FARSIGHT_FOCUS_CHANGED", "SPELLS_CHANGED", "UNIT_FLAGS") or (event == "UNIT_PET" and unit == "player") then
         SetPortraitTexture(self.portrait, "pet")
         if event == "UNIT_PET" then
+            self:UpdateTextTags()
             self:UpdateHealthBar()
             self:UpdatePowerBar(true)
             if self.auras.ForceUpdate then -- Classic path; on Retail the container refreshes itself
@@ -345,9 +347,7 @@ end
 
 function GwPlayerPetFrameMixin:UpdateSettings()
     self.showAbsorbBar = GW.settings.unitframes.pet.showAbsorbBar
-    self.shortendHealthValues = GW.settings.unitframes.pet.shortHealthValues
-    self.showHealthValue = GW.settings.unitframes.pet.healthValueRaw
-    self.showHealthPrecentage = GW.settings.unitframes.pet.healthValuePercent
+    self:ApplyTextTags()
 
     if GW.isModern and self.aurasContainer then
         self:ApplyAuraSettings()
@@ -374,10 +374,36 @@ function GwPlayerPetFrameMixin:UpdateSettings()
     self:OnEvent("UNIT_PET", "player")
 end
 
-local function LoadPetFrame(lm)
-    local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent,
+-- the look of the pet frame, shared by the frame and its text preview; the texts sit in the middle of the bars
+local function CreatePetFrame(name)
+    local frame = CreateFrame("Button", name, UIParent,
         GW.isModern and "GwPlayerPetFramePingableTemplate" or "GwPlayerPetFrameTemplate")
-    GW.SetFrameRoleset(playerPetFrame, "unitFrames")
+    GW.SetFrameRoleset(frame, "unitFrames")
+    Mixin(frame, GW.UnitFrameTextMixin)
+    frame.gwUnit = "pet"
+    frame.buttons = {}
+    frame.centeredTexts = true
+
+    if not GW.isModern then
+        GW.AddStatusbarAnimation(frame.health, true)
+        GW.AddStatusbarAnimation(frame.powerbar, true)
+    end
+
+    frame.healthString = frame.health.text
+    frame.health.customMaskSize = 64
+    frame.powerbar.customMaskSize = 64
+    frame.powerbar.label = frame.powerbar:CreateFontString(nil, "OVERLAY")
+
+    frame.health:SetStatusBarColor(HEALTH_COLOR.r, HEALTH_COLOR.g, HEALTH_COLOR.b)
+    frame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
+    return frame
+end
+
+GW.SetUnitFrameTextPreviewBuilder("pet", function() return CreatePetFrame("GwPlayerPetFrameTextPreview") end,
+    function(frame) frame:TogglePortraitSide() end)
+
+local function LoadPetFrame(lm)
+    local playerPetFrame = CreatePetFrame("GwPlayerPetFrame")
 
     if GW.isModern then
         playerPetFrame.hpValues = CreateUnitHealPredictionCalculator()
@@ -386,17 +412,7 @@ local function LoadPetFrame(lm)
         playerPetFrame.hpValues:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MissingHealth)
         playerPetFrame.hpValues:SetHealAbsorbMode(Enum.UnitHealAbsorbMode.ReducedByIncomingHeals)
         playerPetFrame.hpValues:SetIncomingHealOverflowPercent(1)
-    else
-        GW.AddStatusbarAnimation(playerPetFrame.health, true)
-        GW.AddStatusbarAnimation(playerPetFrame.powerbar, true)
     end
-
-    playerPetFrame.healthString = playerPetFrame.health.text
-    playerPetFrame.health.customMaskSize = 64
-    playerPetFrame.powerbar.customMaskSize = 64
-
-    playerPetFrame.buttons = {}
-    playerPetFrame.gwUnit = "pet"
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
@@ -406,9 +422,6 @@ local function LoadPetFrame(lm)
     GW.AddToClique(playerPetFrame)
     RegisterStateDriver(playerPetFrame, "visibility",
         "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
-
-    playerPetFrame.health:SetStatusBarColor(HEALTH_COLOR.r, HEALTH_COLOR.g, HEALTH_COLOR.b)
-    playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
 
     playerPetFrame:SetScript("OnEnter", function(self)
         GameTooltip:ClearLines()

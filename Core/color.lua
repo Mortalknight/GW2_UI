@@ -22,6 +22,13 @@ do
     GW.Colors.AccentLight = CreateColor(r + (1 - r) * 0.4, g + (1 - g) * 0.4, b + (1 - b) * 0.4)
 end
 
+-- the stagger text of a brewmaster: light, moderate, heavy
+GW.Colors.StaggerTextColors = {
+    CreateColor(0.4, 0.9, 0.4),
+    CreateColor(0.95, 0.85, 0.3),
+    CreateColor(0.9, 0.4, 0.4),
+}
+
 GW.Colors.DebuffColors = {
     [GW.Enum.DispelType.None] = CreateColor(220 / 255, 0, 0),
     [GW.Enum.DispelType.Curse] = CreateColor(97 / 255, 72 / 255, 177 / 255),

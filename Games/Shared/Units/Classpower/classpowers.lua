@@ -86,11 +86,79 @@ local function barChange_OnEvent(self, event)
     end
 end
 
+-- the texts of the mana bars and the class bar; mana shows the mana also while another power is active
+local DEFAULT_TEXT_BLOCKS = {
+    manaText = {{k = "power", mode = "CUR", mana = true}},
+    littleManaText = {{k = "power", mode = "CUR", mana = true}},
+    classBarText = {{k = "classBarValue"}},
+}
+
+local function GetClassPowerTextBlocks(line)
+    return GW.settings.classpower[line] or DEFAULT_TEXT_BLOCKS[line]
+end
+
+-- the bars write no text of their own, they show tags of the text designer
+local function ApplyTextTags(self)
+    local bars = {manaText = {self.exbar, self.exbarSecret}, littleManaText = {self.lmb, self.lmbSecret},
+        classBarText = GW.Retail and {self.defaultResourceBar} or {}}
+    for line, lineBars in pairs(bars) do
+        local tagString = GW.BuildTagString(GetClassPowerTextBlocks(line))
+        for _, bar in ipairs(lineBars) do
+            bar.gwUnit = "player"
+            GW.SetFontStringTag(bar, bar.label, tagString)
+            bar.label:UpdateTag()
+        end
+    end
+end
+
+-- the class power bars in the text preview: a mana bar, the little one below and on retail the class bar
+local function CreateClassPowerTextPreview(parent, lines)
+    local preview = CreateFrame("Frame", nil, parent)
+    preview.texts = {}
+    local y = -8
+    for _, line in ipairs(lines) do
+        local bar = CreateFrame("StatusBar", nil, preview, "GwStatusPowerBarModernTemplate")
+        bar.bar = bar
+        bar:SetSize(313, line.key == "littleManaText" and 5 or 14)
+        bar:SetPoint("TOPLEFT", 0, y)
+        bar:SetPowerBarVisuals(Enum.PowerType.Mana, "MANA")
+        bar:SetMinMaxValues(0, 1)
+        bar:SetValue(0.84)
+        bar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, line.key == "littleManaText" and GW.Enum.TextSizeType.Small
+            or GW.Enum.TextSizeType.Normal, "SHADOW")
+        preview.texts[line.key] = bar.label
+        y = y - bar:GetHeight() - 14
+    end
+    preview:SetSize(313, -y)
+    return preview
+end
+
+function GW.GetClassPowerTextTarget()
+    local lines = {
+        {key = "manaText", label = GW.L["Mana Bar"]},
+        {key = "littleManaText", label = GW.L["Small Mana Bar"]},
+    }
+    if GW.Retail then
+        tinsert(lines, {key = "classBarText", label = GW.L["Class Bar"]})
+    end
+    return {
+        createPreview = CreateClassPowerTextPreview,
+        player = true,
+        categories = {power = true, color = true, text = true},
+        lines = lines,
+        get = GetClassPowerTextBlocks,
+        -- nil goes back to the built-in line
+        set = function(line, blocks)
+            GW.settings.classpower[line] = blocks or false
+            if GwPlayerClassPower then
+                ApplyTextTags(GwPlayerClassPower)
+            end
+        end,
+    }
+end
+
 local function UpdateSettings(self, skipEvent)
-    self.exbarSecret.showBarValues = GW.settings.classpower.showValue
-    self.exbar.showBarValues = GW.settings.classpower.showValue
-    self.lmb.showBarValues = GW.settings.classpower.showValue
-    self.lmbSecret.showBarValues = GW.settings.classpower.showValue
+    ApplyTextTags(self)
     if skipEvent then return end
     barChange_OnEvent(self.decay, "FORCE_UPDATE")
 end

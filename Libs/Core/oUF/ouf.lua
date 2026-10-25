@@ -86,7 +86,10 @@ Private.frame_metatable = frame_metatable
 
 local objectElementUpdateFuncs = {}
 function Private.insertObjectElementUpdateFunc(object, func)
-	table.insert(objectElementUpdateFuncs[object], func)
+	-- gw2: GW frames that are no oUF objects use the tags too and have no element list
+	if(objectElementUpdateFuncs[object]) then
+		table.insert(objectElementUpdateFuncs[object], func)
+	end
 end
 
 for k, v in next, {

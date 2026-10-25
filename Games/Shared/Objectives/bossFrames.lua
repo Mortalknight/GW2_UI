@@ -48,6 +48,7 @@ function GwBossFrameMixin:UpdateAll()
 end
 
 function GwBossFrameMixin:ApplySettings()
+    self:ApplyTextTags()
     self:ApplyAuraSettings(GW.settings.objectives.bossFrames.auras)
     if self:IsShown() and not self.gwTest then
         self:UpdateCastbar(GW.settings.objectives.bossFrames.castbar)
@@ -94,14 +95,15 @@ end
 function GwBossFrameMixin:StartTest(data)
     UnregisterUnitWatch(self)
     self.gwTest = true
-    self.name:SetText(data.name)
+    -- the lines of the text designer with the values of the test boss
+    local unit = {name = data.name, health = data.health * 1000000, maxHealth = 1000000,
+        power = data.power * 100, maxPower = 100}
+    self:SetTestTexts(unit)
     self.health:SetMinMaxValues(0, 1)
     self.health:SetValue(data.health)
-    self.health.value:SetText(GW.RoundInt(data.health * 100) .. "%")
     self.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Hostile:GetRGB())
     self.power:SetMinMaxValues(0, 1)
     self.power:SetValue(data.power)
-    self.power.value:SetText(GW.RoundInt(data.power * 100) .. "%")
     self.power:SetStatusBarColor(GW.Colors.PowerBarCustomColors.MANA:GetRGB())
     self.icon:Show()
     self.marker:Hide()
@@ -202,11 +204,28 @@ function GwObjectivesBossContainerMixin:SetUpFramePosition()
     end
 end
 
-function GwObjectivesBossContainerMixin:RegisterFrame(i)
-    local bossFrame = CreateFrame("Button", "GwBossFrame" .. i, GwQuestTracker, GW.isModern and "GwQuestTrackerBossFramePingableTemplate" or "GwQuestTrackerBossFrameTemplate")
+-- the look of a boss frame, shared by the frames and their text preview; the texts come from the text designer
+local function CreateBossFrameLook(name, parent)
+    local bossFrame = CreateFrame("Button", name, parent, GW.isModern and "GwQuestTrackerBossFramePingableTemplate" or "GwQuestTrackerBossFrameTemplate")
     GW.SetFrameRoleset(bossFrame, "unitFrames")
-    local unit = "boss" .. i
     Mixin(bossFrame, GwBossFrameMixin)
+    bossFrame:InitTexts("boss")
+    bossFrame.icon:SetVertexColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Boss]:GetRGB())
+    return bossFrame
+end
+
+GW.SetUnitFrameTextPreviewBuilder("boss", function()
+    local frame = CreateBossFrameLook("GwBossFrameTextPreview")
+    frame.gwUnit = "boss"
+    frame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss.png")
+    frame.icon:Show()
+    frame:Show()
+    return frame
+end)
+
+function GwObjectivesBossContainerMixin:RegisterFrame(i)
+    local bossFrame = CreateBossFrameLook("GwBossFrame" .. i, GwQuestTracker)
+    local unit = "boss" .. i
 
     bossFrame.id = i
     bossFrame.gwUnit = unit
@@ -221,11 +240,6 @@ function GwObjectivesBossContainerMixin:RegisterFrame(i)
     RegisterUnitWatch(bossFrame)
     bossFrame:EnableMouse(true)
     bossFrame:RegisterForClicks("AnyDown")
-
-    bossFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
-    bossFrame.marker:Hide()
-
-    bossFrame.icon:SetVertexColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Boss]:GetRGB())
 
     bossFrame:InitCastbarAndAuras({ "INSTANCE_ENCOUNTER_ENGAGE_UNIT", "PLAYER_ENTERING_WORLD" }, {
         { key = "debuffs", filter = "HARMFUL|PLAYER", candidateFilters = { nameplateShowPersonal = true }, maxFrameCount = 3, isDebuff = true },

@@ -123,6 +123,7 @@ local function LoadObjectivesPanel(sWindow)
             GW.DeactivateSettingsPreview("bossFrames")
         end
     end, dependence = {["objectives.enabled"] = true}, forceNewLine = true, hidden = GW.Classic or GW.TBC})
+    p:AddOptionTagDesigner(L["Design Texts"], L["Build the name line, the health text and the power text from blocks."], {target = GW.GetUnitFrameTextTarget("boss", function() if GW.UpdateBossFramesSettings then GW.UpdateBossFramesSettings() end end), dependence = {["objectives.enabled"] = true}, hidden = GW.Classic or GW.TBC})
 
     p:AddGroupHeader(HUD_EDIT_MODE_ARENA_FRAMES_LABEL, {hidden = GW.Classic})
     p:AddOption(HUD_EDIT_MODE_CAST_BAR_LABEL, L["Shows the casts of the opponents in place of their power bar."], {getterSetter = "objectives.arenaFrames.castbar", callback = GW.UpdateArenaFramesSettings, dependence = {["objectives.enabled"] = true}, hidden = GW.Classic})
@@ -134,6 +135,7 @@ local function LoadObjectivesPanel(sWindow)
             GW.DeactivateSettingsPreview("arenaFrames")
         end
     end, dependence = {["objectives.enabled"] = true}, forceNewLine = true, hidden = GW.Classic})
+    p:AddOptionTagDesigner(L["Design Texts"], L["Build the name line, the health text and the power text from blocks."], {target = GW.GetUnitFrameTextTarget("arena", function() if GW.UpdateArenaFramesSettings then GW.UpdateArenaFramesSettings() end end), dependence = {["objectives.enabled"] = true}, hidden = GW.Classic})
 
     p:AddGroupHeader(L["Boss Times"])
     p:AddOption(L["Mythic+ split times"], L["Shows when each boss died since the key started, compared to your best time on this key level."], {getterSetter = "objectives.encounterTimes.mythicPlus", callback = GW.RefreshEncounterTimes, dependence = {["objectives.enabled"] = true}, hidden = not (GW.Retail or GW.Mists)})

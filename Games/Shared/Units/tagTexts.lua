@@ -10,9 +10,10 @@ end
 
 local L = GW.L
 
--- the made up member of the preview, a shaman healer who leads the group
-local PREVIEW_HEALTH, PREVIEW_MAX_HEALTH = 58204, 80840
-local PREVIEW_POWER, PREVIEW_MAX_POWER = 42000, 50000
+-- the made up member of the preview, a shaman healer who leads the group; test modes hand in their own values
+local PREVIEW_UNIT = {name = "Thrall", role = "HEALER", spec = "Restoration", health = 58204, maxHealth = 80840,
+    power = 42000, maxPower = 50000, inBattleground = true}
+local PREVIEW_UNIT_META = {__index = PREVIEW_UNIT}
 
 local function PreviewValue(block, mode, current, max)
     if mode == "PREC" then
@@ -23,7 +24,8 @@ local function PreviewValue(block, mode, current, max)
 end
 
 -- a block with modes keeps the chosen one in block.mode, the first mode is the default; checks are the
--- checkboxes of a block, hideInMode hides one in the mode it does nothing in; playerOnly blocks show the
+-- checkboxes of a block, hideInMode hides one in the mode it does nothing in; a hidden mode or checkbox does not
+-- exist on this client; playerOnly blocks show the
 -- player's own values and are only offered by designer targets for the player; hidden blocks do not exist
 -- on this client
 local SHORT_CHECK = {key = "short", label = L["Shorten values"], hideInMode = "PREC"}
@@ -44,7 +46,8 @@ local CLASSIFICATION_PREVIEWS = {classification = "Elite", shortclassification =
 
 -- label, desc and preview are for the designer; blocks that show nothing on the preview member preview an example
 local BLOCKS = {
-    name = {category = "name", label = NAME, desc = L["The name of the unit."], tag = "GW2_Grid:name", preview = "Thrall"},
+    name = {category = "name", label = NAME, desc = L["The name of the unit."], tag = "GW2_Grid:name",
+        preview = function(_, _, unit) return unit.name end},
     class = {category = "name", label = CLASS, desc = L["The class of a player."],
         checks = {{key = "creature", label = L["Creature Type on Everything Else"]}},
         tag = function(block) return block.creature and "smartclass" or "class" end,
@@ -55,13 +58,25 @@ local BLOCKS = {
         tag = "creature", preview = "Beast"},
     faction = {category = "name", label = FACTION, desc = L["Horde or Alliance."], tag = "faction", preview = "Horde"},
     arenaspec = {category = "name", label = SPECIALIZATION, desc = L["The specialization of an arena enemy."],
-        tag = "arenaspec", preview = "Restoration", hidden = GW.Classic or GW.TBC or GW.Wrath},
+        checks = {{key = "dash", label = L["With Dash in Front"]}}, tag = "GW2:arenaSpec",
+        args = function(block) return tostring(block.dash == true) end,
+        preview = function(block, _, unit) return (block.dash and " - " or "") .. unit.spec end,
+        hidden = GW.Classic or GW.TBC or GW.Wrath},
 
     healthValue = {category = "health", label = HEALTH, desc = L["The health of the unit."],
         modes = {{"PREC", STATUS_TEXT_PERCENT}, {"HEALTH", REFORGE_CURRENT}, {"MAX", MAXIMUM}, {"LOSTHEALTH", L["Missing"]}},
         checks = {SHORT_CHECK}, tag = "GW2_Grid:healtValue",
         args = function(block, mode) return mode .. "," .. tostring(block.short == true) end,
-        preview = function(block, mode) return PreviewValue(block, mode, PREVIEW_HEALTH, PREVIEW_MAX_HEALTH) end},
+        preview = function(block, mode, unit) return PreviewValue(block, mode, unit.health, unit.maxHealth) end},
+    -- retail hands out the shield as a secret, only blizzards formatting can show it, so no percent and no shortening
+    absorb = {category = "health", label = L["Shield"], desc = L["The damage shield of the unit."],
+        modes = {{"CUR", REFORGE_CURRENT}, {"PREC", STATUS_TEXT_PERCENT, hidden = GW.isModern}},
+        checks = {{key = "short", label = L["Shorten values"], hideInMode = "PREC", hidden = GW.isModern}},
+        tag = "GW2:absorb",
+        args = function(block, mode) return mode .. "," .. tostring(block.short == true) end,
+        preview = function(block, mode)
+            return mode == "PREC" and "15%" or block.short and GW.ShortValue(12000) or BreakUpLargeNumbers(12000)
+        end},
     status = {category = "health", label = DEAD .. " / " .. PLAYER_OFFLINE,
         desc = L["Dead, Ghost or Offline, zzz on yourself while resting."],
         modes = {{"status", L["Dead, Ghost or Offline"]}, {"dead", L["Dead or Ghost"]}, {"offline", PLAYER_OFFLINE}},
@@ -73,26 +88,41 @@ local BLOCKS = {
         args = function(block, mode)
             return mode .. "," .. tostring(block.short == true) .. "," .. tostring(block.mana == true)
         end,
-        preview = function(block, mode) return PreviewValue(block, mode, PREVIEW_POWER, PREVIEW_MAX_POWER) end},
+        preview = function(block, mode, unit) return PreviewValue(block, mode, unit.power, unit.maxPower) end},
     classPower = {category = "power", label = L["Class Resource"], playerOnly = true,
         desc = L["Your class resource, picked by class and specialization like the class power bar."],
         tag = "GW2:classPower", preview = "3"},
+    classBarValue = {category = "power", label = L["Class Bar Value"], playerOnly = true, hidden = not GW.Retail,
+        desc = L["The stagger of a brewmaster in percent of the health, the counter of a devourer demon hunter."],
+        tag = "GW2:classBarValue",
+        preview = function() return GW.Colors.StaggerTextColors[1]:WrapTextInColorCode(GW.GetLocalizedNumber("12.50%")) end},
 
     roleIcon = {category = "icon", label = L["Role Icon"], desc = L["Tank, healer or damage dealer."],
-        tag = "GW2_Grid:roleIcon", args = "true", preview = function() return GW.nameRoleIcon.HEALER end},
+        tag = "GW2_Grid:roleIcon", args = "true", preview = function(_, _, unit) return GW.nameRoleIcon[unit.role] end},
     leaderIcon = {category = "icon", label = L["Leader Icon"], desc = L["Shown on the group leader."],
         tag = "GW2_Grid:leaderIcon", args = "true", preview = function() return GW.GridTagIcons.leader end},
     assistIcon = {category = "icon", label = L["Assist Icon"], desc = L["Shown on raid assistants."],
         tag = "GW2_Grid:assistIcon", args = "true", preview = function() return GW.GridTagIcons.assist end},
     mainTankIcon = {category = "icon", label = L["Tank Icon"], desc = L["Shown on main tanks and main assists."],
         tag = "GW2_Grid:mainTank", args = "true", preview = function() return GW.GridTagIcons.mainTank end},
+    factionIcon = {category = "icon", label = L["Faction Icon"], desc = L["Horde or Alliance as an icon."],
+        checks = {{key = "onlyBattleground", label = L["Only in Battlegrounds"]}}, tag = "GW2:factionIcon",
+        args = function(block) return tostring(block.onlyBattleground == true) end,
+        preview = function(block, _, unit)
+            return (unit.inBattleground or not block.onlyBattleground) and GW.GridTagIcons.Horde or ""
+        end},
     realmFlag = {category = "icon", label = L["Country Flag"], desc = L["The language of the realm."],
         modes = {{"DIFFERENT", L["Different Than Own"]}, {"ALL", ALL}}, tag = "GW2_Grid:realmFlag", args = ModeTag,
         preview = function() return GW.REALM_FLAGS.enUS or "" end},
 
     level = {category = "status", label = LEVEL, desc = L["The level, or ?? when it is unknown."],
-        checks = {{key = "smart", label = L["+ on Elites, Boss on Bosses"]}},
-        tag = function(block) return block.smart and "smartlevel" or "level" end, preview = "90"},
+        checks = {{key = "smart", label = L["+ on Elites, Boss on Bosses"]}, {key = "colored", label = L["Difficulty Color"]}},
+        tag = "GW2:level",
+        args = function(block) return tostring(block.smart == true) .. "," .. tostring(block.colored == true) end,
+        -- your own level
+        preview = function(block)
+            return GW.oUF.Tags.Methods["GW2:level"]("player", nil, "false", tostring(block.colored == true))
+        end},
     group = {category = "status", label = GROUP, desc = L["The number of the raid group."], tag = "group", preview = "2"},
     leader = {category = "status", label = LEADER, desc = L["Shown on the group leader."],
         modes = {{"leader", "L"}, {"leaderlong", "Leader"}}, tag = ModeTag,
@@ -117,6 +147,8 @@ local BLOCKS = {
         text = "|r"},
 
     space = {category = "text", label = L["Space"], desc = L["An empty space."], text = " "},
+    newLine = {category = "text", label = L["Line Break"],
+        desc = L["Starts a new row, for texts with room for it like the health globe."], text = "\n"},
     separator = {category = "text", label = L["Separator"], desc = L["A vertical line between two texts."], text = " || "},
     text = {category = "text", label = L["Custom Text"], desc = L["Any text of up to 10 characters."], textInput = true,
         text = function(block) return EscapeText(block.text) end},
@@ -124,12 +156,12 @@ local BLOCKS = {
 -- the order of the block list in the designer
 GW.TagTextBlockOrder = {
     "name", "class", "race", "sex", "creature", "faction", "arenaspec",
-    "healthValue", "status",
-    "power", "classPower",
-    "roleIcon", "leaderIcon", "assistIcon", "mainTankIcon", "realmFlag",
+    "healthValue", "absorb", "status",
+    "power", "classPower", "classBarValue",
+    "roleIcon", "leaderIcon", "assistIcon", "mainTankIcon", "factionIcon", "realmFlag",
     "level", "group", "leader", "classification", "pvp", "resting", "threat", "happiness",
     "colorStart", "colorEnd",
-    "space", "separator", "text",
+    "space", "separator", "newLine", "text",
 }
 GW.TagTextBlocks = BLOCKS
 
@@ -138,11 +170,11 @@ function GW.GetTagTextBlockMode(def, block)
     return def.modes and (block.mode or def.modes[1][1])
 end
 
--- a field of a block definition is a value or a function of the block and its mode
-local function Field(def, field, block)
+-- a field of a block definition is a value or a function of the block, its mode and the preview unit
+local function Field(def, field, block, unit)
     local value = def[field]
     if type(value) == "function" then
-        return value(block, GW.GetTagTextBlockMode(def, block))
+        return value(block, GW.GetTagTextBlockMode(def, block), unit)
     end
     return value
 end
@@ -161,14 +193,27 @@ function GW.BuildTagString(blocks)
     return table.concat(parts)
 end
 
--- the same line with made up values instead of the tags
-function GW.BuildTagPreview(blocks)
+-- the same line with made up values instead of the tags; unit overrides fields of the made up member
+function GW.BuildTagPreview(blocks, unit)
+    unit = setmetatable(unit or {}, PREVIEW_UNIT_META)
     local parts = {}
     for _, block in ipairs(blocks) do
         local def = BLOCKS[block.k]
         if def then
-            tinsert(parts, Field(def, def.tag and "preview" or "text", block))
+            tinsert(parts, Field(def, def.tag and "preview" or "text", block, unit) or "")
         end
     end
     return table.concat(parts)
+end
+
+-- GW frames that are no oUF objects use the oUF tag engine too, it reads the unit from __unit
+local function IsEventless()
+    return false
+end
+
+function GW.SetFontStringTag(frame, fontString, tagString)
+    frame.__unit = frame.gwUnit
+    frame.IsEventless = IsEventless
+    frame.Untag = GW.oUF.Tags.Untag
+    GW.oUF.Tags.Tag(frame, fontString, tagString)
 end

@@ -941,6 +941,8 @@ local function strip(tag)
 end
 
 oUF.Tags = {
+	Tag = Tag, -- gw2: for GW frames that are no oUF objects
+	Untag = Untag,
 	Methods = tagFuncs,
 	Events = tagEvents,
 	SharedEvents = unitlessEvents,

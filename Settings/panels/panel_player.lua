@@ -73,6 +73,19 @@ local function LoadPlayerPanel(sWindow)
     classpower.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     classpower.breadcrumb:SetText(L["Class Power"])
 
+    local powerBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    powerBar.panelId = "player_powerbar"
+    powerBar.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    powerBar.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    powerBar.header:SetText(PLAYER)
+    powerBar.sub:SetFont(UNIT_NAME_FONT, 12)
+    powerBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    powerBar.sub:SetText(L["Edit the text of the power bar."])
+    powerBar.header:SetWidth(fader.header:GetStringWidth())
+    powerBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    powerBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    powerBar.breadcrumb:SetText(L["Power Bar"])
+
     p_player:AddOption(ENABLE, L["Enable the health bar replacement."], {getterSetter = "unitframes.healthGlobe.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
     p_player:AddOption(L["Power Bar"], L["Replace the default mana/power bar."], {getterSetter = "powerBar.enabled", callback = function() if GwPlayerPowerBar then GwPlayerPowerBar:ToggleBar(); GW.ClassPowers.UpdateExtraManabar() end end, isMasterToggle = true})
     p_player:AddOption(L["Player frame in target frame style"], nil, {getterSetter = "unitframes.player.enabled", callback = function() GW.ShowRlPopup = true end, dependence = {["unitframes.healthGlobe.enabled"] = true}})
@@ -81,20 +94,6 @@ local function LoadPlayerPanel(sWindow)
 
     p_player:AddOption(RAID_USE_CLASS_COLORS, nil, {getterSetter = "unitframes.player.classColor", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
     p_player:AddOption(L["PvP Indicator"], nil, {getterSetter = "unitframes.player.pvpIndicator", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:UpdatePvpIndicator() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:UpdatePvpIndicator() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}})
-    p_player:AddOption(L["Shorten health values"], nil, {getterSetter = "unitframes.healthGlobe.shortHealthValues", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
-    p_player:AddOption(L["Shorten shield values"], nil, {getterSetter = "unitframes.healthGlobe.shortShieldValues", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["unitframes.healthGlobe.enabled"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath or GW.Retail})
-    p_player:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "unitframes.healthGlobe.healthValue", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = {"NONE", "PREC", "VALUE", "BOTH"}, optionNames = {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH}, dependence = {["unitframes.healthGlobe.enabled"] = true}})
-
-    local absorbSettingsList = {"NONE", "VALUE"}
-    local absorbSettingsNames = {NONE, STATUS_TEXT_VALUE}
-    if not GW.Retail then
-        tinsert(absorbSettingsList, "PREC")
-        tinsert(absorbSettingsList, STATUS_TEXT_PERCENT)
-        tinsert(absorbSettingsNames, "BOTH")
-        tinsert(absorbSettingsNames, STATUS_TEXT_BOTH)
-    end
-
-    p_player:AddOptionDropdown(L["Show Shield Value"], nil, { getterSetter = "unitframes.healthGlobe.absorbValue", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = absorbSettingsList, optionNames = absorbSettingsNames, dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = false}, hidden = GW.Classic or GW.TBC or GW.Wrath})
 
     local statusBarTexturesOptions, statusBarTexturesLables = GW.GetStatusBarTextures()
     p_player:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "unitframes.player.healthBarTexture", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
@@ -123,6 +122,10 @@ local function LoadPlayerPanel(sWindow)
     p_player:AddOptionSlider(L["Powerbar Text X-Offset"], nil, { getterSetter = "unitframes.player.powerBarTextOffset.x", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
     p_player:AddOptionSlider(L["Powerbar Text Y-Offset"], nil, { getterSetter = "unitframes.player.powerBarTextOffset.y", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
 
+    -- the designer of the style that is switched on
+    p_player:AddGroupHeader(L["Design Texts"])
+    p_player:AddOptionTagDesigner(L["Design Texts"], L["Build the health text and the shield text of the health globe from blocks."], {target = GW.GetHealthGlobeTextTarget(), dependence = {["unitframes.healthGlobe.enabled"] = true}, isVisible = function() return not GW.settings.unitframes.player.enabled end})
+    p_player:AddOptionTagDesigner(L["Design Texts"], L["Build the name line, the health text and the power text from blocks."], {target = GW.GetUnitFrameTextTarget("player", "GwPlayerUnitFrame"), isVisible = function() return GW.settings.unitframes.player.enabled end, dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true}})
 
     -- CAST BAR
     castbar:AddOption(ENABLE, L["Enable the GW2 style casting bar."], {getterSetter = "castingbar.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
@@ -198,7 +201,6 @@ local function LoadPlayerPanel(sWindow)
 
     -- Classpower
     classpower:AddOption(ENABLE, L["Enable the alternate class powers."], {getterSetter = "classpower.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
-    classpower:AddOption(L["Show value on bar"], nil, {getterSetter = "classpower.showValue", callback = function() GW.ClassPowers.UpdateSettings(GwPlayerClassPower); GwPlayerPowerBar:ToggleSettings(); if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["classpower.enabled"] = true}})
     classpower:AddOptionDropdown(L["Class power anchor"], L["Controls how the class power bar is anchored to its mover."], {
         getterSetter = "classpower.anchorMode",
         callback = function()
@@ -264,11 +266,21 @@ local function LoadPlayerPanel(sWindow)
         dependence = {["classpower.enabled"] = true},
     })
     classpower:AddOption(L["Show classpower bar only in combat"], nil, {getterSetter = "classpower.onlyInCombat", callback = function() GW.ClassPowers.UpdateVisibilitySetting(GwPlayerClassPower, true) end, dependence = {["classpower.enabled"] = true}})
-    classpower:AddOption(L["Energy/Mana Ticker"], nil, {getterSetter = "unitframes.player.energyManaTick", callback = GW.Update5SrHot,  dependence = {["powerBar.enabled"] = true}, hidden = GW.Retail or GW.Mists})
-    classpower:AddOption(L["5 second rule: display remaining time"], nil, {getterSetter = "unitframes.player.fiveSecondRuleTimer", callback = GW.Update5SrHot,  dependence = {["powerBar.enabled"] = true, ["unitframes.player.energyManaTick"] = true}, hidden = GW.Retail or GW.Mists})
-    classpower:AddOption(L["Show Energy/Mana Ticker only in combat"], nil, {getterSetter = "unitframes.player.energyManaTickHideOutOfCombat", callback = GW.Update5SrHot,  dependence = {["powerBar.enabled"] = true, ["unitframes.player.energyManaTick"] = true}, hidden = GW.Retail or GW.Mists})
-    classpower:AddOption(L["Show an additional resource bar"], nil, {getterSetter = "unitframes.player.showResourceBar", callback = function() GwPlayerPowerBar:ToggleBar(); GW.ClassPowers.UpdateExtraManabar() end, dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true, ["powerBar.enabled"] = true}})
 
-    sWindow:AddSettingsPanel(p, PLAYER, L["Modify the player frame settings."], {{name = GENERAL, frame = p_player}, {name = L["Cast Bar"], frame = castbar}, {name = L["Auras"], frame = p_player_aura}, {name = L["Fader"], frame = fader}, {name = L["Class Power"], frame = classpower},})
+    classpower:AddGroupHeader(L["Design Texts"])
+    classpower:AddOptionTagDesigner(L["Design Texts"], L["Build the texts of the class power bars from blocks."], {target = GW.GetClassPowerTextTarget(), dependence = {["classpower.enabled"] = true}})
+
+    powerBar:AddOption(L["Energy/Mana Ticker"], nil, {getterSetter = "unitframes.player.energyManaTick", callback = GW.Update5SrHot,  dependence = {["powerBar.enabled"] = true}, hidden = GW.Retail or GW.Mists})
+    powerBar:AddOption(L["5 second rule: display remaining time"], nil, {getterSetter = "unitframes.player.fiveSecondRuleTimer", callback = GW.Update5SrHot,  dependence = {["powerBar.enabled"] = true, ["unitframes.player.energyManaTick"] = true}, hidden = GW.Retail or GW.Mists})
+    powerBar:AddOption(L["Show Energy/Mana Ticker only in combat"], nil, {getterSetter = "unitframes.player.energyManaTickHideOutOfCombat", callback = GW.Update5SrHot,  dependence = {["powerBar.enabled"] = true, ["unitframes.player.energyManaTick"] = true}, hidden = GW.Retail or GW.Mists})
+    powerBar:AddOption(L["Show an additional resource bar"], nil, {getterSetter = "unitframes.player.showResourceBar", callback = function() GwPlayerPowerBar:ToggleBar(); GW.ClassPowers.UpdateExtraManabar() end, dependence = {["unitframes.healthGlobe.enabled"] = true, ["unitframes.player.enabled"] = true, ["powerBar.enabled"] = true}})
+
+    powerBar:AddOptionSlider(L["Powerbar Text X-Offset"], nil, { getterSetter = "powerBar.textOffset.x", callback = function() if GwPlayerPowerBar then GwPlayerPowerBar:ApplyTextTags() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, dependence = {["powerBar.enabled"] = true}})
+    powerBar:AddOptionSlider(L["Powerbar Text Y-Offset"], nil, { getterSetter = "powerBar.textOffset.y", callback = function() if GwPlayerPowerBar then GwPlayerPowerBar:ApplyTextTags() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, dependence = {["powerBar.enabled"] = true}})
+
+    powerBar:AddGroupHeader(L["Design Texts"])
+    powerBar:AddOptionTagDesigner(L["Design Texts"], L["Build the text of the power bar from blocks."], {target = GW.GetPowerBarTextTarget(), dependence = {["powerBar.enabled"] = true}})
+
+    sWindow:AddSettingsPanel(p, PLAYER, L["Modify the player frame settings."], {{name = GENERAL, frame = p_player}, {name = L["Cast Bar"], frame = castbar}, {name = L["Auras"], frame = p_player_aura}, {name = L["Fader"], frame = fader}, {name = L["Class Power"], frame = classpower}, {name = L["Power Bar"], frame = powerBar},})
 end
 GW.LoadPlayerPanel = LoadPlayerPanel

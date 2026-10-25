@@ -6,11 +6,6 @@ local CP = GW.ClassPowers
 if GW.myClassID ~= GW.Enum.ClassIndex.Monk or not (GW.Retail or GW.Mists) then return end
 
 local RoundInt = GW.RoundInt
-local staggerTextColors = {
-    {r = 0.4, g = 0.9, b = 0.4},
-    {r = 0.95, g = 0.85, b = 0.3},
-    {r = 0.9, g = 0.4, b = 0.4}
-}
 
 local function powerChi(self, event, ...)
     local pType = select(2, ...)
@@ -76,31 +71,9 @@ local function setStaggerBar()
     local pwrMax = UnitHealthMax("player")
     local stagger = UnitStagger("player") or 0
 
+    -- the stagger text is a tag of the text designer
     bar:SetMinMaxValues(0, pwrMax)
     bar:SetValue(stagger, Enum.StatusBarInterpolation.ExponentialEaseOut)
-
-    local staggerPrec = math.max(0, math.min(stagger / pwrMax, 1))
-    local colorToUse = staggerTextColors[1]
-    if staggerPrec >= 0.75 then
-        colorToUse = staggerTextColors[3]
-    elseif staggerPrec >= 0.5 then
-        colorToUse = staggerTextColors[2]
-    end
-
-    local staggerText = GW.GetLocalizedNumber(format("%.2f%%", staggerPrec * 100))
-    if bar.label._lastText ~= staggerText then
-        bar.label:SetText(staggerText)
-        if GW.settings.classpower.showValue then
-            bar.label:SetText(staggerText)
-        else
-            bar.label:SetText("")
-        end
-        bar.label._lastText = staggerText
-    end
-    if not (bar.label._lastR == colorToUse.r and bar.label._lastG == colorToUse.g and bar.label._lastB == colorToUse.b) then
-        bar.label:SetTextColor(colorToUse.r, colorToUse.g, colorToUse.b)
-        bar.label._lastR, bar.label._lastG, bar.label._lastB = colorToUse.r, colorToUse.g, colorToUse.b
-    end
 end
 
 local function powerStagger(self, event, ...)

@@ -117,7 +117,7 @@ local function GetOptionRowExtent(opt)
     end
 
     if opt and opt.optionType == "tagDesigner" then
-        return ROW_PAD_Y * 2 + GW.TAG_DESIGNER_HEIGHT
+        return ROW_PAD_Y * 2 + (opt.target.height or GW.TAG_DESIGNER_HEIGHT)
     end
 
     return DEFAULT_ROW_EXTENT

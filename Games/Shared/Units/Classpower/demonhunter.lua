@@ -7,12 +7,8 @@ if GW.myClassID ~= GW.Enum.ClassIndex.Demonhunter or not GW.Retail then return e
 
 local function voidMetamorphosisUpdatePower(self)
     self.defaultResourceBar:SetMinMaxValues(0, self.maxPoints)
+    -- the counter text is a tag of the text designer
     self.defaultResourceBar:SetValue(self.currentPoints, Enum.StatusBarInterpolation.ExponentialEaseOut)
-    if GW.settings.classpower.showValue then
-        self.defaultResourceBar.label:SetText(self.currentPoints)
-    else
-        self.defaultResourceBar.label:SetText("")
-    end
 end
 
 local function VoidMetamorphosisGetCurrentMinMaxPower(self)
@@ -23,22 +19,17 @@ local function VoidMetamorphosisGetCurrentMinMaxPower(self)
 	end
 end
 
+-- the counter of a devourer, also read by the text tag of the class bar
+local function GetVoidMetamorphosisPoints()
+    local ids = Constants.UnitPowerSpellIDs
+    local inVoid = C_UnitAuras.GetPlayerAuraBySpellID(ids.VOID_METAMORPHOSIS_SPELL_ID) ~= nil
+    local aura = C_UnitAuras.GetPlayerAuraBySpellID(inVoid and ids.SILENCE_THE_WHISPERS_SPELL_ID or ids.DARK_HEART_SPELL_ID)
+    return inVoid, aura and aura.applications or 0
+end
+CP.GetVoidMetamorphosisPoints = GetVoidMetamorphosisPoints
+
 local function counterVoidMetamorphosis(self)
-    self.inVoidMetamorphosis = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_SPELL_ID) ~= nil
-    self.currentPoints = 0
-
-    if self.inVoidMetamorphosis then
-        local silenceTheWhispersAura = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.SILENCE_THE_WHISPERS_SPELL_ID)
-        if silenceTheWhispersAura then
-			self.currentPoints = silenceTheWhispersAura.applications;
-		end
-    else
-        local darkHeartAura = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID)
-		if darkHeartAura then
-			self.currentPoints = darkHeartAura.applications;
-		end
-    end
-
+    self.inVoidMetamorphosis, self.currentPoints = GetVoidMetamorphosisPoints()
     VoidMetamorphosisGetCurrentMinMaxPower(self)
     voidMetamorphosisUpdatePower(self)
 end

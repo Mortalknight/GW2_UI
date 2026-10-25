@@ -40,7 +40,7 @@ local function MigrateGridTexts(db, isPet)
         return db[key]
     end
 
-    if db.nameText == nil then
+    if not db.nameText then
         local blocks = {}
         if Value("showTankIcon", not isPet) then tinsert(blocks, {k = "mainTankIcon"}) end
         if Value("showLeaderIcon", not isPet) then
@@ -57,13 +57,70 @@ local function MigrateGridTexts(db, isPet)
         db.nameText = blocks
     end
 
-    if db.healthText == nil then
+    if not db.healthText then
         local health = Value("unitHealth", "NONE")
         db.healthText = health ~= "NONE" and {{k = "healthValue", mode = health, short = Value("shortHealthValues", false)}} or {}
     end
 
     for _, key in ipairs(GRID_TEXT_OPTIONS) do
         db[key] = nil
+    end
+end
+
+-- the single health text options became the health line of the text designer: value and percent joined by a dash,
+-- swapped on an inverted frame; a text line is false until the designer stores one, AceDB copies that default into
+-- the active profile
+local function MigrateHealthText(db, valueKey, percentKey, shortKey, valueDefault)
+    if db[valueKey] == nil and db[percentKey] == nil and db[shortKey] == nil then return end
+
+    if not db.healthText then
+        local showValue = db[valueKey]
+        if showValue == nil then
+            showValue = valueDefault
+        end
+        local value = showValue and {k = "healthValue", mode = "HEALTH", short = db[shortKey] == true}
+        local percent = db[percentKey] and {k = "healthValue", mode = "PREC"}
+        local first, second = value, percent
+        if db.invert then
+            first, second = percent, value
+        end
+        local blocks = {first or second}
+        if first and second then
+            tinsert(blocks, {k = "text", text = " - "})
+            tinsert(blocks, second)
+        end
+        db.healthText = blocks
+    end
+    db[valueKey], db[percentKey], db[shortKey] = nil, nil, nil
+end
+
+-- the text options of the health globe became its two lines in the text designer, value and percent on two rows;
+-- the player frame took the health text from the globe and gets it on one row
+local function GlobeTextBlocks(show, short, blockKey, joiner)
+    local value = {k = blockKey, mode = blockKey == "absorb" and "CUR" or "HEALTH", short = short}
+    local percent = {k = blockKey, mode = "PREC"}
+    return show == "VALUE" and {value} or show == "PREC" and {percent}
+        or show == "BOTH" and {value, {k = joiner == "\n" and "newLine" or "text", text = joiner}, percent} or {}
+end
+
+local function MigrateHealthGlobeTexts(unitframes)
+    local globe = unitframes.healthGlobe
+    if globe.healthValue ~= nil or globe.shortHealthValues ~= nil then
+        local show, short = globe.healthValue or "VALUE", globe.shortHealthValues == true
+        if not globe.healthText then
+            globe.healthText = GlobeTextBlocks(show, short, "healthValue", "\n")
+        end
+        unitframes.player = type(unitframes.player) == "table" and unitframes.player or {}
+        if not unitframes.player.healthText then
+            unitframes.player.healthText = GlobeTextBlocks(show, short, "healthValue", " - ")
+        end
+        globe.healthValue, globe.shortHealthValues = nil, nil
+    end
+    if globe.absorbValue ~= nil or globe.shortShieldValues ~= nil then
+        if not globe.absorbText then
+            globe.absorbText = GlobeTextBlocks(globe.absorbValue or "VALUE", globe.shortShieldValues == true, "absorb", "\n")
+        end
+        globe.absorbValue, globe.shortShieldValues = nil, nil
     end
 end
 
@@ -238,6 +295,47 @@ local function MigrateProfileSettings(profile)
             if type(profile.groupFrames[grid]) == "table" then
                 MigrateGridTexts(profile.groupFrames[grid], isPet)
             end
+        end
+    end
+
+    -- "Show value on bar" became the lines of the class power bars, the power bar and the player frame; switched off
+    -- they all start empty
+    local classpower = type(profile.classpower) == "table" and profile.classpower
+    if classpower and classpower.showValue ~= nil then
+        if classpower.showValue == false then
+            for _, line in ipairs({"manaText", "littleManaText", "classBarText"}) do
+                classpower[line] = classpower[line] or {}
+            end
+            profile.powerBar = type(profile.powerBar) == "table" and profile.powerBar or {}
+            profile.powerBar.powerText = profile.powerBar.powerText or {}
+            profile.unitframes = type(profile.unitframes) == "table" and profile.unitframes or {}
+            profile.unitframes.player = type(profile.unitframes.player) == "table" and profile.unitframes.player or {}
+            profile.unitframes.player.powerText = profile.unitframes.player.powerText or {}
+        end
+        classpower.showValue = nil
+    end
+
+    if type(profile.unitframes) == "table" then
+        for _, unit in ipairs({"target", "focus"}) do
+            if type(profile.unitframes[unit]) == "table" then
+                MigrateHealthText(profile.unitframes[unit], "healthValue", "healthValueType", "shortValues", false)
+            end
+        end
+        if type(profile.unitframes.healthGlobe) == "table" then
+            MigrateHealthGlobeTexts(profile.unitframes)
+        end
+        local party = profile.unitframes.party
+        if type(party) == "table" and (party.healthValue ~= nil or party.shortHealthValues ~= nil) then
+            -- the party frames showed one health mode, none by default
+            local mode = party.healthValue or "NONE"
+            if not party.healthText then
+                party.healthText = mode ~= "NONE" and {{k = "healthValue", mode = mode, short = party.shortHealthValues == true}} or {}
+            end
+            party.healthValue, party.shortHealthValues = nil, nil
+        end
+        if type(profile.unitframes.pet) == "table" then
+            -- the pet showed its health value by default
+            MigrateHealthText(profile.unitframes.pet, "healthValueRaw", "healthValuePercent", "shortHealthValues", true)
         end
     end
 

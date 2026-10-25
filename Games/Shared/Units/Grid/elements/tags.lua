@@ -10,8 +10,24 @@ local ICONS = {
     assist = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:0:0:0:-2:64:64:4:60:4:60|t",
     mainTank = "|TInterface/AddOns/GW2_UI/textures/party/icon-maintank.png:15:15:0:-2|t",
     mainAssist = "|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist.png:15:15:0:-1|t",
+    Alliance = "|TInterface/AddOns/GW2_UI/textures/battleground/alliance.png:16:16:0:0|t ",
+    Horde = "|TInterface/AddOns/GW2_UI/textures/battleground/horde.png:16:16:0:0|t ",
 }
 GW.GridTagIcons = ICONS
+
+
+-- the spec of an arena enemy and its role; 12.1.5 hands the spec out as a secret, then only its name is known
+local function GetArenaSpec(unit)
+    local id = tonumber(unit:match("^arena(%d)$"))
+    if not id or not GetArenaOpponentSpec then return end
+    local specID = GetArenaOpponentSpec(id)
+    if issecretvalue(specID) then
+        return UnitFrameUtil.GetArenaOpponentSpecDisplayInfo(id).specName
+    elseif specID and specID > 0 then
+        local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(unit))
+        return specName, role
+    end
+end
 
 local function AddTag(tagName, events, func)
     GW.oUF.Tags.Events[tagName] = events
@@ -45,11 +61,31 @@ local function Create_Tags()
         local setting = stringtoboolean[...]
         if not setting then return "" end
         local role = UnitGroupRolesAssigned(realUnit or unit)
+        -- arena enemies have no group role, their spec tells it
+        if GW.NotSecretValue(role) and role == "NONE" then
+            role = select(2, GetArenaSpec(realUnit or unit)) or role
+        end
 
         if GW.NotSecretValue(role) and GW.nameRoleIcon[role] then
             return GW.nameRoleIcon[role]
         end
     end)
+
+    AddTag("GW2:arenaSpec", "ARENA_PREP_OPPONENT_SPECIALIZATIONS ARENA_OPPONENT_UPDATE", function(unit, realUnit, dash)
+        local specName = GetArenaSpec(realUnit or unit)
+        if specName and stringtoboolean[dash] then
+            return " - " .. specName
+        end
+        return specName
+    end)
+
+    -- the faction of the unit, the arena frames showed it only in battlegrounds
+    AddTag("GW2:factionIcon", "UNIT_FACTION PLAYER_ENTERING_WORLD", function(unit, realUnit, onlyBattleground)
+        if stringtoboolean[onlyBattleground] and not UnitInBattleground("player") then return end
+        local faction = UnitFactionGroup(realUnit or unit)
+        return GW.NotSecretValue(faction) and ICONS[faction]
+    end)
+    GW.oUF.Tags.SharedEvents.PLAYER_ENTERING_WORLD = true
 
     AddTag("GW2_Grid:realmFlag", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE", function(unit, realUnit, ...)
         local realmLocal = select(5, LRI:GetRealmInfoByUnit(realUnit or unit))
@@ -121,7 +157,7 @@ local function Create_Tags()
         return ""
     end)
 
-    AddTag("GW2_Grid:power", "UNIT_POWER_UPDATE UNIT_MAXPOWER UNIT_DISPLAYPOWER", function(unit, realUnit, mode, short, mana)
+    AddTag("GW2_Grid:power", "UNIT_POWER_UPDATE UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER", function(unit, realUnit, mode, short, mana)
         unit = realUnit or unit
         local powerType = stringtoboolean[mana] and Enum.PowerType.Mana or nil
         if mode == "PREC" then
@@ -142,6 +178,56 @@ local function Create_Tags()
             return formatFunc(UnitPowerMax(unit, powerType) - UnitPower(unit, powerType))
         end
         return formatFunc(UnitPower(unit, powerType))
+    end)
+
+    -- the level like the unit frames showed it before the text designer, colored by difficulty the same way
+    AddTag("GW2:level", "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_FACTION UNIT_CLASSIFICATION_CHANGED",
+        function(unit, realUnit, smart, colored)
+        unit = realUnit or unit
+        local text
+        if stringtoboolean[smart] then
+            text = GW.oUF.Tags.Methods.smartlevel(unit)
+        else
+            local level = UnitLevel(unit)
+            text = level == -1 and "??" or level
+        end
+        if not stringtoboolean[colored] then
+            return text
+        end
+        -- white like our other texts, blizzards color only where it says more than the yellow of an even level
+        local color = GW.GetUnitLevelColor(unit)
+        color = color == QuestDifficultyColors.difficult and GW.Colors.FallbackWhite or color
+        return format("|cff%02x%02x%02x%s|r", color.r * 255, color.g * 255, color.b * 255, text)
+    end)
+
+    -- the damage shield; retail hands it out as a secret, there it stays a plain number without zero
+    AddTag("GW2:absorb", "UNIT_ABSORB_AMOUNT_CHANGED UNIT_MAXHEALTH", function(unit, realUnit, mode, short)
+        unit = realUnit or unit
+        local absorb = UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(unit) or 0
+        if GW.isModern then
+            return C_StringUtil.TruncateWhenZero(absorb)
+        elseif absorb == 0 then
+            return ""
+        elseif mode == "PREC" then
+            local healthMax = UnitHealthMax(unit)
+            return GW.GetLocalizedNumber(healthMax > 0 and absorb / healthMax * 100 or 0, 0) .. "%"
+        end
+        return stringtoboolean[short] and GW.ShortValue(absorb) or GW.GetLocalizedNumber(absorb)
+    end)
+
+    -- the text of the class bar: the stagger of a brewmaster in percent of the health, colored by its height, or the
+    -- void metamorphosis counter of a devourer demon hunter
+    AddTag("GW2:classBarValue", "UNIT_AURA UNIT_HEALTH UNIT_MAXHEALTH PLAYER_SPECIALIZATION_CHANGED", function()
+        local spec = C_SpecializationInfo.GetSpecialization()
+        if GW.myclass == "MONK" and spec == 1 then
+            local healthMax = UnitHealthMax("player")
+            local stagger = math.max(0, math.min((UnitStagger("player") or 0) / healthMax, 1))
+            local colors = GW.Colors.StaggerTextColors
+            local color = stagger >= 0.75 and colors[3] or stagger >= 0.5 and colors[2] or colors[1]
+            return color:WrapTextInColorCode(GW.GetLocalizedNumber(format("%.2f%%", stagger * 100)))
+        elseif GW.myclass == "DEMONHUNTER" and spec == 3 then
+            return select(2, GW.ClassPowers.GetVoidMetamorphosisPoints())
+        end
     end)
 
     AddTag("GW2:classPower", "UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER UNIT_AURA RUNE_POWER_UPDATE"
@@ -186,4 +272,5 @@ local function Create_Tags()
         end
     end)
 end
-GW.Create_Tags = Create_Tags
+-- at load, the target frame tags its texts before the grids are built
+Create_Tags()

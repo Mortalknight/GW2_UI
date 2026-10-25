@@ -90,6 +90,7 @@ local function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect)
             end
             GW.settings.profileChangedDate = date(L["TimeStamp m/d/y h:m:s"])
             GW.RefreshProfileScrollBox()
+            GW.RefreshTagDesignerPreviews()
         end,
 
         getDefault = function(optionKey)

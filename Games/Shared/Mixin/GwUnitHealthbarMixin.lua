@@ -7,11 +7,6 @@ GwUnitHealthbarMixin = {}
 local HEALTH_RETRY_INTERVAL = 0.1
 local HEALTH_RETRY_LIMIT = 10
 
-local function HealthTextOnUpdate(bar)
-    local frame = bar.gwHealthOwner
-    frame:UpdateHealthTextString(frame.gwHealthValue, bar:GetFillAmount(), frame.gwHealthMaxValue)
-end
-
 local function HasNoHealthData(unit, health, healthMax)
     if not unit or not UnitExists(unit) then return false end
     if healthMax <= 0 then return true end
@@ -37,41 +32,12 @@ function GwUnitHealthbarMixin:ScheduleHealthDataRetry(forceUpdate)
     end)
 end
 
-function GwUnitHealthbarMixin:UpdateHealthTextString(health, healthPrecentage)
-    local text = ""
-    if GW.isModern then
-        local formatFunc = self.shortendHealthValues and GW.ShortValue or BreakUpLargeNumbers
-        local pctText = string.format("%.0f%%", UnitHealthPercent(self.gwUnit, true, CurveConstants.ScaleTo100))
-        if self.showHealthValue and self.showHealthPrecentage then
-            text = self.frameInvert and (string.format("%s - %s", pctText, formatFunc(health))) or (string.format("%s - %s", formatFunc(health), pctText))
-        elseif self.showHealthValue then
-            text = formatFunc(health)
-        elseif self.showHealthPrecentage then
-            text = pctText
-        end
-    else
-        local formatFunc = self.shortendHealthValues and GW.ShortValue or GW.GetLocalizedNumber
-        local pctText = GW.RoundDec(healthPrecentage * 100, 0) .. "%"
-
-        if self.showHealthValue and self.showHealthPrecentage then
-            text = self.frameInvert and (pctText .. " - " .. formatFunc(health)) or (formatFunc(health) .. " - " .. pctText)
-        elseif self.showHealthValue then
-            text = formatFunc(health)
-        elseif self.showHealthPrecentage then
-            text = pctText
-        end
-    end
-
-    self.healthString:SetText(text)
-end
-
 function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
     if GW.isModern then
         local statusBarAnimation = forceUpdate and Enum.StatusBarInterpolation.Immediate or Enum.StatusBarInterpolation.ExponentialEaseOut
         local unit = self.gwUnit
         local health = UnitHealth(unit)
         local healthMax = UnitHealthMax(unit)
-        local healthPrecentage = UnitHealthPercent(unit)
 
         UnitGetDetailedHealPrediction(unit, nil, self.hpValues)
         local allHeal = self.hpValues:GetIncomingHeals()
@@ -82,8 +48,6 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
             self.healPrediction:SetMinMaxValues(0, healthMax)
             self.healPrediction:SetValue(allHeal, Enum.StatusBarInterpolation.ExponentialEaseOut)
         end
-
-        self:UpdateHealthTextString(health, healthPrecentage, healthMax) -- HealthMax is used in the overriden PartyFrame UpdateHealthTextString function
 
         self.health:SetMinMaxValues(0, healthMax)
         self.health:SetValue(health, statusBarAnimation)
@@ -121,12 +85,6 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
 
         if self.healPrediction then
             self.healPrediction:SetFillAmount(predictionPrecentage)
-        end
-
-        self.gwHealthValue, self.gwHealthMaxValue = health, healthMax
-        if not self.health.barOnUpdate then
-            self.health.gwHealthOwner = self
-            self.health.barOnUpdate = HealthTextOnUpdate
         end
 
         if forceUpdate then

@@ -2,9 +2,7 @@
 local GW = select(2, ...)
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local SetClassIcon = GW.SetClassIcon
-local RoundDec = GW.RoundDec
 local IsIn = GW.IsIn
-local nameRoleIcon = GW.nameRoleIcon
 
 local GW_PORTRAIT_BACKGROUND = {
     [1] = {l = 0, r = 0.828, t = 0, b = 0.166015625},
@@ -15,7 +13,6 @@ local GW_PORTRAIT_BACKGROUND = {
 }
 
 local partyFrames = {}
-local healtTextColorCurve
 local previewMode = false
 local SUMMON_ICON_PREFIX = GW.isModern and "RaidFrame-Icon-" or "Raid-Icon-"
 local PARTY_HORIZONTAL_AURA_SIZE = 16
@@ -30,12 +27,6 @@ local PARTY_VERTICAL_PET_Y_OFFSET = -17
 local PARTY_HORIZONTAL_AURA_GAP = 4
 local PARTY_HORIZONTAL_PET_GAP = 10
 local PARTY_HORIZONTAL_PET_AURA_GAP = 6
-
-if C_CurveUtil then
-    healtTextColorCurve = C_CurveUtil.CreateColorCurve()
-    healtTextColorCurve:SetType(Enum.LuaCurveType.Linear)
-    healtTextColorCurve:AddPoint(0, CreateColor(1, 1, 1, 1))
-end
 
 local function GetPartyUnit(i)
     return (i == 1 and GW.settings.unitframes.party.showPlayer) and "player" or "party" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
@@ -455,72 +446,14 @@ function GwPartyFrameMixin:UpdatePortrait()
     self.portrait:SetDesaturated(phaseReason)
 end
 
-function GwPartyFrameMixin:SetUnitName()
-    local role = UnitGroupRolesAssigned(self.gwUnit)
-    local nameString = GW.GetUnitDisplayName(self.gwUnit) or UNKNOWNOBJECT
-    local isLeader = UnitIsGroupLeader(self.gwUnit)
-    local isSecret = GW.IsSecretValue(isLeader)
-
-    if GW.NotSecretValue(role) and nameRoleIcon[role] then
-        nameString = nameRoleIcon[role] .. nameString
-    end
-
-    if not isSecret and isLeader then
-        nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:18:18:0:-3|t" .. nameString
-    end
-
-    self.name:SetText(nameString)
-end
-
-function GwPartyFrameMixin:UpdateHealthTextString(healthCur, healthPrec, healthMax)
-    if GW.settings.unitframes.party.healthValue == "NONE" then
-        self.healthString:Hide()
-        return
-    end
-
-    if GW.isModern then
-        local formatFunc = GW.settings.unitframes.party.shortHealthValues and GW.ShortValue or BreakUpLargeNumbers
-
-        if GW.settings.unitframes.party.healthValue == "PREC" then
-            self.healthString:SetText(string.format("%.0f%%", UnitHealthPercent(self.gwUnit, true, CurveConstants.ScaleTo100)))
-            self.healthString:SetJustifyH("LEFT")
-        elseif GW.settings.unitframes.party.healthValue == "HEALTH" then
-            self.healthString:SetText(formatFunc(healthCur))
-            self.healthString:SetJustifyH("LEFT")
-        elseif GW.settings.unitframes.party.healthValue == "LOSTHEALTH" then
-            self.healthString:SetText(formatFunc(UnitHealthMissing(self.gwUnit)))
-            self.healthString:SetJustifyH("RIGHT")
-        end
-        local color = UnitHealthPercent(self.gwUnit, true, healtTextColorCurve)
-        self.healthString:SetTextColor(color:GetRGB())
-    else
-        local formatFunc = GW.settings.unitframes.party.shortHealthValues and GW.ShortValue or GW.GetLocalizedNumber
-        if GW.settings.unitframes.party.healthValue == "PREC" then
-            self.healthString:SetText(RoundDec(healthPrec * 100, 0) .. "%")
-            self.healthString:SetJustifyH("LEFT")
-        elseif GW.settings.unitframes.party.healthValue == "HEALTH" then
-            self.healthString:SetText(formatFunc(healthCur))
-            self.healthString:SetJustifyH("LEFT")
-        elseif GW.settings.unitframes.party.healthValue == "LOSTHEALTH" then
-            local lost = (healthMax - healthCur > 0) and formatFunc(healthMax - healthCur) or ""
-            self.healthString:SetText(lost)
-            self.healthString:SetJustifyH("RIGHT")
-        end
-
-        self.healthString:SetTextColor(healthCur == 0 and 255 or 1, healthCur == 0 and 0 or 1, healthCur == 0 and 0 or 1)
-    end
-    self.healthString:Show()
-end
-
 function GwPartyFrameMixin:UpdateFrame()
     self:UpdatePowerBar()
     self:UpdateHealthBar()
-    self:SetUnitName()
     self:UpdateAwayData()
     self:UpdatePortrait()
 
-    if self.level then self.level:SetText(UnitLevel(self.gwUnit)) end
     if self.classicon then SetClassIcon(self.classicon, select(3, UnitClass(self.gwUnit))) end
+    self:UpdateTextTags()
 end
 
 function GwPartyFrameMixin:OnEvent(event, unit, ...)
@@ -598,6 +531,7 @@ local function UpdatePartyFrames()
         frame.auras.smallSize = GW.settings.unitframes.party.auraIconSize
         frame.auras.bigSize = GW.settings.unitframes.party.auraIconSize
         frame.auras.ignoredAuraSpellIDs = GW.settings.unitframes.party.ignoredAuras -- Classic engine; Retail runs via container excludeSpellIDs
+        frame:ApplyTextTags()
         frame:OnEvent("load")
         frame.PetFrame.auras.smallSize = GW.settings.unitframes.party.auraIconSize - 6
         frame.PetFrame.auras.bigSize = GW.settings.unitframes.party.auraIconSize - 6
@@ -606,6 +540,7 @@ local function UpdatePartyFrames()
         frame.PetFrame.displayBuffs = GW.settings.unitframes.party.showBuffs and 32 or 0
         frame.PetFrame.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Friendly:GetRGB())
         frame.showAbsorbBar = GW.settings.unitframes.party.showAbsorbBar
+        frame.PetFrame:ApplyTextTags()
         frame.PetFrame:OnEvent("load")
     end
 
@@ -667,6 +602,7 @@ local function UpdatePlayerInPartySetting(alwaysHide)
         frame.gwUnit = unit
         frame.guid = UnitGUID(unit)
         frame:SetAttribute("unit", unit)
+        frame:ApplyTextTags()
         RegisterPartyUnitEvents(frame, FRAME_UNIT_EVENTS, unit)
         frame:OnEvent("load")
 
@@ -674,6 +610,7 @@ local function UpdatePlayerInPartySetting(alwaysHide)
         petFrame.gwUnit = petUnit
         petFrame.guid = UnitGUID(petUnit)
         petFrame:SetAttribute("unit", petUnit)
+        petFrame:ApplyTextTags()
         petFrame:RegisterUnitEvent("UNIT_PET", unit)
         RegisterPartyUnitEvents(petFrame, PET_UNIT_EVENTS, petUnit)
         petFrame:OnEvent("load")
@@ -701,14 +638,20 @@ local function UpdatePlayerInPartySetting(alwaysHide)
 end
 GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
 
-local function CreatePartyFrame(i, isPlayer)
-    local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
-    local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, GW.isModern and "GwPartyFrameModernTemplate" or "GwPartyFrameTemplate")
-    GW.SetFrameRoleset(frame, "unitFrames")
+-- the texts of party frames and their pets come from the lines of the party frames in the text designer
+local function AddTextLines(frame)
+    Mixin(frame, GW.UnitFrameTextMixin)
+    frame.textSettingsKey = "party"
+    frame.nameString = frame.name
+    frame.levelString = frame.level
+    frame.powerbar.label = frame.powerbar:CreateFontString(nil, "OVERLAY")
+end
 
-    if i == 1 then
-        RegisterMovableFrame(frame, PARTY, "unitframes.party", "Unitframe,Group")
-    end
+-- the look of a party frame, shared by the frames and their text preview
+local function CreatePartyFrameLook(name)
+    local frame = CreateFrame("Button", name, UIParent, GW.isModern and "GwPartyFrameModernTemplate" or "GwPartyFrameTemplate")
+    GW.SetFrameRoleset(frame, "unitFrames")
+    AddTextLines(frame)
 
     local hg = frame.healthContainer
     if GW.isModern then
@@ -785,6 +728,28 @@ local function CreatePartyFrame(i, isPlayer)
     frame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
     frame.level:SetFont(UNIT_NAME_FONT, 12, "OUTLINE")
     frame.healthString:SetFontObject(GameFontNormalSmall)
+    frame.healthString:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+    return frame
+end
+
+-- the made up shaman of the preview, in reach like a member next to you
+GW.SetUnitFrameTextPreviewBuilder("party", function()
+    local frame = CreatePartyFrameLook("GwPartyFrameTextPreview")
+    frame.gwUnit = "party"
+    frame.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
+    SetClassIcon(frame.classicon, 7)
+    frame:SetPortraitBackground(1)
+    return frame
+end)
+
+local function CreatePartyFrame(i, isPlayer)
+    local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
+    local frame = CreatePartyFrameLook("GwPartyFrame" .. i)
+    local textureKey = GW.settings.unitframes.party.healthBarTexture
+
+    if i == 1 then
+        RegisterMovableFrame(frame, PARTY, "unitframes.party", "Unitframe,Group")
+    end
 
     --Create party pet frame
     local petUnit = (registerUnit == "player") and "pet" or "partypet" .. (i - (GW.settings.unitframes.party.showPlayer and 1 or 0))
@@ -793,6 +758,7 @@ local function CreatePartyFrame(i, isPlayer)
     petFrame.gwUnit = petUnit
     petFrame:SetAttribute("unit", petUnit)
     petFrame.isPet = true
+    AddTextLines(petFrame)
 
     local phg = petFrame.healthContainer
     if GW.isModern then
@@ -871,6 +837,7 @@ local function CreatePartyFrame(i, isPlayer)
     petFrame.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
     petFrame.healthString:SetFontObject(GameFontNormalSmall)
+    petFrame.healthString:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
 
     petFrame:SetAttribute("*type1", "target")
     petFrame:SetAttribute("*type2", "togglemenu")

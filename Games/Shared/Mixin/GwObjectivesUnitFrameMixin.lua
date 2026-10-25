@@ -19,11 +19,8 @@ function GwObjectivesUnitFrameMixin:UpdateHealth()
 
     if GW.isModern then
         self.health:SetValue(health, Enum.StatusBarInterpolation.ExponentialEaseOut)
-        self.health.value:SetText(string.format("%.0f%%", UnitHealthPercent(self.gwUnit, true, CurveConstants.ScaleTo100)))
     else
-        local healthPercentage = (health > 0 and maxHealth > 0) and (health / maxHealth) or 0
         self.health:SetValue(health)
-        self.health.value:SetText(GW.RoundInt(healthPercentage * 100) .. "%")
     end
 end
 
@@ -43,17 +40,32 @@ function GwObjectivesUnitFrameMixin:UpdatePower()
 
     if GW.isModern then
         self.power:SetValue(power, Enum.StatusBarInterpolation.ExponentialEaseOut)
-        self.power.value:SetText(string.format("%.0f%%", UnitPowerPercent(self.gwUnit, powerType, true, CurveConstants.ScaleTo100)))
     else
-        local powerPercentage = (power > 0 and powerMax > 0) and (power / powerMax) or 0
         self.power:SetValue(power)
-        self.power.value:SetText(GW.RoundInt(powerPercentage * 100) .. "%")
     end
 end
 
+-- the texts are lines of the text designer, kept with the objectives settings under key
+function GwObjectivesUnitFrameMixin:InitTexts(key)
+    Mixin(self, GW.UnitFrameTextMixin)
+    self.textSettingsKey = key
+    self.nameString = self.name
+    self.healthString = self.health.value
+    self.powerText = self.power.value
+    self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
+    self.marker:Hide()
+end
+
+-- the test mode shows the lines with the values of a made up unit
+function GwObjectivesUnitFrameMixin:SetTestTexts(unit)
+    for line, fontString in pairs(self:GetTextStrings()) do
+        fontString:SetText(GW.BuildTagPreview(GW.GetUnitFrameTextBlocks(self.textSettingsKey, line), unit))
+    end
+end
+
+-- the texts are tags of the text designer, a new unit behind the token needs a push
 function GwObjectivesUnitFrameMixin:UpdateName()
-    local name = GW.GetUnitDisplayName(self.gwUnit)
-    self.name:SetText(name)
+    self:UpdateTextTags()
 
     if GW.isModern then return end -- guid is secret
     self.guid = UnitGUID(self.gwUnit)

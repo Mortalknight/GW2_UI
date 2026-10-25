@@ -4,10 +4,13 @@ local L = GW.L
 
 -- the text designer, a row in the settings: blocks from the list on the left are dragged into the lines of a frame,
 -- the lines are saved right away. A caller passes its target: {lines = {{key, label}}, get(line), set(line, blocks)},
--- player = true offers the blocks with the player's own values
+-- player = true offers the blocks with the player's own values, createPreview(parent, lines) returns a picture of
+-- the frame with a font string per line in .texts[line key] and a Refresh() that takes the current settings; without
+-- it the preview looks like a grid frame; height is the height of the designer for more lines, categories =
+-- {key = true} limits the block list to those categories
 local CHIP_HEIGHT = 20
 local CHIP_SPACING = 4
-local WIDTH, HEIGHT = 550, 420
+local WIDTH, HEIGHT = 550, 460
 local TOP = 30 -- the row of the hint and the reset button
 local PALETTE_WIDTH = 180
 -- the scroll bar of the block list sits in the gap
@@ -30,7 +33,15 @@ local CATEGORIES = {
     {key = "text", label = LOCALE_TEXT_LABEL},
 }
 
+-- create(unit) returns a frame of the same build as the real one for the text preview of a unit frame, apply(frame)
+-- gives it the current settings and runs again when a setting changes; here, as the settings load before the frames
+GW.UnitFrameTextPreviewBuilders = {}
+function GW.SetUnitFrameTextPreviewBuilder(unit, create, apply)
+    GW.UnitFrameTextPreviewBuilders[unit] = {create = create, apply = apply}
+end
+
 local ghost
+local designers = {}
 -- one drag at a time: {designer, key} from the list or {designer, line, index} from a line
 local drag
 
@@ -261,13 +272,15 @@ end
 local function SetupModeDropdown(designer, def)
     designer.options.mode:SetupMenu(function(_, rootDescription)
         for _, mode in ipairs(def.modes) do
-            rootDescription:CreateRadio(mode[2], function()
-                local block = SelectedBlock(designer)
-                return block and GW.GetTagTextBlockMode(def, block) == mode[1]
-            end, function()
-                -- a mode can hide or show a checkbox
-                ChangeSelected(designer, function(block) block.mode = mode[1] end, true)
-            end)
+            if not mode.hidden then
+                rootDescription:CreateRadio(mode[2], function()
+                    local block = SelectedBlock(designer)
+                    return block and GW.GetTagTextBlockMode(def, block) == mode[1]
+                end, function()
+                    -- a mode can hide or show a checkbox
+                    ChangeSelected(designer, function(block) block.mode = mode[1] end, true)
+                end)
+            end
         end
     end)
 end
@@ -301,7 +314,7 @@ UpdateOptions = function(designer)
     local mode = GW.GetTagTextBlockMode(def, block)
     local index = 0
     for _, checkDef in ipairs(def.checks or {}) do
-        if not checkDef.hideInMode or checkDef.hideInMode ~= mode then
+        if not checkDef.hidden and (not checkDef.hideInMode or checkDef.hideInMode ~= mode) then
             index = index + 1
             local check = options.checks[index]
             check.key = checkDef.key
@@ -326,6 +339,9 @@ end
 
 UpdateLines = function(designer)
     local lines = designer.lines
+    if designer.preview.Refresh then
+        designer.preview:Refresh()
+    end
     local y = 0
     for _, zone in ipairs(designer.zones) do
         zone:ClearAllPoints()
@@ -337,10 +353,8 @@ UpdateLines = function(designer)
     designer.preview:ClearAllPoints()
     designer.preview:SetPoint("TOPLEFT", designer.right, "TOPLEFT", 0, y - 6)
 
-    -- the preview shows the first line on top and the others below it, like the grids
-    for index, fontString in ipairs(designer.preview.texts) do
-        local line = designer.target.lines[index]
-        fontString:SetText(line and GW.BuildTagPreview(lines[line.key]) or "")
+    for _, line in ipairs(designer.target.lines) do
+        designer.preview.texts[line.key]:SetText(GW.BuildTagPreview(lines[line.key]))
     end
 end
 
@@ -376,33 +390,35 @@ local function CreatePalette(designer)
 
     local y = 0
     for _, category in ipairs(CATEGORIES) do
-        local header = palette:CreateFontString(nil, "OVERLAY")
-        header:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        header:SetPoint("TOPLEFT", 0, y)
-        header:SetText(category.label)
-        y = y - 16
+        if not designer.target.categories or designer.target.categories[category.key] then
+            local header = palette:CreateFontString(nil, "OVERLAY")
+            header:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+            header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+            header:SetPoint("TOPLEFT", 0, y)
+            header:SetText(category.label)
+            y = y - 16
 
-        local chips = {}
-        for _, key in ipairs(GW.TagTextBlockOrder) do
-            local def = Blocks()[key]
-            if def.category == category.key and not def.hidden and (not def.playerOnly or designer.target.player) then
-                local chip = CreateChip(palette)
-                SetChipText(chip, def.label)
-                chip:SetScript("OnDragStart", function() StartDrag({designer = designer, key = key}, def.label) end)
-                chip:SetScript("OnDragStop", StopDrag)
-                chip:SetScript("OnEnter", function(self)
-                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                    GameTooltip:SetText(def.label, 1, 1, 1)
-                    GameTooltip:AddLine(def.desc, nil, nil, nil, true)
-                    GameTooltip:AddLine(L["Drag into a line."], nil, nil, nil, true)
-                    GameTooltip:Show()
-                end)
-                chip:SetScript("OnLeave", GameTooltip_Hide)
-                tinsert(chips, chip)
+            local chips = {}
+            for _, key in ipairs(GW.TagTextBlockOrder) do
+                local def = Blocks()[key]
+                if def.category == category.key and not def.hidden and (not def.playerOnly or designer.target.player) then
+                    local chip = CreateChip(palette)
+                    SetChipText(chip, def.label)
+                    chip:SetScript("OnDragStart", function() StartDrag({designer = designer, key = key}, def.label) end)
+                    chip:SetScript("OnDragStop", StopDrag)
+                    chip:SetScript("OnEnter", function(self)
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                        GameTooltip:SetText(def.label, 1, 1, 1)
+                        GameTooltip:AddLine(def.desc, nil, nil, nil, true)
+                        GameTooltip:AddLine(L["Drag into a line."], nil, nil, nil, true)
+                        GameTooltip:Show()
+                    end)
+                    chip:SetScript("OnLeave", GameTooltip_Hide)
+                    tinsert(chips, chip)
+                end
             end
+            y = FlowChips(chips, palette, PALETTE_WIDTH, y) - 10
         end
-        y = FlowChips(chips, palette, PALETTE_WIDTH, y) - 10
     end
     palette:SetHeight(-y)
 
@@ -433,7 +449,7 @@ local function CreateZone(parent, line)
     return zone
 end
 
-local function CreatePreview(parent)
+local function CreateGridPreview(parent, lines)
     local preview = CreateFrame("Frame", nil, parent)
     preview:SetSize(PREVIEW_WIDTH, 56)
     preview:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
@@ -453,19 +469,22 @@ local function CreatePreview(parent)
     power:SetPoint("BOTTOMRIGHT")
     power:SetHeight(4)
 
+    -- the first line on top and the others below it, like the grids
     preview.texts = {}
-    for index = 1, 3 do
+    local previous
+    for _, line in ipairs(lines) do
         local text = preview:CreateFontString(nil, "OVERLAY")
         text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
         text:SetJustifyH("LEFT")
         text:SetWordWrap(false)
-        if index == 1 then
-            text:SetPoint("TOPLEFT", 3, -3)
+        if previous then
+            text:SetPoint("TOPLEFT", previous, "BOTTOMLEFT", 2, 0)
         else
-            text:SetPoint("TOPLEFT", preview.texts[index - 1], "BOTTOMLEFT", 2, 0)
+            text:SetPoint("TOPLEFT", 3, -3)
         end
         text:SetPoint("RIGHT", -3, 0)
-        preview.texts[index] = text
+        preview.texts[line.key] = text
+        previous = text
     end
     return preview
 end
@@ -531,9 +550,25 @@ local function CreateOptions(designer)
     return options
 end
 
+-- a setting changed the look of a frame, the shown previews follow on the next frame; a slider changes many times
+local refreshPending
+function GW.RefreshTagDesignerPreviews()
+    if refreshPending then return end
+    refreshPending = true
+    C_Timer.After(0, function()
+        refreshPending = nil
+        for _, designer in ipairs(designers) do
+            if designer.frame:IsVisible() then
+                UpdateLines(designer)
+            end
+        end
+    end)
+end
+
 -- builds the designer into frame, a row of the settings; hint is the text in front of the reset button
 function GW.CreateTagDesigner(frame, target, hint)
     local designer = {frame = frame, target = target, lines = {}, zones = {}}
+    tinsert(designers, designer)
 
     local reset = CreateFrame("Button", nil, frame, "GwStandardButton")
     reset:SetSize(140, 22)
@@ -562,16 +597,21 @@ function GW.CreateTagDesigner(frame, target, hint)
     -- starts right of the scroll bar and below the reset button, it fades out by the middle of the right side
     local background = GW.CreateDetailsBackgroundTexture(frame)
     background:SetPoint("TOPLEFT", designer.right, -PADDING - 4, PADDING + 6)
-    background:SetSize((RIGHT_WIDTH + 2 * PADDING + 4) / 1.3, (HEIGHT - TOP + 6) / 1.3)
+    background:SetSize((RIGHT_WIDTH + 2 * PADDING + 4) / 1.3, ((target.height or HEIGHT) - TOP + 6) / 1.3)
 
     for index, line in ipairs(target.lines) do
         designer.zones[index] = CreateZone(designer.right, line)
     end
 
-    designer.preview = CreatePreview(designer.right)
+    designer.preview = (target.createPreview or CreateGridPreview)(designer.right, target.lines)
 
+    -- the options go next to a small preview, below a wide one
     designer.options = CreateOptions(designer)
-    designer.options:SetPoint("TOPLEFT", designer.preview, "TOPRIGHT", 12, 0)
+    if designer.preview:GetWidth() > PREVIEW_WIDTH then
+        designer.options:SetPoint("TOPLEFT", designer.preview, "BOTTOMLEFT", 0, -12)
+    else
+        designer.options:SetPoint("TOPLEFT", designer.preview, "TOPRIGHT", 12, 0)
+    end
     designer.options:SetPoint("RIGHT", designer.right, "RIGHT")
 
     -- the tag strings the lines turn into, an escaped pipe shown as one and a color code as its text; a tag string

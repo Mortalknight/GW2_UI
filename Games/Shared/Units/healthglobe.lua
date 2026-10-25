@@ -39,30 +39,7 @@ function GwHealthglobeMixin:UpdateHealthData()
     self.absorbOverlay:SetFillAmount(absorbOverlayPercentage)
     self.antiHeal:SetFillAmount(healAbsorbPercentage)
 
-    local function formatValue(value)
-        return GW.settings.unitframes.healthGlobe.shortHealthValues and GW.ShortValue(value) or GW.GetLocalizedNumber(value)
-    end
-
-    local function formatShieldValue(value)
-        return GW.settings.unitframes.healthGlobe.shortShieldValues and GW.ShortValue(value) or GW.GetLocalizedNumber(value)
-    end
-
-    local hv = GW.settings.unitframes.healthGlobe.healthValue == "PREC" and (GW.GetLocalizedNumber(healthPercentage * 100, 0) .. "%")
-        or GW.settings.unitframes.healthGlobe.healthValue == "VALUE" and formatValue(health)
-        or GW.settings.unitframes.healthGlobe.healthValue == "BOTH" and formatValue(health) .. "\n" .. GW.GetLocalizedNumber(healthPercentage * 100, 0) .. "%"
-        or ""
-
-    local av = GW.settings.unitframes.healthGlobe.absorbValue == "PREC" and (GW.GetLocalizedNumber(absorbPercentage * 100, 0) .. "%")
-        or GW.settings.unitframes.healthGlobe.absorbValue == "VALUE" and formatShieldValue(absorb)
-        or GW.settings.unitframes.healthGlobe.absorbValue == "BOTH" and  formatShieldValue(absorb) .. "\n" .. GW.GetLocalizedNumber(absorbPercentage * 100, 0) .. "%"
-        or ""
-
-    self.text_h.value:SetText(hv)
-    self.text_a.value:SetText(av)
-
-    for _, v in ipairs(self.text_h.shadow) do v:SetText(hv) end
-    for _, v in ipairs(self.text_a.shadow) do v:SetText(av) end
-
+    -- the texts are tags of the text designer
     self.text_a:SetShown(absorb > 0)
 
     if healthPercentage < 0.65 and not self:GetScript("OnUpdate") then
@@ -228,37 +205,9 @@ local function LoadHealthGlobe()
 
     GW.AddToClique(hg)
 
-    -- set text/font stuff
-    if GW.settings.unitframes.healthGlobe.absorbValue == "BOTH" then
-        hg.text_a:ClearAllPoints()
-        hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
-
-        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-        hg.text_a.value:SetShadowColor(1, 1, 1, 0)
-
-        for i, v in ipairs(hg.text_a.shadow) do
-            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-            v:SetShadowColor(1, 1, 1, 0)
-            v:SetTextColor(0, 0, 0, 1 / i)
-        end
-    else
-        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-        hg.text_a.value:SetShadowColor(1, 1, 1, 0)
-
-        for i, v in ipairs(hg.text_a.shadow) do
-            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-            v:SetShadowColor(1, 1, 1, 0)
-            v:SetTextColor(0, 0, 0, 1 / i)
-        end
-    end
-    hg.text_h.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, nil, -1)
-    hg.text_h.value:SetShadowColor(1, 1, 1, 0)
-
-    for i, v in ipairs(hg.text_h.shadow) do
-        v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, nil, -1)
-        v:SetShadowColor(1, 1, 1, 0)
-        v:SetTextColor(0, 0, 0, 1 / i)
-    end
+    -- the texts come from the text designer
+    Mixin(hg, GW.HealthGlobeTextMixin)
+    hg:ApplyTextTags()
 
     hg:SetScript("OnEvent", hg.OnEvent)
     hg:SetScript("OnEnter", hg.OnEnter)

@@ -10,6 +10,86 @@ local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
+-- the text lines of the frames with a text designer, false in the settings means the built-in line
+local DEFAULT_TEXT_BLOCKS = {
+    nameText = {{k = "leaderIcon"}, {k = "name"}},
+    levelText = {{k = "level", colored = true}},
+    healthText = {},
+    powerText = {},
+}
+
+-- the player frame showed its power value, the health globe, the player frame and the pet the health value
+local function GetDefaultTextBlocks(unit, line)
+    if unit == "player" and line == "powerText" then
+        return {{k = "power", mode = "CUR"}}
+    elseif line == "healthText" and (unit == "player" or unit == "pet" or unit == "healthGlobe") then
+        return {{k = "healthValue", mode = "HEALTH"}}
+    elseif line == "absorbText" then
+        return {{k = "absorb", mode = "CUR"}}
+    elseif (unit == "boss" or unit == "arena") and line == "healthText" then
+        return {{k = "healthValue", mode = "PREC"}}
+    elseif unit == "boss" and line == "nameText" then
+        return {{k = "name"}}
+    elseif unit == "boss" and line == "powerText" then
+        return {{k = "power", mode = "PREC"}}
+    elseif unit == "arena" and line == "nameText" then
+        -- like the arena frames showed it: the faction in battlegrounds, the spec in the arena
+        return {{k = "factionIcon", onlyBattleground = true}, {k = "roleIcon"}, {k = "name"}, {k = "arenaspec", dash = true}}
+    elseif unit == "party" and line == "nameText" then
+        return {{k = "leaderIcon"}, {k = "roleIcon"}, {k = "name"}}
+    elseif unit == "party" and line == "levelText" then
+        return {{k = "level"}}
+    end
+    return DEFAULT_TEXT_BLOCKS[line]
+end
+
+-- boss and arena frames keep their settings with the objectives
+local function GetTextSettings(unit)
+    return unit == "boss" and GW.settings.objectives.bossFrames or unit == "arena" and GW.settings.objectives.arenaFrames
+        or GW.settings.unitframes[unit]
+end
+
+function GW.GetUnitFrameTextBlocks(unit, line)
+    return GetTextSettings(unit)[line] or GetDefaultTextBlocks(unit, line)
+end
+
+local UNIT_FRAME_LINES = {
+    {key = "nameText", label = GW.L["Name Line"]},
+    {key = "levelText", label = LEVEL},
+    {key = "healthText", label = HEALTH},
+    {key = "powerText", label = GW.L["Power"]},
+}
+-- the pet frame has no name and level, boss and arena frames no level
+local PET_LINES = {UNIT_FRAME_LINES[3], UNIT_FRAME_LINES[4]}
+local OBJECTIVES_LINES = {UNIT_FRAME_LINES[1], UNIT_FRAME_LINES[3], UNIT_FRAME_LINES[4]}
+
+-- the lines of a unit frame in the text designer, frameName is the global of the frame or a function that
+-- updates the frames
+function GW.GetUnitFrameTextTarget(unit, frameName)
+    local isPet = unit == "pet"
+    return {
+        createPreview = function(parent)
+            local builder = GW.UnitFrameTextPreviewBuilders[unit]
+            return GW.CreateUnitFrameTextPreview(parent, builder.create(unit), builder.apply)
+        end,
+        height = not isPet and unit ~= "boss" and unit ~= "arena" and 540 or nil,
+        player = unit == "player",
+        -- the pet has no name line, names and group icons make no sense there
+        categories = isPet and {health = true, power = true, status = true, color = true, text = true} or nil,
+        lines = isPet and PET_LINES or (unit == "boss" or unit == "arena") and OBJECTIVES_LINES or UNIT_FRAME_LINES,
+        get = function(line) return GW.GetUnitFrameTextBlocks(unit, line) end,
+        -- nil goes back to the built-in line
+        set = function(line, blocks)
+            GetTextSettings(unit)[line] = blocks or false
+            if type(frameName) == "function" then
+                frameName()
+            elseif _G[frameName] then
+                _G[frameName]:ApplyTextTags()
+            end
+        end,
+    }
+end
+
 local function castingbarOnUpdate(self)
     local frame = self:GetParent()
     if (frame.casting or frame.channeling or frame.empowering) and frame.showCastingbarTimer and self.castingTimeString then
@@ -279,7 +359,7 @@ local function CreateSmallUnitFrame(name)
     f.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     f.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
-    f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
+    f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
     f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "SHADOW")
     f.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "SHADOW")
     f.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
@@ -488,29 +568,8 @@ function GwUnitFrameMixin:SetUnitPortrait()
     self.activePortrait = nil
 end
 
--- colored for every unit, like in the tooltip
--- white like our other texts, blizzards color only where it says more than the yellow of an even level
-function GwUnitFrameMixin:UpdateLevelColor(lvl)
-    local color = GW.GetUnitLevelColor(self.gwUnit, lvl)
-    if color == QuestDifficultyColors.difficult then
-        color = GW.Colors.FallbackWhite
-    end
-    self.levelString:SetVertexColor(color.r, color.g, color.b)
-end
-
-function GwUnitFrameMixin:UnitFrameData(lvl)
-    local level = lvl or UnitLevel(self.gwUnit)
-    local name = GW.GetUnitDisplayName(self.gwUnit)
-    local isLeader = UnitIsGroupLeader(self.gwUnit)
-    local isSecret = GW.IsSecretValue(isLeader)
-
-    if not isSecret and isLeader then
-        name = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:18:18|t" .. name
-    end
-
-    self.nameString:SetText(name)
-    self.levelString:SetText((level == -1 and "??" or level))
-
+-- name and level are tags of the text designer, here only their colors
+function GwUnitFrameMixin:UnitFrameData()
     if self.gwUnit == "player" and self.classColor and UnitIsPlayer(self.gwUnit) then
         local _, englishClass = UnitClass(self.gwUnit)
         local color = GW.GWGetClassColor(englishClass, true)
@@ -521,10 +580,10 @@ function GwUnitFrameMixin:UnitFrameData(lvl)
         self:UpdateHealthbarColor()
     end
 
-    self:UpdateLevelColor(lvl)
-
     self:SetUnitPortrait()
     self:SetUnitPortraitFrame()
+    -- the tag events only reach shown texts of the same unit, a new unit and the polled small frames need a push
+    self:UpdateTextTags()
 end
 
 function GwUnitFrameMixin:UpdatePvpIndicator()
@@ -925,9 +984,295 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             end
         elseif event == "UNIT_FACTION" then
             self:UpdateHealthbarColor()
-            self:UpdateLevelColor()
         end
     end
+end
+
+-- the texts of the text designer replace the name and the health text the frame writes itself, the power bar
+-- gets a text of its own
+-- the text sits on the edge of the bar like the health text, in the middle where the health text does; on a thin
+-- bar it reaches over the health bar, so the power bar is lifted above it
+function GwUnitFrameMixin:SetupPowerText()
+    local powerText = self.powerbar.label
+    local offset = GW.settings.unitframes[self.textSettingsKey or self.gwUnit].powerBarTextOffset
+    powerText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
+    powerText:ClearAllPoints()
+    if self.centeredTexts then
+        powerText:SetPoint("CENTER", self.powerbar, "CENTER", offset.x, offset.y)
+        powerText:SetJustifyH("CENTER")
+    elseif self.frameInvert then
+        powerText:SetPoint("RIGHT", self.powerbar, "RIGHT", -offset.x, offset.y)
+        powerText:SetJustifyH("RIGHT")
+    else
+        powerText:SetPoint("LEFT", self.powerbar, "LEFT", offset.x, offset.y)
+        powerText:SetJustifyH("LEFT")
+    end
+    powerText:Show()
+    self.powerbar:SetFrameLevel((self.healthContainer or self.health):GetFrameLevel() + 10)
+end
+
+-- the font strings of the lines a frame has, the pet frame has no name and level
+function GwUnitFrameMixin:GetTextStrings()
+    return {nameText = self.nameString, levelText = self.levelString, healthText = self.healthString,
+        powerText = self.powerText or self.powerbar and self.powerbar.label}
+end
+
+-- the lines are in the settings of the unit, the health globe keeps its own
+function GwUnitFrameMixin:ApplyTextTags()
+    self.textTags = true
+    self.textStrings = self:GetTextStrings()
+    if self.powerbar then
+        self:SetupPowerText()
+    end
+    for line, fontString in pairs(self.textStrings) do
+        local blocks = GW.GetUnitFrameTextBlocks(self.textSettingsKey or self.gwUnit, line)
+        GW.SetFontStringTag(self, fontString, GW.BuildTagString(blocks))
+    end
+    self:UpdateTextTags()
+end
+
+-- the tags read the unit of the frame, a frame can switch it like the party preview does
+function GwUnitFrameMixin:UpdateTextTags()
+    if not self.textTags then return end
+    self.__unit = self.gwUnit
+    for _, fontString in pairs(self.textStrings) do
+        fontString:UpdateTag()
+    end
+end
+
+-- frames of their own build (pet) take the text functions of the unit frames
+GW.UnitFrameTextMixin = {
+    GetTextStrings = GwUnitFrameMixin.GetTextStrings,
+    ApplyTextTags = GwUnitFrameMixin.ApplyTextTags,
+    UpdateTextTags = GwUnitFrameMixin.UpdateTextTags,
+    SetupPowerText = GwUnitFrameMixin.SetupPowerText,
+}
+
+-- sizes and anchors of the bars from the settings, shared by the frame and its text preview
+function GwUnitFrameMixin:ApplyBarLayout()
+    self.castingbarBackground:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
+    self.castingbarNormal:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
+    if self.castingbar then
+        self.castingbar:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
+    end
+    self.healthContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].healthBarSize.height)
+    self.powerbarContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].powerBarSize.height) --width is shared
+
+    local powerHeight = self.powerbarContainer:GetHeight()
+    local yOffset = (powerHeight + 1) / 2
+
+    self.healthContainer:ClearAllPoints()
+    if self.frameInvert then
+        self.healthContainer:SetPoint("RIGHT", self.portrait, "LEFT", -4, yOffset)
+    else
+        self.healthContainer:SetPoint("LEFT", self.portrait, "RIGHT", 4, yOffset)
+    end
+
+    self.powerbarContainer:ClearAllPoints()
+    if self.frameInvert then
+        self.powerbarContainer:SetPoint("TOPRIGHT", self.healthContainer, "BOTTOMRIGHT", 0, -1)
+    else
+        self.powerbarContainer:SetPoint("TOPLEFT", self.healthContainer, "BOTTOMLEFT", 0, -1)
+    end
+
+    self.healthbarBackground:ClearAllPoints()
+    if self.frameInvert then
+        self.healthbarBackground:SetPoint("TOPRIGHT", self.healthContainer, "TOPRIGHT", 0, 0)
+    else
+        self.healthbarBackground:SetPoint("TOPLEFT", self.healthContainer, "TOPLEFT", 0, 0)
+    end
+    self.healthbarBackground:SetSize(self.healthContainer:GetWidth(), self.healthContainer:GetHeight())
+
+    local textOffset = GW.settings.unitframes[self.gwUnit].healthBarTextOffset
+    self.healthString:ClearAllPoints()
+    if self.frameInvert then
+        self.healthString:SetPoint("RIGHT", self.health, "RIGHT", -textOffset.x, textOffset.y)
+    else
+        self.healthString:SetPoint("LEFT", self.health, "LEFT", textOffset.x, textOffset.y)
+    end
+    self.nameString:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width - 15)
+
+    self:SetHeight(40 + self.healthContainer:GetHeight() + self.powerbarContainer:GetHeight())
+    self:SetWidth(90 + self.healthContainer:GetWidth())
+end
+
+-- parts of a unit frame that only show for a live unit
+local PREVIEW_HIDDEN_PARTS = {"threattabbg", "threatString", "castingbarBackground", "castingbarSpark", "castingbar",
+    "castingbarNormal", "castingString", "castingTimeString", "highlight", "raidmarker", "prestigebg", "prestigeString",
+    "auras", "absorbOverlay", "antiHeal", "absorbbg", "healPrediction", "happiness"}
+
+local function SetPreviewBar(bar, value)
+    if bar.SetFillAmount then
+        bar:SetFillAmount(value)
+    else
+        bar:SetMinMaxValues(0, 1)
+        bar:SetValue(value)
+    end
+end
+
+-- the preview of the text designer is a unit frame of the same build as the real one, built by the caller with its
+-- art and classColor, without unit and events and with made up values; your own portrait stands in for the unit. The frame art reaches far out,
+-- a margin of it stays and the rest is cut off
+function GW.CreateUnitFrameTextPreview(parent, frame, apply)
+    local preview = CreateFrame("Frame", nil, parent)
+    preview:SetClipsChildren(true)
+    frame:SetParent(preview)
+    frame:SetFrameStrata(parent:GetFrameStrata())
+    frame:ClearAllPoints()
+    frame:SetPoint("LEFT", 20, 0)
+    frame:EnableMouse(false)
+
+    for _, key in ipairs(PREVIEW_HIDDEN_PARTS) do
+        if frame[key] then
+            frame[key]:Hide()
+        end
+    end
+    if frame.portrait then
+        SetPortraitTexture(frame.portrait, "player")
+    end
+
+    -- boss and arena frames call their power bar power
+    local powerbar = frame.powerbar or frame.power
+    SetPreviewBar(frame.health, 0.72)
+    SetPreviewBar(powerbar, 0.84)
+    local powerColor = GW.Colors.PowerBarCustomColors.MANA
+    if powerColor then
+        powerbar:SetStatusBarColor(powerColor.r, powerColor.g, powerColor.b)
+    end
+    preview.texts = frame:GetTextStrings()
+
+    function preview:Refresh()
+        if apply then
+            apply(frame)
+        end
+        local color = frame.classColor and GWGetClassColor("SHAMAN", true) or GW.Colors.UnitFrameReactionColors.Friendly
+        frame.health:SetStatusBarColor(color:GetRGB())
+        if frame.nameString then
+            frame.nameString:SetTextColor(color:GetRGB())
+        end
+        if frame.powerbar then
+            frame:SetupPowerText()
+        end
+        self:SetSize(frame:GetWidth() + 20, frame:GetHeight() + 30)
+    end
+    preview:Refresh()
+    return preview
+end
+
+-- the health globe: a health and a shield text, each with shadow copies that follow it
+local function SetGlobeFont(text, size, sizeOffset)
+    text.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, size, nil, sizeOffset)
+    text.value:SetShadowColor(1, 1, 1, 0)
+    for i, shadow in ipairs(text.shadow) do
+        shadow:GwSetFontTemplate(DAMAGE_TEXT_FONT, size, nil, sizeOffset)
+        shadow:SetShadowColor(1, 1, 1, 0)
+        shadow:SetTextColor(0, 0, 0, 1 / i)
+    end
+end
+
+local function MirrorShadows(text)
+    hooksecurefunc(text.value, "SetText", function(_, ...)
+        for _, shadow in ipairs(text.shadow) do shadow:SetText(...) end
+    end)
+    hooksecurefunc(text.value, "SetFormattedText", function(_, ...)
+        for _, shadow in ipairs(text.shadow) do shadow:SetFormattedText(...) end
+    end)
+end
+
+GW.HealthGlobeTextMixin = {textSettingsKey = "healthGlobe"}
+
+function GW.HealthGlobeTextMixin:GetTextStrings()
+    return {healthText = self.text_h.value, absorbText = self.text_a.value}
+end
+
+-- a shield text on two rows moves up and gets smaller, like the old value and percent did
+function GW.HealthGlobeTextMixin:ApplyTextLayout()
+    if not self.gwShadowsMirrored then
+        self.gwShadowsMirrored = true
+        MirrorShadows(self.text_h)
+        MirrorShadows(self.text_a)
+    end
+    local twoRows = false
+    for _, block in ipairs(GW.GetUnitFrameTextBlocks("healthGlobe", "absorbText")) do
+        twoRows = twoRows or block.k == "newLine"
+    end
+    local text = self.text_a
+    text.gwPoint = text.gwPoint or {text:GetPoint()}
+    text:ClearAllPoints()
+    if twoRows then
+        text:SetPoint("CENTER", self, "CENTER", 0, 25)
+    else
+        text:SetPoint(unpack(text.gwPoint))
+    end
+    SetGlobeFont(text, twoRows and GW.Enum.TextSizeType.Small or GW.Enum.TextSizeType.Normal)
+    SetGlobeFont(self.text_h, GW.Enum.TextSizeType.Header, -1)
+end
+
+function GW.HealthGlobeTextMixin:ApplyTextTags()
+    GwUnitFrameMixin.ApplyTextTags(self)
+    self:ApplyTextLayout()
+end
+
+-- the globe in the text preview; the classic clients have the bars nested in each other
+local function CreateHealthGlobeTextPreview(parent)
+    local preview = CreateFrame("Frame", nil, parent)
+    local hg = CreateFrame("Button", "GW2_PlayerFrameTextPreview", preview,
+        GW.isModern and "GwHealthGlobeModernTmpl" or "GwHealthGlobeTmpl")
+    if GW.isModern then
+        hg.health:SetOrientation("VERTICAL")
+        hg.health:SetMinMaxValues(0, 1)
+        hg.health:SetValue(0.72)
+        hg.healAbsorb:Hide()
+    else
+        hg.health = hg.healPrediction.absorbbg.candy.health
+        hg.text_h = hg.health.antiHeal.absorbOverlay.text_h
+        hg.text_a = hg.health.antiHeal.absorbOverlay.text_a
+        hg.health.antiHeal.absorbOverlay.repair:Hide()
+        for _, bar in pairs({hg.health.antiHeal.absorbOverlay, hg.health.antiHeal, hg.health, hg.healPrediction.absorbbg.candy,
+            hg.healPrediction.absorbbg, hg.healPrediction}) do
+            GW.AddStatusbarAnimation(bar, true)
+            bar:SetOrientation("VERTICAL")
+            bar:SetFillAmount(0)
+        end
+        hg.health:SetFillAmount(0.72 - 0.035)
+        hg.healPrediction.absorbbg.candy:SetFillAmount(0.72)
+    end
+    Mixin(hg, GW.HealthGlobeTextMixin)
+    hg.gwUnit = "player"
+    hg:EnableMouse(false)
+    -- the template fixes a low frame level, the background of the designer would cover the globe
+    hg:SetFrameStrata(parent:GetFrameStrata())
+    hg:SetFrameLevel(preview:GetFrameLevel() + 1)
+    hg:SetPoint("TOPLEFT", 8, -8)
+    preview:SetSize(hg:GetWidth() + 16, hg:GetHeight() + 16)
+    preview.texts = hg:GetTextStrings()
+    -- the shield text moves with the rows of its line
+    function preview:Refresh()
+        hg:ApplyTextLayout()
+    end
+    preview:Refresh()
+    return preview
+end
+
+function GW.GetHealthGlobeTextTarget()
+    return {
+        createPreview = CreateHealthGlobeTextPreview,
+        player = true,
+        -- the globe only shows health and shield
+        categories = {health = true, color = true, text = true},
+        lines = {
+            {key = "healthText", label = HEALTH},
+            {key = "absorbText", label = GW.L["Shield"]},
+        },
+        get = function(line) return GW.GetUnitFrameTextBlocks("healthGlobe", line) end,
+        -- nil goes back to the built-in line
+        set = function(line, blocks)
+            GW.settings.unitframes.healthGlobe[line] = blocks or false
+            if GW2_PlayerFrame then
+                GW2_PlayerFrame:ApplyTextTags()
+            end
+        end,
+    }
 end
 
 function GW.UpdateFilters(frame)
@@ -1021,8 +1366,6 @@ function GwUnitFrameMixin:ToggleSettings()
     end
 
     self.classColor = GW.settings.unitframes[unit].classColor
-    self.showHealthValue = GW.settings.unitframes[unit].healthValue
-    self.showHealthPrecentage = GW.settings.unitframes[unit].healthValueType
     self.showCastbar = GW.settings.unitframes[unit].showCastbar
     self.showAbsorbBar = GW.settings.unitframes[unit].showAbsorbBar
 
@@ -1043,7 +1386,7 @@ function GwUnitFrameMixin:ToggleSettings()
     self.auras.bigSize = GW.settings.unitframes[unit].auraBigSize
     self.auras.ignoredAuraSpellIDs = GW.settings.unitframes[unit].ignoredAuras -- Classic engine; Retail runs via container excludeSpellIDs
 
-    self.shortendHealthValues = GW.settings.unitframes[unit].shortValues
+    self:ApplyTextTags()
 
     self.showItemLevel = GW.settings.unitframes[unit].itemLevel
 
@@ -1072,50 +1415,7 @@ function GwUnitFrameMixin:ToggleSettings()
     end
 
     self:SetScale(GW.settings.unitframes[self.gwUnit].scale)
-    self.castingbarBackground:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
-    self.castingbarNormal:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
-    if self.castingbar then
-        self.castingbar:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
-    end
-    self.healthContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].healthBarSize.height)
-    self.powerbarContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].powerBarSize.height) --width is shared
-
-    local powerHeight = self.powerbarContainer:GetHeight()
-    local yOffset = (powerHeight + 1) / 2
-
-    self.healthContainer:ClearAllPoints()
-    if self.frameInvert then
-        self.healthContainer:SetPoint("RIGHT", self.portrait, "LEFT", -4, yOffset)
-    else
-        self.healthContainer:SetPoint("LEFT", self.portrait, "RIGHT", 4, yOffset)
-    end
-
-    self.powerbarContainer:ClearAllPoints()
-    if self.frameInvert then
-        self.powerbarContainer:SetPoint("TOPRIGHT", self.healthContainer, "BOTTOMRIGHT", 0, -1)
-    else
-        self.powerbarContainer:SetPoint("TOPLEFT", self.healthContainer, "BOTTOMLEFT", 0, -1)
-    end
-
-    self.healthbarBackground:ClearAllPoints()
-    if self.frameInvert then
-        self.healthbarBackground:SetPoint("TOPRIGHT", self.healthContainer, "TOPRIGHT", 0, 0)
-    else
-        self.healthbarBackground:SetPoint("TOPLEFT", self.healthContainer, "TOPLEFT", 0, 0)
-    end
-    self.healthbarBackground:SetSize(self.healthContainer:GetWidth(), self.healthContainer:GetHeight())
-
-    local textOffset = GW.settings.unitframes[self.gwUnit].healthBarTextOffset
-    self.healthString:ClearAllPoints()
-    if self.frameInvert then
-        self.healthString:SetPoint("RIGHT", self.health, "RIGHT", -textOffset.x, textOffset.y)
-    else
-        self.healthString:SetPoint("LEFT", self.health, "LEFT", textOffset.x, textOffset.y)
-    end
-    self.nameString:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width - 15)
-
-    self:SetHeight(40 + self.healthContainer:GetHeight() + self.powerbarContainer:GetHeight())
-    self:SetWidth(90 + self.healthContainer:GetWidth())
+    self:ApplyBarLayout()
 
     self.auras:SetWidth(self.healthContainer:GetWidth() + 4)
     self.auras.maxWidth = self.healthContainer:GetWidth() + 4
@@ -1166,6 +1466,47 @@ function GwUnitFrameMixin:ToggleTargetFrameCombatFeedback()
         self:SetScript("OnUpdate", nil)
     end
 end
+
+function GW.AddUnitFramePortraitMask(unitframe)
+    unitframe.portrait.mask = unitframe:CreateMaskTexture()
+    unitframe.portrait.mask:SetPoint("CENTER", unitframe.portrait, "CENTER", 0, 0)
+    unitframe.portrait.mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    unitframe.portrait.mask:SetSize(58, 58)
+    unitframe.portrait:AddMaskTexture(unitframe.portrait.mask)
+end
+
+-- background, class color and bar layout of target, focus and player in the text preview
+local function ApplyUnitFramePreview(frame)
+    local settings = GW.settings.unitframes[frame.gwUnit]
+    frame.backgroundOverlay:SetShown(settings.altBackground)
+    frame.classColor = settings.classColor
+    frame:ApplyBarLayout()
+end
+
+-- target and focus in the text preview, built like LoadUnitFrame does; inverting needs a reload like the frame
+local function CreateUnitFramePreview(unit)
+    local unitframe = CreateUnitFrame("Gw" .. unit .. "UnitFrameTextPreview", GW.settings.unitframes[unit].invert)
+    unitframe.gwUnit = unit
+    GW.AddUnitFramePortraitMask(unitframe)
+    if unitframe.frameInvert then
+        unitframe.backgroundOverlay:SetPoint("CENTER", -15, -5)
+    end
+    unitframe.background:SetTexture(TARGET_FRAME_ART.normal)
+    return unitframe
+end
+GW.SetUnitFrameTextPreviewBuilder("target", CreateUnitFramePreview, ApplyUnitFramePreview)
+GW.SetUnitFrameTextPreviewBuilder("focus", CreateUnitFramePreview, ApplyUnitFramePreview)
+
+-- the player frame in the text preview, built like LoadPlayerFrame does
+local function CreatePlayerFramePreview()
+    local frame = CreateUnitFrame("GwPlayerUnitFrameTextPreview", false, true)
+    frame.gwUnit = "player"
+    Mixin(frame, GwPlayerUnitFrameMixin)
+    GW.AddUnitFramePortraitMask(frame)
+    frame.background:SetTexture(TARGET_FRAME_ART.normal)
+    return frame
+end
+GW.SetUnitFrameTextPreviewBuilder("player", CreatePlayerFramePreview, ApplyUnitFramePreview)
 
 local function LoadUnitFrame(unit, frameInvert)
     local unitframe = CreateUnitFrame("Gw" .. unit .."UnitFrame", frameInvert)
@@ -1225,12 +1566,7 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:ClearAllPoints()
     unitframe:SetPoint("CENTER", unitframe.gwMover, "CENTER")
 
-    -- Porträt-Maske erstellen
-    unitframe.portrait.mask = unitframe:CreateMaskTexture()
-    unitframe.portrait.mask:SetPoint("CENTER", unitframe.portrait, "CENTER", 0, 0)
-    unitframe.portrait.mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    unitframe.portrait.mask:SetSize(58, 58)
-    unitframe.portrait:AddMaskTexture(unitframe.portrait.mask)
+    GW.AddUnitFramePortraitMask(unitframe)
 
     if unitframe.frameInvert then
         unitframe.backgroundOverlay:SetPoint("CENTER", -15, -5)
@@ -1408,6 +1744,15 @@ function GwTargetUnitFrameMixin:ToggleSettings()
     end
 
     self:SetScale(GW.settings.unitframes[self.gwUnit].scale)
+    self:ApplyBarLayout()
+
+    self:ApplyTextTags()
+
+    self.parentUnitFrame:OnEvent("FORCE_UPDATE")
+end
+
+-- sizes and anchors of the bars from the settings, shared by the frame and its text preview
+function GwTargetUnitFrameMixin:ApplyBarLayout()
     self.healthContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].healthBarSize.height)
     self.powerbarContainer:SetSize(GW.settings.unitframes[self.gwUnit].healthBarSize.width, GW.settings.unitframes[self.gwUnit].powerBarSize.height) -- width is shared
     self.castingbarBackground:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width)
@@ -1442,7 +1787,9 @@ function GwTargetUnitFrameMixin:ToggleSettings()
 
     self.nameString:SetWidth(GW.settings.unitframes[self.gwUnit].healthBarSize.width - 15)
 
-    self.parentUnitFrame:OnEvent("FORCE_UPDATE")
+    local textOffset = GW.settings.unitframes[self.gwUnit].healthBarTextOffset
+    self.healthString:ClearAllPoints()
+    self.healthString:SetPoint("LEFT", self.health, "LEFT", textOffset.x, textOffset.y)
 end
 
 function GwTargetUnitFrameMixin:ToggleUnitFrame()
@@ -1455,6 +1802,22 @@ function GwTargetUnitFrameMixin:ToggleUnitFrame()
         RegisterStateDriver(self, "visibility", "hide")
     end
 end
+
+-- target of target and focus target in the text preview, they take color and background from their parent frame
+local function CreateSmallUnitFramePreview(unit)
+    local unitframe = CreateSmallUnitFrame("Gw" .. unit .. "UnitFrameTextPreview")
+    unitframe.gwUnit = unit
+    return unitframe
+end
+
+local function ApplySmallUnitFramePreview(frame)
+    local parentSettings = GW.settings.unitframes[frame.gwUnit:gsub("target$", "")]
+    frame.backgroundOverlay:SetShown(parentSettings.altBackground)
+    frame.classColor = parentSettings.classColor
+    frame:ApplyBarLayout()
+end
+GW.SetUnitFrameTextPreviewBuilder("targettarget", CreateSmallUnitFramePreview, ApplySmallUnitFramePreview)
+GW.SetUnitFrameTextPreviewBuilder("focustarget", CreateSmallUnitFramePreview, ApplySmallUnitFramePreview)
 
 local function LoadTargetOfUnit(unit, parentUnitFrame)
     local f = CreateSmallUnitFrame("Gw" .. unit .. "TargetUnitFrame")
@@ -1480,9 +1843,6 @@ local function LoadTargetOfUnit(unit, parentUnitFrame)
     f:RegisterForClicks("AnyDown")
 
     GW.AddToClique(f)
-
-    f.showHealthValue = false
-    f.showHealthPrecentage = false
 
     f:ToggleSettings()
 

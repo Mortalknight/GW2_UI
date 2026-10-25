@@ -675,7 +675,6 @@ end
 
 local function Initialize()
     GW.CreateRaidControlFrame()
-    GW.Create_Tags()
 
     -- create headers (and groups for the enabled profiles)
     for profile, options in pairs(profiles) do

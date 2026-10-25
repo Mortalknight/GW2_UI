@@ -16,22 +16,8 @@ function GwHealthglobeMixin:FlashAnimation(delta, t)
     end
 end
 
-local function formatHealthValue(value)
-    if GW.settings.unitframes.healthGlobe.shortHealthValues then
-        return GW.ShortValue(value)
-    end
-
-    return BreakUpLargeNumbers(value)
-end
-
-local function formatShieldValue(value)
-    return GW.settings.unitframes.healthGlobe.shortShieldValues and GW.ShortValue(value) or BreakUpLargeNumbers(value)
-end
-
 function GwHealthglobeMixin:UpdateHealthData()
     local health, healthMax = UnitHealth("player"), UnitHealthMax("player")
-    local healthValue = ""
-    local absorbValue = 0
 
     self.health:SetMinMaxValues(0, healthMax)
     self.health:SetValue(health, Enum.StatusBarInterpolation.ExponentialEaseOut)
@@ -45,7 +31,6 @@ function GwHealthglobeMixin:UpdateHealthData()
     -- the amount scale itself always follows the live max)
     UnitGetDetailedHealPrediction("player", nil, self.hpValues)
     local allHeal = self.hpValues:GetIncomingHeals()
-    local allValues = self.hpValues:GetPredictedValues()
 
     if not GW.IsSecretValue(healthMax) then
         self.gwGeoPedestal = -healthMax * self.gwGeoPedestalFactor
@@ -61,24 +46,6 @@ function GwHealthglobeMixin:UpdateHealthData()
     local healAbsorbAmount = self.hpValues:GetHealAbsorbs()
     self.healAbsorb:SetMinMaxValues(0, healthMax)
     self.healAbsorb:SetValue(healAbsorbAmount, Enum.StatusBarInterpolation.ExponentialEaseOut)
-
-    if GW.settings.unitframes.healthGlobe.healthValue == "PREC" then
-        healthValue = string.format("%.0f%%", UnitHealthPercent("player", true, CurveConstants.ScaleTo100))
-    elseif GW.settings.unitframes.healthGlobe.healthValue == "VALUE" then
-        healthValue = formatHealthValue(health)
-    elseif GW.settings.unitframes.healthGlobe.healthValue == "BOTH" then
-        healthValue = string.format("%s\n%.0f%%", formatHealthValue(health), UnitHealthPercent("player", true, CurveConstants.ScaleTo100))
-    end
-
-    if GW.settings.unitframes.healthGlobe.absorbValue == "VALUE" then
-        absorbValue = allValues.totalDamageAbsorbs --Not yet possible C_StringUtil.TruncateWhenZero only acceps numbers and AbbreviateLargeNumbers returns a string. formatShieldValue(allValues.totalDamageAbsorbs)
-    end
-
-    self.text_h.value:SetText(healthValue)
-    self.text_a.value:SetText(C_StringUtil.TruncateWhenZero(absorbValue))
-
-    for _, v in ipairs(self.text_h.shadow) do v:SetText(healthValue) end
-    for _, v in ipairs(self.text_a.shadow) do v:SetText(C_StringUtil.TruncateWhenZero(absorbValue)) end
 end
 
 function GwHealthglobeMixin:OnEvent(event)
@@ -319,37 +286,9 @@ local function LoadHealthGlobe()
 
     GW.AddToClique(hg)
 
-    -- set text/font stuff
-    if GW.settings.unitframes.healthGlobe.absorbValue == "BOTH" then
-        hg.text_a:ClearAllPoints()
-        hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
-
-        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-        hg.text_a.value:SetShadowColor(1, 1, 1, 0)
-
-        for i, v in ipairs(hg.text_a.shadow) do
-            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-            v:SetShadowColor(1, 1, 1, 0)
-            v:SetTextColor(0, 0, 0, 1 / i)
-        end
-    else
-        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-        hg.text_a.value:SetShadowColor(1, 1, 1, 0)
-
-        for i, v in ipairs(hg.text_a.shadow) do
-            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-            v:SetShadowColor(1, 1, 1, 0)
-            v:SetTextColor(0, 0, 0, 1 / i)
-        end
-    end
-    hg.text_h.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, nil, -1)
-    hg.text_h.value:SetShadowColor(1, 1, 1, 0)
-
-    for i, v in ipairs(hg.text_h.shadow) do
-        v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, nil, -1)
-        v:SetShadowColor(1, 1, 1, 0)
-        v:SetTextColor(0, 0, 0, 1 / i)
-    end
+    -- the texts come from the text designer
+    Mixin(hg, GW.HealthGlobeTextMixin)
+    hg:ApplyTextTags()
 
     hg.UpdateTooltip = (GW.NotSecretValue(hg.gwUnit) and hg.OnEnter) or nil
     hg:SetScript("OnEvent", hg.OnEvent)

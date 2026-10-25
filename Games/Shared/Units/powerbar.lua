@@ -324,7 +324,6 @@ function GwPlayerPowerBarMixin:OnUpdate()
         return
     end
 
-    self.textUpdate = self.textUpdate or 0
     local decayRate = 1
     local inactiveRegen, activeRegen = GetPowerRegen()
     local regen = InCombatLockdown() and activeRegen or inactiveRegen
@@ -334,7 +333,6 @@ function GwPlayerPowerBarMixin:OnUpdate()
     local powerPrec
 
     if GW.isModern then
-        powerPrec = UnitPowerPercent("player", self.powerType)
         self:SetValue(0, Enum.StatusBarInterpolation.ExponentialEaseOut)
         self:Show()
     else
@@ -345,15 +343,6 @@ function GwPlayerPowerBarMixin:OnUpdate()
         else
             self:Show()
         end
-    end
-
-    if self.textUpdate < GetTime() then
-        if GW.isModern then
-            self.powerBarString:SetText(self.showBarValues and power or "")
-        else
-            self.powerBarString:SetText(self.showBarValues and GW.GetLocalizedNumber(powerMax * powerPrec) or "")
-        end
-        self.textUpdate = GetTime() + 0.2
     end
 end
 
@@ -383,16 +372,13 @@ function GwPlayerPowerBarMixin:UpdatePowerData(forcePowerType, powerToken)
     self:SetPowerBarVisuals(forcePowerType, powerToken)
 
     if GW.isModern then
-        self.label:SetText(self.showBarValues and BreakUpLargeNumbers(power) or "")
         self:SetValue(powerPrec, Enum.StatusBarInterpolation.ExponentialEaseOut)
     else
-        self.label:SetText(self.showBarValues and GW.GetLocalizedNumber(self.lostKnownPower) or "")
         self:SetFillAmount(powerPrec)
     end
 
     if self.lastPowerType ~= self.powerType and self == GwPlayerPowerBar then
         self.lastPowerType = self.powerType
-        self.powerBarString = self.label
 
         if GW.isModern then
             self:SetValue(powerPrec, Enum.StatusBarInterpolation.ExponentialEaseOut)
@@ -440,23 +426,42 @@ function GwPlayerPowerBarMixin:ToggleBar()
     end
 end
 
+-- the text of the bar comes from the text designer, the bar showed its power value
+local function GetPowerTextBlocks()
+    return GW.settings.powerBar.powerText or {{k = "power", mode = "CUR"}}
+end
+
+local function AnchorLabel(bar)
+    local offset = GW.settings.powerBar.textOffset
+    bar.label:ClearAllPoints()
+    bar.label:SetPoint("CENTER", bar, "CENTER", offset.x, offset.y)
+end
+
+function GwPlayerPowerBarMixin:ApplyTextTags()
+    self.gwUnit = "player"
+    AnchorLabel(self)
+    GW.SetFontStringTag(self, self.label, GW.BuildTagString(GetPowerTextBlocks()))
+    self.label:UpdateTag()
+end
+
 function GwPlayerPowerBarMixin:ToggleSettings()
-    self.showBarValues = GW.settings.classpower.showValue
+    self:ApplyTextTags()
     self:ClearAllPoints()
     local point = GW.ClassPowers and GW.ClassPowers.GetAnchorPoint("TOPLEFT") or "TOPLEFT"
     self:SetPoint(point, self.gwMover, point)
     self:UpdatePowerData()
 end
 
-local function LoadPowerBar()
+-- the look of the bar, shared by the bar and its text preview
+local function CreatePowerBar(name)
     local playerPowerBar
 
     if GW.isModern then
-        playerPowerBar = CreateFrame("StatusBar", "GwPlayerPowerBar", UIParent, "GwStatusPowerBarModernTemplate")
+        playerPowerBar = CreateFrame("StatusBar", name, UIParent, "GwStatusPowerBarModernTemplate")
         playerPowerBar.spark:ClearAllPoints()
         playerPowerBar.spark:SetPoint("RIGHT", playerPowerBar:GetStatusBarTexture(), "RIGHT", 0, 0)
     else
-        playerPowerBar = GW.CreateAnimatedStatusBar("GwPlayerPowerBar", UIParent, "GwStatusPowerBar", true)
+        playerPowerBar = GW.CreateAnimatedStatusBar(name, UIParent, "GwStatusPowerBar", true)
         playerPowerBar.customMaskSize = 64
         playerPowerBar:AddToBarMask(playerPowerBar.intensity)
         playerPowerBar:AddToBarMask(playerPowerBar.intensity2)
@@ -466,7 +471,7 @@ local function LoadPowerBar()
         playerPowerBar.runicmask:SetSize(playerPowerBar:GetSize())
         playerPowerBar.runeoverlay:AddMaskTexture(playerPowerBar.runicmask)
 
-        playerPowerBar.decay = GW.CreateAnimatedStatusBar("GwPlayerPowerBarDecay", UIParent, nil, true)
+        playerPowerBar.decay = GW.CreateAnimatedStatusBar(name .. "Decay", UIParent, nil, true)
         playerPowerBar.decay:SetFillAmount(0)
 
         playerPowerBar.decay:SetFrameLevel(playerPowerBar.decay:GetFrameLevel() - 1)
@@ -475,6 +480,56 @@ local function LoadPowerBar()
         playerPowerBar.decay:SetPoint("BOTTOMRIGHT", playerPowerBar, "BOTTOMRIGHT", 0, 0)
     end
     playerPowerBar.bar = playerPowerBar
+    playerPowerBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
+    return playerPowerBar
+end
+
+-- the bar in the text preview, filled with your own power type
+local function CreatePowerBarTextPreview(parent)
+    local preview = CreateFrame("Frame", nil, parent)
+    local bar = CreatePowerBar("GwPlayerPowerBarTextPreview")
+    bar:SetParent(preview)
+    bar:SetFrameStrata(parent:GetFrameStrata())
+    bar:ClearAllPoints()
+    bar:SetPoint("LEFT", 0, 0)
+    if bar.decay then
+        bar.decay:SetParent(preview)
+    end
+    bar:SetPowerBarVisuals(UnitPowerType("player"))
+    if GW.isModern then
+        bar:SetMinMaxValues(0, 1)
+        bar:SetValue(0.84)
+    else
+        bar:SetFillAmount(0.84)
+    end
+    preview:SetSize(bar:GetWidth(), bar:GetHeight() + 20)
+    preview.texts = {powerText = bar.label}
+    function preview:Refresh()
+        AnchorLabel(bar)
+    end
+    preview:Refresh()
+    return preview
+end
+
+function GW.GetPowerBarTextTarget()
+    return {
+        createPreview = CreatePowerBarTextPreview,
+        player = true,
+        categories = {power = true, color = true, text = true},
+        lines = {{key = "powerText", label = GW.L["Power"]}},
+        get = function() return GetPowerTextBlocks() end,
+        -- nil goes back to the built-in line
+        set = function(_, blocks)
+            GW.settings.powerBar.powerText = blocks or false
+            if GwPlayerPowerBar then
+                GwPlayerPowerBar:ApplyTextTags()
+            end
+        end,
+    }
+end
+
+local function LoadPowerBar()
+    local playerPowerBar = CreatePowerBar("GwPlayerPowerBar")
 
     GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "powerBar", "Unitframe,Power", nil, {GW.MoverOption.Scale}, true)
 
@@ -494,7 +549,6 @@ local function LoadPowerBar()
         GW.MixinHideDuringPetAndOverride(playerPowerBar.decay)
     end
 
-    playerPowerBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
     playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
