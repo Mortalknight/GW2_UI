@@ -47,6 +47,9 @@ local function ScanStandings(track)
     end
     if track and bestIndex then
         SetWatchedFactionByIndex(bestIndex)
+        if GW.UpdateExpBar then
+            GW.UpdateExpBar()
+        end
     end
 end
 

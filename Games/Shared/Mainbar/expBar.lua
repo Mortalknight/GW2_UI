@@ -58,6 +58,7 @@ local function SetStatusBarHover(bar, enable)
         if bar.hoverColor then
             bar:SetStatusBarColor(bar.hoverColor.r, bar.hoverColor.g, bar.hoverColor.b)
         end
+        bar.hoverColor = nil
     end
 end
 
@@ -845,6 +846,7 @@ local function LoadXPBar()
             SetStatusBarHover(self.RepuBar, false)
             SetStatusBarHover(self.PetBar, false)
             SetStatusBarHover(self.AzeritBar, false)
+            UpdateData(self)
         end
     )
 
