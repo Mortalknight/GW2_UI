@@ -337,8 +337,6 @@ local function LoadStaticPopupSkin()
             editbox.NineSlice:GwStripTextures()
         end
         editbox:SetFrameLevel(editbox:GetFrameLevel() + 1)
-        editbox:SetPoint("TOPLEFT", -2, -4)
-        editbox:SetPoint("BOTTOMRIGHT", 2, 4)
         GW.SkinEditBox(editbox)
 
         if _G["StaticPopup" .. i .. "ItemFrameNameFrame"] then
