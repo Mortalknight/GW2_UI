@@ -18,7 +18,7 @@ local function Create_Tags()
     AddTag("GW2_Grid:leaderIcon", "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
-        local isLeader = UnitIsGroupLeader(unit)
+        local isLeader = UnitIsGroupLeader(realUnit or unit)
         if( GW.NotSecretValue(isLeader) and isLeader) then
             return "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:0:0:0:-2:64:64:4:60:4:60|t "
         end
@@ -27,7 +27,7 @@ local function Create_Tags()
     AddTag("GW2_Grid:assistIcon", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
-        local isAssistant = UnitIsGroupAssistant(unit)
+        local isAssistant = UnitIsGroupAssistant(realUnit or unit)
         if( GW.NotSecretValue(isAssistant) and isAssistant) then
             return"|TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:0:0:0:-2:64:64:4:60:4:60|t "
         end
@@ -36,7 +36,7 @@ local function Create_Tags()
     AddTag("GW2_Grid:roleIcon", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE PLAYER_ROLES_ASSIGNED GROUP_ROSTER_UPDATE" ,function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
-        local role = UnitGroupRolesAssigned(unit)
+        local role = UnitGroupRolesAssigned(realUnit or unit)
 
         if GW.NotSecretValue(role) and GW.nameRoleIcon[role] then
             return GW.nameRoleIcon[role]
@@ -44,7 +44,7 @@ local function Create_Tags()
     end)
 
     AddTag("GW2_Grid:realmFlag", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE", function(unit, realUnit, ...)
-        local realmLocal = select(5, LRI:GetRealmInfoByUnit(unit))
+        local realmLocal = select(5, LRI:GetRealmInfoByUnit(realUnit or unit))
         local realmflag = ""
         local setting = ...
         if realmLocal and setting then
@@ -59,7 +59,7 @@ local function Create_Tags()
         if not setting then return "" end
 
         -- asks for the unit directly, the roster scan ran over the whole raid for every name
-        local isTank, isAssist = GetPartyAssignment("MAINTANK", unit), GetPartyAssignment("MAINASSIST", unit)
+        local isTank, isAssist = GetPartyAssignment("MAINTANK", realUnit or unit), GetPartyAssignment("MAINASSIST", realUnit or unit)
         if GW.IsSecretValue(isTank) or GW.IsSecretValue(isAssist) then return "" end
         if isTank then
             return "|TInterface/AddOns/GW2_UI/textures/party/icon-maintank.png:15:15:0:-2|t "
