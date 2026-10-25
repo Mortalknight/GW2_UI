@@ -57,13 +57,19 @@ GW.TalentData = {
         end
 
         local tierUnlocked = (info.tier - 1) * (isPet and PET_TALENTS_PER_TIER or PLAYER_TALENTS_PER_TIER) <= treePoints
+        -- the classic talent api leaves the spell at 0, a learned talent spell is found by its name in the spellbook
+        local spellID = info.spellID and info.spellID > 0 and info.spellID or nil
+        if not spellID and info.rank > 0 and info.name then
+            local spellInfo = C_Spell.GetSpellInfo(info.name)
+            spellID = spellInfo and spellInfo.spellID
+        end
         return {
             tier = info.tier,
             column = info.column,
             rank = preview and info.previewRank or info.rank,
             maxRank = info.maxRank,
             icon = info.icon,
-            spellID = info.spellID,
+            spellID = spellID,
             isExceptional = info.isExceptional,
             available = tierUnlocked and ((preview and info.meetsPreviewPrereq) or (not preview and info.meetsPrereq)),
             prereqs = prereqs,
