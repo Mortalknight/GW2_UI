@@ -7,9 +7,11 @@ local function Construct_HealthValueText(frame)
     healthValue:SetShadowOffset(-1, -1)
     healthValue:SetShadowColor(0, 0, 0, 1)
     healthValue:SetJustifyH("LEFT")
+    healthValue:SetWordWrap(false)
     healthValue:SetFont(UNIT_NAME_FONT, 11)
 
 	healthValue:SetPoint('TOPLEFT', frame.Name, "BOTTOMLEFT", 2, 0)
+	healthValue:SetPoint('TOPRIGHT', frame.Name, "BOTTOMRIGHT", 0, 0)
 
 	return healthValue
 end

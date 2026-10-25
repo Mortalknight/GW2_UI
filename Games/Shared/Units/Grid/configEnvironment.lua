@@ -16,13 +16,15 @@ local NIL_ATTRIBUTE = {}
 -- tags that show unit data and therefore run in the fake environment
 local FAKED_TAGS = {
     "GW2_Grid:name", "GW2_Grid:leaderIcon", "GW2_Grid:assistIcon", "GW2_Grid:roleIcon",
-    "GW2_Grid:realmFlag", "GW2_Grid:mainTank", "GW2_Grid:healtValue",
+    "GW2_Grid:realmFlag", "GW2_Grid:mainTank", "GW2_Grid:healtValue", "GW2_Grid:power",
 }
 
 -- unit functions the tags call, answered from the fake member when the unit is one of ours
 local FAKE_UNIT_API = {
     UnitPower = function(data) return data.power end,
     UnitPowerMax = function(data) return data.maxPower end,
+    UnitPowerMissing = function(data) return max(data.maxPower - data.power, 0) end,
+    UnitPowerPercent = function(data) return data.maxPower > 0 and data.power / data.maxPower * 100 or 0 end,
     UnitHealth = function(data) return data.health end,
     UnitHealthMax = function(data) return data.maxHealth end,
     UnitHealthMissing = function(data) return max(data.maxHealth - data.health, 0) end,
