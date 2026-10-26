@@ -425,6 +425,20 @@ local function CreatePalette(designer)
     ScrollUtil.InitScrollBoxWithScrollBar(scrollBox, scrollBar, CreateScrollBoxLinearView())
     scrollBar:SetHideIfUnscrollable(true)
     GW.SkinSlimScrollBar(scrollBar)
+
+    scrollBox:SetScript("OnMouseWheel", function(self, delta)
+        if self:HasScrollableExtent() and not (delta > 0 and self:IsAtBegin() or delta < 0 and self:IsAtEnd()) then
+            self:OnMouseWheel(delta)
+            return
+        end
+        local list = frame:GetParent()
+        while list and not list.ScrollInDirection do
+            list = list:GetParent()
+        end
+        if list then
+            list:OnMouseWheel(delta)
+        end
+    end)
 end
 
 local function CreateZone(parent, line)

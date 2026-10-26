@@ -875,7 +875,7 @@ local function CreateBrandLogo(parent, size)
     holder:SetSize(size, size)
 
     local glow = holder:CreateTexture(nil, "BACKGROUND")
-    glow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/glow.png")
+    glow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/glow.png", nil, nil, "TRILINEAR")
     glow:SetBlendMode("ADD")
     glow:SetVertexColor(GW.Colors.AccentLight:GetRGB())
     glow:SetAlpha(0.5)
@@ -888,7 +888,7 @@ local function CreateBrandLogo(parent, size)
     outlineFrame:SetPoint("CENTER")
 
     local outline = outlineFrame:CreateTexture(nil, "ARTWORK")
-    outline:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwlogo-outline.png")
+    outline:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwlogo-outline.png", nil, nil, "TRILINEAR")
     outline:SetAlpha(0.9)
     outline:SetAllPoints(outlineFrame)
 
@@ -897,7 +897,7 @@ local function CreateBrandLogo(parent, size)
     logoFrame:SetAllPoints(holder)
 
     local logo = logoFrame:CreateTexture(nil, "ARTWORK")
-    logo:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png")
+    logo:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png", nil, nil, "TRILINEAR")
     logo:SetAllPoints(logoFrame)
 
     -- endless seamless pulse: a cosine wave has no turnaround point, so unlike a

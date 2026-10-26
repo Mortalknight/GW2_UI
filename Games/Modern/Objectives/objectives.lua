@@ -18,9 +18,7 @@ end
 local function IsClassQuest(questID)
     local headerIndex = C_QuestLog.GetHeaderIndexForQuest and C_QuestLog.GetHeaderIndexForQuest(questID)
     local info = headerIndex and C_QuestLog.GetInfo(headerIndex)
-    local title = info and info.title
-    return title ~= nil and (title == GW.myLocalizedClass or title == LOCALIZED_CLASS_NAMES_MALE[GW.myclass]
-        or title == LOCALIZED_CLASS_NAMES_FEMALE[GW.myclass])
+    return GW.IsOwnClassHeader(info and info.title)
 end
 
 local function IsTopContainerQuest(q)

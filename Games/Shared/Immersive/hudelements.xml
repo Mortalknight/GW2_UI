@@ -187,9 +187,9 @@
         </Anchors>
         <Layers>
             <Layer>
-                <FontString parentKey="Time" justifyH="CENTER" justifyV="MIDDLE">
+                <FontString parentKey="Time" justifyH="LEFT" justifyV="MIDDLE">
                     <Anchors>
-                        <Anchor point="CENTER"/>
+                        <Anchor point="LEFT" x="5"/>
                     </Anchors>
                 </FontString>
             </Layer>

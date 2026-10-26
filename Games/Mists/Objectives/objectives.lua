@@ -76,7 +76,8 @@ local function AddQuestInfos(questLogIndex, id)
             requiredMoney = GetQuestLogRequiredMoney(questLogIndex),
             isAutoComplete = GetQuestLogIsAutoComplete(questLogIndex),
             isFailed = isFailed,
-            isFrequency = GW.IsRepeatableQuestFrequency(frequency)
+            isFrequency = GW.IsRepeatableQuestFrequency(frequency),
+            isClassQuest = GW.IsClassQuestLogIndex(questLogIndex),
         }
     end
 end
@@ -332,7 +333,9 @@ function GwQuestLogMixin:UpdateLayout()
         if shouldShowHeader then
             self.header:Show()
             counterQuest = counterQuest + 1
-            local colorKey = quest.tagID == Enum.QuestTag.PvP and GW.Enum.ObjectivesNotificationType.PvPQuest or quest.isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
+            -- class quests take the color of the campaign, like on forever
+            local colorKey = quest.isClassQuest and GW.Enum.ObjectivesNotificationType.Campaign
+                or quest.tagID == Enum.QuestTag.PvP and GW.Enum.ObjectivesNotificationType.PvPQuest or quest.isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
             local signature = BuildQuestBlockSignature(quest, colorKey)
             local block = self.blocks and self.blocks[counterQuest]
 

@@ -76,7 +76,7 @@ function GW.SkinMinimapInstanceDifficult()
     d:SetSize(50, 20)
     d:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -10, 0)
     d.text = d:CreateFontString(nil, "OVERLAY")
-    d.text:SetPoint("CENTER", d, "CENTER")
+    d.text:SetPoint("LEFT", d, "LEFT", 20, 0)
     d.icon = d:CreateFontString(nil, "OVERLAY")
     d.icon:SetPoint("LEFT", d.text, "RIGHT", 4, 0)
 

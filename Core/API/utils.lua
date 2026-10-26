@@ -952,6 +952,21 @@ function GW.GetUnitLevelColor(unit, level)
     return GetCreatureDifficultyColor(level > 0 and level or 99)
 end
 
+function GW.IsOwnClassHeader(title)
+    return title ~= nil and (title == GW.myLocalizedClass or title == LOCALIZED_CLASS_NAMES_MALE[GW.myclass]
+        or title == LOCALIZED_CLASS_NAMES_FEMALE[GW.myclass])
+end
+
+function GW.IsClassQuestLogIndex(questLogIndex)
+    for i = questLogIndex - 1, 1, -1 do
+        local title, _, _, isHeader = GetQuestLogTitle(i)
+        if isHeader then
+            return GW.IsOwnClassHeader(title)
+        end
+    end
+    return false
+end
+
 -- forever's gamepad interface replaces the action bars and the micro menu; switching it reloads the ui
 function GW.IsGamepadInterface()
     return InputUtil and InputUtil.IsGamepadUIEnabled and InputUtil.IsGamepadUIEnabled()
