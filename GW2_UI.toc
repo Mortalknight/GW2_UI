@@ -8,7 +8,8 @@
 
 ## SavedVariables: GW2UI_STORAGE2, GW2UI_DATABASE, GW2UI_PRIVATE_DB
 
-## Notes: User Interface Replacement
+## Notes: A full user interface replacement, built modular: disable any part you dislike or have another AddOn for, the rest of the interface stays intact.
+## Notes-deDE: Ein vollständiger UI-Ersatz, modular aufgebaut: Jeden Teil, den du nicht magst oder für den du ein anderes AddOn nutzt, kannst du abschalten, der Rest bleibt intakt.
 ## Title: |cffffedbaGW2 UI|r |cFF888888Midnight|r [AllowLoadGameType standard]
 ## Title: |cffffedbaGW2 UI|r |cFF888888Wrath|r [AllowLoadGameType wrath]
 ## Title: |cffffedbaGW2 UI|r |cFF888888Era|r [AllowLoadGameType vanilla]

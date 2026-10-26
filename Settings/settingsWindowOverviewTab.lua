@@ -333,12 +333,18 @@ local function ResetChangelogSearch(settingsOverview)
     end
 end
 
+local function UpdateOverviewMenu(settingsOverview)
+    GW.SetSettingsMenuButtonActive(settingsOverview.menu.changelog, settingsOverview.currentOverviewType == "changelog")
+    GW.SetSettingsMenuButtonActive(settingsOverview.menu.creditsbtn, settingsOverview.currentOverviewType == "credits")
+end
+
 local function ShowChangelog(frame)
     local settingsOverview = frame:GetParent()
     if NormalizeSearchQuery(settingsOverview.searchQuery) ~= "" then
         ResetChangelogSearch(settingsOverview)
     end
     settingsOverview.currentOverviewType = "changelog"
+    UpdateOverviewMenu(settingsOverview)
     settingsOverview.search:Show()
     settingsOverview.credits:Hide()
     settingsOverview.pageblock:SetHeight(settingsOverview.basePageBlockHeight)
@@ -355,6 +361,7 @@ local function ShowCredits(frame)
         ResetChangelogSearch(settingsOverview)
     end
     settingsOverview.currentOverviewType = "credits"
+    UpdateOverviewMenu(settingsOverview)
     settingsOverview.search:Hide()
     settingsOverview.header:SetText(L["Credits"])
     -- an empty list, so the scroll bar of the hidden changelog does not come back with its next update
@@ -605,6 +612,7 @@ function GW.LoadSettingsOverview(container)
     end)
 
     settingsOverview.currentOverviewType = "changelog"
+    UpdateOverviewMenu(settingsOverview)
     settingsOverview.searchQuery = ""
     local search = settingsOverview.search
     GW.SkinEditBox(search, {search = true})

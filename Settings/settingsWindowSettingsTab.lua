@@ -1182,15 +1182,20 @@ end
 -- selection accent: hover and selection share the same row texture, the red bar
 -- and brighter text keep the active entry recognizable while hovering others
 local function SetMenuRowActive(button, active)
-    button.activeTexture:SetShown(active)
-    if button.activeBar then
-        button.activeBar:SetShown(active)
-    end
+    GW.SetSettingsMenuButtonActive(button, active)
     if active then
         button.text:SetTextColor(1, 1, 1)
     else
         button.text:SetTextColor(1, 0.9450, 0.8196)
     end
+end
+
+local function PlaceMenuText(button)
+    local x, y = 0, 0
+    if button.gwPressed then
+        x, y = button:GetPushedTextOffset()
+    end
+    button.text:SetPoint("LEFT", button, "LEFT", button.gwTextX + x, y)
 end
 
 local function InitMenuButton(button, elementData)
@@ -1212,13 +1217,6 @@ local function InitMenuButton(button, elementData)
         button.subRail:SetWidth(1)
         button.subRail:SetColorTexture(1, 1, 1, 0.18)
 
-        button.activeBar = button:CreateTexture(nil, "OVERLAY")
-        button.activeBar:SetPoint("TOPLEFT", 0, 0)
-        button.activeBar:SetPoint("BOTTOMLEFT", 0, 0)
-        button.activeBar:SetWidth(3)
-        button.activeBar:SetColorTexture(GW.Colors.Accent:GetRGB())
-        button.activeBar:Hide()
-
         button.newIcon = button:CreateTexture(nil, "OVERLAY")
         button.newIcon:SetTexture("Interface/OptionsFrame/UI-OptionsFrame-NewFeatureIcon")
         button.newIcon:SetSize(14, 14)
@@ -1233,6 +1231,14 @@ local function InitMenuButton(button, elementData)
             end
         end)
         button:HookScript("OnLeave", GameTooltip_Hide)
+        button:HookScript("OnMouseDown", function(self)
+            self.gwPressed = true
+            PlaceMenuText(self)
+        end)
+        button:HookScript("OnMouseUp", function(self)
+            self.gwPressed = nil
+            PlaceMenuText(self)
+        end)
 
         button:SetScript("OnClick", function()
             CloseSearch()
@@ -1265,7 +1271,8 @@ local function InitMenuButton(button, elementData)
     end
 
     button.arrow:SetShown(elementData.itemData.hasSubFrames)
-    button.text:SetPoint("LEFT", button, "LEFT", elementData.isSubCat and 36 or 22, 0)
+    button.gwTextX = elementData.isSubCat and 36 or 22
+    PlaceMenuText(button)
     button.text:SetText(elementData.itemData.name)
     button.gwTooltipDesc = (not elementData.isSubCat and elementData.itemData.desc) or nil
 

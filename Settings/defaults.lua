@@ -521,6 +521,7 @@ GW.globalDefault = {
                 width = 720,
                 reverseSort = false,
                 separateBags = false,
+                autoSortOnOpen = false,
                 headerNames = {
                     [0] = "",
                     [1] = "",

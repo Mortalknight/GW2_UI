@@ -79,9 +79,9 @@ local function delete_OnClick(self)
 end
 
 
-local function activate_OnClick(self)
+local function activate_OnClick(self, _, upInside)
     local p = self:GetParent()
-    if not p.canActivate then return end
+    if not p.canActivate or not upInside then return end
     GW.ShowPopup({
         text = L["Do you want to activate profile"] .. "\n\n'" .. (p.profileName or UNKNOWN) .. "'?",
         OnAccept = function()

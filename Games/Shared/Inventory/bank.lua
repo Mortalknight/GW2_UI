@@ -364,6 +364,10 @@ local function bank_OnShow(self)
     GwBagFrame:Show()
     updateBagBar(self.ItemFrame)
     rescanBankContainers(self)
+
+    if GW.settings.bags.bank.autoSortOnOpen then
+        GW_SortBankBags()
+    end
 end
 
 
@@ -650,6 +654,8 @@ local function LoadBank(helpers)
         addCheck(L["Show Quality Color"], function() return GW.settings.bags.items.qualityBorder end, function() GW.settings.bags.items.qualityBorder = not GW.settings.bags.items.qualityBorder; GW.UpdateAllOwnBagItemButtons() end, "bags.items.qualityBorder")
         addCheck(L["Separate bags"], function() return GW.settings.bags.bank.separateBags end,
                  function() local ns = not GW.settings.bags.bank.separateBags; GW.settings.bags.bank.separateBags = ns; layoutItems(f); snapFrameSize(f) end, "bags.bank.separateBags")
+        addCheck(L["Sort when opening"], function() return GW.settings.bags.bank.autoSortOnOpen end,
+                 function() GW.settings.bags.bank.autoSortOnOpen = not GW.settings.bags.bank.autoSortOnOpen end, "bags.bank.autoSortOnOpen")
         newEntries:Finish()
     end)
 

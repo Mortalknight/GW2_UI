@@ -2178,3 +2178,15 @@ local function SettingsMenuButtonSetUp(self, odd)
     self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
 end
 GW.SettingsMenuButtonSetUp = SettingsMenuButtonSetUp
+
+function GW.SetSettingsMenuButtonActive(button, active)
+    if not button.activeBar then
+        button.activeBar = button:CreateTexture(nil, "OVERLAY")
+        button.activeBar:SetPoint("TOPLEFT", 0, 0)
+        button.activeBar:SetPoint("BOTTOMLEFT", 0, 0)
+        button.activeBar:SetWidth(3)
+        button.activeBar:SetColorTexture(GW.Colors.Accent:GetRGB())
+    end
+    button.activeTexture:SetShown(active)
+    button.activeBar:SetShown(active)
+end

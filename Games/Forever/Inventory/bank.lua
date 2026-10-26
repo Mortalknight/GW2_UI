@@ -317,6 +317,10 @@ local function Bank_OnShow(self)
     HideBlizzardBankFrame()
     UpdateBagBar(self.ItemFrame)
     RescanBankContainers(self)
+
+    if GW.settings.bags.bank.autoSortOnOpen then
+        C_Container.SortBank(BANK_TYPE)
+    end
 end
 
 local function Bank_OnHide(self)
@@ -505,6 +509,9 @@ local function LoadBank(helpers)
             GW.settings.bags.bank.separateBags = not GW.settings.bags.bank.separateBags
             LayoutItems(f)
             SnapFrameSize(f)
+        end)
+        AddCheck(L["Sort when opening"], function() return GW.settings.bags.bank.autoSortOnOpen end, function()
+            GW.settings.bags.bank.autoSortOnOpen = not GW.settings.bags.bank.autoSortOnOpen
         end)
     end)
 
