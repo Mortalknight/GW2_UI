@@ -17,10 +17,22 @@ local function HandleAddonEntry(entry, treeNode)
         GW.AddListItemChildHoverTexture(entry)
         entry.gwSkinned = true
     end
+    if entry.gwHoverTexture then
+        entry.gwHoverTexture:SetDrawLayer("BACKGROUND", -1)
+    end
     local state = entry.Enabled.state
     local statusColor = state == Enum.AddOnEnableState.All and GW.Colors.SkinColors.SubText or GW.Colors.SkinColors.Disabled
     entry.Status:SetTextColor(statusColor:GetRGB())
-    local _, _, _, _, reason = C_AddOns.GetAddOnInfo(treeNode:GetData().addonIndex)
+    local _, _, _, loadable, reason = C_AddOns.GetAddOnInfo(treeNode:GetData().addonIndex)
+    if entry.gwHoverTexture then
+        local hover = GW.Colors.SkinColors.ListHover
+        if loadable or reason == "DEMAND_LOADED" or reason == "DEP_DEMAND_LOADED" then
+            entry.gwHoverTexture:SetVertexColor(hover:GetRGBA())
+        else
+            local r, g, b = entry.Title:GetTextColor()
+            entry.gwHoverTexture:SetVertexColor(r, g, b, hover.a)
+        end
+    end
     local checktex = entry.Enabled:GetCheckedTexture()
     checktex:SetVertexColor(GW.Colors.FallbackWhite:GetRGB())
     checktex:SetDesaturated(false)

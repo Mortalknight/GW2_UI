@@ -526,6 +526,7 @@ function GW.SkinFriendList()
         FriendsFrameBattlenetFrame.BroadcastButton:GwKill()
         FriendsFrameBattlenetFrameScrollFrame:GwStripTextures()
         GW.AddEditBoxBackground(FriendsFrameBattlenetFrameScrollFrame)
+        FriendsFrameBattlenetFrameScrollFrame.EditBox:SetHeight(20)
         FriendsFrameBattlenetFrameScrollFrame.UpdateButton:GwSkinButton(false, true)
         FriendsFrameBattlenetFrameScrollFrame.CancelButton:GwSkinButton(false, true)
     end

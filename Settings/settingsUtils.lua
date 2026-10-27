@@ -540,6 +540,7 @@ function GwSettingsPanelMixin:AddOptionDropdown(name, desc, values)
     end
     opt.tooltipType = values.tooltipType
     opt.optionTooltips = values.optionTooltips
+    opt.isOptionEnabled = values.isOptionEnabled
     opt.hasSound = values.hasSound
     opt.noNewLine = values.noNewLine
 
@@ -1824,6 +1825,9 @@ local function SettingsInitOptionWidget(of, v, panel)
                         entryButton = rootDescription:CreateCheckbox(v.optionsNames[idx], IsSelected, SetSelected, {optionName = v.optionName, option = option})
                     else
                         entryButton = rootDescription:CreateRadio(v.optionsNames[idx], IsSelected, SetSelected, {optionName = v.optionName, option = option})
+                    end
+                    if v.isOptionEnabled then
+                        entryButton:SetEnabled(function() return v.isOptionEnabled(option) end)
                     end
 
                     entryButton:AddInitializer(function(button, description, menu)
