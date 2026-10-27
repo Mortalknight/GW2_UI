@@ -91,15 +91,21 @@ end
 
 -- the logs and the tab info lie on a details background, so does the bank view without slots
 -- (no right to view the tab). only retail colors the slots itself, the classic clients fetch the
--- quality but never show it
+-- quality but never show it; our search of the classic clients dims the items whose name does not match
 local function UpdateBankView(frame)
     frame.gwDetailsBackground:SetShown(frame.mode ~= "bank" or not frame.Columns[1]:IsShown())
     if frame.mode ~= "bank" then return end
     local tab = GetCurrentGuildBankTab()
+    local query = frame.gwSearchBox and frame.gwSearchBox:GetText():lower() or ""
     for columnIndex, column in ipairs(frame.Columns) do
         for row, button in ipairs(column.Buttons) do
-            local quality = select(5, GetGuildBankItemInfo(tab, (columnIndex - 1) * SLOTS_PER_COLUMN + row))
-            GW.SetItemSlotQuality(button, quality)
+            local slot = (columnIndex - 1) * SLOTS_PER_COLUMN + row
+            GW.SetItemSlotQuality(button, select(5, GetGuildBankItemInfo(tab, slot)))
+            if frame.gwSearchBox then
+                local link = query ~= "" and GetGuildBankItemLink(tab, slot)
+                local name = link and link:match("%[(.-)%]")
+                button.searchOverlay:SetShown(name ~= nil and not name:lower():find(query, 1, true))
+            end
         end
     end
 end
@@ -221,13 +227,18 @@ local function SkinTopRow()
         label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     end
 
-    if GuildItemSearchBox then
-        GW.SkinBagSearchBox(GuildItemSearchBox)
-        GuildItemSearchBox:ClearAllPoints()
-        GuildItemSearchBox:SetPoint("TOPLEFT", GuildBankFrame, "TOPLEFT", 6, -40)
-        GuildItemSearchBox:SetPoint("TOPRIGHT", GuildBankFrame, "TOPRIGHT", -10, -40)
-        GuildItemSearchBox:SetHeight(24)
+    -- tbc and wrath have no search, they get our own; it leaves the bag search alone
+    local searchBox = GuildItemSearchBox
+    if not searchBox then
+        searchBox = CreateFrame("EditBox", nil, GuildBankFrame, "SearchBoxTemplate")
+        searchBox:HookScript("OnTextChanged", function() UpdateBankView(GuildBankFrame) end)
+        GuildBankFrame.gwSearchBox = searchBox
     end
+    GW.SkinBagSearchBox(searchBox)
+    searchBox:ClearAllPoints()
+    searchBox:SetPoint("TOPLEFT", GuildBankFrame, "TOPLEFT", 6, -40)
+    searchBox:SetPoint("TOPRIGHT", GuildBankFrame, "TOPRIGHT", -10, -40)
+    searchBox:SetHeight(24)
 
     -- the slots start below the search like the bank items
     local point, relativeTo, relativePoint, x = GuildBankFrame.Column1:GetPoint()
