@@ -25,7 +25,7 @@ addChange("12.1.0", {
     {GW.Enum.ChangelogType.change, [=[Action bars: empty slots hidden in Edit Mode come back on login, "Empty Slots Alpha" at 0% hides them until you drag something onto the bars]=]},
     {GW.Enum.ChangelogType.change, [=[New scale setting for the loot roll bars; the Pawn button of the hero panel shows the Pawn tooltip; Blizzard's own coordinates below the minimap are hidden]=]},
     {GW.Enum.ChangelogType.change, [=[Scale handles of hero panel, friends and world map: drag with the right button, Shift + right click resets; Escape closes the hero panel together with the other windows]=]},
-    {GW.Enum.ChangelogType.change, [=[Bank (Classic clients and Forever): can sort itself when opening, like the bags]=]},
+    {GW.Enum.ChangelogType.change, [=[Bags: a left click on the gold picks up money like Blizzard's bags; the bank (Classic clients and Forever) can sort itself when opening]=]},
     {GW.Enum.ChangelogType.change, [=[Reputation tracking: losses no longer switch the bar, renown and paragon gains count too]=]},
     {GW.Enum.ChangelogType.change, [=[New credits page, reviewed English texts and a few settings polished]=]},
     {GW.Enum.ChangelogType.bug, [=[Action bars: no flicker between the override and the normal bar, fewer "action blocked" errors; Classic multi bars no longer stay hidden after a reconnect; Forever: no Edit Mode error on save; the out of range color follows page, stance and form changes]=]},

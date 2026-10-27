@@ -129,7 +129,10 @@ local function ApplyChannelsSkin()
         frame.Inset:Hide()
     end
 
-    local title = frame.TitleContainer and frame.TitleContainer.TitleText or frame.TitleText
+   local title = frame.TitleContainer and frame.TitleContainer.TitleText
+    if frame.TitleText and (frame.TitleText:GetText() or "") ~= "" then
+        title = frame.TitleText
+    end
     GW.SkinSmallWindow(frame, title, WINDOW_ICON, frame.CloseButton or ChannelFrameCloseButton)
 
     SkinInset(frame.LeftInset)

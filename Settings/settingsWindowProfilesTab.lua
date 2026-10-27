@@ -709,7 +709,7 @@ end
 local function ShowPage(panel, page)
     for _, other in ipairs({panel.profilesPage, panel.characterDataPage}) do
         other:SetShown(other == page)
-        other.menuButton.activeTexture:SetShown(other == page)
+        GW.SetSettingsMenuButtonActive(other.menuButton, other == page)
     end
 end
 

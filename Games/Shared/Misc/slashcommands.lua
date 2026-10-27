@@ -13,13 +13,22 @@ local function LoadSlashCommands()
             GW.Notice(L["  /gw2 kb             -> Activate keybind mode"])
             GW.Notice(L["  /gw2 mh             -> Activate Move HUD mode"])
             GW.Notice(L["  /gw2 reset profile  -> Reset the current profile to default settings"])
-            GW.Notice(L["  /gw2 clear achievements  -> Untrack all earned achievements (Blizzard bug)"])
+            -- only the commands this client has
+            if C_ContentTracking then
+                GW.Notice(L["  /gw2 clear achievements  -> Untrack all earned achievements (Blizzard bug)"])
+            end
             GW.Notice(L["  /gw2 error          -> Show the GW2 error log"])
             GW.Notice(L["  /gw2 test error     -> Raise a test error to check the error log"])
             GW.Notice(L["  /gw2 test lootroll  -> Show test loot roll bars"])
-            GW.Notice(L["  /gw2 test mythicplus -> Toggle a test Mythic+ timer in the quest tracker"])
-            GW.Notice(L["  /gw2 test bossframes -> Toggle test boss frames in the quest tracker"])
-            GW.Notice(L["  /gw2 test arenaframes -> Toggle test arena frames in the quest tracker"])
+            if GW.Retail or GW.Mists then
+                GW.Notice(L["  /gw2 test mythicplus -> Toggle a test Mythic+ timer in the quest tracker"])
+            end
+            if not (GW.Classic or GW.TBC) then
+                GW.Notice(L["  /gw2 test bossframes -> Toggle test boss frames in the quest tracker"])
+            end
+            if not GW.Classic then
+                GW.Notice(L["  /gw2 test arenaframes -> Toggle test arena frames in the quest tracker"])
+            end
         elseif msg == "settings" then
             if InCombatLockdown() then
                 GW.Notice(L["Settings are not available in combat!"])
@@ -66,13 +75,13 @@ local function LoadSlashCommands()
             GW.TestErrorHandler()
         elseif msg == "test lootroll" then
             GW.TestLootRolls()
-        elseif msg == "test mythicplus" then
+        elseif msg == "test mythicplus" and (GW.Retail or GW.Mists) then
             if GW.TestMythicPlusTimer then GW.TestMythicPlusTimer() end
-        elseif msg == "test bossframes" then
+        elseif msg == "test bossframes" and not (GW.Classic or GW.TBC) then
             if GW.ToggleBossFramesTest then GW.ToggleBossFramesTest() end
-        elseif msg == "test arenaframes" then
+        elseif msg == "test arenaframes" and not GW.Classic then
             if GW.ToggleArenaFramesTest then GW.ToggleArenaFramesTest() end
-        elseif msg == "clear achievements" then
+        elseif msg == "clear achievements" and C_ContentTracking then
             local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
             local numAchievements = #trackedAchievements
             local counter = 0

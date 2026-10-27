@@ -1250,7 +1250,21 @@ local function LoadBag(helpers)
 
     -- money frame tooltip
     f.moneyFrame:SetScript("OnEnter", GW.Money_OnEnter)
-    f.moneyFrame:SetScript("OnClick", GW.Money_OnClick)
+    f.moneyFrame.info = MoneyTypeInfo.PLAYER
+    f.moneyFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    f.moneyFrame:SetScript("OnClick", function(self, button)
+        if button == "LeftButton" then
+            MoneyInputFrame_OpenPopup(self)
+        else
+            GW.Money_OnClick(self, button)
+        end
+    end)
+    f.moneyFrame:SetScript("OnHide", function(self)
+        if self.hasPickup == 1 then
+            MoneyInputFrame_ClosePopup()
+            self.hasPickup = 0
+        end
+    end)
 
     -- update money when applicable
     f.moneyFrame:SetScript("OnEvent", function(self, event)

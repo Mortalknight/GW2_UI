@@ -587,10 +587,10 @@ local function LoadPetFrame(lm)
 
     -- create floating combat text
     playerPetFrame.feedbackText = playerPetFrame:CreateFontString(nil, "OVERLAY")
-    playerPetFrame.feedbackText:SetFont(DAMAGE_TEXT_FONT, 30, "")
+    playerPetFrame.feedbackText:SetFont(DAMAGE_TEXT_FONT, 20, "")
     playerPetFrame.feedbackText:SetPoint("CENTER", playerPetFrame.portrait, "CENTER")
     playerPetFrame.feedbackText:Hide()
-    playerPetFrame.feedbackFontHeight = 30
+    playerPetFrame.feedbackFontHeight = 20
     playerPetFrame:ToggleCombatFeedback()
 
     --frame fader init

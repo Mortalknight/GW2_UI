@@ -47,7 +47,7 @@ local function CreateWindow()
     resizer:SetScript("OnEnter", GW.ShowResizeHandleTooltip)
     resizer:SetScript("OnLeave", GameTooltip_Hide)
 
-    local text = CreateFrame("Frame", nil, window, "GwCopyChatEditBoxTemplate")
+    local text = CreateFrame("Frame", nil, window, "GwScrollingEditBoxTemplate")
     text:SetPoint("TOPLEFT", 8, -30)
     text:SetPoint("BOTTOMRIGHT", -20, 20)
     text:GetEditBox():SetMaxLetters(0) -- a few hundred lines are far beyond the default

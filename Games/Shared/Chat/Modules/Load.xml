@@ -18,7 +18,6 @@
     <Script file ="scrolling.lua"/>
     <Script file ="nameInChat.lua"/>
     <Script file ="editBox.lua"/>
-    <Include file ="copyChat.xml"/>
     <Script file ="copyChat.lua"/>
     <Script file ="chatLayout.lua"/>
     <Script file ="unreadTabs.lua"/>

@@ -1209,8 +1209,8 @@ function GW.HealthGlobeTextMixin:ApplyTextLayout()
 end
 
 function GW.HealthGlobeTextMixin:ApplyTextTags()
-    GwUnitFrameMixin.ApplyTextTags(self)
     self:ApplyTextLayout()
+    GwUnitFrameMixin.ApplyTextTags(self)
 end
 
 -- the globe in the text preview; the classic clients have the bars nested in each other
@@ -1637,10 +1637,10 @@ local function LoadUnitFrame(unit, frameInvert)
 
     if unit == "target" then
         unitframe.feedbackText = unitframe:CreateFontString(nil, "OVERLAY")
-        unitframe.feedbackText:SetFont(DAMAGE_TEXT_FONT, 30, "")
+        unitframe.feedbackText:SetFont(DAMAGE_TEXT_FONT, 20, "")
         unitframe.feedbackText:SetPoint("CENTER", unitframe.portrait, "CENTER")
         unitframe.feedbackText:Hide()
-        unitframe.feedbackFontHeight = 30
+        unitframe.feedbackFontHeight = 20
         unitframe:ToggleTargetFrameCombatFeedback()
     end
 

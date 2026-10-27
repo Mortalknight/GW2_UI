@@ -26,30 +26,6 @@ local function CreateErrorLogWindow()
     frame.info:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -20, -45)
     frame.info:SetJustifyH("LEFT")
 
-    frame.scrollArea = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-    frame.scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -70)
-    frame.scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 15)
-    frame.scrollArea:SetScript("OnSizeChanged", function(scroll)
-        frame.editBox:SetWidth(scroll:GetWidth())
-        frame.editBox:SetHeight(scroll:GetHeight())
-    end)
-    frame.scrollArea:HookScript("OnVerticalScroll", function(scroll, offset)
-        frame.editBox:SetHitRectInsets(0, 0, offset, (frame.editBox:GetHeight() - offset - scroll:GetHeight()))
-    end)
-    frame.scrollArea.bg = frame.scrollArea:CreateTexture(nil, "ARTWORK")
-    frame.scrollArea.bg:SetAllPoints()
-    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground.png")
-
-    frame.editBox = CreateFrame("EditBox", nil, frame)
-    frame.editBox:SetMultiLine(true)
-    frame.editBox:EnableMouse(true)
-    frame.editBox:SetAutoFocus(false)
-    frame.editBox:SetFontObject(ChatFontNormal)
-    frame.editBox:SetAllPoints()
-    frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
-
-    frame.scrollArea:SetScrollChild(frame.editBox)
-
     return frame
 end
 
@@ -71,22 +47,37 @@ function Gw2ErrorHandlerMixin:Toggle()
 
         self.info:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         self.info:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        self.scrollArea.ScrollBar:GwSkinScrollBar()
+        local text = CreateFrame("Frame", nil, self, "GwScrollingEditBoxTemplate")
+        text:SetPoint("TOPLEFT", self, "TOPLEFT", 15, -70)
+        text:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -30, 15)
+        text:SetFontObject("ChatFontNormal")
+        text:GetEditBox():SetMaxLetters(0)
+        text:RegisterCallback("OnEscapePressed", self.Hide, self)
+        text.bg = text:CreateTexture(nil, "BACKGROUND")
+        text.bg:SetAllPoints()
+        text.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground.png")
+        self.text = text
+
+        local scrollBar = CreateFrame("EventFrame", nil, self, "MinimalScrollBar")
+        scrollBar:SetPoint("TOPLEFT", text, "TOPRIGHT", 6, 0)
+        scrollBar:SetPoint("BOTTOMLEFT", text, "BOTTOMRIGHT", 6, 0)
+        ScrollUtil.RegisterScrollBoxWithScrollBar(text:GetScrollBox(), scrollBar)
+        GW.SkinSlimScrollBar(scrollBar)
         self.Skinned = true
     end
 
     if self:IsShown() then
-        self.editBox:SetText("")
+        self.text:SetText("")
         self:Hide()
     else
         local txt = ("Version: %s Date: %s Locale: %s Build %s %s"):format(GW.GetVersionString() or "?", date("%m/%d/%y %H:%M:%S") or "?", GW.mylocal or "?", GW.wowpatch, GW.wowbuild)
         txt = txt .. "\n" .. GW.Join("\n", self.log)
-        self.editBox:SetText(txt)
+        self.text:SetText(txt)
         self.info:SetText(format(GW.L["%d errors this session, Ctrl+C copies the marked log."], #self.log))
-        self.scrollArea:SetVerticalScroll(0)
-        self.editBox:HighlightText()
-        self.editBox:SetFocus()
         self:Show()
+        self.text:GetScrollBox():ScrollToBegin(ScrollBoxConstants.NoScrollInterpolation)
+        self.text:GetEditBox():HighlightText()
+        self.text:SetFocus()
     end
 end
 

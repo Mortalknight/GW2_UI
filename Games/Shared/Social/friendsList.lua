@@ -240,7 +240,37 @@ local function HandleInviteTexDisabled(self)
     self:SetDesaturated(true)
 end
 
+-- the friend requests of the classic list come from blizzards stretch buttons, they get our list look
+local function SkinFriendInvites(buttonType)
+    local scrollFrame = FriendsFrameFriendsScrollFrame
+    if buttonType == FRIENDS_BUTTON_TYPE_INVITE_HEADER then
+        local header = scrollFrame.PendingInvitesHeaderButton
+        if header.gwSkinned then return end
+        header.gwSkinned = true
+        GW.HandleBlizzardRegions(header)
+        header.BG:Hide()
+        header:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+        header:GetFontString():SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    else
+        for invite in scrollFrame.invitePool:EnumerateActive() do
+            if not invite.gwSkinned then
+                invite.gwSkinned = true
+                invite.AcceptButton:GwSkinButton(false, true)
+                invite.DeclineButton:GwSkinButton(true)
+                invite.DeclineButton.Icon:Hide()
+            end
+        end
+    end
+end
+
 local function UpdateFriendButton(button)
+    if button.buttonType == FRIENDS_BUTTON_TYPE_INVITE_HEADER or button.buttonType == FRIENDS_BUTTON_TYPE_INVITE then
+        if FriendsFrameFriendsScrollFrame and FriendsFrameFriendsScrollFrame.invitePool then
+            SkinFriendInvites(button.buttonType)
+        end
+        return
+    end
+
     if not button.gwSkinned then
         local normal = button.travelPassButton:GetNormalTexture()
         normal:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png")
