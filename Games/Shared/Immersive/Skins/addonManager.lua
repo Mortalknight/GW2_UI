@@ -23,14 +23,14 @@ local function HandleAddonEntry(entry, treeNode)
     local state = entry.Enabled.state
     local statusColor = state == Enum.AddOnEnableState.All and GW.Colors.SkinColors.SubText or GW.Colors.SkinColors.Disabled
     entry.Status:SetTextColor(statusColor:GetRGB())
-    local _, _, _, loadable, reason = C_AddOns.GetAddOnInfo(treeNode:GetData().addonIndex)
+    local _, _, _, _, reason = C_AddOns.GetAddOnInfo(treeNode:GetData().addonIndex)
     if entry.gwHoverTexture then
-        local hover = GW.Colors.SkinColors.ListHover
-        if loadable or reason == "DEMAND_LOADED" or reason == "DEP_DEMAND_LOADED" then
-            entry.gwHoverTexture:SetVertexColor(hover:GetRGBA())
+        local hover = entry.gwHoverTexture
+        local r, g, b = entry.Title:GetTextColor()
+        if g > 0.7 then
+            hover.r, hover.g, hover.b = nil, nil, nil
         else
-            local r, g, b = entry.Title:GetTextColor()
-            entry.gwHoverTexture:SetVertexColor(r, g, b, hover.a)
+            hover.r, hover.g, hover.b = r, g, b
         end
     end
     local checktex = entry.Enabled:GetCheckedTexture()

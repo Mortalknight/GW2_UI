@@ -21,6 +21,7 @@ local minimapDetails = {
     ["CLOCK"] = "GwMapTime",
     ["COORDS"] = "GwMapCoords",
     ["LAYER"] = "GwMapLayer",
+    ["FPS"] = "GwMapFPS",
 }
 
 local expansionLandingPageTable = {
@@ -186,7 +187,7 @@ end
 
 
 local function hoverMiniMapOut()
-    if GwMapTime:IsMouseOver() or GwMapCoords:IsMouseOver() then return end
+    if GwMapTime:IsMouseOver() or GwMapCoords:IsMouseOver() or GwMapFPS:IsMouseOver() then return end
     for k, v in pairs(GW.settings.minimap.alwaysShowHoverDetails) do
         local frame = v == false and minimapDetails[k] and _G[minimapDetails[k]]
         if frame and frame:IsShown() then
@@ -198,6 +199,11 @@ GW.hoverMiniMapOut = hoverMiniMapOut
 
 local function MapCoordsMiniMap_OnLeave()
     GameTooltip_Hide()
+    hoverMiniMapOut()
+end
+
+local function MapFps_OnLeave()
+    GW.FpsOnLeave()
     hoverMiniMapOut()
 end
 
@@ -271,15 +277,24 @@ local function UpdateButtonSide()
     setMinimapButtons(side)
 end
 
-local function UpdateMinimapCoordsTicker(self)
-    local shouldRun = GW.settings.minimap.coords.enabled and self:IsShown() and self:GetAlpha() > 0
-    if shouldRun and not self.CoordsTimer then
-        mapCoordsMiniMap_setCoords(self)
-        self.CoordsTimer = C_Timer.NewTicker(0.5, function() mapCoordsMiniMap_setCoords(self) end)
-    elseif not shouldRun and self.CoordsTimer then
-        self.CoordsTimer:Cancel()
-        self.CoordsTimer = nil
+-- a hidden or faded out detail needs no ticker
+local function UpdateDetailTicker(self, enabled, interval, update)
+    local shouldRun = enabled and self:IsShown() and self:GetAlpha() > 0
+    if shouldRun and not self.detailTicker then
+        update(self)
+        self.detailTicker = C_Timer.NewTicker(interval, function() update(self) end)
+    elseif not shouldRun and self.detailTicker then
+        self.detailTicker:Cancel()
+        self.detailTicker = nil
     end
+end
+
+local function UpdateMinimapCoordsTicker(self)
+    UpdateDetailTicker(self, GW.settings.minimap.coords.enabled, 0.5, mapCoordsMiniMap_setCoords)
+end
+
+local function UpdateMinimapFpsTicker(self)
+    UpdateDetailTicker(self, GW.settings.minimap.fps, 1, GW.FpsOnUpdate)
 end
 
 function GW.ToogleMinimapCoordsLable()
@@ -334,15 +349,10 @@ function GW.ToogleMinimapFpsLable()
     if GW.settings.minimap.fps then
         GW.BuildAddonList()
         GwMapFPS:SetScript("OnEnter", GW.FpsOnEnter)
-        GwMapFPS:SetScript("OnLeave", GW.FpsOnLeave)
+        GwMapFPS:SetScript("OnLeave", MapFps_OnLeave)
         GwMapFPS:SetScript("OnClick", GW.FpsOnClick)
         GwMapFPS:SetScript("OnEvent", GW.FpsOnEvent)
         GwMapFPS:RegisterEvent("MODIFIER_STATE_CHANGED")
-        if GwMapFPS.updateTicker then
-            GwMapFPS.updateTicker:Cancel()
-        end
-        GwMapFPS.updateTicker = C_Timer.NewTicker(1, function() GW.FpsOnUpdate(GwMapFPS) end)
-        GW.FpsOnUpdate(GwMapFPS)
         GwMapFPS:Show()
     else
         GwMapFPS:SetScript("OnEnter", nil)
@@ -350,12 +360,9 @@ function GW.ToogleMinimapFpsLable()
         GwMapFPS:SetScript("OnClick", nil)
         GwMapFPS:SetScript("OnEvent", nil)
         GwMapFPS:UnregisterEvent("MODIFIER_STATE_CHANGED")
-        if GwMapFPS.updateTicker then
-            GwMapFPS.updateTicker:Cancel()
-            GwMapFPS.updateTicker = nil
-        end
         GwMapFPS:Hide()
     end
+    UpdateMinimapFpsTicker(GwMapFPS)
 end
 
 local function Minimap_OnMouseDown(self, btn)
@@ -948,6 +955,7 @@ function GW.LoadMinimap()
     GwMapFPS.fps:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
     GwMapFPS.fps:SetTextColor(1, 1, 1)
     GwMapFPS.fps:SetText(NOT_APPLICABLE)
+    hooksecurefunc(GwMapFPS, "SetAlpha", UpdateMinimapFpsTicker)
     GW.ToogleMinimapFpsLable()
 
     -- the modern clients have no layers
