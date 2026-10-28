@@ -1250,7 +1250,7 @@ local function LoadBag(helpers)
 
     -- money frame tooltip
     f.moneyFrame:SetScript("OnEnter", GW.Money_OnEnter)
-    f.moneyFrame.info = MoneyTypeInfo.PLAYER
+    f.moneyFrame.info = {canPickup = true}
     f.moneyFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     f.moneyFrame:SetScript("OnClick", function(self, button)
         if button == "LeftButton" then
