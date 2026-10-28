@@ -1,0 +1,33 @@
+name: Post Changelog to Discord
+
+# triggers when pushing a tag, or by hand from the actions tab
+on:
+  push:
+    tags:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  discord:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        - name: Generate package changelog
+          run: python3 tools/generate_changelog_txt.py changelog.lua CHANGELOG_NEW_VERSION.txt
+        - name: Post changelog to Discord
+          env:
+            DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          run: |
+            python3 - <<'EOF'
+            import json, os, urllib.request
+            chunks, chunk = [], ""
+            for line in open("CHANGELOG_NEW_VERSION.txt", encoding="utf-8").read().splitlines(keepends=True):
+                if len(chunk) + len(line) > 2000:
+                    chunks.append(chunk)
+                    chunk = ""
+                chunk += line
+            chunks.append(chunk)
+            for text in chunks:
+                body = json.dumps({"content": text, "allowed_mentions": {"parse": []}}).encode()
+                urllib.request.urlopen(urllib.request.Request(os.environ["DISCORD_WEBHOOK"], body, {"Content-Type": "application/json", "User-Agent": "GW2_UI release"}))
+            EOF
