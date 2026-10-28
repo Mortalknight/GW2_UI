@@ -19,9 +19,19 @@ jobs:
             DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           run: |
             python3 - <<'EOF'
-            import json, os, urllib.request
+            import json, os, re, urllib.request
+            # discord markdown: version as title, sections as headers, the area in front of a change in bold
+            lines = []
+            for i, line in enumerate(open("CHANGELOG_NEW_VERSION.txt", encoding="utf-8").read().splitlines()):
+                if i == 0:
+                    line = "# GW2 UI " + line.strip()
+                elif line.startswith("    - "):
+                    line = "- " + re.sub(r"^(.{1,40}?): ", r"**\1:** ", line[6:], count=1)
+                elif line.strip():
+                    line = "## " + line.strip().capitalize()
+                lines.append(line + "\n")
             chunks, chunk = [], ""
-            for line in open("CHANGELOG_NEW_VERSION.txt", encoding="utf-8").read().splitlines(keepends=True):
+            for line in lines:
                 if len(chunk) + len(line) > 2000:
                     chunks.append(chunk)
                     chunk = ""
