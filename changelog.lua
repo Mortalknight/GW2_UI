@@ -31,7 +31,7 @@ addChange("12.1.0", {
     {GW.Enum.ChangelogType.bug, [=[Action bars: no flicker between the override and the normal bar, fewer "action blocked" errors; Classic multi bars no longer stay hidden after a reconnect; Forever: no Edit Mode error on save; the out of range color follows page, stance and form changes]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest tracker: correct scroll range after a resize and in combat; Classic clients: elite and dungeon icons in every language]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest frame and immersive questing (Classic clients): quest texts are always readable, required items show their name]=]},
-    {GW.Enum.ChangelogType.bug, [=[Minimap: the instance difficulty no longer shows only 0 and works in every language; switched off coordinates stay hidden on hover]=]},
+    {GW.Enum.ChangelogType.bug, [=[Minimap: the instance difficulty no longer shows only 0 and works in every language; switched off coordinates stay hidden on hover, hovering the clock or coordinates no longer hides them, the coordinates hide in instances]=]},
     {GW.Enum.ChangelogType.bug, [=[Tooltips: "Hide in combat" no longer hides them out of combat with a modifier key; guild names with "level" no longer break the level line]=]},
     {GW.Enum.ChangelogType.bug, [=[Chat: NPC lines in instances get a timestamp again, no quick join error in combat]=]},
     {GW.Enum.ChangelogType.bug, [=[Damage meter skin: bar backgrounds stay transparent after login and in the details]=]},

@@ -151,10 +151,10 @@ end
 
 local function mapCoordsMiniMap_setCoords(self)
     local x, y, xT, yT = GW.Location.GetCoords()
+    self.Coords:SetShown(x ~= nil)
+    self:EnableMouse(x ~= nil)
     if x and y then
         self.Coords:SetText(GW.GetLocalizedNumber(xT, GW.settings.minimap.coords.precision) .. "/" .. GW.GetLocalizedNumber(yT, GW.settings.minimap.coords.precision))
-    else
-        self.Coords:SetText(NOT_APPLICABLE)
     end
 end
 
@@ -186,6 +186,7 @@ end
 
 
 local function hoverMiniMapOut()
+    if GwMapTime:IsMouseOver() or GwMapCoords:IsMouseOver() then return end
     for k, v in pairs(GW.settings.minimap.alwaysShowHoverDetails) do
         local frame = v == false and minimapDetails[k] and _G[minimapDetails[k]]
         if frame and frame:IsShown() then
@@ -194,6 +195,11 @@ local function hoverMiniMapOut()
     end
 end
 GW.hoverMiniMapOut = hoverMiniMapOut
+
+local function MapCoordsMiniMap_OnLeave()
+    GameTooltip_Hide()
+    hoverMiniMapOut()
+end
 
 
 local function GetMinimapShape()
@@ -281,7 +287,7 @@ function GW.ToogleMinimapCoordsLable()
         GwMapCoords:Show()
         GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
         GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
-        GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
+        GwMapCoords:SetScript("OnLeave", MapCoordsMiniMap_OnLeave)
     else
         GwMapCoords:Hide()
         GwMapCoords:SetScript("OnEnter", nil)
@@ -926,6 +932,7 @@ function GW.LoadMinimap()
     GwMapTime:SetScript("OnClick", GW.Time_OnClick)
     GwMapTime:SetScript("OnEnter", GW.Time_OnEnter)
     GwMapTime:SetScript("OnLeave", GW.Time_OnLeave)
+    GwMapTime:HookScript("OnLeave", hoverMiniMapOut)
     GwMapTime:SetScript("OnEvent", GW.Time_OnEvent)
 
     --coords
