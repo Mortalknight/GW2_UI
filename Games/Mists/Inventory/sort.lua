@@ -108,32 +108,6 @@ local CLASSES = {
     },
 }
 
-do
-    local f = CreateFrame"Frame"
-    local lastUpdate = 0
-    local function updateHandler()
-        if GetTime() - lastUpdate > 1 then
-            for _, container in pairs(BAG_CONTAINERS) do
-                for position = 1, C_Container.GetContainerNumSlots(container) do
-                    SetScanTooltip(container, position)
-                end
-            end
-            for _, container in pairs(BANK_BAG_CONTAINERS) do
-                for position = 1, C_Container.GetContainerNumSlots(container) do
-                    SetScanTooltip(container, position)
-                end
-            end
-            f:SetScript("OnUpdate", nil)
-        end
-    end
-    f:SetScript("OnEvent", function()
-        lastUpdate = GetTime()
-        f:SetScript("OnUpdate", updateHandler)
-    end)
-    f:RegisterEvent"BAG_UPDATE"
-    f:RegisterEvent"BANKFRAME_OPENED"
-end
-
 local model, itemStacks, itemClasses, itemSortKeys
 
 do
@@ -169,7 +143,11 @@ do
     f:SetScript("OnUpdate", function(_, arg1)
         if coroutine.status(process) == "suspended" then
             suspended = true
-            coroutine.resume(process)
+            -- resume swallows errors, the error log should show them
+            local ok, err = coroutine.resume(process)
+            if not ok then
+                geterrorhandler()(err)
+            end
         end
         if coroutine.status(process) == "dead" then
             f:Hide()
@@ -362,6 +340,10 @@ do
             for position = 1, C_Container.GetContainerNumSlots(container) do
                 local slot = {container=container, position=position, class=class}
                 local item = Item(container, position)
+                -- item data still loading after login, try again next frame
+                if item == false then
+                    return false
+                end
                 if item then
                     local containerInfo = C_Container.GetContainerItemInfo(container, position)
  					if containerInfo and containerInfo.isLocked then
@@ -422,8 +404,15 @@ function Item(container, position)
     local link = C_Container.GetContainerItemLink(container, position)
     if link then
         local _, _, itemID, enchantID, suffixID, uniqueID = strfind(link, "item:(%d+):(%d*):%d*:%d*:%d*:%d*:(%-?%d*):(%-?%d*)")
+        if not itemID then
+            -- caged battle pets link as battlepet:, they sort as their pet cage item
+            itemID, enchantID, suffixID, uniqueID = C_Container.GetContainerItemID(container, position), "", "", ""
+        end
         itemID = tonumber(itemID)
         local itemName, _, quality, _, _, _, _, stack, slot, _, sellPrice, classId, subClassId, bindType = C_Item.GetItemInfo("item:" .. itemID)
+        if not itemName then
+            return false
+        end
         local charges, usable, soulbound, conjured = TooltipInfo(container, position)
         local sortKey = {}
 

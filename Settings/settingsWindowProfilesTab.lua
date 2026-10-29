@@ -70,6 +70,7 @@ end
 local function delete_OnClick(self)
     local p = self:GetParent()
     GW.ShowPopup({
+        which = "DELETE_PROFILE",
         text = L["Are you sure you want to delete this profile?"] .. "\n\n'" .. (p.profileName or UNKNOWN) .. "'",
         OnAccept = function()
             deleteProfile(p.profileName)
@@ -83,6 +84,7 @@ local function activate_OnClick(self, _, upInside)
     local p = self:GetParent()
     if not p.canActivate or not upInside then return end
     GW.ShowPopup({
+        which = "ACTIVATE_PROFILE",
         text = L["Do you want to activate profile"] .. "\n\n'" .. (p.profileName or UNKNOWN) .. "'?",
         OnAccept = function()
             setProfile(p.profileName)
@@ -845,7 +847,6 @@ local function LoadSettingsProfileTab(container)
             text = format("%s\n%s", L["Import Profile"], L["Paste your profile string here to import the profile."]),
             hasEditBox = true,
             maxLetters = 0,
-            button1 = L["Import Profile"],
             hideOnEscape = true,
             -- a failed attempt keeps the popup open (success hides it itself)
             notHideOnAccept = true,

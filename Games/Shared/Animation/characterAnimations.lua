@@ -74,6 +74,10 @@ function GW.SetupCharacterPanelSwitchAnimation(frame)
         end)
     end
 
+    frame.SetCurrentPanel = function(self, selected)
+        self.currentPanel = selected
+    end
+
     frame:HookScript("OnHide", GW.ResetCharacterPanelSwitchAnimation)
 end
 

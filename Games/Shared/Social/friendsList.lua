@@ -263,6 +263,16 @@ local function SkinFriendInvites(buttonType)
     end
 end
 
+local function SkinFriendsFriendsButton(button)
+    if button.gwSkinned then return end
+    local r, g, b = BATTLENET_FONT_COLOR:GetRGB()
+    local highlight = button:GetHighlightTexture()
+    highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
+    highlight:SetBlendMode("BLEND")
+    highlight:SetVertexColor(r, g, b, GW.Colors.SkinColors.ListHover.a)
+    button.gwSkinned = true
+end
+
 local function UpdateFriendButton(button)
     if button.buttonType == FRIENDS_BUTTON_TYPE_INVITE_HEADER or button.buttonType == FRIENDS_BUTTON_TYPE_INVITE then
         if FriendsFrameFriendsScrollFrame and FriendsFrameFriendsScrollFrame.invitePool then
@@ -468,6 +478,7 @@ function GW.SkinFriendList()
 
         GW.HandleTrimScrollBar(FriendsFriendsFrame.ScrollBar)
         GW.HandleScrollControls(FriendsFriendsFrame)
+        hooksecurefunc(FriendsFriendsFrame.ScrollBox, "Update", function(box) box:ForEachFrame(SkinFriendsFriendsButton) end)
 
         FriendsFrameBattlenetFrame.ContactsMenuButton:SetPoint("TOPRIGHT", FriendsFrame.gwHeader, "BOTTOMRIGHT", 5, 0)
         FriendsFrameBattlenetFrame.ContactsMenuButton:GwHandleDropDownBox(GW.BackdropTemplates.ColorableBorderOnly, nil, nil, 32)
@@ -482,6 +493,10 @@ function GW.SkinFriendList()
         FriendsFriendsScrollFrame:GwStripTextures()
         FriendsFriendsScrollFrame:GwSkinScrollFrame()
         FriendsFriendsScrollFrameScrollBar:GwSkinScrollBar()
+        FriendsFriendsList:Hide()
+        for i = 1, FRIENDS_FRIENDS_TO_DISPLAY do
+            SkinFriendsFriendsButton(_G["FriendsFriendsButton" .. i])
+        end
 
         button:SetScript("OnClick", function()
         PlaySound(SOUNDKIT.IG_CHAT_EMOTE_BUTTON)

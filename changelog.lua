@@ -13,6 +13,12 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.1", {
+    {GW.Enum.ChangelogType.bug, [=[Guild bank: the search shows on TBC and Wrath and also finds item types like armor or herb]=]},
+    {GW.Enum.ChangelogType.bug, [=[Profiles: only one activation prompt at a time, the import button shows its check mark]=]},
+    {GW.Enum.ChangelogType.bug, [=[Bags and bank (Classic clients): sorting right after login no longer uses incomplete item data, the sort key bindings work; Mists: caged pets no longer stop the sorting]=]},
+})
+
 addChange("12.1.0", {
     {GW.Enum.ChangelogType.feature, [=[Action bars: extra bars can show only out of combat; bars hidden by their show option are really hidden and take no clicks; bars can hide while mounted or in a vehicle, on Retail also while skyriding; keybind and macro name position per bar]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker: section headers stay at the top while scrolling, a slim bar shows the scroll position; PvP quests are red; Forever: class quests get their own section]=]},

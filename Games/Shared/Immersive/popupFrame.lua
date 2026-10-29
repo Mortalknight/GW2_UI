@@ -64,8 +64,9 @@ local function Resize(popup)
 end
 
 local function FindVisibleFrame(info)
+    local key = info.which or info.text
     for _, popup in pairs(frames) do
-        if popup and popup:IsShown() and popup.info.text == info.text then
+        if popup and popup:IsShown() and (popup.info.which or popup.info.text) == key then
             return popup
         end
     end

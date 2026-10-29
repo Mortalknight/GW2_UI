@@ -103,8 +103,14 @@ local function UpdateBankView(frame)
             GW.SetItemSlotQuality(button, select(5, GetGuildBankItemInfo(tab, slot)))
             if frame.gwSearchBox then
                 local link = query ~= "" and GetGuildBankItemLink(tab, slot)
-                local name = link and link:match("%[(.-)%]")
-                button.searchOverlay:SetShown(name ~= nil and not name:lower():find(query, 1, true))
+                local found = true
+                if link then
+                    -- name, type and subtype, e.g. "armor" or "herb"
+                    local _, _, _, _, _, itemType, itemSubType = C_Item.GetItemInfo(link)
+                    local text = format("%s %s %s", link:match("%[(.-)%]") or "", itemType or "", itemSubType or ""):lower()
+                    found = text:find(query, 1, true) ~= nil
+                end
+                button.searchOverlay:SetShown(not found)
             end
         end
     end
@@ -113,7 +119,7 @@ end
 local function SkinItems()
     -- below the search and as wide as its visible bar, which starts right of the box edge
     local detailsBackground = GW.CreateDetailsBackgroundTexture(GuildBankFrame)
-    if GuildItemSearchBox then
+    if GuildItemSearchBox and not (GW.TBC or GW.Wrath) then
         detailsBackground:SetPoint("TOPLEFT", GuildItemSearchBox.Middle, "BOTTOMLEFT", 0, -9)
     else
         detailsBackground:SetPoint("TOPLEFT", GuildBankFrame, "TOPLEFT", 6, -73)
@@ -227,8 +233,8 @@ local function SkinTopRow()
         label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     end
 
-    -- tbc and wrath have no search, they get our own; it leaves the bag search alone
-    local searchBox = GuildItemSearchBox
+    -- tbc and wrath hide blizzards search, it only works from cata on; they get our own
+    local searchBox = not (GW.TBC or GW.Wrath) and GuildItemSearchBox
     if not searchBox then
         searchBox = CreateFrame("EditBox", nil, GuildBankFrame, "SearchBoxTemplate")
         searchBox:HookScript("OnTextChanged", function() UpdateBankView(GuildBankFrame) end)

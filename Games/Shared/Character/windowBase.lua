@@ -506,6 +506,7 @@ function GW.BuildCharacterWindowAttributeChangedHandler(config)
     lines[#lines + 1] = "    elseif not self:IsVisible() then"
     lines[#lines + 1] = "        self:Show()"
     lines[#lines + 1] = "        self:CallMethod(\"SoundOpen\")"
+    lines[#lines + 1] = "        self:CallMethod(\"SetCurrentPanel\", selected)"
     lines[#lines + 1] = "    else"
     lines[#lines + 1] = "        self:CallMethod(\"SoundSwap\")"
     lines[#lines + 1] = "        self:CallMethod(\"AnimatePanelSwitch\", selected)"
