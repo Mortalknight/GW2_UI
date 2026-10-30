@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.2", {
+    {GW.Enum.ChangelogType.bug, [=[Bank (Classic clients): the first sort after login no longer sorts differently than the next one, special bags like quivers or herb bags are recognized right away]=]},
+})
+
 addChange("12.1.1", {
     {GW.Enum.ChangelogType.bug, [=[Guild bank: the search shows on TBC and Wrath and also finds item types like armor or herb]=]},
     {GW.Enum.ChangelogType.bug, [=[Profiles: only one activation prompt at a time, the import button shows its check mark]=]},

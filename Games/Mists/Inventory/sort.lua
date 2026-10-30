@@ -5,7 +5,7 @@ setfenv(1, setmetatable(_M, {__index=_G}))
 
 local fuc = {}
 
-CreateFrame("GameTooltip", "SortBagsTooltip", nil, "GameTooltipTemplate")
+local scanTooltip = GW.ScanTooltip
 
 BAG_CONTAINERS = {0, 1, 2, 3, 4}
 BANK_BAG_CONTAINERS = {-1, 5, 6, 7, 8, 9, 10, 11}
@@ -227,33 +227,29 @@ end
 function TooltipInfo(container, position)
     SetScanTooltip(container, position)
 
-    local charges, usable, soulbound, conjured
-    for i = 1, SortBagsTooltip:NumLines() do
-        local text = getglobal("SortBagsTooltipTextLeft" .. i):GetText()
+    local charges, conjured
+    for i = 1, scanTooltip:NumLines() do
+        local text = getglobal(scanTooltip:GetName() .. "TextLeft" .. i):GetText()
 
         local extractedCharges = fuc:itemCharges(text)
         if extractedCharges then
             charges = extractedCharges
-        elseif strfind(text, "^" .. ITEM_SPELL_TRIGGER_ONUSE) then
-            usable = true
-        elseif text == ITEM_SOULBOUND then
-            soulbound = true
         elseif text == ITEM_CONJURED then
             conjured = true
         end
     end
 
-    return charges or 1, usable, soulbound, conjured
+    return charges or 1, conjured
 end
 
 function SetScanTooltip(container, position)
-    SortBagsTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-    SortBagsTooltip:ClearLines()
+    scanTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+    scanTooltip:ClearLines()
 
     if container == BANK_CONTAINER then
-        SortBagsTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(position))
+        scanTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(position))
     else
-        SortBagsTooltip:SetBagItem(container, position)
+        scanTooltip:SetBagItem(container, position)
     end
 end
 
@@ -387,14 +383,12 @@ end
 
 function ContainerClass(container)
     if container ~= 0 and container ~= BANK_CONTAINER then
-        local name = C_Container.GetBagName(container)
-        if name then
-            for class, info in pairs(CLASSES) do
-                for _, itemID in pairs(info.containers) do
-                    if name == C_Item.GetItemInfo(itemID) then
-                        return class
-                    end
-                end
+        -- by item id: the names of the special bags are often not loaded after login,
+        -- the first sort would miss them and the next one sort differently
+        local bagItemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(container))
+        for class, info in pairs(CLASSES) do
+            if tContains(info.containers, bagItemID) then
+                return class
             end
         end
     end
@@ -413,7 +407,10 @@ function Item(container, position)
         if not itemName then
             return false
         end
-        local charges, usable, soulbound, conjured = TooltipInfo(container, position)
+        local charges, conjured = TooltipInfo(container, position)
+        -- bound and use effect from the api, the tooltip can still miss lines on the first bank open
+        local soulbound = C_Container.GetContainerItemInfo(container, position).isBound
+        local usable = C_Item.GetItemSpell(itemID) ~= nil
         local sortKey = {}
 
         -- hearthstone
