@@ -275,9 +275,16 @@ end
 -- =========================
 local NEVER_NEW = {header = true, subHeader = true, note = true}
 
+local SEEN_NEW_SIGN = [[|TInterface\OptionsFrame\UI-OptionsFrame-NewFeatureIcon:14:14:0:0:64:64:0:64:0:64:120:120:120|t]]
+
 local function IsNewOption(opt)
-    local seen = GW.global and GW.global.seenSettings
+    local seen = GW.global.seenSettings
     return seen ~= nil and not NEVER_NEW[opt.optionType] and not seen[opt.seenKey]
+end
+
+local function IsSeenThisVersion(opt)
+    local seen = GW.global.seenSettings
+    return seen ~= nil and seen[opt.seenKey] == GW.GetVersionString()
 end
 
 local function PanelHasNewOptions(panel)
@@ -301,7 +308,7 @@ local function MenuEntryHasNewOptions(ed)
 end
 
 local function SetOptionTitle(of)
-    of.title:SetText((IsNewOption(of) and GW.NewSign or "") .. (of.displayName or ""))
+    of.title:SetText((IsNewOption(of) and GW.NewSign or IsSeenThisVersion(of) and SEEN_NEW_SIGN or "") .. (of.displayName or ""))
 end
 
 local function ForEachMenuPanel(func)
@@ -337,7 +344,7 @@ local function MarkPanelSeen(panel)
     local changed = false
     for _, opt in ipairs(panel.gwOptions or {}) do
         if IsNewOption(opt) then
-            seen[opt.seenKey] = true
+            seen[opt.seenKey] = GW.GetVersionString()
             changed = true
             if opt.__widget then
                 SetOptionTitle(opt.__widget)
@@ -431,7 +438,7 @@ local function SearchWidgetsByText(query)
             -- headers only structure the panel, alone they are no result
             if e.type ~= "header" and e.type ~= "subHeader" then
                 if searchNew then
-                    if IsNewOption(e.opt) then
+                    if IsNewOption(e.opt) or IsSeenThisVersion(e.opt) then
                         hits[#hits+1] = e
                     end
                 elseif e.titleNorm:find(q, 1, true) or e.groupHeaderNorm:find(q, 1, true) or e.descNorm:find(q, 1, true) then

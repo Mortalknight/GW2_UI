@@ -19,6 +19,7 @@ addChange("12.1.2", {
     {GW.Enum.ChangelogType.bug, [=[Role bar: counts your own role on TBC and Wrath; Quest compass (Classic clients): class and PvP quests take their tracker color]=]},
     {GW.Enum.ChangelogType.change, [=[Quest tracker (Classic clients, Mists): class quests get their own section named after your class, like on Forever]=]},
     {GW.Enum.ChangelogType.change, [=[Hero panel: the spellbook plays Blizzard's spellbook sounds when it opens and closes]=]},
+    {GW.Enum.ChangelogType.change, [=[Settings: new options you already looked at keep a dim marker until the next update, searching for "!" lists them too]=]},
 })
 
 addChange("12.1.1", {
