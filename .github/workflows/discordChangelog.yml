@@ -19,25 +19,31 @@ jobs:
             DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           run: |
             python3 - <<'EOF'
-            import json, os, re, urllib.request
-            # discord markdown: version as title, sections as headers, the area in front of a change in bold
+            import datetime, json, os, re, urllib.request
+            # an embed like the github bot: the version links to its release, sections as headers, the area in front of a change in bold
+            source = open("CHANGELOG_NEW_VERSION.txt", encoding="utf-8").read().splitlines()
+            version = source[0].strip()
+            repo = os.environ["GITHUB_REPOSITORY"]
             lines = []
-            for i, line in enumerate(open("CHANGELOG_NEW_VERSION.txt", encoding="utf-8").read().splitlines()):
-                if i == 0:
-                    line = "# GW2 UI " + line.strip()
-                elif line.startswith("    - "):
+            for line in source[1:]:
+                if line.startswith("    - "):
                     line = "- " + re.sub(r"^(.{1,40}?): ", r"**\1:** ", line[6:], count=1)
                 elif line.strip():
                     line = "## " + line.strip().capitalize()
                 lines.append(line + "\n")
+            # an embed description holds 4096 characters
             chunks, chunk = [], ""
             for line in lines:
-                if len(chunk) + len(line) > 2000:
+                if len(chunk) + len(line) > 4096:
                     chunks.append(chunk)
                     chunk = ""
                 chunk += line
             chunks.append(chunk)
-            for text in chunks:
-                body = json.dumps({"content": text, "allowed_mentions": {"parse": []}}).encode()
+            embeds = [{"description": text.strip(), "color": 0x963232} for text in chunks]
+            # the release is created after this post, its link is known already
+            embeds[0].update(title="GW2 UI " + version, url=f"https://github.com/{repo}/releases/tag/{version}")
+            embeds[-1].update(footer={"text": "GW2 UI"}, timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat())
+            for embed in embeds:
+                body = json.dumps({"embeds": [embed], "allowed_mentions": {"parse": []}}).encode()
                 urllib.request.urlopen(urllib.request.Request(os.environ["DISCORD_WEBHOOK"], body, {"Content-Type": "application/json", "User-Agent": "GW2_UI release"}))
             EOF
