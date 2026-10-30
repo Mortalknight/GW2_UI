@@ -47,6 +47,15 @@ local COLOR_PREVIEWS = {
     ["GW2:reactionColor"] = function() return GW.Colors.FactionBarColors[5]:GenerateHexColorMarkup() end,
     ["GW2:healthColor"] = function() return YELLOW_FONT_COLOR:GenerateHexColorMarkup() end,
 }
+-- our colored class icon or the white one of the party frames
+function GW.GetTagClassIcon(class, classID, colored)
+    if colored then
+        return GW.GetClassIconStringWithStyle(strlower(class))
+    end
+    local tex = GW.CLASS_ICONS[classID]
+    return tex and format("|TInterface/AddOns/GW2_UI/textures/party/classicons.png:0:0:0:0:1024:64:%d:%d:0:64|t", tex.l * 1024, tex.r * 1024)
+end
+
 local NAME_LENGTHS = {{"0", ALL}}
 for _, length in ipairs({8, 12, 16}) do
     tinsert(NAME_LENGTHS, {tostring(length), format(L["%d Letters"], length)})
@@ -66,17 +75,18 @@ local BLOCKS = {
             return mode .. "," .. tostring(block.abbrev == true) .. "," .. tostring(block.realm == true)
         end,
         preview = function(block, mode, unit)
-            local name = unit.name .. (block.realm and "-Draenor" or "")
+            local name = unit.name .. (block.realm and "-" .. GW.myrealm or "")
             return tonumber(mode) > 0 and string.utf8sub(name, 1, tonumber(mode)) or name
         end},
     class = {category = "name", label = CLASS, desc = L["The class of a player."],
         modes = {{"TEXT", L["Text"]}, {"ICON", L["Icon"]}},
-        checks = {{key = "creature", label = L["Creature Type on Everything Else"], hideInMode = "ICON"}},
+        checks = {{key = "creature", label = L["Creature Type on Everything Else"], hideInMode = "ICON"},
+            {key = "colored", label = L["In Color"], hideInMode = "TEXT"}},
         tag = function(block, mode) return mode == "ICON" and "GW2:classIcon" or block.creature and "smartclass" or "class" end,
-        preview = function(_, mode)
+        args = function(block, mode) return mode == "ICON" and tostring(block.colored == true) or nil end,
+        preview = function(block, mode)
             if mode == "ICON" then
-                local c = CLASS_ICON_TCOORDS.SHAMAN
-                return format("|TInterface/WorldStateFrame/Icons-Classes:0:0:0:0:256:256:%d:%d:%d:%d|t", c[1] * 256, c[2] * 256, c[3] * 256, c[4] * 256)
+                return GW.GetTagClassIcon("SHAMAN", 7, block.colored)
             end
             return LOCALIZED_CLASS_NAMES_MALE.SHAMAN
         end},

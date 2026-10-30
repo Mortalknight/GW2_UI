@@ -35,7 +35,7 @@ local function AddTag(tagName, events, func)
 end
 
 local function Create_Tags()
-    -- the name, cut to a number of letters, other words than the last as initials, with the realm of other realms
+    -- the name, cut to a number of letters, other words than the last as initials, with the realm of a player
     AddTag("GW2_Grid:name", "UNIT_NAME_UPDATE", function(unit, realunit, maxLength, abbrev, withRealm)
         unit = realunit or unit
         local name = GW.GetUnitDisplayName(unit, UnitName)
@@ -46,8 +46,15 @@ local function Create_Tags()
             name = name:gsub("(%S+) ", function(word) return string.utf8sub(word, 1, 1) .. ". " end)
         end
         if stringtoboolean[withRealm] then
+            -- players of the own realm come without one
             local _, realm = UnitName(unit)
-            if GW.NotSecretValue(realm) and realm and realm ~= "" then
+            local isPlayer = UnitIsPlayer(unit)
+            if GW.IsSecretValue(realm) or GW.IsSecretValue(isPlayer) then
+                realm = nil
+            elseif (not realm or realm == "") and isPlayer then
+                realm = GW.myrealm
+            end
+            if realm and realm ~= "" then
                 name = name .. "-" .. realm
             end
         end
@@ -76,15 +83,13 @@ local function Create_Tags()
         return stringtoboolean[brackets] and "<" .. guild .. ">" or guild
     end)
 
-    AddTag("GW2:classIcon", "UNIT_NAME_UPDATE", function(unit, realUnit)
+    -- our class icons, the colored ones or the white ones of the party frames
+    AddTag("GW2:classIcon", "UNIT_NAME_UPDATE", function(unit, realUnit, colored)
         unit = realUnit or unit
         local isPlayer = UnitIsPlayer(unit)
-        local _, class = UnitClass(unit)
-        local coords = GW.NotSecretValue(isPlayer) and isPlayer and GW.NotSecretValue(class) and CLASS_ICON_TCOORDS[class]
-        if coords then
-            return format("|TInterface/WorldStateFrame/Icons-Classes:0:0:0:0:256:256:%d:%d:%d:%d|t",
-                coords[1] * 256, coords[2] * 256, coords[3] * 256, coords[4] * 256)
-        end
+        local _, class, classID = UnitClass(unit)
+        if GW.IsSecretValue(isPlayer) or GW.IsSecretValue(class) or not isPlayer or not class then return end
+        return GW.GetTagClassIcon(class, classID, stringtoboolean[colored])
     end)
 
     -- dead, ghost or offline like oUF, then away or busy

@@ -411,7 +411,7 @@
                             </Anchors>
                         </FontString>
                         <FontString parentKey="levelString" justifyH="RIGHT" justifyV="MIDDLE">
-                            <Size x="50" y="15"/>
+                            <Size x="0" y="15"/>
                             <Anchors>
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                             </Anchors>

@@ -1268,3 +1268,4 @@ L["Current - Percent"] = true
 L["With Shield"] = true
 L["Only Healers"] = true
 L["Reaction"] = true
+L["In Color"] = true
