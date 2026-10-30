@@ -21,6 +21,7 @@ addChange("12.1.2", {
     {GW.Enum.ChangelogType.bug, [=[Bank (Classic clients): the first sort after login no longer sorts differently than the next one, special bags like quivers or herb bags are recognized right away]=]},
     {GW.Enum.ChangelogType.bug, [=[Profiles: the icon picker no longer stutters when it opens]=]},
     {GW.Enum.ChangelogType.bug, [=[Role bar: counts your own role on TBC and Wrath; Quest compass (Classic clients): class and PvP quests take their tracker color]=]},
+    {GW.Enum.ChangelogType.feature, [=[Text designer: new blocks Guild and Target of the unit; names can be shortened, abbreviated or show the realm, the class as an icon, health and power as current / max, health with shield, power only on healers, AFK and DND in the status, threat in percent, reaction and health colors]=]},
     {GW.Enum.ChangelogType.change, [=[Quest tracker (Classic clients, Mists): class quests get their own section named after your class, like on Forever]=]},
     {GW.Enum.ChangelogType.change, [=[Hero panel: the spellbook plays Blizzard's spellbook sounds when it opens and closes]=]},
     {GW.Enum.ChangelogType.change, [=[Settings: new options you already looked at keep a dim marker until the next update, searching for "!" lists them too]=]},

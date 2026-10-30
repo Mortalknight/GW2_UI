@@ -35,8 +35,94 @@ local function AddTag(tagName, events, func)
 end
 
 local function Create_Tags()
-    AddTag("GW2_Grid:name", "UNIT_NAME_UPDATE", function(unit, realunit)
-        return GW.GetUnitDisplayName(realunit or unit, UnitName)
+    -- the name, cut to a number of letters, other words than the last as initials, with the realm of other realms
+    AddTag("GW2_Grid:name", "UNIT_NAME_UPDATE", function(unit, realunit, maxLength, abbrev, withRealm)
+        unit = realunit or unit
+        local name = GW.GetUnitDisplayName(unit, UnitName)
+        if not maxLength or GW.IsSecretValue(name) or not name then
+            return name
+        end
+        if stringtoboolean[abbrev] then
+            name = name:gsub("(%S+) ", function(word) return string.utf8sub(word, 1, 1) .. ". " end)
+        end
+        if stringtoboolean[withRealm] then
+            local _, realm = UnitName(unit)
+            if GW.NotSecretValue(realm) and realm and realm ~= "" then
+                name = name .. "-" .. realm
+            end
+        end
+        maxLength = tonumber(maxLength)
+        if maxLength > 0 and strlenutf8(name) > maxLength then
+            name = string.utf8sub(name, 1, maxLength)
+        end
+        return name
+    end)
+
+    -- the name of what the unit has targeted
+    AddTag("GW2:target", "UNIT_TARGET UNIT_NAME_UPDATE", function(unit, realUnit)
+        local target = (realUnit or unit) .. "target"
+        local exists = UnitExists(target)
+        if GW.NotSecretValue(exists) and exists then
+            return GW.GetUnitDisplayName(target)
+        end
+    end)
+
+    AddTag("GW2:guild", "UNIT_NAME_UPDATE PLAYER_GUILD_UPDATE", function(unit, realUnit, brackets, withRank)
+        local guild, rank = GetGuildInfo(realUnit or unit)
+        if GW.IsSecretValue(guild) or not guild then return end
+        if stringtoboolean[withRank] and GW.NotSecretValue(rank) and rank then
+            guild = guild .. " - " .. rank
+        end
+        return stringtoboolean[brackets] and "<" .. guild .. ">" or guild
+    end)
+
+    AddTag("GW2:classIcon", "UNIT_NAME_UPDATE", function(unit, realUnit)
+        unit = realUnit or unit
+        local isPlayer = UnitIsPlayer(unit)
+        local _, class = UnitClass(unit)
+        local coords = GW.NotSecretValue(isPlayer) and isPlayer and GW.NotSecretValue(class) and CLASS_ICON_TCOORDS[class]
+        if coords then
+            return format("|TInterface/WorldStateFrame/Icons-Classes:0:0:0:0:256:256:%d:%d:%d:%d|t",
+                coords[1] * 256, coords[2] * 256, coords[3] * 256, coords[4] * 256)
+        end
+    end)
+
+    -- dead, ghost or offline like oUF, then away or busy
+    AddTag("GW2:status", "UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION PARTY_MEMBER_ENABLE PARTY_MEMBER_DISABLE PLAYER_FLAGS_CHANGED",
+        function(unit, realUnit, mode)
+        unit = realUnit or unit
+        local text = GW.oUF.Tags.Methods[mode](unit)
+        if text then return text end
+        local afk, dnd = UnitIsAFK(unit), UnitIsDND(unit)
+        if GW.IsSecretValue(afk) or GW.IsSecretValue(dnd) then return end
+        return afk and AFK or dnd and DND or nil
+    end)
+
+    -- your threat on the unit
+    AddTag("GW2:threatPercent", "UNIT_THREAT_LIST_UPDATE UNIT_THREAT_SITUATION_UPDATE", function(unit, realUnit)
+        local _, _, percent = UnitDetailedThreatSituation("player", realUnit or unit)
+        if GW.NotSecretValue(percent) and percent and percent > 0 then
+            return format("%.0f%%", percent)
+        end
+    end)
+
+    AddTag("GW2:reactionColor", "UNIT_FACTION UNIT_NAME_UPDATE", function(unit, realUnit)
+        local reaction = UnitReaction(realUnit or unit, "player")
+        local color = GW.NotSecretValue(reaction) and reaction and GW.Colors.FactionBarColors[reaction]
+        return color and color:GenerateHexColorMarkup()
+    end)
+
+    -- red over yellow to green by the health; retail hands the health out as a secret, it has no such color
+    AddTag("GW2:healthColor", "UNIT_HEALTH UNIT_MAXHEALTH", function(unit, realUnit)
+        unit = realUnit or unit
+        local healthMax = UnitHealthMax(unit)
+        local percent = healthMax > 0 and UnitHealth(unit) / healthMax or 0
+        local from, to = RED_FONT_COLOR, YELLOW_FONT_COLOR
+        if percent > 0.5 then
+            from, to, percent = YELLOW_FONT_COLOR, GREEN_FONT_COLOR, percent - 0.5
+        end
+        percent = percent * 2
+        return CreateColor(Lerp(from.r, to.r, percent), Lerp(from.g, to.g, percent), Lerp(from.b, to.b, percent)):GenerateHexColorMarkup()
     end)
 
     AddTag("GW2_Grid:leaderIcon", "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)
@@ -112,53 +198,58 @@ local function Create_Tags()
         end
     end)
 
-    AddTag("GW2_Grid:healtValue", "UNIT_HEALTH UNIT_MAXHEALTH", function(unit, realUnit, ...)
-        local healthDisplaySetting, shortendHealthValue = ...
+    AddTag("GW2_Grid:healtValue", "UNIT_HEALTH UNIT_MAXHEALTH UNIT_ABSORB_AMOUNT_CHANGED", function(unit, realUnit, mode, short, withShield)
         -- like the name: config mode hands its made up member in as realUnit
         unit = realUnit or unit
-        local formatFunc
+        local formatFunc = stringtoboolean[short] and GW.ShortValue or GW.isModern and BreakUpLargeNumbers or GW.GetLocalizedNumber
 
-        shortendHealthValue = stringtoboolean[shortendHealthValue]
-
+        -- retail hands the health out as a secret: blizzards functions format it, no math on it
         if GW.isModern then
-            formatFunc = shortendHealthValue and GW.ShortValue or BreakUpLargeNumbers
-        else
-            formatFunc = shortendHealthValue and GW.ShortValue or GW.GetLocalizedNumber
-        end
-
-        if healthDisplaySetting == "NONE" then
+            local percent = string.format("%.0f%%", UnitHealthPercent(unit, true, CurveConstants.ScaleTo100))
+            if mode == "PREC" then
+                return percent
+            elseif mode == "HEALTH" then
+                return formatFunc(UnitHealth(unit))
+            elseif mode == "MAX" then
+                return formatFunc(UnitHealthMax(unit))
+            elseif mode == "LOSTHEALTH" then
+                return formatFunc(UnitHealthMissing(unit))
+            elseif mode == "CURMAX" then
+                return formatFunc(UnitHealth(unit)) .. " / " .. formatFunc(UnitHealthMax(unit))
+            elseif mode == "CURPREC" then
+                return formatFunc(UnitHealth(unit)) .. " - " .. percent
+            end
             return ""
         end
-        if healthDisplaySetting == "PREC" then
-            if GW.isModern then
-                return string.format("%.0f%%", UnitHealthPercent(unit, true, CurveConstants.ScaleTo100))
-            else
-                local healthMax = UnitHealthMax(unit)
-                local healthPrecentage = (healthMax > 0) and (UnitHealth(unit) / healthMax) or 0
-                return GW.RoundDec(healthPrecentage * 100, 0) .. "%"
-            end
-        elseif healthDisplaySetting == "HEALTH" then
-            return formatFunc(UnitHealth(unit))
-        elseif healthDisplaySetting == "MAX" then
-            return formatFunc(UnitHealthMax(unit))
-        elseif healthDisplaySetting == "LOSTHEALTH" then
-            if GW.isModern then
-                return formatFunc(UnitHealthMissing(unit))
-            else
-                local healthMax = UnitHealthMax(unit)
-                local health = UnitHealth(unit)
-                if (healthMax - health) > 0 then
-                    return formatFunc(healthMax - health)
-                end
-                return ""
-            end
-        end
 
+        local health, healthMax = UnitHealth(unit), UnitHealthMax(unit)
+        if mode == "LOSTHEALTH" then
+            return healthMax - health > 0 and formatFunc(healthMax - health) or ""
+        end
+        if stringtoboolean[withShield] and UnitGetTotalAbsorbs then
+            health = health + (UnitGetTotalAbsorbs(unit) or 0)
+        end
+        local percent = GW.RoundDec(healthMax > 0 and health / healthMax * 100 or 0, 0) .. "%"
+        if mode == "PREC" then
+            return percent
+        elseif mode == "HEALTH" then
+            return formatFunc(health)
+        elseif mode == "MAX" then
+            return formatFunc(healthMax)
+        elseif mode == "CURMAX" then
+            return formatFunc(health) .. " / " .. formatFunc(healthMax)
+        elseif mode == "CURPREC" then
+            return formatFunc(health) .. " - " .. percent
+        end
         return ""
     end)
 
-    AddTag("GW2_Grid:power", "UNIT_POWER_UPDATE UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER", function(unit, realUnit, mode, short, mana)
+    AddTag("GW2_Grid:power", "UNIT_POWER_UPDATE UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER PLAYER_ROLES_ASSIGNED", function(unit, realUnit, mode, short, mana, onlyHealer)
         unit = realUnit or unit
+        if stringtoboolean[onlyHealer] then
+            local role = UnitGroupRolesAssigned(unit)
+            if GW.IsSecretValue(role) or role ~= "HEALER" then return end
+        end
         local powerType = stringtoboolean[mana] and Enum.PowerType.Mana or nil
         if mode == "PREC" then
             if GW.isModern then
@@ -171,6 +262,8 @@ local function Create_Tags()
         local formatFunc = stringtoboolean[short] and GW.ShortValue or GW.isModern and BreakUpLargeNumbers or GW.GetLocalizedNumber
         if mode == "MAX" then
             return formatFunc(UnitPowerMax(unit, powerType))
+        elseif mode == "CURMAX" then
+            return formatFunc(UnitPower(unit, powerType)) .. " / " .. formatFunc(UnitPowerMax(unit, powerType))
         elseif mode == "MISSING" then
             if GW.isModern then
                 return formatFunc(UnitPowerMissing(unit, powerType))

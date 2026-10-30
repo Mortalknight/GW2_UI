@@ -16,7 +16,11 @@ local PREVIEW_UNIT = {name = "Thrall", role = "HEALER", spec = "Restoration", he
 local PREVIEW_UNIT_META = {__index = PREVIEW_UNIT}
 
 local function PreviewValue(block, mode, current, max)
-    if mode == "PREC" then
+    if mode == "CURMAX" then
+        return PreviewValue(block, "CUR", current, max) .. " / " .. PreviewValue(block, "MAX", current, max)
+    elseif mode == "CURPREC" then
+        return PreviewValue(block, "CUR", current, max) .. " - " .. PreviewValue(block, "PREC", current, max)
+    elseif mode == "PREC" then
         return string.format("%.0f%%", current / max * 100)
     end
     local value = mode == "MAX" and max or (mode == "LOSTHEALTH" or mode == "MISSING") and max - current or current
@@ -40,18 +44,52 @@ local COLOR_PREVIEWS = {
     powercolor = function() return GW.oUF.colors.power.MANA:GenerateHexColorMarkup() end,
     threatcolor = function() return GW.oUF.colors.threat[3]:GenerateHexColorMarkup() end,
     difficulty = function() return RED_FONT_COLOR:GenerateHexColorMarkup() end,
+    ["GW2:reactionColor"] = function() return GW.Colors.FactionBarColors[5]:GenerateHexColorMarkup() end,
+    ["GW2:healthColor"] = function() return YELLOW_FONT_COLOR:GenerateHexColorMarkup() end,
 }
+local NAME_LENGTHS = {{"0", ALL}}
+for _, length in ipairs({8, 12, 16}) do
+    tinsert(NAME_LENGTHS, {tostring(length), format(L["%d Letters"], length)})
+end
 local CLASSIFICATION_PREVIEWS = {classification = "Elite", shortclassification = "+", rare = "Rare", plus = "+",
     affix = "Affix"}
 
 -- label, desc and preview are for the designer; blocks that show nothing on the preview member preview an example
 local BLOCKS = {
-    name = {category = "name", label = NAME, desc = L["The name of the unit."], tag = "GW2_Grid:name",
-        preview = function(_, _, unit) return unit.name end},
+    -- forever hands out the surname where the others hand out the realm, the name shows it already
+    name = {category = "name", label = NAME, desc = L["The name of the unit."], modes = NAME_LENGTHS,
+        checks = {{key = "abbrev", label = L["Abbreviate"]}, {key = "realm", label = L["With Realm"], hidden = GW.Forever}},
+        tag = "GW2_Grid:name",
+        -- no arguments without an option, the tag stays the one of the texts saved before
+        args = function(block, mode)
+            if mode == "0" and not block.abbrev and not block.realm then return end
+            return mode .. "," .. tostring(block.abbrev == true) .. "," .. tostring(block.realm == true)
+        end,
+        preview = function(block, mode, unit)
+            local name = unit.name .. (block.realm and "-Draenor" or "")
+            return tonumber(mode) > 0 and string.utf8sub(name, 1, tonumber(mode)) or name
+        end},
     class = {category = "name", label = CLASS, desc = L["The class of a player."],
-        checks = {{key = "creature", label = L["Creature Type on Everything Else"]}},
-        tag = function(block) return block.creature and "smartclass" or "class" end,
-        preview = function() return LOCALIZED_CLASS_NAMES_MALE.SHAMAN end},
+        modes = {{"TEXT", L["Text"]}, {"ICON", L["Icon"]}},
+        checks = {{key = "creature", label = L["Creature Type on Everything Else"], hideInMode = "ICON"}},
+        tag = function(block, mode) return mode == "ICON" and "GW2:classIcon" or block.creature and "smartclass" or "class" end,
+        preview = function(_, mode)
+            if mode == "ICON" then
+                local c = CLASS_ICON_TCOORDS.SHAMAN
+                return format("|TInterface/WorldStateFrame/Icons-Classes:0:0:0:0:256:256:%d:%d:%d:%d|t", c[1] * 256, c[2] * 256, c[3] * 256, c[4] * 256)
+            end
+            return LOCALIZED_CLASS_NAMES_MALE.SHAMAN
+        end},
+    guild = {category = "name", label = GUILD, desc = L["The guild of a player."],
+        checks = {{key = "brackets", label = L["In Brackets"]}, {key = "rank", label = L["With Rank"]}},
+        tag = "GW2:guild",
+        args = function(block) return tostring(block.brackets == true) .. "," .. tostring(block.rank == true) end,
+        preview = function(block)
+            local guild = "Horde Elite" .. (block.rank and " - Officer" or "")
+            return block.brackets and "<" .. guild .. ">" or guild
+        end},
+    unitTarget = {category = "name", label = TARGET, desc = L["The name of what the unit has targeted."],
+        tag = "GW2:target", preview = "Garrosh"},
     race = {category = "name", label = RACE, desc = L["The race of a player."], tag = "race", preview = "Orc"},
     sex = {category = "name", label = L["Gender"], desc = L["Male or female."], tag = "sex", preview = "Male"},
     creature = {category = "name", label = L["Creature Type"], desc = L["The family or type of a creature, like Beast."],
@@ -64,9 +102,12 @@ local BLOCKS = {
         hidden = GW.Classic or GW.TBC or GW.Wrath},
 
     healthValue = {category = "health", label = HEALTH, desc = L["The health of the unit."],
-        modes = {{"PREC", STATUS_TEXT_PERCENT}, {"HEALTH", REFORGE_CURRENT}, {"MAX", MAXIMUM}, {"LOSTHEALTH", L["Missing"]}},
-        checks = {SHORT_CHECK}, tag = "GW2_Grid:healtValue",
-        args = function(block, mode) return mode .. "," .. tostring(block.short == true) end,
+        modes = {{"PREC", STATUS_TEXT_PERCENT}, {"HEALTH", REFORGE_CURRENT}, {"MAX", MAXIMUM}, {"LOSTHEALTH", L["Missing"]},
+            {"CURMAX", L["Current / Max"]}, {"CURPREC", L["Current - Percent"]}},
+        -- retail hands out health and shield as secrets, they can not be added up
+        checks = {SHORT_CHECK, {key = "shield", label = L["With Shield"], hideInMode = "LOSTHEALTH", hidden = GW.isModern}},
+        tag = "GW2_Grid:healtValue",
+        args = function(block, mode) return mode .. "," .. tostring(block.short == true) .. "," .. tostring(block.shield == true) end,
         preview = function(block, mode, unit) return PreviewValue(block, mode, unit.health, unit.maxHealth) end},
     -- retail hands out the shield as a secret, only blizzards formatting can show it, so no percent and no shortening
     absorb = {category = "health", label = L["Shield"], desc = L["The damage shield of the unit."],
@@ -80,15 +121,23 @@ local BLOCKS = {
     status = {category = "health", label = DEAD .. " / " .. PLAYER_OFFLINE,
         desc = L["Dead, Ghost or Offline, zzz on yourself while resting."],
         modes = {{"status", L["Dead, Ghost or Offline"]}, {"dead", L["Dead or Ghost"]}, {"offline", PLAYER_OFFLINE}},
-        tag = ModeTag, preview = function(_, mode) return mode == "offline" and "Offline" or "Dead" end},
+        checks = {{key = "afk", label = AFK .. " / " .. DND}},
+        tag = function(block, mode) return block.afk and "GW2:status" or mode end,
+        args = function(block, mode) return block.afk and mode or nil end,
+        preview = function(_, mode) return mode == "offline" and "Offline" or "Dead" end},
 
     power = {category = "power", label = L["Power"], desc = L["The power of the unit, like mana or rage."],
-        modes = {{"PREC", STATUS_TEXT_PERCENT}, {"CUR", REFORGE_CURRENT}, {"MAX", MAXIMUM}, {"MISSING", L["Missing"]}},
-        checks = {SHORT_CHECK, {key = "mana", label = L["Always Mana"]}}, tag = "GW2_Grid:power",
+        modes = {{"PREC", STATUS_TEXT_PERCENT}, {"CUR", REFORGE_CURRENT}, {"MAX", MAXIMUM}, {"MISSING", L["Missing"]},
+            {"CURMAX", L["Current / Max"]}},
+        checks = {SHORT_CHECK, {key = "mana", label = L["Always Mana"]}, {key = "healer", label = L["Only Healers"]}},
+        tag = "GW2_Grid:power",
         args = function(block, mode)
-            return mode .. "," .. tostring(block.short == true) .. "," .. tostring(block.mana == true)
+            return mode .. "," .. tostring(block.short == true) .. "," .. tostring(block.mana == true) .. "," .. tostring(block.healer == true)
         end,
-        preview = function(block, mode, unit) return PreviewValue(block, mode, unit.power, unit.maxPower) end},
+        preview = function(block, mode, unit)
+            if block.healer and unit.role ~= "HEALER" then return "" end
+            return PreviewValue(block, mode, unit.power, unit.maxPower)
+        end},
     classPower = {category = "power", label = L["Class Resource"], playerOnly = true,
         desc = L["Your class resource, picked by class and specialization like the class power bar."],
         tag = "GW2:classPower", preview = "3"},
@@ -135,13 +184,17 @@ local BLOCKS = {
         preview = "PvP"},
     resting = {category = "status", label = TUTORIAL_TITLE30, desc = L["zzz on yourself while resting."],
         tag = "resting", preview = "zzz"},
-    threat = {category = "status", label = L["Threat"], desc = L["++, -- or Aggro, depending on the threat of the unit."],
-        tag = "threat", preview = "Aggro"},
+    threat = {category = "status", label = L["Threat"],
+        desc = L["++, -- or Aggro, depending on the threat of the unit; in percent your threat on the unit."],
+        modes = {{"threat", "++ / -- / Aggro"}, {"PREC", STATUS_TEXT_PERCENT}},
+        tag = function(_, mode) return mode == "PREC" and "GW2:threatPercent" or "threat" end,
+        preview = function(_, mode) return mode == "PREC" and "85%" or "Aggro" end},
     happiness = {category = "status", label = HAPPINESS, desc = L["The happiness of a hunter pet."], tag = "happiness",
         preview = ":D", hidden = GW.Retail or GW.Mists},
 
     colorStart = {category = "color", label = L["Color Start"], desc = L["Colors the text up to the next Color End."],
-        modes = {{"raidcolor", CLASS}, {"powercolor", L["Power"]}, {"threatcolor", L["Threat"]}, {"difficulty", L["Difficulty"]}},
+        modes = {{"raidcolor", CLASS}, {"powercolor", L["Power"]}, {"threatcolor", L["Threat"]}, {"difficulty", L["Difficulty"]},
+            {"GW2:reactionColor", L["Reaction"]}, {"GW2:healthColor", HEALTH, hidden = GW.isModern}},
         tag = ModeTag, preview = function(_, mode) return COLOR_PREVIEWS[mode]() end},
     colorEnd = {category = "color", label = L["Color End"], desc = L["Ends the color, the text after it is no longer colored."],
         text = "|r"},
@@ -155,7 +208,7 @@ local BLOCKS = {
 }
 -- the order of the block list in the designer
 GW.TagTextBlockOrder = {
-    "name", "class", "race", "sex", "creature", "faction", "arenaspec",
+    "name", "class", "guild", "unitTarget", "race", "sex", "creature", "faction", "arenaspec",
     "healthValue", "absorb", "status",
     "power", "classPower", "classBarValue",
     "roleIcon", "leaderIcon", "assistIcon", "mainTankIcon", "factionIcon", "realmFlag",
