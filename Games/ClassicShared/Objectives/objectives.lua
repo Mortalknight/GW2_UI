@@ -325,7 +325,8 @@ function GwQuestLogMixin:UpdateLayout()
 
     wipe(self.trackedQuests)
     for _, quest in pairs(sorted) do
-        if ((GetCVar("autoQuestWatch") == "1" and not questWatchDB.AutoUntrackedQuests[quest.questId]) or (GetCVar("autoQuestWatch") == "0" and questWatchDB.TrackedQuests[quest.questId])) then
+        -- class quests go to the campaign container, like on forever
+        if (quest.isClassQuest or false) == self.isCampaignContainer and ((GetCVar("autoQuestWatch") == "1" and not questWatchDB.AutoUntrackedQuests[quest.questId]) or (GetCVar("autoQuestWatch") == "0" and questWatchDB.TrackedQuests[quest.questId])) then
             if shouldShowHeader then
                 self.header:Show()
                 counterQuest = counterQuest + 1
@@ -361,6 +362,8 @@ function GwQuestLogMixin:UpdateLayout()
                 end
 
                 GW.CombatQueue:Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
+                -- the compass takes the same color
+                quest.colorKey = colorKey
                 tinsert(self.trackedQuests, quest)
             else
                 counterQuest = counterQuest + 1
@@ -370,7 +373,7 @@ function GwQuestLogMixin:UpdateLayout()
                     block.questLogIndex = 0
                     block.sourceItemId = nil
                     block:Hide()
-                    GW.CombatQueue:Queue("update_tracker_" .. counterQuest, block.UpdateObjectiveActionButton, {block})
+                    GW.CombatQueue:Queue("update_tracker_" .. frameName .. counterQuest, block.UpdateObjectiveActionButton, {block})
                 end
             end
         end
@@ -385,13 +388,17 @@ function GwQuestLogMixin:UpdateLayout()
         block.questLogIndex = 0
         block.sourceItemId = nil
         block:Hide()
-        GW.CombatQueue:Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
+        GW.CombatQueue:Queue("update_tracker_itembutton_remove" .. frameName .. i, block.UpdateObjectiveActionButton, {block})
+    end
+
+    if counterQuest == 0 and self.isCampaignContainer then
+        self.header:Hide()
     end
 
     self:LayoutBlocks(counterQuest)
 
     local headerCounterText = " (" .. counterQuest .. ")"
-    self.header.title:SetText(TRACKER_HEADER_QUESTS .. headerCounterText)
+    self.header.title:SetText((self.isCampaignContainer and GW.myLocalizedClass or TRACKER_HEADER_QUESTS) .. headerCounterText)
 
     self.isUpdating = false
 end
@@ -485,6 +492,12 @@ end
 
 GwObjectivesQuestContainerMixin = CreateFromMixins(GwQuestLogMixin)
 
+-- a watch change can concern either container, class quests have their own
+local function UpdateQuestContainers()
+    GW.ObjectiveTrackerContainer.Quests:OnEvent()
+    GW.ObjectiveTrackerContainer.Campaign:OnEvent()
+end
+
 
 function GwObjectivesQuestContainerMixin:_RemoveQuestWatch(index, isGW2)
     if not isGW2 then
@@ -499,7 +512,7 @@ function GwObjectivesQuestContainerMixin:_RemoveQuestWatch(index, isGW2)
             else
                 questWatchDB.AutoUntrackedQuests[questId] = true
             end
-            self:OnEvent()
+            UpdateQuestContainers()
         end
     end
 end
@@ -539,12 +552,13 @@ function GwObjectivesQuestContainerMixin:_AQW_Insert(index)
             end
         end
 
-        self:OnEvent()
+        UpdateQuestContainers()
     end
 end
 
 function GwObjectivesQuestContainerMixin:InitModule()
     self.blockMixInTemplate = GwQuestLogBlockMixin
+    self.isCampaignContainer = self:GetName() == "GwQuesttrackerContainerCampaign"
 
     questWatchDB = GW.private.questWatch
 
@@ -579,6 +593,14 @@ function GwObjectivesQuestContainerMixin:InitModule()
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function
+    if self.isCampaignContainer then
+        self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:GetRGB())
+        self.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
+        self.header.title:SetText(GW.myLocalizedClass)
+        -- the quest watch hooks below exist once, in the quests container
+        self:OnEvent("LOAD")
+        return
+    end
     self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:GetRGB())
     self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
     self.header.title:SetText(TRACKER_HEADER_QUESTS)

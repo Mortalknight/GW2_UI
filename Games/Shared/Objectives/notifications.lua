@@ -15,6 +15,7 @@ local sourceEntries = {}
 
 local icons = {
     [GW.Enum.ObjectivesNotificationType.Quest] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
+    [GW.Enum.ObjectivesNotificationType.PvPQuest] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
     [GW.Enum.ObjectivesNotificationType.Campaign] = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
     [GW.Enum.ObjectivesNotificationType.Event] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
     [GW.Enum.ObjectivesNotificationType.Scenario] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
@@ -239,31 +240,34 @@ local function getNearestQuestPOIClassic()
     local spawnInfo
     local questieQuest
 
-    for _, quest in pairs(GW.ObjectiveTrackerContainer.Quests.trackedQuests) do
-        if quest.questId then
-            questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(quest.questId)
-            if questieQuest then
-                -- do this to prevent a questie error
-                local shouldCheck = false
-                if questieQuest.Objectives then
-                    for _, objective in pairs(questieQuest.Objectives) do
-                        if objective.spawnList then --and next(objective.spawnList) then
-                            shouldCheck = true
-                            break
-                        else
-                            shouldCheck = false
+    -- class quests sit in the campaign container
+    for _, container in ipairs({GW.ObjectiveTrackerContainer.Campaign, GW.ObjectiveTrackerContainer.Quests}) do
+        for _, quest in pairs(container.trackedQuests) do
+            if quest.questId then
+                questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(quest.questId)
+                if questieQuest then
+                    -- do this to prevent a questie error
+                    local shouldCheck = false
+                    if questieQuest.Objectives then
+                        for _, objective in pairs(questieQuest.Objectives) do
+                            if objective.spawnList then --and next(objective.spawnList) then
+                                shouldCheck = true
+                                break
+                            else
+                                shouldCheck = false
+                            end
                         end
                     end
-                end
-                if shouldCheck then
-                    local spawn, zone, name = QuestieLoader:ImportModule("DistanceUtils").GetNearestSpawnForQuest(questieQuest)
-                    if spawn and zone and name then
-                        if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.Location.GetMapID() then
-                            local distance = _GetDistanceToClosestObjective(spawn, zone, name)
-                            if distance and distance < minDist then
-                                minDist = distance
-                                closestQuest = quest
-                                spawnInfo = spawn
+                    if shouldCheck then
+                        local spawn, zone, name = QuestieLoader:ImportModule("DistanceUtils").GetNearestSpawnForQuest(questieQuest)
+                        if spawn and zone and name then
+                            if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.Location.GetMapID() then
+                                local distance = _GetDistanceToClosestObjective(spawn, zone, name)
+                                if distance and distance < minDist then
+                                    minDist = distance
+                                    closestQuest = quest
+                                    spawnInfo = spawn
+                                end
                             end
                         end
                     end
@@ -284,7 +288,7 @@ local function getNearestQuestPOIClassic()
         y = poiY,
         desc = getQuestPOIText(closestQuest.questLogIndex),
         title = closestQuest.title,
-        type = closestQuest.isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
+        type = closestQuest.colorKey or GW.Enum.ObjectivesNotificationType.Quest,
         id = closestQuest.questId,
         compass = true,
         questID = closestQuest.questId

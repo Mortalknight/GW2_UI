@@ -54,14 +54,16 @@ local function fnGMIG_OnEvent(self)
     end
 
     if GetNumGroupMembers() == 0 or unit == "party" then
-        if GW.myrole then
-            if GW.myrole == "TANK" then
-                numTank = numTank + 1
-            elseif GW.myrole == "HEALER" then
-                numHeal = numHeal + 1
-            elseif GW.myrole == "DAMAGER" then
-                numDamage = numDamage + 1
-            end
+        local playerRole = UnitGroupRolesAssigned("player")
+        if playerRole == "NONE" then
+            playerRole = GW.myrole
+        end
+        if playerRole == "TANK" then
+            numTank = numTank + 1
+        elseif playerRole == "HEALER" then
+            numHeal = numHeal + 1
+        elseif playerRole == "DAMAGER" then
+            numDamage = numDamage + 1
         end
     end
     self.groupCounter:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank.png:0:0:0:2:64:64:4:60:4:60|t " .. numTank .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-healer.png:0:0:0:2:64:64:4:60:4:60|t " .. numHeal .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-dps.png:15:15:0:0:64:64:4:60:4:60|t " .. numDamage)

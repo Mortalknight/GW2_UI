@@ -95,7 +95,10 @@ local function CreateRaidCounter()
         end
 
         if GetNumGroupMembers() == 0 or unit == "party" then
-            local playerRole = GW.GetPlayerRole()
+            local playerRole = UnitGroupRolesAssigned("player")
+            if playerRole == "NONE" then
+                playerRole = GW.GetPlayerRole()
+            end
             if playerRole == "TANK" then
                 tank = tank + 1
             elseif playerRole == "HEALER" then

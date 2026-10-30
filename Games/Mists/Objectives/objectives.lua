@@ -314,7 +314,8 @@ function GwQuestLogMixin:UpdateLayout()
 
         if questLogIndex and questLogIndex > 0 then
             local questInfo = AddQuestInfos(questLogIndex, i)
-             if questInfo then table.insert(sorted, questInfo) end
+            -- class quests go to the campaign container, like on forever
+            if questInfo and (questInfo.isClassQuest or false) == self.isCampaignContainer then table.insert(sorted, questInfo) end
         end
     end
 
@@ -370,7 +371,7 @@ function GwQuestLogMixin:UpdateLayout()
                 block.questID = nil
                 block.questLogIndex = 0
                 block:Hide()
-                GW.CombatQueue:Queue("update_tracker_" .. counterQuest, block.UpdateObjectiveActionButton, {block})
+                GW.CombatQueue:Queue("update_tracker_" .. frameName .. counterQuest, block.UpdateObjectiveActionButton, {block})
             end
         end
     end
@@ -383,13 +384,17 @@ function GwQuestLogMixin:UpdateLayout()
         block.questID = nil
         block.questLogIndex = 0
         block:Hide()
-        GW.CombatQueue:Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
+        GW.CombatQueue:Queue("update_tracker_itembutton_remove" .. frameName .. i, block.UpdateObjectiveActionButton, {block})
+    end
+
+    if counterQuest == 0 and self.isCampaignContainer then
+        self.header:Hide()
     end
 
     self:LayoutBlocks(counterQuest)
 
     local headerCounterText = " (" .. counterQuest .. ")"
-    self.header.title:SetText(TRACKER_HEADER_QUESTS .. headerCounterText)
+    self.header.title:SetText((self.isCampaignContainer and GW.myLocalizedClass or TRACKER_HEADER_QUESTS) .. headerCounterText)
 
     self.isUpdating = false
 end
@@ -503,6 +508,7 @@ GwObjectivesQuestContainerMixin = CreateFromMixins(GwQuestLogMixin)
 
 function GwObjectivesQuestContainerMixin:InitModule()
     self.blockMixInTemplate = GwQuestLogBlockMixin
+    self.isCampaignContainer = self:GetName() == "GwQuesttrackerContainerCampaign"
 
     self:SetScript("OnEvent", self.OnEvent)
     self:RegisterEvent("QUEST_LOG_UPDATE")
@@ -524,9 +530,15 @@ function GwObjectivesQuestContainerMixin:InitModule()
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function
-    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:GetRGB())
-    self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
-    self.header.title:SetText(TRACKER_HEADER_QUESTS)
+    if self.isCampaignContainer then
+        self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:GetRGB())
+        self.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
+        self.header.title:SetText(GW.myLocalizedClass)
+    else
+        self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:GetRGB())
+        self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
+        self.header.title:SetText(TRACKER_HEADER_QUESTS)
+    end
 
 
     ExpandQuestHeader(0)

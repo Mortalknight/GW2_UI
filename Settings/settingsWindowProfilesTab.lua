@@ -124,9 +124,9 @@ local function CreateIconSelectionFrame()
     IconSelectionFrame:EnableMouse(true)
     IconSelectionFrame:SetScript("OnShow", function(self)
         self:OnShow()
+        if self.iconDataProvider then return end
         self.iconDataProvider = CreateAndInitFromMixin(IconDataProviderMixin, IconDataProviderExtraType.Equipment)
         self:SetIconFilter(IconSelectorPopupFrameIconFilterTypes.All)
-        self:Update()
 
         self.IconSelector:SetSelectedCallback(function(selectionIndex, icon)
             self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(icon)
@@ -134,9 +134,7 @@ local function CreateIconSelectionFrame()
             self.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetFontObject(GameFontHighlightSmall)
         end)
 
-        if not self.gwSkinned then
-            GW.HandleIconSelectionFrame(self)
-        end
+        GW.HandleIconSelectionFrame(self)
     end)
     IconSelectionFrame:SetScript("OnHide", IconSelectionFrame.OnHide)
     IconSelectionFrame:SetScript("OnEvent", IconSelectionFrame.OnEvent)

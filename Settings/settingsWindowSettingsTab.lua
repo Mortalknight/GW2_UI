@@ -1180,14 +1180,9 @@ end
 -- Settings Tab Setup
 -- =========================
 -- selection accent: hover and selection share the same row texture, the red bar
--- and brighter text keep the active entry recognizable while hovering others
+-- keeps the active entry recognizable while hovering others
 local function SetMenuRowActive(button, active)
     GW.SetSettingsMenuButtonActive(button, active)
-    if active then
-        button.text:SetTextColor(1, 1, 1)
-    else
-        button.text:SetTextColor(1, 0.9450, 0.8196)
-    end
 end
 
 local function PlaceMenuText(button)

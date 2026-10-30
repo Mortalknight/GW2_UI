@@ -230,14 +230,17 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
     frame.secure:SetAttribute("_onclick", secureOnClick)
     frame.secure:SetFrameRef("GwCharacterWindow", frame)
     frame:SetAttribute("_onattributechanged", secureOnAttributeChanged)
-    frame.SoundOpen = function()
-        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
+    local function IsSpellbook(panel)
+        return panel == "spellbook" or panel == "petbook"
+    end
+    frame.SoundOpen = function(_, selected)
+        PlaySound(IsSpellbook(selected) and SOUNDKIT.IG_SPELLBOOK_OPEN or SOUNDKIT.IG_CHARACTER_INFO_OPEN)
     end
     frame.SoundSwap = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
     end
-    frame.SoundExit = function()
-        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
+    frame.SoundExit = function(self)
+        PlaySound(IsSpellbook(self.currentPanel) and SOUNDKIT.IG_SPELLBOOK_CLOSE or SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
     end
 
     frame.backgroundMask = UIParent:CreateMaskTexture()
@@ -501,11 +504,11 @@ function GW.BuildCharacterWindowAttributeChangedHandler(config)
     lines[#lines + 1] = "    end"
     lines[#lines + 1] = ""
     lines[#lines + 1] = "    if close then"
-    lines[#lines + 1] = "        self:Hide()"
     lines[#lines + 1] = "        self:CallMethod(\"SoundExit\")"
+    lines[#lines + 1] = "        self:Hide()"
     lines[#lines + 1] = "    elseif not self:IsVisible() then"
     lines[#lines + 1] = "        self:Show()"
-    lines[#lines + 1] = "        self:CallMethod(\"SoundOpen\")"
+    lines[#lines + 1] = "        self:CallMethod(\"SoundOpen\", selected)"
     lines[#lines + 1] = "        self:CallMethod(\"SetCurrentPanel\", selected)"
     lines[#lines + 1] = "    else"
     lines[#lines + 1] = "        self:CallMethod(\"SoundSwap\")"

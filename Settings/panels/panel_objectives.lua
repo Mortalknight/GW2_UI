@@ -8,7 +8,7 @@ local function GetObjectiveTrackerModuleOrderOptions()
     local types = GW.Enum.ObjectivesNotificationType
     local modules = {
         {key = "Achievement", label = ACHIEVEMENTS, color = types.Achievement, load = not (GW.Classic or GW.TBC)},
-        {key = "Campaign", label = GW.QuestTrackerTopContainerTitle or TRACKER_HEADER_CAMPAIGN_QUESTS, color = types.Campaign, load = GW.isModern},
+        {key = "Campaign", label = GW.QuestTrackerTopContainerTitle or GW.myLocalizedClass, color = types.Campaign, load = true},
         {key = "Quests", label = TRACKER_HEADER_QUESTS or QUESTS_LABEL, color = types.Quest, load = true},
         {key = "Bonus", label = EVENTS_LABEL, color = types.Event, load = GW.isModern},
         {key = "Recipe", label = PROFESSIONS_TRACKER_HEADER_PROFESSION, color = types.Recipe, load = GW.isModern},
@@ -35,6 +35,7 @@ end
 local function UpdateObjectiveTrackerStatusBarSettings()
     for _, container in ipairs({
         GwQuesttrackerContainerQuests,
+        GwQuesttrackerContainerCampaign,
         GwQuesttrackerContainerAchievement,
         GwQuesttrackerContainerBonus,
         GwQuesttrackerContainerCollection,
@@ -51,6 +52,11 @@ local function UpdateObjectiveTrackerStatusBarSettings()
     if GwQuestTracker then
         GwQuestTracker:LayoutChanged()
     end
+end
+
+local function UpdateQuestContainers()
+    GwQuesttrackerContainerQuests:UpdateLayout()
+    GwQuesttrackerContainerCampaign:UpdateLayout()
 end
 
 local function LoadObjectivesPanel(sWindow)
@@ -99,8 +105,8 @@ local function LoadObjectivesPanel(sWindow)
     p:AddOption(L["Toggle Compass"], L["Enable or disable the quest tracker compass."], {getterSetter = "objectives.compass", callback = function() if not (GW.Classic or GW.TBC or GW.Wrath) then GwQuesttrackerContainerBossFrames:SetUpFramePosition(); GwQuesttrackerContainerArenaBGFrames:SetUpFramePosition() end; GwObjectivesNotification:OnUpdate() end, dependence = {["objectives.enabled"] = true}})
     p:AddOption(L["Show Objective Tracker progress bars"], L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."], {getterSetter = "objectives.statusBars", callback = UpdateObjectiveTrackerStatusBarSettings, dependence = {["objectives.enabled"] = true}})
 
-    p:AddOption(L["Show Quest XP in Quest Tracker"], nil, {getterSetter = "objectives.showXp", callback = function() GwQuesttrackerContainerQuests:UpdateLayout() end, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
-    p:AddOptionDropdown(L["Quest Tracker Sorting"], nil, { getterSetter = "objectives.sorting", callback = function() GwQuesttrackerContainerQuests:UpdateLayout() end, optionsList = {"DEFAULT", "LEVEL", "ZONE"}, optionNames = {DEFAULT, GUILD_RECRUITMENT_LEVEL, ZONE}, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
+    p:AddOption(L["Show Quest XP in Quest Tracker"], nil, {getterSetter = "objectives.showXp", callback = UpdateQuestContainers, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
+    p:AddOptionDropdown(L["Quest Tracker Sorting"], nil, { getterSetter = "objectives.sorting", callback = UpdateQuestContainers, optionsList = {"DEFAULT", "LEVEL", "ZONE"}, optionNames = {DEFAULT, GUILD_RECRUITMENT_LEVEL, ZONE}, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
 
     local moduleOrderOptions, moduleOrderOptionNames = GetObjectiveTrackerModuleOrderOptions()
     p:AddOptionSortableList(L["Objective Tracker Module Order"], L["Set the order of Objective Tracker modules."], {
