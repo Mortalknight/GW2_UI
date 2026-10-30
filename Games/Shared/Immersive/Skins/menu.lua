@@ -205,6 +205,11 @@ local function UpdateHighlight(frame, enabled)
     if not highlight then return end
     if fontString then
         local r, g, b = fontString:GetTextColor()
+        local text = fontString:GetText()
+        local hex = text and not GW.IsSecretValue(text) and strmatch(text, "^|c(%x%x%x%x%x%x%x%x)")
+        if hex then
+            r, g, b = CreateColorFromHexString(hex):GetRGB()
+        end
         if r < 0.99 or g < 0.99 or b < 0.99 then
             highlight:SetVertexColor(r * HOVER_STRENGTH, g * HOVER_STRENGTH, b * HOVER_STRENGTH)
         end

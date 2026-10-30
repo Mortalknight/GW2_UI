@@ -443,6 +443,18 @@ function GW.ShowQuestLogEntry(questLogIndex, toggle)
         return
     end
     ShowUIPanel(QuestLogFrame)
+
+    -- blizzard selects the quest without scrolling the list to it; era and tbc have fixed rows, wrath and mists a hybrid list
+    local scrollFrame = QuestLogListScrollFrame
+    local buttons = scrollFrame.buttons
+    local offset = buttons and HybridScrollFrame_GetOffset(scrollFrame) or FauxScrollFrame_GetOffset(scrollFrame)
+    local visibleRows = buttons and #buttons - 1 or QUESTS_DISPLAYED
+    if questLogIndex <= offset or questLogIndex > offset + visibleRows then
+        local rowHeight = buttons and buttons[1]:GetHeight() or QUESTLOG_QUEST_HEIGHT
+        local scrollBar = scrollFrame.scrollBar or QuestLogListScrollFrameScrollBar
+        scrollBar:SetValue((questLogIndex - 1) * rowHeight)
+    end
+
     QuestLog_SetSelection(questLogIndex)
     QuestLog_Update()
 end
