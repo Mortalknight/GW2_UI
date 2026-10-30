@@ -60,6 +60,7 @@ GW.Colors.SkinColors = {
     ListSelected = CreateColor(0.8, 0.8, 0.8, 1), -- menu-hover.png on the selected list row
     CardHover = CreateColor(0.8, 0.8, 0.8, 0.35), -- menu-hover.png over art and cards
     HighlightWhite = CreateColor(1, 1, 1, 0.25), -- flat white highlight over icons and buttons
+    StatusBarTrack = CreateColor(1, 1, 1, 0.12), -- the empty track of a progress bar on dark art
     IconBorder = CreateColor(0.45, 0.45, 0.45, 1), -- the frame of an icon without quality
     CreamBorder = CreateColor(1, 0.99, 0.85), -- the light frame of cards and tiles
     QuestGold = CreateColor(1, 0.8, 0.1), -- quest titles, enough money, finished objectives
