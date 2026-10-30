@@ -266,13 +266,15 @@ GW.SetOverrideIncompatibleAddons = SetOverrideIncompatibleAddons
 local function ResetToDefault()
     local activeProfile = GW.globalSettings:GetCurrentProfile()
     local allLayouts = GetAllLayouts()
-    local oldUsername = nil
+    local oldUsername, oldIcon = nil, nil
 
     if activeProfile then
         oldUsername = GW.globalSettings.profiles[activeProfile].profileCreatedCharacter
+        oldIcon = GW.globalSettings.profiles[activeProfile].profileIcon
         GW.globalSettings:ResetProfile()
         GW.globalSettings.profiles[activeProfile].profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"])
         GW.globalSettings.profiles[activeProfile].profileCreatedCharacter = oldUsername or "GW2_UI"
+        GW.globalSettings.profiles[activeProfile].profileIcon = oldIcon
 
         -- also rest the matching profile layout
         local profileName = GW.L["Profiles"] .. " - " .. activeProfile

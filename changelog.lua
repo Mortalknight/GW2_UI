@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.3", {
+    {GW.Enum.ChangelogType.bug, [=[Profiles: icons from icon packs show correctly and no longer seem to change, loading the default settings keeps the profile icon]=]},
+})
+
 addChange("12.1.2", {
     {GW.Enum.ChangelogType.bug, [=[Bank (Classic clients): the first sort after login no longer sorts differently than the next one, special bags like quivers or herb bags are recognized right away]=]},
     {GW.Enum.ChangelogType.bug, [=[Profiles: the icon picker no longer stutters when it opens]=]},

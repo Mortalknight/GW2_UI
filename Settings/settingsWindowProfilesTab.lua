@@ -390,11 +390,12 @@ local function InitButton(button, elementData)
     prof.profileIcon = prof.profileIcon or ICONS[random(1, #ICONS > 0 and #ICONS or 1)]
     GW.globalSettings.profiles[profileName] = prof -- ensure back
 
-    if type(prof.profileIcon) == "number" then
-        button.activateButton.icon:SetTexture(prof.profileIcon)
-    else
-        button.activateButton.icon:SetTexture("INTERFACE/ICONS/" .. tostring(prof.profileIcon))
+    -- custom icons of icon packs come with their path, older profiles saved the bare file name
+    local icon = prof.profileIcon
+    if type(icon) == "string" and not strfind(strlower(icon), "^interface") then
+        icon = "INTERFACE/ICONS/" .. icon
     end
+    button.activateButton.icon:SetTexture(icon)
 
     local lines = {}
     if prof.profileCreatedDate then
