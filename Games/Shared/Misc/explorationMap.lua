@@ -89,7 +89,8 @@ local function GetZoneProgress(zoneID, continentName)
     if OVERLAY_COUNTS then
         local total = OVERLAY_COUNTS[zoneID]
         if total then
-            return math.min(#C_MapExplorationInfo.GetExploredMapTextures(zoneID), total), total
+            local explored = C_MapExplorationInfo.GetExploredMapTextures(zoneID)
+            return math.min(explored and #explored or 0, total), total
         end
         return
     end
