@@ -8,6 +8,7 @@ local ICON_SIZE = 26
 local HOLD_TIME = 5
 local FADE_TIME = 0.5
 local SETTLE_TIME = 0.3
+local LEAVE_HOLD_TIME = 1
 local SLIDE_DISTANCE = 40
 local SLIDE_SPEED = 12
 local PULSE_DECAY = 4
@@ -45,6 +46,28 @@ local function ParseOwnLoot(text)
     end
 end
 
+-- the tooltip of a row; while the mouse is on the icon the row holds, when it leaves it fades soon
+local function IconOnEnter(self)
+    local entry = self:GetParent().entry
+    entry.hovered = true
+    entry.fadeStart = nil
+    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+    if entry.isMoney then
+        GameTooltip:SetText(MONEY, GW.Colors.SkinColors.QuestGold:GetRGB())
+        GameTooltip:AddLine(GW.FormatMoneyForChat(entry.amount, true))
+    else
+        GameTooltip:SetHyperlink(entry.key)
+    end
+    GameTooltip:Show()
+end
+
+local function IconOnLeave(self)
+    local entry = self:GetParent().entry
+    entry.hovered = nil
+    entry.time = GetTime() - HOLD_TIME + LEAVE_HOLD_TIME
+    GameTooltip:Hide()
+end
+
 local function CreateRow()
     local row = CreateFrame("Frame", nil, feed)
     row:SetSize(feed:GetWidth(), ROW_HEIGHT)
@@ -58,6 +81,13 @@ local function CreateRow()
     row.icon:SetSize(ICON_SIZE, ICON_SIZE)
     row.icon:SetPoint("CENTER", row, "LEFT", 2 + ICON_SIZE / 2, 0)
     GW.HandleIcon(row.icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
+
+    -- only the icon reacts to the mouse and only to hovering, clicks still go through to the world
+    row.iconHit = CreateFrame("Frame", nil, row)
+    row.iconHit:SetAllPoints(row.icon)
+    row.iconHit:SetMouseMotionEnabled(true)
+    row.iconHit:SetScript("OnEnter", IconOnEnter)
+    row.iconHit:SetScript("OnLeave", IconOnLeave)
 
     row.count = row:CreateFontString(nil, "OVERLAY")
     row.count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
@@ -86,6 +116,9 @@ end
 
 local function RemoveEntry(index)
     local entry = tremove(entries, index)
+    if GameTooltip:IsOwned(entry.row.iconHit) then
+        GameTooltip:Hide()
+    end
     entry.row:Hide()
     tinsert(rowPool, entry.row)
 end
@@ -98,7 +131,14 @@ local function OnUpdate(_, elapsed)
     local white, gold = GW.Colors.FallbackWhite, GW.Colors.SkinColors.QuestGold
     local removed = false
 
-    local oldest = entries[1]
+    -- a held row is skipped, the next older one leaves instead
+    local oldest
+    for _, entry in ipairs(entries) do
+        if not entry.hovered then
+            oldest = entry
+            break
+        end
+    end
     if oldest and not oldest.fadeStart and now >= oldest.time + HOLD_TIME and now >= nextFadeAt then
         oldest.fadeStart = now
     end
@@ -164,6 +204,7 @@ local function AddEntry(key, icon, name, color, amount, isMoney)
     row:Show()
 
     local entry = {key = key, amount = amount, isMoney = isMoney, time = GetTime(), row = row, x = SLIDE_DISTANCE, pulse = 0}
+    row.entry = entry
     tinsert(entries, entry)
     SetCount(entry)
     Layout()

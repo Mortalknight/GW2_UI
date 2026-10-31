@@ -2,6 +2,7 @@
     <Script file ="raidMarkerCircle.lua"/>
     <Script file ="worldmapCoords.lua"/>
     <Include file ="explorationMap.xml"/>
+    <Include file ="mapTrail.xml"/>
     <Script file ="extendVendor.lua"/>
     <Script file ="worldmarkersKeybind.lua"/>
     <Script file ="raidCounter.lua"/>

@@ -481,6 +481,12 @@ GW.globalDefault = {
 
         worldmap = {
             explorationProgress = false,
+            explorationPanelPosition = "TOPLEFT",
+            explorationPanelOffsetX = 8,
+            explorationPanelOffsetY = 8,
+            explorationPanelCollapsed = false,
+            explorationAchievementsPvP = false,
+            trail = false,
             coords = {
                 enabled = false,
                 position = "TOP",

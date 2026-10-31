@@ -275,7 +275,7 @@ end
 -- =========================
 local NEVER_NEW = {header = true, subHeader = true, note = true}
 
-local SEEN_NEW_SIGN = [[|TInterface\OptionsFrame\UI-OptionsFrame-NewFeatureIcon:14:14:0:0:64:64:0:64:0:64:120:120:120|t]]
+local NEW_SIGN_SPACE = [[|TInterface\Common\spacer:14:14|t]]
 
 local function IsNewOption(opt)
     local seen = GW.global.seenSettings
@@ -308,7 +308,19 @@ local function MenuEntryHasNewOptions(ed)
 end
 
 local function SetOptionTitle(of)
-    of.title:SetText((IsNewOption(of) and GW.NewSign or IsSeenThisVersion(of) and SEEN_NEW_SIGN or "") .. (of.displayName or ""))
+    local isNew, isSeen = IsNewOption(of), IsSeenThisVersion(of)
+    of.title:SetText(((isNew or isSeen) and NEW_SIGN_SPACE or "") .. (of.displayName or ""))
+    if (isNew or isSeen) and not of.gwNewSign then
+        of.gwNewSign = of:CreateTexture(nil, "OVERLAY")
+        of.gwNewSign:SetTexture("Interface/OptionsFrame/UI-OptionsFrame-NewFeatureIcon")
+        of.gwNewSign:SetSize(14, 14)
+        of.gwNewSign:SetPoint("LEFT", of.title, "LEFT")
+    end
+    if of.gwNewSign then
+        of.gwNewSign:SetShown(isNew or isSeen)
+        local brightness = isNew and 1 or 120 / 255
+        of.gwNewSign:SetVertexColor(brightness, brightness, brightness)
+    end
 end
 
 local function ForEachMenuPanel(func)
@@ -511,7 +523,7 @@ local function CreateOrGetOptionWidget(panel, opt)
         hover:SetAlpha(0)
         hover:SetAllPoints(of)
         of:HookScript("OnEnter", function(self)
-            local blocked = (self.isIncompatibleAddonLoaded and not self.isIncompatibleAddonLoadedButOverride) or self.gamepadReplaced
+            local blocked = (self.isIncompatibleAddonLoaded and not self.isIncompatibleAddonLoadedButOverride) or self.gamepadReplaced or self.missingRequiredAddon
             hover:SetColorTexture((blocked and GW.Colors.SkinColors.Negative or GW.Colors.TextColors.LightHeader):GetRGB())
             hover:SetAlpha(blocked and 0.1 or 0.05)
         end)

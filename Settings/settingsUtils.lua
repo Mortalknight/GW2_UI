@@ -151,7 +151,7 @@ local function ResolveDependenceValue(settingName)
     end
 
     local currentVal = widget.get and widget.get()
-    if (widget.isIncompatibleAddonLoaded and not widget.isIncompatibleAddonLoadedButOverride) or widget.gamepadReplaced then
+    if (widget.isIncompatibleAddonLoaded and not widget.isIncompatibleAddonLoadedButOverride) or widget.gamepadReplaced or widget.missingRequiredAddon then
         currentVal = false
     end
 
@@ -343,6 +343,7 @@ local function CreateOption(optionType, panel, name, desc, values)
         isIncompatibleAddonLoaded = false,
         isIncompatibleAddonLoadedButOverride = false,
         gamepadReplaced = values.gamepadReplaced and GW.IsGamepadInterface(), -- forever's gamepad interface replaces the module
+        missingRequiredAddon = values.requiredAddon and not C_AddOns.IsAddOnLoaded(values.requiredAddon), -- the option only works with that addon
         groupHeaderName = values.groupHeaderName,
         group = values.group, -- groups options visually (extra spacing) without rendering a header
         startsGroup = values.startsGroup, -- forces the group spacing before this option
@@ -390,6 +391,11 @@ local function CreateOption(optionType, panel, name, desc, values)
 
     if opt.gamepadReplaced then
         opt.desc = opt.desc .. "\n\n|cffffedba" .. L["The gamepad interface is active and brings its own version of this, so it is disabled."] .. "|r"
+    end
+
+    if opt.missingRequiredAddon then
+        local title = C_AddOns.GetAddOnMetadata(values.requiredAddon, "Title") or values.requiredAddon
+        opt.desc = (opt.desc or "") .. "\n\n|cffffedba" .. L["This setting needs the following addon, which is not loaded:"] .. "|r\n|cffff0000" .. title .. "|r"
     end
 
     return opt
@@ -547,14 +553,19 @@ function GwSettingsPanelMixin:AddOptionDropdown(name, desc, values)
     return opt
 end
 
-local function setDependenciesOption(of, SetEnable, deactivateColor, overrideColor)
+local function setDependenciesOption(of, SetEnable, deactivateColor, overrideColor, missingAddon)
     local type = of.optionType
 
     local color = of.isMasterToggle and {GW.Colors.TextColors.LightHeader:GetRGB()} or {1, 1, 1}
     local inputColor, enabled = {0.82, 0.82, 0.82}, true
     local sliderInputColor = {1, 0.93, 0.73}
 
-    if overrideColor then
+    if missingAddon then
+        color = {0.82, 0, 0}
+        inputColor = color
+        sliderInputColor = color
+        enabled = false
+    elseif overrideColor then
         color = {1, 0.65, 0}
         inputColor = color
         sliderInputColor = color
@@ -633,6 +644,8 @@ end
 local function UpdateWidgetDependencies(v)
     if v.gamepadReplaced then
         setDependenciesOption(v, false)
+    elseif v.missingRequiredAddon then
+        setDependenciesOption(v, false, nil, nil, true)
     elseif v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
         setDependenciesOption(v, false, v.isIncompatibleAddonLoaded, v.isIncompatibleAddonLoadedButOverride)
     elseif v.dependence then

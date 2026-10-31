@@ -926,6 +926,7 @@ local function evLoadSkins()
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
     GW.UpdateExplorationMapPins()
+    GW.UpdateMapTrail()
 
     GW.LoadDressUpFrameSkin()
 

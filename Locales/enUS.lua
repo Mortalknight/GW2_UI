@@ -1274,5 +1274,11 @@ L["Shows the items and the money you receive in a short list that fades out, lik
 L["Nearly Done"] = true
 L["Shows the three achievements you are closest to completing in the quest tracker. Right-click opens a menu to track or hide one."] = true
 L["Exploration Progress"] = true
-L["Shows on the continent maps how much of each zone you have explored, the tooltip shows the details."] = true
+L["Shows how much you have explored: a panel for the zone and the continent on the world map and a ring on each zone of the continent maps."] = true
 L["Explored Areas"] = true
+L["Zones Completed"] = true
+L["Trail"] = true
+L["Shows the way you went in this session as dots on the world map."] = true
+L["Include PvP Achievements"] = true
+L["With Krowi's Achievement Filter the panel shows the achievements of the zone too; this counts its PvP achievements in."] = true
+L["This setting needs the following addon, which is not loaded:"] = true
