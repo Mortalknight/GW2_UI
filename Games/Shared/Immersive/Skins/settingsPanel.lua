@@ -127,7 +127,7 @@ local function SkinArrowButton(button, direction)
     GW.HandleNextPrevButton(button, direction, true)
 end
 
-local function SkinStepSlider(stepper)
+function GW.SkinStepSlider(stepper)
     if stepper.gwSkinned then return end
     stepper.gwSkinned = true
 
@@ -159,7 +159,7 @@ local function SkinStepSlider(stepper)
     hooksecurefunc(stepper, "SetEnabled", ColorLabels)
 end
 
-local function SkinDropdownControl(control)
+function GW.SkinDropdownControl(control)
     if control.gwSkinned then return end
     control.gwSkinned = true
 
@@ -216,10 +216,10 @@ local function SkinControl(frame)
         frame.Checkbox:GwSkinCheckButton(false, 20)
     end
     if frame.SliderWithSteppers then
-        SkinStepSlider(frame.SliderWithSteppers)
+        GW.SkinStepSlider(frame.SliderWithSteppers)
     end
     if frame.Control and frame.Control.Dropdown then
-        SkinDropdownControl(frame.Control)
+        GW.SkinDropdownControl(frame.Control)
     end
     for _, control in ipairs(frame.Controls or {}) do
         SkinControl(control)

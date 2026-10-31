@@ -878,6 +878,90 @@ function GW.SkinHelpIconButton(button, size)
     button:GwStyleButton(nil, true)
 end
 
+-- the gold line of our popups on top, so a help box stands out from the window under it
+local function AddHelpAccent(backdrop)
+    local line = backdrop:CreateTexture(nil, "ARTWORK")
+    line:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
+    line:SetHeight(2)
+    line:SetPoint("TOPLEFT", 4, -4)
+    line:SetPoint("TOPRIGHT", -4, -4)
+end
+
+-- the help tooltip is a glow box, blanked textures stay invisible when blizzard shows the arrows
+local function SkinHelpPlateTooltip()
+    local tooltip = HelpPlateTooltip
+    if tooltip.gwSkinned then return end
+    tooltip.gwSkinned = true
+    tooltip:GwStripTextures()
+    tooltip:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    AddHelpAccent(tooltip.backdrop)
+    tooltip.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    tooltip.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
+end
+
+-- HelpTip frames are pooled and shared with the whole game: only tips on our buttons get our look,
+-- and they get blizzards back when they hide
+local skinnedHelpButtons = {}
+local function StyleHelpTipFrame(frame)
+    if not frame.gwHelpTipHooked then
+        frame.gwHelpTipHooked = true
+        frame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+        AddHelpAccent(frame.backdrop)
+        frame.backdrop:Hide()
+        if frame.OkayButton then
+            frame.OkayButton:GwSkinButton(false, true)
+        end
+        frame:HookScript("OnHide", function(self)
+            if not self.gwStyled then return end
+            self.gwStyled = nil
+            self.backdrop:Hide()
+            for _, region in next, {self:GetRegions()} do
+                if region:IsObjectType("Texture") then
+                    region:SetShown(region.gwWasShown)
+                    region:SetAlpha(1)
+                end
+            end
+            self.Arrow:SetAlpha(1)
+        end)
+    end
+    frame.gwStyled = true
+    -- blizzard sets the level of the pooled frame on every show, the backdrop has to stay below its text
+    frame.backdrop:SetFrameLevel(math.max(frame:GetFrameLevel() - 1, 0))
+    frame.backdrop:Show()
+    -- alpha alone left the gradient background visible, hiding the regions is reliable
+    for _, region in next, {frame:GetRegions()} do
+        if region:IsObjectType("Texture") then
+            region.gwWasShown = region:IsShown()
+            region:SetAlpha(0)
+            region:Hide()
+        end
+    end
+    frame.Arrow:SetAlpha(0)
+end
+
+local function HookHelpTips()
+    if HelpTip.gwHooked then return end
+    HelpTip.gwHooked = true
+    hooksecurefunc(HelpTip, "Show", function(self, parent)
+        if not skinnedHelpButtons[parent] then return end
+        for frame in self.framePool:EnumerateActive() do
+            if frame:GetParent() == parent then
+                StyleHelpTipFrame(frame)
+            end
+        end
+    end)
+end
+
+-- a help button with our icon, its help plate and help tips in our look
+function GW.SkinHelpButton(button, size)
+    if button.gwSkinned then return end
+    button.gwSkinned = true
+    GW.SkinHelpIconButton(button, size)
+    skinnedHelpButtons[button] = true
+    SkinHelpPlateTooltip()
+    HookHelpTips()
+end
+
 function GW.AddStatusBarFrame(bar)
     local background = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
     background:SetAllPoints(bar)

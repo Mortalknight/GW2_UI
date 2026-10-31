@@ -587,9 +587,10 @@ local function SkinWindow(frame)
 
     local help = frame.HelpPlateButton
     if help then
-        GW.SkinHelpIconButton(help, 20)
+        GW.SkinHelpButton(help, 20)
         help:ClearAllPoints()
         help:SetPoint("RIGHT", frame.CloseButton, "LEFT", -6, 0)
+        help:SetFrameLevel(frame.CloseButton:GetFrameLevel())
     end
 end
 

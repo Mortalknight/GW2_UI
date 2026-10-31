@@ -26,6 +26,7 @@
     <Script file="socket.lua"/>
     <Script file="colorPicker.lua"/>
     <Script file="settingsPanel.lua"/>
+    <Script file="editMode.lua"/>
     <Script file="addonManager.lua"/>
     <Script file="inspectFrame.lua"/>
     <Script file="dressUpFrameClassic.lua"/>

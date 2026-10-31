@@ -40,6 +40,7 @@ local function LoadSkinsPanel(sWindow)
     general:AddOption(MINIMAP_TRACKING_MAILBOX, nil, {getterSetter = "skins.mail.enabled", callback = function() GW.ShowRlPopup = true end})
     general:AddOption(HELP_FRAME_TITLE, nil, {getterSetter = "skins.helpFrame.enabled", callback = function() GW.ShowRlPopup = true end})
     general:AddOption(SETTINGS_TITLE, nil, {getterSetter = "skins.blizzardOptions.enabled", callback = function() GW.ShowRlPopup = true end})
+    general:AddOption(HUD_EDIT_MODE_MENU, nil, {getterSetter = "skins.editMode.enabled", callback = function() GW.ShowRlPopup = true end})
     general:AddOption(TIMEMANAGER_TITLE, nil, {getterSetter = "skins.timeManager.enabled", callback = function() GW.ShowRlPopup = true end})
 
     gameFrames:AddOption(L["Quest Frame"], nil, {getterSetter = "skins.questLog.enabled", callback = function() GW.ShowRlPopup = true end})

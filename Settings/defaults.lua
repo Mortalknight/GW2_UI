@@ -1918,6 +1918,9 @@ GW.globalDefault = {
             blizzardOptions = {
                 enabled = true,
             },
+            editMode = {
+                enabled = true,
+            },
             macro = {
                 enabled = true,
             },

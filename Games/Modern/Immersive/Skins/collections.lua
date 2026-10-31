@@ -26,76 +26,14 @@ local COLLECTION_ACHIEVEMENT_CATEGORY = 15259
 
 ---------- small shared pieces ----------
 
--- the help tooltip is a glow box, blanked textures stay invisible when blizzard shows the arrows
-local function SkinHelpPlateTooltip()
-    local tooltip = HelpPlateTooltip
-    if tooltip.gwSkinned then return end
-    tooltip.gwSkinned = true
-    tooltip:GwStripTextures()
-    tooltip:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-    tooltip.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    tooltip.Text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-end
-
--- HelpTip frames are pooled and shared with the whole game: only tips on our buttons get our look,
--- and they get blizzards back when they hide
-local skinnedHelpButtons = {}
-local function StyleHelpTipFrame(frame)
-    if not frame.gwHelpTipHooked then
-        frame.gwHelpTipHooked = true
-        frame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-        frame.backdrop:Hide()
-        frame:HookScript("OnHide", function(self)
-            if not self.gwStyled then return end
-            self.gwStyled = nil
-            self.backdrop:Hide()
-            for _, region in next, {self:GetRegions()} do
-                if region:IsObjectType("Texture") then
-                    region:SetShown(region.gwWasShown)
-                    region:SetAlpha(1)
-                end
-            end
-            self.Arrow:SetAlpha(1)
-        end)
-    end
-    frame.gwStyled = true
-    frame.backdrop:Show()
-    -- alpha alone left the gradient background visible, hiding the regions is reliable
-    for _, region in next, {frame:GetRegions()} do
-        if region:IsObjectType("Texture") then
-            region.gwWasShown = region:IsShown()
-            region:SetAlpha(0)
-            region:Hide()
-        end
-    end
-    frame.Arrow:SetAlpha(0)
-end
-
-local function HookHelpTips()
-    if HelpTip.gwHooked then return end
-    HelpTip.gwHooked = true
-    hooksecurefunc(HelpTip, "Show", function(self, parent)
-        if not skinnedHelpButtons[parent] then return end
-        for frame in self.framePool:EnumerateActive() do
-            if frame:GetParent() == parent then
-                StyleHelpTipFrame(frame)
-            end
-        end
-    end)
-end
-
 local HELP_BUTTON_SIZE = 20
 local function SkinHelpButton(button)
     if not button then return end
-    if not button.gwSkinned then
-        button.gwSkinned = true
-        GW.SkinHelpIconButton(button, HELP_BUTTON_SIZE)
-        skinnedHelpButtons[button] = true
-        SkinHelpPlateTooltip()
-        HookHelpTips()
-    end
+    GW.SkinHelpButton(button, HELP_BUTTON_SIZE)
     button:ClearAllPoints()
     button:SetPoint("RIGHT", CollectionsJournal.CloseButton, "LEFT", -6, 0)
+    -- next to the close button blizzards title bar would catch the clicks
+    button:SetFrameLevel(CollectionsJournal.CloseButton:GetFrameLevel())
 end
 
 local function SkinSearchBox(box)
