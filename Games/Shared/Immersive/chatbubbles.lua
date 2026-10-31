@@ -13,6 +13,20 @@ local borderHoriInvTex  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/bor
 local borderTexture     = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border.png"
 local borderInvTexture  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted.png"
 
+local BORDER_KEYS = {"bordertop", "borderbottom", "borderright", "borderleft", "bordertopright", "bordertopleft", "borderbottomleft", "borderbottomright"}
+
+local function SetBorderColor(self, color)
+    local r, g, b = 1, 1, 1
+    if color then
+        r, g, b = color.r, color.g, color.b
+    end
+    for _, key in ipairs(BORDER_KEYS) do
+        self[key]:SetVertexColor(r, g, b)
+        self.borderTints[key]:SetVertexColor(r, g, b)
+        self.borderTints[key]:SetShown(color ~= nil)
+    end
+end
+
 local function UpdateBubbleBorder(self)
     local backdrop = self.backdrop
     local messageText = backdrop and backdrop.String
@@ -32,13 +46,16 @@ local function UpdateBubbleBorder(self)
     if self.Name and self.Name:GetText() then
         self.Name:SetText("")
     end
+    SetBorderColor(self)
 
     local text = messageText:GetText()
     if not text or GW.IsSecretValue(text) then return end -- secret text cannot be used as a table key
 
     local senderInfo = messageToSender[text]
     if senderInfo then
-        self.Name:SetFormattedText("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, senderInfo.senderName)
+        local info = GW.settings.chat.bubbles.chatTypeColors and senderInfo.chatType ~= "SAY" and ChatTypeInfo[senderInfo.chatType]
+        local color = info and CreateColor(info.r, info.g, info.b) or RAID_CLASS_COLORS.PRIEST
+        self.Name:SetText(color:WrapTextInColorCode(senderInfo.senderName))
         if senderInfo.unitType == 1 then
             messageText:SetTextColor(1, 1, 1, 1)
             self.background:SetTexture(bgInvTexture)
@@ -51,6 +68,10 @@ local function UpdateBubbleBorder(self)
             self.borderbottomleft:SetTexture(borderInvTexture)
             self.borderbottomright:SetTexture(borderInvTexture)
             return
+        end
+        -- npc bubbles returned above, their dark border shows no tint
+        if info then
+            SetBorderColor(self, info)
         end
     end
 
@@ -126,6 +147,17 @@ local function SkinBubble(frame, backdrop)
     frame.borderbottomright:SetSize(22 / 2, 10 / 2)
     frame.borderbottomright:SetTexCoord(0.828125, 1, 0, 0.01953125)
 
+    frame.borderTints = {}
+    for _, key in ipairs(BORDER_KEYS) do
+        local border = frame[key]
+        local tint = frame:CreateTexture(nil, "ARTWORK", nil, -7)
+        tint:SetTexture(border:GetTexture())
+        tint:SetTexCoord(border:GetTexCoord())
+        tint:SetAllPoints(border)
+        tint:Hide()
+        frame.borderTints[key] = tint
+    end
+
     if not frame.Name then
         frame.Name = frame:CreateFontString(nil, "OVERLAY")
         frame.Name:SetPoint("BOTTOMLEFT", frame.background, "TOPLEFT", 0, 0)
@@ -156,6 +188,8 @@ local NAME_EVENTS = {
     CHAT_MSG_YELL = true,
     CHAT_MSG_MONSTER_SAY = true,
     CHAT_MSG_MONSTER_YELL = true,
+    CHAT_MSG_PARTY = true,
+    CHAT_MSG_PARTY_LEADER = true,
 }
 
 local function ChatBubble_OnUpdate(self, elapsed)
@@ -192,7 +226,7 @@ local function ChatBubble_OnEvent(self, event, msg, sender)
     if NAME_EVENTS[event] and GW.NotSecretValue(msg) and GW.NotSecretValue(sender) then
         local unit = (event == "CHAT_MSG_MONSTER_SAY" or event == "CHAT_MSG_MONSTER_YELL") and 1 or 0
         local senderName = TRP3_API and TRP3_API.register.getUnitRPNameWithID(sender) or Ambiguate(sender, "none")
-        messageToSender[msg] = { unitType = unit, senderName = senderName }
+        messageToSender[msg] = { unitType = unit, senderName = senderName, chatType = event:sub(10) }
         tinsert(messageOrder, msg)
         -- keep table bounded; always retain newest entry for the next OnUpdate pass
         while #messageOrder > MESSAGE_CAP do

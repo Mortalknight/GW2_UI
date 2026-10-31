@@ -1292,3 +1292,5 @@ L["Shows the way you went in this session as dots on the world map."] = "Zeigt d
 L["Include PvP Achievements"] = "PvP-Erfolge einbeziehen"
 L["With Krowi's Achievement Filter the panel shows the achievements of the zone too; this counts its PvP achievements in."] = "Mit Krowi's Achievement Filter zeigt das Fenster auch die Erfolge der Zone; damit zählen ihre PvP-Erfolge mit."
 L["This setting needs the following addon, which is not loaded:"] = "Diese Einstellung braucht das folgende Addon, das nicht geladen ist:"
+L["Color by Chat Type"] = "Nach Chat-Typ einfärben"
+L["Colors the border and the name of a bubble in the color of its chat type, as set for the chat window."] = "Färbt Rand und Namen einer Blase in der Farbe ihres Chat-Typs, wie im Chatfenster eingestellt."

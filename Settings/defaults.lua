@@ -398,6 +398,7 @@ GW.globalDefault = {
             bubbles = {
                 enabled = true,
                 scale = 1,
+                chatTypeColors = false,
             },
             fade = true,
             hideEditBox = true,
