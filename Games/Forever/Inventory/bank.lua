@@ -177,7 +177,7 @@ local function BagSlot_OnEnter(self)
         if IsNextPurchasableTab(self.tabIndex) then
             local tabData = C_Bank.FetchNextPurchasableBankTabData(BANK_TYPE)
             if tabData then
-                GameTooltip:AddLine(GetMoneyString(tabData.tabCost), 1, 1, 1)
+                GameTooltip:AddLine(GW.FormatMoneyForChat(tabData.tabCost, true), 1, 1, 1)
             end
         end
     end

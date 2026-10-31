@@ -2,7 +2,8 @@
 local GW = select(2, ...)
 
 GW.Colors.TextColors = {
-    LightHeader = CreateColor(1, 0.9450, 0.8196)
+    LightHeader = CreateColor(1, 0.9450, 0.8196),
+    Guild = CreateColor(0, 1, 16 / 255),
 }
 
 -- wine red: the dominant tone of the settings panel background (settingspanelbg.png,
@@ -77,6 +78,8 @@ GW.Colors.SkinColors = {
     Chip = CreateColor(0, 0, 0, 0.35), -- a small name plate on a card
     NotificationBadge = CreateColor(1, 0, 0, 1), -- the round count of micro buttons and chat tabs
     TooltipBorder = CreateColor(0.05, 0.05, 0.05, 1), -- the dark frame of our tooltips
+    MapBadge = CreateColor(0, 0, 0, 0.6), -- the dark disc behind a badge on the world map
+    RowShade = CreateColor(0, 0, 0, 0.6), -- the dark start of a row background that fades out to the right
 }
 
 -- the coin amounts of our bag money

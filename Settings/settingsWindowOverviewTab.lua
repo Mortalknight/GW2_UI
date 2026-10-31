@@ -8,14 +8,6 @@ local welcome_OnClick = function()
     GW.ShowWelcomePanel()
 end
 
-local function ShowDiscordPopup()
-    GW.ShowPopup({text = L["Join Discord"],
-        hasEditBox = true,
-        inputText = "https://discord.gg/MZZtRWt",
-        EditBoxOnEscapePressed = function(popup) popup:Hide() end,
-        hideOnEscape = true})
-end
-
 local statusReport_OnClick = function()
     GwSettingsWindow:Hide()
     GW.ShowStatusReport()
@@ -513,10 +505,9 @@ function GW.LoadSettingsOverview(container)
             GW.moveHudObjects(GW.MoveHudScaleableFrame)
         end},
         {button = settingsOverview.menu.keybindingsbtn, text = KEY_BINDING, onClick = function() container:Hide() GW.DisplayHoverBinding() end},
-        {button = settingsOverview.menu.discordbtn, text = L["Join Discord"], onClick = ShowDiscordPopup}
     }
 
-    settingsOverview.credits = GW.CreateCreditsPage(settingsOverview, ShowDiscordPopup)
+    settingsOverview.credits = GW.CreateCreditsPage(settingsOverview)
     settingsOverview.credits:SetPoint("TOPLEFT", settingsOverview.ScrollBox, "TOPLEFT", 10, -10)
     settingsOverview.credits:SetPoint("BOTTOMRIGHT", settingsOverview.ScrollBox, "BOTTOMRIGHT", -10, 10)
 

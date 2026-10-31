@@ -78,13 +78,13 @@ local function DurabilityTooltip(self)
 
     if repairCost > 0 then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddDoubleLine(REPAIR_COST, GetMoneyString(repairCost), white.r, white.g, white.b, white.r, white.g, white.b)
+        GameTooltip:AddDoubleLine(REPAIR_COST, GW.FormatMoneyForChat(repairCost, true), white.r, white.g, white.b, white.r, white.g, white.b)
 
         local sub = GW.Colors.SkinColors.SubText
         for standing = 5, 8 do
             local discount = REPUTATION_DISCOUNTS[standing]
             GameTooltip:AddDoubleLine(format("  %s (-%d%%)", _G["FACTION_STANDING_LABEL" .. standing], discount * 100),
-                GetMoneyString(floor(repairCost * (1 - discount))), sub.r, sub.g, sub.b, sub.r, sub.g, sub.b)
+                GW.FormatMoneyForChat(floor(repairCost * (1 - discount)), true), sub.r, sub.g, sub.b, sub.r, sub.g, sub.b)
         end
 
         if MerchantFrame and MerchantFrame:IsShown() and CanMerchantRepair() then
@@ -92,7 +92,7 @@ local function DurabilityTooltip(self)
             if merchantCost and merchantCost > 0 then
                 local positive = GW.Colors.SkinColors.Positive
                 local discount = Round((1 - merchantCost / repairCost) * 100)
-                GameTooltip:AddDoubleLine(discount > 0 and format("%s (-%d%%)", MERCHANT, discount) or MERCHANT, GetMoneyString(merchantCost),
+                GameTooltip:AddDoubleLine(discount > 0 and format("%s (-%d%%)", MERCHANT, discount) or MERCHANT, GW.FormatMoneyForChat(merchantCost, true),
                     positive.r, positive.g, positive.b, positive.r, positive.g, positive.b)
             end
         end

@@ -135,7 +135,8 @@ local function ShowAFKScreen(self)
 
     local guildName, rankName = GetGuildInfo("player")
     if guildName then
-        self.bottom.guild:SetFormattedText("<%s> [%s]", guildName, rankName)
+        local guild = GW.Colors.TextColors.Guild
+        self.bottom.guild:SetFormattedText("%s [%s]", guild:WrapTextInColorCode("<" .. guildName .. ">"), guild:WrapTextInColorCode(rankName))
     else
         self.bottom.guild:SetText(L["No Guild"])
     end

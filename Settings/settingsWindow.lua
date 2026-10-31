@@ -97,6 +97,33 @@ local function BuildSettingsWindow()
 
     settingsContainer.close:SetScript("OnClick", function() settingsContainer:Hide() end)
 
+    -- wow opens no links, the popup offers the url to copy
+    local anchor = settingsContainer.close
+    for _, link in ipairs({
+        {key = "github", text = "GitHub", url = "https://github.com/Mortalknight/GW2_UI"},
+        {key = "discord", text = L["Join Discord"], url = "https://discord.gg/MZZtRWt"},
+    }) do
+        local button = CreateFrame("Button", nil, settingsContainer)
+        button:SetSize(22, 22)
+        button:SetPoint("RIGHT", anchor, "LEFT", -6, 0)
+        button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/settings-" .. link.key .. "-normal.png")
+        button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/settings-" .. link.key .. "-hover.png")
+        button:SetScript("OnClick", function()
+            GW.ShowPopup({text = link.text,
+                hasEditBox = true,
+                inputText = link.url,
+                EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+                hideOnEscape = true})
+        end)
+        button:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+            GameTooltip:SetText(link.text, GW.Colors.TextColors.LightHeader:GetRGB())
+            GameTooltip:Show()
+        end)
+        button:SetScript("OnLeave", GameTooltip_Hide)
+        anchor = button
+    end
+
     -- live "reload required" hint in the header with the pending settings as tooltip
     local reloadIndicator = CreateFrame("Frame", nil, settingsContainer)
     reloadIndicator:SetPoint("LEFT", settingsContainer.headerBreadcrumb, "RIGHT", 14, 2)

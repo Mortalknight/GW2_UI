@@ -270,7 +270,7 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, 
 		end
 
         if quest.requiredMoney > GetMoney() then
-            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), QuestObjectiveOptions(isComplete, nil))
+            self:AddObjective(GW.FormatMoneyForChat(GetMoney(), true) .. " / " .. GW.FormatMoneyForChat(quest.requiredMoney, true), QuestObjectiveOptions(isComplete, nil))
         end
 
         -- timer bar

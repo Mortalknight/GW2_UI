@@ -172,7 +172,7 @@ local function Layout(page)
     page.contentHeight = -top + 4 + page.thanks:GetHeight()
 end
 
-function GW.CreateCreditsPage(parent, onDiscordClick)
+function GW.CreateCreditsPage(parent)
     local page = CreateFrame("Frame", nil, parent)
     page:Hide()
 
@@ -188,18 +188,12 @@ function GW.CreateCreditsPage(parent, onDiscordClick)
     thanks:SetHeight(32)
     page.thanks = thanks
 
-    local discord = CreateFrame("Button", nil, thanks, "GwStandardButton")
-    discord:SetSize(130, 26)
-    discord:SetPoint("RIGHT", 0, 0)
-    discord:SetText(L["Join Discord"])
-    discord:SetScript("OnClick", onDiscordClick)
-
     local text = thanks:CreateFontString(nil, "ARTWORK")
     text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     text:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
     text:SetJustifyH("LEFT")
     text:SetPoint("LEFT", 4, 0)
-    text:SetPoint("RIGHT", discord, "LEFT", -12, 0)
+    text:SetPoint("RIGHT", -4, 0)
     text:SetText(L["Thank you to everyone who uses GW2 UI, reports bugs and shares ideas."])
 
     page:SetScript("OnSizeChanged", Layout)

@@ -243,11 +243,13 @@ end
 -- the type of a quest like the tracker tells it, and its level in the difficulty color
 local function GetQuestTypeAndLevel(questIndex)
     local _, level, _, _, _, _, frequency, questID = GetQuestLogTitle(questIndex)
+    local tagID = GW.GetQuestTagID(questID)
     local questType = GW.IsClassQuestLogIndex(questIndex) and TYPES.Campaign
-        or GW.GetQuestTagID(questID) == Enum.QuestTag.PvP and TYPES.PvPQuest
+        or tagID == Enum.QuestTag.PvP and TYPES.PvPQuest
         or GW.IsRepeatableQuestFrequency(frequency) and TYPES.DailyQuest or TYPES.Quest
     local color = GetQuestDifficultyColor(level)
-    return questType, CreateColor(color.r, color.g, color.b):WrapTextInColorCode("[" .. level .. "]")
+    -- the level with the group and dungeon icon of the tracker
+    return questType, CreateColor(color.r, color.g, color.b):WrapTextInColorCode(strtrim(GW.GetQuestLevelPrefix(level, tagID)))
 end
 
 -- the quest icon of the tracker for the type
@@ -282,6 +284,12 @@ local function SkinRow(title)
     title.gwCompassArrow:SetTexture("Interface/AddOns/GW2_UI/textures/notification/compass-arrow.png")
     title.gwCompassArrow:SetTexCoord(1, 0, 0, 1)
     title.gwCompassArrow:SetAllPoints(title.gwCompass)
+
+    -- blizzard turns the tag white on hover
+    local tag = _G[title:GetName() .. "Tag"]
+    title:HookScript("OnEnter", function(self)
+        tag:SetTextColor(self.r, self.g, self.b)
+    end)
 end
 
 
@@ -327,6 +335,8 @@ local function StyleQuestRow(title, questIndex)
     title:GetFontString():SetPoint("LEFT", title, "LEFT", isHeader and 20 or QUEST_TEXT_OFFSET, 0)
     if isHeader then
         title:SetNormalFontObject(GetRowFont("Header", HEADER_COLOR, true))
+        title:SetHighlightFontObject(GetRowFont("Header", HEADER_COLOR, true))
+        title.gwHoverTexture:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
         -- the count right aligned in the tag blizzard leaves empty on zones; leaving the row restores title.r/g/b to it
         title.r, title.g, title.b = GW.Colors.SkinColors.SubText:GetRGB()
         tag:SetText(GetZoneQuestCount(questIndex) or "")
@@ -335,14 +345,20 @@ local function StyleQuestRow(title, questIndex)
         return
     end
     local questType, levelText = GetQuestTypeAndLevel(questIndex)
-    title:SetNormalFontObject(GetRowFont(questType, GW.Colors.ObjectivesTypeColors[questType]))
+    local typeColor = GW.Colors.ObjectivesTypeColors[questType]
+    -- hovered and selected rows keep their colors, the hover shows in the type color like in the tracker
+    title:SetNormalFontObject(GetRowFont(questType, typeColor))
+    title:SetHighlightFontObject(GetRowFont(questType, typeColor))
+    title.gwHoverTexture:SetVertexColor(typeColor.r, typeColor.g, typeColor.b, GW.Colors.SkinColors.ListHover.a)
 
-    -- (Complete) green, (Failed) red; leaving the row restores title.r/g/b to the tag
+    -- (Complete) green, (Failed) red; dungeon, group and elite show in the level like in the tracker
     local isComplete = select(6, GetQuestLogTitle(questIndex))
     if isComplete then
         title.r, title.g, title.b = (isComplete > 0 and GW.Colors.SkinColors.Positive or GW.Colors.SkinColors.Negative):GetRGB()
-        tag:SetTextColor(title.r, title.g, title.b)
+    else
+        tag:SetText("")
     end
+    tag:SetTextColor(title.r, title.g, title.b)
 
     -- the title and its xp like the tracker shows it; questie may have written the level already, it is taken off
     local label = strtrim(title:GetText() or "")

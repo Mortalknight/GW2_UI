@@ -60,14 +60,9 @@
                             <Anchor point="TOPLEFT" relativeKey="$parent.keybindingsbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="discordbtn" inherits="GwSettingsOverviewMenuButton" text="Join Discord">
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.movehudbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
-                        </Anchors>
-                    </Button>
                     <Button parentKey="reportbtn" inherits="GwSettingsOverviewMenuButton" text="StatusReport">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.discordbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.movehudbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
                     </Button>
                     <Button parentKey="changelog" inherits="GwSettingsOverviewMenuButton" text="Changelog">

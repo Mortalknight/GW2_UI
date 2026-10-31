@@ -124,7 +124,7 @@ GW.RegisterTooltipModule({
         -- one plain sell price line instead of the money frame
         if TooltipDataProcessor and TooltipDataProcessor.AddLinePreCall and GW.isModern then
             TooltipDataProcessor.AddLinePreCall(Enum.TooltipDataLineType.SellPrice, function(tooltip, lineData)
-                tooltip:AddLine(SELL_PRICE .. ": " .. GetMoneyString(lineData.price), WHITE_FONT_COLOR:GetRGB())
+                tooltip:AddLine(SELL_PRICE .. ": " .. GW.FormatMoneyForChat(lineData.price, true), WHITE_FONT_COLOR:GetRGB())
                 return true
             end)
         end

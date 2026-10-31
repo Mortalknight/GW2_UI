@@ -14,6 +14,12 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.3", {
+    {GW.Enum.ChangelogType.feature, [=[Loot feed: the items and the money you receive in a short list that fades out, like in Guild Wars 2 (option, off by default, movable)]=]},
+    {GW.Enum.ChangelogType.feature, [=[Quest tracker (Wrath, Mists, Retail, Forever): new section "Nearly Done" with the three achievements you are closest to completing; right-click tracks or hides one (option, off by default)]=]},
+    {GW.Enum.ChangelogType.feature, [=[World map (Wrath, Mists, Retail, Forever): exploration progress as a ring on each zone of the continent maps that is not fully explored, the tooltip lists the areas still missing (option, off by default)]=]},
+    {GW.Enum.ChangelogType.change, [=[Quest log (Classic, TBC): hover in the quest type color, colors stay when a quest is hovered or selected, dungeon and group quests show the icons of the quest tracker; opening a quest from the tracker scrolls the log to it]=]},
+    {GW.Enum.ChangelogType.change, [=[Settings: Discord and GitHub buttons next to the close button, they replace the Join Discord entry]=]},
+    {GW.Enum.ChangelogType.change, [=[AFK screen: guild name in guild color; auto repair: the chat message shows the cost like the durability tooltip]=]},
     {GW.Enum.ChangelogType.bug, [=[Profiles: icons from icon packs show correctly and no longer seem to change, loading the default settings keeps the profile icon]=]},
 })
 

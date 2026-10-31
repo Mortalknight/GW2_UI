@@ -185,7 +185,7 @@ local function UpdateBlockInternal(self, parent, quest, signature)
     end
 
     if quest.requiredMoney and quest.requiredMoney > GetMoney() and not quest.isComplete then
-        self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), QuestObjectiveOptions(quest.isComplete, nil))
+        self:AddObjective(GW.FormatMoneyForChat(GetMoney(), true) .. " / " .. GW.FormatMoneyForChat(quest.requiredMoney, true), QuestObjectiveOptions(quest.isComplete, nil))
     end
 
     if quest.isComplete then
