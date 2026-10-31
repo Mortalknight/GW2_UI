@@ -235,7 +235,9 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, 
         isComplete = true
     end
 
-    self:UpdateBlockObjectives(numObjectives)
+    if not isComplete then
+        self:UpdateBlockObjectives(numObjectives)
+    end
 
     if isComplete then
         if quest.isAutoComplete then
