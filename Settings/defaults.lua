@@ -73,6 +73,8 @@ GW.privateDefaults = {
         CHAT_KEYWORDS_ALERT_COLOR = {r = .5, g = .5, b = .5},
         ChatHistoryLog = {},
         ChatEditHistory = {},
+        hiddenNearlyDoneAchievements = {},
+        nearlyDoneCandidates = {},
         heroPanel = {
             stats = {
                 order = {},
@@ -290,6 +292,18 @@ GW.globalDefault = {
             mode = "IN_RAID",
         },
 
+        lootFeed = {
+            enabled = true,
+            pos = {
+                point = "BOTTOMRIGHT",
+                relativePoint = "BOTTOMRIGHT",
+                xOfs = -320,
+                yOfs = 300,
+                hasMoved = false,
+            },
+            scale = 1,
+        },
+
         altPowerBar = {
             pos = {
                 point = "TOP",
@@ -466,6 +480,7 @@ GW.globalDefault = {
         },
 
         worldmap = {
+            explorationProgress = false,
             coords = {
                 enabled = false,
                 position = "TOP",
@@ -1598,7 +1613,8 @@ GW.globalDefault = {
             showCompleted = false,
             compactMode = false,
             spacing = 1,
-            moduleOrder = {"Achievement", "Campaign", "Quests", "Bonus", "Recipe", "MonthlyActivity", "Collection", "HousingInitiative", "WQT", "PetTracker", "Todoloo"},
+            nearlyDone = false,
+            moduleOrder = {"Achievement", "NearlyDone", "Campaign", "Quests", "Bonus", "Recipe", "MonthlyActivity", "Collection", "HousingInitiative", "WQT", "PetTracker", "Todoloo"},
             showXp = true,
             sorting = "DEFAULT",
         },

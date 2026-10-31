@@ -261,6 +261,7 @@ local function LoadHudPanel(sWindow)
     minimap:AddOption(L["Keep Size Ratio"], L["With this setting you can no longer move the minimap completely to the top or bottom of the screen. This is not allowed by Blizzard."], {getterSetter = "minimap.keepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("minimap.size"); widget.title:SetText(value == true and L["Minimap Size"] or L["Width"]); GW.UpdateMinimapSize() end, dependence = {["minimap.enabled"] = true}})
 
     --WORLDMAP
+    worldmap:AddOption(L["Exploration Progress"], L["Shows on the continent maps how much of each zone you have explored, the tooltip shows the details."], {getterSetter = "worldmap.explorationProgress", callback = function() GW.UpdateExplorationMapPins() end})
     -- world map coordinates
     worldmap:AddGroupHeader(L["World Map Coordinates"])
     worldmap:AddOption(L["Enable"], nil, {getterSetter = "worldmap.coords.enabled", callback = GW.UpdateWorldMapCoordinateSettings, groupHeaderName = L["World Map Coordinates"]})

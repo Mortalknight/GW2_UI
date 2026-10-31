@@ -1,0 +1,7 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="explorationMap.lua"/>
+
+    <Frame name="GwExplorationPinTemplate" mixin="GwExplorationPinMixin" enableMouse="true" virtual="true">
+        <Size x="40" y="40"/>
+    </Frame>
+</Ui>

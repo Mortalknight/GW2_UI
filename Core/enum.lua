@@ -23,6 +23,7 @@ GW.Enum.ObjectivesBlockType = {
     WQT = 13,
     PetTracker = 14,
     Todoloo = 15,
+    NearlyDone = 16,
 }
 
 GW.Enum.ObjectivesNotificationType = {

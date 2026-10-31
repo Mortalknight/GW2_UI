@@ -56,6 +56,7 @@ local function LoadGeneralPanel(sWindow)
         getDefault = function() return false end,
     })
     general:AddOption(L["Global Cooldown at the Cursor"], L["Shows the global cooldown as a ring around the mouse cursor."], {getterSetter = "general.cursorGcdRing", callback = function() GW.UpdateCursorGcdRing() end})
+    general:AddOption(L["Loot Feed"], L["Shows the items and the money you receive in a short list that fades out, like in Guild Wars 2."], {getterSetter = "lootFeed.enabled", callback = function() GW.UpdateLootFeed() end})
     general:AddOption(L["Hide error messages in combat"], L["Hides messages like 'Not enough rage' while in combat."], {getterSetter = "general.hideErrorsInCombat"})
     general:AddOption(CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, {getterSetter = "general.dynamicCam",
         callback = function(value)

@@ -924,9 +924,7 @@ local function evLoadSkins()
     GW.AddMasqueSkin()
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
-    if not (GW.Classic or GW.TBC) then
-        GW.UpdateExplorationMapPins()
-    end
+    GW.UpdateExplorationMapPins()
 
     GW.LoadDressUpFrameSkin()
 

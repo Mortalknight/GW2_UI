@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file ="raidMarkerCircle.lua"/>
     <Script file ="worldmapCoords.lua"/>
+    <Include file ="explorationMap.xml"/>
     <Script file ="extendVendor.lua"/>
     <Script file ="worldmarkersKeybind.lua"/>
     <Script file ="raidCounter.lua"/>
@@ -10,6 +11,7 @@
     <Script file ="interruptAnnouncement.lua"/>
     <Script file ="afk.lua"/>
     <Script file ="cursorGcd.lua"/>
+    <Script file ="lootFeed.lua"/>
     <Script file ="itemlevel.lua"/>
     <Script file ="misc.lua"/>
     <Script file ="blizzardFixes.lua"/>
