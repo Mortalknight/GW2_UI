@@ -8,11 +8,6 @@ local welcome_OnClick = function()
     GW.ShowWelcomePanel()
 end
 
-local statusReport_OnClick = function()
-    GwSettingsWindow:Hide()
-    GW.ShowStatusReport()
-end
-
 local function getChangeLogIcon(self, tag)
     self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/changelogicons.png")
     if tonumber(tag) == GW.Enum.ChangelogType.bug then
@@ -230,8 +225,8 @@ local function UpdateOverviewScrollFx(source)
         end
     end
 
-    -- the credits set the page block height themselves
-    if not settingsOverview or not settingsOverview.ScrollBar or settingsOverview.currentOverviewType == "credits" then
+    -- the credits and the system info set the page block height themselves
+    if not settingsOverview or not settingsOverview.ScrollBar or settingsOverview.currentOverviewType ~= "changelog" then
         return
     end
 
@@ -328,6 +323,7 @@ end
 local function UpdateOverviewMenu(settingsOverview)
     GW.SetSettingsMenuButtonActive(settingsOverview.menu.changelog, settingsOverview.currentOverviewType == "changelog")
     GW.SetSettingsMenuButtonActive(settingsOverview.menu.creditsbtn, settingsOverview.currentOverviewType == "credits")
+    GW.SetSettingsMenuButtonActive(settingsOverview.menu.reportbtn, settingsOverview.currentOverviewType == "systemInfo")
 end
 
 local function ShowChangelog(frame)
@@ -339,6 +335,7 @@ local function ShowChangelog(frame)
     UpdateOverviewMenu(settingsOverview)
     settingsOverview.search:Show()
     settingsOverview.credits:Hide()
+    settingsOverview.systemInfo:Hide()
     settingsOverview.pageblock:SetHeight(settingsOverview.basePageBlockHeight)
     frame:Show()
     settingsOverview.ScrollBar:Show()
@@ -347,24 +344,36 @@ local function ShowChangelog(frame)
     UpdateOverviewScrollFx(frame)
 end
 
-local function ShowCredits(frame)
+-- the credits and the system info replace the changelog list with a page of their own
+local function ShowPage(frame, pageType, title)
     local settingsOverview = frame:GetParent()
     if NormalizeSearchQuery(settingsOverview.searchQuery) ~= "" then
         ResetChangelogSearch(settingsOverview)
     end
-    settingsOverview.currentOverviewType = "credits"
+    settingsOverview.currentOverviewType = pageType
     UpdateOverviewMenu(settingsOverview)
     settingsOverview.search:Hide()
-    settingsOverview.header:SetText(L["Credits"])
+    settingsOverview.header:SetText(title)
     -- an empty list, so the scroll bar of the hidden changelog does not come back with its next update
     frame:SetDataProvider(CreateDataProvider())
     frame:Hide()
     settingsOverview.ScrollBar:Hide()
-    settingsOverview.credits:Show()
-    -- the page block grows up like on scrolling until all credits fit, the credits sit 15 inside it
+    local page = settingsOverview[pageType]
+    for _, other in ipairs({settingsOverview.credits, settingsOverview.systemInfo}) do
+        other:SetShown(other == page)
+    end
+    -- the page block grows up like on scrolling until the page fits, the page sits 15 inside it
     local base = settingsOverview.basePageBlockHeight
-    settingsOverview.pageblock:SetHeight(math.max(base, (settingsOverview.credits.contentHeight or 0) + 30))
+    settingsOverview.pageblock:SetHeight(math.max(base, (page.contentHeight or 0) + 30))
     settingsOverview.lastScrollGrowAmount = nil
+end
+
+local function ShowCredits(frame)
+    ShowPage(frame, "credits", L["Credits"])
+end
+
+local function ShowSystemInfo(frame)
+    ShowPage(frame, "systemInfo", L["System info"])
 end
 
 local function SetTitleTextAnchors(button, xOffset, yOffset)
@@ -494,7 +503,7 @@ function GW.LoadSettingsOverview(container)
 
     local buttons = {
         {button = settingsOverview.menu.welcomebtn, text = L["Setup"], onClick = welcome_OnClick},
-        {button = settingsOverview.menu.reportbtn, text = L["System info"], onClick = statusReport_OnClick},
+        {button = settingsOverview.menu.reportbtn, text = L["System info"], onClick = function() ShowSystemInfo(settingsOverview.ScrollBox) end},
         {button = settingsOverview.menu.changelog, text = L["Changelog"], onClick = function() ShowChangelog(settingsOverview.ScrollBox) end},
         {button = settingsOverview.menu.creditsbtn, text = L["Credits"], onClick = function() ShowCredits(settingsOverview.ScrollBox) end},
         {button = settingsOverview.menu.movehudbtn, text = L["Move HUD"], onClick = function()
@@ -510,6 +519,9 @@ function GW.LoadSettingsOverview(container)
     settingsOverview.credits = GW.CreateCreditsPage(settingsOverview)
     settingsOverview.credits:SetPoint("TOPLEFT", settingsOverview.ScrollBox, "TOPLEFT", 10, -10)
     settingsOverview.credits:SetPoint("BOTTOMRIGHT", settingsOverview.ScrollBox, "BOTTOMRIGHT", -10, 10)
+    settingsOverview.systemInfo = GW.CreateSystemInfoPage(settingsOverview)
+    settingsOverview.systemInfo:SetPoint("TOPLEFT", settingsOverview.ScrollBox, "TOPLEFT", 10, -10)
+    settingsOverview.systemInfo:SetPoint("BOTTOMRIGHT", settingsOverview.ScrollBox, "BOTTOMRIGHT", -10, 10)
 
     settingsOverview.header:SetFont(DAMAGE_TEXT_FONT, 30)
 
@@ -571,6 +583,17 @@ function GW.LoadSettingsOverview(container)
         GwSettingsWindow:Show()
         GwSettingsWindow:SwitchTab("GwSettingsOverview")
         ShowChangelog(settingsOverview.ScrollBox)
+    end
+
+    -- /gw2 status
+    GW.ShowStatusReport = function()
+        if InCombatLockdown() then
+            GW.Notice(L["Settings are not available in combat!"])
+            return
+        end
+        GwSettingsWindow:Show()
+        GwSettingsWindow:SwitchTab("GwSettingsOverview")
+        ShowSystemInfo(settingsOverview.ScrollBox)
     end
 
     local odd = true
