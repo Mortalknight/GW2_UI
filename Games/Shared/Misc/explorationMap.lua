@@ -3,7 +3,6 @@ local GW = select(2, ...)
 
 local RING_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/gcd-ring.png"
 local EXPLORATION_CATEGORY = 97
-local PVP_CATEGORY = 95
 local CRITERIA_TYPE_EXPLORE_AREA = 43
 local MAX_TOOLTIP_AREAS = 12
 
@@ -27,7 +26,6 @@ local provider
 local panel
 local explorationAchievements
 local zoneAchievement = {}
-local kafZoneAchievements
 
 local function IsInCategory(categoryID, rootID)
     while categoryID and categoryID > 0 do
@@ -108,51 +106,42 @@ local function GetZoneProgress(zoneID, continentName)
     end
 end
 
--- Krowi's Achievement Filter keeps its zone lists in KrowiAF.ZoneData: groups of {AddZoneData, mapIDs, achievementIDs};
--- it is the table KAF fills itself from, read here only when the addon is there
-local function CollectKafZoneAchievements()
-    kafZoneAchievements = {}
-    if not (KrowiAF and type(KrowiAF.ZoneData) == "table" and KrowiAF.AddZoneData) then return end
-
-    local function AddIDs(list, ids)
-        for _, id in ipairs(ids) do
-            if type(id) == "table" then
-                AddIDs(list, id)
-            elseif type(id) == "number" then
-                list[#list + 1] = id
-            end
-        end
-    end
-    for _, group in pairs(KrowiAF.ZoneData) do
-        for _, entry in ipairs(group) do
-            if type(entry) == "table" and entry[1] == KrowiAF.AddZoneData and type(entry[3]) == "table" then
-                local mapIDs = type(entry[2]) == "table" and entry[2] or {entry[2]}
-                for _, mapID in ipairs(mapIDs) do
-                    kafZoneAchievements[mapID] = kafZoneAchievements[mapID] or {}
-                    AddIDs(kafZoneAchievements[mapID], entry[3])
-                end
-            end
+-- KAF's own world map button: it knows the achievement objects of the shown map and opens its category
+local function GetKafMapButton()
+    local buttons = LibStub and LibStub("Krowi_WorldMapButtons-1.4", true)
+    for _, button in ipairs(buttons and buttons.Buttons or {}) do
+        if KrowiAF_WorldMapButtonMixin and button.OnClick == KrowiAF_WorldMapButtonMixin.OnClick then
+            return button
         end
     end
 end
 
-local function IsPvPAchievement(id)
-    return GetAchievementCategory and IsInCategory(GetAchievementCategory(id), PVP_CATEGORY)
+-- after a refresh the button holds KAF's achievements of the shown map, with faction, PvP and whether
+-- they can still be earned; turned off in KAF it has none
+local function GetKafAchievements()
+    local button = GetKafMapButton()
+    if not button then return end
+    button:Refresh()
+    return button:IsShown() and button.Achievements
 end
 
--- earned and all achievements of a zone after KAF, the missing ones for the tooltip
-local function GetZoneAchievements(zoneID)
-    if not kafZoneAchievements then
-        CollectKafZoneAchievements()
-    end
-    local ids = kafZoneAchievements[zoneID]
-    if not ids then return end
+-- earned and all achievements of a zone after KAF, the missing ones for the tooltip; achievements of the
+-- other faction and those that can no longer or not yet be earned only count when they are earned
+local function GetZoneAchievements()
+    local list = GetKafAchievements()
+    if not list then return end
 
     local includePvP = GW.settings.worldmap.explorationAchievementsPvP
+    local playerFaction = KrowiAF.Enum and KrowiAF.Enum.Faction and KrowiAF.Enum.Faction[(UnitFactionGroup("player"))]
     local earned, total, missing = 0, 0, {}
-    for _, id in ipairs(ids) do
-        local _, name, _, completed = GetAchievementInfo(id)
-        if name and (includePvP or not IsPvPAchievement(id)) then
+    for _, achievement in ipairs(list) do
+        local _, name, _, completed = GetAchievementInfo(achievement.Id)
+        local counts = name ~= nil and (includePvP or not achievement.IsPvP)
+        if counts and not completed then
+            local state = achievement.GetObtainableState and achievement:GetObtainableState()
+            counts = (not achievement.Faction or achievement.Faction == playerFaction) and state ~= "Past" and state ~= "Future"
+        end
+        if counts then
             total = total + 1
             if completed then
                 earned = earned + 1
@@ -168,13 +157,10 @@ end
 
 -- KAF's own world map button opens its "selected zone" category with its filters; ours just clicks it
 local function OpenKafZoneCategory()
-    local buttons = LibStub and LibStub("Krowi_WorldMapButtons-1.4", true)
-    for _, button in ipairs(buttons and buttons.Buttons or {}) do
-        if KrowiAF_WorldMapButtonMixin and button.OnClick == KrowiAF_WorldMapButtonMixin.OnClick then
-            button:Refresh()
-            button:Click()
-            return
-        end
+    local button = GetKafMapButton()
+    if button then
+        button:Refresh()
+        button:Click()
     end
 end
 
@@ -423,28 +409,30 @@ local function CreatePanel()
     panel.continent = CreateRow(panel, "Interface/Icons/INV_Misc_Map02")
     panel.continent.hasData = true
 
-    -- the achievements line of the zone after KAF: the missing ones as tooltip, a click opens them in KAF
-    local achievements = panel.zone.lines[2]
-    achievements:EnableMouse(true)
-    achievements:SetScript("OnEnter", function(self)
-        if not self.missing then return end
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(ACHIEVEMENTS, GW.Colors.SkinColors.QuestGold:GetRGB())
-        for i, name in ipairs(self.missing) do
-            if i > MAX_TOOLTIP_AREAS then
-                GameTooltip:AddLine("...", GW.Colors.SkinColors.Disabled:GetRGB())
-                break
+    -- the achievements line of the zone after KAF: the missing ones as tooltip, a click opens them in KAF;
+    -- it is the first line where there is nothing to explore, like in a city
+    for _, achievements in ipairs(panel.zone.lines) do
+        achievements:EnableMouse(true)
+        achievements:SetScript("OnEnter", function(self)
+            if not self.missing then return end
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(ACHIEVEMENTS, GW.Colors.SkinColors.QuestGold:GetRGB())
+            for i, name in ipairs(self.missing) do
+                if i > MAX_TOOLTIP_AREAS then
+                    GameTooltip:AddLine("...", GW.Colors.SkinColors.Disabled:GetRGB())
+                    break
+                end
+                GameTooltip:AddLine(name, GW.Colors.SkinColors.Disabled:GetRGB())
             end
-            GameTooltip:AddLine(name, GW.Colors.SkinColors.Disabled:GetRGB())
-        end
-        GameTooltip:Show()
-    end)
-    achievements:SetScript("OnLeave", GameTooltip_Hide)
-    achievements:SetScript("OnMouseUp", function(self)
-        if self.missing then
-            OpenKafZoneCategory()
-        end
-    end)
+            GameTooltip:Show()
+        end)
+        achievements:SetScript("OnLeave", GameTooltip_Hide)
+        achievements:SetScript("OnMouseUp", function(self)
+            if self.missing then
+                OpenKafZoneCategory()
+            end
+        end)
+    end
 
     panel.toggle = CreateFrame("Button", nil, panel)
     panel.toggle:SetSize(14, 14)
@@ -488,19 +476,24 @@ local function UpdatePanel(mapInfo)
     local explored, total, earned, all, missing
     if mapInfo.mapType == Enum.UIMapType.Zone then
         explored, total = GetZoneProgress(mapInfo.mapID, continent.name)
-        if explored and GetAchievementInfo then
-            earned, all, missing = GetZoneAchievements(mapInfo.mapID)
-        end
     end
-    panel.zone.hasData = explored ~= nil
-    panel.zone.lines[2].missing = missing
-    if explored then
-        local lines = {{ICON_EXPLORATION, GW.L["Explored Areas"], explored .. "/" .. total}}
+    if mapInfo.mapType > Enum.UIMapType.Continent and GetAchievementInfo then
+        earned, all, missing = GetZoneAchievements()
+    end
+    panel.zone.hasData = explored ~= nil or earned ~= nil
+    if panel.zone.hasData then
+        local lines = {}
+        if explored then
+            lines[#lines + 1] = {ICON_EXPLORATION, GW.L["Explored Areas"], explored .. "/" .. total}
+        end
         if earned then
-            lines[2] = {ICON_ACHIEVEMENTS, ACHIEVEMENTS, earned .. "/" .. all}
+            lines[#lines + 1] = {ICON_ACHIEVEMENTS, ACHIEVEMENTS, earned .. "/" .. all}
+        end
+        for i, line in ipairs(panel.zone.lines) do
+            line.missing = (earned and i == #lines) and missing or nil
         end
         -- like the completion of guild wars 2, every area and achievement counts the same
-        SetRow(panel.zone, mapInfo.name, explored + (earned or 0), total + (all or 0), lines)
+        SetRow(panel.zone, mapInfo.name, (explored or 0) + (earned or 0), (total or 0) + (all or 0), lines)
     end
     SetRow(panel.continent, continent.name, exploredSum, totalSum, {{ICON_EXPLORATION, GW.L["Zones Completed"], zonesDone .. "/" .. zonesCount}})
 
