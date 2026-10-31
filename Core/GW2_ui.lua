@@ -535,8 +535,12 @@ local function evPlayerLogin(self)
         GW.HideGamepadFocusFrames()
     end
 
-    if GW.CheckForPasteAddon() and GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
-        GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
+    -- the old LibStrataFix (embedded by Paste and others) raises the level of every new or reparented frame above
+    -- its parent, which hides our action buttons; its hooks look the functions up on the lib, so they can be emptied
+    local strataFix = LibStub and LibStub("LibStrataFix", true)
+    if strataFix then
+        strataFix.CreateFrameHook = GW.NoOp
+        strataFix.SetParentHook = GW.NoOp
     end
 
     -- Remove old debuffs from db
@@ -780,6 +784,7 @@ local function evPlayerLogin(self)
 
     GW.LoadAFKAnimation()
     GW.UpdateCursorGcdRing()
+    GW.UpdateLootFeed()
 
     if not GW.ShouldBlockIncompatibleAddon("DynamicCam") then -- Only touch this setting if no other addon for this is loaded
         if GW.settings.general.dynamicCam then
@@ -919,6 +924,9 @@ local function evLoadSkins()
     GW.AddMasqueSkin()
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
+    if not (GW.Classic or GW.TBC) then
+        GW.UpdateExplorationMapPins()
+    end
 
     GW.LoadDressUpFrameSkin()
 

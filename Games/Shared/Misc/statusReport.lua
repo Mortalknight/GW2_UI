@@ -18,10 +18,6 @@ local function AreOtherAddOnsEnabled()
     return AnyAddOnEnabled(function(name) return name ~= "GW2_UI" end)
 end
 
-local function CheckForPasteAddon()
-    return AnyAddOnEnabled(function(name) return name == "Paste" or name == "CopyPaste" end)
-end
-GW.CheckForPasteAddon = CheckForPasteAddon
 
 local function YesNo(value)
     return value and "Yes" or "No"
@@ -49,7 +45,6 @@ local SECTIONS = {
         rows = {
             { "GW2 UI Version", function() return GW.GetVersionString() end },
             { "Other AddOns Enabled", function() local on = AreOtherAddOnsEnabled() return YesNo(on), on end },
-            { "Paste AddOn Enabled", function() local on = CheckForPasteAddon() return YesNo(on), on end },
             { "Recommended Scale", function() return format("%.2f", GW.getBestPixelScale()) end },
             { "UI Scale", function() return format("%.2f", GW.scale), GW.scale ~= GW.getBestPixelScale() end },
         },
