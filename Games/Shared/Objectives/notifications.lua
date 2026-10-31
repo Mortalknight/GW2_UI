@@ -13,9 +13,13 @@ local SOURCE_TYPES = {
 }
 local sourceEntries = {}
 
+-- types without a star of their own take the white star in their type color (tint)
+
 local icons = {
     [GW.Enum.ObjectivesNotificationType.Quest] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
-    [GW.Enum.ObjectivesNotificationType.PvPQuest] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
+    [GW.Enum.ObjectivesNotificationType.PvPQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
+    [GW.Enum.ObjectivesNotificationType.LegendaryQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
+    [GW.Enum.ObjectivesNotificationType.ImportantQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
     [GW.Enum.ObjectivesNotificationType.Campaign] = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
     [GW.Enum.ObjectivesNotificationType.Event] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
     [GW.Enum.ObjectivesNotificationType.Scenario] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
@@ -216,7 +220,8 @@ local function getNearestQuestPOIRetail()
         y = poiY,
         desc = objectiveText,
         title = questData.title,
-        type = isCampaign and GW.Enum.ObjectivesNotificationType.Campaign or isFrequent and GW.Enum.ObjectivesNotificationType.DailyQuest or isWQ and GW.Enum.ObjectivesNotificationType.Event or GW.Enum.ObjectivesNotificationType.Quest,
+        -- the type of the tracker, so the compass shows the same star and color
+        type = isWQ and GW.Enum.ObjectivesNotificationType.Event or GW.GetQuestColorKey(closestQuestID, isCampaign, isFrequent),
         id = closestQuestID,
         compass = true,
         questID = closestQuestID
@@ -311,6 +316,7 @@ local function getNearestQuestPOIMists()
     local closestQuestID
     local minDistSqr = math.huge
     local isFrequent = false
+    local closestIsClassQuest = false
     local title
 
     for questLogIndex = 1, numQuests do
@@ -323,6 +329,7 @@ local function getNearestQuestPOIMists()
                 minDistSqr = distance
                 closestQuestID = questID
                 isFrequent = frequency and frequency > 1
+                closestIsClassQuest = GW.IsClassQuestLogIndex(questLogIndex)
                 title = questLogTitleText
             end
         end
@@ -335,7 +342,9 @@ local function getNearestQuestPOIMists()
             y = poiY,
             desc = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
             title = title,
-            type = isFrequent and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
+            type = closestIsClassQuest and GW.Enum.ObjectivesNotificationType.Campaign
+                or GW.GetQuestTagID(closestQuestID) == Enum.QuestTag.PvP and GW.Enum.ObjectivesNotificationType.PvPQuest
+                or isFrequent and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
             id = closestQuestID,
             compass = true,
             questID = closestQuestID
@@ -706,6 +715,8 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
     if iconInfo then
         self.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex .. ".png")
         self.iconFrame.icon:SetTexCoord(iconInfo.l, iconInfo.r, iconInfo.t, iconInfo.b)
+        local tint = iconInfo.tint and data.color or GW.Colors.FallbackWhite
+        self.iconFrame.icon:SetVertexColor(tint.r, tint.g, tint.b)
 
         if data.type == GW.Enum.ObjectivesNotificationType.Delve then
             self.iconFrame:SetScript("OnEnter", function()
@@ -738,6 +749,8 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         if iconInfo then
             self.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex .. ".png")
             self.compass.icon:SetTexCoord(iconInfo.l, iconInfo.r, iconInfo.t, iconInfo.b)
+            local tint = iconInfo.tint and data.color or GW.Colors.FallbackWhite
+            self.compass.icon:SetVertexColor(tint.r, tint.g, tint.b)
         else
             self.compass.icon:SetTexture(nil)
         end

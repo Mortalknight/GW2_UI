@@ -37,7 +37,7 @@ local function BrightenColor(r, g, b, factor)
         math.min(1, b + (1 - b) * factor)
 end
 
-local function GetQuestColorKey(questID, isCampaignContainer, isFrequency)
+function GW.GetQuestColorKey(questID, isCampaignContainer, isFrequency)
     -- the campaign container is its own visual group and wins over the classification:
     -- IsCampaign fills it, and that does not always match a Campaign classification
     if isCampaignContainer then
@@ -518,7 +518,7 @@ function GwQuestLogMixin:UpdateLayout()
                     counterQuest = counterQuest + 1
 
                     local isFrequency = IsQuestFrequency(q)
-                    local colorKey = GetQuestColorKey(curQuestId, self.isCampaignContainer, isFrequency)
+                    local colorKey = GW.GetQuestColorKey(curQuestId, self.isCampaignContainer, isFrequency)
                     local questLogIndex = q:GetQuestLogIndex()
                     local signature = BuildQuestBlockSignature(q, curQuestId, questLogIndex, colorKey)
                     local block = self.blocks and self.blocks[counterQuest]
@@ -604,7 +604,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
 
     local questLogIndex = q:GetQuestLogIndex()
     local isFrequency = IsQuestFrequency(q)
-    local colorKey = GetQuestColorKey(questID, self.isCampaignContainer, isFrequency)
+    local colorKey = GW.GetQuestColorKey(questID, self.isCampaignContainer, isFrequency)
     local signature = BuildQuestBlockSignature(q, questID, questLogIndex, colorKey)
     local existingBlock = self:GetBlockByQuestId(questID)
     if existingBlock and existingBlock:IsShown() and existingBlock.gwSignature == signature then

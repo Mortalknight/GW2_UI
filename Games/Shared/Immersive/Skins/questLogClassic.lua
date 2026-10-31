@@ -256,8 +256,9 @@ end
 local function GetTypeIcon(questType, size)
     local icon = GW.GetObjectivesTypeIcon and GW.GetObjectivesTypeIcon(questType)
     if not icon then return "" end
-    return format("|TInterface/AddOns/GW2_UI/textures/icons/%s.png:%d:%d:0:0:256:512:%d:%d:%d:%d|t ", icon.tex, size, size,
-        icon.l * 256, icon.r * 256, icon.t * 512, icon.b * 512)
+    local color = icon.tint and GW.Colors.ObjectivesTypeColors[questType] or GW.Colors.FallbackWhite
+    return format("|TInterface/AddOns/GW2_UI/textures/icons/%s.png:%d:%d:0:0:256:512:%d:%d:%d:%d:%d:%d:%d|t ", icon.tex, size, size,
+        icon.l * 256, icon.r * 256, icon.t * 512, icon.b * 512, color.r * 255, color.g * 255, color.b * 255)
 end
 
 -- once per row: the line under zones and the green tick of the tracker for watched quests
@@ -285,10 +286,28 @@ local function SkinRow(title)
     title.gwCompassArrow:SetTexCoord(1, 0, 0, 1)
     title.gwCompassArrow:SetAllPoints(title.gwCompass)
 
-    -- blizzard turns the tag white on hover
+    -- blizzard turns the tag white on hover; the objectives in the tooltip, below the party info blizzard may show
     local tag = _G[title:GetName() .. "Tag"]
     title:HookScript("OnEnter", function(self)
         tag:SetTextColor(self.r, self.g, self.b)
+
+        local questIndex = self:GetID() + FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
+        local questTitle, _, _, isHeader = GetQuestLogTitle(questIndex)
+        local numObjectives = not isHeader and GetNumQuestLeaderBoards(questIndex) or 0
+        if numObjectives == 0 then return end
+        if GameTooltip:IsOwned(self) then
+            GameTooltip:AddLine(" ")
+        else
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(questTitle, self.gwTypeColor:GetRGB())
+        end
+        for i = 1, numObjectives do
+            local text, _, finished = GetQuestLogLeaderBoard(i, questIndex)
+            if text then
+                GameTooltip:AddLine(text, (finished and OBJECTIVE_DONE_COLOR or OBJECTIVE_OPEN_COLOR):GetRGB())
+            end
+        end
+        GameTooltip:Show()
     end)
 end
 
@@ -346,6 +365,7 @@ local function StyleQuestRow(title, questIndex)
     end
     local questType, levelText = GetQuestTypeAndLevel(questIndex)
     local typeColor = GW.Colors.ObjectivesTypeColors[questType]
+    title.gwTypeColor = typeColor
     -- hovered and selected rows keep their colors, the hover shows in the type color like in the tracker
     title:SetNormalFontObject(GetRowFont(questType, typeColor))
     title:SetHighlightFontObject(GetRowFont(questType, typeColor))
