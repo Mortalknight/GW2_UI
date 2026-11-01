@@ -1,71 +1,19 @@
 ---@class GW2
 local GW = select(2, ...)
 local GWGetClassColor = GW.GWGetClassColor
+local HeroPanel = GW.HeroPanel
+local PlayerSlots = HeroPanel.PlayerSlots
+local statsIconsSprite = HeroPanel.statsIconsSprite
+local STATS_ICONS = HeroPanel.STATS_ICONS
+local statGridPos = HeroPanel.StatGridPos
 
 local hideCharframe = true
 
-local PlayerSlots = {
-    ["CharacterHeadSlot"] = {0, 0.25, 0, 0.125},
-    ["CharacterNeckSlot"] = {0.25, 0.5, 0, 0.125},
-    ["CharacterShoulderSlot"] = {0.5, 0.75, 0.25, 0.375},
-    ["CharacterBackSlot"] = {0.75, 1, 0, 0.125},
-    ["CharacterChestSlot"] = {0.75, 1, 0.25, 0.375},
-    ["CharacterShirtSlot"] = {0.75, 1, 0.25, 0.375},
-    ["CharacterTabardSlot"] = {0.25, 0.5, 0.375, 0.5},
-    ["CharacterWristSlot"] = {0.75, 1, 0.125, 0.25},
-    ["CharacterHandsSlot"] = {0, 0.25, 0.375, 0.5},
-    ["CharacterWaistSlot"] = {0.25, 0.5, 0.25, 0.375},
-    ["CharacterLegsSlot"] = {0, 0.25, 0.25, 0.375},
-    ["CharacterFeetSlot"] = {0.5, 0.75, 0.125, 0.25},
-    ["CharacterFinger0Slot"] = {0.5, 0.75, 0, 0.125},
-    ["CharacterFinger1Slot"] = {0.5, 0.75, 0, 0.125},
-    ["CharacterTrinket0Slot"] = {0.5, 0.75, 0.375, 0.5},
-    ["CharacterTrinket1Slot"] = {0.5, 0.75, 0.375, 0.5},
-    ["CharacterMainHandSlot"] = {0.25, 0.5, 0.125, 0.25},
-    ["CharacterSecondaryHandSlot"] = {0, 0.25, 0.125, 0.25},
-    ["CharacterRangedSlot"] = {0.25, 0.5, 0.5, 0.625},
-}
-
-local  statsIconsSprite = {
-    width = 256,
-    height = 512,
-    colums = 4,
-    rows = 8
-}
-
-local STATS_ICONS ={
-    STRENGTH = {x = 1, y = 5},
-    AGILITY = {x = 2, y = 5},
-    INTELLECT = {x = 3, y = 5},
-    SPIRIT= {x = 4, y = 2},
-    STAMINA = {x = 1, y = 2},
-    ARMOR = {x = 3, y = 1},
-    CRITCHANCE = {x = 2, y = 2},
-    HASTE = {x = 1, y = 3},
-    MASTERY = {x = 1, y = 1},
-    --Needs icon
-    MANAREGEN = {x = 4, y = 2},
-    VERSATILITY = {x = 2, y = 3},
-    LIFESTEAL = {x = 2, y = 4},
-    --Needs icon
-    AVOIDANCE = {x =4 , y = 1},
-    --DODGE needs icon
-    DODGE = {x = 3, y = 3},
-    DEFENSE = {x = 4, y = 3},
-    PARRY = {x = 1, y = 1},
-    MOVESPEED = {x = 3, y = 2},
-    ATTACKRATING = {x = 4, y = 5},
-    DAMAGE = {x = 4, y = 4},
-    ATTACKPOWER = {x = 1, y = 6},
-    RANGEDATTACK = {x = 2, y = 6},
-    RANGEDDAMAGE = {x = 3, y = 6},
-    RANGEDATTACKPOWER = {x = 4, y = 6},
-    Holy = {x = 1, y = 7},
-    Fire = {x = 2, y = 7},
-    Nature = {x = 3, y = 7},
-    Frost = {x = 4, y = 7},
-    Shadow = {x = 1, y = 8},
-    Arcane = {x = 2, y = 8},
+local TOGGLE_PANELS = {
+    PaperDollFrame = {"GwHeroPanelMenu", "paperdoll"},
+    ReputationFrame = {"GwPaperReputation", "reputation"},
+    PetPaperDollFrame = {"GwPetContainer", "paperdollpet"},
+    TokenFrame = {"GwCurrencyDetailsFrame", "currency"},
 }
 
 local function PaperDollStats_QueuedUpdate(self)
@@ -162,17 +110,6 @@ local function PaperDollStats_OnEvent(self, event, ...)
     elseif event == "SPELL_POWER_CHANGED" then
         self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     end
-end
-
-local function statGridPos(grid, x, y)
-    grid = grid + 1
-    x = x + 92
-    if grid > 2 then
-        grid = 1
-        x = 0
-        y = y + 30
-    end
-    return grid, x, y
 end
 
 local function StatOnEnter(self)
@@ -449,72 +386,6 @@ local function PaperDollSlotButton_Update(self)
     end
 end
 
-local function SetItemButtonBorderQuality(button, quality)
-    -- grey items get a border too; blizzard's bag colors would make common items grey as well, ours are white
-    local color = quality and GW.GetQualityColor(quality)
-    if color then
-        button.IconBorder:Show()
-        button.IconBorder:SetVertexColor(color.r, color.g, color.b)
-    else
-        button.IconBorder:Hide()
-    end
-end
-GW.SetItemButtonBorderQuality = SetItemButtonBorderQuality
-
-local CHARACTER_PANEL_OPEN = nil
-function GwToggleCharacter(tab, onlyShow)
-    if InCombatLockdown() then
-        return
-    end
-    -- closed with escape or the close button, the next toggle of the same tab opens it again
-    if not GwCharacterWindow:IsShown() then
-        CHARACTER_PANEL_OPEN = nil
-    end
-
-    local CHARACTERFRAME_DEFAULTFRAMES= {}
-
-    CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwHeroPanelMenu
-    CHARACTERFRAME_DEFAULTFRAMES["ReputationFrame"] = GwPaperReputation
-    CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPetContainer
-    CHARACTERFRAME_DEFAULTFRAMES["TokenFrame"] = GwCurrencyDetailsFrame
-
-    if CHARACTERFRAME_DEFAULTFRAMES[tab] ~= nil and CHARACTER_PANEL_OPEN ~= tab  then
-        CHARACTER_PANEL_OPEN = tab
-        if tab == "ReputationFrame" then
-            if not onlyShow then
-                GwCharacterWindow:SetAttribute("keytoggle", true)
-            end
-            GwCharacterWindow:SetAttribute("windowpanelopen", "reputation")
-        elseif tab == "PetPaperDollFrame" then
-            if not onlyShow then
-                GwCharacterWindow:SetAttribute("keytoggle", true)
-            end
-            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdollpet")
-        elseif tab == "TokenFrame" then
-            if not onlyShow then
-                GwCharacterWindow:SetAttribute("keytoggle", true)
-            end
-            GwCharacterWindow:SetAttribute("windowpanelopen", "currency")
-        else
-            -- PaperDollFrame or any other value
-            if not onlyShow then
-                GwCharacterWindow:SetAttribute("keytoggle", true)
-            end
-            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
-        end
-
-        return
-    end
-
-    if GwCharacterWindow:IsShown() then
-        if not InCombatLockdown() then
-            GwCharacterWindow:SetAttribute("windowPanelOpen", nil)
-        end
-        CHARACTER_PANEL_OPEN = nil
-        return
-    end
-end
-
 local function grabDefaultSlots(slot, anchor, parent, size)
     slot:ClearAllPoints()
     slot:SetPoint(unpack(anchor))
@@ -604,11 +475,6 @@ local function SetupCharacterSlots(slots, parent)
     end
 end
 
-local function menu_SetupBackButton(_, fmBtn, key)
-    GW.CharacterMenuButtonBack_OnLoad(fmBtn, key, true)
-    GW.SetCharacterWindowOpenAttribute(fmBtn, "paperdoll", false)
-end
-
 local function LoadPaperDoll(tabContainer)
     local dressingRoom = CreateFrame("Button", "GwDressingRoom", tabContainer, "GwDressingRoom")
     GW.HandleModelControlFrame(dressingRoom.model.controlFrame)
@@ -628,7 +494,7 @@ local function LoadPaperDoll(tabContainer)
     end
     dressingRoomPet.stats:SetScript("OnEvent", PaperDollPetStats_OnEvent)
 
-    heroPanelMenu.SetupBackButton = menu_SetupBackButton
+    heroPanelMenu.SetupBackButton = HeroPanel.SetupBackButton
 
      -- to prevent ALT click lua error
     GwDressingRoom.flyoutSettings = {
@@ -688,7 +554,7 @@ local function LoadPaperDoll(tabContainer)
     GW.ToggleCharacterItemInfo(true)
 
     CharacterFrame:UnregisterAllEvents()
-    hooksecurefunc("ToggleCharacter", GwToggleCharacter)
+    HeroPanel.HookToggleCharacter(TOGGLE_PANELS)
 
     dressingRoom.characterName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
     dressingRoom.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
@@ -806,7 +672,6 @@ local function LoadPaperDoll(tabContainer)
         end
     ]=])
     RegisterAttributeDriver(heroPanelMenu.petMenu, "state-petstate", "[@pet,noexists] nopet; [@pet,help] hasPet; [@pet,harm] nopet")
-
 
     CharacterFrame:SetScript("OnShow", function()
         if hideCharframe then
