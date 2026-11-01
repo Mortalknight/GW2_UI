@@ -12,8 +12,6 @@ local HEADER_COLOR = GW.Colors.TextColors.LightHeader
 local TEXT_COLOR = GW.Colors.FallbackWhite
 local MONEY_MISSING_COLOR = GW.Colors.SkinColors.Disabled
 local MONEY_OK_COLOR = GW.Colors.SkinColors.QuestGold
-local OBJECTIVE_DONE_COLOR = GW.Colors.SkinColors.QuestGold
-local OBJECTIVE_OPEN_COLOR = GW.Colors.SkinColors.ObjectiveOpen
 local ARROW_RIGHT = "Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right.png"
 local ARROW_DOWN = "Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png"
 local CHECKBOX = "Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png"
@@ -21,8 +19,7 @@ local CHECKBOX_CHECKED = "Interface/AddOns/GW2_UI/textures/uistuff/checkboxcheck
 -- era and tbc: the list as wide as the details under it
 local LIST_WIDTH = (GW.Classic or GW.TBC) and 335 or 303
 
-local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
-local GetItemQualityColor = C_Item and C_Item.GetItemQualityColor or GetItemQualityColor
+local tooltipStrikes = {}
 
 local function SetColor(text, color)
     if text then
@@ -86,10 +83,10 @@ local function ColorItemByQuality(item, name, link)
     -- reward buttons blizzard has not created yet
     if not item or not name then return end
     SkinItemButton(item)
-    local quality = link and select(3, GetItemInfo(link))
+    local quality = link and select(3, C_Item.GetItemInfo(link))
     local r, g, b = 1, 1, 1
     if quality and quality > 1 then
-        r, g, b = GetItemQualityColor(quality)
+        r, g, b = C_Item.GetItemQualityColor(quality)
     end
     name:SetTextColor(TEXT_COLOR:GetRGB())
     if item.Icon and item.Icon.backdrop then
@@ -152,8 +149,15 @@ local function ColorQuestLogTexts()
         local _, objectiveType, finished = GetQuestLogLeaderBoard(i)
         if objectiveType ~= "spell" then
             line = line + 1
-            SetColor(_G["QuestLogObjective" .. line], finished and OBJECTIVE_DONE_COLOR or OBJECTIVE_OPEN_COLOR)
+            SetColor(_G["QuestLogObjective" .. line], finished and GW.Colors.SkinColors.Disabled or TEXT_COLOR)
+            GW.SetStrikeLines(_G["QuestLogObjective" .. line], finished)
         end
+    end
+
+    line = line + 1
+    while _G["QuestLogObjective" .. line] do
+        GW.SetStrikeLines(_G["QuestLogObjective" .. line], false)
+        line = line + 1
     end
 
     for i = 1, MAX_NUM_ITEMS do
@@ -301,13 +305,21 @@ local function SkinRow(title)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:SetText(questTitle, self.gwTypeColor:GetRGB())
         end
+        local finishedLines = {}
         for i = 1, numObjectives do
             local text, _, finished = GetQuestLogLeaderBoard(i, questIndex)
             if text then
-                GameTooltip:AddLine(text, (finished and OBJECTIVE_DONE_COLOR or OBJECTIVE_OPEN_COLOR):GetRGB())
+                GameTooltip:AddLine(text, (finished and GW.Colors.SkinColors.Disabled or TEXT_COLOR):GetRGB())
+                if finished then
+                    tinsert(finishedLines, _G["GameTooltipTextLeft" .. GameTooltip:NumLines()])
+                end
             end
         end
         GameTooltip:Show()
+        for _, line in ipairs(finishedLines) do
+            GW.SetStrikeLines(line, true)
+            tooltipStrikes[line] = true
+        end
     end)
 end
 
@@ -494,16 +506,7 @@ local function StyleQuestDetails()
         local line = _G["QuestLogObjective" .. i]
         local text, _, finished = GetQuestLogLeaderBoard(i)
         line:SetTextColor((finished and GW.Colors.SkinColors.Disabled or TEXT_COLOR):GetRGB())
-        -- finished ones are struck through like in the tracker
-        if not line.gwStrike then
-            line.gwStrike = line:GetParent():CreateTexture(nil, "OVERLAY")
-            line.gwStrike:SetHeight(1)
-            line.gwStrike:SetPoint("LEFT", line, "LEFT", 0, 0)
-            local r, g, b = GW.Colors.SkinColors.Disabled:GetRGB()
-            line.gwStrike:SetColorTexture(r, g, b, 0.7)
-        end
-        line.gwStrike:SetWidth(line:GetStringWidth())
-        line.gwStrike:SetShown(finished)
+        GW.SetStrikeLines(line, finished)
         if previous then
             line:ClearAllPoints()
             line:SetPoint("TOPLEFT", previous, "BOTTOMLEFT", 0, previousBar and -(BAR_HEIGHT + 6) or -2)
@@ -524,9 +527,7 @@ local function StyleQuestDetails()
     end
     local i = numObjectives + 1
     while _G["QuestLogObjective" .. i] do
-        if _G["QuestLogObjective" .. i].gwStrike then
-            _G["QuestLogObjective" .. i].gwStrike:Hide()
-        end
+        GW.SetStrikeLines(_G["QuestLogObjective" .. i], false)
         i = i + 1
     end
 
@@ -765,6 +766,13 @@ end
 local function LoadQuestLogFrameSkin()
     if not GW.settings.skins.questLog.enabled then return end
     local splitLog = QuestLogDetailFrame ~= nil
+
+    GameTooltip:HookScript("OnTooltipCleared", function()
+        for line in pairs(tooltipStrikes) do
+            GW.SetStrikeLines(line, false)
+        end
+        wipe(tooltipStrikes)
+    end)
 
     for _, frame in ipairs({QuestLogFrame, EmptyQuestLogFrame or false, QuestLogListScrollFrame, QuestLogDetailScrollFrame, QuestLogQuestCount,
         QuestInfoItemHighlight or false, QuestDetailScrollChildFrame or false, QuestRewardScrollChildFrame or false}) do

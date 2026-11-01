@@ -1947,3 +1947,37 @@ function GW.GetEnumName(enum, enumValue)
     local keysByValue = tInvert(enum)
     return keysByValue[enumValue] or UNKNOWN .. enumValue
 end
+
+-- a line through each line of a finished objective, like in the quest tracker; the lines belong to the text
+function GW.SetStrikeLines(text, shown)
+    text.gwStrikeLines = text.gwStrikeLines or {}
+    local lines = text.gwStrikeLines
+    local numLines = 0
+    if shown then
+        numLines = math.max(1, text:GetNumLines() or 1)
+        local maxWidth = text:GetWidth() or 0
+        local width = text:GetStringWidth() or 0
+        if maxWidth > 0 then
+            width = numLines > 1 and maxWidth or math.min(width, maxWidth)
+        end
+        local _, fontSize = text:GetFont()
+        local lineHeight = text:GetLineHeight() or fontSize or 12
+
+        for i = 1, numLines do
+            local line = lines[i]
+            if not line then
+                line = text:GetParent():CreateTexture(nil, "OVERLAY")
+                line:SetColorTexture(GW.Colors.SkinColors.StrikeLine:GetRGBA())
+                line:SetHeight(1)
+                lines[i] = line
+            end
+            line:SetWidth(math.max(1, width))
+            line:ClearAllPoints()
+            line:SetPoint("TOPLEFT", text, "TOPLEFT", 0, -math.floor((i - 1) * lineHeight + lineHeight / 2 + 0.5))
+            line:Show()
+        end
+    end
+    for i = numLines + 1, #lines do
+        lines[i]:Hide()
+    end
+end

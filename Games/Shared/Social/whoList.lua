@@ -12,6 +12,15 @@ local function ReskinWhoFrameButton(button)
     end
 end
 
+local function AlignColumnHeaders()
+    for header, column in pairs({[WhoFrameColumnHeader1] = WhoFrameButton1Name, [WhoFrameColumnHeader3] = WhoFrameButton1Level, [WhoFrameColumnHeader4] = WhoFrameButton1Class}) do
+        local text = header:GetFontString()
+        text:ClearAllPoints()
+        text:SetPoint("LEFT", header, "LEFT", column:GetLeft() - header:GetLeft(), 0)
+    end
+    WhoFrameDropdown.Text:SetPoint("LEFT", WhoFrameDropdown, "LEFT", WhoFrameButton1Variable:GetLeft() - WhoFrameDropdown:GetLeft(), 0)
+end
+
 function GW.SkinWhoFrameDropdown()
     -- blizzard lets the dropdown hang out of the header on the left
     local dropdown = WhoFrameDropdown
@@ -68,6 +77,11 @@ function GW.SkinWhoList()
         WhoListScrollFrame:GwStripTextures()
         WhoListScrollFrame:GwSkinScrollFrame()
         WhoListScrollFrameScrollBar:GwSkinScrollBar()
+
+        for i = 1, WHOS_TO_DISPLAY do
+            _G["WhoFrameButton" .. i .. "Level"]:SetJustifyH("LEFT")
+        end
+        WhoFrame:HookScript("OnShow", AlignColumnHeaders)
     end
 
     if WhoFrameEditBox.Backdrop then

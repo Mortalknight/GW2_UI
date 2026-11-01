@@ -4,7 +4,6 @@ local GW = select(2, ...)
 
 local ARROW_RIGHT = "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png"
 local ARROW_DOWN = "Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png"
-local MENU_BG = "Interface/AddOns/GW2_UI/textures/character/menu-bg.png"
 local MENU_HOVER = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
 local MENU_TEXT_COLOR = {1, 0.9450, 0.8196}
 local MENU_MAIN_FONT_SIZE = 14
@@ -57,7 +56,7 @@ local function SkinCategoryRow(row)
         -- category header = main menu row
         row.Background:SetAlpha(0)
         row.gwBg = row:CreateTexture(nil, "BACKGROUND")
-        row.gwBg:SetTexture(MENU_BG)
+        row.gwBg:SetColorTexture(GW.Colors.SkinColors.ListHeader:GetRGBA())
         row.gwBg:SetAllPoints()
         row.Label:SetFont(UNIT_NAME_FONT, MENU_MAIN_FONT_SIZE, "")
         row.Label:SetTextColor(unpack(MENU_TEXT_COLOR))

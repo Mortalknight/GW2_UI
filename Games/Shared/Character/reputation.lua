@@ -763,8 +763,8 @@ local function detailsInactive_OnClick(self)
     local parent = self:GetParent():GetParent()
     isSearchResult = nil
     local shouldBeActive = not GW.IsFactionActive(parent.data.factionIndex)
-    local categories, details = CollectFactionData()
     GW.SetFactionActive(parent.data.factionIndex, shouldBeActive)
+    local categories, details = CollectFactionData(true)
     UpdateCategories(GwPaperReputation.Categories, categories)
     local firstCategory = GwPaperReputation.Categories:FindElementData(1)
     if firstCategory then
@@ -1032,8 +1032,7 @@ local function InitCategorieButton(button, elementData)
         end
     end
 
-    -- set zebra color by idx or watch status
-    local zebra = elementData.idx % 2
+    local zebra = button:GetElementDataIndex() % 2
     if button.factionIndexFirst == firstReputationCat then
         button.zebra:SetVertexColor(1, 1, 0.5, 0.15)
     else

@@ -67,6 +67,7 @@ GW.Colors.SkinColors = {
     QuestGold = CreateColor(1, 0.8, 0.1), -- quest titles, enough money, finished objectives
     ObjectiveOpen = CreateColor(0.63, 0.09, 0.09), -- an objective still to do
     Disabled = CreateColor(0.6, 0.6, 0.6), -- greyed out text, money that is missing
+    StrikeLine = CreateColor(0.78, 0.78, 0.78, 0.7), -- the line through a finished objective
     Placeholder = CreateColor(0.7, 0.7, 0.7), -- the hint in an empty text field
     SubText = CreateColor(0.75, 0.75, 0.75), -- the small second line under a name
     Positive = CreateColor(0.3, 1, 0.3),
@@ -80,6 +81,7 @@ GW.Colors.SkinColors = {
     TooltipBorder = CreateColor(0.05, 0.05, 0.05, 1), -- the dark frame of our tooltips
     MapBadge = CreateColor(0, 0, 0, 0.6), -- the dark disc behind a badge on the world map
     RowShade = CreateColor(0, 0, 0, 0.6), -- the dark start of a row background that fades out to the right
+    ListHeader = CreateColor(0, 0, 0, 0.5), -- the even band behind a header of a list, the art behind must not show through
 }
 
 -- the coin amounts of our bag money

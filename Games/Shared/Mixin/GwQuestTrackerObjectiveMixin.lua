@@ -132,55 +132,6 @@ function GwQuestTrackerObjectiveMixin:OnLoad()
     hooksecurefunc(self.StatusBar, "SetValue", statusBarSetValue)
 end
 
-local function GetCompletedStrikeLine(self, index)
-    self.CompletedStrikeLines = self.CompletedStrikeLines or {}
-
-    local line = self.CompletedStrikeLines[index]
-    if line then
-        return line
-    end
-
-    line = self:CreateTexture(nil, "OVERLAY")
-    line:SetColorTexture(0.78, 0.78, 0.78, 0.7)
-    line:SetHeight(1)
-    self.CompletedStrikeLines[index] = line
-
-    return line
-end
-
 function GwQuestTrackerObjectiveMixin:SetCompletedLineState(showLine)
-    self.CompletedStrikeLines = self.CompletedStrikeLines or {}
-
-    if not showLine then
-        for i = 1, #self.CompletedStrikeLines do
-            self.CompletedStrikeLines[i]:Hide()
-        end
-        return
-    end
-
-    local textWidth = self.ObjectiveText:GetStringWidth() or 0
-    local maxWidth = self.ObjectiveText:GetWidth() or 0
-    if maxWidth > 0 then
-        textWidth = math.min(textWidth, maxWidth)
-    end
-
-    local lineCount = math.max(1, self.ObjectiveText:GetNumLines() or 1)
-    local lineWidth = lineCount > 1 and math.max(1, maxWidth > 0 and maxWidth or textWidth) or math.max(1, textWidth)
-
-    local _, fontSize = self.ObjectiveText:GetFont()
-    local lineHeight = self.ObjectiveText:GetLineHeight() or fontSize or 12
-
-    for i = 1, lineCount do
-        local strike = GetCompletedStrikeLine(self, i)
-        local strikeYOffset = -math.floor((((i - 1) * lineHeight) + (lineHeight * 0.5)) + 0.5)
-
-        strike:SetWidth(lineWidth)
-        strike:ClearAllPoints()
-        strike:SetPoint("TOPLEFT", self.ObjectiveText, "TOPLEFT", 0, strikeYOffset)
-        strike:Show()
-    end
-
-    for i = lineCount + 1, #self.CompletedStrikeLines do
-        self.CompletedStrikeLines[i]:Hide()
-    end
+    GW.SetStrikeLines(self.ObjectiveText, showLine)
 end

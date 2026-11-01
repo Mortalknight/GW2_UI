@@ -2,6 +2,8 @@
 local GW = select(2, ...)
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
+local LOOT_BUTTON_SHIFT = 20
+
 local function updateLootFrameButtons()
     for i = 1, 4 do
         _G["LootButton" .. i]:ClearNormalTexture()
@@ -45,6 +47,14 @@ local function LoadLootFrameSkin()
     GwLootFrameTitle.BGLEFT:SetWidth(w)
     GwLootFrameTitle.BGRIGHT:SetWidth(w)
     GwLootFrameTitle.headerString:SetWidth(w)
+
+    LootFrame:SetHeight(LootFrame:GetHeight() + LOOT_BUTTON_SHIFT)
+    for i = 1, 4 do
+        local button = _G["LootButton" .. i]
+        local point, relativeTo, relativePoint, x, y = button:GetPoint(1)
+        button:ClearAllPoints()
+        button:SetPoint(point, relativeTo, relativePoint, x, y - LOOT_BUTTON_SHIFT)
+    end
 
     -- the mover also carries the scale, it is there with loot under the mouse too; its position is unused then
     RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "skins.lootFrame", "Blizzard", nil, {GW.MoverOption.Scale})
