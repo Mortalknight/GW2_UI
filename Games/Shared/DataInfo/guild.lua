@@ -91,7 +91,7 @@ local function GetOnlineMembers(byRank)
 end
 
 local function AddReputation()
-    local data = C_Reputation and C_Reputation.GetGuildFactionData and C_Reputation.GetGuildFactionData()
+    local data = C_Reputation.GetGuildFactionData()
     if not data or data.reaction == (MAX_REPUTATION_REACTION or 8) then
         return
     end

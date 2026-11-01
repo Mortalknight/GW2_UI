@@ -1,8 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo or GetSpellInfo
-
 local UnitFrameFader = {
     casting = false,
     combat = false,
@@ -1206,7 +1204,7 @@ GW.globalDefault = {
 
         playerAuras = {
             enabled = true,
-            missingAuras = strjoin(", ", unpack(GW.MapTable(GW.AURAS_MISSING, GetSpellInfo, nil, "name"))),
+            missingAuras = strjoin(", ", unpack(GW.MapTable(GW.AURAS_MISSING, C_Spell.GetSpellInfo, nil, "name"))),
             buffs = {
                 pos = {
                     point = "BOTTOMLEFT",

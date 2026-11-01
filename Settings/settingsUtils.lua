@@ -1410,20 +1410,6 @@ local function GetSpellListIDs(of)
     return ids
 end
 
--- spell info with Classic fallback (older clients lack C_Spell.GetSpellInfo)
-local function GetSpellListSpellInfo(spellID)
-    if not spellID then return end
-
-    if C_Spell and C_Spell.GetSpellInfo then
-        return C_Spell.GetSpellInfo(spellID)
-    end
-
-    local name, _, icon = GetSpellInfo(spellID)
-    if name then
-        return { name = name, iconID = icon }
-    end
-end
-
 local RefreshSpellListOption -- forward declaration, needed by the scrollbar closures
 
 local function UpdateSpellListScrollbar(of, v, totalRows, visibleRows, entryHeight)
@@ -1507,7 +1493,7 @@ local function GetListEntryInfo(v, id, stored)
     if v.resolveEntry then
         return v.resolveEntry(id, stored)
     end
-    return GetSpellListSpellInfo(id)
+    return C_Spell.GetSpellInfo(id)
 end
 
 RefreshSpellListOption = function(of, v)
@@ -1614,7 +1600,7 @@ end
 -- or a hint that the tracked ability is picked automatically
 local function RefreshSpellInputOption(of)
     local spellID = tonumber(of.get()) or 0
-    local spellInfo = spellID > 0 and GetSpellListSpellInfo(spellID) or nil
+    local spellInfo = spellID > 0 and C_Spell.GetSpellInfo(spellID) or nil
 
     of.spellPreview.spellID = spellInfo and spellID or nil
     of.spellPreview.icon:SetShown(spellInfo ~= nil)
@@ -1642,7 +1628,7 @@ local function TrySetSpellInput(of, v)
     local input = (of.inputFrame.input:GetText() or ""):trim()
     local spellID = tonumber(input) or 0
 
-    if input ~= "" and not GetSpellListSpellInfo(spellID) then
+    if input ~= "" and not C_Spell.GetSpellInfo(spellID) then
         UIErrorsFrame:AddMessage(L["Invalid spell ID"], 1, 0.2, 0.2)
         RefreshSpellInputOption(of)
         return

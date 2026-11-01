@@ -424,7 +424,7 @@ local function UpdateData(self)
             end
         end
 
-        local data = GW.GetWatchedFactionInfo()
+        local data = C_Reputation.GetWatchedFactionData()
         if data and data.factionID and data.factionID > 0 then
             local tempLevel, tempNextLevel = level, nextLevel
             showRepu, valPrecRepu, level, nextLevel = UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
@@ -843,7 +843,7 @@ local function LoadXPBar()
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)
     experiencebar:SetScript("OnMouseUp", function(self, button)
         if button == "LeftButton" and IsShiftKeyDown() and not InCombatLockdown() and self.RepuBar:IsShown() and self.RepuBar:IsMouseOver() then
-            local data = GW.GetWatchedFactionInfo()
+            local data = C_Reputation.GetWatchedFactionData()
             GW.ShowReputationFaction(data and data.factionID)
         end
     end)

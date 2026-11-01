@@ -16,7 +16,6 @@ local AVERAGE_SLOTS = 16
 -- the slots of the average, the shirt (4) does not count
 local GEAR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}
 local TWO_HANDED = {INVTYPE_2HWEAPON = true, INVTYPE_RANGED = true, INVTYPE_RANGEDRIGHT = true}
-local GetItemInfoInstant = C_Item.GetItemInfoInstant or GetItemInfoInstant
 
 local ILVL_CACHE_LIFETIME = 600
 
@@ -146,7 +145,7 @@ GW.GetGearSlotInfo = GetGearSlotInfo
 
 -- wands sit in the ranged slot but are one handed
 local function IsTwoHanded(link)
-    local _, _, _, equipLoc, _, classID, subClassID = GetItemInfoInstant(link)
+    local _, _, _, equipLoc, _, classID, subClassID = C_Item.GetItemInfoInstant(link)
     local isWand = Enum.ItemWeaponSubclass and classID == Enum.ItemClass.Weapon and subClassID == Enum.ItemWeaponSubclass.Wand
     return TWO_HANDED[equipLoc] and not isWand
 end

@@ -28,7 +28,7 @@ local scanPending = false
 
 local function ScanStandings(track)
     scanPending = false
-    local watched = track and GW.GetWatchedFactionInfo()
+    local watched = track and C_Reputation.GetWatchedFactionData()
     local bestIndex, bestGain
     for i = 1, GetNumFactions() do
         local data = GW.GetFactionDataByIndex(i)

@@ -815,11 +815,10 @@ local function isUsefulAtlas(info)
 end
 
 local function GetParagonFaction(questID)
-    local isParagon = C_Reputation.IsFactionParagonForCurrentPlayer or C_Reputation.IsFactionParagon
-    if isParagon and C_Reputation.GetNumFactions then
+    if C_Reputation.GetNumFactions then
         for i = 1, C_Reputation.GetNumFactions() do
             local data = C_Reputation.GetFactionDataByIndex(i)
-            if data and not data.isHeader and isParagon(data.factionID) then
+            if data and not data.isHeader and C_Reputation.IsFactionParagonForCurrentPlayer(data.factionID) then
                 local _, _, rewardQuestID = C_Reputation.GetFactionParagonInfo(data.factionID)
                 if rewardQuestID == questID then
                     return data
@@ -970,7 +969,7 @@ GW.AlertPreviews = {
     NEW_MAIL = ShowMailAlert,
     REPAIR = function() ShowRepairAlert(INVTYPE_HEAD, 15) end,
     PARAGON = function()
-        local watched = C_Reputation and C_Reputation.GetWatchedFactionData and C_Reputation.GetWatchedFactionData()
+        local watched = C_Reputation.GetWatchedFactionData()
         ShowParagonAlert(watched and watched.name or L["Paragon"], L["Paragon chest"])
     end,
     RARE = function()
@@ -1398,9 +1397,7 @@ function GW.LoadAlertSystem()
     container:RegisterEvent("CALENDAR_UPDATE_GUILD_EVENTS")
     container:RegisterEvent("PLAYER_ENTERING_WORLD")
     container:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
-    if C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo then
-        container:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-    end
+    container:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
     if GW.isModern then
         container:RegisterEvent("VIGNETTE_MINIMAP_UPDATED")
         container:RegisterEvent("WEEKLY_REWARDS_UPDATE")

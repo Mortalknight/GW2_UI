@@ -31,7 +31,7 @@ local ExpandAllFactionHeaders = C_Reputation and C_Reputation.ExpandAllFactionHe
 local SetWatchedFactionByIndex = C_Reputation and C_Reputation.SetWatchedFactionByIndex or SetWatchedFactionIndex
 local ToggleFactionAtWar = C_Reputation and C_Reputation.ToggleFactionAtWar or FactionToggleAtWar
 local GetNumFactions = C_Reputation and C_Reputation.GetNumFactions or GetNumFactions
-local IsMajorFaction = C_Reputation and C_Reputation.IsMajorFaction or GW.NoOp
+local IsMajorFaction = C_Reputation.IsMajorFaction
 
 -- session reputation gain: a baseline per factionID is taken when entering the world and kept in
 -- memory only, so it resets on login and reload like the money session data (or manually via
@@ -44,7 +44,7 @@ local function GetFactionTotalStanding(data)
             total = (major.renownLevel or 0) * (major.renownLevelThreshold or 0) + (major.renownReputationEarned or 0)
         end
     end
-    if data.factionID and C_Reputation and C_Reputation.IsFactionParagonForCurrentPlayer and C_Reputation.IsFactionParagonForCurrentPlayer(data.factionID) then
+    if data.factionID and C_Reputation.IsFactionParagonForCurrentPlayer(data.factionID) then
         local currentValue = C_Reputation.GetFactionParagonInfo(data.factionID)
         total = total + (currentValue or 0)
     end
@@ -607,7 +607,7 @@ local function setReputationDetails(frame, data)
 
     local remaining, remainingTarget -- points to the next rank / reward; nil at max rank
     local pendingParagonReward = false
-    if data.factionID and C_Reputation and C_Reputation.IsFactionParagonForCurrentPlayer and C_Reputation.IsFactionParagonForCurrentPlayer(data.factionID) then
+    if data.factionID and C_Reputation.IsFactionParagonForCurrentPlayer(data.factionID) then
         local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(data.factionID)
         local value = currentValue % threshold
         local isMajorFaction = IsMajorFaction(data.factionID)

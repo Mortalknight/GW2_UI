@@ -42,34 +42,6 @@ end
 CompatibleTooltip(GameTooltip)
 CompatibleTooltip(GW.ScanTooltip)
 
-function GW.GetWatchedFactionInfo()
-    if C_Reputation and C_Reputation.GetWatchedFactionData then
-        return C_Reputation.GetWatchedFactionData()
-    else
-        local name, standing, min, max, value, factionID = GetWatchedFactionInfo()
-        local watchedInfo = {
-            factionID = factionID,
-            name = name,
-            description = "",
-            reaction = standing,
-            currentReactionThreshold = min,
-            nextReactionThreshold = max,
-            currentStanding = value,
-            atWarWith = false,
-            canToggleAtWar = false,
-            isChild = false,
-            isHeader = false,
-            isHeaderWithRep = false,
-            isCollapsed = false,
-            isWatched = false,
-            hasBonusRepGain = false,
-            canSetInactive = false,
-            isAccountWide = false
-        }
-        return watchedInfo
-    end
-end
-
 -- nil guard: on a client without LE_QUEST_FREQUENCY_WEEKLY a nil frequency would match
 function GW.IsRepeatableQuestFrequency(frequency)
     return frequency ~= nil and (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
