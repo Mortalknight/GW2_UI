@@ -4,13 +4,17 @@ local GW = select(2, ...)
 -- Alerts stack away from the screen edge their mover is closer to. Blizzard anchors them first,
 -- we re-anchor afterwards instead of replacing the AdjustAnchors methods of its alert systems.
 
-local GROW_DOWN = { point = "TOP", relativePoint = "BOTTOM", y = -5 }
-local GROW_UP = { point = "BOTTOM", relativePoint = "TOP", y = 5 }
-local growth = GROW_DOWN
+-- only the BOTTOM point, the one blizzard sets on its next pass: a TOP point of ours would stay on the frame
+-- and blizzard's new BOTTOM point could then close an anchor loop ("Cannot anchor to a region dependent on it")
+local growDown = true
 
 local function PlaceNext(frame, relative)
     frame:ClearAllPoints()
-    frame:SetPoint(growth.point, relative, growth.relativePoint, 0, growth.y)
+    if growDown then
+        frame:SetPoint("BOTTOM", relative, "BOTTOM", 0, -(frame:GetHeight() + 5))
+    else
+        frame:SetPoint("BOTTOM", relative, "TOP", 0, 5)
+    end
     return frame
 end
 
@@ -60,7 +64,7 @@ end
 
 local function RestackAlerts()
     local _, centerY = GW.AlertContainerFrame:GetCenter()
-    growth = centerY > UIParent:GetTop() / 2 and GROW_DOWN or GROW_UP
+    growDown = centerY > UIParent:GetTop() / 2
 
     AlertFrame:ClearAllPoints()
     AlertFrame:SetAllPoints(GW.AlertContainerFrame)
