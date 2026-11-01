@@ -31,7 +31,8 @@ end
 -- the multiple variants first, the single ones would match them too; by name, a text missing
 -- on a client must not end the list
 local LOOT_PATTERNS = {}
-for _, key in ipairs({"LOOT_ITEM_SELF_MULTIPLE", "LOOT_ITEM_PUSHED_SELF_MULTIPLE", "LOOT_ITEM_CREATED_SELF_MULTIPLE", "LOOT_ITEM_SELF", "LOOT_ITEM_PUSHED_SELF", "LOOT_ITEM_CREATED_SELF"}) do
+for _, key in ipairs({"LOOT_ITEM_SELF_MULTIPLE", "LOOT_ITEM_PUSHED_SELF_MULTIPLE", "LOOT_ITEM_CREATED_SELF_MULTIPLE", "CURRENCY_GAINED_MULTIPLE_BONUS", "CURRENCY_GAINED_MULTIPLE",
+    "LOOT_ITEM_SELF", "LOOT_ITEM_PUSHED_SELF", "LOOT_ITEM_CREATED_SELF", "CURRENCY_GAINED"}) do
     if _G[key] then
         tinsert(LOOT_PATTERNS, FormatToPattern(_G[key]))
     end
@@ -214,10 +215,19 @@ local function AddEntry(key, icon, name, color, amount, isMoney)
 end
 
 local function OnEvent(_, event, text)
-    if event == "CHAT_MSG_LOOT" then
+    if event == "CHAT_MSG_LOOT" or event == "CHAT_MSG_CURRENCY" then
         if issecretvalue and issecretvalue(text) then return end
         local link, count = ParseOwnLoot(text)
         if not link then return end
+
+        if event == "CHAT_MSG_CURRENCY" then
+            local info = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
+            if info then
+                local color = ITEM_QUALITY_COLORS[info.quality] or ITEM_QUALITY_COLORS[Enum.ItemQuality.Common]
+                AddEntry(link, info.iconFileID, info.name, color.color, count)
+            end
+            return
+        end
 
         local name, _, quality, _, _, _, _, _, _, icon = C_Item.GetItemInfo(link)
         local color = ITEM_QUALITY_COLORS[quality or Enum.ItemQuality.Common] or ITEM_QUALITY_COLORS[Enum.ItemQuality.Common]
@@ -255,6 +265,7 @@ function GW.UpdateLootFeed()
         lastMoney = GetMoney()
         feed:RegisterEvent("CHAT_MSG_LOOT")
         feed:RegisterEvent("PLAYER_MONEY")
+        feed:RegisterEvent("CHAT_MSG_CURRENCY")
     else
         feed:UnregisterAllEvents()
         for i = #entries, 1, -1 do

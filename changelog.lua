@@ -15,7 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("12.1.3", {
     {GW.Enum.ChangelogType.feature, [=[Edit mode: new skin for the window, the settings of a frame and its dialogs (option under Skins)]=]},
-    {GW.Enum.ChangelogType.feature, [=[Loot feed: the items and the money you receive in a short list that fades out, like in Guild Wars 2; the icons show their tooltip and hold their row]=]},
+    {GW.Enum.ChangelogType.feature, [=[Loot feed: the items, currencies and money you receive in a short list that fades out, like in Guild Wars 2; the icons show their tooltip and hold their row]=]},
     {GW.Enum.ChangelogType.feature, [=[Quest tracker (Wrath, Mists, Retail, Forever): new section "Nearly Done" with the three achievements you are closest to completing; right-click tracks or hides one (option, off by default)]=]},
     {GW.Enum.ChangelogType.feature, [=[World map: exploration progress as a ring on each zone of the continent maps that is not fully explored, shown when the mouse is over the zone, the tooltip lists the areas still missing (Classic and TBC: the number of explored areas) (option, off by default)]=]},
     {GW.Enum.ChangelogType.feature, [=[World map: a panel with the exploration of the shown zone and its continent, collapsible, in a corner and at a distance of your choice; with Krowi's Achievement Filter also the achievements of the zone, a click opens them in its achievement window; a trail of dots shows the way you went in this session (own option, off by default)]=]},
@@ -25,6 +25,7 @@ addChange("12.1.3", {
     {GW.Enum.ChangelogType.change, [=[AFK screen: guild name in guild color; auto repair: the chat message shows the cost like the durability tooltip]=]},
     {GW.Enum.ChangelogType.bug, [=[Collections, transmog: the help button can be clicked on its whole area again, its help in our look]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest tracker (Retail, Forever): a quest ready for turn in no longer lists its open optional objectives]=]},
+    {GW.Enum.ChangelogType.bug, [=[Alerts: no error when our alerts and Blizzard's loot alerts show at the same time]=]},
     {GW.Enum.ChangelogType.bug, [=[Action bars: no longer empty when an addon with the old LibStrataFix is installed, like Paste]=]},
     {GW.Enum.ChangelogType.bug, [=[Profiles: icons from icon packs show correctly and no longer seem to change, loading the default settings keeps the profile icon]=]},
 })
