@@ -1284,3 +1284,4 @@ L["With Krowi's Achievement Filter the panel shows the achievements of the zone 
 L["This setting needs the following addon, which is not loaded:"] = true
 L["Color by Chat Type"] = true
 L["Colors the border and the name of a bubble in the color of its chat type, as set for the chat window."] = true
+L["Shift-click a frame to put it behind the frames it overlaps."] = true

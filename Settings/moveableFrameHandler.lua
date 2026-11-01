@@ -15,6 +15,7 @@ local SMALL_SETTINGS_COMPACT_HEADER_WIDTH = 82
 local SMALL_SETTINGS_EXPANDED_HEADER_WIDTH = 258
 local SMALL_SETTINGS_ACTIVE_ALPHA = 1
 local SMALL_SETTINGS_IDLE_ALPHA = 0.65
+local MOVER_HINT = L["Left click on a moverframe to show extra frame options"] .. "\n" .. L["Shift-click a frame to put it behind the frames it overlaps."]
 
 local function SetLayoutManagerMoveHudMode(layoutManager, inMoveHudMode, refresh)
     if not layoutManager then return end
@@ -459,7 +460,7 @@ local function hideExtraOptions()
     ReleaseOptionWidgets()
     SetSmallSettingsHeader(L["Extra Frame Options"])
     GW.MoveHudScaleableFrame.moverSettingsFrame.options:Hide()
-    GW.MoveHudScaleableFrame.moverSettingsFrame.desc:SetText(L["Left click on a moverframe to show extra frame options"])
+    GW.MoveHudScaleableFrame.moverSettingsFrame.desc:SetText(MOVER_HINT)
     GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Show()
 end
 
@@ -484,6 +485,7 @@ local function lockHudObjects(_, _, inCombatLockdown)
         mf:EnableMouse(false)
         mf:SetMovable(false)
         mf:Hide()
+        mf:SetFrameLevel(mf.parent:GetFrameLevel() + 1)
     end
 
     SetGridShown(false)
@@ -667,10 +669,31 @@ local function SnapToGrid(self, xOfs, yOfs)
     return xOfs + deltaX, yOfs + deltaY
 end
 
+local function GetAnchorPosition(frame, point)
+    local left, bottom, width, height = frame:GetRect()
+    local x = (point:find("LEFT") and left) or (point:find("RIGHT") and left + width) or left + width / 2
+    local y = (point:find("BOTTOM") and bottom) or (point:find("TOP") and bottom + height) or bottom + height / 2
+    return x, y
+end
+
+-- after a drag the client anchors a frame to the screen point closest to it; back on its default anchor
+-- the X/Y inputs always mean the same, after a reset as after a drag
+local function AnchorToDefaultPoint(self)
+    local point, relativePoint = self.defaultPoint.point, self.defaultPoint.relativePoint
+    local x, y = GetAnchorPosition(self, point)
+    local parentX, parentY = GetAnchorPosition(UIParent, relativePoint)
+    local toMoverSpace = UIParent:GetEffectiveScale() / self:GetEffectiveScale()
+    self:ClearAllPoints()
+    self:SetPoint(point, UIParent, relativePoint, x - parentX * toMoverSpace, y - parentY * toMoverSpace)
+end
+
 local function mover_OnDragStop(self)
     local settingsName = self.setting
     local wasDragged = self.IsMoving
     self:StopMovingOrSizing()
+    if wasDragged then
+        AnchorToDefaultPoint(self)
+    end
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
     -- only real drags snap while the grid is shown - pixel nudges, the X/Y inputs
@@ -730,7 +753,19 @@ local function showExtraOptions(self)
     GW.FrameFlash(self, 1.5, 0.5, 1, true)
 end
 
+local function SendMoverBehind(self)
+    for _, mover in ipairs(GW.MOVABLE_FRAMES) do
+        if mover ~= self and mover:IsShown() and mover:IsMouseOver() and mover:GetFrameLevel() <= self:GetFrameLevel() then
+            mover:SetFrameLevel(self:GetFrameLevel() + 1)
+        end
+    end
+end
+
 local function mover_options(self)
+    if IsShiftKeyDown() then
+        SendMoverBehind(self)
+        return
+    end
     if GW.MoveHudScaleableFrame.moverSettingsFrame.childMover == self then
         hideExtraOptions()
     else
@@ -1015,7 +1050,7 @@ local function LoadMovers(layoutManager)
         end)
     end
 
-    smallSettingsContainer.moverSettingsFrame.desc:SetText(L["Left click on a moverframe to show extra frame options"])
+    smallSettingsContainer.moverSettingsFrame.desc:SetText(MOVER_HINT)
     smallSettingsContainer.moverSettingsFrame.desc:SetFont(UNIT_NAME_FONT, 12, "")
     smallSettingsContainer.moverSettingsFrame.desc:SetTextColor(181 / 255, 160 / 255, 128 / 255)
 

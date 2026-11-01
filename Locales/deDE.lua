@@ -1294,3 +1294,4 @@ L["With Krowi's Achievement Filter the panel shows the achievements of the zone 
 L["This setting needs the following addon, which is not loaded:"] = "Diese Einstellung braucht das folgende Addon, das nicht geladen ist:"
 L["Color by Chat Type"] = "Nach Chat-Typ einfärben"
 L["Colors the border and the name of a bubble in the color of its chat type, as set for the chat window."] = "Färbt Rand und Namen einer Blase in der Farbe ihres Chat-Typs, wie im Chatfenster eingestellt."
+L["Shift-click a frame to put it behind the frames it overlaps."] = "Umschalt-Klick legt ein Fenster hinter die Fenster, die es überdeckt."
