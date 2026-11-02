@@ -453,6 +453,12 @@ local function SkinTitleButtons()
                 StyleQuestRow(buttons[i], i + offset)
             end
         end
+        for _, title in ipairs(buttons) do
+            if title:IsShown() and title:IsMouseOver() then
+                if GameTooltip:IsOwned(title) then GameTooltip:Hide() end
+                title:GetScript("OnEnter")(title)
+            end
+        end
     end
     for _, title in ipairs(buttons) do
         if not skinnedTitles[title] then
