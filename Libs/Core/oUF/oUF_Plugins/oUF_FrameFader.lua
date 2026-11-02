@@ -3,7 +3,7 @@ local oUF = ns.oUF
 -- oUF.Private is gone once oUF finished loading, the plugins check the game themselves
 local isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
-local isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local hasFrequentHealth = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 
 local MIN_ALPHA, MAX_ALPHA = 0.35, 1
 
@@ -205,14 +205,14 @@ local options = {
     },
     Health = {
         enable = function(self)
-            if isVanilla then
+            if hasFrequentHealth then
                 self:RegisterEvent("UNIT_HEALTH_FREQUENT", Update)
             end
 
             self:RegisterEvent("UNIT_HEALTH", Update)
             self:RegisterEvent("UNIT_MAXHEALTH", Update)
         end,
-        events = isVanilla and {"UNIT_HEALTH_FREQUENT","UNIT_HEALTH","UNIT_MAXHEALTH"} or {"UNIT_HEALTH","UNIT_MAXHEALTH"}
+        events = hasFrequentHealth and {"UNIT_HEALTH_FREQUENT","UNIT_HEALTH","UNIT_MAXHEALTH"} or {"UNIT_HEALTH","UNIT_MAXHEALTH"}
     },
     MinAlpha = {
         countIgnored = true,

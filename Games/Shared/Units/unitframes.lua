@@ -413,6 +413,10 @@ function GwUnitFrameMixin:UpdateHealthbarColor()
         nameString:SetTextColor(nameColor:GetRGB())
     end
 
+    if not UnitIsConnected(unit) then
+        healthBar:SetStatusBarColor(GW.Colors.UnitFrameDisconnected:GetRGB())
+    end
+
     if (UnitLevel(unit) - GW.mylevel) <= -5 then
         local r, g, b = nameString:GetTextColor()
         if GW.IsSecretValue(r) then return end
@@ -716,6 +720,7 @@ end
 
 function GwUnitFrameMixin:StartCastbar(event)
     self:ClearInterrupt()
+    self.casting, self.channeling, self.empowering = false, false, false
     local barTexture = GW.CASTINGBAR_TEXTURES.YELLOW.NORMAL
     local direction, duration
 
@@ -984,6 +989,10 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             end
         elseif event == "UNIT_FACTION" then
             self:UpdateHealthbarColor()
+        elseif event == "UNIT_CONNECTION" then
+            self:UpdateHealthbarColor()
+            self:UpdateHealthBar()
+            self:UpdatePowerBar()
         end
     end
 end
@@ -1621,11 +1630,12 @@ local function LoadUnitFrame(unit, frameInvert)
         unitframe:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", unit)
     end
 
-    if GW.Classic then
+    if GW.Classic or GW.TBC then
         unitframe:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
     end
 
     unitframe:RegisterUnitEvent("UNIT_FACTION", unit)
+    unitframe:RegisterUnitEvent("UNIT_CONNECTION", unit)
     unitframe:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", unit)
     unitframe:RegisterEvent("PORTRAITS_UPDATED")
     if unit == "target" then

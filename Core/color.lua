@@ -216,6 +216,8 @@ function GW.UpdateUnitFrameReactionColors()
     GW.Colors.UnitFrameReactionColors.TappedDenied = CreateReactionColor(GW.settings.unitframes.reactionColors.TappedDenied, GW.globalDefault.profile.unitframes.reactionColors.TappedDenied)
 end
 
+GW.Colors.UnitFrameDisconnected = CreateColor(0.3, 0.3, 0.3)
+
 GW.Colors.ClassColors = {
     WARRIOR = CreateColor(90 / 255, 54 / 255, 38 / 255, 1),
     PALADIN = CreateColor(177 / 255, 72 / 255, 117 / 255, 1),

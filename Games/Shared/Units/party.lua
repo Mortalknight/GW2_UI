@@ -449,6 +449,7 @@ end
 function GwPartyFrameMixin:UpdateFrame()
     self:UpdatePowerBar()
     self:UpdateHealthBar()
+    self.health:SetStatusBarColor((UnitIsConnected(self.gwUnit) and GW.Colors.UnitFrameReactionColors.Friendly or GW.Colors.UnitFrameDisconnected):GetRGB())
     self:UpdateAwayData()
     self:UpdatePortrait()
 
@@ -477,8 +478,7 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
             self:UpdatePortrait()
         end
     elseif event == "UNIT_CONNECTION" then
-        self:UpdateAwayData()
-        self:UpdatePortrait()
+        self:UpdateFrame()
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" then
         self:UpdatePortrait()
     elseif event == "UNIT_NAME_UPDATE" or event == "PLAYER_ROLES_ASSIGNED" then
@@ -586,7 +586,7 @@ local function RegisterPartyUnitEvents(frame, events, unit)
     if GW.isModern or GW.Mists then
         frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", unit)
         frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", unit)
-    elseif GW.Classic then
+    elseif GW.Classic or GW.TBC then
         frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
     end
     if frame.aurasContainer then

@@ -289,7 +289,7 @@ local function Enable(self)
 		self:RegisterEvent('UNIT_MAXHEALTH', Path)
 		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
 
-		if GameVersion.Vanilla then
+		if GameVersion.Vanilla or GameVersion.Anniversary then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
@@ -394,7 +394,7 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
 
-		if GameVersion.Vanilla then
+		if GameVersion.Vanilla or GameVersion.Anniversary then
 			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 

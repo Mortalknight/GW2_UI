@@ -7,8 +7,11 @@ function GwUnitPowerbarMixin:UpdatePowerBar(forceUpdate)
     if GW.isModern then
         local statusBarAnimation = forceUpdate and Enum.StatusBarInterpolation.Immediate or Enum.StatusBarInterpolation.ExponentialEaseOut
         local powerType, powerToken = UnitPowerType(self.gwUnit)
-        local power = UnitPower(self.gwUnit, powerType)
         local powerMax = UnitPowerMax(self.gwUnit, powerType)
+        local power = powerMax
+        if UnitIsConnected(self.gwUnit) then
+            power = UnitPower(self.gwUnit, powerType)
+        end
 
         self.powerbar:Show()
         self.powerbar:SetMinMaxValues(0, powerMax)
@@ -20,8 +23,8 @@ function GwUnitPowerbarMixin:UpdatePowerBar(forceUpdate)
         end
     else
         local powerType, powerToken = UnitPowerType(self.gwUnit)
-        local power = UnitPower(self.gwUnit, powerType)
         local powerMax = UnitPowerMax(self.gwUnit, powerType)
+        local power = UnitIsConnected(self.gwUnit) and UnitPower(self.gwUnit, powerType) or powerMax
         local pct = (powerMax > 0) and (power / powerMax) or 0
 
         self.powerbar:Show()

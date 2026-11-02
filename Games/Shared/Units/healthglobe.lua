@@ -227,7 +227,7 @@ local function LoadHealthGlobe()
 
     if GW.isModern or GW.Mists then
         hg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
-    elseif GW.Classic then
+    elseif GW.Classic or GW.TBC then
        hg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     end
 

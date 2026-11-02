@@ -311,14 +311,14 @@ local options = {
     },
     Health = {
         enable = function(self)
-            if GW.Classic then
+            if GW.Classic or GW.TBC then
                 self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self.__owner.gwUnit)
             end
 
             self:RegisterUnitEvent("UNIT_HEALTH", self.__owner.gwUnit)
             self:RegisterUnitEvent("UNIT_MAXHEALTH", self.__owner.gwUnit)
         end,
-        events = GW.Classic and {'UNIT_HEALTH_FREQUENT','UNIT_HEALTH','UNIT_MAXHEALTH'} or {'UNIT_HEALTH','UNIT_MAXHEALTH'}
+        events = (GW.Classic or GW.TBC) and {'UNIT_HEALTH_FREQUENT','UNIT_HEALTH','UNIT_MAXHEALTH'} or {'UNIT_HEALTH','UNIT_MAXHEALTH'}
     },
     MinAlpha = {
         countIgnored = true,

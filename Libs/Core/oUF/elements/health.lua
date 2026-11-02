@@ -332,7 +332,7 @@ local function Enable(self, unit)
 
 		if GameVersion.Retail then
 			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
-		elseif GameVersion.Vanilla then
+		elseif GameVersion.Vanilla or GameVersion.Anniversary then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
@@ -391,7 +391,7 @@ local function Disable(self)
 
 		if GameVersion.Retail then
 			self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
-		elseif GameVersion.Vanilla then
+		elseif GameVersion.Vanilla or GameVersion.Anniversary then
 			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 

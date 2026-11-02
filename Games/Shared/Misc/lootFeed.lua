@@ -195,6 +195,11 @@ local function AddEntry(key, icon, name, color, amount, isMoney)
 
     local row = tremove(rowPool) or CreateRow()
     row.icon:SetTexture(icon)
+    if GW.IsClassicHonorIcon(icon) then
+        row.icon:SetTexCoord(unpack(GW.HonorIconTexCoords))
+    else
+        GW.HandleIcon(row.icon)
+    end
     row.icon:SetSize(ICON_SIZE, ICON_SIZE)
     row.icon.backdrop:SetBackdropBorderColor(color:GetRGB())
     row.name:SetText(name)

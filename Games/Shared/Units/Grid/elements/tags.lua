@@ -4,6 +4,8 @@ local LRI = GW.Libs.LRI
 local REALM_FLAGS = GW.REALM_FLAGS
 
 local stringtoboolean = {["true"] = true, ["false"] = false}
+-- the classic and tbc clients send UNIT_HEALTH not on every change
+local HEALTH_EVENTS = (GW.Classic or GW.TBC) and "UNIT_HEALTH UNIT_HEALTH_FREQUENT" or "UNIT_HEALTH"
 
 local ICONS = {
     leader = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:0:0:0:-2:64:64:4:60:4:60|t",
@@ -118,7 +120,7 @@ local function Create_Tags()
     end)
 
     -- red over yellow to green by the health; retail hands the health out as a secret, it has no such color
-    AddTag("GW2:healthColor", "UNIT_HEALTH UNIT_MAXHEALTH", function(unit, realUnit)
+    AddTag("GW2:healthColor", HEALTH_EVENTS .. " UNIT_MAXHEALTH", function(unit, realUnit)
         unit = realUnit or unit
         local healthMax = UnitHealthMax(unit)
         local percent = healthMax > 0 and UnitHealth(unit) / healthMax or 0
@@ -203,7 +205,7 @@ local function Create_Tags()
         end
     end)
 
-    AddTag("GW2_Grid:healtValue", "UNIT_HEALTH UNIT_MAXHEALTH UNIT_ABSORB_AMOUNT_CHANGED", function(unit, realUnit, mode, short, withShield)
+    AddTag("GW2_Grid:healtValue", HEALTH_EVENTS .. " UNIT_MAXHEALTH UNIT_ABSORB_AMOUNT_CHANGED", function(unit, realUnit, mode, short, withShield)
         -- like the name: config mode hands its made up member in as realUnit
         unit = realUnit or unit
         local formatFunc = stringtoboolean[short] and GW.ShortValue or GW.isModern and BreakUpLargeNumbers or GW.GetLocalizedNumber
@@ -287,7 +289,7 @@ local function Create_Tags()
             text = GW.oUF.Tags.Methods.smartlevel(unit)
         else
             local level = UnitLevel(unit)
-            text = level == -1 and "??" or level
+            text = level > 0 and level or "??"
         end
         if not stringtoboolean[colored] then
             return text

@@ -199,7 +199,7 @@ local function LoadPlayerFrame()
 
     if GW.isModern or GW.Mists then
         frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
-    elseif GW.Classic then
+    elseif GW.Classic or GW.TBC then
         frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     end
 

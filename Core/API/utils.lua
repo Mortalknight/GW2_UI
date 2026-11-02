@@ -940,6 +940,13 @@ local function MixinHideDuringOverride(f)
 end
 GW.MixinHideDuringOverride = MixinHideDuringOverride
 
+GW.HonorIconTexCoords = {0.03125, 0.59375, 0.03125, 0.59375}
+function GW.IsClassicHonorIcon(icon)
+    local currencyID = Constants.CurrencyConsts.CLASSIC_HONOR_CURRENCY_ID
+    local info = currencyID and C_CurrencyInfo.GetCurrencyInfo(currencyID)
+    return info ~= nil and icon == info.iconFileID
+end
+
 local GetContentDifficultyCreatureForPlayer = C_PlayerInfo and C_PlayerInfo.GetContentDifficultyCreatureForPlayer
 function GW.GetUnitLevelColor(unit, level)
     if GetContentDifficultyCreatureForPlayer and GetDifficultyColor then

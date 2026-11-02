@@ -115,7 +115,7 @@ local function loadCurrency(curwin)
                 slot.item.icon:SetTexture(icon)
                 -- If is honor
                 if itemID == Constants.CurrencyConsts.CLASSIC_HONOR_CURRENCY_ID then
-                    slot.item.icon:SetTexCoord( 0.03125, 0.59375, 0.03125, 0.59375 )
+                    slot.item.icon:SetTexCoord(unpack(GW.HonorIconTexCoords))
                 else
                     slot.item.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
                 end

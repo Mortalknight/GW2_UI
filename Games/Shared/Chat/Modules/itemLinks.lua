@@ -5,6 +5,7 @@ local EVENTS = CopyTable(GW.CHAT_MESSAGE_EVENTS)
 tinsert(EVENTS, "CHAT_MSG_LOOT")
 
 local ICON_FORMAT = "|T%s:0:0:0:0:100:100:10:90:10:90|t"
+local HONOR_ICON_FORMAT = "|T%s:0:0:0:0:64:64:2:38:2:38|t" -- GW.HonorIconTexCoords
 
 local GEAR = {
     [Enum.ItemClass.Weapon] = true,
@@ -27,7 +28,7 @@ local function DecorateLink(color, link)
             suffix = " (" .. itemLevel .. ")"
         end
     end
-    return format(ICON_FORMAT, icon) .. color .. link .. suffix .. "|r"
+    return format(GW.IsClassicHonorIcon(icon) and HONOR_ICON_FORMAT or ICON_FORMAT, icon) .. color .. link .. suffix .. "|r"
 end
 
 GW.RegisterChatModule({

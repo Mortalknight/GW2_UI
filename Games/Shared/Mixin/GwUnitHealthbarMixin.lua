@@ -36,8 +36,11 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
     if GW.isModern then
         local statusBarAnimation = forceUpdate and Enum.StatusBarInterpolation.Immediate or Enum.StatusBarInterpolation.ExponentialEaseOut
         local unit = self.gwUnit
-        local health = UnitHealth(unit)
         local healthMax = UnitHealthMax(unit)
+        local health = healthMax
+        if UnitIsConnected(unit) then
+            health = UnitHealth(unit)
+        end
 
         UnitGetDetailedHealPrediction(unit, nil, self.hpValues)
         local allHeal = self.hpValues:GetIncomingHeals()
@@ -63,8 +66,8 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
         end
     else
         local unit = self.gwUnit
-        local health = UnitHealth(unit)
         local healthMax = UnitHealthMax(unit)
+        local health = UnitIsConnected(unit) and UnitHealth(unit) or healthMax
 
         if HasNoHealthData(unit, health, healthMax) then
             self:ScheduleHealthDataRetry(forceUpdate)
