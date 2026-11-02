@@ -2,12 +2,9 @@
 local GW = select(2, ...)
 local GWGetClassColor = GW.GWGetClassColor
 local HeroPanel = GW.HeroPanel
-local PlayerSlots = HeroPanel.PlayerSlots
 local statsIconsSprite = HeroPanel.statsIconsSprite
 local STATS_ICONS = HeroPanel.STATS_ICONS
 local statGridPos = HeroPanel.StatGridPos
-
-local hideCharframe = true
 
 local TOGGLE_PANELS = {
     PaperDollFrame = {"GwHeroPanelMenu", "paperdoll"},
@@ -537,18 +534,7 @@ local function LoadPaperDoll(tabContainer)
 
     CharacterRangedSlot.icon:SetTexCoord(0, 0.25, 0.5, 0.625)
 
-    hooksecurefunc("PaperDollItemSlotButton_Update", function(button)
-        if not button.IsGW2Hooked then return end
-        local textureName = GetInventoryItemTexture("player", button:GetID())
-        if not textureName then
-            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg-cata.png")
-            button.icon:SetTexCoord(unpack(PlayerSlots[button:GetName()]))
-            PaperDollSlotButton_Update(button)
-        else
-            button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-            PaperDollSlotButton_Update(button)
-        end
-    end)
+    HeroPanel.HookSlotUpdate("Interface/AddOns/GW2_UI/textures/character/slot-bg-cata.png", false, PaperDollSlotButton_Update)
 
     GW.SetPaperDollModelPosition(dressingRoom.model)
     GW.ToggleCharacterItemInfo(true)
@@ -556,13 +542,7 @@ local function LoadPaperDoll(tabContainer)
     CharacterFrame:UnregisterAllEvents()
     HeroPanel.HookToggleCharacter(TOGGLE_PANELS)
 
-    dressingRoom.characterName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
-    dressingRoom.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    dressingRoom.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
-
-    dressingRoomPet.characterName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
-    dressingRoomPet.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    dressingRoomPet.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    HeroPanel.SetupFonts(dressingRoom, dressingRoomPet)
 
     local titelFrame = GW.LoadPDTitles(tabContainer, heroPanelMenu)
     local equipSetFrame = GW.LoadPDEquipset(tabContainer, heroPanelMenu)
@@ -577,22 +557,7 @@ local function LoadPaperDoll(tabContainer)
         PaperDollUpdatePetStats()
     end)
 
-    dressingRoom.stats.advancedCharStatsFrame = CreateFrame("Frame", nil, dressingRoom.stats)
-    dressingRoom.stats.advancedCharStatsFrame:SetPoint("TOPLEFT", dressingRoom.stats, "TOPLEFT", 0, -1)
-    dressingRoom.stats.advancedCharStatsFrame:SetSize(180, 40)
-    dressingRoom.stats.advancedCharStatsFrame:SetScript("OnMouseUp", function(self)
-        GW.ShowAdvancedCharStats(self:GetParent())
-    end)
-    dressingRoom.stats.advancedCharStatsFrame:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:ClearLines()
-        GameTooltip:SetText(ADVANCED_LABEL .. " " .. STAT_CATEGORY_ATTRIBUTES, nil, nil, nil, nil, true)
-        GameTooltip:Show()
-    end)
-    dressingRoom.stats.advancedCharStatsFrame:SetScript("OnLeave", GameTooltip_Hide)
-    if GW.settings.windows.character.advancedStats then
-        GW.ShowAdvancedCharStats(dressingRoom.stats, true)
-    end
+    HeroPanel.SetupAdvancedStatsButton(dressingRoom)
 
     -- Secure stuff
     GW.CharacterMenuButton_OnLoad(heroPanelMenu.titleMenu, true, true)
@@ -620,64 +585,11 @@ local function LoadPaperDoll(tabContainer)
         GwCharacterWindow:SetNextAddonMenuButtonShadowState(false)
     end
     GwCharacterWindow:SetNextAddonMenuButtonAnchor((GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6) and heroPanelMenu.petMenu or heroPanelMenu.equipmentMenu)
-    heroPanelMenu.Outfitter = GW.AddAddonMenuButtonToHeroPanelMenu({
-        name = "Outfitter",
-        setting = GW.settings.windows.character.enabled,
-        showFunction = function() hideCharframe = false Outfitter:OpenUI() end,
-        hideOurFrame = true,
-    })
-
-    heroPanelMenu["GearQuipper-TBC"] = GW.AddAddonMenuButtonToHeroPanelMenu({
-        name = "GearQuipper-TBC",
-        setting = GW.settings.windows.character.enabled,
-        showFunction = function() gearquipper:ToggleUI() end,
-        hideOurFrame = false,
-        onCreated = function(createdButton)
-            createdButton:SetText("GearQuipper")
-            GqUiFrame:ClearAllPoints()
-            GqUiFrame:SetParent(GwCharacterWindow)
-            GqUiFrame:SetPoint("TOPRIGHT", GwCharacterWindow, "TOPRIGHT", 350, -12)
-        end,
-    })
-    heroPanelMenu.Clique = GW.AddAddonMenuButtonToHeroPanelMenu({
-        name = "Clique",
-        setting = GW.settings.windows.spellbook.enabled,
-        showFunction = function() ShowUIPanel(CliqueConfig) end,
-        hideOurFrame = true,
-    })
-
-    heroPanelMenu.Pawn = GW.AddAddonMenuButtonToHeroPanelMenu({
-        name = "Pawn",
-        setting = GW.settings.windows.character.enabled,
-        showFunction = function() PawnUIShow() end,
-        onEnter = function(self) PawnUI_InventoryPawnButton_OnEnter(self) end,
-        hideOurFrame = false,
-    })
+    HeroPanel.AddAddonButtons(heroPanelMenu)
 
     -- pet GwDressingRoom
-    heroPanelMenu.petMenu:SetAttribute("_onstate-petstate", [=[
-        local f = self:GetFrameRef("GwCharacterWindow")
-        local myClassId = f:GetAttribute("myClassId")
-        if myClassId == 3 or myClassId == 6 or myClassId == 9 then
-            self:Show()
-        else
-            self:Hide()
-        end
-        if newstate == "nopet" then
-            self:Disable()
-            self:GetFrameRef("GwCharacterWindow"):SetAttribute("HasPetUI", false)
-        elseif newstate == "hasPet" then
-            self:Enable()
-            self:GetFrameRef("GwCharacterWindow"):SetAttribute("HasPetUI", true)
-        end
-    ]=])
-    RegisterAttributeDriver(heroPanelMenu.petMenu, "state-petstate", "[@pet,noexists] nopet; [@pet,help] hasPet; [@pet,harm] nopet")
+    HeroPanel.SetupPetMenuDriver(heroPanelMenu)
 
-    CharacterFrame:SetScript("OnShow", function()
-        if hideCharframe then
-            HideUIPanel(CharacterFrame)
-        end
-        hideCharframe = true
-    end)
+    HeroPanel.KeepCharacterFrameHidden()
 end
 GW.LoadPaperDoll = LoadPaperDoll

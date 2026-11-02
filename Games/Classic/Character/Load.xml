@@ -12,5 +12,5 @@
     <Script file ="..\..\Shared\Character\spellbook.lua"/>
     <Script file ="..\..\ClassicShared\Character\talentsData.lua"/>
     <Script file ="..\..\Shared\Character\talents.lua"/>
-    <Script file ="windowManager.lua"/>
+    <Script file ="..\..\ClassicShared\Character\windowManagerClassicTBC.lua"/>
 </Ui>

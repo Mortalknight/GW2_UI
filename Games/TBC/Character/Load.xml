@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="character.xml"/>
     <Script file ="character.lua"/>
-    <Script file ="windowManager.lua"/>
+    <Script file ="..\..\ClassicShared\Character\windowManagerClassicTBC.lua"/>
 </Ui>

@@ -1,6 +1,8 @@
 ---@class GW2
 local GW = select(2, ...)
 
+-- classic and tbc share their window; a panel whose frame does not exist on a client is skipped
+
 local windowsList = {
     {
         OnLoad = "LoadPaperDoll",
@@ -93,6 +95,7 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
         "GwPaperSkills",
         "GwPaperHonor",
         "GwPetContainer",
+        "GwEngravingFrame",
         "GwSpellbookFrame",
         "GwTalentsFrame",
     },
@@ -110,7 +113,7 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
         {
             value = "paperdoll",
             toggleRef = "GwPaperDoll",
-            toggleHiddenRefs = {"GwPaperSkills", "GwPaperDollTitles", "GwPetContainer", "GwPaperHonor"},
+            toggleHiddenRefs = {"GwPaperSkills", "GwPaperDollTitles", "GwPetContainer", "GwPaperHonor", "GwEngravingFrame"},
             showRefs = {"GwPaperDoll", "GwHeroPanelMenu", "GwDressingRoom"},
         },
         {
@@ -122,6 +125,11 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
             value = "titles",
             toggleRef = "GwPaperDollTitles",
             showRefs = {"GwPaperDoll", "GwPaperDollTitles", "GwDressingRoom"},
+        },
+        {
+            value = "paperdollengravings",
+            toggleRef = "GwEngravingFrame",
+            showRefs = {"GwPaperDoll", "GwEngravingFrame", "GwDressingRoom"},
         },
         {
             value = "paperdollskills",
