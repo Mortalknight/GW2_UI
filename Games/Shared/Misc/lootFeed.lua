@@ -83,6 +83,10 @@ local function CreateRow()
     row.icon:SetPoint("CENTER", row, "LEFT", 2 + ICON_SIZE / 2, 0)
     GW.HandleIcon(row.icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
 
+    row.itemLevel = row:CreateFontString(nil, "OVERLAY")
+    row.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
+    row.itemLevel:SetPoint("BOTTOMRIGHT", row.icon, "BOTTOMRIGHT", 0, 1)
+
     -- only the icon reacts to the mouse and only to hovering, clicks still go through to the world
     row.iconHit = CreateFrame("Frame", nil, row)
     row.iconHit:SetAllPoints(row.icon)
@@ -202,6 +206,7 @@ local function AddEntry(key, icon, name, color, amount, isMoney)
     end
     row.icon:SetSize(ICON_SIZE, ICON_SIZE)
     row.icon.backdrop:SetBackdropBorderColor(color:GetRGB())
+    row.itemLevel:SetText(not isMoney and GW.IsItemEligibleForItemLevelDisplay(key) and C_Item.GetDetailedItemLevelInfo(key) or "")
     row.name:SetText(name)
     row.name:SetTextColor(color:GetRGB())
     row.count:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
@@ -234,14 +239,18 @@ local function OnEvent(_, event, text)
             return
         end
 
-        local name, _, quality, _, _, _, _, _, _, icon = C_Item.GetItemInfo(link)
+        -- an item the client does not know yet has no quality, better show it than lose it
+        local quality = C_Item.GetItemQualityByID(link)
+        if quality and quality < GW.settings.lootFeed.minQuality then return end
+
+        local name, _, _, _, _, _, _, _, _, icon = C_Item.GetItemInfo(link)
         local color = ITEM_QUALITY_COLORS[quality or Enum.ItemQuality.Common] or ITEM_QUALITY_COLORS[Enum.ItemQuality.Common]
         AddEntry(link, icon or select(5, C_Item.GetItemInfoInstant(link)), name or link:match("%[(.-)%]") or link, color.color, count)
     elseif event == "PLAYER_MONEY" then
         local money = GetMoney()
         local gained = money - lastMoney
         lastMoney = money
-        if gained > 0 then
+        if gained > 0 and GW.settings.lootFeed.showMoney then
             AddEntry("money", MONEY_ICON, MONEY, GW.Colors.SkinColors.QuestGold, gained, true)
         end
     end

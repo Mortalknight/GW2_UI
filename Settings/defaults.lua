@@ -292,6 +292,8 @@ GW.globalDefault = {
 
         lootFeed = {
             enabled = true,
+            minQuality = 0,
+            showMoney = true,
             pos = {
                 point = "BOTTOMRIGHT",
                 relativePoint = "BOTTOMRIGHT",

@@ -57,6 +57,8 @@ local function LoadGeneralPanel(sWindow)
     })
     general:AddOption(L["Global Cooldown at the Cursor"], L["Shows the global cooldown as a ring around the mouse cursor."], {getterSetter = "general.cursorGcdRing", callback = function() GW.UpdateCursorGcdRing() end})
     general:AddOption(L["Loot Feed"], L["Shows the items and the money you receive in a short list that fades out, like in Guild Wars 2."], {getterSetter = "lootFeed.enabled", callback = function() GW.UpdateLootFeed() end})
+    general:AddOptionDropdown(L["Loot Feed"] .. ": " .. LOOT_THRESHOLD, nil, {getterSetter = "lootFeed.minQuality", optionsList = {0, 1, 2, 3, 4}, optionNames = {ITEM_QUALITY_COLORS[0].hex .. ITEM_QUALITY0_DESC, ITEM_QUALITY_COLORS[1].hex .. ITEM_QUALITY1_DESC, ITEM_QUALITY_COLORS[2].hex .. ITEM_QUALITY2_DESC, ITEM_QUALITY_COLORS[3].hex .. ITEM_QUALITY3_DESC, ITEM_QUALITY_COLORS[4].hex .. ITEM_QUALITY4_DESC}, dependence = {["lootFeed.enabled"] = true}})
+    general:AddOption(L["Loot Feed"] .. ": " .. MONEY, nil, {getterSetter = "lootFeed.showMoney", dependence = {["lootFeed.enabled"] = true}})
     general:AddOption(L["Hide error messages in combat"], L["Hides messages like 'Not enough rage' while in combat."], {getterSetter = "general.hideErrorsInCombat"})
     general:AddOption(CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, {getterSetter = "general.dynamicCam",
         callback = function(value)
