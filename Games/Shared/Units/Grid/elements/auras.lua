@@ -648,7 +648,7 @@ local function HasGridResourceBar(frame)
     if frame.showResscoureBar ~= "HEALER" then
         return false
     end
-    return (GW.allowRoles and UnitGroupRolesAssigned(frame.__unit or "player")) == "HEALER"
+    return UnitGroupRolesAssigned(frame.__unit or "player") == "HEALER"
 end
 
 local function AnchorGridAuraContainer(frame)

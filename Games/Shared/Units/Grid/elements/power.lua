@@ -15,7 +15,7 @@ local function GetRole(frame)
 		local rnd = random(1, 3)
 		return (rnd == 1 and 'TANK') or (rnd == 2 and 'HEALER') or 'DAMAGER'
 	else
-		return GW.allowRoles and UnitGroupRolesAssigned(frame.__unit)
+		return UnitGroupRolesAssigned(frame.__unit)
 	end
 end
 

@@ -31,6 +31,7 @@ addChange("12.1.3", {
     {GW.Enum.ChangelogType.bug, [=[Move HUD: the X and Y fields of a frame keep the same meaning after dragging it as after resetting it]=]},
     {GW.Enum.ChangelogType.bug, [=[Reputation: a faction marked as inactive moves into the Inactive category right away]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest tracker (Retail, Forever): a quest ready for turn in no longer lists its open optional objectives]=]},
+    {GW.Enum.ChangelogType.bug, [=[Group frames: the power bar "only healers" shows for healers, the unit tooltip shows the group role]=]},
     {GW.Enum.ChangelogType.bug, [=[Alerts: no error when our alerts and Blizzard's loot alerts show at the same time]=]},
     {GW.Enum.ChangelogType.bug, [=[Action bars: no longer empty when an addon with the old LibStrataFix is installed, like Paste]=]},
     {GW.Enum.ChangelogType.bug, [=[Profiles: icons from icon packs show correctly and no longer seem to change, loading the default settings keeps the profile icon]=]},

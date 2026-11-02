@@ -45,7 +45,7 @@ end
 GW.RegisterTooltipModule({
     onLoad = function()
         Tooltip.OnTooltipData("Unit", function(tooltip, data)
-            if tooltip == GameTooltip and GW.settings.tooltip.unit.role and GW.allowRoles then
+            if tooltip == GameTooltip and GW.settings.tooltip.unit.role then
                 local unit = Tooltip.GetUnit(tooltip, data)
                 if unit then
                     AddRole(tooltip, unit)

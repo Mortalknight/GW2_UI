@@ -21,8 +21,11 @@ GW.GetVersionString = GetVersionString
 
 -- init: store API, to reduce the API usage
 local function GetPlayerRole()
-    local role = GW.allowRoles and UnitGroupRolesAssigned("player") or "NONE"
-    return GW.NotSecretValue(role) and (role ~= "NONE" and role) or GW.myspecRole or "NONE"
+    local role = UnitGroupRolesAssigned("player")
+    if GW.NotSecretValue(role) and role and role ~= "NONE" then
+        return role
+    end
+    return GW.myspecRole or "NONE"
 end
 GW.GetPlayerRole = GetPlayerRole
 
@@ -53,7 +56,6 @@ GW.mylevel = UnitLevel("player")
 GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
 GW.resolution = format("%dx%d", GW.screenwidth, GW.screenHeight)
 GW.wowpatch, GW.wowbuild, _ , GW.wowToc = GetBuildInfo()
-GW.allowRoles = GW.Retail or GW.Mists or GW.ClassicAnniv or GW.ClassicAnnivHC or GW.ClassicSOD
 
 GW.wowbuild = tonumber(GW.wowbuild)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
