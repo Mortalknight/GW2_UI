@@ -303,6 +303,9 @@ local function BuildMenu(_, root)
             end)
         end
     end
+
+    inviteMenu:SetEnabled(inviteMenu:HasElements())
+    whisperMenu:SetEnabled(whisperMenu:HasElements())
 end
 
 local function Friends_OnMouseUp(self, button)

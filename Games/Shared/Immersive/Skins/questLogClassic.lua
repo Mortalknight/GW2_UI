@@ -290,6 +290,19 @@ local function SkinRow(title)
     title.gwCompassArrow:SetTexCoord(1, 0, 0, 1)
     title.gwCompassArrow:SetAllPoints(title.gwCompass)
 
+    title:HookScript("PreClick", function(self)
+        if self.gwChatText and IsModifiedClick("CHATLINK") and ChatFrameUtil.GetActiveWindow() then
+            self.gwStyledText = self:GetText()
+            self:SetText(self.gwChatText)
+        end
+    end)
+    title:HookScript("PostClick", function(self)
+        if self.gwStyledText then
+            self:SetText(self.gwStyledText)
+            self.gwStyledText = nil
+        end
+    end)
+
     -- blizzard turns the tag white on hover; the objectives in the tooltip, below the party info blizzard may show
     local tag = _G[title:GetName() .. "Tag"]
     title:HookScript("OnEnter", function(self)
@@ -360,6 +373,7 @@ local QUEST_TEXT_OFFSET = 4
 local function StyleQuestRow(title, questIndex)
     SkinRow(title)
     local isHeader = select(4, GetQuestLogTitle(questIndex))
+    title.gwChatText = not isHeader and title:GetText() or nil
     title.gwSeparator:SetShown(isHeader)
     local tag = _G[title:GetName() .. "Tag"]
     -- zones keep their name behind the collapse arrow, quests start with their icon in that arrow column
