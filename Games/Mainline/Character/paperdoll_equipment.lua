@@ -128,7 +128,11 @@ local function OnGrabSlot(slot)
     hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
     hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
     slot:HookScript("OnShow", CorruptionIcon)
-    slot:HookScript("OnEvent", CorruptionIcon)
+    slot:HookScript("OnEvent", function(self, event)
+        if event ~= "ITEM_LOCK_CHANGED" then
+            CorruptionIcon(self)
+        end
+    end)
 end
 
 ---------- mythic+ rating ----------
