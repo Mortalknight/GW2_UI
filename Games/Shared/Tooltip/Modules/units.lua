@@ -231,6 +231,9 @@ GW.RegisterTooltipModule({
         Tooltip.OnTooltipData("Unit", OnUnitTooltip)
         local watcher = CreateFrame("Frame")
         watcher:RegisterEvent("MODIFIER_STATE_CHANGED")
+        if C_EventUtils.IsEventValid("PLAYER_ROLES_ASSIGNED") then
+            watcher:RegisterEvent("PLAYER_ROLES_ASSIGNED")
+        end
         watcher:SetScript("OnEvent", RefreshMouseoverTooltip)
     end,
 })

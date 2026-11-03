@@ -415,7 +415,11 @@ local function ScanBagItemForUnusable(bagID, slot)
 
 
     GW.ScanTooltip:ClearLines()
-    GW.ScanTooltip:SetBagItem(bagID, slot)
+    if bagID == BANK_CONTAINER then
+        GW.ScanTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
+    else
+        GW.ScanTooltip:SetBagItem(bagID, slot)
+    end
     -- line 1 is the item name, never a restriction
     for i = 2, GW.ScanTooltip:NumLines() do
         local left = _G["GW2_UIScanTooltipTextLeft" .. i]
@@ -444,7 +448,7 @@ local function IsItemUnusable(bagID, button, itemInfo)
         return button.gwUnusable
     end
 
-    button.gwUnusableLink = itemInfo.hyperlink
+    button.gwUnusableLink = C_Item.GetItemInfo(itemInfo.hyperlink) and itemInfo.hyperlink or nil
     button.gwUnusableGeneration = unusableGeneration
     button.gwUnusable = ScanBagItemForUnusable(bagID, button:GetID())
 

@@ -27,6 +27,7 @@ addChange("12.1.3", {
     {GW.Enum.ChangelogType.change, [=[Unit frames: offline players show a full gray health and power bar like the group frames, an unknown level as ??]=]},
     {GW.Enum.ChangelogType.bug, [=[Unit frames (TBC): health no longer stays on an old value during combat]=]},
     {GW.Enum.ChangelogType.bug, [=[Target of target: the cast bar no longer runs backwards when a cast follows a channel]=]},
+    {GW.Enum.ChangelogType.bug, [=[Bags: Mark Unusable Items is correct for items seen for the first time and, on the classic clients, in the bank]=]},
     {GW.Enum.ChangelogType.bug, [=[Collections, transmog: the help button can be clicked on its whole area again, its help in our look]=]},
     {GW.Enum.ChangelogType.bug, [=[Move HUD: the X and Y fields of a frame keep the same meaning after dragging it as after resetting it]=]},
     {GW.Enum.ChangelogType.bug, [=[Reputation: a faction marked as inactive moves into the Inactive category right away]=]},

@@ -1078,8 +1078,10 @@ end
 -- the reputation tab with the given faction picked; without the gw2 character window blizzards frame opens
 function GW.ShowReputationFaction(factionID)
     if InCombatLockdown() then return end
-    if not (GwPaperReputation and GwPaperReputation:IsVisible()) then
+    if not GwPaperReputation then
         ToggleCharacter("ReputationFrame")
+    elseif not GwPaperReputation:IsVisible() then
+        GwCharacterWindow:SetAttribute("windowpanelopen", "reputation")
     end
     if GwPaperReputation then
         RunNextFrame(function()
