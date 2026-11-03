@@ -127,12 +127,6 @@ local function OnGrabSlot(slot)
     SetupCorruptionOverlay(slot)
     hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
     hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
-    slot:HookScript("OnShow", CorruptionIcon)
-    slot:HookScript("OnEvent", function(self, event)
-        if event ~= "ITEM_LOCK_CHANGED" then
-            CorruptionIcon(self)
-        end
-    end)
 end
 
 ---------- mythic+ rating ----------
@@ -389,6 +383,12 @@ local function LoadPDBagList(fmMenu, parent)
         styleBagItem = StyleBagItem,
         onBagItemUpdated = OnBagItemUpdated,
     })
+
+    hooksecurefunc("PaperDollItemSlotButton_Update", function(button)
+        if button.IsGW2Hooked then
+            CorruptionIcon(button)
+        end
+    end)
 
     fmGDR.stats:SetScript("OnEvent", stats_OnEvent)
     RegisterStatsEvents(fmGDR.stats)
