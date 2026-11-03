@@ -79,6 +79,7 @@ local function reskinItemButton(b, overrideIconSize)
     b:SetSize(iconSize, iconSize)
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    GW.HandleItemButtonCrop(b)
     b.icon:SetAllPoints(b)
     b.icon:SetAlpha(0.9)
 
@@ -100,7 +101,7 @@ local function reskinItemButton(b, overrideIconSize)
     if GW.isModern then
         -- kill the retail slot background
         if not b.ItemSlotBackground then
-            b.ItemSlotBackground = b:CreateTexture(nil, "BACKGROUND", "ItemSlotBackgroundCombinedBagsTemplate", -6)
+            b.ItemSlotBackground = b:CreateTexture(nil, "BACKGROUND", nil, -6)
             b.ItemSlotBackground:SetAllPoints(b)
         end
         b.ItemSlotBackground:SetAlpha(0)
@@ -741,6 +742,7 @@ local function reskinBagBar(b, ha)
     end
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    GW.HandleItemButtonCrop(b)
     b.icon:SetAlpha(0.75)
     b.icon:Show()
 

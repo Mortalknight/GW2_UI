@@ -264,6 +264,30 @@ local function HandleIcon(icon, backdrop, backdropTexture, isBorder)
 end
 GW.HandleIcon = HandleIcon
 
+local function KeepIconCrop(icon, left, right, top, bottom)
+    if left ~= 0.07 or right ~= 0.93 or top ~= 0.07 or bottom ~= 0.93 then
+        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    end
+end
+
+-- forever masks item buttons round and SetItemButtonTexture resets the icon crop on every update
+local function HandleItemButtonCrop(button)
+    if not GW.Forever or button.gwCropKept then return end
+    button.gwCropKept = true
+
+    local icon = GetItemButtonIconTexture(button)
+    if button.Mask then
+        icon:RemoveMaskTexture(button.Mask)
+        for _, texture in ipairs({button:GetNormalTexture() or false, button:GetPushedTexture() or false}) do
+            if texture then
+                texture:RemoveMaskTexture(button.Mask)
+            end
+        end
+    end
+    hooksecurefunc(icon, "SetTexCoord", KeepIconCrop)
+end
+GW.HandleItemButtonCrop = HandleItemButtonCrop
+
 do
     -- atlas borders tell the quality by their name, the others by their vertex color
     local ATLAS_QUALITY = {

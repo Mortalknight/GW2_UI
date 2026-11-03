@@ -857,6 +857,23 @@ function GwUnitFrameMixin:UpdateThreatValues()
     end
 end
 
+-- forever sends the amount as a secret and blizzards feedback compares it: it gets a stand-in for
+-- size and color, the text comes from the secret, empty for 0 like blizzard
+function GW.CombatFeedbackOnEvent(frame, event, flags, amount, damageType)
+    if GW.NotSecretValue(amount) then
+        CombatFeedback_OnCombatEvent(frame, event, flags, amount, damageType)
+        return
+    end
+    CombatFeedback_OnCombatEvent(frame, event, flags, 1, damageType)
+    if event == "WOUND" or event == "HEAL" or event == "ENERGIZE" then
+        local text = C_StringUtil.TruncateWhenZero(amount)
+        if event == "WOUND" and flags == "BLOCK_REDUCED" then
+            text = COMBAT_TEXT_BLOCK_REDUCED:format(text)
+        end
+        frame.feedbackText:SetText(text)
+    end
+end
+
 function GwUnitFrameMixin:OnEvent(event, unit, ...)
     local secondaryFrame
     if self.gwUnit == "target" then
@@ -869,7 +886,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
 
     if event == "UNIT_COMBAT" then
         if unit == self.gwUnit then
-            CombatFeedback_OnCombatEvent(self, arg1, arg2, arg3, arg4)
+            GW.CombatFeedbackOnEvent(self, arg1, arg2, arg3, arg4)
         end
     elseif IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_FOCUS_CHANGED", "PLAYER_ENTERING_WORLD", "FORCE_UPDATE") then
         if event == "PLAYER_TARGET_CHANGED" and self.gwUnit == "target" and UnitIsPlayer(self.gwUnit) and (self.showItemLevel == "PVP_LEVEL" or self.showItemLevel == "ITEM_LEVEL")
