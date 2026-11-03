@@ -466,11 +466,11 @@ local function RefreshRewardList(self)
     local search = strtrim(self.search:GetText()):lower()
     local dataProvider = CreateDataProvider()
     if self.showPet then
-        InsertSection(dataProvider, L["Trainable Now"], petTrainableRewards, search)
-        InsertSection(dataProvider, L["Next Levels"], petUpcomingRewards, search)
+        InsertSection(dataProvider, L["Trainable Now:"], petTrainableRewards, search)
+        InsertSection(dataProvider, L["Next Levels:"], petUpcomingRewards, search)
     else
-        InsertSection(dataProvider, L["Trainable Now"], trainableRewards, search)
-        InsertSection(dataProvider, L["Next Levels"], upcomingLevelRewards, search)
+        InsertSection(dataProvider, L["Trainable Now:"], trainableRewards, search)
+        InsertSection(dataProvider, L["Next Levels:"], upcomingLevelRewards, search)
     end
 
     self.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
