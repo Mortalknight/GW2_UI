@@ -1976,6 +1976,15 @@ GW.globalDefault = {
             itemUpgrade = {
                 enabled = true,
             },
+            itemInteraction = {
+                enabled = true,
+            },
+            scrappingMachine = {
+                enabled = true,
+            },
+            catalogShop = {
+                enabled = true,
+            },
             timeManager = {
                 enabled = true,
             },

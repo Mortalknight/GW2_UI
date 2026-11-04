@@ -64,6 +64,13 @@ local function SkinFlyout()
     end
 end
 
+local flyoutHooked = false
+function GW.HookEquipmentFlyoutSkin()
+    if flyoutHooked then return end
+    flyoutHooked = true
+    hooksecurefunc("EquipmentFlyout_UpdateItems", SkinFlyout)
+end
+
 local function ApplyItemUpgradeSkin()
     if not GW.settings.skins.itemUpgrade.enabled then return end
     local frame = ItemUpgradeFrame
@@ -102,8 +109,7 @@ local function ApplyItemUpgradeSkin()
     StylePreview(frame.LeftItemPreviewFrame)
     StylePreview(frame.RightItemPreviewFrame)
 
-    -- runs on show and on every page change
-    hooksecurefunc("EquipmentFlyout_UpdateItems", SkinFlyout)
+    GW.HookEquipmentFlyoutSkin()
 
     frame.UpgradeButton:GwSkinButton(false, true)
     frame.CloseButton:GwSkinButton(true)

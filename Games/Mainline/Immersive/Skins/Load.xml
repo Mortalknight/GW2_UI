@@ -1,6 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file="talkinghead.lua"/>
     <Script file="itemUpgrade.lua"/>
+    <Script file="itemInteraction.lua"/>
+    <Script file="scrappingMachine.lua"/>
     <Script file="encounterJournal.lua"/>
     <Script file="covenantSanctum.lua"/>
     <Script file="soulbinds.lua"/>

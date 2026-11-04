@@ -929,6 +929,7 @@ local function evLoadSkins()
     GW.UpdateMapTrail()
 
     GW.LoadDressUpFrameSkin()
+    GW.LoadCatalogShopSkin()
 
     if GW.Retail then
         GW.LoadExpansionLadningPageSkin()
@@ -943,6 +944,8 @@ local function evLoadSkins()
         GW.LoadChromieTimerSkin()
         GW.LoadCovenantSanctumSkin()
         GW.LoadItemUpgradeSkin()
+        GW.LoadItemInteractionSkin()
+        GW.LoadScrappingMachineSkin()
         GW.LoadLFGSkin()
         GW.LoadOrderHallTalentFrameSkin()
         GW.LoadSoulbindsSkin()
