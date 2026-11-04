@@ -19,6 +19,7 @@ Tired of a UI that looks like a spreadsheet? GW2 UI replaces the default interfa
 - **In your language** - translated into 11 languages.
 
 [![GW2 UI on Discord](https://discord.com/api/guilds/243035988614578176/widget.png?style=banner2)](https://discord.gg/MZZtRWt)
+[![GW2 UI on Patreon](https://i.imgur.com/gyn76CI.png)](https://www.patreon.com/gw2ui)[![GW2 UI on PayPal](https://i.imgur.com/xSSjpwd.png)](https://www.paypal.com/donate?hosted_button_id=WBGL5GPMTNEL4)
 
 ## FEATURES
 
@@ -80,6 +81,3 @@ Tell us on [Discord](https://discord.gg/MZZtRWt) or open a [GitHub issue](https:
 ## HELP US
 
 - **Translate:** help on [CurseForge localization](https://www.curseforge.com/wow/addons/gw2-ui/localization) - thank you to all of our translators!
-- **Support the project:**
-
-[![GW2 UI on Patreon](https://i.imgur.com/gyn76CI.png)](https://www.patreon.com/gw2ui)[![GW2 UI on PayPal](https://i.imgur.com/xSSjpwd.png)](https://www.paypal.com/donate?hosted_button_id=WBGL5GPMTNEL4)
