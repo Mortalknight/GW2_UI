@@ -415,6 +415,8 @@ local function ScanBagItemForUnusable(bagID, slot)
     end
 
 
+    -- other scans hide the tooltip, without an owner it stays empty
+    GW.ScanTooltip:SetOwner(UIParent, "ANCHOR_NONE")
     GW.ScanTooltip:ClearLines()
     if bagID == BANK_CONTAINER then
         GW.ScanTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))

@@ -9,11 +9,12 @@ local REPUTATION_DISCOUNTS = {[5] = 0.05, [6] = 0.1, [7] = 0.15, [8] = 0.2}
 
 -- the full tooltip data of an item is costly, so the cost is only asked for when the tooltip shows
 local function GetRepairCost(slot)
-    if C_TooltipInfo then
+    if C_TooltipInfo and C_TooltipInfo.GetInventoryItem then
         local data = C_TooltipInfo.GetInventoryItem("player", slot)
         return data and data.repairCost or 0
     end
     -- clients without tooltip data return the cost from the scan tooltip
+    GW.ScanTooltip:SetOwner(UIParent, "ANCHOR_NONE")
     local _, _, cost = GW.ScanTooltip:SetInventoryItem("player", slot)
     return cost or 0
 end

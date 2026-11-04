@@ -14,7 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.4", {
-    {GW.Enum.ChangelogType.bug, [=[Bags: Mark Unusable Items marks the bank items right after a reload]=]},
+    {GW.Enum.ChangelogType.bug, [=[Bags (Classic, TBC, Wrath, Mists): Mark Unusable Items works again and marks the bank items right after a reload]=]},
 })
 
 addChange("12.1.3", {

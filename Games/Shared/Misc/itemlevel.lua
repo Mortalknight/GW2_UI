@@ -78,7 +78,7 @@ end
 local function GetTooltipData(unit, slot, itemLink)
     local isLink = GW.NotSecretValue(itemLink) and itemLink and strfind(itemLink, "item", 1, true)
     if not (isLink or slot) then return end
-    if not C_TooltipInfo then
+    if not (C_TooltipInfo and C_TooltipInfo.GetHyperlink) then
         return ScanTooltipData(unit, slot, isLink and itemLink)
     elseif isLink then
         return C_TooltipInfo.GetHyperlink(itemLink)
