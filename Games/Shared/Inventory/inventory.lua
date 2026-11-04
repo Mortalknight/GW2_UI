@@ -449,9 +449,22 @@ local function IsItemUnusable(bagID, button, itemInfo)
         return button.gwUnusable
     end
 
-    button.gwUnusableLink = C_Item.GetItemInfo(itemInfo.hyperlink) and itemInfo.hyperlink or nil
+    local cached = C_Item.GetItemInfo(itemInfo.hyperlink) ~= nil
+    button.gwUnusableLink = cached and itemInfo.hyperlink or nil
     button.gwUnusableGeneration = unusableGeneration
     button.gwUnusable = ScanBagItemForUnusable(bagID, button:GetID())
+
+    -- without item data the tooltip lacks the red lines; after a reload that is the whole bank
+    if not cached then
+        local item = Item:CreateFromItemLink(itemInfo.hyperlink)
+        if not item:IsItemDataCached() then
+            GW.ContinueOnItemLoad(item, function()
+                if button:IsVisible() then
+                    GW.UpdateOwnContainerItemButton(button, true)
+                end
+            end)
+        end
+    end
 
     return button.gwUnusable
 end

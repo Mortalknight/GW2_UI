@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.4", {
+    {GW.Enum.ChangelogType.bug, [=[Bags: Mark Unusable Items marks the bank items right after a reload]=]},
+})
+
 addChange("12.1.3", {
     {GW.Enum.ChangelogType.feature, [=[Edit mode: new skin for the window, the settings of a frame and its dialogs (option under Skins)]=]},
     {GW.Enum.ChangelogType.feature, [=[Loot feed: the items, currencies and money you receive in a short list that fades out, like in Guild Wars 2; the icons show their tooltip and hold their row, equipment shows its item level on the icon; options for the lowest item quality and for money]=]},
