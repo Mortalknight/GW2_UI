@@ -15,4 +15,5 @@
     <Script file="battlefieldMap.lua"/>
     <Script file="cooldownManager.lua"/>
     <Script file="playerChoice.lua"/>
+    <Script file="pvpMatch.lua"/>
 </Ui>

@@ -979,6 +979,7 @@ local function evLoadSkins()
         GW.LoadPlayerChoiceSkin()
         GW.LoadAuctionatorAddonSkin()
         GW.LoadTransmogSkin()
+        GW.LoadPVPMatchSkin()
     end
 
     if not (GW.Classic or GW.TBC) then

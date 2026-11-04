@@ -1985,6 +1985,9 @@ GW.globalDefault = {
             catalogShop = {
                 enabled = true,
             },
+            pvpMatch = {
+                enabled = true,
+            },
             timeManager = {
                 enabled = true,
             },

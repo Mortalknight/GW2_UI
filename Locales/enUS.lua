@@ -664,6 +664,7 @@ L["Main Action Bar"] = true
 L["Trading post"] = true
 L["Catalyst"] = true
 L["Scrapper"] = true
+L["PvP Scoreboard"] = true
 L["Show healing numbers"] = "Show Healing Numbers"
 L["Classic combat text anchoring"] = "Classic Combat Text Anchoring"
 L["Center of screen"] = "Center of Screen"
