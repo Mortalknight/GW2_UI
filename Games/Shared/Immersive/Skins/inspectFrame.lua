@@ -225,14 +225,14 @@ local function SkinTalents()
     if not InspectTalentFrameScrollFrame then return end
     InspectTalentFramePortrait:GwKill()
 
-    -- blizzard places the tree tabs in its header art, they start under our header now
+    -- blizzard places the tree tabs in its header art, they sit on the tree now, below our portrait
     for index = 1, 3 do
         local tab = _G["InspectTalentFrameTab" .. index]
         GW.HandleTabs(tab, "top")
-        tab:SetHeight(25)
+        tab:SetHeight(22)
     end
     InspectTalentFrameTab1:ClearAllPoints()
-    InspectTalentFrameTab1:SetPoint("TOPLEFT", InspectFrame, "TOPLEFT", 10, -35)
+    InspectTalentFrameTab1:SetPoint("BOTTOMLEFT", InspectTalentFrameBackgroundTopLeft, "TOPLEFT", 0, 0)
 
     InspectTalentFramePointsBar:GwStripTextures()
     InspectTalentFramePointsBar:GwCreateBackdrop(GW.BackdropTemplates.Default)
