@@ -416,7 +416,16 @@ local function StyleQuestRow(title, questIndex)
     end
     -- icon, level, title like the details
     local onCompass = GwObjectivesNotification and GwObjectivesNotification.compassQuestID == questID
-    title:SetText(GetTypeIcon(questType, 14) .. levelText .. " " .. label)
+    -- blizzards count of group members on the quest sits below our icon, it moves into the text behind the icon
+    local groupMates = title.groupMates or _G[title:GetName() .. "GroupMates"]
+    local mates = groupMates and groupMates:GetText() or ""
+    if groupMates then
+        groupMates:SetText("")
+    end
+    if mates ~= "" then
+        mates = GW.Colors.SkinColors.SubText:WrapTextInColorCode(mates) .. " "
+    end
+    title:SetText(GetTypeIcon(questType, 14) .. mates .. levelText .. " " .. label)
 
     title.gwCompass:SetShown(onCompass)
     title.gwCompassArrow:SetShown(onCompass)
