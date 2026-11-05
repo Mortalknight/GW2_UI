@@ -1437,6 +1437,7 @@ local function HandleItemReward(frame, isMap)
         if not frame.Icon.backdrop then
             GW.HandleIcon(frame.Icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
             frame.Icon.backdrop:SetFrameLevel(frame:GetFrameLevel() + 1)
+            GW.HandleItemButtonCrop(frame)
             if frame.IconBorder then
                 GW.HandleIconBorder(frame.IconBorder, frame.Icon.backdrop)
             end
