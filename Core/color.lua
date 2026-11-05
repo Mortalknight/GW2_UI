@@ -15,7 +15,7 @@ GW.Colors.Accent = (GW.Classic and CreateColor(190 / 255, 150 / 255, 60 / 255)) 
     or (GW.Cata and CreateColor(200 / 255, 95 / 255, 35 / 255)) -- fire orange
     or (GW.Mists and CreateColor(40 / 255, 150 / 255, 120 / 255)) -- jade
     or (GW.Retail and CreateColor(120 / 255, 70 / 255, 180 / 255)) -- void purple
-    or (GW.Forever and CreateColor(225 / 255, 220 / 255, 205 / 255)) -- milk white
+    or (GW.Forever and CreateColor(175 / 255, 120 / 255, 70 / 255)) -- bronze
     or CreateColor(150 / 255, 50 / 255, 50 / 255)
 -- the accent lifted towards white, for light that is added or multiplied onto dark art (logo glow, separators)
 do
