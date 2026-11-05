@@ -52,6 +52,10 @@ local function HandleSocialCard(card)
 
         card.ButtonText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         card.ButtonText:GwLockTextColor(1, 1, 1)
+        -- the button sets its own fonts on hover
+        local fontObject = card.ButtonText:GetFontObject()
+        card:SetNormalFontObject(fontObject)
+        card:SetHighlightFontObject(fontObject)
         return
     end
 
@@ -164,6 +168,8 @@ local function UpdateFriendCardContent(card)
 
     if not card.gwContentSkinned then
         card.gwContentSkinned = true
+        card.FriendName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        card.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
         card.Level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
         card.Class:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
         card.Location:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
@@ -194,33 +200,28 @@ local function UpdateFriendCardContent(card)
         card.FriendName:SetText(GW.StringWithRGB(accountName, clientColor))
     end
 
-    if gameAccountInfo.characterName and gameAccountInfo.characterName ~= "" then
+    if gameAccountInfo.characterName then
         local isOnline = gameAccountInfo.isOnline
         local classToken = gameAccountInfo.classFilename
         if not classToken or classToken == "" then
             classToken = GW.UnlocalizedClassName(gameAccountInfo.className)
         end
-        local classColor = isOnline and classToken and GW.GWGetClassColor(classToken, true, true) or DARKGRAY_COLOR
+        local classColor = isOnline and classToken and GW.GWGetClassColor(classToken, true, true)
+            or isOnline and GW.Colors.FallbackWhite or DARKGRAY_COLOR
 
-        local nameString = GW.StringWithRGB(gameAccountInfo.characterName, classColor)
-        if TimerunningUtil and gameAccountInfo.timerunningSeasonID and gameAccountInfo.timerunningSeasonID ~= 0 and gameAccountInfo.timerunningSeasonID ~= "" then
-            nameString = TimerunningUtil.AddSmallIcon(nameString) or nameString
-        end
-        card.Name:SetText(nameString)
-
-        if gameAccountInfo.characterLevel and gameAccountInfo.characterLevel > 0 then
-            local levelColor = isOnline and GetQuestDifficultyColor(gameAccountInfo.characterLevel) or DARKGRAY_COLOR
-            card.Level:SetText(GW.friendsList.delimiter .. GW.StringWithRGB(tostring(gameAccountInfo.characterLevel), levelColor))
+        local row = GW.StringWithRGB(FriendsListUtil.GetFormattedCharacterName(accountInfo), classColor)
+        local level = tonumber(gameAccountInfo.characterLevel)
+        if level and level > 0 then
+            row = row .. GW.friendsList.delimiter .. GW.StringWithRGB(tostring(level), isOnline and GetQuestDifficultyColor(level) or DARKGRAY_COLOR)
         end
         if gameAccountInfo.className and gameAccountInfo.className ~= "" then
-            card.Class:SetText(GW.friendsList.delimiter .. GW.StringWithRGB(gameAccountInfo.className, classColor))
+            row = row .. GW.friendsList.delimiter .. GW.StringWithRGB(gameAccountInfo.className, classColor)
         end
 
-        card.Level:ClearAllPoints()
-        card.Level:SetPoint("BOTTOMLEFT", card.Name, "BOTTOMRIGHT", 2, 0)
-        card.Class:ClearAllPoints()
-        card.Class:SetPoint("BOTTOMLEFT", card.Level, "BOTTOMRIGHT", 2, 0)
-        card.Class:SetPoint("RIGHT", card.TextHolder, "RIGHT")
+        card.Name:SetText(row)
+        card.Name:SetPoint("RIGHT", card.TextHolder, "RIGHT")
+        card.Level:SetText("")
+        card.Class:SetText("")
     end
 
     if gameAccountInfo.isOnline then

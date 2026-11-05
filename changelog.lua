@@ -13,6 +13,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.6", {
+    {GW.Enum.ChangelogType.change, [=[Forever: bronze accent color instead of white]=]},
+    {GW.Enum.ChangelogType.bug, [=[Friends list (Forever): the list headers keep their size on hover, name, level and class sit in one row without gaps]=]},
+})
+
 addChange("12.1.5", {
     {GW.Enum.ChangelogType.change, [=[Text designer: a template for every text line, with the options from before the designer; the designer itself sits behind the new Advanced switch]=]},
     {GW.Enum.ChangelogType.feature, [=[Installer: new step Text Style, Minimal, Default or Detailed for the health and power texts of target, group and player frames]=]},
