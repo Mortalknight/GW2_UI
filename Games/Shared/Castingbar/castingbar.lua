@@ -186,7 +186,7 @@ function GwCastingBarMixin:ApplySize()
     end
 
     -- the cast name takes whatever the timer leaves of the bar width
-    local timeWidth = math.min(70, width * 0.4)
+    local timeWidth = math.min(45, width * 0.4)
     self.time:SetWidth(timeWidth)
     self.name:SetWidth(math.max(20, width - timeWidth))
 
