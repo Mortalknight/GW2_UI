@@ -21,8 +21,12 @@ local DEFAULT_PET_TEXT_BLOCKS = {
     healthText = {},
 }
 
+function GW.GetGridDefaultTextBlocks(line, isPet)
+    return (isPet and DEFAULT_PET_TEXT_BLOCKS or DEFAULT_TEXT_BLOCKS)[line]
+end
+
 function GW.GetGridTextBlocks(profile, line, isPet)
-    return GW.settings.groupFrames[profile][line] or (isPet and DEFAULT_PET_TEXT_BLOCKS or DEFAULT_TEXT_BLOCKS)[line]
+    return GW.settings.groupFrames[profile][line] or GW.GetGridDefaultTextBlocks(line, isPet)
 end
 
 local function OnEnter(self)

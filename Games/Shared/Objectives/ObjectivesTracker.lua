@@ -775,7 +775,7 @@ local function LoadObjectivesTracker()
     GW.ObjectiveTrackerContainer.Notification:HookScript("OnShow", function() QueueItemButtonPositionUpdate(0.25) end)
     GW.ObjectiveTrackerContainer.Notification:HookScript("OnHide", function() QueueItemButtonPositionUpdate(0.25) end)
 
-    GW.RegisterMovableFrame(objectivesTracker, OBJECTIVES_TRACKER_LABEL, "objectives", ALL, nil, {GW.MoverOption.Scale, GW.MoverOption.Height})
+    GW.RegisterMovableFrame(objectivesTracker, GW.L["Tracker"], "objectives", ALL, nil, {GW.MoverOption.Scale, GW.MoverOption.Height})
     objectivesTracker:ClearAllPoints()
     objectivesTracker:SetPoint("TOPLEFT", objectivesTracker.gwMover)
     hooksecurefunc(objectivesTracker, "SetHeight", objectivesTracker.LayoutChanged)

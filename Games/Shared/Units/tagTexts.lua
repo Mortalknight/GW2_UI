@@ -228,6 +228,48 @@ GW.TagTextBlockOrder = {
 }
 GW.TagTextBlocks = BLOCKS
 
+-- the templates of the designer, at least what the text options of the frames offered before it; a line names its
+-- list in .presets, the designer puts the default of the line first
+local function Preset(blocks, note, hidden)
+    return {blocks = blocks, note = note, hidden = hidden}
+end
+local function Health(mode, short)
+    return {k = "healthValue", mode = mode, short = short}
+end
+local function Power(mode, short, mana)
+    return {k = "power", mode = mode, short = short, mana = mana}
+end
+local function Absorb(mode, short)
+    return {k = "absorb", mode = mode, short = short}
+end
+local DASH = {k = "text", text = " - "}
+local NEW_LINE = {k = "newLine"}
+local NAME_BLOCK = {k = "name"}
+local function GroupName(...)
+    return {{k = "mainTankIcon"}, {k = "leaderIcon"}, {k = "assistIcon"}, {k = "roleIcon"}, NAME_BLOCK, ...}
+end
+
+GW.TagTextPresets = {
+    name = {Preset({NAME_BLOCK}), Preset({{k = "leaderIcon"}, NAME_BLOCK}), Preset({{k = "leaderIcon"}, {k = "roleIcon"}, NAME_BLOCK})},
+    groupName = {Preset(GroupName()), Preset({NAME_BLOCK}), Preset({{k = "roleIcon"}, NAME_BLOCK}),
+        Preset(GroupName({k = "space"}, {k = "realmFlag", mode = "DIFFERENT"}), L["Different Than Own"]),
+        Preset(GroupName({k = "space"}, {k = "realmFlag", mode = "ALL"}), ALL)},
+    petName = {Preset({NAME_BLOCK}), Preset({NAME_BLOCK, {k = "space"}, {k = "realmFlag", mode = "DIFFERENT"}}, L["Different Than Own"]),
+        Preset({NAME_BLOCK, {k = "space"}, {k = "realmFlag", mode = "ALL"}}, ALL)},
+    level = {Preset({}), Preset({{k = "level"}}), Preset({{k = "level", colored = true}})},
+    health = {Preset({}), Preset({Health("PREC")}), Preset({Health("HEALTH")}), Preset({Health("HEALTH", true)}),
+        Preset({Health("LOSTHEALTH")}), Preset({Health("LOSTHEALTH", true)}),
+        Preset({Health("HEALTH"), DASH, Health("PREC")}), Preset({Health("HEALTH", true), DASH, Health("PREC")})},
+    globeHealth = {Preset({Health("HEALTH")}), Preset({Health("HEALTH", true)}), Preset({Health("PREC")}),
+        Preset({Health("HEALTH"), NEW_LINE, Health("PREC")}), Preset({Health("HEALTH", true), NEW_LINE, Health("PREC")})},
+    -- retail can neither shorten the shield nor show it in percent
+    absorb = {Preset({Absorb("CUR")}), Preset({Absorb("CUR", true)}, nil, GW.isModern), Preset({Absorb("PREC")}, nil, GW.isModern),
+        Preset({Absorb("CUR"), NEW_LINE, Absorb("PREC")}, nil, GW.isModern)},
+    power = {Preset({}), Preset({Power("CUR")}), Preset({Power("CUR", true)}), Preset({Power("PREC")})},
+    mana = {Preset({}), Preset({Power("CUR", nil, true)}), Preset({Power("CUR", true, true)}), Preset({Power("PREC", nil, true)})},
+    classBar = {Preset({}), Preset({{k = "classBarValue"}})},
+}
+
 -- the chosen mode of a block, a block without one has the default
 function GW.GetTagTextBlockMode(def, block)
     return def.modes and (block.mode or def.modes[1][1])

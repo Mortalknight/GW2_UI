@@ -134,11 +134,11 @@ end
 
 function GW.GetClassPowerTextTarget()
     local lines = {
-        {key = "manaText", label = GW.L["Mana Bar"]},
-        {key = "littleManaText", label = GW.L["Small Mana Bar"]},
+        {key = "manaText", label = GW.L["Mana Bar"], presets = "mana"},
+        {key = "littleManaText", label = GW.L["Small Mana Bar"], presets = "mana"},
     }
     if GW.Retail then
-        tinsert(lines, {key = "classBarText", label = GW.L["Class Bar"]})
+        tinsert(lines, {key = "classBarText", label = GW.L["Class Bar"], presets = "classBar"})
     end
     return {
         createPreview = CreateClassPowerTextPreview,
@@ -146,6 +146,7 @@ function GW.GetClassPowerTextTarget()
         categories = {power = true, color = true, text = true},
         lines = lines,
         get = GetClassPowerTextBlocks,
+        getDefault = function(line) return DEFAULT_TEXT_BLOCKS[line] end,
         -- nil goes back to the built-in line
         set = function(line, blocks)
             GW.settings.classpower[line] = blocks or false

@@ -670,10 +670,11 @@ function GW.GetGridTextTarget(profile)
     local isPet = profiles[profile].isPet
     return {
         lines = {
-            {key = "nameText", label = GW.L["Name Line"]},
-            {key = "healthText", label = HEALTH},
+            {key = "nameText", label = GW.L["Name Line"], presets = isPet and "petName" or "groupName"},
+            {key = "healthText", label = HEALTH, presets = "health"},
         },
         get = function(line) return GW.GetGridTextBlocks(profile, line, isPet) end,
+        getDefault = function(line) return GW.GetGridDefaultTextBlocks(line, isPet) end,
         set = function(line, blocks)
             GW.settings.groupFrames[profile][line] = blocks or false
             GW.UpdateGridSettings(profile)

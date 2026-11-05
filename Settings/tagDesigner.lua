@@ -3,7 +3,8 @@ local GW = select(2, ...)
 local L = GW.L
 
 -- the text designer, a row in the settings: blocks from the list on the left are dragged into the lines of a frame,
--- the lines are saved right away. A caller passes its target: {lines = {{key, label}}, get(line), set(line, blocks)},
+-- the lines are saved right away. A caller passes its target: {lines = {{key, label, presets}}, get(line), set(line, blocks),
+-- getDefault(line)}, presets names a list of GW.TagTextPresets offered as templates above the designer;
 -- player = true offers the blocks with the player's own values, createPreview(parent, lines) returns a picture of
 -- the frame with a font string per line in .texts[line key] and a Refresh() that takes the current settings; without
 -- it the preview looks like a grid frame; height is the height of the designer for more lines, categories =
@@ -21,7 +22,8 @@ local RIGHT_WIDTH = WIDTH - PALETTE_WIDTH - PALETTE_GAP - 2 * PADDING
 -- minus the padding inside a line
 local LINE_WIDTH = RIGHT_WIDTH - 12
 local PREVIEW_WIDTH = 160
-GW.TAG_DESIGNER_HEIGHT = HEIGHT
+-- a template dropdown with the name of its line above it
+local PRESET_ROW = 44
 
 local CATEGORIES = {
     {key = "name", label = NAME},
@@ -45,7 +47,7 @@ local designers = {}
 -- one drag at a time: {designer, key} from the list or {designer, line, index} from a line
 local drag
 
-local Refresh, UpdateLines, UpdateOptions
+local Refresh, UpdateLines, UpdateOptions, Height
 
 -- the settings load before the block list
 local function Blocks()
@@ -342,20 +344,28 @@ UpdateLines = function(designer)
     if designer.preview.Refresh then
         designer.preview:Refresh()
     end
+    -- without the designer the preview sits at the top, next to the templates
     local y = 0
-    for _, zone in ipairs(designer.zones) do
-        zone:ClearAllPoints()
-        zone:SetPoint("TOPLEFT", designer.right, "TOPLEFT", 0, y - 16)
-        zone:SetPoint("RIGHT", designer.right, "RIGHT")
-        UpdateZone(designer, zone)
-        y = y - 16 - zone:GetHeight() - 10
+    if GW.global.tagDesignerExpanded then
+        for _, zone in ipairs(designer.zones) do
+            zone:ClearAllPoints()
+            zone:SetPoint("TOPLEFT", designer.right, "TOPLEFT", 0, y - 16)
+            zone:SetPoint("RIGHT", designer.right, "RIGHT")
+            UpdateZone(designer, zone)
+            y = y - 16 - zone:GetHeight() - 10
+        end
+        y = y - 6
     end
     designer.preview:ClearAllPoints()
-    designer.preview:SetPoint("TOPLEFT", designer.right, "TOPLEFT", 0, y - 6)
+    designer.preview:SetPoint("TOPLEFT", designer.right, "TOPLEFT", 0, y)
 
     for _, line in ipairs(designer.target.lines) do
         designer.preview.texts[line.key]:SetText(GW.BuildTagPreview(lines[line.key]))
     end
+    for _, dropdown in ipairs(designer.presets) do
+        dropdown:GenerateMenu()
+    end
+    designer.background:SetHeight((Height(designer.target, designer) - TOP + 6) / 1.3)
 end
 
 Refresh = function(designer)
@@ -363,24 +373,51 @@ Refresh = function(designer)
     UpdateOptions(designer)
 end
 
--- reads the lines again each time the row shows, the profile may have changed in between
+-- reads the lines again each time the row shows, the profile may have changed in between; the row height of the
+-- settings follows the preview
 local function Load(designer)
     designer.selected = nil
     for _, line in ipairs(designer.target.lines) do
         designer.lines[line.key] = CopyTable(designer.target.get(line.key))
     end
     Refresh(designer)
+    C_Timer.After(0, GW.RefreshConditionalOptions)
+end
+
+-- without the designer only the templates and the preview are left
+Height = function(target, designer)
+    if GW.global.tagDesignerExpanded then
+        return target.height or HEIGHT
+    end
+    local preview = designer and designer.preview:GetHeight() or 0
+    return TOP + 2 * PADDING + math.max(#target.lines * PRESET_ROW, preview)
+end
+
+-- the height of the row in the settings, frame is the row once it is built
+function GW.GetTagDesignerHeight(target, frame)
+    return Height(target, frame and frame.tagDesigner)
+end
+
+local function ApplyLayout(designer)
+    local expanded = GW.global.tagDesignerExpanded == true
+    designer.advanced:SetChecked(expanded)
+    designer.reset:SetShown(expanded)
+    designer.palette:SetShown(expanded)
+    designer.options:SetShown(expanded)
+    for _, zone in ipairs(designer.zones) do
+        zone:SetShown(expanded)
+    end
 end
 
 -- creation ------------------------------------------------------------------------------------------------------------
 
 local function CreatePalette(designer)
     local frame = designer.frame
-    local scrollBox = CreateFrame("Frame", nil, frame, "WowScrollBox")
-    scrollBox:SetPoint("TOPLEFT", 0, -TOP)
+    local scrollBox = CreateFrame("Frame", nil, designer.palette, "WowScrollBox")
+    scrollBox:SetPoint("TOPLEFT")
     scrollBox:SetPoint("BOTTOMLEFT")
     scrollBox:SetWidth(PALETTE_WIDTH)
-    local scrollBar = CreateFrame("EventFrame", nil, frame, "MinimalScrollBar")
+    local scrollBar = CreateFrame("EventFrame", nil, designer.palette, "MinimalScrollBar")
     scrollBar:SetPoint("TOPLEFT", scrollBox, "TOPRIGHT", 6, 0)
     scrollBar:SetPoint("BOTTOMLEFT", scrollBox, "BOTTOMRIGHT", 6, 0)
 
@@ -439,6 +476,59 @@ local function CreatePalette(designer)
             list:OnMouseWheel(delta)
         end
     end)
+end
+
+-- the templates of a line: its default first, then its list, a text that is already there not twice
+local function LinePresets(designer, line)
+    local list, seen = {}, {}
+    local function Add(blocks, note, isDefault)
+        local tagString = GW.BuildTagString(blocks)
+        if seen[tagString] then return end
+        seen[tagString] = true
+        local label = GW.BuildTagPreview(blocks):gsub("\n", " / ")
+        label = (label == "" and NONE or label) .. (note and " (" .. note .. ")" or "") .. (isDefault and " (" .. DEFAULT .. ")" or "")
+        tinsert(list, {blocks = blocks, tagString = tagString, label = label, isDefault = isDefault})
+    end
+    if designer.target.getDefault then
+        Add(designer.target.getDefault(line.key), nil, true)
+    end
+    for _, preset in ipairs(GW.TagTextPresets[line.presets] or {}) do
+        if not preset.hidden then
+            Add(preset.blocks, preset.note)
+        end
+    end
+    return list
+end
+
+-- a dropdown per line, it shows the template the line matches or custom
+local function CreatePresets(designer)
+    designer.presets = {}
+    for index, line in ipairs(designer.target.lines) do
+        local label = designer.frame:CreateFontString(nil, "OVERLAY")
+        label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        label:SetPoint("TOPLEFT", 0, -TOP - (index - 1) * PRESET_ROW)
+        label:SetText(line.label)
+
+        local presets = LinePresets(designer, line)
+        local dropdown = CreateFrame("DropdownButton", nil, designer.frame, "WowStyle1DropdownTemplate")
+        dropdown:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 0, -4)
+        dropdown:GwHandleDropDownBox(nil, nil, nil, PALETTE_WIDTH)
+        dropdown:SetDefaultText(CUSTOM)
+        dropdown:SetupMenu(function(_, rootDescription)
+            for _, preset in ipairs(presets) do
+                rootDescription:CreateRadio(preset.label, function()
+                    return GW.BuildTagString(designer.lines[line.key] or {}) == preset.tagString
+                end, function()
+                    designer.target.set(line.key, not preset.isDefault and CopyTable(preset.blocks) or nil)
+                    designer.lines[line.key] = CopyTable(designer.target.get(line.key))
+                    designer.selected = nil
+                    Refresh(designer)
+                end)
+            end
+        end)
+        tinsert(designer.presets, dropdown)
+    end
 end
 
 local function CreateZone(parent, line)
@@ -576,6 +666,7 @@ function GW.RefreshTagDesignerPreviews()
                 UpdateLines(designer)
             end
         end
+        GW.RefreshConditionalOptions()
     end)
 end
 
@@ -583,10 +674,32 @@ end
 function GW.CreateTagDesigner(frame, target, hint)
     local designer = {frame = frame, target = target, lines = {}, zones = {}}
     tinsert(designers, designer)
+    frame.tagDesigner = designer
+
+    -- one switch for every designer, new users start with the templates only
+    local advancedLabel = frame:CreateFontString(nil, "OVERLAY")
+    advancedLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    advancedLabel:SetPoint("RIGHT", frame, "TOPRIGHT", 0, -11)
+    advancedLabel:SetText(ADVANCED_LABEL)
+    designer.advanced = CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
+    designer.advanced:SetSize(16, 16)
+    designer.advanced:GwSkinCheckButton()
+    designer.advanced:SetPoint("RIGHT", advancedLabel, "LEFT", -6, 0)
+    designer.advanced:SetScript("OnClick", function(self)
+        GW.global.tagDesignerExpanded = self:GetChecked() or nil
+        for _, other in ipairs(designers) do
+            ApplyLayout(other)
+            if other.frame:IsVisible() then
+                UpdateLines(other)
+            end
+        end
+        GW.RefreshConditionalOptions()
+    end)
 
     local reset = CreateFrame("Button", nil, frame, "GwStandardButton")
+    designer.reset = reset
     reset:SetSize(140, 22)
-    reset:SetPoint("TOPRIGHT")
+    reset:SetPoint("RIGHT", designer.advanced, "LEFT", -12, 0)
     reset:SetText(RESET_TO_DEFAULT)
     reset:SetScript("OnClick", function()
         for _, line in ipairs(target.lines) do
@@ -603,15 +716,20 @@ function GW.CreateTagDesigner(frame, target, hint)
     hintText:SetJustifyH("LEFT")
     hintText:SetText(hint)
 
+    CreatePresets(designer)
+    designer.palette = CreateFrame("Frame", nil, frame)
+    designer.palette:SetPoint("TOPLEFT", 0, -TOP - #target.lines * PRESET_ROW - 6)
+    designer.palette:SetPoint("BOTTOMLEFT")
+    designer.palette:SetWidth(PALETTE_WIDTH + PALETTE_GAP)
     CreatePalette(designer)
 
     designer.right = CreateFrame("Frame", nil, frame)
     designer.right:SetPoint("TOPLEFT", PALETTE_WIDTH + PALETTE_GAP + PADDING, -TOP - PADDING)
     designer.right:SetPoint("BOTTOMRIGHT", -PADDING, PADDING)
     -- starts right of the scroll bar and below the reset button, it fades out by the middle of the right side
-    local background = GW.CreateDetailsBackgroundTexture(frame)
-    background:SetPoint("TOPLEFT", designer.right, -PADDING - 4, PADDING + 6)
-    background:SetSize((RIGHT_WIDTH + 2 * PADDING + 4) / 1.3, ((target.height or HEIGHT) - TOP + 6) / 1.3)
+    designer.background = GW.CreateDetailsBackgroundTexture(frame)
+    designer.background:SetPoint("TOPLEFT", designer.right, -PADDING - 4, PADDING + 6)
+    designer.background:SetWidth((RIGHT_WIDTH + 2 * PADDING + 4) / 1.3)
 
     for index, line in ipairs(target.lines) do
         designer.zones[index] = CreateZone(designer.right, line)
@@ -643,6 +761,7 @@ function GW.CreateTagDesigner(frame, target, hint)
     end)
     designer.preview:SetScript("OnLeave", GameTooltip_Hide)
 
+    ApplyLayout(designer)
     frame:HookScript("OnShow", function() Load(designer) end)
     frame:HookScript("OnHide", function()
         if drag and drag.designer == designer then

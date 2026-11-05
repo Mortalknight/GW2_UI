@@ -427,8 +427,9 @@ function GwPlayerPowerBarMixin:ToggleBar()
 end
 
 -- the text of the bar comes from the text designer, the bar showed its power value
+local DEFAULT_TEXT_BLOCKS = {{k = "power", mode = "CUR"}}
 local function GetPowerTextBlocks()
-    return GW.settings.powerBar.powerText or {{k = "power", mode = "CUR"}}
+    return GW.settings.powerBar.powerText or DEFAULT_TEXT_BLOCKS
 end
 
 local function AnchorLabel(bar)
@@ -516,8 +517,9 @@ function GW.GetPowerBarTextTarget()
         createPreview = CreatePowerBarTextPreview,
         player = true,
         categories = {power = true, color = true, text = true},
-        lines = {{key = "powerText", label = GW.L["Power"]}},
+        lines = {{key = "powerText", label = GW.L["Power"], presets = "power"}},
         get = function() return GetPowerTextBlocks() end,
+        getDefault = function() return DEFAULT_TEXT_BLOCKS end,
         -- nil goes back to the built-in line
         set = function(_, blocks)
             GW.settings.powerBar.powerText = blocks or false

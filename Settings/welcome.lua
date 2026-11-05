@@ -143,6 +143,116 @@ local function ApplyCVars()
     return format("%d/%d", applied, total)
 end
 
+-- the text styles of the installer, picked per frame for health and power, names and levels stay; a style sets the
+-- line kinds it names, false is the default of a line
+local function Health(mode, short)
+    return {k = "healthValue", mode = mode, short = short}
+end
+local DASH = {k = "text", text = " - "}
+local DETAILED_POWER = {{k = "power", mode = "CUR", short = true}, DASH, {k = "power", mode = "PREC"}}
+local TEXT_STYLE_NAMES = {L["Minimal"], DEFAULT, L["Detailed"]}
+local TEXT_STYLE_SECTIONS = {{key = "health", label = HEALTH}, {key = "power", label = L["Power"]}}
+
+local TEXT_STYLE_FRAMES = {
+    {label = TARGET, unit = "target",
+        lines = function(settings)
+            local unitframes, objectives = settings.unitframes, settings.objectives
+            local list = {}
+            for _, db in pairs({unitframes.target, unitframes.targettarget, unitframes.focus, unitframes.focustarget,
+                objectives.bossFrames, objectives.arenaFrames}) do
+                tinsert(list, {db, "healthText", "health"})
+                tinsert(list, {db, "powerText", "power"})
+            end
+            return list
+        end,
+        health = {{health = {}}, {health = false}, {health = {Health("HEALTH", true), DASH, Health("PREC")}}},
+        power = {{power = {}}, {power = false}, {power = DETAILED_POWER}}},
+    {label = GROUP,
+        lines = function(settings)
+            local list = {{settings.unitframes.party, "healthText", "health"}}
+            for _, grid in ipairs({"party", "raid10", "raid25", "raid40", "maintank", "partyPet", "raidPet"}) do
+                tinsert(list, {settings.groupFrames[grid], "healthText", "health"})
+            end
+            return list
+        end,
+        health = {{health = {}}, {health = false}, {health = {Health("HEALTH", true)}}}},
+    {label = PLAYER, unit = "player",
+        lines = function(settings)
+            local unitframes, classpower = settings.unitframes, settings.classpower
+            return {
+                {unitframes.player, "healthText", "health"}, {unitframes.player, "powerText", "power"},
+                {unitframes.pet, "healthText", "health"}, {unitframes.pet, "powerText", "power"},
+                {unitframes.healthGlobe, "healthText", "globe"}, {settings.powerBar, "powerText", "powerBar"},
+                {classpower, "manaText", "mana"}, {classpower, "littleManaText", "mana"},
+            }
+        end,
+        health = {
+            {health = {Health("HEALTH", true)}, globe = {Health("HEALTH", true)}},
+            {health = false, globe = false},
+            {health = {Health("HEALTH"), DASH, Health("PREC")}, globe = {Health("HEALTH"), {k = "newLine"}, Health("PREC")}},
+        },
+        power = {
+            {power = {}, powerBar = {}, mana = {}},
+            {power = false, powerBar = false, mana = false},
+            {power = DETAILED_POWER, powerBar = DETAILED_POWER, mana = false},
+        }},
+}
+
+local function ApplyTextStyle(frame, style)
+    for _, entry in ipairs(frame.lines(GW.settings)) do
+        local db, line, kind = entry[1], entry[2], entry[3]
+        if type(db) == "table" and style[kind] ~= nil then
+            db[line] = style[kind] and CopyTable(style[kind]) or false
+        end
+    end
+end
+
+-- the preview shows the health and power line of the first frame of the column
+local function PreviewBlocks(frame, style, kind, line)
+    local blocks = style[kind]
+    if blocks == false then
+        return frame.unit and GW.GetUnitFrameTextTarget(frame.unit).getDefault(line) or GW.GetGridDefaultTextBlocks(line)
+    end
+    return blocks or {}
+end
+
+local function CreateStylePreview(parent, frame)
+    local preview = CreateFrame("Frame", nil, parent)
+    preview:SetSize(145, 36)
+    preview:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+
+    local title = preview:CreateFontString(nil, "OVERLAY")
+    title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    title:SetTextColor(0.62, 0.58, 0.5)
+    title:SetPoint("BOTTOMLEFT", preview, "TOPLEFT", 0, 4)
+    title:SetText(frame.label)
+
+    -- a health bar on top and a power bar below, each with its text
+    local health = preview:CreateTexture(nil, "ARTWORK")
+    health:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+    health:SetVertexColor(GW.oUF.colors.health:GetRGB())
+    health:SetPoint("TOPLEFT")
+    health:SetSize(145 * 0.72, 21)
+    local power = preview:CreateTexture(nil, "ARTWORK")
+    power:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+    power:SetVertexColor(GW.oUF.colors.power.MANA:GetRGB())
+    power:SetPoint("BOTTOMLEFT")
+    power:SetSize(145 * 0.84, 14)
+
+    preview.healthText = preview:CreateFontString(nil, "OVERLAY")
+    preview.healthText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
+    preview.healthText:SetPoint("LEFT", health, "LEFT", 4, 0)
+    preview.powerText = preview:CreateFontString(nil, "OVERLAY")
+    preview.powerText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
+    preview.powerText:SetPoint("LEFT", power, "LEFT", 4, 0)
+
+    function preview:SetStyles(healthStyle, powerStyle)
+        self.healthText:SetText(GW.BuildTagPreview(PreviewBlocks(frame, healthStyle, "health", "healthText")))
+        self.powerText:SetText(GW.BuildTagPreview(PreviewBlocks(frame, powerStyle or {}, "power", "powerText")))
+    end
+    return preview
+end
+
 -- one click install: every step with its recommended default, then reload
 local function ApplyExpressInstall()
     ApplyChatSetup()
@@ -221,7 +331,7 @@ local MODULES = {
     { setting = "chat.enabled", name = CHAT },
     { setting = "chat.bubbles.enabled", name = CHAT_BUBBLES_TEXT },
     { setting = "notifications.enabled", name = COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL },
-    { setting = "objectives.enabled", name = OBJECTIVES_TRACKER_LABEL or QUESTS_LABEL },
+    { setting = "objectives.enabled", name = L["Tracker"] },
     { setting = "immersiveQuesting.enabled", name = L["Immersive Questing"] },
     { setting = "tooltip.enabled", name = L["Tooltips"] },
 }
@@ -510,6 +620,63 @@ STEPS = RemoveHiddenSteps({
                     end
                 end
             end
+        end,
+    },
+    {
+        title = L["Text Style"],
+        desc = L["Choose how much the health and power texts of the unit frames show. Every text can be changed later in the text designer."],
+        -- a column per frame, a preview and a dropdown for health and for power; what is not picked keeps its texts
+        buildContent = function(content, step)
+            step.gwChoices = step.gwChoices or {}
+            for index, frame in ipairs(TEXT_STYLE_FRAMES) do
+                local choices = step.gwChoices[index] or {}
+                step.gwChoices[index] = choices
+                local preview = CreateStylePreview(content, frame)
+                preview:SetPoint("TOPLEFT", content, "TOPLEFT", 10 + (index - 1) * 155, -30)
+                local function UpdatePreview()
+                    preview:SetStyles(frame.health[choices.health or 2], frame.power and frame.power[choices.power or 2])
+                end
+                UpdatePreview()
+
+                local previous = preview
+                for _, section in ipairs(TEXT_STYLE_SECTIONS) do
+                    local styles = frame[section.key]
+                    if styles then
+                        local label = content:CreateFontString(nil, "OVERLAY")
+                        label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+                        label:SetTextColor(0.62, 0.58, 0.5)
+                        label:SetPoint("TOPLEFT", previous, "BOTTOMLEFT", 0, -10)
+                        label:SetText(section.label)
+
+                        local dropdown = CreateFrame("DropdownButton", nil, content, "WowStyle1DropdownTemplate")
+                        dropdown:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 0, -4)
+                        dropdown:GwHandleDropDownBox(nil, nil, nil, 145)
+                        dropdown:SetupMenu(function(_, rootDescription)
+                            for styleIndex, name in ipairs(TEXT_STYLE_NAMES) do
+                                rootDescription:CreateRadio(name, function() return (choices[section.key] or 2) == styleIndex end, function()
+                                    choices[section.key] = styleIndex
+                                    ApplyTextStyle(frame, styles[styleIndex])
+                                    UpdatePreview()
+                                    step.applied = true
+                                end)
+                            end
+                        end)
+                        previous = dropdown
+                    end
+                end
+            end
+        end,
+        onNext = function(_, step)
+            local parts = {}
+            for index, frame in ipairs(TEXT_STYLE_FRAMES) do
+                local choices = step.gwChoices and step.gwChoices[index] or {}
+                for _, section in ipairs(TEXT_STYLE_SECTIONS) do
+                    if choices[section.key] then
+                        tinsert(parts, format("%s %s: %s", frame.label, section.label, TEXT_STYLE_NAMES[choices[section.key]]))
+                    end
+                end
+            end
+            step.summaryDetail = #parts > 0 and table.concat(parts, ", ") or nil
         end,
     },
     {

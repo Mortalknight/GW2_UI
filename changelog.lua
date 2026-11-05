@@ -14,6 +14,8 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.5", {
+    {GW.Enum.ChangelogType.change, [=[Text designer: a template for every text line, with the options from before the designer; the designer itself sits behind the new Advanced switch]=]},
+    {GW.Enum.ChangelogType.feature, [=[Installer: new step Text Style, Minimal, Default or Detailed for the health and power texts of target, group and player frames]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest window (Forever): reward icons without a second frame]=]},
     {GW.Enum.ChangelogType.bug, [=[Spellbook: fixed a Lua error when a new spell tab shows up]=]},
     {GW.Enum.ChangelogType.bug, [=[Totem bar: no longer jumps over the other action bars in combat]=]},

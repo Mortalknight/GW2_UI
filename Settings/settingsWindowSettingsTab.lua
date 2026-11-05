@@ -117,7 +117,7 @@ local function GetOptionRowExtent(opt)
     end
 
     if opt and opt.optionType == "tagDesigner" then
-        return ROW_PAD_Y * 2 + (opt.target.height or GW.TAG_DESIGNER_HEIGHT)
+        return ROW_PAD_Y * 2 + GW.GetTagDesignerHeight(opt.target, opt.__widget or opt)
     end
 
     return DEFAULT_ROW_EXTENT
@@ -632,7 +632,7 @@ end
 
 local function HasConditionalOptions(panel)
     for _, opt in ipairs((panel and panel.gwOptions) or {}) do
-        if opt.isVisible then return true end
+        if opt.isVisible or opt.optionType == "tagDesigner" then return true end
     end
     return false
 end
@@ -642,6 +642,10 @@ local function VisibilitySignature(panel)
     for _, opt in ipairs((panel and panel.gwOptions) or {}) do
         if opt.isVisible then
             parts[#parts + 1] = IsOptionVisible(opt) and "1" or "0"
+        end
+        -- a text designer changes its height with the advanced switch and its preview
+        if opt.optionType == "tagDesigner" then
+            parts[#parts + 1] = math.floor(GetOptionRowExtent(opt))
         end
     end
     return table.concat(parts)

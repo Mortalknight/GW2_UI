@@ -66,7 +66,7 @@ local function LoadObjectivesPanel(sWindow)
     p.panelId = "objectives_general"
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    p.header:SetText(OBJECTIVES_TRACKER_LABEL)
+    p.header:SetText(L["Tracker"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit objectives settings."])
@@ -157,6 +157,6 @@ local function LoadObjectivesPanel(sWindow)
     p:AddOption(L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], {getterSetter = "general.questXpPercent"})
     p:AddOption(L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], {getterSetter = "general.questRewardMostValueIcon", callback = GW.ResetQuestRewardMostValueIcon})
 
-    sWindow:AddSettingsPanel(p, OBJECTIVES_TRACKER_LABEL, L["Edit objectives settings."])
+    sWindow:AddSettingsPanel(p, L["Tracker"], L["Edit objectives settings."])
 end
 GW.LoadObjectivesPanel = LoadObjectivesPanel

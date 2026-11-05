@@ -54,10 +54,10 @@ function GW.GetUnitFrameTextBlocks(unit, line)
 end
 
 local UNIT_FRAME_LINES = {
-    {key = "nameText", label = GW.L["Name Line"]},
-    {key = "levelText", label = LEVEL},
-    {key = "healthText", label = HEALTH},
-    {key = "powerText", label = GW.L["Power"]},
+    {key = "nameText", label = GW.L["Name Line"], presets = "name"},
+    {key = "levelText", label = LEVEL, presets = "level"},
+    {key = "healthText", label = HEALTH, presets = "health"},
+    {key = "powerText", label = GW.L["Power"], presets = "power"},
 }
 -- the pet frame has no name and level, boss and arena frames no level
 local PET_LINES = {UNIT_FRAME_LINES[3], UNIT_FRAME_LINES[4]}
@@ -78,6 +78,7 @@ function GW.GetUnitFrameTextTarget(unit, frameName)
         categories = isPet and {health = true, power = true, status = true, color = true, text = true} or nil,
         lines = isPet and PET_LINES or (unit == "boss" or unit == "arena") and OBJECTIVES_LINES or UNIT_FRAME_LINES,
         get = function(line) return GW.GetUnitFrameTextBlocks(unit, line) end,
+        getDefault = function(line) return GetDefaultTextBlocks(unit, line) end,
         -- nil goes back to the built-in line
         set = function(line, blocks)
             GetTextSettings(unit)[line] = blocks or false
@@ -1287,10 +1288,11 @@ function GW.GetHealthGlobeTextTarget()
         -- the globe only shows health and shield
         categories = {health = true, color = true, text = true},
         lines = {
-            {key = "healthText", label = HEALTH},
-            {key = "absorbText", label = GW.L["Shield"]},
+            {key = "healthText", label = HEALTH, presets = "globeHealth"},
+            {key = "absorbText", label = GW.L["Shield"], presets = "absorb"},
         },
         get = function(line) return GW.GetUnitFrameTextBlocks("healthGlobe", line) end,
+        getDefault = function(line) return GetDefaultTextBlocks("healthGlobe", line) end,
         -- nil goes back to the built-in line
         set = function(line, blocks)
             GW.settings.unitframes.healthGlobe[line] = blocks or false
