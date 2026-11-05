@@ -19,6 +19,7 @@ GW.Construct_HealthValueText = Construct_HealthValueText
 
 local function UpdateHealthValueTextSettings(frame)
     local name = frame.HealthValueText
+    GW.SetGridTextRows(name, frame.healthTagString)
     frame:Tag(name, frame.healthTagString)
 end
 GW.UpdateHealthValueTextSettings = UpdateHealthValueTextSettings

@@ -20,6 +20,7 @@ GW.Construct_NameText = Construct_NameText
 
 local function UpdateNameSettings(frame)
     local name = frame.Name
+    GW.SetGridTextRows(name, frame.nameTagString)
     frame:Tag(name, frame.nameTagString)
 end
 GW.UpdateNameSettings = UpdateNameSettings

@@ -325,6 +325,13 @@ local function CreateRaisedText(raised)
 end
 GW.CreateRaisedText = CreateRaisedText
 
+local function SetTextRows(text, tagString)
+    local rows = select(2, tagString:gsub("\n", "")) + 1
+    text:SetWordWrap(rows > 1)
+    text:SetMaxLines(rows)
+end
+GW.SetGridTextRows = SetTextRows
+
 local function CreateRaisedElement(frame)
 	local raised = CreateFrame("Frame", nil, frame)
 	local level = frame:GetFrameLevel() + 100
