@@ -103,6 +103,36 @@ local function StripTexture(texture, kill, alpha)
     end
 end
 
+local function KeepIconCrop(icon, left, right, top, bottom)
+    if left ~= 0.07 or right ~= 0.93 or top ~= 0.07 or bottom ~= 0.93 then
+        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    end
+end
+
+-- forever masks the icon of item buttons, a stripped mask hides it completely
+local function RemoveItemButtonMask(button)
+    local mask = button.Mask
+    if not mask then return end
+    for _, texture in ipairs({GetItemButtonIconTexture(button) or false, button:GetNormalTexture() or false, button:GetPushedTexture() or false}) do
+        if texture then
+            texture:RemoveMaskTexture(mask)
+        end
+    end
+end
+
+-- SetItemButtonTexture resets the icon crop on every update on forever
+local function HandleItemButtonCrop(button)
+    if not GW.Forever or button.gwCropKept then return end
+    button.gwCropKept = true
+
+    RemoveItemButtonMask(button)
+    local icon = GetItemButtonIconTexture(button)
+    if icon then
+        hooksecurefunc(icon, "SetTexCoord", KeepIconCrop)
+    end
+end
+GW.HandleItemButtonCrop = HandleItemButtonCrop
+
 -- every texture of the frame and of its art child frames
 local function GwStripTextures(object, kill, alpha)
     if object:IsObjectType("Texture") then
@@ -123,6 +153,9 @@ local function GwStripTextures(object, kill, alpha)
                 StripTexture(region, kill, alpha)
             end
         end
+    end
+    if object.GetItemButtonIconTexture then
+        RemoveItemButtonMask(object)
     end
 end
 

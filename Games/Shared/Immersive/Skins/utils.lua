@@ -264,30 +264,6 @@ local function HandleIcon(icon, backdrop, backdropTexture, isBorder)
 end
 GW.HandleIcon = HandleIcon
 
-local function KeepIconCrop(icon, left, right, top, bottom)
-    if left ~= 0.07 or right ~= 0.93 or top ~= 0.07 or bottom ~= 0.93 then
-        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    end
-end
-
--- forever masks item buttons round and SetItemButtonTexture resets the icon crop on every update
-local function HandleItemButtonCrop(button)
-    if not GW.Forever or button.gwCropKept then return end
-    button.gwCropKept = true
-
-    local icon = GetItemButtonIconTexture(button)
-    if button.Mask then
-        icon:RemoveMaskTexture(button.Mask)
-        for _, texture in ipairs({button:GetNormalTexture() or false, button:GetPushedTexture() or false}) do
-            if texture then
-                texture:RemoveMaskTexture(button.Mask)
-            end
-        end
-    end
-    hooksecurefunc(icon, "SetTexCoord", KeepIconCrop)
-end
-GW.HandleItemButtonCrop = HandleItemButtonCrop
-
 do
     -- atlas borders tell the quality by their name, the others by their vertex color
     local ATLAS_QUALITY = {
@@ -1355,6 +1331,15 @@ function GW.SetCollapseArrow(texture, collapsed)
     texture:SetRotation(collapsed and math.pi / 2 or 0)
 end
 
+-- the left half of the tab icon is the selected look, the right half the normal one
+local function SetTabIconSelected(tab, selected)
+    if selected then
+        tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
+    else
+        tab.icon:SetTexCoord(0.51, 1, 0, 0.625)
+    end
+end
+
 local function SkinSideTabButton(self, iconTexture, tooltipText)
     self.gwSkinned = true
     self:GwStripTextures()
@@ -1370,7 +1355,7 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
 
     self.icon:SetTexture(iconTexture)
 
-    self.icon:SetTexCoord(0.51, 1, 0, 0.625)
+    SetTabIconSelected(self, false)
 
     if tooltipText then
         self:HookScript("OnEnter", function()
@@ -1384,24 +1369,29 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
 
     if self.SetTabSelected then
         hooksecurefunc(self, "SetTabSelected", function(tab)
-            if tab.isSelected then
-                tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
-            else
-                tab.icon:SetTexCoord(0.51, 1, 0, 0.625)
-            end
+            SetTabIconSelected(tab, tab.isSelected)
         end)
         if self.isSelected then
-            self.icon:SetTexCoord(0, 0.5, 0, 0.625)
+            SetTabIconSelected(self, true)
         end
     else
         OnTabState(self,
-            function(tab) tab.icon:SetTexCoord(0, 0.5, 0, 0.625) end,
-            function(tab) tab.icon:SetTexCoord(0.51, 1, 0, 0.625) end,
+            function(tab) SetTabIconSelected(tab, true) end,
+            function(tab) SetTabIconSelected(tab, false) end,
             function(tab) tab:SetSize(64, 40) end)
 
         -- frame based side tabs (legacy system) have no enabled state
         if self.IsEnabled and not self:IsEnabled() then -- selected tab
-            self.icon:SetTexCoord(0, 0.5, 0, 0.625)
+            SetTabIconSelected(self, true)
+        end
+    end
+
+    -- the tabs of the social window show their selection only through SetChecked
+    if self.SetChecked then
+        hooksecurefunc(self, "SetChecked", SetTabIconSelected)
+        -- the side tabs of the group finder have a SetChecked from their mixin but no GetChecked
+        if self.GetChecked and self:GetChecked() then
+            SetTabIconSelected(self, true)
         end
     end
 end

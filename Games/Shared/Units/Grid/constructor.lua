@@ -612,6 +612,7 @@ local function CreateHeader(parent, profile, options, overrideName, groupFilter)
     local header = parent:SpawnHeader(overrideName, ((options.name == "RaidPet" or options.name == "PartyPet") and "SecureGroupPetHeaderTemplate" or nil),
         "showParty", true,
         "showRaid", options.name ~= "Party" and options.name ~= "PartyPet",
+        "gw2-guessUnit", (options.name == "Party" or options.name == "PartyPet") and "party" or "raid",
         "showPlayer", true,
         "groupFilter", groupFilter,
         "groupingOrder", "1,2,3,4,5,6,7,8",

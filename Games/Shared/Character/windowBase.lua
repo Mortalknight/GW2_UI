@@ -338,10 +338,10 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
         savedPos.point, _, savedPos.relativePoint, savedPos.xOfs, savedPos.yOfs = frame:GetPoint()
         GW.settings.windows.character.pos = savedPos
 
-        if frame.dressingRoom and frame.dressingRoom.model then
-            frame.dressingRoom.model:RefreshCamera()
-        elseif _G.GwDressingRoom and GwDressingRoom.model then
-            GwDressingRoom.model:RefreshCamera()
+        local model = frame.dressingRoom and frame.dressingRoom.model or _G.GwDressingRoom and GwDressingRoom.model
+        if model then
+            model:RefreshCamera()
+            GW.UpdatePaperDollModelScale(model)
         end
     end)
 

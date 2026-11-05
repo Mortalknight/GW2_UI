@@ -233,6 +233,8 @@ local function copy_OnClick(self)
     local currentProfile = GW.globalSettings:GetCurrentProfile()
     GW.globalSettings:SetProfile(L["Copy of"] .. " " .. profileNameToCopy)
     GW.globalSettings:CopyProfile(profileNameToCopy, true)
+    GW.globalSettings.profile.profileCreatedCharacter = GW.myname .. " - " .. GW.myrealm
+    GW.globalSettings.profile.profileCreatedDate = date(L["TimeStamp m/d/y h:m:s"])
     GW.CreateProfileLayout()
     GW.globalSettings:SetProfile(currentProfile)
 

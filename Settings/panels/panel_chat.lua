@@ -69,7 +69,7 @@ local function LoadChatPanel(sWindow)
 
     general:AddOptionDropdown(L["Chat Buttons Position"], L["Position of the chat control buttons (menu, channel, voice, social). Top and Right move them into a small hover bar, so the chat window can sit flush at the screen edge."], { getterSetter = "chat.buttonsPosition", callback = function() GW.UpdateChatButtonsPosition() end, optionsList = {"LEFT", "TOP", "RIGHT"}, optionNames = {L["Left"], L["Top"], L["Right"]}, dependence = {["chat.enabled"] = true}})
     general:AddOptionDropdown(TIMESTAMPS_LABEL, OPTION_TOOLTIP_TIMESTAMPS, { getterSetter = "chat.timeStampFormat", optionsList = {"NONE", "%I:%M ", "%I:%M:%S ", "%I:%M %p ", "%I:%M:%S %p ", "%H:%M ", "%H:%M:%S "}, optionNames = {NONE, "03:27", "03:27:32", "03:27 PM", "03:27:32 PM", "15:27", "15:27:32"}, dependence = {["chat.enabled"] = true}})
-    general:AddOptionDropdown(L["Announce Interrupts"], L["Announce when you interrupt a spell to the specified chat channel"], { getterSetter = "chat.interruptAnnounce", callback = GW.ToggleInterruptAnncouncement, optionsList = {"NONE", "SAY", "YELL", "PARTY", "RAID", "RAID_ONLY", "EMOTE"}, optionNames = {NONE, SAY, YELL, L["Party Only"], L["Party / Raid"], L["Raid Only"], EMOTE}, hidden = GW.Retail})
+    general:AddOptionDropdown(L["Announce Interrupts"], L["Announce when you interrupt a spell to the specified chat channel"], { getterSetter = "chat.interruptAnnounce", callback = GW.ToggleInterruptAnncouncement, optionsList = {"NONE", "SAY", "YELL", "PARTY", "RAID", "RAID_ONLY", "EMOTE"}, optionNames = {NONE, SAY, YELL, L["Party Only"], L["Party / Raid"], L["Raid Only"], EMOTE}, hidden = GW.isModern})
 
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do

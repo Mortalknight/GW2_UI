@@ -134,7 +134,7 @@ end
 ---------- listing ----------
 
 -- the layout frame takes its size from blizzards hover art, so that stays as it is without alpha; our frame
--- and hover lie on the picture and stay out of the layout
+-- and hover lie exactly on the picture, so the layout may count them. An ignoreInLayout of our own would taint it
 local function SkinCategoryButtons(view)
     for _, button in ipairs(view.CategoryButtons) do
         if not button.gwSkinned then
@@ -144,7 +144,6 @@ local function SkinCategoryButtons(view)
             button.backdrop:SetAllPoints(button.Icon)
             button.backdrop:SetFrameLevel(button:GetFrameLevel() + 1)
             button.backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.CardBorder:GetRGB())
-            button.backdrop.ignoreInLayout = true
             button.Cover:SetAlpha(0)
             button:GetPushedTexture():SetAlpha(0)
             button.HighlightTexture:SetAlpha(0)
@@ -152,7 +151,6 @@ local function SkinCategoryButtons(view)
             button.gwHover:SetTexture(MENU_HOVER)
             button.gwHover:SetVertexColor(GW.Colors.SkinColors.CardHover:GetRGBA())
             button.gwHover:SetAllPoints(button.Icon)
-            button.gwHover.ignoreInLayout = true
             button.Label:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
         end
     end

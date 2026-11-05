@@ -42,6 +42,13 @@ local function EquipCursorItem()
     end
 end
 
+-- forever draws the model as if our window had no scale, the camera moves back by the window scale
+function GW.UpdatePaperDollModelScale(model)
+    if GW.Forever and GwCharacterWindow then
+        model:SetCamDistanceScale(1 / GwCharacterWindow:GetScale())
+    end
+end
+
 function GW.SetPaperDollModelPosition(model)
     model:SetUnit("player")
     model:SetPosition(0.8, 0, 0)
@@ -58,4 +65,5 @@ function GW.SetPaperDollModelPosition(model)
 
     model:SetScript("OnReceiveDrag", EquipCursorItem)
     model:HookScript("OnMouseDown", EquipCursorItem)
+    GW.UpdatePaperDollModelScale(model)
 end

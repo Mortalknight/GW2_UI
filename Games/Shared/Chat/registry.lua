@@ -63,8 +63,12 @@ end
 
 local MY_REALM = gsub(GW.myrealm, "[%s%-]", "")
 
--- chat events leave out the realm of senders from the own one
+-- chat events leave out the realm of senders from the own one; forever sends "Firstname Surname",
+-- the surname takes the place of the realm like in UnitFullName
 function GW.GetChatNameWithRealm(name)
+    if GW.Forever then
+        name = gsub(name, " ", "-", 1)
+    end
     return strfind(name, "-", 1, true) and name or name .. "-" .. MY_REALM
 end
 

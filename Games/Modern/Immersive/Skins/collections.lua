@@ -166,8 +166,18 @@ local function KeepLabelWhite(text)
     Recolor(text, text:GetTextColor())
 end
 
-local function SkinCounter(counter)
+local function PlaceCounter(counter)
+    counter:ClearAllPoints()
+    counter:SetPoint("BOTTOMLEFT", counter:GetParent().LeftInset, "TOPLEFT", 2, 4)
+end
+
+local function SkinCounter(counter, place)
+    place = place or PlaceCounter
     counter:GwStripTextures()
+    place(counter)
+    if counter.UpdateDisplayStyle then
+        hooksecurefunc(counter, "UpdateDisplayStyle", place)
+    end
     GW.AddDetailsBackground(counter)
     GW.WhitenFontStrings(counter)
 
@@ -276,6 +286,18 @@ local function UpdateRowNameColor(row)
     end
 end
 
+-- forever has no pet qualities, every pet gets the light grey frame; its pet card has no quality border at all
+local function HandlePetQualityBorder(border, backdrop)
+    if border and not GW.Forever then
+        GW.HandleIconBorder(border, backdrop)
+        return
+    end
+    if border then
+        border:SetAlpha(0)
+    end
+    backdrop:SetBackdropBorderColor(GW.Colors.SkinColors.CardBorder:GetRGB())
+end
+
 -- rows of three templates: mounts (icon, name, background, factionIcon, DragButton), pets (icon, name,
 -- iconBorder, dragButton with level) and sets (IconFrame.Icon, Name, ProgressBar)
 local function SkinListRow(row)
@@ -303,7 +325,7 @@ local function SkinListRow(row)
 
     BackdropAroundIcon(icon, GW.BackdropTemplates.DefaultWithColorableBorder)
     if row.iconBorder then
-        GW.HandleIconBorder(row.iconBorder, icon.backdrop)
+        HandlePetQualityBorder(row.iconBorder, icon.backdrop)
     end
 
     local drag = row.DragButton or row.dragButton
@@ -557,8 +579,6 @@ local function SkinMountJournal()
     StripFrames(journal, journal.LeftInset, journal.RightInset, journal.BottomLeftInset)
     GW.AddDetailsBackground(journal.BottomLeftInset)
     SkinCounter(journal.MountCount)
-    journal.MountCount:ClearAllPoints()
-    journal.MountCount:SetPoint("BOTTOMLEFT", journal.LeftInset, "TOPLEFT", 2, 4)
     journal.gwProgressBar = CreateCollectionBar(journal)
     journal.gwAchievementStatus = CreateAchievementStatus(journal, journal.gwProgressBar, MOUNT_ACHIEVEMENT_CATEGORY, MOUNTS)
     -- total: only mounts this character can obtain, the same rule blizzard uses for its owned count
@@ -635,7 +655,7 @@ local function SkinLoadoutPet(pet)
     pet.subName:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     BackdropAroundIcon(pet.icon, GW.BackdropTemplates.ColorableBorderOnly)
     pet.icon.backdrop:SetFrameLevel(pet:GetFrameLevel() + 2)
-    GW.HandleIconBorder(pet.qualityBorder, pet.icon.backdrop)
+    HandlePetQualityBorder(pet.qualityBorder, pet.icon.backdrop)
     local function ColorLevel(backdrop)
         pet.level:SetTextColor(backdrop:GetBackdropBorderColor())
     end
@@ -666,14 +686,17 @@ local function SkinPetCard(card)
         info.level:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
     end
     info.name:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
-    if info.icon and info.qualityBorder then
+    if info.icon then
         BackdropAroundIcon(info.icon, GW.BackdropTemplates.DefaultWithColorableBorder)
-        GW.HandleIconBorder(info.qualityBorder, info.icon.backdrop)
-        local function ColorLevel(backdrop)
-            info.level:SetTextColor(backdrop:GetBackdropBorderColor())
+        HandlePetQualityBorder(info.qualityBorder, info.icon.backdrop)
+        -- the forever pet card shows no level
+        if info.level then
+            local function ColorLevel(backdrop)
+                info.level:SetTextColor(backdrop:GetBackdropBorderColor())
+            end
+            hooksecurefunc(info.icon.backdrop, "SetBackdropBorderColor", ColorLevel)
+            ColorLevel(info.icon.backdrop)
         end
-        hooksecurefunc(info.icon.backdrop, "SetBackdropBorderColor", ColorLevel)
-        ColorLevel(info.icon.backdrop)
     end
     for i = 1, 6 do
         SkinIconButton(card["spell" .. i])
@@ -682,6 +705,9 @@ local function SkinPetCard(card)
         SkinStatusBar(card.HealthFrame.healthBar)
     end
     SkinStatusBar(card.xpBar, XP_COLOR)
+    for side, button in pairs({left = card.modelScene.RotateLeftButton, right = card.modelScene.RotateRightButton}) do
+        GW.HandleClassicRotateButton(button, side)
+    end
 end
 
 local function SkinPetJournal()
@@ -700,8 +726,6 @@ local function SkinPetJournal()
         end
     end
     SkinCounter(journal.PetCount)
-    journal.PetCount:ClearAllPoints()
-    journal.PetCount:SetPoint("BOTTOMLEFT", journal.LeftInset, "TOPLEFT", 2, 4)
     journal.gwProgressBar = CreateCollectionBar(journal)
     SkinAchievementStatus(journal.AchievementStatus, journal.gwProgressBar)
     local function UpdatePetBar()
@@ -832,19 +856,35 @@ local function SkinToyBox()
         local achievements = CreateAchievementStatus(box, box.progressBar, TOYBOX_ACHIEVEMENT_CATEGORY, TOY_BOX)
         box:HookScript("OnShow", function() achievements:Update() end)
     end
+    local tracker = box.ProgressTracker
+    if tracker and tracker.isCount then
+        SkinCounter(tracker, function(counter)
+            counter:ClearAllPoints()
+            counter:SetPoint("TOP", box.searchBox, "TOP")
+            counter:SetPoint("LEFT", details, "LEFT", 2, 0)
+        end)
+    end
+    local function UpdateToyButton(button)
+        local itemID = button.itemID
+        if not itemID or itemID == -1 then return end
+        -- forever draws no gift model for a new toy, the icon stays visible until the click unwraps it
+        if GW.Forever and button.modelScene and button.modelScene:IsShown() then
+            button.iconTexture:Show()
+        end
+        SetBackdropQuality(button, C_Item.GetItemQualityByID(itemID), not PlayerHasToy(itemID))
+    end
+
     SkinPagingFrame(box.PagingFrame)
     for i = 1, 18 do
         local button = box.iconsFrame["spellButton" .. i]
         SkinSpellButton(button)
         hooksecurefunc(button.name, "SetTextColor", RecolorCollectionText)
         hooksecurefunc(button.new, "SetTextColor", RecolorCollectionText)
+        -- on show and on events the buttons call the update function they stored before our hook
+        button:HookScript("OnShow", UpdateToyButton)
+        button:HookScript("OnEvent", UpdateToyButton)
     end
-
-    hooksecurefunc("ToySpellButton_UpdateButton", function(button)
-        local itemID = button.itemID
-        if not itemID or itemID == -1 then return end
-        SetBackdropQuality(button, C_Item.GetItemQualityByID(itemID), not PlayerHasToy(itemID))
-    end)
+    hooksecurefunc("ToySpellButton_UpdateButton", UpdateToyButton)
 end
 
 ---------- heirlooms ----------

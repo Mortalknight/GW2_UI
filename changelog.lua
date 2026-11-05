@@ -17,6 +17,15 @@ addChange("12.1.4", {
     {GW.Enum.ChangelogType.bug, [=[Bags (Classic, TBC, Wrath, Mists): Mark Unusable Items works again and marks the bank items right after a reload]=]},
     {GW.Enum.ChangelogType.bug, [=[Target, focus and pet frames: fixed a Lua error on login when their health text was switched off before the text designer]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest window: with the quest skin off the texts are dark on the parchment again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Group frames: fixed a Lua error when a setting adds frames while the preview is shown]=]},
+    {GW.Enum.ChangelogType.bug, [=[Character window (Forever): the model fits the window at every scale]=]},
+    {GW.Enum.ChangelogType.bug, [=[Profiles (Forever): renaming or switching a profile no longer causes an error, the interrupt announcement is no longer offered there]=]},
+    {GW.Enum.ChangelogType.bug, [=[Profiles: a copied profile names your character as its creator]=]},
+    {GW.Enum.ChangelogType.bug, [=[Edit mode: after switching the advanced options, showing the party or raid frames no longer causes a Lua error]=]},
+    {GW.Enum.ChangelogType.bug, [=[Chat (Forever): the group role icons show in front of the names again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Social window: the selected tab is highlighted like in the hero panel]=]},
+    {GW.Enum.ChangelogType.bug, [=[Collections (Forever): pets get a light grey frame, new toys show their icon, the mount, pet and toy counters sit on the left and are skinned, the rotate buttons of the pet card too]=]},
+    {GW.Enum.ChangelogType.bug, [=[Skins (Forever): item icons show again, for example at the merchant and in the character window]=]},
 })
 
 addChange("12.1.3", {

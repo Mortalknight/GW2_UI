@@ -33,6 +33,7 @@ local function SkinMerchantFrameItemButton(index)
 
     local button = _G["MerchantItem" .. index .. "ItemButton"]
     button:GwStripTextures()
+    GW.HandleItemButtonCrop(button)
     button:GwStyleButton()
     button:SetPoint("TOPLEFT", slot, "TOPLEFT", 4, -4)
     StyleItemIcon(button.icon)
@@ -138,6 +139,7 @@ local function SkinBuyback()
 
     local button = MerchantBuyBackItemItemButton
     button:GwStripTextures()
+    GW.HandleItemButtonCrop(button)
     local frameSize = button:GetWidth() > 40 and 2 or 1
     local frame = CreateFrame("Frame", nil, button, "GwActionButtonBackdropTmpl")
     frame:SetPoint("TOPLEFT", -frameSize, frameSize)

@@ -1,13 +1,14 @@
 ---@class GW2
 local GW = select(2, ...)
 
--- the edit mode windows size themselves from their children, our additions must stay out of that
+-- the edit mode windows size themselves from their children; our backdrop sits on blizzards border, which
+-- the layout already skips. An ignoreInLayout of our own tainted the layout and with it the account settings
 local function SkinWindow(frame)
+    local holder = frame.Border or frame
     if frame.Border then
-        frame.Border:Hide()
+        frame.Border:GwStripTextures(false, true)
     end
-    frame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-    frame.backdrop.ignoreInLayout = true
+    holder:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     if frame.Title then
         frame.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)

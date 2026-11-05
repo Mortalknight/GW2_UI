@@ -700,6 +700,9 @@ do
 					unit = 'raid'
 				elseif(header:GetAttribute('showParty')) then
 					unit = 'party'
+				else
+					-- gw2: the grid preview clears the visibility attributes, frames created meanwhile take the unit from the header
+					unit = header:GetAttribute('gw2-guessUnit')
 				end
 
 				local headerType = header:GetAttribute('oUF-headerType')

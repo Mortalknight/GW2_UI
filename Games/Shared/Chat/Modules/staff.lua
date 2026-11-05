@@ -10,6 +10,7 @@ local STAFF = {
     -- Glow
     ["Zâmarâ-Antonidas"] = true, ["Sàphy-Antonidas"] = true, ["Shâdowfall-Antonidas"] = true, ["Winglord-Antonidas"] = true,
     ["Zâmârâ-Antonidas"] = true, ["Mâgus-Aegwynn"] = true, ["Flôffi-Aegwynn"] = true, ["Sâphìra-Thunderstrike"] = true,
+    ["Rhosk-Aschenhain"] = true,
     -- SHOODOX
     ["Blish-Thrall"] = true, ["Blish-Arthas"] = true, ["Hildegunde-ArgentDawn"] = true, ["Notburga-ArgentDawn"] = true,
     ["Aderna-Arthas"] = true, ["Wan-Malfurion"] = true, ["Funda-Malfurion"] = true, ["Glühdirne-Arthas"] = true,
