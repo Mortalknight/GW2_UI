@@ -474,11 +474,21 @@ local function UpdateRecipeListSkins(scrollBox)
     end)
 end
 
+local function RemoveReagentSlotFrame(button, isModifyingRequired)
+    local alpha = isModifyingRequired and 1 or 0
+    button:GetNormalTexture():SetAlpha(alpha)
+    button:GetPushedTexture():SetAlpha(alpha)
+end
+
 local function SkinReagentSlots(form)
     for slot in form.reagentSlotPool:EnumerateActive() do
         if not slot.gwSkinned then
             GW.HandleIcon(slot.Button.Icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
             GW.HandleIconBorder(slot.Button.IconBorder, slot.Button.Icon.backdrop)
+            GW.HandleItemButtonCrop(slot.Button)
+            slot.Button.SlotBackground:SetAlpha(0)
+            RemoveReagentSlotFrame(slot.Button, slot.Button.showLargeAddIcon)
+            hooksecurefunc(slot.Button, "SetModifyingRequired", RemoveReagentSlotFrame)
             slot.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
             slot.gwSkinned = true
         end
