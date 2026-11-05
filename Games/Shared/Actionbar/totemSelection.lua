@@ -2,13 +2,12 @@
 local GW = select(2, ...)
 
 -- the shaman totem selection (MultiCastActionBarFrame) of the classic clients and Forever: Blizzard keeps
--- its logic and lays the buttons out in a row, the bar moves into a frame of ours with a mover and gets our look
+-- its logic and lays the buttons out in a row, the buttons move into a frame of ours with a mover and get our look
 local PUSHED_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png"
 local HIGHLIGHT_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png"
 local ARROW_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up.png"
 
 local holder
-local anchoring = false
 local skinned = {}
 local elementBorders = {}
 
@@ -93,19 +92,6 @@ local function SkinArrowButton(button, rotate)
     end
 end
 
--- blizzard moves the bar on its own: edit mode layouts, the slide in and out on wrath
-local function AnchorToHolder()
-    if InCombatLockdown() then
-        GW.CombatQueue:Queue("GwTotemSelectionAnchor", AnchorToHolder)
-        return
-    end
-    local bar = MultiCastActionBarFrame
-    anchoring = true
-    bar:ClearAllPoints();
-    (bar.SetPointBase or bar.SetPoint)(bar, "BOTTOMLEFT", holder, "BOTTOMLEFT", 0, 0)
-    anchoring = false
-end
-
 local function OnSlotUpdate(button, slot)
     SetBorderColor(button, GetElementColor(slot))
 end
@@ -148,13 +134,22 @@ function GW.LoadTotemSelectionBar()
     -- on wrath the bar went with the main menu bar, that hides in vehicles
     RegisterStateDriver(holder, "visibility", "[overridebar][vehicleui][petbattle] hide; show")
 
+    -- blizzard moves the bar itself even in combat (bottom bar stack on Forever, the slide on wrath), so like
+    -- the multibars only the buttons go into our frame; they anchor to their parent or to each other
     bar:SetParent(holder)
-    hooksecurefunc(bar, "SetPoint", function()
-        if not anchoring then
-            AnchorToHolder()
-        end
-    end)
-    AnchorToHolder()
+    bar:EnableMouse(false)
+    for _, child in ipairs({MultiCastSummonSpellButton, MultiCastSlotButton1, MultiCastSlotButton2, MultiCastSlotButton3,
+        MultiCastSlotButton4, MultiCastActionPage1, MultiCastActionPage2, MultiCastActionPage3, MultiCastRecallSpellButton}) do
+        child:SetParent(holder)
+    end
+    -- the same offsets blizzard uses, until its next update anchors them again
+    local xOffset = MultiCastSummonSpellButton:IsShown() and MultiCastSummonSpellButton:GetWidth() + 11 or 3
+    MultiCastSummonSpellButton:ClearAllPoints()
+    MultiCastSummonSpellButton:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", 3, 3)
+    for _, child in ipairs({MultiCastSlotButton1, MultiCastActionPage1, MultiCastActionPage2, MultiCastActionPage3}) do
+        child:ClearAllPoints()
+        child:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", xOffset, 3)
+    end
 
     for i = 1, NUM_MULTI_CAST_BUTTONS_PER_PAGE do
         -- the empty slot art keeps blizzards coords

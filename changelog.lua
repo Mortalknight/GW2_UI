@@ -16,6 +16,7 @@ AddChange(string addonVersion, table changeList)
 addChange("12.1.5", {
     {GW.Enum.ChangelogType.bug, [=[Quest window (Forever): reward icons without a second frame]=]},
     {GW.Enum.ChangelogType.bug, [=[Spellbook: fixed a Lua error when a new spell tab shows up]=]},
+    {GW.Enum.ChangelogType.bug, [=[Totem bar: no longer jumps over the other action bars in combat]=]},
 })
 
 addChange("12.1.4", {
