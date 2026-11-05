@@ -117,8 +117,8 @@ local function SkinSocialContactsView(view, cardContentHandler)
             FilterBar.SearchBar:SetHeight(28)
         end
         if FilterBar.SearchFilterDropdown then
-            FilterBar.SearchFilterDropdown.OnButtonStateChanged = GW.NoOp
             FilterBar.SearchFilterDropdown:GwHandleDropDownBox()
+            FilterBar.SearchFilterDropdown.Background:SetAlpha(0)
             FilterBar.SearchFilterDropdown:SetHeight(28)
         end
     end
