@@ -71,7 +71,14 @@ local function getHeaderFontFamily()
     return activeFont
 end
 
+-- the font families of the current font settings, "" means the blizzard fonts
+function GW.GetFontFamilies()
+    return getNormalFontFamily(), getHeaderFontFamily()
+end
+
 local function LoadFonts()
+    -- kept for the font preview of the installer, the engine fonts are replaced below
+    GW.BlizzardFonts = GW.BlizzardFonts or {normal = UNIT_NAME_FONT, header = DAMAGE_TEXT_FONT}
     local addonFont = getNormalFontFamily()
     local addonFontHeader = getHeaderFontFamily()
     if addonFont == nil or addonFont == "" then

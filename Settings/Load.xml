@@ -6,7 +6,6 @@
     <Include file = "settingsWindowProfilesTab.xml"/>
     <Include file = "settingsWindowOverviewTab.xml"/>
     <Include file = "smallSettingFrame.xml"/>
-    <Include file = "welcome.xml"/>
 
     <Script file = "api.lua"/>
     <Script file = "incompatibleAddons.lua"/>

@@ -153,8 +153,157 @@ local DETAILED_POWER = {{k = "power", mode = "CUR", short = true}, DASH, {k = "p
 local TEXT_STYLE_NAMES = {L["Minimal"], DEFAULT, L["Detailed"]}
 local TEXT_STYLE_SECTIONS = {{key = "health", label = HEALTH}, {key = "power", label = L["Power"]}}
 
+-- previews of frames that are hidden right now, for the text style step and the module tiles: a copy of a unit
+-- frame on its place, the group frames in their preview or config mode. Hide only undoes what show did
+local unitCopies, shownGroupPreviews = {}, {}
+
+local function RefreshUnitCopy(unit)
+    local copy = unitCopies[unit]
+    if not copy then return end
+    for _, line in ipairs(GW.GetUnitFrameTextTarget(unit).lines) do
+        if copy.texts[line.key] then
+            copy.texts[line.key]:SetText(GW.BuildTagPreview(GW.GetUnitFrameTextBlocks(unit, line.key)))
+        end
+    end
+end
+
+-- the copies are built from the secure unit frame templates, so not in combat
+local function ShowUnitCopy(unit, frame)
+    if not frame or not frame:GetLeft() or UnitExists(unit) or InCombatLockdown() then return end
+    local copy = unitCopies[unit] or GW.GetUnitFrameTextTarget(unit).createPreview(wpanel)
+    unitCopies[unit] = copy
+    -- the copy holds the frame 20 to the right and 15 above its bottom
+    copy:SetScale(frame:GetEffectiveScale() / wpanel:GetEffectiveScale())
+    copy:ClearAllPoints()
+    copy:SetPoint("BOTTOMLEFT", wpanel, "BOTTOMLEFT", frame:GetLeft() - 20, frame:GetBottom() - 15)
+    copy:Show()
+    RefreshUnitCopy(unit)
+end
+
+local function HideUnitCopy(unit)
+    if unitCopies[unit] then
+        unitCopies[unit]:Hide()
+    end
+end
+
+local function UnitFrameOrCopy(unit, frame)
+    return UnitExists(unit) and frame or unitCopies[unit]
+end
+
+local function PartyGridReplacesFrames()
+    return GW.settings.groupFrames.enabled and GW.settings.groupFrames.party.enabled
+end
+
+-- the kind of preview the party needs: the grid when it replaces the party frames
+local function PartyPreviewKind()
+    return PartyGridReplacesFrames() and "party" or "partyFrames"
+end
+
+-- the first raid grid that is built
+local function RaidPreviewKind()
+    for _, profile in ipairs({"raid25", "raid40", "raid10"}) do
+        if GW.GridGroupHeaders and GW.GridGroupHeaders[profile] then
+            return profile
+        end
+    end
+end
+
+-- kind: "partyFrames" for the party frames, otherwise a grid profile in config mode
+local function ShowGroupPreview(kind)
+    if not kind or InCombatLockdown() or shownGroupPreviews[kind] then return end
+    if kind == "partyFrames" then
+        if not (GW.settings.unitframes.party.enabled and GW.TogglePartyPreview) or GW.IsPartyFramesPreviewActive() then return end
+        GW.TogglePartyPreview()
+    else
+        local header = GW.GridGroupHeaders and GW.GridGroupHeaders[kind]
+        if not header or header.forceShow then return end
+        GW.ToggleGridConfigurationMode(header, true)
+    end
+    shownGroupPreviews[kind] = true
+end
+
+local function HideGroupPreview(kind)
+    if not (kind and shownGroupPreviews[kind]) then return end
+    shownGroupPreviews[kind] = nil
+    local function Hide()
+        if kind == "partyFrames" then
+            if GW.IsPartyFramesPreviewActive() then GW.TogglePartyPreview() end
+        else
+            local header = GW.GridGroupHeaders[kind]
+            if header and header.forceShow then GW.ToggleGridConfigurationMode(header, nil) end
+        end
+    end
+    -- in combat the grid config mode ends on its own, the party preview after the fight
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("GwInstallerGroupPreview" .. kind, Hide)
+    else
+        Hide()
+    end
+end
+
+local function GroupPreviewFrames(kind)
+    if kind == "partyFrames" then
+        return {GwPartyFrame1, GwPartyFrame2, GwPartyFrame3, GwPartyFrame4, GwPartyFrame5}
+    end
+    return {kind and GW.GridGroupHeaders and GW.GridGroupHeaders[kind]}
+end
+
+-- the text style step shows the real frames and changes them right away
+local TEXT_STYLE_FRAME_NAMES = {
+    target = {"GwTargetUnitFrame", "GwTargetTargetUnitFrame", "GwFocusUnitFrame", "GwFocusTargetUnitFrame"},
+    player = {"GW2_PlayerFrame", "GwPlayerUnitFrame", "GwPlayerPetFrame", "GwPlayerPowerBar"},
+}
+
+local function RefreshTextStyleFrames(kind)
+    for _, name in ipairs(TEXT_STYLE_FRAME_NAMES[kind] or {}) do
+        local frame = _G[name]
+        if frame and frame.ApplyTextTags then
+            frame:ApplyTextTags()
+        end
+    end
+    if kind == "target" then
+        if GW.UpdateBossFramesSettings then GW.UpdateBossFramesSettings() end
+        if GW.UpdateArenaFramesSettings then GW.UpdateArenaFramesSettings() end
+        RefreshUnitCopy("target")
+    elseif kind == "group" then
+        if GW.UpdatePartyFrames then GW.UpdatePartyFrames() end
+        GW.UpdateGridSettings("ALL")
+        -- the grid update drops the fake members of a running config mode
+        for previewKind in pairs(shownGroupPreviews) do
+            if previewKind ~= "partyFrames" then
+                GW.RefreshGridConfigurationMode(previewKind, true)
+            end
+        end
+    else
+        -- the class power has no frame method, its setter refreshes the texts
+        GW.GetClassPowerTextTarget().set("manaText", GW.settings.classpower.manaText)
+    end
+end
+
+local textStyleGroupKind
+
+local function ShowTextStyleFrames()
+    textStyleGroupKind = PartyPreviewKind()
+    ShowGroupPreview(textStyleGroupKind)
+    ShowUnitCopy("target", GwTargetUnitFrame)
+end
+
+local function HideTextStyleFrames()
+    HideGroupPreview(textStyleGroupKind)
+    HideUnitCopy("target")
+end
+
+-- a list of frames is lit as one area
+local function TextStyleHighlights()
+    return {
+        {GW2_PlayerFrame, GwPlayerUnitFrame, GwPlayerPowerBar},
+        UnitFrameOrCopy("target", GwTargetUnitFrame),
+        GroupPreviewFrames(textStyleGroupKind),
+    }
+end
+
 local TEXT_STYLE_FRAMES = {
-    {label = TARGET, unit = "target",
+    {label = TARGET, unit = "target", refresh = function() RefreshTextStyleFrames("target") end,
         lines = function(settings)
             local unitframes, objectives = settings.unitframes, settings.objectives
             local list = {}
@@ -167,7 +316,7 @@ local TEXT_STYLE_FRAMES = {
         end,
         health = {{health = {}}, {health = false}, {health = {Health("HEALTH", true), DASH, Health("PREC")}}},
         power = {{power = {}}, {power = false}, {power = DETAILED_POWER}}},
-    {label = GROUP,
+    {label = GROUP, refresh = function() RefreshTextStyleFrames("group") end,
         lines = function(settings)
             local list = {{settings.unitframes.party, "healthText", "health"}}
             for _, grid in ipairs({"party", "raid10", "raid25", "raid40", "maintank", "partyPet", "raidPet"}) do
@@ -176,7 +325,7 @@ local TEXT_STYLE_FRAMES = {
             return list
         end,
         health = {{health = {}}, {health = false}, {health = {Health("HEALTH", true)}}}},
-    {label = PLAYER, unit = "player",
+    {label = PLAYER, unit = "player", globe = true, refresh = function() RefreshTextStyleFrames("player") end,
         lines = function(settings)
             local unitframes, classpower = settings.unitframes, settings.classpower
             return {
@@ -207,19 +356,70 @@ local function ApplyTextStyle(frame, style)
     end
 end
 
--- the preview shows the health and power line of the first frame of the column
+-- the preview shows the health and power line of the first frame of the column, for the player globe and power bar
 local function PreviewBlocks(frame, style, kind, line)
     local blocks = style[kind]
     if blocks == false then
+        if kind == "globe" then
+            return GW.GetHealthGlobeTextTarget().getDefault(line)
+        elseif kind == "powerBar" then
+            return GW.GetPowerBarTextTarget().getDefault(line)
+        end
         return frame.unit and GW.GetUnitFrameTextTarget(frame.unit).getDefault(line) or GW.GetGridDefaultTextBlocks(line)
     end
     return blocks or {}
 end
 
+-- names, a zone and numbers in the fonts of the chosen template; the fonts themselves change after the reload
+local function CreateFontPreview(parent)
+    local preview = CreateFrame("Frame", nil, parent)
+    preview:SetSize(300, 96)
+    preview:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+
+    local classColor = GW.GWGetClassColor(select(2, UnitClass("player")), true, true)
+    preview.name = preview:CreateFontString(nil, "OVERLAY")
+    preview.name:SetPoint("TOPLEFT", 14, -12)
+    preview.name:SetTextColor(classColor.r, classColor.g, classColor.b)
+    preview.zone = preview:CreateFontString(nil, "OVERLAY")
+    preview.zone:SetPoint("TOPLEFT", preview.name, "BOTTOMLEFT", 0, -6)
+    preview.zone:SetTextColor(0.9, 0.85, 0.7)
+    preview.numbers = preview:CreateFontString(nil, "OVERLAY")
+    preview.numbers:SetPoint("TOPLEFT", preview.zone, "BOTTOMLEFT", 0, -6)
+    preview.numbers:SetTextColor(0.62, 0.58, 0.5)
+
+    function preview:Update()
+        local normal, header = GW.GetFontFamilies()
+        if not normal or normal == "" then
+            local blizzard = GW.BlizzardFonts or {normal = UNIT_NAME_FONT, header = DAMAGE_TEXT_FONT}
+            normal, header = blizzard.normal, blizzard.header
+        elseif not header or header == "" then
+            header = normal
+        end
+        local size, outline = GW.settings.fonts.size, GW.settings.fonts.outline or ""
+        self.name:SetFont(header, size.bigHeader + 6, outline)
+        self.zone:SetFont(normal, size.normal, outline)
+        self.numbers:SetFont(normal, size.small, outline)
+    end
+    -- a font string needs its font before the first text
+    preview:Update()
+    preview.name:SetText(UnitName("player"))
+    preview.zone:SetText(GetRealZoneText())
+    preview.numbers:SetFormattedText("%s %s  |  %s %s", HEALTH, BreakUpLargeNumbers(58204), L["Power"], BreakUpLargeNumbers(42000))
+    return preview
+end
+
+local function CreatePreviewBar(parent, color, width, height)
+    local bar = parent:CreateTexture(nil, "ARTWORK")
+    bar:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+    bar:SetVertexColor(color:GetRGB())
+    bar:SetSize(width, height)
+    return bar
+end
+
+-- target and group as a bar frame, the player as health globe with the power bar next to it
 local function CreateStylePreview(parent, frame)
     local preview = CreateFrame("Frame", nil, parent)
-    preview:SetSize(145, 36)
-    preview:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    preview:SetSize(145, 64)
 
     local title = preview:CreateFontString(nil, "OVERLAY")
     title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
@@ -227,55 +427,52 @@ local function CreateStylePreview(parent, frame)
     title:SetPoint("BOTTOMLEFT", preview, "TOPLEFT", 0, 4)
     title:SetText(frame.label)
 
-    -- a health bar on top and a power bar below, each with its text
-    local health = preview:CreateTexture(nil, "ARTWORK")
-    health:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
-    health:SetVertexColor(GW.oUF.colors.health:GetRGB())
-    health:SetPoint("TOPLEFT")
-    health:SetSize(145 * 0.72, 21)
-    local power = preview:CreateTexture(nil, "ARTWORK")
-    power:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
-    power:SetVertexColor(GW.oUF.colors.power.MANA:GetRGB())
-    power:SetPoint("BOTTOMLEFT")
-    power:SetSize(145 * 0.84, 14)
+    local health, power
+    if frame.globe then
+        local globe = CreateFrame("StatusBar", nil, preview)
+        globe:SetSize(64, 64)
+        globe:SetPoint("LEFT")
+        globe:SetOrientation("VERTICAL")
+        globe:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/globe/globetextured.png")
+        globe:SetMinMaxValues(0, 1)
+        globe:SetValue(0.72)
+        local background = globe:CreateTexture(nil, "BACKGROUND")
+        background:SetTexture("Interface/AddOns/GW2_UI/textures/globe/globewhite.png")
+        background:SetVertexColor(0, 0, 0)
+        background:SetAllPoints()
+        local border = globe:CreateTexture(nil, "OVERLAY")
+        border:SetTexture("Interface/AddOns/GW2_UI/textures/globe/globeborder.png")
+        border:SetAllPoints()
+        health = globe
 
-    preview.healthText = preview:CreateFontString(nil, "OVERLAY")
+        power = CreatePreviewBar(preview, GW.oUF.colors.power.MANA, 145 - 70, 14)
+        power:SetPoint("LEFT", globe, "RIGHT", 6, 0)
+    else
+        -- a health bar on top and a power bar below, each with its text
+        local box = CreateFrame("Frame", nil, preview)
+        box:SetSize(145, 36)
+        box:SetPoint("LEFT")
+        box:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+        health = CreatePreviewBar(box, GW.oUF.colors.health, 145 * 0.72, 21)
+        health:SetPoint("TOPLEFT")
+        power = CreatePreviewBar(box, GW.oUF.colors.power.MANA, 145 * 0.84, 14)
+        power:SetPoint("BOTTOMLEFT")
+    end
+
+    local textParent = frame.globe and health or preview
+    preview.healthText = textParent:CreateFontString(nil, "OVERLAY")
     preview.healthText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
-    preview.healthText:SetPoint("LEFT", health, "LEFT", 4, 0)
+    preview.healthText:SetPoint(frame.globe and "CENTER" or "LEFT", health, frame.globe and "CENTER" or "LEFT", frame.globe and 0 or 4, 0)
+    preview.healthText:SetJustifyH(frame.globe and "CENTER" or "LEFT")
     preview.powerText = preview:CreateFontString(nil, "OVERLAY")
     preview.powerText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
     preview.powerText:SetPoint("LEFT", power, "LEFT", 4, 0)
 
     function preview:SetStyles(healthStyle, powerStyle)
-        self.healthText:SetText(GW.BuildTagPreview(PreviewBlocks(frame, healthStyle, "health", "healthText")))
-        self.powerText:SetText(GW.BuildTagPreview(PreviewBlocks(frame, powerStyle or {}, "power", "powerText")))
+        self.healthText:SetText(GW.BuildTagPreview(PreviewBlocks(frame, healthStyle, frame.globe and "globe" or "health", "healthText")))
+        self.powerText:SetText(GW.BuildTagPreview(PreviewBlocks(frame, powerStyle or {}, frame.globe and "powerBar" or "power", "powerText")))
     end
     return preview
-end
-
--- one click install: every step with its recommended default, then reload
-local function ApplyExpressInstall()
-    ApplyChatSetup()
-    ApplyCVars()
-
-    GW.settings.general.pixelPerfection = true
-    C_CVar.SetCVar("useUiScale", "0")
-    GW.PixelPerfection()
-
-    GW.settings.fonts.styleTemplate = "GW2"
-    GW.ApplyFontStyleTemplate()
-
-    if not GW.isModern then
-        GW.settings.combatText.mode = "GW2"
-        GW.ApplyCombatTextMode("GW2")
-    end
-
-    GW.ShowPopup({
-        text = L["The recommended settings have been applied. The interface will now be reloaded."],
-        OnAccept = function() C_UI.Reload() end,
-        button1 = ACCEPT,
-        button2 = CANCEL,
-    })
 end
 
 -- ============================
@@ -285,6 +482,40 @@ local function CreateActionButton(parent, width)
     local button = CreateFrame("Button", nil, parent, "GwStandardButton")
     button:SetSize(width or 146, 28)
     return button
+end
+
+-- fades a region in; only the alpha moves, a moving text snaps from pixel to pixel and looks shaky
+local function PlayFadeIn(region, delay)
+    local group = region.gwFadeIn
+    if not group then
+        group = region:CreateAnimationGroup()
+        group.fade = group:CreateAnimation("Alpha")
+        group.fade:SetFromAlpha(0)
+        group.fade:SetToAlpha(1)
+        group.fade:SetDuration(0.4)
+        group.fade:SetSmoothing("OUT")
+        group:SetToFinalAlpha(true)
+        region.gwFadeIn = group
+    end
+    group:Stop()
+    group.fade:SetStartDelay(delay or 0)
+    region:SetAlpha(0)
+    group:Play()
+end
+
+-- a small text that works as a button, for side actions that should not look like the main buttons
+local function CreateTextLink(parent, text, onClick)
+    local link = CreateFrame("Button", nil, parent)
+    link.text = link:CreateFontString(nil, "OVERLAY")
+    link.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    link.text:SetPoint("CENTER")
+    link.text:SetTextColor(0.62, 0.58, 0.5)
+    link.text:SetText(text)
+    link:SetSize(link.text:GetStringWidth() + 4, 16)
+    link:SetScript("OnEnter", function(self) self.text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB()) end)
+    link:SetScript("OnLeave", function(self) self.text:SetTextColor(0.62, 0.58, 0.5) end)
+    link:SetScript("OnClick", onClick)
+    return link
 end
 
 local function CreateInstallCheckbox(parent, label)
@@ -305,35 +536,168 @@ end
 -- ============================
 -- Steps
 -- ============================
--- grouped: unit frames, hud bars, ui windows, misc. Dotted settings resolve nested
+-- grouped as the tiles show them; frames returns what the spotlight lights while a tile is hovered.
+-- Dotted settings resolve nested
+
+-- previews show a module that is not on the screen while its tile is hovered; show returns false when there is
+-- nothing to show. Large ones are windows: they wait a moment and the installer fades back meanwhile
+local previewDriver = CreateFrame("Frame")
+
+-- the fake cast loops and holds the bar up every frame: moving its mover or a settings update hides it again
+local CAST_BAR_PREVIEW = {
+    show = function()
+        local bar = GwCastingBarPlayer
+        -- a real cast runs its own update
+        if not bar or bar:GetScript("OnUpdate") then return false end
+        bar:SetValues(L["Cast Bar"], 134414)
+        if bar.time then bar.time:SetText("") end
+        local elapsedTotal = 0
+        local function Update(_, elapsed)
+            if bar:GetScript("OnUpdate") then return end
+            -- the bar fades itself out after a second without a real cast
+            bar.gwStuckVisibleSince = nil
+            elapsedTotal = (elapsedTotal + elapsed) % 2
+            bar.progress:SetFillAmount(elapsedTotal / 2)
+            bar:SetAlpha(1)
+        end
+        -- visible right away, the spotlight looks for it in the same moment
+        Update(nil, 0)
+        previewDriver:SetScript("OnUpdate", Update)
+    end,
+    hide = function()
+        previewDriver:SetScript("OnUpdate", nil)
+        local bar = GwCastingBarPlayer
+        if bar and not bar:GetScript("OnUpdate") then
+            bar:SetAlpha(0)
+        end
+    end,
+}
+
+local bagsWereOpen
+local BAGS_PREVIEW = {
+    show = function()
+        if not GwBagFrame then return false end
+        bagsWereOpen = GwBagFrame:IsShown()
+        if not bagsWereOpen then OpenAllBags() end
+    end,
+    hide = function()
+        if not bagsWereOpen then CloseAllBags() end
+    end,
+}
+
+local NOTIFICATION_PREVIEW = {
+    show = function()
+        if not (GW.AlertPreviews and GW.AlertPreviews.LEVEL_UP) then return false end
+        GW.AlertPreviews.LEVEL_UP()
+    end,
+    hide = function() end,
+}
+
+local TOOLTIP_PREVIEW = {
+    ownTooltip = true,
+    show = function()
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit("player")
+    end,
+    hide = function() GameTooltip:Hide() end,
+}
+
+-- a panel of the hero window, only opened and closed by us when it was not open before
+local function HeroPanelPreview(panel)
+    local wasOpen
+    local function Close()
+        GwCharacterWindow:SetAttribute("windowpanelopen", nil)
+    end
+    return {
+        large = true,
+        show = function()
+            if not GwCharacterWindow then return false end
+            wasOpen = GwCharacterWindow:IsShown()
+            if not wasOpen then GwCharacterWindow:SetAttribute("windowpanelopen", panel) end
+        end,
+        hide = function()
+            if wasOpen or not GwCharacterWindow then return end
+            if InCombatLockdown() then
+                GW.CombatQueue:Queue("GwInstallerHeroPanel", Close)
+            else
+                Close()
+            end
+        end,
+    }
+end
+
+local socialWasOpen
+local SOCIAL_PREVIEW = {
+    large = true,
+    show = function()
+        if not SocialUIFrame then return false end
+        socialWasOpen = SocialUIFrame:IsShown()
+        if not socialWasOpen then SocialUIFrame:Show() end
+    end,
+    hide = function()
+        if SocialUIFrame and not socialWasOpen then SocialUIFrame:Hide() end
+    end,
+}
+
+local function UnitPreview(unit, getFrame)
+    return {
+        show = function() ShowUnitCopy(unit, getFrame()) end,
+        hide = function() HideUnitCopy(unit) end,
+    }
+end
+
+local function GroupPreview(getKind)
+    local kind
+    return {
+        show = function()
+            kind = getKind()
+            ShowGroupPreview(kind)
+        end,
+        hide = function() HideGroupPreview(kind) end,
+    }
+end
+
+local MODULE_GROUPS = {
+    {key = "unit", label = UNITFRAME_LABEL},
+    {key = "hud", label = L["HUD"]},
+    {key = "windows", label = L["Windows"]},
+    {key = "misc", label = MISCELLANEOUS or OTHER},
+}
+
 local MODULES = {
-    { setting = "unitframes.healthGlobe.enabled", name = PLAYER },
-    { setting = "powerBar.enabled", name = L["Power Bar"] },
-    { setting = "castingbar.enabled", name = L["Cast Bar"] },
-    { setting = "playerAuras.enabled", name = L["Auras"] },
-    { setting = "classpower.enabled", name = L["Class Power"] },
-    { setting = "unitframes.target.enabled", name = TARGET },
-    { setting = "unitframes.focus.enabled", name = FOCUS, hidden = GW.Classic },
-    { setting = "unitframes.pet.enabled", name = PET },
-    { setting = "unitframes.party.enabled", name = PARTY },
-    { setting = "groupFrames.party.enabled", name = USE_RAID_STYLE_PARTY_FRAMES },
-    { setting = "groupFrames.enabled", name = RAID_FRAMES_LABEL or RAID },
-    { setting = "actionbars.enabled", name = BINDING_HEADER_ACTIONBAR, gamepadReplaced = true },
-    { setting = "micromenu.enabled", name = L["Micro Bar"], gamepadReplaced = true },
-    { setting = "hud.xpBar", name = XPBAR_LABEL },
-    { setting = "minimap.enabled", name = MINIMAP_LABEL or MINIMAP_ZOOM },
-    { setting = "bags.enabled", name = INVENTORY_TOOLTIP },
-    { setting = "windows.character.enabled", name = L["Character Pane"] },
-    { setting = "windows.talent.enabled", name = TALENTS, hidden = GW.Retail },
-    { setting = "windows.profession.enabled", name = TRADE_SKILLS },
-    { setting = "windows.social.enabled", name = FRIENDS },
-    { setting = "general.battlegroundHud", name = BATTLEGROUND },
-    { setting = "chat.enabled", name = CHAT },
-    { setting = "chat.bubbles.enabled", name = CHAT_BUBBLES_TEXT },
-    { setting = "notifications.enabled", name = COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL },
-    { setting = "objectives.enabled", name = L["Tracker"] },
-    { setting = "immersiveQuesting.enabled", name = L["Immersive Questing"] },
-    { setting = "tooltip.enabled", name = L["Tooltips"] },
+    { setting = "unitframes.healthGlobe.enabled", name = PLAYER, group = "unit", frames = function() return {GW2_PlayerFrame, GwPlayerUnitFrame} end },
+    { setting = "powerBar.enabled", name = L["Power Bar"], group = "unit", frames = function() return {GwPlayerPowerBar} end },
+    { setting = "castingbar.enabled", name = L["Cast Bar"], group = "unit", preview = CAST_BAR_PREVIEW, frames = function() return {GwCastingBarPlayer} end },
+    { setting = "playerAuras.enabled", name = L["Auras"], group = "unit", frames = function() return {GW2UIPlayerBuffs, GW2UIPlayerDebuffs} end },
+    { setting = "classpower.enabled", name = L["Class Power"], group = "unit", frames = function() return {GwPlayerClassPower} end },
+    { setting = "unitframes.target.enabled", name = TARGET, group = "unit", preview = UnitPreview("target", function() return GwTargetUnitFrame end),
+        frames = function() return {UnitFrameOrCopy("target", GwTargetUnitFrame)} end },
+    { setting = "unitframes.focus.enabled", name = FOCUS, group = "unit", hidden = GW.Classic, preview = UnitPreview("focus", function() return GwFocusUnitFrame end),
+        frames = function() return {UnitFrameOrCopy("focus", GwFocusUnitFrame)} end },
+    { setting = "unitframes.pet.enabled", name = PET, group = "unit", frames = function() return {GwPlayerPetFrame} end },
+    { setting = "unitframes.party.enabled", name = PARTY, group = "unit", preview = GroupPreview(PartyPreviewKind),
+        frames = function() return GroupPreviewFrames(PartyPreviewKind()) end },
+    { setting = "groupFrames.party.enabled", name = USE_RAID_STYLE_PARTY_FRAMES, group = "unit", preview = GroupPreview(function() return "party" end),
+        frames = function() return GroupPreviewFrames("party") end },
+    { setting = "groupFrames.enabled", name = RAID_FRAMES_LABEL or RAID, group = "unit", preview = GroupPreview(RaidPreviewKind),
+        frames = function() return GroupPreviewFrames(RaidPreviewKind()) end },
+    { setting = "actionbars.enabled", name = BINDING_HEADER_ACTIONBAR, group = "hud", gamepadReplaced = true,
+        frames = function() return {MainActionBar or MainMenuBar, MultiBarBottomLeft, MultiBarBottomRight, MultiBarRight, MultiBarLeft} end },
+    { setting = "micromenu.enabled", name = L["Micro Bar"], group = "hud", gamepadReplaced = true, frames = function() return {Gw2MicroBarFrame} end },
+    { setting = "hud.xpBar", name = XPBAR_LABEL, group = "hud", frames = function() return {GwExperienceFrame} end },
+    { setting = "minimap.enabled", name = MINIMAP_LABEL or MINIMAP_ZOOM, group = "hud", frames = function() return {Minimap} end },
+    { setting = "objectives.enabled", name = L["Tracker"], group = "hud", frames = function() return {GwQuestTracker} end },
+    { setting = "chat.enabled", name = CHAT, group = "hud", frames = function() return {FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) or ChatFrame1} end },
+    { setting = "bags.enabled", name = INVENTORY_TOOLTIP, group = "windows", preview = BAGS_PREVIEW, frames = function() return {GwBagFrame} end },
+    { setting = "windows.character.enabled", name = L["Character Pane"], group = "windows", preview = HeroPanelPreview("paperdoll"), frames = function() return {GwCharacterWindow} end },
+    { setting = "windows.talent.enabled", name = TALENTS, group = "windows", hidden = GW.Retail, preview = HeroPanelPreview("talents"), frames = function() return {GwCharacterWindow} end },
+    { setting = "windows.profession.enabled", name = TRADE_SKILLS, group = "windows", preview = HeroPanelPreview("professions"), frames = function() return {GwCharacterWindow} end },
+    { setting = "windows.social.enabled", name = FRIENDS, group = "windows", preview = SOCIAL_PREVIEW, frames = function() return {SocialUIFrame} end },
+    { setting = "immersiveQuesting.enabled", name = L["Immersive Questing"], group = "windows" },
+    { setting = "general.battlegroundHud", name = BATTLEGROUND, group = "misc" },
+    { setting = "chat.bubbles.enabled", name = CHAT_BUBBLES_TEXT, group = "misc" },
+    { setting = "notifications.enabled", name = COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, group = "misc", preview = NOTIFICATION_PREVIEW, frames = function() return {GW.AlertContainerFrame} end },
+    { setting = "tooltip.enabled", name = L["Tooltips"], group = "misc", preview = TOOLTIP_PREVIEW, frames = function() return {GameTooltip} end },
 }
 
 -- the gamepad interface brings its own action bars and micro menu
@@ -341,7 +705,7 @@ local function IsModuleShown(module)
     return not module.hidden and not (module.gamepadReplaced and GW.IsGamepadInterface())
 end
 
--- flavor gated steps drop out entirely, the progress dots follow #STEPS
+-- flavor gated steps drop out entirely, the step rail follows #STEPS
 local function RemoveHiddenSteps(steps)
     for i = #steps, 1, -1 do
         if steps[i].hidden then
@@ -357,11 +721,433 @@ local SetModuleValue = GW.SetSetting
 -- forward declaration: the final steps summary closure iterates STEPS, and a local
 -- only enters scope AFTER its declaration statement - inline it would capture a
 -- global nil instead
+-- defined with the spotlight further down, the module tiles and the layout step use them
+local SetHighlights, SetSpotlight
+
+-- a module as a tile: click switches it, hovering lights its frame on the screen
+local MODULE_TILE_WIDTH, MODULE_TILE_HEIGHT, MODULE_TILE_GAP = 114, 26, 4
+
+local function CreateModuleTile(parent, module, step)
+    local tile = CreateFrame("Button", nil, parent)
+    tile:SetSize(MODULE_TILE_WIDTH, MODULE_TILE_HEIGHT)
+    tile.module = module
+
+    local background = tile:CreateTexture(nil, "BACKGROUND")
+    background:SetAllPoints()
+    background:SetColorTexture(0, 0, 0, 0.4)
+    tile.accent = tile:CreateTexture(nil, "ARTWORK")
+    tile.accent:SetPoint("TOPLEFT")
+    tile.accent:SetPoint("BOTTOMLEFT")
+    tile.accent:SetWidth(2)
+    tile.accent:SetColorTexture(GW.Colors.Accent:GetRGB())
+    local hover = tile:CreateTexture(nil, "HIGHLIGHT")
+    hover:SetAllPoints()
+    hover:SetColorTexture(1, 1, 1, 0.06)
+
+    tile.check = tile:CreateTexture(nil, "ARTWORK")
+    tile.check:SetSize(14, 14)
+    tile.check:SetPoint("RIGHT", -6, 0)
+
+    tile.label = tile:CreateFontString(nil, "OVERLAY")
+    tile.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    tile.label:SetPoint("LEFT", 9, 0)
+    tile.label:SetPoint("RIGHT", tile.check, "LEFT", -4, 0)
+    tile.label:SetJustifyH("LEFT")
+    tile.label:SetWordWrap(false)
+    tile.label:SetText(module.name)
+
+    function tile:Update()
+        local enabled = GetModuleValue(module.setting)
+        self.accent:SetShown(enabled)
+        self.check:SetTexture(enabled and "Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png"
+            or "Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
+        if enabled then
+            self.label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        else
+            self.label:SetTextColor(0.5, 0.47, 0.42)
+        end
+    end
+    tile:Update()
+
+    tile:SetScript("OnClick", function(self)
+        local enabled = not GetModuleValue(module.setting)
+        SetModuleValue(module.setting, enabled)
+        PlaySound(enabled and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+        self:Update()
+        step.applied = true
+    end)
+    tile:SetScript("OnEnter", function(self)
+        local preview = module.preview
+        if not (preview and preview.ownTooltip) then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(module.name, 1, 1, 1)
+            GameTooltip:AddLine(L["Changes take effect once the installation completes."], 0.9, 0.85, 0.7, true)
+            GameTooltip:Show()
+        end
+        if not preview then
+            if module.frames then
+                SetHighlights({[module] = module.frames()})
+            end
+            return
+        end
+
+        local function ShowPreview()
+            self.previewTimer = nil
+            if preview.large and InCombatLockdown() then return end
+            if preview.show() == false then return end
+            self.previewShown = true
+            if preview.large then
+                UIFrameFadeOut(wpanel.window, 0.2, wpanel.window:GetAlpha(), 0.15)
+            end
+            -- right away; a frame that needs a moment for its size joins the running animation later
+            SetHighlights({[module] = module.frames()})
+            C_Timer.After(0.05, function()
+                if self.previewShown then SetHighlights({[module] = module.frames()}, true) end
+            end)
+            C_Timer.After(0.3, function()
+                if self.previewShown then SetHighlights({[module] = module.frames()}, true) end
+            end)
+        end
+        if preview.large then
+            self.previewTimer = C_Timer.NewTimer(0.3, ShowPreview)
+        else
+            ShowPreview()
+        end
+    end)
+    tile:SetScript("OnLeave", function(self)
+        GameTooltip_Hide()
+        if self.previewTimer then
+            self.previewTimer:Cancel()
+            self.previewTimer = nil
+        end
+        if self.previewShown then
+            self.previewShown = nil
+            module.preview.hide()
+            if module.preview.large then
+                UIFrameFadeIn(wpanel.window, 0.2, wpanel.window:GetAlpha(), 1)
+            end
+        end
+        SetHighlights({})
+    end)
+    return tile
+end
+
+-- playstyle like the layouts of other interfaces: melee and ranged keep the GW positions, the healer gets the
+-- group and raid grids at the bottom in the middle with heal over time effects, power bars and dispellable debuffs
+local PLAYSTYLES = {
+    {key = "MELEE", label = MELEE, icon = GW.nameRoleIconPure.TANK,
+        desc = L["Group and raid frames on the left, the cast bar above the action bars."]},
+    {key = "HEALER", label = HEALER, icon = GW.nameRoleIconPure.HEALER,
+        desc = L["Group and raid frames at the bottom in the middle, with heal over time effects, power bars and dispellable debuffs."]},
+    {key = "RANGED", label = RANGED, icon = GW.nameRoleIconPure.DAMAGER,
+        desc = L["Group and raid frames on the left, the cast bar above the action bars."]},
+}
+local HEALER_GRID_POSITIONS = {"party", "raid10", "raid25"}
+local HEALER_GRID_VALUES = {showBuffs = true, showPowerBar = "ALL", dispelBorder = "DISPELLABLE", dispelIcon = "DISPELLABLE"}
+
+local function DetectPlaystyle()
+    if GW.myspecRole == "HEALER" then
+        return "HEALER"
+    elseif GW.myspecRole == "DAMAGER" and GW.myspec then
+        local primaryStat = select(6, C_SpecializationInfo.GetSpecializationInfo(GW.myspec))
+        -- survival hunters fight in melee
+        if primaryStat == (LE_UNIT_STAT_INTELLECT or 4) or (GW.myclass == "HUNTER" and GW.myspecID ~= 255) then
+            return "RANGED"
+        end
+    end
+    return "MELEE"
+end
+
+-- the rect of a shown frame in UIParent units
+local function ScreenRect(frame)
+    if not (frame and frame:IsShown()) then return end
+    local left, bottom, width, height = frame:GetRect()
+    if not left or GW.IsSecretValue(width) then return end
+    local scale = frame:GetEffectiveScale() / UIParent:GetEffectiveScale()
+    return left * scale, bottom * scale, width * scale, height * scale
+end
+
+local function SetPosition(db, point, x, y)
+    db.pos = {point = point, relativePoint = "BOTTOM", xOfs = GW.RoundInt(x), yOfs = GW.RoundInt(y), hasMoved = true}
+end
+
+local function ApplyPlaystyle(style)
+    local healer = style == "HEALER"
+    local groupFrames = GW.settings.groupFrames
+    for _, profile in ipairs({"party", "raid10", "raid25", "raid40"}) do
+        for key, value in pairs(HEALER_GRID_VALUES) do
+            groupFrames[profile][key] = healer and value or GW.GetSettingDefault("groupFrames." .. profile .. "." .. key)
+        end
+    end
+    groupFrames.party.enabled = healer or GW.GetSettingDefault("groupFrames.party.enabled")
+
+    -- melee and ranged use the default places; healers with the globe get the grids above the action bars left of
+    -- globe and cast bar, in the WoW layout the cast bar sits above the action bars and the grids in the middle above it
+    GW.settings.castingbar.pos = CopyTable(GW.GetSettingDefault("castingbar.pos"))
+    for _, profile in ipairs(HEALER_GRID_POSITIONS) do
+        groupFrames[profile].pos = CopyTable(GW.GetSettingDefault("groupFrames." .. profile .. ".pos"))
+    end
+    if healer then
+        local castBar = GwCastingBarPlayer and GwCastingBarPlayer.gwMover
+        local castBarScale = castBar and castBar:GetEffectiveScale() / UIParent:GetEffectiveScale() or 1
+        -- the buttons count, a bar frame reaches higher than its shown rows
+        local hudTop = 120
+        for _, prefix in ipairs({"ActionButton", "MultiBarBottomLeftButton"}) do
+            for i = 1, 12 do
+                local button = _G[prefix .. i]
+                local _, bottom, _, height = ScreenRect(button and button:IsVisible() and button)
+                if bottom then hudTop = math.max(hudTop, bottom + height) end
+            end
+        end
+        local point, x, y
+        if GW.settings.unitframes.player.enabled then
+            SetPosition(GW.settings.castingbar, "BOTTOM", 0, hudTop + 10)
+            point, x, y = "BOTTOM", 0, hudTop + 20 + (castBar and castBar:GetHeight() * castBarScale or 20)
+        else
+            local centerX = UIParent:GetWidth() / 2
+            local globeLeft = ScreenRect(GW2_PlayerFrame) or (centerX - 60)
+            local castBarLeft = castBar and centerX - castBar:GetWidth() * castBarScale / 2 or globeLeft
+            point, x, y = "BOTTOMRIGHT", math.min(globeLeft, castBarLeft) - centerX - 10, hudTop + 10
+        end
+        for _, profile in ipairs(HEALER_GRID_POSITIONS) do
+            SetPosition(groupFrames[profile], point, x, y)
+        end
+    end
+
+    GW.ApplyMoverPositionsFromSettings()
+    GW.UpdateGridSettings("ALL")
+    -- the grid update drops the fake members of a running config mode
+    for kind in pairs(shownGroupPreviews) do
+        if kind ~= "partyFrames" then
+            GW.RefreshGridConfigurationMode(kind, true)
+        end
+    end
+end
+
+-- the step shows the cast bar and the raid grid while it is open; the party grid moves to the same place, both
+-- at once would lie on top of each other
+local playstyleGroupKind
+
+-- the WoW layout comes with the reload: until then the globe and what goes with it are faded in its previews
+local function SetGlobeShown(shown)
+    if not GW2_PlayerFrame then return end
+    local alpha = shown and 1 or 0
+    GW2_PlayerFrame:SetAlpha(alpha)
+    if GwDodgeBar then GwDodgeBar:SetAlpha(alpha) end
+    if GwPlayerPowerBar and not GW.settings.unitframes.player.showResourceBar then GwPlayerPowerBar:SetAlpha(alpha) end
+end
+
+local function ShowPlaystyleFrames()
+    SetGlobeShown(not GW.settings.unitframes.player.enabled)
+    CAST_BAR_PREVIEW.show()
+    playstyleGroupKind = RaidPreviewKind()
+    ShowGroupPreview(playstyleGroupKind)
+end
+
+local function HidePlaystyleFrames()
+    SetGlobeShown(true)
+    CAST_BAR_PREVIEW.hide()
+    HideGroupPreview(playstyleGroupKind)
+end
+
+local function PlaystyleHighlights()
+    return {{GwCastingBarPlayer}, GroupPreviewFrames(playstyleGroupKind)}
+end
+
+local function CreatePlaystyleCard(parent, style)
+    local card = CreateFrame("Button", nil, parent)
+    card:SetSize(150, 176)
+    card.style = style
+    local background = card:CreateTexture(nil, "BACKGROUND")
+    background:SetAllPoints()
+    background:SetColorTexture(0, 0, 0, 0.4)
+    card.selected = card:CreateTexture(nil, "BACKGROUND", nil, 1)
+    card.selected:SetAllPoints()
+    card.selected:SetColorTexture(GW.Colors.Accent.r, GW.Colors.Accent.g, GW.Colors.Accent.b, 0.18)
+    local hover = card:CreateTexture(nil, "HIGHLIGHT")
+    hover:SetAllPoints()
+    hover:SetColorTexture(1, 1, 1, 0.06)
+    card:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
+
+    local icon = card:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(40, 40)
+    icon:SetPoint("TOP", 0, -16)
+    if style.portrait then
+        SetPortraitTexture(icon, "player")
+        local mask = card:CreateMaskTexture()
+        mask:SetAllPoints(icon)
+        mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        icon:AddMaskTexture(mask)
+    else
+        icon:SetTexture(style.icon)
+    end
+
+    card.title = card:CreateFontString(nil, "OVERLAY")
+    card.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+    card.title:SetPoint("TOP", icon, "BOTTOM", 0, -10)
+    card.title:SetText(style.label)
+
+    local desc = card:CreateFontString(nil, "OVERLAY")
+    desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    desc:SetTextColor(0.62, 0.58, 0.5)
+    desc:SetPoint("TOP", card.title, "BOTTOM", 0, -8)
+    desc:SetWidth(132)
+    desc:SetJustifyH("CENTER")
+    desc:SetText(style.desc)
+
+    function card:SetSelected(selected)
+        self.selected:SetShown(selected)
+        if selected then
+            self.backdrop:SetBackdropBorderColor(GW.Colors.Accent:GetRGB())
+            self.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        else
+            self.backdrop:SetBackdropBorderColor(0, 0, 0, 0.6)
+            self.title:SetTextColor(0.62, 0.58, 0.5)
+        end
+    end
+    return card
+end
+
+local function LabelOf(list, key)
+    for _, entry in ipairs(list) do
+        if entry.key == key then return entry.label end
+    end
+end
+
+local LAYOUTS = {
+    {key = "GW2", label = "GW2 UI", icon = "Interface/AddOns/GW2_UI/textures/globe/globetextured.png",
+        desc = L["Health globe in the middle, target and target of target at the top."]},
+    {key = "WOW", label = L["WoW Style"], portrait = true,
+        desc = L["Player frame on the left, target on the right above the action bars, like in World of Warcraft."]},
+}
+-- arranged like the modern Blizzard layout; the target auras go on top, below they would run into the action bars
+local WOW_LAYOUT_POSITIONS = {
+    player = {point = "BOTTOMRIGHT", relativePoint = "BOTTOM", xOfs = -300, yOfs = 250},
+    target = {point = "BOTTOMLEFT", relativePoint = "BOTTOM", xOfs = 300, yOfs = 250},
+    targettarget = {point = "TOPRIGHT", relativePoint = "BOTTOM", xOfs = 600, yOfs = 240},
+}
+
+local function DetectLayout()
+    return GW.settings.unitframes.player.enabled and "WOW" or "GW2"
+end
+
+-- the player frame replaces the globe after the reload at the end
+local function ApplyLayout(layout)
+    local wow = layout == "WOW"
+    local unitframes = GW.settings.unitframes
+    unitframes.player.enabled = wow
+    for unit, pos in pairs(WOW_LAYOUT_POSITIONS) do
+        unitframes[unit].pos = CopyTable(wow and pos or GW.GetSettingDefault("unitframes." .. unit .. ".pos"))
+    end
+    unitframes.target.aurasOnTop = wow or GW.GetSettingDefault("unitframes.target.aurasOnTop")
+
+    -- the player auras go to the top right next to the tracker and grow left and down, the debuffs follow the buffs
+    local auras = GW.settings.playerAuras
+    for _, key in ipairs({"buffs", "debuffs"}) do
+        auras[key].GrowDirection = wow and "DOWN" or GW.GetSettingDefault("playerAuras." .. key .. ".GrowDirection")
+    end
+    local trackerLeft = ScreenRect(GwQuestTracker) or (UIParent:GetWidth() - 300)
+    auras.buffs.pos = wow and {point = "TOPRIGHT", relativePoint = "TOPRIGHT", xOfs = GW.RoundInt(trackerLeft - UIParent:GetWidth() - 10), yOfs = -10, hasMoved = true}
+        or CopyTable(GW.GetSettingDefault("playerAuras.buffs.pos"))
+
+    GW.ApplyMoverPositionsFromSettings()
+    if GwTargetUnitFrame then
+        GwTargetUnitFrame:ToggleSettings()
+    end
+    -- the header update tells the bar layout whether the auras were moved; at their default place they follow the
+    -- action bars and the bar layout puts them there
+    for _, header in ipairs({GW2UIPlayerBuffs, GW2UIPlayerDebuffs}) do
+        GW.UpdateAuraHeader(header)
+    end
+    EventRegistry:TriggerEvent("GW2_UI.ActionBarStateChanged")
+end
+
+-- the frame of the other layout only exists after the reload: a copy of the player frame stands in until then
+local layoutChoice
+
+local function ShowPlayerFrameCopy()
+    if InCombatLockdown() then return end
+    local copy = unitCopies.player or GW.GetUnitFrameTextTarget("player").createPreview(wpanel)
+    unitCopies.player = copy
+    local pos = WOW_LAYOUT_POSITIONS.player
+    copy:SetScale(UIParent:GetEffectiveScale() / wpanel:GetEffectiveScale())
+    copy:ClearAllPoints()
+    -- the copy ends with the frame on the right and reaches 15 below it
+    copy:SetPoint(pos.point, wpanel, pos.relativePoint, pos.xOfs, pos.yOfs - 15)
+    copy:Show()
+    RefreshUnitCopy("player")
+end
+
+local function ShowLayoutFrames()
+    local wow = layoutChoice == "WOW"
+    SetGlobeShown(not wow)
+    if wow and not GwPlayerUnitFrame then
+        ShowPlayerFrameCopy()
+    else
+        HideUnitCopy("player")
+    end
+    ShowUnitCopy("target", GwTargetUnitFrame)
+    ShowUnitCopy("targettarget", GwTargetTargetUnitFrame)
+end
+
+local function HideLayoutFrames()
+    SetGlobeShown(true)
+    HideUnitCopy("player")
+    HideUnitCopy("target")
+    HideUnitCopy("targettarget")
+end
+
+local function LayoutStepHighlights()
+    return {
+        layoutChoice == "WOW" and (GwPlayerUnitFrame or unitCopies.player) or GW2_PlayerFrame or GwPlayerUnitFrame,
+        UnitFrameOrCopy("target", GwTargetUnitFrame),
+        UnitFrameOrCopy("targettarget", GwTargetTargetUnitFrame),
+        -- the buffs alone, the debuffs below them would light a lot of empty room
+        GW2UIPlayerBuffs,
+    }
+end
+
+-- the WoW layout uses the bottom and the top right, the window waits top left
+local function LayoutWindowAt()
+    return layoutChoice == "WOW" and "TOPLEFT" or nil
+end
+
+-- one click install: every step with its recommended default and the playstyle of the spec, then reload
+local function ApplyExpressInstall()
+    ApplyChatSetup()
+    ApplyCVars()
+
+    GW.settings.general.pixelPerfection = true
+    C_CVar.SetCVar("useUiScale", "0")
+    GW.PixelPerfection()
+
+    GW.settings.fonts.styleTemplate = "GW2"
+    GW.ApplyFontStyleTemplate()
+
+    if not GW.isModern then
+        GW.settings.combatText.mode = "GW2"
+        GW.ApplyCombatTextMode("GW2")
+    end
+
+    if not InCombatLockdown() then
+        ApplyPlaystyle(DetectPlaystyle())
+    end
+
+    GW.ShowPopup({
+        text = L["The recommended settings have been applied. The interface will now be reloaded."],
+        OnAccept = function() C_UI.Reload() end,
+        button1 = ACCEPT,
+        button2 = CANCEL,
+    })
+end
+
 local STEPS
 STEPS = RemoveHiddenSteps({
     {
         title = CHAT,
         desc = L["This part sets up your chat window names, positions, and colors."],
+        -- the selected tab, after a first setup the main chat can sit hidden behind another tab
+        spotlight = function() return FCFDock_GetSelectedWindow(GENERAL_CHAT_DOCK) or ChatFrame1 end,
         applyText = L["Setup Chat"],
         apply = ApplyChatSetup,
         buildContent = function(content)
@@ -441,6 +1227,7 @@ STEPS = RemoveHiddenSteps({
     {
         title = DISPLAY,
         desc = L["Use the recommended pixel perfect scale, or set your own - the preview applies live."],
+        spotlight = "screen",
         buildContent = function(content)
             local best = GW.getBestPixelScale()
             local state = { entryScale = UIParent:GetScale(), mode = nil }
@@ -525,56 +1312,50 @@ STEPS = RemoveHiddenSteps({
     {
         title = L["Modules"],
         desc = L["Choose which parts of GW2 UI are active for you. Everything can be changed later in the settings."],
+        spotlight = "screen",
+        -- nothing lit until a tile is hovered
+        highlights = function() return {} end,
         buildContent = function(content, step)
-            local shown = {}
-            for _, module in ipairs(MODULES) do
-                if IsModuleShown(module) then
-                    tinsert(shown, module)
+            local tiles = {}
+            local y = 0
+            for groupIndex, group in ipairs(MODULE_GROUPS) do
+                local modules = {}
+                for _, module in ipairs(MODULES) do
+                    if module.group == group.key and IsModuleShown(module) then
+                        tinsert(modules, module)
+                    end
+                end
+                if #modules > 0 then
+                    local header = content:CreateFontString(nil, "OVERLAY")
+                    header:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+                    header:SetTextColor(GW.Colors.AccentLight:GetRGB())
+                    header:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -y)
+                    header:SetText(group.label)
+
+                    if groupIndex == 1 then
+                        local function SetAll(value)
+                            for _, tile in ipairs(tiles) do
+                                SetModuleValue(tile.module.setting, value)
+                                tile:Update()
+                            end
+                            step.applied = true
+                        end
+                        local uncheckAll = CreateTextLink(content, UNCHECK_ALL, function() SetAll(false) end)
+                        uncheckAll:SetPoint("TOPRIGHT", content, "TOPRIGHT", -2, -y)
+                        local checkAll = CreateTextLink(content, CHECK_ALL, function() SetAll(true) end)
+                        checkAll:SetPoint("RIGHT", uncheckAll, "LEFT", -14, 0)
+                    end
+                    y = y + 20
+
+                    for index, module in ipairs(modules) do
+                        local tile = CreateModuleTile(content, module, step)
+                        local column, row = (index - 1) % 4, math.floor((index - 1) / 4)
+                        tile:SetPoint("TOPLEFT", content, "TOPLEFT", column * (MODULE_TILE_WIDTH + MODULE_TILE_GAP), -(y + row * (MODULE_TILE_HEIGHT + MODULE_TILE_GAP)))
+                        tinsert(tiles, tile)
+                    end
+                    y = y + math.ceil(#modules / 4) * (MODULE_TILE_HEIGHT + MODULE_TILE_GAP) + 4
                 end
             end
-
-            local checks = {}
-            local perColumn = math.ceil(#shown / 3)
-            for index, module in ipairs(shown) do
-                local check = CreateInstallCheckbox(content, module.name)
-                local column = math.floor((index - 1) / perColumn)
-                local row = (index - 1) % perColumn
-                check:SetPoint("TOPLEFT", content, "TOPLEFT", 10 + column * 155, -30 - row * 22)
-                check.label:SetWidth(125)
-                check.label:SetWordWrap(false)
-                check:SetChecked(GetModuleValue(module.setting))
-                check:SetScript("OnClick", function(self)
-                    SetModuleValue(module.setting, self:GetChecked())
-                    step.applied = true
-                end)
-                checks[index] = check
-            end
-
-            local function SetAll(value)
-                for index, module in ipairs(shown) do
-                    SetModuleValue(module.setting, value)
-                    checks[index]:SetChecked(value)
-                end
-                step.applied = true
-            end
-
-            local checkAll = CreateActionButton(content, 110)
-            checkAll:SetHeight(20)
-            checkAll:SetPoint("TOPLEFT", content, "TOPLEFT", 10, -2)
-            checkAll:SetText(CHECK_ALL)
-            checkAll:SetScript("OnClick", function() SetAll(true) end)
-
-            local uncheckAll = CreateActionButton(content, 110)
-            uncheckAll:SetHeight(20)
-            uncheckAll:SetPoint("LEFT", checkAll, "RIGHT", 8, 0)
-            uncheckAll:SetText(UNCHECK_ALL)
-            uncheckAll:SetScript("OnClick", function() SetAll(false) end)
-
-            local hint = content:CreateFontString(nil, "OVERLAY")
-            hint:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-            hint:SetTextColor(0.62, 0.58, 0.5)
-            hint:SetPoint("TOP", content, "TOP", 0, -30 - perColumn * 22 - 14)
-            hint:SetText(L["Changes take effect once the installation completes."])
         end,
         onNext = function(_, step)
             local enabled, total, names = 0, 0, {}
@@ -592,6 +1373,90 @@ STEPS = RemoveHiddenSteps({
         end,
     },
     {
+        title = L["Layout"],
+        desc = L["Choose where the player and target frames sit."],
+        spotlight = "screen",
+        highlights = LayoutStepHighlights,
+        onEnter = function()
+            local step = installFrame.currentStep
+            layoutChoice = step.gwChoice or DetectLayout()
+            step.windowAt = LayoutWindowAt()
+            ShowLayoutFrames()
+        end,
+        onLeave = HideLayoutFrames,
+        buildContent = function(content, step)
+            step.gwChoice = layoutChoice
+            local cards = {}
+            for index, layout in ipairs(LAYOUTS) do
+                local card = CreatePlaystyleCard(content, layout)
+                card:SetPoint("TOPLEFT", content, "TOPLEFT", (index - 1) * 160, -6)
+                card:SetSelected(layout.key == step.gwChoice)
+                card:SetScript("OnClick", function()
+                    if InCombatLockdown() then return end
+                    step.gwChoice, layoutChoice = layout.key, layout.key
+                    ApplyLayout(layout.key)
+                    for _, other in ipairs(cards) do
+                        other:SetSelected(other == card)
+                    end
+                    step.windowAt = LayoutWindowAt()
+                    SetSpotlight("screen", true, step.windowAt)
+                    -- the healer grids depend on the layout, the playstyle step applies again
+                    for _, other in ipairs(STEPS) do
+                        if other.title == L["Playstyle"] then other.applied = nil end
+                    end
+                    -- the movers move right away, the copies and lit areas follow them
+                    C_Timer.After(0.05, function()
+                        if installFrame.currentStep ~= step then return end
+                        ShowLayoutFrames()
+                        SetHighlights(LayoutStepHighlights())
+                    end)
+                end)
+                cards[index] = card
+            end
+        end,
+        onNext = function(_, step)
+            step.summaryDetail = LabelOf(LAYOUTS, step.gwChoice)
+        end,
+    },
+    {
+        title = L["Playstyle"],
+        desc = L["Choose how you play. Group and raid frames move to where you need them."],
+        spotlight = "screen",
+        -- the grids sit left and at the bottom
+        windowAt = "TOPRIGHT",
+        highlights = PlaystyleHighlights,
+        onEnter = ShowPlaystyleFrames,
+        onLeave = HidePlaystyleFrames,
+        buildContent = function(content, step)
+            step.gwChoice = step.gwChoice or DetectPlaystyle()
+            local cards = {}
+            for index, style in ipairs(PLAYSTYLES) do
+                local card = CreatePlaystyleCard(content, style)
+                card:SetPoint("TOPLEFT", content, "TOPLEFT", (index - 1) * 160, -6)
+                card:SetSelected(style.key == step.gwChoice)
+                card:SetScript("OnClick", function()
+                    if InCombatLockdown() then return end
+                    step.gwChoice = style.key
+                    ApplyPlaystyle(style.key)
+                    step.applied = true
+                    for _, other in ipairs(cards) do
+                        other:SetSelected(other == card)
+                    end
+                    -- the movers move right away, the lit areas glide after them
+                    C_Timer.After(0.05, function() SetHighlights(PlaystyleHighlights()) end)
+                end)
+                cards[index] = card
+            end
+        end,
+        -- the preselected style counts when next is pressed without a click
+        onNext = function(_, step)
+            if not step.applied and not InCombatLockdown() then
+                ApplyPlaystyle(step.gwChoice)
+            end
+            step.summaryDetail = LabelOf(PLAYSTYLES, step.gwChoice)
+        end,
+    },
+    {
         title = L["Fonts"],
         desc = L["Choose from predefined options to customize fonts and text styles, adjusting the appearance of your text."],
         buildContent = function(content, step)
@@ -606,11 +1471,15 @@ STEPS = RemoveHiddenSteps({
                         function()
                             GW.settings.fonts.styleTemplate = template
                             GW.ApplyFontStyleTemplate()
+                            content.gwFontPreview:Update()
                             step.applied = true
                             step.summaryDetail = GW.FONT_STYLE_TEMPLATE_NAMES[index]
                         end)
                 end
             end)
+
+            content.gwFontPreview = CreateFontPreview(content)
+            content.gwFontPreview:SetPoint("TOP", dropdown, "BOTTOM", 0, -20)
         end,
         onNext = function(_, step)
             if not step.summaryDetail then
@@ -624,6 +1493,10 @@ STEPS = RemoveHiddenSteps({
     },
     {
         title = L["Text Style"],
+        spotlight = "screen",
+        highlights = TextStyleHighlights,
+        onEnter = ShowTextStyleFrames,
+        onLeave = HideTextStyleFrames,
         desc = L["Choose how much the health and power texts of the unit frames show. Every text can be changed later in the text designer."],
         -- a column per frame, a preview and a dropdown for health and for power; what is not picked keeps its texts
         buildContent = function(content, step)
@@ -656,6 +1529,7 @@ STEPS = RemoveHiddenSteps({
                                 rootDescription:CreateRadio(name, function() return (choices[section.key] or 2) == styleIndex end, function()
                                     choices[section.key] = styleIndex
                                     ApplyTextStyle(frame, styles[styleIndex])
+                                    frame.refresh()
                                     UpdatePreview()
                                     step.applied = true
                                 end)
@@ -782,11 +1656,13 @@ STEPS = RemoveHiddenSteps({
     {
         title = L["Installation Complete"],
         desc = L["You have now finished installing GW2 UI!"],
-        applyText = L["Complete"],
+        applyText = RELOADUI,
         apply = function() C_UI.Reload() end,
         isFinal = true,
+        spotlight = "screen",
         buildContent = function(content)
             local previous
+            local delay = 0.2
             for _, step in ipairs(STEPS) do
                 if not step.isFinal then
                     local text = content:CreateFontString(nil, "OVERLAY")
@@ -821,53 +1697,412 @@ STEPS = RemoveHiddenSteps({
                         line:SetScript("OnLeave", GameTooltip_Hide)
                     end
                     previous = text
+                    PlayFadeIn(text, delay)
+                    delay = delay + 0.12
                 end
             end
+
+            local tip = content:CreateFontString(nil, "OVERLAY")
+            tip:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+            tip:SetTextColor(0.62, 0.58, 0.5)
+            tip:SetPoint("BOTTOM", content, "BOTTOM", 0, 4)
+            tip:SetText(L["Type /gw2 settings to open the settings at any time."])
+            PlayFadeIn(tip, delay + 0.2)
         end,
     },
 })
 
 -- ============================
+-- Spotlight: the screen is dimmed except the frame a step is about
+-- ============================
+local WINDOW_WIDTH, WINDOW_HEIGHT, RAIL_WIDTH = 780, 500, 190
+local SPOT_PADDING, SPOT_DURATION = 8, 0.45
+
+-- the window sits on whole pixels, a half pixel makes its texts blurry
+local function SnapToPixel(value)
+    local pixel = 768 / select(2, GetPhysicalScreenSize()) / wpanel:GetEffectiveScale()
+    return math.floor(value / pixel + 0.5) * pixel
+end
+
+-- four dim textures frame the hole; hole and window glide to their targets
+local function UpdateSpotlight(self, elapsed)
+    local spot = self.spot
+    spot.time = math.min(spot.time + elapsed, SPOT_DURATION)
+    local t = spot.time / SPOT_DURATION
+    t = t * t * (3 - 2 * t)
+    for i = 1, 6 do
+        spot.current[i] = spot.from[i] + (spot.to[i] - spot.from[i]) * t
+    end
+
+    local left, bottom, width, height, windowLeft, windowBottom = unpack(spot.current)
+    local screenWidth, screenHeight = self:GetSize()
+    self.dimTop:SetHeight(math.max(screenHeight - bottom - height, 0.01))
+    self.dimBottom:SetHeight(math.max(bottom, 0.01))
+    self.dimLeft:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, bottom)
+    self.dimLeft:SetSize(math.max(left, 0.01), math.max(height, 0.01))
+    self.dimRight:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, bottom)
+    self.dimRight:SetSize(math.max(screenWidth - left - width, 0.01), math.max(height, 0.01))
+    self.ring:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", left, bottom)
+    self.ring:SetSize(math.max(width, 0.01), math.max(height, 0.01))
+    self.window:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", SnapToPixel(windowLeft), SnapToPixel(windowBottom))
+
+    if spot.time >= SPOT_DURATION then
+        self:SetScript("OnUpdate", nil)
+    end
+end
+
+-- target: a frame, "screen" for no dimming or nil for a fully dimmed screen; windowAt "TOPRIGHT" or "TOPLEFT" moves the window
+-- out of the way of frames a step shows. instant only skips the dimming animation, the window always glides
+function SetSpotlight(target, instant, windowAt)
+    local spot = wpanel.spot
+    local width, height = wpanel:GetSize()
+    local windowLeft, windowBottom = (width - WINDOW_WIDTH) / 2, (height - WINDOW_HEIGHT) / 2
+    if windowAt == "TOPRIGHT" then
+        windowLeft, windowBottom = math.max(width - WINDOW_WIDTH - 20, 20), math.max(height - WINDOW_HEIGHT - 20, 20)
+    elseif windowAt == "TOPLEFT" then
+        windowLeft, windowBottom = 20, math.max(height - WINDOW_HEIGHT - 20, 20)
+    end
+    local isFrame = type(target) == "table" and target:IsVisible() and target:GetRect() ~= nil
+    local to
+    if isFrame then
+        local scale = target:GetEffectiveScale() / wpanel:GetEffectiveScale()
+        local left, bottom, frameWidth, frameHeight = target:GetRect()
+        left, bottom = left * scale - SPOT_PADDING, bottom * scale - SPOT_PADDING
+        frameWidth, frameHeight = frameWidth * scale + SPOT_PADDING * 2, frameHeight * scale + SPOT_PADDING * 2
+        -- the window sits next to the lit frame, bottoms aligned, and stays on the screen
+        if left + frameWidth / 2 < width / 2 then
+            windowLeft = left + frameWidth + 40
+        else
+            windowLeft = left - 40 - WINDOW_WIDTH
+        end
+        windowLeft = math.min(math.max(windowLeft, 20), math.max(width - WINDOW_WIDTH - 20, 20))
+        windowBottom = math.min(math.max(bottom, 20), math.max(height - WINDOW_HEIGHT - 20, 20))
+        to = {left, bottom, frameWidth, frameHeight, windowLeft, windowBottom}
+    elseif target == "screen" then
+        to = {0, 0, width, height, windowLeft, windowBottom}
+    else
+        to = {width / 2, height / 2, 0, 0, windowLeft, windowBottom}
+    end
+
+    spot.target, spot.windowAt = target, windowAt
+    spot.from = CopyTable(spot.current)
+    spot.to = to
+    spot.time = 0
+    if instant then
+        for i = 1, 4 do
+            spot.from[i] = to[i]
+        end
+    end
+    wpanel.ring:SetShown(isFrame)
+    wpanel:SetScript("OnUpdate", UpdateSpotlight)
+    if instant then
+        UpdateSpotlight(wpanel, 0)
+    end
+end
+
+-- an accent frame that breathes
+local function CreateRing()
+    local ring = CreateFrame("Frame", nil, wpanel)
+    ring:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
+    ring.backdrop:SetBackdropBorderColor(GW.Colors.AccentLight:GetRGB())
+    ring:Hide()
+    local pulse = ring:CreateAnimationGroup()
+    pulse:SetLooping("BOUNCE")
+    local fade = pulse:CreateAnimation("Alpha")
+    fade:SetFromAlpha(1)
+    fade:SetToAlpha(0.35)
+    fade:SetDuration(1.2)
+    fade:SetSmoothing("IN_OUT")
+    pulse:Play()
+    return ring
+end
+
+-- the rect of a frame or of a list of frames in screen units, with the padding of the spotlight
+local function GetHighlightRect(target)
+    local left, bottom, right, top
+    -- pairs: a frame that does not exist leaves a hole in the list
+    for _, frame in pairs(target.GetRect and {target} or target) do
+        local frameLeft, frameBottom, width, height = frame:GetRect()
+        -- secure aura containers have secret sizes, their mover has the same rect
+        if GW.IsSecretValue(width) and frame.gwMover then
+            frameLeft, frameBottom, width, height = frame.gwMover:GetRect()
+        end
+        if frame:IsVisible() and frame:GetEffectiveAlpha() > 0 and frameLeft and not GW.IsSecretValue(width) and width > 1 and height > 1 then
+            local scale = frame:GetEffectiveScale() / wpanel:GetEffectiveScale()
+            frameLeft, frameBottom = frameLeft * scale, frameBottom * scale
+            local frameRight, frameTop = frameLeft + width * scale, frameBottom + height * scale
+            left, bottom = math.min(left or frameLeft, frameLeft), math.min(bottom or frameBottom, frameBottom)
+            right, top = math.max(right or frameRight, frameRight), math.max(top or frameTop, frameTop)
+        end
+    end
+    if left then
+        return {left = left - SPOT_PADDING, bottom = bottom - SPOT_PADDING, right = right + SPOT_PADDING, top = top + SPOT_PADDING}
+    end
+end
+
+-- dims all but the rects: the screen is cut into bands at the rect edges, in each band the gaps get a texture.
+-- All edges sit on whole pixels, two textures meeting on a half pixel leave a bright line
+local function DimAround(rects)
+    wpanel.holeDims = wpanel.holeDims or {}
+    local used = 0
+    local function Dim(left, bottom, right, top)
+        if right - left < 0.5 or top - bottom < 0.5 then return end
+        used = used + 1
+        local dim = wpanel.holeDims[used]
+        if not dim then
+            dim = wpanel:CreateTexture(nil, "BACKGROUND")
+            dim:SetColorTexture(0, 0, 0, 0.78)
+            wpanel.holeDims[used] = dim
+        end
+        dim:ClearAllPoints()
+        dim:SetPoint("BOTTOMLEFT", wpanel, "BOTTOMLEFT", left, bottom)
+        dim:SetSize(right - left, top - bottom)
+        dim:Show()
+    end
+
+    if rects then
+        local width, height = wpanel:GetSize()
+        local snapped, edges = {}, {0, SnapToPixel(height)}
+        for _, rect in pairs(rects) do
+            local bottom = SnapToPixel(math.min(math.max(rect.bottom, 0), height))
+            local top = SnapToPixel(math.min(math.max(rect.top, 0), height))
+            tinsert(snapped, {left = SnapToPixel(rect.left), right = SnapToPixel(rect.right), bottom = bottom, top = top})
+            tinsert(edges, bottom)
+            tinsert(edges, top)
+        end
+        sort(edges)
+        for i = 1, #edges - 1 do
+            local bandBottom, bandTop = edges[i], edges[i + 1]
+            if bandTop > bandBottom then
+                local middle = (bandBottom + bandTop) / 2
+                local spans = {}
+                for _, rect in ipairs(snapped) do
+                    if rect.bottom < middle and rect.top > middle then
+                        tinsert(spans, rect)
+                    end
+                end
+                sort(spans, function(a, b) return a.left < b.left end)
+                local x = 0
+                for _, rect in ipairs(spans) do
+                    Dim(x, bandBottom, rect.left, bandTop)
+                    x = math.max(x, rect.right)
+                end
+                Dim(x, bandBottom, SnapToPixel(width), bandTop)
+            end
+        end
+    end
+    for i = used + 1, #wpanel.holeDims do
+        wpanel.holeDims[i]:Hide()
+    end
+end
+
+-- rects by the key of their target, a ring each
+local function LayoutHighlights(rects)
+    wpanel.rings = wpanel.rings or {}
+    for key, ring in pairs(wpanel.rings) do
+        ring:SetShown(rects ~= nil and rects[key] ~= nil)
+    end
+    for key, rect in pairs(rects or {}) do
+        local ring = wpanel.rings[key] or CreateRing()
+        wpanel.rings[key] = ring
+        ring:ClearAllPoints()
+        ring:SetPoint("BOTTOMLEFT", wpanel, "BOTTOMLEFT", rect.left, rect.bottom)
+        ring:SetSize(math.max(rect.right - rect.left, 0.01), math.max(rect.top - rect.bottom, 0.01))
+        ring:SetShown(rect.right - rect.left > 2 and rect.top - rect.bottom > 2)
+    end
+    DimAround(rects)
+end
+
+-- the lit areas grow out of their middle like the spotlight
+local function UpdateHighlights(self, elapsed)
+    local anim = self.anim
+    anim.time = math.min(anim.time + elapsed, SPOT_DURATION)
+    local t = anim.time / SPOT_DURATION
+    t = t * t * (3 - 2 * t)
+    local rects = {}
+    for key, to in pairs(anim.to) do
+        local from = anim.from[key]
+        rects[key] = {
+            left = from.left + (to.left - from.left) * t,
+            bottom = from.bottom + (to.bottom - from.bottom) * t,
+            right = from.right + (to.right - from.right) * t,
+            top = from.top + (to.top - from.top) * t,
+        }
+    end
+    if anim.time >= SPOT_DURATION then
+        self:SetScript("OnUpdate", nil)
+        -- closed areas are done
+        for key in pairs(anim.closing) do
+            rects[key] = nil
+        end
+    end
+    wpanel.highlightCurrent = rects
+    LayoutHighlights(rects)
+end
+
+local function CenterOf(rect)
+    local x, y = (rect.left + rect.right) / 2, (rect.bottom + rect.top) / 2
+    return {left = x, right = x, bottom = y, top = y}
+end
+
+-- several frames lit at once with a ring each, the rest of the screen dimmed; a list of frames counts as one area.
+-- retarget only moves the goals of a running animation, frames that show up late join it without a restart
+function SetHighlights(targets, retarget)
+    wpanel.highlightTargets = targets
+    local driver = wpanel.highlightDriver
+    if not driver then
+        driver = CreateFrame("Frame", nil, wpanel)
+        wpanel.highlightDriver = driver
+    end
+    if not targets then
+        driver:SetScript("OnUpdate", nil)
+        driver.anim = nil
+        wpanel.highlightCurrent = nil
+        LayoutHighlights(nil)
+        return
+    end
+
+    local to = {}
+    for key, target in pairs(targets) do
+        to[key] = GetHighlightRect(target)
+    end
+    local anim = driver.anim
+    if retarget and anim and anim.time < SPOT_DURATION then
+        for key, rect in pairs(to) do
+            anim.from[key] = anim.from[key] or CenterOf(rect)
+        end
+        anim.to = to
+        return
+    end
+
+    local from, closing = {}, {}
+    for key, rect in pairs(to) do
+        from[key] = wpanel.highlightCurrent and wpanel.highlightCurrent[key] or CenterOf(rect)
+    end
+    -- an area that is no longer wanted closes into its middle
+    for key, rect in pairs(wpanel.highlightCurrent or {}) do
+        if not to[key] then
+            from[key], to[key], closing[key] = rect, CenterOf(rect), true
+        end
+    end
+    driver.anim = {from = from, to = to, time = 0, closing = closing}
+    driver:SetScript("OnUpdate", UpdateHighlights)
+    -- right away, the dark screen of the spotlight is already gone
+    UpdateHighlights(driver, 0)
+end
+
+local function CreateSpotlight()
+    wpanel.spot = {time = 0}
+
+    for _, key in ipairs({"dimTop", "dimBottom", "dimLeft", "dimRight"}) do
+        local dim = wpanel:CreateTexture(nil, "BACKGROUND")
+        dim:SetColorTexture(0, 0, 0, 0.78)
+        wpanel[key] = dim
+    end
+    wpanel.dimTop:SetPoint("TOPLEFT")
+    wpanel.dimTop:SetPoint("TOPRIGHT")
+    wpanel.dimBottom:SetPoint("BOTTOMLEFT")
+    wpanel.dimBottom:SetPoint("BOTTOMRIGHT")
+
+    wpanel.ring = CreateRing()
+
+    local width, height = wpanel:GetSize()
+    wpanel.spot.current = {width / 2, height / 2, 0, 0, (width - WINDOW_WIDTH) / 2, (height - WINDOW_HEIGHT) / 2}
+    wpanel.window:SetPoint("BOTTOMLEFT", wpanel, "BOTTOMLEFT", SnapToPixel(wpanel.spot.current[5]), SnapToPixel(wpanel.spot.current[6]))
+    -- the scale preview of the display step resizes the screen
+    wpanel:SetScript("OnSizeChanged", function()
+        SetSpotlight(wpanel.spot.target, true, wpanel.spot.windowAt)
+        SetHighlights(wpanel.highlightTargets)
+    end)
+end
+
+-- ============================
 -- Step engine
 -- ============================
+local function UpdateRail(index)
+    for i, row in ipairs(installFrame.rows) do
+        local step = STEPS[i]
+        row.accent:SetShown(i == index)
+        row.highlight:SetShown(i == index)
+        if i == index then
+            row.text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+            row.number:SetText(i)
+        elseif step.applied then
+            row.text:SetTextColor(0.72, 0.82, 0.6)
+            row.number:SetText("|TInterface/RaidFrame/ReadyCheck-Ready:14|t")
+        elseif i < index then
+            row.text:SetTextColor(0.5, 0.47, 0.42)
+            row.number:SetText(i)
+        else
+            row.text:SetTextColor(0.62, 0.58, 0.5)
+            row.number:SetText(i)
+        end
+        row.number:SetTextColor(row.text:GetTextColor())
+    end
+end
+
+-- a step can show frames while it is open (onEnter) and has to put them away again (onLeave)
+local function LeaveStep()
+    local step = installFrame.currentStep
+    installFrame.currentStep = nil
+    if step and step.onLeave then
+        step.onLeave()
+    end
+    if step and step.highlights then
+        SetHighlights(nil)
+        -- the next step opens its spotlight from a dark screen
+        SetSpotlight(nil, true)
+    end
+end
+
 local function RenderStep(index)
     local step = STEPS[index]
     local install = installFrame
 
+    LeaveStep()
+    install.currentStep = step
+    if step.onEnter then
+        step.onEnter()
+    end
+
     install.title:SetText(step.title)
     install.desc:SetText(step.desc)
-
-    -- progress: filled dots are done, the gold one is the current step
-    for i, dot in ipairs(install.dots) do
-        if i == index then
-            dot:SetVertexColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        elseif STEPS[i].applied then
-            dot:SetVertexColor(0.3, 0.92, 0.17)
-        elseif i < index then
-            dot:SetVertexColor(1, 1, 1, 0.7)
-        else
-            dot:SetVertexColor(1, 1, 1, 0.2)
-        end
-        dot:SetSize(i == index and 10 or 8, i == index and 10 or 8)
+    UpdateRail(index)
+    SetSpotlight(type(step.spotlight) == "function" and step.spotlight() or step.spotlight, step.highlights ~= nil, step.windowAt)
+    if step.highlights then
+        -- the config mode of the group frames shows its frames a moment later
+        SetHighlights(step.highlights())
+        C_Timer.After(0.2, function()
+            if install.currentStep == step then
+                SetHighlights(step.highlights(), true)
+            end
+        end)
     end
-    install.stepText:SetFormattedText(L["Step %d of %d"], index, #STEPS)
 
     -- content area is rebuilt per step (steps are visited rarely, no pooling needed)
     if install.content then
         install.content:Hide()
         install.content:SetParent(nil)
     end
+    -- below the description on a whole pixel, the texts of the content would blur otherwise
+    local top = 28 + install.title:GetStringHeight() + 10 + install.desc:GetStringHeight() + 16
     install.content = CreateFrame("Frame", nil, install)
-    install.content:SetPoint("TOP", install.desc, "BOTTOM", 0, -12)
-    install.content:SetPoint("BOTTOM", install.action, "TOP", 0, 10)
+    install.content:SetPoint("TOP", install.main, "TOPLEFT", (WINDOW_WIDTH - RAIL_WIDTH) / 2, -SnapToPixel(top))
+    install.content:SetPoint("BOTTOM", install.next, "TOP", 0, 12)
     install.content:SetWidth(470)
     if step.buildContent then
         step.buildContent(install.content, step)
     end
-    UIFrameFadeIn(install.content, 0.2, 0, 1)
+    -- the finale brings its lines in one by one itself
+    if not step.isFinal then
+        PlayFadeIn(install.content)
+    end
+    PlayFadeIn(install.title)
+    PlayFadeIn(install.desc, 0.05)
 
-    -- the steps own action stands alone, the navigation row stays small below it
+    -- the action replaces next, the finale lets it glow
     install.action:SetShown(step.applyText ~= nil)
+    install.glow:SetShown(step.isFinal == true)
     if step.applyText then
         install.action:SetText(step.applyText)
         install.action:SetScript("OnClick", function()
@@ -882,13 +2117,7 @@ local function RenderStep(index)
     install.back:SetShown(index > 1 and not step.isFinal)
     install.skip:SetShown(not step.isFinal)
     install.next:SetShown(not step.isFinal and not step.applyText)
-
-    install.skip:ClearAllPoints()
-    if install.next:IsShown() then
-        install.skip:SetPoint("RIGHT", install.next, "LEFT", -8, 0)
-    else
-        install.skip:SetPoint("BOTTOMRIGHT", install, "BOTTOMRIGHT", -10, 4)
-    end
+    install.skip:SetPoint("BOTTOMRIGHT", step.applyText and install.action or install.next, "BOTTOMLEFT", -8, 0)
 
     install.back:SetScript("OnClick", function()
         if step.onSkip then step.onSkip(install.content) end
@@ -906,65 +2135,117 @@ local function RenderStep(index)
 end
 
 local function CreateInstallFrame()
-    installFrame = CreateFrame("Frame", nil, wpanel)
-    installFrame:SetPoint("TOP", wpanel, "TOP", 0, -60)
-    installFrame:SetPoint("BOTTOM", wpanel, "BOTTOM", 0, 14)
-    installFrame:SetWidth(478)
+    local window = wpanel.window
+    installFrame = CreateFrame("Frame", nil, window)
+    installFrame:SetAllPoints(window)
     installFrame:Hide()
 
-    -- progress at the very top: done | current (gold) | upcoming, all on one center line
-    installFrame.dots = {}
-    local dotCount = #STEPS
-    local spacing = 20
-    for i = 1, dotCount do
-        local dot = installFrame:CreateTexture(nil, "OVERLAY")
-        dot:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-        dot:SetSize(8, 8)
-        dot:SetPoint("CENTER", installFrame, "TOP", (i - (dotCount + 1) / 2) * spacing, -10)
-        installFrame.dots[i] = dot
+    -- left rail: brand on top, one row per step
+    local rail = CreateFrame("Frame", nil, installFrame)
+    rail:SetPoint("TOPLEFT")
+    rail:SetPoint("BOTTOMLEFT")
+    rail:SetWidth(RAIL_WIDTH)
+    local railBg = rail:CreateTexture(nil, "BACKGROUND", nil, 1)
+    railBg:SetAllPoints()
+    railBg:SetColorTexture(0, 0, 0, 0.35)
+    local railLine = rail:CreateTexture(nil, "BORDER")
+    railLine:SetPoint("TOPRIGHT")
+    railLine:SetPoint("BOTTOMRIGHT")
+    railLine:SetWidth(1)
+    railLine:SetColorTexture(GW.Colors.AccentLight:GetRGB())
+    railLine:SetAlpha(0.25)
+
+    local brand = GW.CreateBrandLogo(rail, 36)
+    brand:SetPoint("CENTER", rail, "TOPLEFT", 36, -36)
+    local brandText = rail:CreateFontString(nil, "OVERLAY")
+    brandText:SetFont("Interface/AddOns/GW2_UI/Fonts/menomonia.ttf", 22)
+    brandText:SetText("|cffffffffGW2|r " .. GW.Colors.TextColors.LightHeader:WrapTextInColorCode("UI"))
+    brandText:SetPoint("LEFT", brand, "RIGHT", 8, 4)
+    local version = rail:CreateFontString(nil, "OVERLAY")
+    version:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
+    version:SetTextColor(0.62, 0.58, 0.5)
+    version:SetPoint("TOPLEFT", brandText, "BOTTOMLEFT", 0, -2)
+    version:SetText(GW.GetVersionString())
+
+    installFrame.rows = {}
+    for i, step in ipairs(STEPS) do
+        local row = CreateFrame("Frame", nil, rail)
+        row:SetSize(RAIL_WIDTH - 1, 30)
+        row:SetPoint("TOPLEFT", rail, "TOPLEFT", 0, -78 - (i - 1) * 32)
+        row.highlight = row:CreateTexture(nil, "BACKGROUND", nil, 2)
+        row.highlight:SetAllPoints()
+        row.highlight:SetColorTexture(GW.Colors.Accent.r, GW.Colors.Accent.g, GW.Colors.Accent.b, 0.18)
+        row.accent = row:CreateTexture(nil, "ARTWORK")
+        row.accent:SetPoint("TOPLEFT")
+        row.accent:SetPoint("BOTTOMLEFT")
+        row.accent:SetWidth(3)
+        row.accent:SetColorTexture(GW.Colors.Accent:GetRGB())
+        row.number = row:CreateFontString(nil, "OVERLAY")
+        row.number:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        row.number:SetPoint("CENTER", row, "LEFT", 22, 0)
+        row.text = row:CreateFontString(nil, "OVERLAY")
+        row.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        row.text:SetPoint("LEFT", row, "LEFT", 40, 0)
+        row.text:SetPoint("RIGHT", row, "RIGHT", -8, 0)
+        row.text:SetJustifyH("LEFT")
+        row.text:SetWordWrap(false)
+        row.text:SetText(step.title)
+        installFrame.rows[i] = row
     end
 
-    installFrame.stepText = installFrame:CreateFontString(nil, "OVERLAY")
-    installFrame.stepText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    installFrame.stepText:SetTextColor(0.62, 0.58, 0.5)
-    installFrame.stepText:SetPoint("TOP", installFrame, "TOP", 0, -22)
+    -- main area: accent title, description, content, buttons
+    local main = CreateFrame("Frame", nil, installFrame)
+    main:SetPoint("TOPLEFT", RAIL_WIDTH, 0)
+    main:SetPoint("BOTTOMRIGHT")
+    installFrame.main = main
 
-    installFrame.title = installFrame:CreateFontString(nil, "OVERLAY")
-    installFrame.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
-    installFrame.title:SetTextColor(0.8, 0.75, 0.6)
-    installFrame.title:SetPoint("TOP", installFrame, "TOP", 0, -46)
+    installFrame.title = main:CreateFontString(nil, "OVERLAY")
+    installFrame.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 8)
+    installFrame.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    installFrame.title:SetPoint("TOPLEFT", main, "TOPLEFT", 32, -28)
+    local titleAccent = main:CreateTexture(nil, "ARTWORK")
+    titleAccent:SetColorTexture(GW.Colors.Accent:GetRGB())
+    titleAccent:SetSize(3, 22)
+    titleAccent:SetPoint("RIGHT", installFrame.title, "LEFT", -10, 0)
 
-    local separator = installFrame:CreateTexture(nil, "OVERLAY")
-    separator:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
-    separator:SetAlpha(0.8)
-    separator:SetSize(260, 2)
-    separator:SetPoint("TOP", installFrame.title, "BOTTOM", 0, -4)
-
-    installFrame.desc = installFrame:CreateFontString(nil, "OVERLAY")
-    installFrame.desc:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    installFrame.desc = main:CreateFontString(nil, "OVERLAY")
+    installFrame.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     installFrame.desc:SetTextColor(0.9, 0.85, 0.7)
-    installFrame.desc:SetPoint("TOP", separator, "BOTTOM", 0, -10)
-    installFrame.desc:SetWidth(440)
-    installFrame.desc:SetJustifyH("CENTER")
+    installFrame.desc:SetPoint("TOPLEFT", installFrame.title, "BOTTOMLEFT", 0, -10)
+    installFrame.desc:SetWidth(WINDOW_WIDTH - RAIL_WIDTH - 64)
+    installFrame.desc:SetJustifyH("LEFT")
 
-    -- the steps own action button, prominent and alone
-    installFrame.action = CreateActionButton(installFrame, 240)
-    installFrame.action:SetPoint("BOTTOM", installFrame, "BOTTOM", 0, 40)
-
-    -- small navigation row below it: back on the left, skip and next grouped right
-    installFrame.back = CreateActionButton(installFrame, 110)
-    installFrame.back:SetHeight(24)
-    installFrame.back:SetPoint("BOTTOMLEFT", installFrame, "BOTTOMLEFT", 10, 4)
-    installFrame.back:SetText(BACK)
-
-    installFrame.next = CreateActionButton(installFrame, 110)
-    installFrame.next:SetHeight(24)
-    installFrame.next:SetPoint("BOTTOMRIGHT", installFrame, "BOTTOMRIGHT", -10, 4)
+    installFrame.next = CreateActionButton(main, 150)
+    installFrame.next:SetPoint("BOTTOMRIGHT", main, "BOTTOMRIGHT", -24, 18)
     installFrame.next:SetText(NEXT)
 
-    installFrame.skip = CreateActionButton(installFrame, 110)
-    installFrame.skip:SetHeight(24)
+    installFrame.action = CreateActionButton(main, 200)
+    installFrame.action:SetPoint("BOTTOMRIGHT", installFrame.next)
+
+    -- the finale lets its button glow
+    local glow = main:CreateTexture(nil, "BACKGROUND", nil, 3)
+    glow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/glow.png")
+    glow:SetBlendMode("ADD")
+    glow:SetVertexColor(GW.Colors.AccentLight:GetRGB())
+    glow:SetPoint("TOPLEFT", installFrame.action, "TOPLEFT", -40, 30)
+    glow:SetPoint("BOTTOMRIGHT", installFrame.action, "BOTTOMRIGHT", 40, -30)
+    local glowPulse = glow:CreateAnimationGroup()
+    glowPulse:SetLooping("BOUNCE")
+    local glowFade = glowPulse:CreateAnimation("Alpha")
+    glowFade:SetFromAlpha(0.9)
+    glowFade:SetToAlpha(0.3)
+    glowFade:SetDuration(1)
+    glowFade:SetSmoothing("IN_OUT")
+    glow:SetScript("OnShow", function() glowPulse:Play() end)
+    glow:SetScript("OnHide", function() glowPulse:Stop() end)
+    installFrame.glow = glow
+
+    installFrame.skip = CreateActionButton(main, 110)
     installFrame.skip:SetText(L["Skip"])
+
+    installFrame.back = CreateActionButton(main, 110)
+    installFrame.back:SetPoint("BOTTOMLEFT", main, "BOTTOMLEFT", 24, 18)
+    installFrame.back:SetText(BACK)
 end
 
 -- ============================
@@ -984,63 +2265,112 @@ local function StartInstall()
 end
 
 local function CreateLandingFrame()
-    landingFrame = CreateFrame("Frame", nil, wpanel)
-    landingFrame:SetPoint("TOP", wpanel, "TOP", 0, -60)
-    landingFrame:SetPoint("BOTTOM", wpanel, "BOTTOM", 0, 14)
-    landingFrame:SetWidth(478)
+    local window = wpanel.window
+    landingFrame = CreateFrame("Frame", nil, window)
+    landingFrame:SetAllPoints(window)
 
-    landingFrame.title = landingFrame:CreateFontString(nil, "OVERLAY")
-    landingFrame.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
-    landingFrame.title:SetTextColor(0.8, 0.75, 0.6)
-    landingFrame.title:SetPoint("TOP", landingFrame, "TOP", 0, -14)
-    landingFrame.title:SetText(L["GW2 UI installation"])
+    -- the artwork of the client, darkened to the right for the text
+    local art = landingFrame:CreateTexture(nil, "BACKGROUND", nil, 1)
+    art:SetTexture((GW.GetSettingsSplashArt()))
+    art:SetTexCoord(0, 0.75, 0.02, 0.98)
+    art:SetAllPoints()
+    local shade = landingFrame:CreateTexture(nil, "BACKGROUND", nil, 2)
+    shade:SetColorTexture(1, 1, 1, 1)
+    shade:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0.15), CreateColor(0, 0, 0, 0.92))
+    shade:SetAllPoints()
+    local bottomShade = landingFrame:CreateTexture(nil, "BACKGROUND", nil, 3)
+    bottomShade:SetColorTexture(1, 1, 1, 1)
+    bottomShade:SetGradient("VERTICAL", CreateColor(0, 0, 0, 0.85), CreateColor(0, 0, 0, 0))
+    bottomShade:SetPoint("BOTTOMLEFT")
+    bottomShade:SetPoint("BOTTOMRIGHT")
+    bottomShade:SetHeight(140)
 
-    local separator = landingFrame:CreateTexture(nil, "OVERLAY")
-    separator:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
-    separator:SetAlpha(0.8)
-    separator:SetSize(260, 2)
-    separator:SetPoint("TOP", landingFrame.title, "BOTTOM", 0, -4)
+    -- the own character, slowly turning a bit to each side
+    local model = CreateFrame("PlayerModel", nil, landingFrame)
+    model:SetPoint("BOTTOMLEFT", landingFrame, "BOTTOMLEFT", 30, 10)
+    model:SetSize(300, 440)
+    local swayTime = 0
+    model:SetScript("OnShow", function(self)
+        self:SetUnit("player")
+        self:SetPortraitZoom(0)
+    end)
+    model:SetScript("OnUpdate", function(self, elapsed)
+        swayTime = swayTime + elapsed
+        self:SetFacing(0.45 * math.sin(swayTime * 0.4))
+    end)
+    landingFrame.model = model
 
-    landingFrame.intro = landingFrame:CreateFontString(nil, "OVERLAY")
-    landingFrame.intro:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    landingFrame.intro:SetTextColor(0.9, 0.85, 0.7)
-    landingFrame.intro:SetPoint("TOP", separator, "BOTTOM", 0, -16)
-    landingFrame.intro:SetWidth(430)
-    landingFrame.intro:SetJustifyH("CENTER")
-    landingFrame.intro:SetText(L["GW2 UI is a full user interface replacement. We have built the user interface with a modular approach, this means that if you dislike a certain part of the addon - or have another you prefer for that function - you can just disable that part, while keeping the rest of the interface intact.\nSome of the modules available to you are an immersive questing window, a full inventory replacement, as well as a full character window replacement. There are many more that you can enjoy, just take a look in the settings menu to see what's available to you!"])
+    local column = CreateFrame("Frame", nil, landingFrame)
+    column:SetPoint("TOPLEFT", landingFrame, "TOPLEFT", 380, -60)
+    column:SetPoint("BOTTOMRIGHT", landingFrame, "BOTTOMRIGHT", -40, 0)
 
-    landingFrame.express = CreateActionButton(landingFrame, 240)
-    landingFrame.express:SetPoint("BOTTOM", landingFrame, "BOTTOM", 0, 76)
-    landingFrame.express:SetText(L["Apply recommended settings"])
-    landingFrame.express:SetScript("OnClick", ApplyExpressInstall)
+    local brand = GW.CreateBrandLogo(column, 56)
+    brand:SetPoint("TOPLEFT", column, "TOPLEFT", 0, 0)
 
-    landingFrame.start = CreateActionButton(landingFrame, 240)
-    landingFrame.start:SetPoint("BOTTOM", landingFrame, "BOTTOM", 0, 40)
-    landingFrame.start:SetText(L["Start installation"])
-    landingFrame.start:SetScript("OnClick", StartInstall)
+    local welcome = column:CreateFontString(nil, "OVERLAY")
+    welcome:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+    welcome:SetTextColor(GW.Colors.AccentLight:GetRGB())
+    welcome:SetPoint("TOPLEFT", brand, "BOTTOMLEFT", 0, -22)
+    welcome:SetText(L["Welcome to GW2 UI"])
 
-    landingFrame.settings = CreateActionButton(landingFrame, 110)
-    landingFrame.settings:SetHeight(24)
-    landingFrame.settings:SetPoint("BOTTOMLEFT", landingFrame, "BOTTOMLEFT", 10, 4)
-    landingFrame.settings:SetText(CHAT_CONFIGURATION)
-    landingFrame.settings.target = GwSettingsWindow
-    landingFrame.settings:SetScript("OnClick", settings_OnClick)
+    local name = column:CreateFontString(nil, "OVERLAY")
+    name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 18)
+    name:SetPoint("TOPLEFT", welcome, "BOTTOMLEFT", 0, -6)
+    name:SetText(UnitName("player"))
+    local classColor = GW.GWGetClassColor(select(2, UnitClass("player")), true, true)
+    name:SetTextColor(classColor.r, classColor.g, classColor.b)
 
-    landingFrame.close = CreateActionButton(landingFrame, 110)
-    landingFrame.close:SetHeight(24)
-    landingFrame.close:SetPoint("BOTTOMRIGHT", landingFrame, "BOTTOMRIGHT", -10, 4)
-    landingFrame.close:SetText(CLOSE)
-    landingFrame.close:SetScript("OnClick", function() wpanel:Hide() end)
-end
+    local version = column:CreateFontString(nil, "OVERLAY")
+    version:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    version:SetTextColor(0.62, 0.58, 0.5)
+    version:SetPoint("TOPLEFT", name, "BOTTOMLEFT", 0, -4)
+    version:SetText(GW.GetVersionString())
 
-local function setDefaultOpenLayout()
-    wpanel.header:SetText(L["Welcome to GW2 UI"])
-    installFrame:Hide()
-    landingFrame:Show()
+    local intro = column:CreateFontString(nil, "OVERLAY")
+    intro:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    intro:SetTextColor(0.9, 0.85, 0.7)
+    intro:SetPoint("TOPLEFT", version, "BOTTOMLEFT", 0, -18)
+    intro:SetWidth(340)
+    intro:SetJustifyH("LEFT")
+    intro:SetText(L["Your interface is ready in a few steps. Everything can be changed later in the settings."])
+
+    -- the buttons hang from the bottom, below a text of any height they would sit on half pixels
+    local start = CreateActionButton(column, 240)
+    start:SetHeight(32)
+    start:SetPoint("BOTTOMLEFT", column, "BOTTOMLEFT", 0, 120)
+    start:SetText(L["Start installation"])
+    start:SetScript("OnClick", StartInstall)
+
+    local express = CreateTextLink(column, L["Apply recommended settings"], ApplyExpressInstall)
+    express.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    express:SetSize(express.text:GetStringWidth() + 4, 20)
+    express:SetPoint("TOPLEFT", start, "BOTTOMLEFT", 0, -10)
+
+    local settings = CreateActionButton(landingFrame, 110)
+    settings:SetHeight(24)
+    settings:SetPoint("BOTTOMRIGHT", landingFrame, "BOTTOMRIGHT", -136, 16)
+    settings:SetText(CHAT_CONFIGURATION)
+    settings.target = GwSettingsWindow
+    settings:SetScript("OnClick", settings_OnClick)
+
+    local close = CreateActionButton(landingFrame, 110)
+    close:SetHeight(24)
+    close:SetPoint("BOTTOMRIGHT", landingFrame, "BOTTOMRIGHT", -18, 16)
+    close:SetText(CLOSE)
+    close:SetScript("OnClick", function() wpanel:Hide() end)
+
+    landingFrame.reveal = {welcome, name, version, intro, start, express}
 end
 
 local function createPanel()
-    wpanel = CreateFrame("Frame", "GwWelcomePage", UIParent, "GwWelcomePageTmpl")
+    -- the whole screen: dimming, spotlight and the window on top
+    wpanel = CreateFrame("Frame", "GwWelcomePage", UIParent)
+    wpanel:SetAllPoints(UIParent)
+    -- above the bags and hero window it opens as previews, those stay below the dimming
+    wpanel:SetFrameStrata("DIALOG")
+    wpanel:SetToplevel(true)
+    wpanel:EnableMouse(true)
+    wpanel:Hide()
 
     -- escape closes the window. NOT via UISpecialFrames: the chat setup activates an
     -- edit mode layout, and the edit mode closes all special frames - the installer
@@ -1054,20 +2384,34 @@ local function createPanel()
             self:SetPropagateKeyboardInput(true)
         end
     end)
+    wpanel:SetScript("OnHide", function()
+        LeaveStep()
+        PlaySoundFile("Interface/AddOns/GW2_UI/Sounds/dialog_close.ogg", "SFX")
+    end)
 
-    local watermark = wpanel:CreateTexture(nil, "BACKGROUND", nil, 1)
-    watermark:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png")
-    watermark:SetAlpha(0.06)
-    watermark:SetSize(200, 200)
-    watermark:SetPoint("BOTTOMRIGHT", wpanel, "BOTTOMRIGHT", 40, 24)
+    local window = CreateFrame("Frame", nil, wpanel)
+    window:SetSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+    window:EnableMouse(true)
+    local background = window:CreateTexture(nil, "BACKGROUND")
+    background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/settingspanelbg.png")
+    background:SetTexCoord(0, WINDOW_WIDTH / 853, 0, WINDOW_HEIGHT / 853)
+    background:SetAllPoints()
 
-    wpanel.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE", 12)
-    wpanel.header:SetTextColor(1, 0.95, 0.8, 1)
+    -- the window comes in a little smaller and grows to its size
+    local enter = window:CreateAnimationGroup()
+    local grow = enter:CreateAnimation("Scale")
+    grow:SetScaleFrom(0.94, 0.94)
+    grow:SetScaleTo(1, 1)
+    grow:SetDuration(0.4)
+    grow:SetSmoothing("OUT")
+    local fade = enter:CreateAnimation("Alpha")
+    fade:SetFromAlpha(0)
+    fade:SetToAlpha(1)
+    fade:SetDuration(0.4)
+    window.enter = enter
+    wpanel.window = window
 
-    wpanel.subHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
-    wpanel.subHeader:SetTextColor(0.9, 0.85, 0.7, 1)
-    wpanel.subHeader:SetText(GW.GetVersionString())
-
+    CreateSpotlight()
     CreateInstallFrame()
     CreateLandingFrame()
 end
@@ -1076,7 +2420,17 @@ local function ShowWelcomePanel()
     if not wpanel then
         createPanel()
     end
-    setDefaultOpenLayout()
+    LeaveStep()
+    installFrame:Hide()
+    landingFrame:Show()
+
     wpanel:Show()
+    SetSpotlight(nil)
+    UIFrameFadeIn(wpanel, 0.5, 0, 1)
+    wpanel.window.enter:Play()
+    for index, region in ipairs(landingFrame.reveal) do
+        PlayFadeIn(region, 0.25 + index * 0.1)
+    end
+    PlaySoundFile("Interface/AddOns/GW2_UI/Sounds/dialog_open.ogg", "SFX")
 end
 GW.ShowWelcomePanel = ShowWelcomePanel

@@ -62,6 +62,7 @@ local function GetSettingsSplashArt()
     local fallback = SETTINGS_SPLASH_ART_PATH .. "settingartwork-retail.png"
     return fallback, fallback, nil
 end
+GW.GetSettingsSplashArt = GetSettingsSplashArt
 
 local function GetGroupCollapseKey(version, changeType)
     return (version or "") .. "|" .. tostring(changeType or "")

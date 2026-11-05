@@ -14,7 +14,10 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.6", {
+    {GW.Enum.ChangelogType.change, [=[Group frames: the party, raid 10 and raid 25 grids start at the top left like the raid 40 grid, the party grid has smaller frames by default]=]},
+    {GW.Enum.ChangelogType.feature, [=[Installer: new look, a welcome with your own character, a step list on the left and a spotlight on what a step changes; modules are tiles that light their frame, the text style step changes your real frames live; a new layout step chooses between the health globe and player and target frames side by side like in World of Warcraft, a new playstyle step puts the group and raid frames of healers at the bottom in the middle]=]},
     {GW.Enum.ChangelogType.change, [=[Forever: bronze accent color instead of white]=]},
+    {GW.Enum.ChangelogType.feature, [=[Party frames: the animation for new buffs can be turned off]=]},
     {GW.Enum.ChangelogType.bug, [=[Friends list (Forever): the list headers keep their size on hover, name, level and class sit in one row without gaps]=]},
 })
 
