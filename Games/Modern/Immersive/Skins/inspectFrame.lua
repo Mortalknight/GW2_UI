@@ -137,6 +137,8 @@ local function SkinCamelotPvpFrame()
     info.CurrentSeasonField:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     info.CurrentRankField:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     info.CurrentRankField:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    info.CurrentRankField:ClearAllPoints()
+    info.CurrentRankField:SetPoint("TOP", info.CurrentSeasonField, "BOTTOM", 0, -4)
     info.HonorableKillsField:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     info.HonorableKillsField:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     for _, text in pairs({info.CurrentRankProgressField, info.LifetimeHKsField, info.TodayHKsField}) do

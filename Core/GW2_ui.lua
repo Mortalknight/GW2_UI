@@ -874,6 +874,7 @@ local function evPlayerLoginLate()
             end
         end
         GW.LoadTotemSelectionBar()
+        GW.SkinPossessBar()
     end
 
     if not GW.isModern then

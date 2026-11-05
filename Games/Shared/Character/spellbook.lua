@@ -274,11 +274,14 @@ local function LayoutRanks(entry)
     end
 
     more = GetMoreButton(entry)
+    local name = entry.title:GetText()
+    local keepOpen = more.flyout:IsShown() and more.spellName == name
+    more.spellName = name
     local numHidden = #ranks - MAX_RANKS_WITH_MORE
     more.numHidden = numHidden
     more.text:SetText("+" .. numHidden)
     more:Show()
-    more.flyout:Hide()
+    more.flyout:SetShown(keepOpen)
     more.flyout:SetWidth(numHidden * RANK_STEP + 5)
 
     for index, button in ipairs(ranks) do

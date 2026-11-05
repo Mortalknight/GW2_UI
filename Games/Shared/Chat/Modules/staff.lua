@@ -23,6 +23,7 @@ local STAFF = {
     ["Zoelie-Nightslayer"] = true,
     ["Zoelia-Nightslayer"] = true,
     ["Zoefia-Dreamscythe"] = true,
+    ["Zoelie Tatezama"] = true
 }
 
 -- on forever the realm is the surname, so entries there are "Firstname-Surname"

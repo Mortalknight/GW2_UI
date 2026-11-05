@@ -3,4 +3,5 @@
     <Script file ="fader.lua"/>
     <Script file ="flyout.lua"/>
     <Script file ="totemSelection.lua"/>
+    <Script file ="possessBar.lua"/>
 </Ui>

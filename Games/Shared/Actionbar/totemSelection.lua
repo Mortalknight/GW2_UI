@@ -125,7 +125,13 @@ end
 
 function GW.LoadTotemSelectionBar()
     local bar = MultiCastActionBarFrame
-    if not bar or GW.myclass ~= "SHAMAN" then
+    if not bar then
+        return
+    end
+    if bar.Selection then
+        bar:GwKillEditMode()
+    end
+    if GW.myclass ~= "SHAMAN" then
         return
     end
     -- the bar holds secure buttons, after a reload in combat it moves once the fight is over
@@ -143,9 +149,6 @@ function GW.LoadTotemSelectionBar()
     RegisterStateDriver(holder, "visibility", "[overridebar][vehicleui][petbattle] hide; show")
 
     bar:SetParent(holder)
-    if bar.Selection then
-        bar:GwKillEditMode()
-    end
     hooksecurefunc(bar, "SetPoint", function()
         if not anchoring then
             AnchorToHolder()
