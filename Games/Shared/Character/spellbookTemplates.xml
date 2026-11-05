@@ -121,7 +121,7 @@
                         <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.headerbg" x="5" y="0"/>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="pages" text="0" justifyH="LEFT" justifyV="MIDDLE">
+                <FontString parentKey="pages" inherits="GameFontNormal" text="0" justifyH="LEFT" justifyV="MIDDLE">
                     <Anchors>
                         <Anchor point="BOTTOM" relativePoint="BOTTOM"  x="0" y="10"/>
                     </Anchors>
