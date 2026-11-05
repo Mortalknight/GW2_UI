@@ -84,7 +84,7 @@ local function MigrateHealthText(db, valueKey, percentKey, shortKey, valueDefaul
         if db.invert then
             first, second = percent, value
         end
-        local blocks = {first or second}
+        local blocks = {first or second or nil}
         if first and second then
             tinsert(blocks, {k = "text", text = " - "})
             tinsert(blocks, second)
@@ -336,6 +336,12 @@ local function MigrateProfileSettings(profile)
         if type(profile.unitframes.pet) == "table" then
             -- the pet showed its health value by default
             MigrateHealthText(profile.unitframes.pet, "healthValueRaw", "healthValuePercent", "shortHealthValues", true)
+        end
+        for _, unit in ipairs({"target", "focus", "pet"}) do
+            local db = profile.unitframes[unit]
+            if type(db) == "table" and type(db.healthText) == "table" and db.healthText[1] == false then
+                db.healthText = {}
+            end
         end
     end
 

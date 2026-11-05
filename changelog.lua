@@ -15,6 +15,8 @@ AddChange(string addonVersion, table changeList)
 
 addChange("12.1.4", {
     {GW.Enum.ChangelogType.bug, [=[Bags (Classic, TBC, Wrath, Mists): Mark Unusable Items works again and marks the bank items right after a reload]=]},
+    {GW.Enum.ChangelogType.bug, [=[Target, focus and pet frames: fixed a Lua error on login when their health text was switched off before the text designer]=]},
+    {GW.Enum.ChangelogType.bug, [=[Quest window: with the quest skin off the texts are dark on the parchment again]=]},
 })
 
 addChange("12.1.3", {

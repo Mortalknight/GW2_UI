@@ -1621,13 +1621,13 @@ local function QuestInfo_Display(template, parentFrame)
                 header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
             end
         end
-        for _, header in pairs({_G.QuestInfoTitleHeader, _G.QuestInfoDescriptionHeader, _G.QuestInfoObjectivesHeader}) do
-            header:GwLockTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        end
-        for _, text in pairs({_G.QuestInfoDescriptionText, _G.QuestInfoObjectivesText, _G.QuestInfoGroupSize, _G.QuestInfoRewardText,
-                _G.QuestInfoQuestType, fRwd.ItemChooseText, fRwd.ItemReceiveText, fRwd.PlayerTitleText, fRwd.SpellLearnText, fRwd.XPFrame.ReceiveText}) do
-            text:GwLockTextColor(GW.Colors.FallbackWhite:GetRGB())
-        end
+    end
+    for _, header in pairs({_G.QuestInfoTitleHeader, _G.QuestInfoDescriptionHeader, _G.QuestInfoObjectivesHeader}) do
+        header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    end
+    for _, text in pairs({_G.QuestInfoDescriptionText, _G.QuestInfoObjectivesText, _G.QuestInfoGroupSize, _G.QuestInfoRewardText,
+            _G.QuestInfoQuestType, fRwd.ItemChooseText, fRwd.ItemReceiveText, fRwd.PlayerTitleText, fRwd.SpellLearnText, fRwd.XPFrame.ReceiveText}) do
+        text:SetTextColor(GW.Colors.FallbackWhite:GetRGB())
     end
 
     select(1, _G.QuestInfoItemHighlight:GetRegions()):SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/questitemhighlight.png")
