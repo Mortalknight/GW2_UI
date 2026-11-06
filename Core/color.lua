@@ -116,6 +116,7 @@ GW.Colors.MirrorTimerColors = {
     DEATH = CreateColor(1, 0.7, 0),
     FEIGNDEATH = CreateColor(1, 0.7, 0),
 }
+GW.Colors.MirrorTimerBackground = CreateColor(0.2, 0.2, 0.2, 0.5)
 
 GW.Colors.PowerBarCustomColors = {
     MANA = CreateColor(37 / 255, 133 / 255, 240 / 255),

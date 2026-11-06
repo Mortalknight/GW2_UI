@@ -24,6 +24,7 @@ addChange("12.1.6", {
     {GW.Enum.ChangelogType.bug, [=[Text designer: fixed Lua errors with the power block and class colors, the previews on the classic clients show health again, the options are no longer cut off]=]},
     {GW.Enum.ChangelogType.bug, [=[Hero panel: the Pawn button opens Pawn in front and no longer closes it again]=]},
     {GW.Enum.ChangelogType.bug, [=[Player buffs and debuffs: moved in the move mode they stay there, before they jumped back to their default place]=]},
+    {GW.Enum.ChangelogType.bug, [=[Breath, fatigue and feign death bars (Retail, Forever): the GW2 look of the classic clients again]=]},
 })
 
 addChange("12.1.5", {
