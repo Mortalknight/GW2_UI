@@ -109,6 +109,42 @@ local function OnToggleFlyout(flyout, flyoutType, parent)
     end
 end
 
+local SPACING = 8
+local function LayoutBar()
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("GwTotemSelectionLayout", LayoutBar)
+        return
+    end
+
+    local summon, recall = MultiCastSummonSpellButton, MultiCastRecallSpellButton
+    local numSlots = MultiCastActionBarFrame.numActiveSlots or 0
+    local slotWidth = MultiCastSlotButton1:GetWidth()
+
+    local x = 3
+    summon:ClearAllPoints()
+    summon:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", x, 3)
+    if summon:IsShown() then
+        x = x + summon:GetWidth() + SPACING
+    end
+    for _, child in ipairs({MultiCastSlotButton1, MultiCastActionPage1, MultiCastActionPage2, MultiCastActionPage3}) do
+        child:ClearAllPoints()
+        child:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", x, 3)
+    end
+    if numSlots > 0 then
+        x = x + numSlots * slotWidth + (numSlots - 1) * SPACING
+    end
+
+    if numSlots > 0 then
+        recall:ClearAllPoints()
+        recall:SetPoint("LEFT", _G["MultiCastSlotButton" .. numSlots], "RIGHT", SPACING, 0)
+        if recall:IsShown() then
+            x = x + SPACING + recall:GetWidth()
+        end
+    end
+
+    holder:SetSize(math.max(x + 3, slotWidth + 6), MultiCastActionBarFrame:GetHeight())
+end
+
 function GW.LoadTotemSelectionBar()
     local bar = MultiCastActionBarFrame
     if not bar then
@@ -142,14 +178,7 @@ function GW.LoadTotemSelectionBar()
         MultiCastSlotButton4, MultiCastActionPage1, MultiCastActionPage2, MultiCastActionPage3, MultiCastRecallSpellButton}) do
         child:SetParent(holder)
     end
-    -- the same offsets blizzard uses, until its next update anchors them again
-    local xOffset = MultiCastSummonSpellButton:IsShown() and MultiCastSummonSpellButton:GetWidth() + 11 or 3
-    MultiCastSummonSpellButton:ClearAllPoints()
-    MultiCastSummonSpellButton:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", 3, 3)
-    for _, child in ipairs({MultiCastSlotButton1, MultiCastActionPage1, MultiCastActionPage2, MultiCastActionPage3}) do
-        child:ClearAllPoints()
-        child:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", xOffset, 3)
-    end
+    LayoutBar()
 
     for i = 1, NUM_MULTI_CAST_BUTTONS_PER_PAGE do
         -- the empty slot art keeps blizzards coords
@@ -173,6 +202,9 @@ function GW.LoadTotemSelectionBar()
     SkinArrowButton(MultiCastFlyoutFrameOpenButton)
     SkinArrowButton(MultiCastFlyoutFrameCloseButton, true)
 
+    hooksecurefunc("MultiCastActionBarFrame_Update", LayoutBar)
+    hooksecurefunc("MultiCastSummonSpellButton_Update", LayoutBar)
+    hooksecurefunc("MultiCastRecallSpellButton_Update", LayoutBar)
     hooksecurefunc("MultiCastSlotButton_Update", OnSlotUpdate)
     hooksecurefunc("MultiCastFlyoutFrame_ToggleFlyout", OnToggleFlyout)
 end
