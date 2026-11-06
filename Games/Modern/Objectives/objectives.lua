@@ -138,6 +138,7 @@ local function BuildQuestBlockSignature(quest, questID, questLogIndex, colorKey)
     AddSignaturePart(HasAutoQuestPopUpOfType(questID, "OFFER"))
     AddSignaturePart(QuestUtil.CanCreateQuestGroup(questID))
     AddSignaturePart(requiredMoney)
+    AddSignaturePart(questLogIndex and select(2, GetQuestLogSpecialItemInfo(questLogIndex)))
     if requiredMoney > 0 then
         AddSignaturePart(GetMoney())
     end
