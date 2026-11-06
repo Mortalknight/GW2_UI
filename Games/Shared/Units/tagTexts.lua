@@ -212,7 +212,8 @@ local BLOCKS = {
     space = {category = "text", label = L["Space"], desc = L["An empty space."], text = " "},
     newLine = {category = "text", label = L["Line Break"],
         desc = L["Starts a new row, for texts with room for it like the health globe."], text = "\n"},
-    separator = {category = "text", label = L["Separator"], desc = L["A vertical line between two texts."], text = " || "},
+    separator = {category = "text", label = L["Separator"], desc = L["A vertical line between two texts."], text = " || ",
+        modes = {{"ALWAYS", ALWAYS}, {"BEFORE", L["Only With Text Before"]}, {"AFTER", L["Only With Text After"]}}},
     text = {category = "text", label = L["Custom Text"], desc = L["Any text of up to 10 characters."], textInput = true,
         text = function(block) return EscapeText(block.text) end},
 }
@@ -284,18 +285,36 @@ local function Field(def, field, block, unit)
     return value
 end
 
+-- a separator that only shows next to a text becomes the suffix of the tag before it or the prefix of the tag after
+-- it, the tag engine leaves both out when that tag gives no text; next to a plain text it always shows
 function GW.BuildTagString(blocks)
     local parts = {}
     for _, block in ipairs(blocks) do
         local def = BLOCKS[block.k]
         if def and def.tag then
-            local args = Field(def, "args", block)
-            tinsert(parts, "[" .. Field(def, "tag", block) .. (args and "(" .. args .. ")" or "") .. "]")
+            tinsert(parts, {tag = Field(def, "tag", block), args = Field(def, "args", block), prefix = "", suffix = ""})
         elseif def then
-            tinsert(parts, Field(def, "text", block))
+            tinsert(parts, {text = Field(def, "text", block), attach = block.k == "separator" and GW.GetTagTextBlockMode(def, block)})
         end
     end
-    return table.concat(parts)
+    for index, part in ipairs(parts) do
+        local before, after = parts[index - 1], parts[index + 1]
+        if part.attach == "BEFORE" and before and before.tag then
+            before.suffix, part.text = before.suffix .. part.text, ""
+        elseif part.attach == "AFTER" and after and after.tag then
+            after.prefix, part.text = part.text .. after.prefix, ""
+        end
+    end
+    local texts = {}
+    for _, part in ipairs(parts) do
+        if part.tag then
+            tinsert(texts, "[" .. (part.prefix ~= "" and part.prefix .. "$>" or "") .. part.tag
+                .. (part.suffix ~= "" and "<$" .. part.suffix or "") .. (part.args and "(" .. part.args .. ")" or "") .. "]")
+        else
+            tinsert(texts, part.text)
+        end
+    end
+    return table.concat(texts)
 end
 
 -- the same line with made up values instead of the tags; unit overrides fields of the made up member

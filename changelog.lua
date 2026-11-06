@@ -21,7 +21,7 @@ addChange("12.1.6", {
     {GW.Enum.ChangelogType.change, [=[Party frames: new buffs no longer play an animation]=]},
     {GW.Enum.ChangelogType.bug, [=[Friends list (Forever): the list headers keep their size on hover, name, level and class sit in one row without gaps]=]},
     {GW.Enum.ChangelogType.bug, [=[Totem bar: Totemic Recall stays in the bar, the bar and its mover grow with your totems]=]},
-    {GW.Enum.ChangelogType.feature, [=[Text designer: power can show current - percent in one block like health, the current - percent templates use that one block]=]},
+    {GW.Enum.ChangelogType.feature, [=[Text designer: power can show current - percent in one block like health, the current - percent templates use that one block; a separator can hide when the text before or after it is empty]=]},
     {GW.Enum.ChangelogType.bug, [=[Text designer: fixed Lua errors with the power block and class colors, the previews on the classic clients show health again, the options are no longer cut off]=]},
     {GW.Enum.ChangelogType.bug, [=[Hero panel: the Pawn button opens Pawn in front and no longer closes it again]=]},
     {GW.Enum.ChangelogType.bug, [=[Player buffs and debuffs: moved in the move mode they stay there, before they jumped back to their default place]=]},
