@@ -1094,8 +1094,8 @@ GW.globalDefault = {
                 pos = {
                     point = "TOP",
                     relativePoint = "TOP",
-                    xOfs = 250,
-                    yOfs = -110,
+                    xOfs = 185,
+                    yOfs = -100,
                     hasMoved = false,
                 },
                 scale = 1,
