@@ -76,6 +76,7 @@ local function UpdateLayoutButtons(layout)
     view.reset:SetShown(locked)
     view.delete:SetEnabled(layout ~= nil)
     view.rename:SetEnabled(layout ~= nil and not locked)
+    view.share:SetEnabled(layout ~= nil)
 end
 
 local function RefreshSpecsDropdown()
@@ -171,6 +172,14 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
         layoutManager:GetScript("OnEvent")(layoutManager)
     end
 end
+
+-- a layout someone shared in the chat: saved under its own name and switched to, the old one stays in the list
+local function AddSharedLayout(name, frames)
+    local layout = {name = name, frames = frames}
+    GW.GetAllLayouts()[name] = layout
+    UpdateFramePositionForLayout(layout, nil, true)
+end
+GW.AddSharedLayout = AddSharedLayout
 
 local function AssignLayoutToSpec(specId, layoutName, toSet)
     if toSet then
@@ -561,6 +570,22 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     smallSettingsFrame.layoutView.rename:SetScript("OnClick", RenameSelectedLayout)
     smallSettingsFrame.layoutView.reset:SetScript("OnClick", ResetSelectedLayout)
     smallSettingsFrame.layoutView.reset:GwSkinNegativeButton()
+
+    -- puts "[GW2 UI: name]" into the chat, other players with GW2 UI get a link to take the layout over
+    local view = smallSettingsFrame.layoutView
+    view.share = CreateFrame("Button", nil, view, "GwStandardButton")
+    view.share:SetPoint("TOPLEFT", view.new, "BOTTOMLEFT", 0, -5)
+    view.share:SetPoint("RIGHT", view.delete, "RIGHT")
+    view.share:SetHeight(15)
+    view.share:SetText(L["Share in chat"])
+    view.share:SetScript("OnClick", function()
+        local name = GW.private.Layouts.currentSelected
+        if name then
+            GW.PutIntoChatEditBox("[GW2 UI: " .. name .. "]")
+        end
+    end)
+    view.specsDropDown:ClearAllPoints()
+    view.specsDropDown:SetPoint("TOPLEFT", view.share, "BOTTOMLEFT", -7, -30)
 
     -- specswitch detaction things
     local specSwitchHandler = CreateFrame("Frame")

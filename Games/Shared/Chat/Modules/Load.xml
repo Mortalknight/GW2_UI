@@ -2,6 +2,7 @@
     <Script file ="channelEvents.lua"/>
     <Script file ="spam.lua"/>
     <Script file ="urls.lua"/>
+    <Script file ="layoutLinks.lua"/>
     <Script file ="itemLinks.lua"/>
     <Script file ="keywords.lua"/>
     <Script file ="mentions.lua"/>
