@@ -482,7 +482,8 @@ local function CreatePalette(designer)
     scrollBar:SetHideIfUnscrollable(true)
     GW.SkinSlimScrollBar(scrollBar)
 
-    scrollBox:SetScript("OnMouseWheel", function(self, delta)
+    -- the wheel over the list or its bar scrolls the list, at its end the settings around it
+    local function OnMouseWheel(self, delta)
         if self:HasScrollableExtent() and not (delta > 0 and self:IsAtBegin() or delta < 0 and self:IsAtEnd()) then
             self:OnMouseWheel(delta)
             return
@@ -494,7 +495,9 @@ local function CreatePalette(designer)
         if list then
             list:OnMouseWheel(delta)
         end
-    end)
+    end
+    scrollBox:SetScript("OnMouseWheel", OnMouseWheel)
+    scrollBar:SetScript("OnMouseWheel", function(_, delta) OnMouseWheel(scrollBox, delta) end)
 end
 
 -- the templates of a line: its default first, then its list, a text that is already there not twice

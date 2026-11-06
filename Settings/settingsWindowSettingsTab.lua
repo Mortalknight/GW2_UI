@@ -150,6 +150,16 @@ local function StashWidget(w, panel)
     w:SetParent(panel._stash)
 end
 
+local function ReleaseWidget(row, w, panel)
+    if not w or w:GetParent() ~= row then return end
+    if panel then
+        StashWidget(w, panel)
+    else
+        w:Hide()
+        w:ClearAllPoints()
+    end
+end
+
 local function AnchorLeftHalf(row, w)
     local half = floor((CONTENT_W - COL_GAP) / 2)
     w:ClearAllPoints()
@@ -682,16 +692,16 @@ local function InitRow(row, elementData)
     row:SetWidth(ROW_PAD_X * 2 + CONTENT_W)
 
     if elementData.kind == "masterToggleSeparator" or elementData.kind == "groupGap" then
-        if row.leftAssigned  then StashWidget(row.leftAssigned,  panel); row.leftAssigned  = nil end
-        if row.rightAssigned then StashWidget(row.rightAssigned, panel); row.rightAssigned = nil end
+        if row.leftAssigned  then ReleaseWidget(row, row.leftAssigned, panel); row.leftAssigned  = nil end
+        if row.rightAssigned then ReleaseWidget(row, row.rightAssigned, panel); row.rightAssigned = nil end
         SetRowMasterToggleSeparatorShown(row, elementData.kind == "masterToggleSeparator")
         return
     end
     SetRowMasterToggleSeparatorShown(row, false)
 
     if SEARCH_ACTIVE then
-        if row.leftAssigned  then StashWidget(row.leftAssigned,  panel); row.leftAssigned  = nil end
-        if row.rightAssigned then StashWidget(row.rightAssigned, panel); row.rightAssigned = nil end
+        if row.leftAssigned  then ReleaseWidget(row, row.leftAssigned, panel); row.leftAssigned  = nil end
+        if row.rightAssigned then ReleaseWidget(row, row.rightAssigned, panel); row.rightAssigned = nil end
         return
     end
 
@@ -700,10 +710,10 @@ local function InitRow(row, elementData)
     local rightW = (rightOpt and not (leftOpt and leftOpt.forceNewLine)) and CreateOrGetOptionWidget(panel, rightOpt) or nil
 
     if row.leftAssigned and row.leftAssigned ~= leftW then
-        StashWidget(row.leftAssigned, panel); row.leftAssigned = nil
+        ReleaseWidget(row, row.leftAssigned, panel); row.leftAssigned = nil
     end
     if row.rightAssigned and row.rightAssigned ~= rightW then
-        StashWidget(row.rightAssigned, panel); row.rightAssigned = nil
+        ReleaseWidget(row, row.rightAssigned, panel); row.rightAssigned = nil
     end
 
     local canAttachLeft  = leftW  and not IsBorrowed(leftW)
@@ -721,8 +731,8 @@ local function InitRow(row, elementData)
         end
         row.leftAssigned, row.rightAssigned = leftW, nil
     else
-        if row.leftAssigned  then StashWidget(row.leftAssigned,  panel); row.leftAssigned  = nil end
-        if row.rightAssigned then StashWidget(row.rightAssigned, panel); row.rightAssigned = nil end
+        if row.leftAssigned  then ReleaseWidget(row, row.leftAssigned, panel); row.leftAssigned  = nil end
+        if row.rightAssigned then ReleaseWidget(row, row.rightAssigned, panel); row.rightAssigned = nil end
     end
 end
 
@@ -736,8 +746,8 @@ local function InitOptionPanel(panel)
     end)
     view:SetElementInitializer("GwFrameTemplate", InitRow)
     view:SetElementResetter(function(row)
-        if row.leftAssigned  then StashWidget(row.leftAssigned,  row.__panel); row.leftAssigned  = nil end
-        if row.rightAssigned then StashWidget(row.rightAssigned, row.__panel); row.rightAssigned = nil end
+        if row.leftAssigned  then ReleaseWidget(row, row.leftAssigned, row.__panel); row.leftAssigned  = nil end
+        if row.rightAssigned then ReleaseWidget(row, row.rightAssigned, row.__panel); row.rightAssigned = nil end
         SetRowMasterToggleSeparatorShown(row, false)
     end)
 
@@ -754,6 +764,7 @@ end
 -- Re-evaluates the isVisible predicates and rebuilds only the panels whose visible set
 -- actually changed. Called from CheckDependencies, i.e. after every settings change.
 local function RefreshConditionalOptions()
+    local changed = false
     for _, main in ipairs(menuItems) do
         local panels = {main.basePanel}
         if main.hasSubFrames then
@@ -768,9 +779,14 @@ local function RefreshConditionalOptions()
                 if signature ~= panel.gwVisibilitySignature then
                     panel.gwVisibilitySignature = signature
                     panel.scroll.ScrollBox:SetDataProvider(BuildOptionsDataProvider(panel), ScrollBoxConstants.RetainScrollPosition)
+                    changed = true
                 end
             end
         end
+    end
+    -- the search measured a text designer before it was built, its rows follow the new height
+    if changed and SEARCH_ACTIVE and searchPanel then
+        searchPanel.scroll.ScrollBox:FullUpdate(ScrollBoxConstants.UpdateQueued)
     end
 end
 GW.RefreshConditionalOptions = RefreshConditionalOptions
@@ -988,8 +1004,8 @@ end
 local function ResetSearchRow(row)
     if row.headerFS then row.headerFS:SetText("") end
     if row.crumbFS  then row.crumbFS:SetText("") end
-    if row.leftAssigned  then row.leftAssigned:Hide();  row.leftAssigned  = nil end
-    if row.rightAssigned then row.rightAssigned:Hide(); row.rightAssigned = nil end
+    if row.leftAssigned  then ReleaseWidget(row, row.leftAssigned);  row.leftAssigned  = nil end
+    if row.rightAssigned then ReleaseWidget(row, row.rightAssigned); row.rightAssigned = nil end
     SetRowSearchHighlightShown(row, false)
 end
 
@@ -1063,8 +1079,8 @@ local function InitSearchRow(row, item)
         end
         row.headerFS:SetText(item.header or "")
         row.crumbFS:SetText(item.crumb  or "")
-        if row.leftAssigned  then row.leftAssigned:Hide();  row.leftAssigned  = nil end
-        if row.rightAssigned then row.rightAssigned:Hide(); row.rightAssigned = nil end
+        if row.leftAssigned  then ReleaseWidget(row, row.leftAssigned);  row.leftAssigned  = nil end
+        if row.rightAssigned then ReleaseWidget(row, row.rightAssigned); row.rightAssigned = nil end
         return
     end
     SetRowSearchHighlightShown(row, true)
@@ -1074,10 +1090,10 @@ local function InitSearchRow(row, item)
     local rightW = rightE and CreateOrGetOptionWidget(rightE.panel, rightE.opt) or nil
 
     if row.leftAssigned and row.leftAssigned ~= leftW then
-        row.leftAssigned:Hide(); row.leftAssigned:ClearAllPoints(); row.leftAssigned = nil
+        ReleaseWidget(row, row.leftAssigned); row.leftAssigned = nil
     end
     if row.rightAssigned and row.rightAssigned ~= rightW then
-        row.rightAssigned:Hide(); row.rightAssigned:ClearAllPoints(); row.rightAssigned = nil
+        ReleaseWidget(row, row.rightAssigned); row.rightAssigned = nil
     end
 
     if leftW and rightW then
@@ -1097,8 +1113,8 @@ local function InitSearchRow(row, item)
         BorrowEntryToSearch(leftE, sp)
         tinsert(state.matches, leftE)
     else
-        if row.leftAssigned  then row.leftAssigned:Hide();  row.leftAssigned  = nil end
-        if row.rightAssigned then row.rightAssigned:Hide(); row.rightAssigned = nil end
+        if row.leftAssigned  then ReleaseWidget(row, row.leftAssigned);  row.leftAssigned  = nil end
+        if row.rightAssigned then ReleaseWidget(row, row.rightAssigned); row.rightAssigned = nil end
     end
 end
 
