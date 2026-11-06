@@ -318,6 +318,7 @@ end
 
 function GW.SetFontStringTag(frame, fontString, tagString)
     frame.__unit = frame.gwUnit
+    frame.colors = GW.oUF.colors
     frame.IsEventless = IsEventless
     frame.Untag = GW.oUF.Tags.Untag
     GW.oUF.Tags.Tag(frame, fontString, tagString)

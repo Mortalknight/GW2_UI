@@ -1137,6 +1137,16 @@ local function SetPreviewBar(bar, value)
     end
 end
 
+-- on the classic clients the health bar and its texts sit inside the absorb and heal prediction bars
+local function HoldsText(part, text)
+    local parent = text and text:GetParent()
+    while parent do
+        if parent == part then return true end
+        parent = parent:GetParent()
+    end
+    return false
+end
+
 -- the preview of the text designer is a unit frame of the same build as the real one, built by the caller with its
 -- art and classColor, without unit and events and with made up values; your own portrait stands in for the unit. The frame art reaches far out,
 -- a margin of it stays and the rest is cut off
@@ -1150,8 +1160,11 @@ function GW.CreateUnitFrameTextPreview(parent, frame, apply)
     frame:EnableMouse(false)
 
     for _, key in ipairs(PREVIEW_HIDDEN_PARTS) do
-        if frame[key] then
-            frame[key]:Hide()
+        local part = frame[key]
+        if part and HoldsText(part, frame.healthString) then
+            SetPreviewBar(part, 0)
+        elseif part then
+            part:Hide()
         end
     end
     if frame.portrait then

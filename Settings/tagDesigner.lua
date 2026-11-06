@@ -615,9 +615,9 @@ local function CreateOptions(designer)
     options.mode:SetPoint("TOPLEFT", options.desc, "BOTTOMLEFT", 0, -8)
     options.mode:GwHandleDropDownBox(nil, nil, nil, width)
 
-    -- the checkboxes of a block, two at most; UpdateOptions gives them their key
+    -- the checkboxes of a block, three at most; UpdateOptions gives them their key
     options.checks = {}
-    for index = 1, 2 do
+    for index = 1, 3 do
         local check = CreateFrame("CheckButton", nil, options, "UICheckButtonTemplate")
         check:SetSize(16, 16)
         check:GwSkinCheckButton()
