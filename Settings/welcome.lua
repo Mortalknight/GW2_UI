@@ -1040,14 +1040,23 @@ local function ApplyLayout(layout)
     end
     unitframes.target.aurasOnTop = wow or GW.GetSettingDefault("unitframes.target.aurasOnTop")
 
-    -- the player auras go to the top right next to the tracker and grow left and down, the debuffs follow the buffs
+    -- the player auras go to the top right next to the tracker, the debuffs a bit below the buffs; both grow left and
+    -- down with 20 per row
     local auras = GW.settings.playerAuras
     for _, key in ipairs({"buffs", "debuffs"}) do
-        auras[key].GrowDirection = wow and "DOWN" or GW.GetSettingDefault("playerAuras." .. key .. ".GrowDirection")
+        local prefix = "playerAuras." .. key .. "."
+        auras[key].GrowDirection = wow and "DOWN" or GW.GetSettingDefault(prefix .. "GrowDirection")
+        auras[key].WrapAfter = wow and 20 or GW.GetSettingDefault(prefix .. "WrapAfter")
+        auras[key].pos = CopyTable(GW.GetSettingDefault(prefix .. "pos"))
     end
-    local trackerLeft = ScreenRect(GwQuestTracker) or (UIParent:GetWidth() - 300)
-    auras.buffs.pos = wow and {point = "TOPRIGHT", relativePoint = "TOPRIGHT", xOfs = GW.RoundInt(trackerLeft - UIParent:GetWidth() - 10), yOfs = -10, hasMoved = true}
-        or CopyTable(GW.GetSettingDefault("playerAuras.buffs.pos"))
+    if wow then
+        local trackerLeft = ScreenRect(GwQuestTracker) or (UIParent:GetWidth() - 300)
+        local x = GW.RoundInt(trackerLeft - UIParent:GetWidth() - 10)
+        auras.buffs.pos = {point = "TOPRIGHT", relativePoint = "TOPRIGHT", xOfs = x, yOfs = -10, hasMoved = true}
+        local buffs = auras.buffs
+        local buffsHeight = buffs.MaxWraps * ((buffs.KeepSizeRatio and buffs.IconSize or buffs.IconHeight) + buffs.VerticalSpacing) * buffs.scale
+        auras.debuffs.pos = {point = "TOPRIGHT", relativePoint = "TOPRIGHT", xOfs = x, yOfs = GW.RoundInt(-10 - buffsHeight - 20), hasMoved = true}
+    end
 
     GW.ApplyMoverPositionsFromSettings()
     if GwTargetUnitFrame then
