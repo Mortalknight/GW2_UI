@@ -139,10 +139,12 @@ local BLOCKS = {
     power = {category = "power", label = L["Power"], desc = L["The power of the unit, like mana or rage."],
         modes = {{"PREC", STATUS_TEXT_PERCENT}, {"CUR", REFORGE_CURRENT}, {"MAX", MAXIMUM}, {"MISSING", L["Missing"]},
             {"CURMAX", L["Current / Max"]}, {"CURPREC", L["Current - Percent"]}},
-        checks = {SHORT_CHECK, {key = "mana", label = L["Always Mana"]}, {key = "healer", label = L["Only Healers"]}},
+        checks = {SHORT_CHECK, {key = "mana", label = L["Always Mana"]}, {key = "healer", label = L["Only Healers"]},
+            {key = "hideZero", label = L["Hide At Zero"]}},
         tag = "GW2_Grid:power",
         args = function(block, mode)
             return mode .. "," .. tostring(block.short == true) .. "," .. tostring(block.mana == true) .. "," .. tostring(block.healer == true)
+                .. "," .. tostring(block.hideZero == true)
         end,
         preview = function(block, mode, unit)
             if block.healer and unit.role ~= "HEALER" then return "" end

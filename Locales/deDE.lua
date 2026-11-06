@@ -65,6 +65,7 @@ L["Edit player aura settings."] = "Bearbeite die Einstellungen der Spieler-Auren
 L["Fixes"] = "Fehlerbehebungen"
 L["Only With Text Before"] = "Nur mit Text davor"
 L["Only With Text After"] = "Nur mit Text danach"
+L["Hide At Zero"] = "Bei null ausblenden"
 L["Share in chat"] = "Im Chat teilen"
 L["Layout of %s"] = "Layout von %s"
 L["The layout is no longer there."] = "Das Layout gibt es nicht mehr."

@@ -24,8 +24,8 @@ local LINE_WIDTH = RIGHT_WIDTH - 12
 local PREVIEW_WIDTH = 160
 -- a template dropdown with the name of its line above it
 local PRESET_ROW = 44
--- the options of the block with the most controls: title, description, mode, three checkboxes and the remove button
-local OPTIONS_HEIGHT = 190
+-- the options of the block with the most controls: title, description, mode, four checkboxes and the remove button
+local OPTIONS_HEIGHT = 214
 
 local CATEGORIES = {
     {key = "name", label = NAME},
@@ -637,9 +637,9 @@ local function CreateOptions(designer)
     options.mode:SetPoint("TOPLEFT", options.desc, "BOTTOMLEFT", 0, -8)
     options.mode:GwHandleDropDownBox(nil, nil, nil, width)
 
-    -- the checkboxes of a block, three at most; UpdateOptions gives them their key
+    -- the checkboxes of a block, four at most; UpdateOptions gives them their key
     options.checks = {}
-    for index = 1, 3 do
+    for index = 1, 4 do
         local check = CreateFrame("CheckButton", nil, options, "UICheckButtonTemplate")
         check:SetSize(16, 16)
         check:GwSkinCheckButton()

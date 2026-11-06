@@ -286,6 +286,7 @@ L["Changes"] = true
 L["Fixes"] = true
 L["Only With Text Before"] = true
 L["Only With Text After"] = true
+L["Hide At Zero"] = true
 L["Share in chat"] = true
 L["Layout of %s"] = true
 L["The layout is no longer there."] = true

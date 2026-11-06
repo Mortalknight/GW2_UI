@@ -251,13 +251,24 @@ local function Create_Tags()
         return ""
     end)
 
-    AddTag("GW2_Grid:power", "UNIT_POWER_UPDATE UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER PLAYER_ROLES_ASSIGNED", function(unit, realUnit, mode, short, mana, onlyHealer)
+    AddTag("GW2_Grid:power", "UNIT_POWER_UPDATE UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER PLAYER_ROLES_ASSIGNED", function(unit, realUnit, mode, short, mana, onlyHealer, hideZero)
         unit = realUnit or unit
         if stringtoboolean[onlyHealer] then
             local role = UnitGroupRolesAssigned(unit)
             if GW.IsSecretValue(role) or role ~= "HEALER" then return end
         end
         local powerType = stringtoboolean[mana] and Enum.PowerType.Mana or nil
+        -- a secret power can not be compared; blizzard leaves a secret zero out, but only as the plain number
+        if stringtoboolean[hideZero] then
+            local power = UnitPower(unit, powerType)
+            if GW.IsSecretValue(power) then
+                if mode == "CUR" then
+                    return C_StringUtil.TruncateWhenZero(power)
+                end
+            elseif power == 0 then
+                return
+            end
+        end
         local percent
         if mode == "PREC" or mode == "CURPREC" then
             if GW.isModern then
