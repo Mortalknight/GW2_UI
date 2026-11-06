@@ -522,6 +522,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
                 btn:SetAttribute("item", link)
                 btn:SetScript("OnUpdate", btn.OnUpdate)
                 btn:Show()
+                self:UpdateObjectiveActionButtonPosition()
                 return
             end
         end
@@ -532,6 +533,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
             btn:SetScript("OnUpdate", btn.OnUpdate)
             btn:Show()
             self.hasItem = true
+            self:UpdateObjectiveActionButtonPosition()
         else
             btn:FakeHide()
             btn.itemID, btn.questID, btn.itemName = nil, nil, nil
