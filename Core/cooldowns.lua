@@ -171,6 +171,8 @@ local function CreateCooldownTimer(parent)
 
     -- keep this after Cooldown_OnSizeChanged
     timer:SetScript("OnUpdate", Cooldown_OnUpdate)
+    -- the throttle only counts down while the text shows, a bag opened again would keep the old time for a while
+    timer:SetScript("OnShow", function(self) Cooldown_OnUpdate(self, -1) end)
 
     return timer
 end

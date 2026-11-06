@@ -26,6 +26,7 @@ addChange("12.1.6", {
     {GW.Enum.ChangelogType.bug, [=[Hero panel: the Pawn button opens Pawn in front and no longer closes it again]=]},
     {GW.Enum.ChangelogType.bug, [=[Player buffs and debuffs: moved in the move mode they stay there, before they jumped back to their default place]=]},
     {GW.Enum.ChangelogType.bug, [=[Breath, fatigue and feign death bars (Retail, Forever): the GW2 look of the classic clients again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Cooldown texts: show the right time right away when a bag or bar shows again, before the time from when it was closed stayed for up to 30 seconds]=]},
     {GW.Enum.ChangelogType.feature, [=[HUD layouts: "Share in chat" in the move mode posts the layout as a link, other players with GW2 UI click it, see a sketch of the frames and take the layout over]=]},
 })
 
