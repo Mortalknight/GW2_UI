@@ -134,6 +134,14 @@ local function ClampEditBoxNumber(editBox, min, max, decimals)
     return value
 end
 
+local function SetParentMoved(parent, moved)
+    parent.isMoved = moved
+    parent:SetAttribute("isMoved", moved)
+    if parent.gwLayoutProxy then
+        parent.gwLayoutProxy:SetAttribute("isMoved", moved)
+    end
+end
+
 local MoverOptionType = GW.Enum.MoverOptionType
 local GRID_MIN, GRID_MAX = 20, 300
 
@@ -148,8 +156,7 @@ local MoverOption = {
         apply = function(mover, value, userInput)
             mover.parent:SetScale(value, true)
             if userInput then
-                mover.parent.isMoved = true
-                mover.parent:SetAttribute("isMoved", true)
+                SetParentMoved(mover.parent, true)
             end
         end,
     },
@@ -579,8 +586,7 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
     GW.GetSetting(mf.setting).pos = new_point
 
     mf.savedPoint = GW.CopyTable(new_point)
-    mf.parent.isMoved = false
-    mf.parent:SetAttribute("isMoved", new_point.hasMoved)
+    SetParentMoved(mf.parent, false)
 
     if mf.setting == "playerAuras.buffs" or mf.setting == "playerAuras.debuffs" then
         -- the aura settings go back to their defaults too
@@ -637,8 +643,7 @@ local function CheckForDefaultPosition(frame, point, relativePoint, xOfs, yOfs, 
         newPoint.hasMoved = true
     end
 
-    frame.parent.isMoved = newPoint.hasMoved
-    frame.parent:SetAttribute("isMoved", newPoint.hasMoved)
+    SetParentMoved(frame.parent, newPoint.hasMoved)
 
     GW.GetSetting(frame.setting).pos = newPoint
 end
