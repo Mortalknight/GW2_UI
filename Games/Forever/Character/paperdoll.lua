@@ -77,7 +77,7 @@ local function LoadPaperDoll(tabContainer)
     GwCharacterWindow:SetNextAddonMenuButtonAnchor(fmMenu.petMenu:IsShown() and fmMenu.petMenu or fmMenu.honorMenu)
     fmMenu.Pawn = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Pawn",
-        showFunction = function() PawnUIShow() end,
+        showFunction = function() if not (PawnUIFrame and PawnUIFrame:IsShown()) then PawnUIShow() end end,
         onEnter = function(self) PawnUI_InventoryPawnButton_OnEnter(self) end,
         hideOurFrame = true,
     })

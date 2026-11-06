@@ -24,6 +24,8 @@ local LINE_WIDTH = RIGHT_WIDTH - 12
 local PREVIEW_WIDTH = 160
 -- a template dropdown with the name of its line above it
 local PRESET_ROW = 44
+-- the options of the block with the most controls: title, description, mode, three checkboxes and the remove button
+local OPTIONS_HEIGHT = 190
 
 local CATEGORIES = {
     {key = "name", label = NAME},
@@ -356,6 +358,7 @@ UpdateLines = function(designer)
         end
         y = y - 6
     end
+    designer.previewOffset = -y
     designer.preview:ClearAllPoints()
     designer.preview:SetPoint("TOPLEFT", designer.right, "TOPLEFT", 0, y)
 
@@ -365,7 +368,13 @@ UpdateLines = function(designer)
     for _, dropdown in ipairs(designer.presets) do
         dropdown:GenerateMenu()
     end
-    designer.background:SetHeight((Height(designer.target, designer) - TOP + 6) / 1.3)
+    -- more blocks make the lines higher, the settings row follows
+    local height = Height(designer.target, designer)
+    designer.background:SetHeight((height - TOP + 6) / 1.3)
+    if height ~= designer.height then
+        designer.height = height
+        C_Timer.After(0, GW.RefreshConditionalOptions)
+    end
 end
 
 Refresh = function(designer)
@@ -374,20 +383,30 @@ Refresh = function(designer)
 end
 
 -- reads the lines again each time the row shows, the profile may have changed in between; the row height of the
--- settings follows the preview
+-- settings follows the preview. A row that grows shows again, the selected block stays if it is still there
 local function Load(designer)
-    designer.selected = nil
     for _, line in ipairs(designer.target.lines) do
         designer.lines[line.key] = CopyTable(designer.target.get(line.key))
+    end
+    if not SelectedBlock(designer) then
+        designer.selected = nil
     end
     Refresh(designer)
     C_Timer.After(0, GW.RefreshConditionalOptions)
 end
 
--- without the designer only the templates and the preview are left
+-- without the designer only the templates and the preview are left; with it the lines, the preview and the options
+-- below or next to it, at least the height of the target
 Height = function(target, designer)
     if GW.global.tagDesignerExpanded then
-        return target.height or HEIGHT
+        local height = target.height or HEIGHT
+        if designer and designer.previewOffset then
+            local preview = designer.preview
+            local below = preview:GetWidth() > PREVIEW_WIDTH and preview:GetHeight() + 12 + OPTIONS_HEIGHT
+                or math.max(preview:GetHeight(), OPTIONS_HEIGHT)
+            height = math.max(height, TOP + 2 * PADDING + designer.previewOffset + below)
+        end
+        return height
     end
     local preview = designer and designer.preview:GetHeight() or 0
     return TOP + 2 * PADDING + math.max(#target.lines * PRESET_ROW, preview)
@@ -595,7 +614,7 @@ end
 
 local function CreateOptions(designer)
     local options = CreateFrame("Frame", nil, designer.right)
-    options:SetHeight(140)
+    options:SetHeight(OPTIONS_HEIGHT)
 
     options.title = options:CreateFontString(nil, "OVERLAY")
     options.title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)

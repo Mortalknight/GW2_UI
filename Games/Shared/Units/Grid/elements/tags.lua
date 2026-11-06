@@ -258,12 +258,15 @@ local function Create_Tags()
             if GW.IsSecretValue(role) or role ~= "HEALER" then return end
         end
         local powerType = stringtoboolean[mana] and Enum.PowerType.Mana or nil
-        if mode == "PREC" then
+        local percent
+        if mode == "PREC" or mode == "CURPREC" then
             if GW.isModern then
-                return string.format("%.0f%%", UnitPowerPercent(unit, powerType, true, CurveConstants.ScaleTo100))
+                percent = string.format("%.0f%%", UnitPowerPercent(unit, powerType, true, CurveConstants.ScaleTo100))
+            else
+                local powerMax = UnitPowerMax(unit, powerType)
+                percent = GW.RoundDec(powerMax > 0 and UnitPower(unit, powerType) / powerMax * 100 or 0, 0) .. "%"
             end
-            local powerMax = UnitPowerMax(unit, powerType)
-            return GW.RoundDec(powerMax > 0 and UnitPower(unit, powerType) / powerMax * 100 or 0, 0) .. "%"
+            if mode == "PREC" then return percent end
         end
 
         local formatFunc = stringtoboolean[short] and GW.ShortValue or GW.isModern and BreakUpLargeNumbers or GW.GetLocalizedNumber
@@ -271,6 +274,8 @@ local function Create_Tags()
             return formatFunc(UnitPowerMax(unit, powerType))
         elseif mode == "CURMAX" then
             return formatFunc(UnitPower(unit, powerType)) .. " / " .. formatFunc(UnitPowerMax(unit, powerType))
+        elseif mode == "CURPREC" then
+            return formatFunc(UnitPower(unit, powerType)) .. " - " .. percent
         elseif mode == "MISSING" then
             if GW.isModern then
                 return formatFunc(UnitPowerMissing(unit, powerType))

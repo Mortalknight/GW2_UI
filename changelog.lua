@@ -19,6 +19,9 @@ addChange("12.1.6", {
     {GW.Enum.ChangelogType.change, [=[Forever: bronze accent color instead of white]=]},
     {GW.Enum.ChangelogType.feature, [=[Party frames: the animation for new buffs can be turned off]=]},
     {GW.Enum.ChangelogType.bug, [=[Friends list (Forever): the list headers keep their size on hover, name, level and class sit in one row without gaps]=]},
+    {GW.Enum.ChangelogType.feature, [=[Text designer: power can show current - percent in one block like health, the current - percent templates use that one block]=]},
+    {GW.Enum.ChangelogType.bug, [=[Text designer: fixed Lua errors with the power block and class colors, the previews on the classic clients show health again, the options are no longer cut off]=]},
+    {GW.Enum.ChangelogType.bug, [=[Hero panel: the Pawn button opens Pawn in front and no longer closes it again]=]},
 })
 
 addChange("12.1.5", {

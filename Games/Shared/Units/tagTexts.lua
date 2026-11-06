@@ -138,7 +138,7 @@ local BLOCKS = {
 
     power = {category = "power", label = L["Power"], desc = L["The power of the unit, like mana or rage."],
         modes = {{"PREC", STATUS_TEXT_PERCENT}, {"CUR", REFORGE_CURRENT}, {"MAX", MAXIMUM}, {"MISSING", L["Missing"]},
-            {"CURMAX", L["Current / Max"]}},
+            {"CURMAX", L["Current / Max"]}, {"CURPREC", L["Current - Percent"]}},
         checks = {SHORT_CHECK, {key = "mana", label = L["Always Mana"]}, {key = "healer", label = L["Only Healers"]}},
         tag = "GW2_Grid:power",
         args = function(block, mode)
@@ -242,7 +242,6 @@ end
 local function Absorb(mode, short)
     return {k = "absorb", mode = mode, short = short}
 end
-local DASH = {k = "text", text = " - "}
 local NEW_LINE = {k = "newLine"}
 local NAME_BLOCK = {k = "name"}
 local function GroupName(...)
@@ -259,14 +258,15 @@ GW.TagTextPresets = {
     level = {Preset({}), Preset({{k = "level"}}), Preset({{k = "level", colored = true}})},
     health = {Preset({}), Preset({Health("PREC")}), Preset({Health("HEALTH")}), Preset({Health("HEALTH", true)}),
         Preset({Health("LOSTHEALTH")}), Preset({Health("LOSTHEALTH", true)}),
-        Preset({Health("HEALTH"), DASH, Health("PREC")}), Preset({Health("HEALTH", true), DASH, Health("PREC")})},
+        Preset({Health("CURPREC")}), Preset({Health("CURPREC", true)})},
     globeHealth = {Preset({Health("HEALTH")}), Preset({Health("HEALTH", true)}), Preset({Health("PREC")}),
         Preset({Health("HEALTH"), NEW_LINE, Health("PREC")}), Preset({Health("HEALTH", true), NEW_LINE, Health("PREC")})},
     -- retail can neither shorten the shield nor show it in percent
     absorb = {Preset({Absorb("CUR")}), Preset({Absorb("CUR", true)}, nil, GW.isModern), Preset({Absorb("PREC")}, nil, GW.isModern),
         Preset({Absorb("CUR"), NEW_LINE, Absorb("PREC")}, nil, GW.isModern)},
-    power = {Preset({}), Preset({Power("CUR")}), Preset({Power("CUR", true)}), Preset({Power("PREC")})},
-    mana = {Preset({}), Preset({Power("CUR", nil, true)}), Preset({Power("CUR", true, true)}), Preset({Power("PREC", nil, true)})},
+    power = {Preset({}), Preset({Power("CUR")}), Preset({Power("CUR", true)}), Preset({Power("PREC")}), Preset({Power("CURPREC", true)})},
+    mana = {Preset({}), Preset({Power("CUR", nil, true)}), Preset({Power("CUR", true, true)}), Preset({Power("PREC", nil, true)}),
+        Preset({Power("CURPREC", true, true)})},
     classBar = {Preset({}), Preset({{k = "classBarValue"}})},
 }
 

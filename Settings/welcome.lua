@@ -148,8 +148,7 @@ end
 local function Health(mode, short)
     return {k = "healthValue", mode = mode, short = short}
 end
-local DASH = {k = "text", text = " - "}
-local DETAILED_POWER = {{k = "power", mode = "CUR", short = true}, DASH, {k = "power", mode = "PREC"}}
+local DETAILED_POWER = {{k = "power", mode = "CURPREC", short = true}}
 local TEXT_STYLE_NAMES = {L["Minimal"], DEFAULT, L["Detailed"]}
 local TEXT_STYLE_SECTIONS = {{key = "health", label = HEALTH}, {key = "power", label = L["Power"]}}
 
@@ -314,7 +313,7 @@ local TEXT_STYLE_FRAMES = {
             end
             return list
         end,
-        health = {{health = {}}, {health = false}, {health = {Health("HEALTH", true), DASH, Health("PREC")}}},
+        health = {{health = {}}, {health = false}, {health = {Health("CURPREC", true)}}},
         power = {{power = {}}, {power = false}, {power = DETAILED_POWER}}},
     {label = GROUP, refresh = function() RefreshTextStyleFrames("group") end,
         lines = function(settings)
@@ -338,7 +337,7 @@ local TEXT_STYLE_FRAMES = {
         health = {
             {health = {Health("HEALTH", true)}, globe = {Health("HEALTH", true)}},
             {health = false, globe = false},
-            {health = {Health("HEALTH"), DASH, Health("PREC")}, globe = {Health("HEALTH"), {k = "newLine"}, Health("PREC")}},
+            {health = {Health("CURPREC")}, globe = {Health("HEALTH"), {k = "newLine"}, Health("PREC")}},
         },
         power = {
             {power = {}, powerBar = {}, mana = {}},

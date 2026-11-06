@@ -511,8 +511,8 @@ function HeroPanel.AddAddonButtons(heroPanelMenu)
     heroPanelMenu.Pawn = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Pawn",
         setting = GW.settings.windows.character.enabled,
-        showFunction = function() PawnUIShow() end,
+        showFunction = function() if not (PawnUIFrame and PawnUIFrame:IsShown()) then PawnUIShow() end end,
         onEnter = function(self) PawnUI_InventoryPawnButton_OnEnter(self) end,
-        hideOurFrame = false,
+        hideOurFrame = true,
     })
 end

@@ -59,7 +59,7 @@ if ShouldShowMawBuffs then
         return auras
     end
 
-    if GW.Retail then
+    if GW.isModern then
         ShouldShowMawBuffs = GW.ShouldShowMawBuffs
     end
 end
