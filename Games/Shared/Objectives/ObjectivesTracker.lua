@@ -309,21 +309,6 @@ local function FormatObjectiveNumbers(text)
 end
 GW.FormatObjectiveNumbers = FormatObjectiveNumbers
 
-local STICKY_HEADER_PADDING = 4
-
--- covers the end of the quest above, which lies under the sticky header
-local function GetStickyBackground(header)
-    if not header.gwStickyBackground then
-        header:SetFrameLevel(header:GetParent():GetFrameLevel() + 10)
-        local bg = header:CreateTexture(nil, "BACKGROUND", nil, -8)
-        bg:SetColorTexture(GW.Colors.Fallback:GetRGBA())
-        bg:SetPoint("TOPLEFT", header, "TOPLEFT", -40, STICKY_HEADER_PADDING)
-        bg:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, -STICKY_HEADER_PADDING)
-        header.gwStickyBackground = bg
-    end
-    return header.gwStickyBackground
-end
-
 local SCROLL_STEP = 15
 local MIN_SCROLL_STOP_DISTANCE = 5
 
@@ -335,12 +320,14 @@ local function GetScrollStops(scrollFrame)
         local top = container:IsShown() and container:GetTop()
         if top then
             stops[#stops + 1] = childTop - top
-            local header = container.header
-            local headerSpace = header and header:IsShown() and (header:GetHeight() + STICKY_HEADER_PADDING) or 0
+            local isFirstBlock = true
             for _, block in ipairs(container.blocks or {}) do
                 local blockTop = block:IsShown() and block:GetTop()
                 if blockTop then
-                    stops[#stops + 1] = childTop - blockTop - headerSpace
+                    if not isFirstBlock then
+                        stops[#stops + 1] = childTop - blockTop
+                    end
+                    isFirstBlock = false
                 end
             end
         end
@@ -417,22 +404,6 @@ local function UpdateScrollView()
     if not childTop then return end
     local scroll = scrollFrame:GetVerticalScroll()
     UpdateScrollIndicator(scrollFrame, scroll)
-
-    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
-        local header, top = container.header, container:GetTop()
-        if header and top then
-            local offset = 0
-            if header:IsShown() then
-                offset = math.max(0, math.min(scroll - (childTop - top), container:GetHeight() - header:GetHeight()))
-            end
-            if offset ~= (header.gwStickyOffset or 0) then
-                header.gwStickyOffset = offset
-                header:ClearAllPoints()
-                header:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, -offset)
-                GetStickyBackground(header):SetShown(offset > 0)
-            end
-        end
-    end
 end
 
 function GW.ScrollObjectivesTrackerToContainer(container)
@@ -587,10 +558,54 @@ local function DisableBlizzardsObjevtiveTracker()
     end
 end
 
+local function GetTrackerSections()
+    local sections = {}
+    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
+        if container:IsShown() and container.header and container.header:IsShown() then
+            sections[#sections + 1] = container
+        end
+    end
+    return sections
+end
+
+local function CollapseTopSectionOnScroll()
+    local expanded = {}
+    for _, section in ipairs(GetTrackerSections()) do
+        if not section.collapsed then
+            expanded[#expanded + 1] = section
+        end
+    end
+    if #expanded < 2 then return false end
+
+    expanded[1].gwCollapsedByScroll = true
+    expanded[1]:SetCollapsed(true, "scroll")
+    return true
+end
+
+local function ExpandLastCollapsedSectionOnScroll()
+    local sections = GetTrackerSections()
+    for i = #sections, 1, -1 do
+        local section = sections[i]
+        if section.gwCollapsedByScroll and section.collapsed then
+            section.gwCollapsedByScroll = nil
+            section:SetCollapsed(false, "scroll")
+            return true
+        end
+    end
+    return false
+end
+
 function GwObjectivesTrackerMixin:CreateTrackerScrollFrame(name, height)
     local scrollFrame = CreateFrame("ScrollFrame", name, self, "GwQuestTrackerScroll")
     scrollFrame:SetHeight(height)
     scrollFrame:SetScript("OnMouseWheel", function(frame, delta)
+        local reachedTop = frame:GetVerticalScroll() <= 1
+        if (delta < 0 and CollapseTopSectionOnScroll()) or (delta > 0 and reachedTop and ExpandLastCollapsedSectionOnScroll()) then
+            frame:SetVerticalScroll(0)
+            GwQuestTracker:LayoutChanged()
+            UpdateScrollView()
+            return
+        end
         frame:SetVerticalScroll(GetNextScroll(frame, delta))
         UpdateScrollView()
     end)
