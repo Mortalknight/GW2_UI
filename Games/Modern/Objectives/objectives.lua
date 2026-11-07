@@ -216,9 +216,9 @@ local function GetQuestLevelPrefix(quest, questID)
 
     local tagInfo = C_QuestLog.GetQuestTagInfo(questID)
     if tagInfo and tagInfo.tagID == Enum.QuestTag.Dungeon then
-        return "[" .. quest.level .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t] "
+        return "[" .. quest.level .. " |TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t ] "
     elseif tagInfo and (tagInfo.tagID == Enum.QuestTag.Group or tagInfo.isElite) then
-        return "[" .. quest.level .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t] "
+        return "[" .. quest.level .. " |TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t ] "
     elseif tagInfo and GROUP_CONTENT_TAGS[tagInfo.tagID] then
         return "[" .. quest.level .. "+] "
     end
