@@ -15,10 +15,14 @@ local function IsQuestFrequency(q)
     return isFreq
 end
 
-local function IsClassQuest(questID)
+local function GetQuestHeaderTitle(questID)
     local headerIndex = C_QuestLog.GetHeaderIndexForQuest and C_QuestLog.GetHeaderIndexForQuest(questID)
     local info = headerIndex and C_QuestLog.GetInfo(headerIndex)
-    return GW.IsOwnClassHeader(info and info.title)
+    return info and info.title
+end
+
+local function IsClassQuest(questID)
+    return GW.IsOwnClassHeader(GetQuestHeaderTitle(questID))
 end
 
 local function IsTopContainerQuest(q)
@@ -70,33 +74,21 @@ local function ShouldSortSuperTrackedQuestToTop()
     return GW.settings.objectives.superTrackedOnTop
 end
 
+local QUEST_SORT_MODES = { LEVEL = true, LEVEL_DESC = true, ZONE = true }
+
 local function GetQuestSortMode()
     local mode = GW.settings.objectives.sorting
-    if mode == "LEVEL" or mode == "LEVEL_DESC" or mode == "ZONE" then
-        return mode
-    end
-end
-
-local function GetQuestSortInfo(questID)
-    local level, zone = 0, ""
-    local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
-    if questLogIndex then
-        local info = C_QuestLog.GetInfo(questLogIndex)
-        level = info and info.level or 0
-        local headerIndex = C_QuestLog.GetHeaderIndexForQuest and C_QuestLog.GetHeaderIndexForQuest(questID)
-        local headerInfo = headerIndex and C_QuestLog.GetInfo(headerIndex)
-        zone = headerInfo and headerInfo.title or ""
-    end
-    return level, zone
+    return QUEST_SORT_MODES[mode] and mode
 end
 
 local function SortQuestIDsBySetting(questIDs, watchOrder, mode)
     local levels, zones = {}, {}
     for _, questID in ipairs(questIDs) do
-        levels[questID], zones[questID] = GetQuestSortInfo(questID)
+        levels[questID] = GW.QuestCache:Get(questID).level or 0
+        zones[questID] = mode == "ZONE" and GetQuestHeaderTitle(questID) or ""
     end
     table.sort(questIDs, function(left, right)
-        if mode == "ZONE" and zones[left] ~= zones[right] then
+        if zones[left] ~= zones[right] then
             return zones[left] < zones[right]
         end
         if levels[left] ~= levels[right] then
