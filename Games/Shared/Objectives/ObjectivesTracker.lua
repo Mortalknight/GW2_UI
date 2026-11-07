@@ -525,6 +525,27 @@ function GwObjectivesTrackerMixin:LayoutChanged()
     self.ScrollFrame:SetSize(self:GetWidth(), scrollContentHeight)
 end
 
+function GW.GetObjectivesScrollViewport()
+    local top = GetStickyHeaderHeight()
+    for _, container in ipairs(GW.QuestTrackerFixedContainer) do
+        top = top + container:GetHeight()
+    end
+    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
+        if IsPinnedSection(container) then
+            top = top + container:GetHeight()
+        end
+    end
+    return top, GwQuestTracker:GetHeight()
+end
+
+local function RunOrQueue(key, func, args)
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue(key, func, args)
+    else
+        func(unpack(args))
+    end
+end
+
 function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
     for _, container in next, { GW.ObjectiveTrackerContainer.Campaign, GW.ObjectiveTrackerContainer.Quests, GW.ObjectiveTrackerContainer.Bonus } do
         for i = 1, #container.blocks do
@@ -536,15 +557,15 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
             -- button (the buttons hang on the tracker, collapsing the blocks alone
             -- leaves them floating)
             if i <= counter and not container.collapsed then
-                GW.CombatQueue:Queue("UpdateTrackerItemButtonPositionForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButtonPosition, {block})
+                RunOrQueue("UpdateTrackerItemButtonPositionForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButtonPosition, {block})
             else
-                GW.CombatQueue:Queue("RemoveTrackerItemButtonForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButton, {block})
+                RunOrQueue("RemoveTrackerItemButtonForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButton, {block})
             end
         end
     end
 
     if GW.ObjectiveTrackerContainer.Scenario and GW.ObjectiveTrackerContainer.Scenario.block.hasItem then
-        GW.CombatQueue:Queue("UpdateTrackerItemButtonPositionForBlock: " .. GW.ObjectiveTrackerContainer.Scenario:GetDebugName(), GW.ObjectiveTrackerContainer.Scenario.block.UpdateObjectiveActionButtonPosition, {GW.ObjectiveTrackerContainer.Scenario.block})
+        RunOrQueue("UpdateTrackerItemButtonPositionForBlock: " .. GW.ObjectiveTrackerContainer.Scenario:GetDebugName(), GW.ObjectiveTrackerContainer.Scenario.block.UpdateObjectiveActionButtonPosition, {GW.ObjectiveTrackerContainer.Scenario.block})
     end
 end
 
