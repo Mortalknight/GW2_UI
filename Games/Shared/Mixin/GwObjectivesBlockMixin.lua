@@ -560,36 +560,12 @@ function GwObjectivesBlockTemplateMixin:UpdateScenarioSpell(spellInfo)
     end
 end
 
+local UpdateObjectiveActionButtonBase = GwObjectivesBlockTemplateMixin.UpdateObjectiveActionButton
+function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
+    UpdateObjectiveActionButtonBase(self)
+    GW.LayoutObjectiveItemButtons()
+end
+
 function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition()
-    if not self.actionButton or not self.hasItem then
-        return
-    end
-
-    -- The button is a SecureActionButton: it must not be moved in combat, and it must
-    -- not be anchored to the scroll child either - scrolling moves that frame, and
-    -- moving an anchor ancestor of a protected frame makes SetVerticalScroll itself a
-    -- protected call (in-combat scrolling gets ADDON_ACTION_BLOCKED). So the anchor is
-    -- the static tracker frame and the current scroll offset is added numerically;
-    -- scroll changes re-run this through AdjustItemButtonPositions (out of combat)
-    local container = self:GetParent()
-    local scrollChild = GwQuestTracker.ScrollFrame.Child
-    local isScrolled = container:GetParent() == scrollChild
-    local column = isScrolled and GW.QuestTrackerScrollableContainer or GW.QuestTrackerFixedContainer
-    local height = (self.fromContainerTopHeight or 0) - GW.GetObjectivesFirstObjectiveOffset()
-
-    for _, other in ipairs(column) do
-        if other == container then
-            break
-        end
-        height = height + other:GetHeight()
-    end
-
-    if isScrolled then
-        for _, other in ipairs(GW.QuestTrackerFixedContainer) do
-            height = height + other:GetHeight()
-        end
-        height = height - GwQuestTracker.ScrollFrame:GetVerticalScroll()
-    end
-
-    self.actionButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
+    GW.LayoutObjectiveItemButtons()
 end
