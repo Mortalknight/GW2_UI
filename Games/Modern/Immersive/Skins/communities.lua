@@ -259,8 +259,11 @@ local function SkinChat(chat)
     addToChat.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     addToChat.Label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
-    CommunitiesFrame.ChatEditBox:GwStripTextures()
-    CommunitiesFrame.ChatEditBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    CommunitiesFrame.ChatEditBox:ClearAllPoints()
+    CommunitiesFrame.ChatEditBox:SetPoint("TOPLEFT", chat, "BOTTOMLEFT", 0, -6)
+    CommunitiesFrame.ChatEditBox:SetPoint("TOPRIGHT", chat, "BOTTOMRIGHT", 0, -6)
+    CommunitiesFrame.ChatEditBox:SetHeight(22)
+    GW.SkinEditBox(CommunitiesFrame.ChatEditBox)
 end
 
 local SECTION_HEADER = "Interface/AddOns/GW2_UI/textures/bag/bag-sep.png"

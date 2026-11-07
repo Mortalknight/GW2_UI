@@ -2324,7 +2324,12 @@ local function CreateLandingFrame()
     local name = column:CreateFontString(nil, "OVERLAY")
     name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 18)
     name:SetPoint("TOPLEFT", welcome, "BOTTOMLEFT", 0, -6)
-    name:SetText(UnitName("player"))
+    if GW.Forever then
+        local firstName, lastName = UnitName("player")
+        name:SetText(firstName .. " " .. lastName)
+    else
+        name:SetText(GW.myname)
+    end
     local classColor = GW.GWGetClassColor(select(2, UnitClass("player")), true, true)
     name:SetTextColor(classColor.r, classColor.g, classColor.b)
 
