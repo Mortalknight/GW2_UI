@@ -109,7 +109,7 @@ local function LoadObjectivesPanel(sWindow)
     p:AddOption(L["Show Objective Tracker progress bars"], L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."], {getterSetter = "objectives.statusBars", callback = UpdateObjectiveTrackerStatusBarSettings, dependence = {["objectives.enabled"] = true}})
 
     p:AddOption(L["Show Quest XP in Quest Tracker"], nil, {getterSetter = "objectives.showXp", callback = UpdateQuestContainers, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
-    p:AddOptionDropdown(L["Quest Tracker Sorting"], nil, { getterSetter = "objectives.sorting", callback = UpdateQuestContainers, optionsList = {"DEFAULT", "LEVEL", "ZONE"}, optionNames = {DEFAULT, GUILD_RECRUITMENT_LEVEL, ZONE}, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
+    p:AddOptionDropdown(L["Quest Tracker Sorting"], nil, { getterSetter = "objectives.sorting", callback = UpdateQuestContainers, optionsList = {"DEFAULT", "LEVEL", "LEVEL_DESC", "ZONE"}, optionNames = {DEFAULT, L["Level (ascending)"], L["Level (descending)"], ZONE}, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
 
     local moduleOrderOptions, moduleOrderOptionNames = GetObjectiveTrackerModuleOrderOptions()
     p:AddOptionSortableList(L["Objective Tracker Module Order"], L["Set the order of Objective Tracker modules."], {

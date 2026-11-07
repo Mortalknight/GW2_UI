@@ -70,6 +70,45 @@ local function ShouldSortSuperTrackedQuestToTop()
     return GW.settings.objectives.superTrackedOnTop
 end
 
+local function GetQuestSortMode()
+    local mode = GW.settings.objectives.sorting
+    if mode == "LEVEL" or mode == "LEVEL_DESC" or mode == "ZONE" then
+        return mode
+    end
+end
+
+local function GetQuestSortInfo(questID)
+    local level, zone = 0, ""
+    local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
+    if questLogIndex then
+        local info = C_QuestLog.GetInfo(questLogIndex)
+        level = info and info.level or 0
+        local headerIndex = C_QuestLog.GetHeaderIndexForQuest and C_QuestLog.GetHeaderIndexForQuest(questID)
+        local headerInfo = headerIndex and C_QuestLog.GetInfo(headerIndex)
+        zone = headerInfo and headerInfo.title or ""
+    end
+    return level, zone
+end
+
+local function SortQuestIDsBySetting(questIDs, watchOrder, mode)
+    local levels, zones = {}, {}
+    for _, questID in ipairs(questIDs) do
+        levels[questID], zones[questID] = GetQuestSortInfo(questID)
+    end
+    table.sort(questIDs, function(left, right)
+        if mode == "ZONE" and zones[left] ~= zones[right] then
+            return zones[left] < zones[right]
+        end
+        if levels[left] ~= levels[right] then
+            if mode == "LEVEL_DESC" then
+                return levels[left] > levels[right]
+            end
+            return levels[left] < levels[right]
+        end
+        return (watchOrder[left] or 0) < (watchOrder[right] or 0)
+    end)
+end
+
 -- AddObjective keeps no reference to its options table (field reads only), so one
 -- scratch table serves every quest objective line — a full update otherwise allocated
 -- a fresh table per line, the bulk of the trackers garbage churn
@@ -496,6 +535,14 @@ function GwQuestLogMixin:UpdateLayout()
         end
     end
 
+    local sortMode = GetQuestSortMode()
+    if sortMode then
+        SortQuestIDsBySetting(watchedQuestIDs, watchedQuestOrder, sortMode)
+        for position, questID in ipairs(watchedQuestIDs) do
+            watchedQuestOrder[questID] = position
+        end
+    end
+
     if ShouldSortSuperTrackedQuestToTop() then
         local superTrackedQuestID = C_SuperTrack.GetSuperTrackedQuestID()
         table.sort(watchedQuestIDs, function(leftQuestID, rightQuestID)
@@ -588,7 +635,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
         return
     end
 
-    if ShouldSortSuperTrackedQuestToTop() then
+    if ShouldSortSuperTrackedQuestToTop() or GetQuestSortMode() then
         self:UpdateLayout()
         GwQuestTracker:LayoutChanged()
         return
