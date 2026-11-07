@@ -483,6 +483,7 @@ function GW.ScrollObjectivesTrackerToContainer(container)
     local childTop, top = scrollFrame.Child:GetTop(), container:GetTop()
     if not (childTop and top) then return end
     scrollFrame:SetVerticalScroll(math.max(0, childTop - top))
+    GwQuestTracker:AdjustItemButtonPositions()
     UpdateScrollView()
 end
 
@@ -524,71 +525,27 @@ function GwObjectivesTrackerMixin:LayoutChanged()
     self.ScrollFrame:SetSize(self:GetWidth(), scrollContentHeight)
 end
 
-local ITEM_BUTTON_COLUMN_X = -362
-local ITEM_BUTTON_TOP_NO_COMPASS = 1
-local ITEM_BUTTON_TOP_WITH_COMPASS = 6
-local NOTIFICATION_MAX_HEIGHT = 70
-local ITEM_BUTTON_GAP = 6
-
-local isNotificationHooked = false
-
-function GW.LayoutObjectiveItemButtons()
-    if not isNotificationHooked and GwObjectivesNotification then
-        isNotificationHooked = true
-        GwObjectivesNotification:HookScript("OnSizeChanged", GW.LayoutObjectiveItemButtons)
-    end
-
-    if InCombatLockdown() then
-        GW.CombatQueue:Queue("LayoutObjectiveItemButtons", GW.LayoutObjectiveItemButtons)
-        return
-    end
-
-    local containers = GW.ObjectiveTrackerContainer
-    if not containers then return end
-
-    local notificationHeight = GwObjectivesNotification and GwObjectivesNotification:GetHeight() or 0
-    local extraHeight = math.max(notificationHeight - 1, 0)
-    local progress = math.min(extraHeight / (NOTIFICATION_MAX_HEIGHT - 1), 1)
-    local y = -(extraHeight + ITEM_BUTTON_TOP_NO_COMPASS + (ITEM_BUTTON_TOP_WITH_COMPASS - ITEM_BUTTON_TOP_NO_COMPASS) * progress)
-    local function Place(block)
-        local button = block and block.actionButton
-        if not (button and block.hasItem and button:IsShown()) then return end
-        button:ClearAllPoints()
-        button:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", ITEM_BUTTON_COLUMN_X, y)
-        y = y - button:GetHeight() - ITEM_BUTTON_GAP
-    end
-
-    if containers.Scenario then
-        Place(containers.Scenario.block)
-    end
-    for _, container in next, { containers.Campaign, containers.Quests, containers.Bonus } do
-        if container and not container.collapsed then
-            for i = 1, #container.blocks do
-                Place(container.blocks[i])
-            end
-        end
-    end
-end
-
 function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
-    local function Remove(key, block)
-        if InCombatLockdown() then
-            GW.CombatQueue:Queue(key, block.UpdateObjectiveActionButton, {block})
-        else
-            block:UpdateObjectiveActionButton()
-        end
-    end
-
     for _, container in next, { GW.ObjectiveTrackerContainer.Campaign, GW.ObjectiveTrackerContainer.Quests, GW.ObjectiveTrackerContainer.Bonus } do
         for i = 1, #container.blocks do
+            local block = container.blocks[i]
             local counter = container.numQuests or container.numEvents or 0
-            if i > counter or container.collapsed then
-                Remove("RemoveTrackerItemButtonForBlock: " .. container:GetDebugName() .. i, container.blocks[i])
+            -- the queue key has to be per BLOCK: with a per-container key every later
+            -- block overwrote the earlier ones and only the last button got updated.
+            -- Collapsed containers route through the full updater, which hides the
+            -- button (the buttons hang on the tracker, collapsing the blocks alone
+            -- leaves them floating)
+            if i <= counter and not container.collapsed then
+                GW.CombatQueue:Queue("UpdateTrackerItemButtonPositionForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButtonPosition, {block})
+            else
+                GW.CombatQueue:Queue("RemoveTrackerItemButtonForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButton, {block})
             end
         end
     end
 
-    GW.LayoutObjectiveItemButtons()
+    if GW.ObjectiveTrackerContainer.Scenario and GW.ObjectiveTrackerContainer.Scenario.block.hasItem then
+        GW.CombatQueue:Queue("UpdateTrackerItemButtonPositionForBlock: " .. GW.ObjectiveTrackerContainer.Scenario:GetDebugName(), GW.ObjectiveTrackerContainer.Scenario.block.UpdateObjectiveActionButtonPosition, {GW.ObjectiveTrackerContainer.Scenario.block})
+    end
 end
 
 local function DisableBlizzardsObjevtiveTracker()
@@ -685,10 +642,14 @@ function GwObjectivesTrackerMixin:CreateTrackerScrollFrame(name, height)
             frame:SetVerticalScroll(0)
             GwQuestTracker:LayoutChanged()
             UpdateScrollView()
+            GwQuestTracker:AdjustItemButtonPositions()
             return
         end
         frame:SetVerticalScroll(GetNextScroll(frame, delta))
         UpdateScrollView()
+        -- the item buttons are anchored to the static tracker (never to the scroll
+        -- child, see UpdateObjectiveActionButtonPosition) - follow the scroll manually
+        GwQuestTracker:AdjustItemButtonPositions()
     end)
     scrollFrame.maxScroll = 0
     return scrollFrame
