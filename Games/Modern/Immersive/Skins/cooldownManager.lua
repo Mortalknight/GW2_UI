@@ -178,11 +178,6 @@ local ITEM_HOOKS = {
             item.Cooldown:SetSwipeColor(0, 0, 0, 1)
         end
     end,
-    SetTimerShown = function(item)
-        if item.Cooldown then
-            GW.ToggleBlizzardCooldownText(item.Cooldown, item.Cooldown.timer)
-        end
-    end,
     RefreshIconBorder = function(item)
         if item.DebuffBorder then
             item.DebuffBorder.Texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")

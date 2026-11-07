@@ -128,7 +128,6 @@ local function ToggleBlizzardCooldownText(self, timer, request)
         self:SetHideCountdownNumbers(hide)
     end
 end
-GW.ToggleBlizzardCooldownText = ToggleBlizzardCooldownText
 
 local function Cooldown_OnSizeChanged(self, width, force)
     local scale = width and (floor(width + 0.5) / ICON_SIZE) or 1
@@ -143,9 +142,24 @@ local function Cooldown_OnSizeChanged(self, width, force)
         self.text:SetFont(UNIT_NAME_FONT, (scale * FONT_SIZE), "OUTLINE")
     end
 
-    if self.parent and self.endTime then
+    if self.binding then
+        self:SetShown(not Cooldown_BelowScale(self))
+    elseif self.parent and self.endTime then
         Cooldown_TimerUpdate(self)
     end
+end
+
+-- on modern start and duration can be secret, an engine binding writes the text there
+local countdownFormatter
+if GW.isModern then
+    -- same texts as GetTimeInfo without the second label
+    countdownFormatter = C_StringUtil.CreateNumericRuleFormatter()
+    countdownFormatter:SetBreakpoints({
+        {threshold = 0, format = "%d", step = 1, rounding = Enum.NumericRuleFormatRounding.Floor},
+        {threshold = 60, format = "%.0fm", components = {{div = 60, step = 1, rounding = Enum.NumericRuleFormatRounding.Nearest}}},
+        {threshold = 3600, format = "%.0fh", components = {{div = 3600, step = 1, rounding = Enum.NumericRuleFormatRounding.Nearest}}},
+        {threshold = 86400, format = "%.0fd", components = {{div = 86400, step = 1, rounding = Enum.NumericRuleFormatRounding.Nearest}}},
+    })
 end
 
 local function CreateCooldownTimer(parent)
@@ -164,15 +178,27 @@ local function CreateCooldownTimer(parent)
     timer.hideBlizzard = true
     ToggleBlizzardCooldownText(parent, timer)
 
+    if countdownFormatter then
+        timer.duration = C_DurationUtil.CreateDuration()
+        timer.binding = C_DurationUtil.CreateDurationTextBinding()
+        timer.binding:SetFontString(text)
+        timer.binding:SetFormatter(countdownFormatter)
+        timer.binding:SetExpiredText("")
+        timer.binding:SetZeroDurationText("")
+        timer.binding:Disable()
+    end
+
     Cooldown_OnSizeChanged(timer, parent:GetWidth(), true)
     parent:SetScript("OnSizeChanged", function(_, width)
         Cooldown_OnSizeChanged(timer, width, true)
     end)
 
-    -- keep this after Cooldown_OnSizeChanged
-    timer:SetScript("OnUpdate", Cooldown_OnUpdate)
-    -- the throttle only counts down while the text shows, a bag opened again would keep the old time for a while
-    timer:SetScript("OnShow", function(self) Cooldown_OnUpdate(self, -1) end)
+    if not timer.binding then
+        -- keep this after Cooldown_OnSizeChanged
+        timer:SetScript("OnUpdate", Cooldown_OnUpdate)
+        -- the throttle only counts down while the text shows, a bag opened again would keep the old time for a while
+        timer:SetScript("OnShow", function(self) Cooldown_OnUpdate(self, -1) end)
+    end
 
     return timer
 end
@@ -250,4 +276,47 @@ local function RegisterCooldown(cooldown)
         ToggleCooldown(cooldown, true)
     end
 end
-GW.RegisterCooldown = RegisterCooldown
+
+local function SetCountdownDuration(cooldown, durationObject)
+    local binding = cooldown.timer.binding
+    if durationObject then
+        binding:SetDuration(durationObject)
+        binding:Enable()
+    else
+        binding:Disable()
+        cooldown.timer.text:SetText("")
+    end
+end
+
+local function OnSetCountdown(self, start, duration, modRate)
+    if GW.IsSecretValue(duration) or (duration and duration > MIN_DURATION) then
+        -- https://github.com/Stanzilla/WoWUIBugs/issues/47
+        if not GW.IsSecretValue(start) and start > GetTime() + 1 then
+            start = start - (2 ^ 32) / 1000
+        end
+        self.timer.duration:SetTimeFromStart(start, duration, modRate)
+        SetCountdownDuration(self, self.timer.duration)
+    else
+        SetCountdownDuration(self, nil)
+    end
+end
+
+local function OnClearCountdown(self)
+    SetCountdownDuration(self, nil)
+end
+
+local function RegisterCountdown(cooldown)
+    if cooldown.timer then return end
+    CreateCooldownTimer(cooldown)
+    hooksecurefunc(cooldown, "SetCooldown", OnSetCountdown)
+    hooksecurefunc(cooldown, "SetCooldownFromDurationObject", SetCountdownDuration)
+    hooksecurefunc(cooldown, "Clear", OnClearCountdown)
+end
+
+function GW.SetCooldownText(cooldown, durationObject)
+    if cooldown.timer and cooldown.timer.binding then
+        SetCountdownDuration(cooldown, durationObject)
+    end
+end
+
+GW.RegisterCooldown = GW.isModern and RegisterCountdown or RegisterCooldown

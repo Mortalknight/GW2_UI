@@ -89,6 +89,7 @@ local function spellbookButton_onEvent(self)
     local durationObject = C_Spell.GetSpellCooldownDuration(self.spellId)
     if durationObject then
         self.cooldown:SetCooldownFromDurationObject(durationObject)
+        GW.SetCooldownText(self.cooldown, C_Spell.GetSpellCooldownDuration(self.spellId, true))
     else
         self.cooldown:Clear()
     end
@@ -466,6 +467,7 @@ local function setButtonStyle(btn, isPassive, spellID, slotType, icon, spellbook
 
     btn.icon:SetDesaturated(isOffSpec)
 
+    if not isPassive then GW.RegisterCooldown(btn.cooldown) end
     spellbookButton_onEvent(btn)
     btn:Show()
 end
@@ -779,7 +781,6 @@ local function updateSpellbookTab(self)
                 buttonIndex = buttonIndex + 1
                 local button = GetSpellbookActionButton(tab, pagingContainer, buttonIndex)
                 setButtonStyle(button, isPassive, spellID or slotID, slotType, icon, spellIndex, isPet, nameSpell, requiredLevel, isOffSpec)
-                if not isPassive then GW.RegisterCooldown(button.cooldown) end
 
                 if entry and lastName == nameSpell then
                     AddRank(entry, button)

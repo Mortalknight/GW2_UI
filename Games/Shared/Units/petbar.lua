@@ -90,9 +90,7 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
         button.gw_ShowMacroName = GW.settings.actionbars.showMacroNames
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
-        if not GW.isModern then
-            GW.RegisterCooldown(button.cooldown)
-        end
+        GW.RegisterCooldown(button.cooldown)
     end
 end
 

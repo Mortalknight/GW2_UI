@@ -142,11 +142,7 @@ local function CreateTotemButton(bar, index)
     button.cooldown:SetAllPoints(button.iconTexture)
     button.cooldown:SetReverse(true)
     button.cooldown:SetDrawEdge(false)
-    button.cooldown:SetHideCountdownNumbers(false)
-    -- modern cooldowns bring their own numbers
-    if not GW.isModern then
-        GW.RegisterCooldown(button.cooldown)
-    end
+    GW.RegisterCooldown(button.cooldown)
 
     return button
 end
