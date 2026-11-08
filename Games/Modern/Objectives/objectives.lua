@@ -15,10 +15,14 @@ local function IsQuestFrequency(q)
     return isFreq
 end
 
-local function IsClassQuest(questID)
+local function GetQuestHeaderTitle(questID)
     local headerIndex = C_QuestLog.GetHeaderIndexForQuest and C_QuestLog.GetHeaderIndexForQuest(questID)
     local info = headerIndex and C_QuestLog.GetInfo(headerIndex)
-    return GW.IsOwnClassHeader(info and info.title)
+    return info and info.title
+end
+
+local function IsClassQuest(questID)
+    return GW.IsOwnClassHeader(GetQuestHeaderTitle(questID))
 end
 
 local function IsTopContainerQuest(q)
@@ -68,6 +72,33 @@ end
 
 local function ShouldSortSuperTrackedQuestToTop()
     return GW.settings.objectives.superTrackedOnTop
+end
+
+local QUEST_SORT_MODES = { LEVEL = true, LEVEL_DESC = true, ZONE = true }
+
+local function GetQuestSortMode()
+    local mode = GW.settings.objectives.sorting
+    return QUEST_SORT_MODES[mode] and mode
+end
+
+local function SortQuestIDsBySetting(questIDs, watchOrder, mode)
+    local levels, zones = {}, {}
+    for _, questID in ipairs(questIDs) do
+        levels[questID] = GW.QuestCache:Get(questID).level or 0
+        zones[questID] = mode == "ZONE" and GetQuestHeaderTitle(questID) or ""
+    end
+    table.sort(questIDs, function(left, right)
+        if zones[left] ~= zones[right] then
+            return zones[left] < zones[right]
+        end
+        if levels[left] ~= levels[right] then
+            if mode == "LEVEL_DESC" then
+                return levels[left] > levels[right]
+            end
+            return levels[left] < levels[right]
+        end
+        return (watchOrder[left] or 0) < (watchOrder[right] or 0)
+    end)
 end
 
 -- AddObjective keeps no reference to its options table (field reads only), so one
@@ -177,9 +208,9 @@ local function GetQuestLevelPrefix(quest, questID)
 
     local tagInfo = C_QuestLog.GetQuestTagInfo(questID)
     if tagInfo and tagInfo.tagID == Enum.QuestTag.Dungeon then
-        return "[" .. quest.level .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t] "
+        return "[" .. quest.level .. " |TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t ] "
     elseif tagInfo and (tagInfo.tagID == Enum.QuestTag.Group or tagInfo.isElite) then
-        return "[" .. quest.level .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t] "
+        return "[" .. quest.level .. " |TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t ] "
     elseif tagInfo and GROUP_CONTENT_TAGS[tagInfo.tagID] then
         return "[" .. quest.level .. "+] "
     end
@@ -496,6 +527,14 @@ function GwQuestLogMixin:UpdateLayout()
         end
     end
 
+    local sortMode = GetQuestSortMode()
+    if sortMode then
+        SortQuestIDsBySetting(watchedQuestIDs, watchedQuestOrder, sortMode)
+        for position, questID in ipairs(watchedQuestIDs) do
+            watchedQuestOrder[questID] = position
+        end
+    end
+
     if ShouldSortSuperTrackedQuestToTop() then
         local superTrackedQuestID = C_SuperTrack.GetSuperTrackedQuestID()
         table.sort(watchedQuestIDs, function(leftQuestID, rightQuestID)
@@ -588,7 +627,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
         return
     end
 
-    if ShouldSortSuperTrackedQuestToTop() then
+    if ShouldSortSuperTrackedQuestToTop() or GetQuestSortMode() then
         self:UpdateLayout()
         GwQuestTracker:LayoutChanged()
         return

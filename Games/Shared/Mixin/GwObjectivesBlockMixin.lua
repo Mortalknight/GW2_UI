@@ -592,4 +592,16 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition()
     end
 
     self.actionButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
+
+    if not InCombatLockdown() then
+        local viewportTop, viewportBottom = GW.GetObjectivesScrollViewport()
+        local isInView = not isScrolled or (height >= viewportTop - 1 and height + self.actionButton:GetHeight() <= viewportBottom + 1)
+        if isInView and self.gwItemButtonScrolledOut then
+            self.gwItemButtonScrolledOut = nil
+            self.actionButton:Show()
+        elseif not isInView then
+            self.gwItemButtonScrolledOut = true
+            self.actionButton:Hide()
+        end
+    end
 end

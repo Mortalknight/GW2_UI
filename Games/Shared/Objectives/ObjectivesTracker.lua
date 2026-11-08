@@ -94,18 +94,87 @@ local function SortObjectivesTrackerScrollableContainers()
     end)
 end
 
-local function AnchorObjectivesTrackerScrollableContainers()
-    if not GwQuestTracker or not GwQuestTracker.ScrollFrame or not GwQuestTracker.ScrollFrame.Child then return end
-    if not GW.QuestTrackerScrollableContainer then return end
+local function IsPinnedSection(container)
+    return container.gwCollapsedByScroll and container.collapsed and container:IsShown()
+end
 
-    for i, frame in ipairs(GW.QuestTrackerScrollableContainer) do
-        frame:ClearAllPoints()
-        if i == 1 then
-            frame:SetPoint("TOPRIGHT", GwQuestTracker.ScrollFrame.Child, "TOPRIGHT")
-        else
-            frame:SetPoint("TOPRIGHT", GW.QuestTrackerScrollableContainer[i - 1], "BOTTOMRIGHT")
+local function GetStickyContainer()
+    local tracker = GwQuestTracker
+    if not tracker or not tracker.ScrollFrame then return nil end
+    local scroll = tracker.ScrollFrame:GetVerticalScroll()
+    local headerHeight = GW.GetObjectivesHeaderHeight()
+    local current = GW.QuestTrackerStickyContainer
+    local top = 0
+    local sticky
+
+    for _, frame in ipairs(GW.QuestTrackerScrollableContainer) do
+        if frame:IsShown() and not IsPinnedSection(frame) then
+            if frame.header and frame.header:IsShown() and not frame.collapsed then
+                local threshold = frame == current and top or top + headerHeight
+                if scroll >= threshold then
+                    sticky = frame
+                end
+            end
+            top = top + frame:GetHeight()
         end
     end
+
+    return sticky
+end
+
+local function GetStickyHeaderHeight()
+    return GW.QuestTrackerStickyContainer and GW.GetObjectivesHeaderHeight() or 0
+end
+
+local function AnchorObjectivesTrackerScrollableContainers()
+    local tracker = GwQuestTracker
+    if not tracker or not tracker.ScrollFrame or not tracker.ScrollFrame.Child then return end
+    if not GW.QuestTrackerScrollableContainer then return end
+
+    local child = tracker.ScrollFrame.Child
+    local pinnedAnchor = GW.QuestTrackerFixedContainer[#GW.QuestTrackerFixedContainer]
+    local previousScrolling
+    local sticky = GetStickyContainer()
+    GW.QuestTrackerStickyContainer = sticky
+
+    tracker.ScrollFrame:ClearAllPoints()
+    for _, frame in ipairs(GW.QuestTrackerScrollableContainer) do
+        frame:ClearAllPoints()
+        if frame.gwHeaderStuck and frame ~= sticky then
+            frame.gwHeaderStuck = nil
+            frame.header:SetParent(frame)
+            frame.header:ClearAllPoints()
+            frame.header:SetPoint("TOPRIGHT", frame, "TOPRIGHT")
+        end
+    end
+
+    for _, frame in ipairs(GW.QuestTrackerScrollableContainer) do
+        if IsPinnedSection(frame) then
+            frame:SetParent(tracker)
+            frame:SetPoint("TOPRIGHT", pinnedAnchor, "BOTTOMRIGHT")
+            pinnedAnchor = frame
+        else
+            frame:SetParent(child)
+            local offsetY = frame == sticky and GW.GetObjectivesHeaderHeight() or 0
+            if previousScrolling then
+                frame:SetPoint("TOPRIGHT", previousScrolling, "BOTTOMRIGHT", 0, offsetY)
+            else
+                frame:SetPoint("TOPRIGHT", child, "TOPRIGHT", 0, offsetY)
+            end
+            previousScrolling = frame
+        end
+    end
+
+    if sticky then
+        sticky.gwHeaderStuck = true
+        sticky.header:SetParent(tracker)
+        sticky.header:ClearAllPoints()
+        sticky.header:SetPoint("TOPRIGHT", pinnedAnchor, "BOTTOMRIGHT")
+        pinnedAnchor = sticky.header
+    end
+
+    tracker.ScrollFrame:SetPoint("TOPRIGHT", pinnedAnchor, "BOTTOMRIGHT")
+    tracker.ScrollFrame:SetPoint("BOTTOMRIGHT", tracker, "BOTTOMRIGHT")
 end
 
 function GW.ApplyObjectivesTrackerModuleOrder()
@@ -309,21 +378,6 @@ local function FormatObjectiveNumbers(text)
 end
 GW.FormatObjectiveNumbers = FormatObjectiveNumbers
 
-local STICKY_HEADER_PADDING = 4
-
--- covers the end of the quest above, which lies under the sticky header
-local function GetStickyBackground(header)
-    if not header.gwStickyBackground then
-        header:SetFrameLevel(header:GetParent():GetFrameLevel() + 10)
-        local bg = header:CreateTexture(nil, "BACKGROUND", nil, -8)
-        bg:SetColorTexture(GW.Colors.Fallback:GetRGBA())
-        bg:SetPoint("TOPLEFT", header, "TOPLEFT", -40, STICKY_HEADER_PADDING)
-        bg:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, -STICKY_HEADER_PADDING)
-        header.gwStickyBackground = bg
-    end
-    return header.gwStickyBackground
-end
-
 local SCROLL_STEP = 15
 local MIN_SCROLL_STOP_DISTANCE = 5
 
@@ -332,15 +386,17 @@ local function GetScrollStops(scrollFrame)
     local childTop = scrollFrame.Child:GetTop()
     if not childTop then return stops end
     for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
-        local top = container:IsShown() and container:GetTop()
+        local top = container:IsShown() and not IsPinnedSection(container) and container:GetTop()
         if top then
             stops[#stops + 1] = childTop - top
-            local header = container.header
-            local headerSpace = header and header:IsShown() and (header:GetHeight() + STICKY_HEADER_PADDING) or 0
+            local isFirstBlock = true
             for _, block in ipairs(container.blocks or {}) do
                 local blockTop = block:IsShown() and block:GetTop()
                 if blockTop then
-                    stops[#stops + 1] = childTop - blockTop - headerSpace
+                    if not isFirstBlock then
+                        stops[#stops + 1] = childTop - blockTop
+                    end
+                    isFirstBlock = false
                 end
             end
         end
@@ -417,21 +473,8 @@ local function UpdateScrollView()
     if not childTop then return end
     local scroll = scrollFrame:GetVerticalScroll()
     UpdateScrollIndicator(scrollFrame, scroll)
-
-    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
-        local header, top = container.header, container:GetTop()
-        if header and top then
-            local offset = 0
-            if header:IsShown() then
-                offset = math.max(0, math.min(scroll - (childTop - top), container:GetHeight() - header:GetHeight()))
-            end
-            if offset ~= (header.gwStickyOffset or 0) then
-                header.gwStickyOffset = offset
-                header:ClearAllPoints()
-                header:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, -offset)
-                GetStickyBackground(header):SetShown(offset > 0)
-            end
-        end
+    if not InCombatLockdown() and GetStickyContainer() ~= GW.QuestTrackerStickyContainer then
+        GwQuestTracker:LayoutChanged()
     end
 end
 
@@ -446,13 +489,22 @@ end
 
 GwObjectivesTrackerMixin = {}
 function GwObjectivesTrackerMixin:LayoutChanged()
-    local scrollContentHeight = 0
-    for _, container in pairs(GW.QuestTrackerScrollableContainer) do
-        scrollContentHeight = scrollContentHeight + container:GetHeight()
+    if not InCombatLockdown() then
+        AnchorObjectivesTrackerScrollableContainers()
     end
 
-    -- the visible part is the tracker height below the fixed containers
-    local visibleHeight = self:GetHeight()
+    local stickyHeaderHeight = GetStickyHeaderHeight()
+    local scrollContentHeight = -stickyHeaderHeight
+    local visibleHeight = self:GetHeight() - stickyHeaderHeight
+    for _, container in pairs(GW.QuestTrackerScrollableContainer) do
+        if IsPinnedSection(container) then
+            visibleHeight = visibleHeight - container:GetHeight()
+        else
+            scrollContentHeight = scrollContentHeight + container:GetHeight()
+        end
+    end
+
+    -- the visible part is the tracker height below the fixed containers and the pinned sections
     for _, container in pairs(GW.QuestTrackerFixedContainer) do
         visibleHeight = visibleHeight - container:GetHeight()
     end
@@ -473,6 +525,27 @@ function GwObjectivesTrackerMixin:LayoutChanged()
     self.ScrollFrame:SetSize(self:GetWidth(), scrollContentHeight)
 end
 
+function GW.GetObjectivesScrollViewport()
+    local top = GetStickyHeaderHeight()
+    for _, container in ipairs(GW.QuestTrackerFixedContainer) do
+        top = top + container:GetHeight()
+    end
+    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
+        if IsPinnedSection(container) then
+            top = top + container:GetHeight()
+        end
+    end
+    return top, GwQuestTracker:GetHeight()
+end
+
+local function RunOrQueue(key, func, args)
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue(key, func, args)
+    else
+        func(unpack(args))
+    end
+end
+
 function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
     for _, container in next, { GW.ObjectiveTrackerContainer.Campaign, GW.ObjectiveTrackerContainer.Quests, GW.ObjectiveTrackerContainer.Bonus } do
         for i = 1, #container.blocks do
@@ -484,15 +557,15 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
             -- button (the buttons hang on the tracker, collapsing the blocks alone
             -- leaves them floating)
             if i <= counter and not container.collapsed then
-                GW.CombatQueue:Queue("UpdateTrackerItemButtonPositionForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButtonPosition, {block})
+                RunOrQueue("UpdateTrackerItemButtonPositionForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButtonPosition, {block})
             else
-                GW.CombatQueue:Queue("RemoveTrackerItemButtonForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButton, {block})
+                RunOrQueue("RemoveTrackerItemButtonForBlock: " .. container:GetDebugName() .. i, block.UpdateObjectiveActionButton, {block})
             end
         end
     end
 
     if GW.ObjectiveTrackerContainer.Scenario and GW.ObjectiveTrackerContainer.Scenario.block.hasItem then
-        GW.CombatQueue:Queue("UpdateTrackerItemButtonPositionForBlock: " .. GW.ObjectiveTrackerContainer.Scenario:GetDebugName(), GW.ObjectiveTrackerContainer.Scenario.block.UpdateObjectiveActionButtonPosition, {GW.ObjectiveTrackerContainer.Scenario.block})
+        RunOrQueue("UpdateTrackerItemButtonPositionForBlock: " .. GW.ObjectiveTrackerContainer.Scenario:GetDebugName(), GW.ObjectiveTrackerContainer.Scenario.block.UpdateObjectiveActionButtonPosition, {GW.ObjectiveTrackerContainer.Scenario.block})
     end
 end
 
@@ -544,10 +617,55 @@ local function DisableBlizzardsObjevtiveTracker()
     end
 end
 
+local function GetTrackerSections()
+    local sections = {}
+    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
+        if container:IsShown() and container.header and container.header:IsShown() then
+            sections[#sections + 1] = container
+        end
+    end
+    return sections
+end
+
+local function CollapseTopSectionOnScroll()
+    local expanded = {}
+    for _, section in ipairs(GetTrackerSections()) do
+        if not section.collapsed then
+            expanded[#expanded + 1] = section
+        end
+    end
+    if #expanded < 2 then return false end
+
+    expanded[1].gwCollapsedByScroll = true
+    expanded[1]:SetCollapsed(true, "scroll")
+    return true
+end
+
+local function ExpandLastCollapsedSectionOnScroll()
+    local sections = GetTrackerSections()
+    for i = #sections, 1, -1 do
+        local section = sections[i]
+        if section.gwCollapsedByScroll and section.collapsed then
+            section.gwCollapsedByScroll = nil
+            section:SetCollapsed(false, "scroll")
+            return true
+        end
+    end
+    return false
+end
+
 function GwObjectivesTrackerMixin:CreateTrackerScrollFrame(name, height)
     local scrollFrame = CreateFrame("ScrollFrame", name, self, "GwQuestTrackerScroll")
     scrollFrame:SetHeight(height)
     scrollFrame:SetScript("OnMouseWheel", function(frame, delta)
+        local reachedTop = frame:GetVerticalScroll() <= 1
+        if (delta < 0 and CollapseTopSectionOnScroll()) or (delta > 0 and reachedTop and ExpandLastCollapsedSectionOnScroll()) then
+            frame:SetVerticalScroll(0)
+            GwQuestTracker:LayoutChanged()
+            UpdateScrollView()
+            GwQuestTracker:AdjustItemButtonPositions()
+            return
+        end
         frame:SetVerticalScroll(GetNextScroll(frame, delta))
         UpdateScrollView()
         -- the item buttons are anchored to the static tracker (never to the scroll
