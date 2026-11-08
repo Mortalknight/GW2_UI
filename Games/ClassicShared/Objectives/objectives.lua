@@ -319,6 +319,10 @@ function GwQuestLogMixin:UpdateLayout()
         table.sort(sorted, function(a, b)
             return a and b and a.questLevel < b.questLevel
         end)
+    elseif GW.settings.objectives.sorting == "LEVEL_DESC" then
+        table.sort(sorted, function(a, b)
+            return a and b and a.questLevel > b.questLevel
+        end)
     elseif GW.settings.objectives.sorting == "ZONE" then
         GW.SortQuestsByZone(sorted)
     end
