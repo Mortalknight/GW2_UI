@@ -113,7 +113,7 @@
         </Layers>
     </Frame>
 
-    <Frame name="GwLevelingRewards" hidden="true" virtual="true">
+    <Frame name="GwLevelingRewards" hidden="true" virtual="true" frameStrata="DIALOG">
         <Size x="540" y="518"></Size>
         <Anchors>
             <Anchor point="CENTER" relativePoint="CENTER"></Anchor>

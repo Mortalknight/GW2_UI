@@ -26,6 +26,10 @@ local MAINLINE_TRAINER = GW.Forever
 
 -- on forever the pet trainer type is the window that teaches the pet and the pet trainer counts as general,
 -- the classic clients teach the pet in the craft window
+local function GetMaxLevel()
+    return GetMaxLevelForPlayerExpansion and GetMaxLevelForPlayerExpansion() or GetMaxPlayerLevel()
+end
+
 local function IsClassOrPetTrainer()
     if C_Trainer and C_Trainer.GetTrainerType then
         local trainerType = C_Trainer.GetTrainerType()
@@ -307,8 +311,7 @@ local function UpdateUpcomingSpells()
 
     -- forever only, the classic clients know their level spells only through the trainer
     if C_SpellBook.GetCurrentLevelSpells then
-        local maxLevel = GetMaxLevelForPlayerExpansion and GetMaxLevelForPlayerExpansion() or GetMaxPlayerLevel()
-        for level = GW.mylevel + 1, maxLevel do
+        for level = GW.mylevel + 1, GetMaxLevel() do
             for _, spellID in ipairs(C_SpellBook.GetCurrentLevelSpells(level) or {}) do
                 AddUpcomingSpell(seen, spellID, level)
             end
@@ -352,13 +355,6 @@ local function EnsureUpcomingSpells()
     end
 end
 
-local function IsUpcomingSpellAvalible()
-    EnsureUpcomingSpells()
-
-    return #upcomingLevelRewards > 0 or #trainableRewards > 0
-end
-GW.IsUpcomingSpellAvalible = IsUpcomingSpellAvalible
-
 function GW.GetUpcomingSpellCounts()
     EnsureUpcomingSpells()
 
@@ -379,7 +375,6 @@ local function GetRewardDisplay(reward)
     return icon, name, subText
 end
 
--- only the unmet requirements, red like at the trainer
 local function GetRequirementText(requirements)
     local texts = {}
     for _, requirement in ipairs(requirements or {}) do
@@ -427,7 +422,6 @@ local function Reward_OnEnter(self)
         GameTooltip:AddLine(requirementText, white.r, white.g, white.b, true)
     end
 
-    -- the levels of the ranks after this one
     local addedSpace
     for _, rank in ipairs(entry.ranks) do
         if rank.reward.level > reward.level and rank.reward.subText and rank.reward.subText ~= "" then
@@ -445,7 +439,7 @@ end
 
 -- the rows show their tooltip only over the icon, the hover of the row stays
 local function Row_OnUpdate(self)
-    local overIcon = self.icon:IsMouseOver()
+    local overIcon = self.icon:IsMouseOver() or nil
     if overIcon ~= self.gwOverIcon then
         self.gwOverIcon = overIcon
         if overIcon then
@@ -494,7 +488,7 @@ local function MatchesSearch(reward, search)
     return text and text:lower():find(search, 1, true) ~= nil
 end
 
--- every rank stands at its own level, the ranks of a spell share one list for the rank text and the tooltip
+-- the ranks of a spell share one list for the rank text and the tooltip
 local function BuildEntries(trainable, upcoming, search)
     local ranksByName, entries = {}, {}
     local function Add(reward, now)
@@ -527,7 +521,6 @@ local function InitNode(frame, data)
         frame.gwSkinned = true
     end
 
-    -- only the node shows the state, the costs stand in the rows
     if data.kind == "here" then
         frame.node:SetTexture("Interface/COMMON/Indicator-Green")
         frame.Name:SetText(format(UNIT_LEVEL_TEMPLATE, data.level))
@@ -539,7 +532,6 @@ local function InitNode(frame, data)
         frame.info:SetText(data.kind == "now" and "" or format("%d %s", #data.entries, SPELLS))
     end
 
-    -- the progress to the next level sits on the node of the own level
     if data.kind == "here" and data.max > 0 then
         if not frame.xp then
             frame.xp = CreateFrame("StatusBar", nil, frame)
@@ -576,13 +568,14 @@ local function InitReward(button, entry)
     end
 
     button.elementData = entry
-    -- the scroll box reuses the row under the mouse, the tooltip opens again for the new entry
-    button.gwOverIcon = nil
+    -- the row under the mouse can get a new entry, its tooltip follows
+    if button.gwOverIcon then
+        Reward_OnEnter(button)
+    end
 
     local reward = entry.reward
     local icon, name = GetRewardDisplay(reward)
     local requirementText = GetRequirementText(reward.requirements)
-    -- rows without a requirement are lower, name, rank and cost center there
     local offset = requirementText and 8 or 0
     button.icon:SetTexture(icon)
     button.name:SetText(name)
@@ -638,7 +631,6 @@ local function InitStrip(frame, data)
     end
 end
 
--- the money turns red when the own is not enough
 local function SetSummary(text, title, count, cost)
     local money = ""
     if cost > 0 then
@@ -657,14 +649,15 @@ local function UpdateSummary(self, trainable, upcoming, level)
         nowCost = nowCost + (reward.cost or 0)
     end
     local aheadCost = nowCost
+    local aheadLevel = math.min(level + SUMMARY_LEVELS, GetMaxLevel())
     for _, reward in ipairs(upcoming) do
-        if reward.level <= level + SUMMARY_LEVELS then
+        if reward.level <= aheadLevel then
             aheadCount = aheadCount + 1
             aheadCost = aheadCost + (reward.cost or 0)
         end
     end
     SetSummary(self.summaryNow, L["Trainable Now:"], #trainable, nowCost)
-    SetSummary(self.summaryAhead, format(L["Up To Level %d"], level + SUMMARY_LEVELS) .. ":", aheadCount, aheadCost)
+    SetSummary(self.summaryAhead, format(L["Up To Level %d"], aheadLevel) .. ":", aheadCount, aheadCost)
 end
 
 -- the path: what the trainer has now, the own level with its progress, then the later levels; far levels only
@@ -674,11 +667,12 @@ local function RefreshRewardList(self)
 
     local search = strtrim(self.search:GetText()):lower()
     local trainable, upcoming, level = trainableRewards, upcomingLevelRewards, GW.mylevel
-    local current, max = UnitXP("player"), UnitXPMax("player")
+    local current, max, isPetXp = UnitXP("player"), UnitXPMax("player"), false
     if self.showPet then
         trainable, upcoming, level = petTrainableRewards, petUpcomingRewards, petRewardLevel
         if petLevelIsOwn and GetPetExperience then
             current, max = GetPetExperience()
+            isPetXp = true
         end
     end
     UpdateSummary(self, trainable, upcoming, level)
@@ -707,7 +701,7 @@ local function RefreshRewardList(self)
                 dataProvider:Insert(entry)
             end
         end
-        dataProvider:Insert({kind = "here", level = level, current = current or 0, max = max or 0, isPet = self.showPet})
+        dataProvider:Insert({kind = "here", level = level, current = current or 0, max = max or 0, isPet = isPetXp})
         for _, entryLevel in ipairs(levels) do
             local list = byLevel[entryLevel]
             if entryLevel > level then
@@ -772,6 +766,22 @@ local function CreateSummaryText(self, point, x)
     return text
 end
 
+-- the alert system of gw2 only runs on wrath and forever
+local function ShowTrainableAlert(self, oldLevel, newLevel)
+    local notifications = GW.settings.notifications
+    if not (GW.AlertSystem and notifications.enabled and notifications.levelUp.enabled) then return end
+    EnsureUpcomingSpells()
+    local count = 0
+    for _, reward in ipairs(trainableRewards) do
+        if reward.level > oldLevel and reward.level <= newLevel then
+            count = count + 1
+        end
+    end
+    if count == 0 then return end
+    GW.AlertSystem:AddAlert(L["Trainable Now:"] .. " " .. format("%d %s", count, SPELLS), nil, L["Upcoming Level Rewards"],
+        function() self:Show() end, "Interface/AddOns/GW2_UI/textures/icons/levelreward-icon.png", false)
+end
+
 local function UpcomingSpellsFrameOnShow(self)
     RefreshRewardList(self)
     self.ScrollBox:ScrollToBegin()
@@ -800,7 +810,7 @@ local function LoadUpcomingSpells()
     upcomingSpellsFrame.header:SetText(L["Upcoming Level Rewards"])
 
     upcomingSpellsFrame.hint:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    upcomingSpellsFrame.hint:SetTextColor(0.6, 0.6, 0.6)
+    upcomingSpellsFrame.hint:SetTextColor(GW.Colors.SkinColors.Disabled:GetRGB())
 
     local search = upcomingSpellsFrame.search
     GW.SkinEditBox(search, {search = true})
@@ -876,8 +886,17 @@ local function LoadUpcomingSpells()
 
     upcomingSpellsFrame:SetScript(
         "OnEvent",
-        function(self, event)
-            -- money and progress only change the summary and the own level
+        function(self, event, ...)
+            if event == "PLAYER_LEVEL_CHANGED" then
+                local oldLevel, newLevel = ...
+                -- later, the own level of gw2 may not be updated yet
+                if newLevel and oldLevel and newLevel > oldLevel then
+                    C_Timer.After(1, function()
+                        Refresh()
+                        ShowTrainableAlert(self, oldLevel, newLevel)
+                    end)
+                end
+            end
             if event == "PLAYER_MONEY" or event == "PLAYER_XP_UPDATE" or event == "UNIT_PET_EXPERIENCE" then
                 if self:IsShown() then
                     RefreshRewardList(self)

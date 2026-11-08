@@ -29,6 +29,7 @@ local function IsAtMaxLevel()
     end
     return GW.mylevel >= GetMaxPlayerLevel()
 end
+GW.IsAtMaxLevel = IsAtMaxLevel
 
 local function GetMaxLevel()
     if GetMaxLevelForPlayerExpansion then
@@ -552,7 +553,8 @@ local function UpdateData(self)
 
     experiencebarAnimation = valPrec
 
-    if HAS_LEVEL_REWARDS and GW.IsUpcomingSpellAvalible() then
+    -- also before the first trainer visit, the window then tells to visit one
+    if HAS_LEVEL_REWARDS and not IsAtMaxLevel() then
         nextLevel = nextLevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon.png:20:20:0:0|t"
     end
 

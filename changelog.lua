@@ -14,7 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.6", {
-    {GW.Enum.ChangelogType.feature, [=[Upcoming level rewards: bigger window with a level path that shows every rank at its level, the money you need now and for the next 5 levels; lower ranks no longer show as trainable once a higher one is known]=]},
+    {GW.Enum.ChangelogType.feature, [=[Upcoming level rewards: bigger window with a level path that shows every rank at its level and the money you need now and for the next 5 levels; open it from the experience bar or the new button in the spell book, on Wrath and Forever a notification after a level up shows the new spells at your trainer]=]},
     {GW.Enum.ChangelogType.change, [=[Group frames: the party, raid 10 and raid 25 grids start at the top left like the raid 40 grid, the party grid has smaller frames by default]=]},
     {GW.Enum.ChangelogType.change, [=[Target of target: sits right next to the target frame and at the same height by default]=]},
     {GW.Enum.ChangelogType.feature, [=[Installer: new look, a welcome with your own character, a step list on the left and a spotlight on what a step changes; modules are tiles that light their frame, the text style step changes your real frames live; a new layout step chooses between the health globe and player and target frames side by side like in World of Warcraft, a new playstyle step puts the group and raid frames of healers at the bottom in the middle]=]},

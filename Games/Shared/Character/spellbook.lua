@@ -950,6 +950,21 @@ local function LoadSpellBook(tabContainer)
     end)
     spellBook.buttonSettings = settings
 
+    -- the upcoming level rewards next to the cog until the max level, also before the first trainer visit so new
+    -- characters find the window; it only exists with our exp bar
+    local rewards = CreateFrame("Button", nil, spellBook)
+    rewards:SetSize(24, 24)
+    rewards:SetPoint("RIGHT", settings, "LEFT", -6, 0)
+    rewards:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/levelreward-icon.png")
+    rewards:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/levelreward-icon.png", "ADD")
+    rewards:SetScript("OnClick", function() GwLevelingRewards:SetShown(not GwLevelingRewards:IsShown()) end)
+    rewards:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+        GameTooltip:SetText(L["Upcoming Level Rewards"])
+        GameTooltip:Show()
+    end)
+    rewards:SetScript("OnLeave", GameTooltip_Hide)
+
 
     menu:SetAttribute("_onattributechanged", [=[
         if name ~= "tabopen" then return end
@@ -982,6 +997,7 @@ local function LoadSpellBook(tabContainer)
 
     menu:SetAttribute("tabopen", 2)
     menu:SetScript("OnShow", function()
+        rewards:SetShown(GwLevelingRewards ~= nil and not GW.IsAtMaxLevel())
         if InCombatLockdown() or spellBook.spellbookDirty == false then return end
         updateSpellbookTab(spellBook)
     end)
