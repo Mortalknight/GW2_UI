@@ -494,6 +494,13 @@ GW.globalDefault = {
                 offsetX = 0,
                 offsetY = 0,
             },
+            framePos = {
+                point = "CENTER",
+                relativePoint = "CENTER",
+                xOfs = 0,
+                yOfs = 0,
+                hasMoved = false,
+            },
         },
 
         bags = {

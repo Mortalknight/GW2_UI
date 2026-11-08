@@ -129,8 +129,38 @@ local function mover_OnDragStart(self)
 end
 
 
+local function IsMapMaximized(map)
+    return map.IsMaximized and map:IsMaximized()
+end
+
+local function SaveMapPosition(map)
+    if IsMapMaximized(map) then return end
+    local point, _, relativePoint, xOfs, yOfs = map:GetPoint()
+    if not point then return end
+    local pos = GW.settings.worldmap.framePos
+    pos.point, pos.relativePoint, pos.xOfs, pos.yOfs, pos.hasMoved = point, relativePoint, xOfs, yOfs, true
+end
+
+local function RestoreMapPosition(map)
+    local pos = GW.settings.worldmap.framePos
+    if not pos.hasMoved or IsMapMaximized(map) or InCombatLockdown() then return end
+    map:ClearAllPoints()
+    map:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+end
+
 local function mover_OnDragStop(self)
-    self:GetParent():StopMovingOrSizing()
+    local map = self:GetParent()
+    map:StopMovingOrSizing()
+    SaveMapPosition(map)
+end
+
+local function map_OnShow(map)
+    RestoreMapPosition(map)
+    C_Timer.After(0, function()
+        if map:IsShown() then
+            RestoreMapPosition(map)
+        end
+    end)
 end
 
 
@@ -409,6 +439,7 @@ local function worldMapSkin()
         WorldMapFrame.mover:RegisterForDrag("LeftButton")
         WorldMapFrame.mover:SetScript("OnDragStart", mover_OnDragStart)
         WorldMapFrame.mover:SetScript("OnDragStop", mover_OnDragStop)
+        WorldMapFrame:HookScript("OnShow", map_OnShow)
     end
 
     if InCombatLockdown() then
