@@ -27,6 +27,9 @@ local function PreviewValue(block, mode, current, max)
     return block.short and GW.ShortValue(value) or BreakUpLargeNumbers(value)
 end
 
+-- the plain text blocks can hang on the tag before or after them and hide with it
+local ATTACH_MODES = {{"ALWAYS", ALWAYS}, {"BEFORE", L["Only With Text Before"]}, {"AFTER", L["Only With Text After"]}}
+
 -- a block with modes keeps the chosen one in block.mode, the first mode is the default; checks are the
 -- checkboxes of a block, hideInMode hides one in the mode it does nothing in; a hidden mode or checkbox does not
 -- exist on this client; playerOnly blocks show the
@@ -211,13 +214,13 @@ local BLOCKS = {
     colorEnd = {category = "color", label = L["Color End"], desc = L["Ends the color, the text after it is no longer colored."],
         text = "|r"},
 
-    space = {category = "text", label = L["Space"], desc = L["An empty space."], text = " "},
+    space = {category = "text", label = L["Space"], desc = L["An empty space."], text = " ", modes = ATTACH_MODES},
     newLine = {category = "text", label = L["Line Break"],
-        desc = L["Starts a new row, for texts with room for it like the health globe."], text = "\n"},
+        desc = L["Starts a new row, for texts with room for it like the health globe."], text = "\n", modes = ATTACH_MODES},
     separator = {category = "text", label = L["Separator"], desc = L["A vertical line between two texts."], text = " || ",
-        modes = {{"ALWAYS", ALWAYS}, {"BEFORE", L["Only With Text Before"]}, {"AFTER", L["Only With Text After"]}}},
+        modes = ATTACH_MODES},
     text = {category = "text", label = L["Custom Text"], desc = L["Any text of up to 10 characters."], textInput = true,
-        text = function(block) return EscapeText(block.text) end},
+        text = function(block) return EscapeText(block.text) end, modes = ATTACH_MODES},
 }
 -- the order of the block list in the designer
 GW.TagTextBlockOrder = {
@@ -287,31 +290,55 @@ local function Field(def, field, block, unit)
     return value
 end
 
--- a separator that only shows next to a text becomes the suffix of the tag before it or the prefix of the tag after
+-- the tag a text block hangs on, behind the color blocks and text blocks of the same mode between them; also tells
+-- whether a Color End lay between them
+local function FindAttachTag(parts, index, step)
+    local mode, colorEnd = parts[index].attach, false
+    index = index + step
+    while parts[index] and (parts[index].color or not parts[index].tag and parts[index].attach == mode) do
+        colorEnd = colorEnd or parts[index].color and not parts[index].tag
+        index = index + step
+    end
+    return parts[index] and parts[index].tag and parts[index], colorEnd
+end
+
+-- a text block that only shows next to a text becomes the suffix of the tag before it or the prefix of the tag after
 -- it, the tag engine leaves both out when that tag gives no text; next to a plain text it always shows
 function GW.BuildTagString(blocks)
     local parts = {}
     for _, block in ipairs(blocks) do
         local def = BLOCKS[block.k]
         if def and def.tag then
-            tinsert(parts, {tag = Field(def, "tag", block), args = Field(def, "args", block), prefix = "", suffix = ""})
+            tinsert(parts, {tag = Field(def, "tag", block), args = Field(def, "args", block), prefix = "", suffix = "",
+                color = def.category == "color"})
         elseif def then
-            tinsert(parts, {text = Field(def, "text", block), attach = block.k == "separator" and GW.GetTagTextBlockMode(def, block)})
+            tinsert(parts, {text = Field(def, "text", block), attach = GW.GetTagTextBlockMode(def, block), color = def.category == "color"})
         end
     end
-    for index, part in ipairs(parts) do
-        local before, after = parts[index - 1], parts[index + 1]
-        if part.attach == "BEFORE" and before and before.tag then
-            before.suffix, part.text = before.suffix .. part.text, ""
-        elseif part.attach == "AFTER" and after and after.tag then
-            after.prefix, part.text = part.text .. after.prefix, ""
+    -- the suffixes from left to right and the prefixes from right to left keep the order of the line; a $ in them
+    -- could end a prefix or start a suffix; a suffix from behind a Color End ends the color itself
+    for index = 1, #parts do
+        if parts[index].attach == "BEFORE" then
+            local target, colorEnd = FindAttachTag(parts, index, -1)
+            if target then
+                target.suffix = target.suffix .. (colorEnd and "|r" or "") .. (parts[index].text:gsub("%$", ""))
+                parts[index].text = ""
+            end
+        end
+    end
+    for index = #parts, 1, -1 do
+        local target = parts[index].attach == "AFTER" and FindAttachTag(parts, index, 1)
+        if target then
+            target.prefix, parts[index].text = (parts[index].text:gsub("%$", "")) .. target.prefix, ""
         end
     end
     local texts = {}
     for _, part in ipairs(parts) do
         if part.tag then
+            -- "()" keeps a bracket in the prefix or suffix from being read as the arguments
+            local args = part.args or (part.prefix .. part.suffix):find("[()]") and ""
             tinsert(texts, "[" .. (part.prefix ~= "" and part.prefix .. "$>" or "") .. part.tag
-                .. (part.suffix ~= "" and "<$" .. part.suffix or "") .. (part.args and "(" .. part.args .. ")" or "") .. "]")
+                .. (part.suffix ~= "" and "<$" .. part.suffix or "") .. (args and "(" .. args .. ")" or "") .. "]")
         else
             tinsert(texts, part.text)
         end

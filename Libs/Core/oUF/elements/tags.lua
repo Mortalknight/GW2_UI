@@ -696,7 +696,9 @@ local function getBracketData(bracket)
 			prefixOffset = 3
 		end
 
-		local suffixEnd = (bracket:match('()%(', prefixOffset + 1) or -1) - 1
+		-- gw2: prefix and suffix may hold brackets, the arguments are the last (...) of the bracket and "()" means none
+		local argsStart, customArgs = bracket:match('()%(([^()]*)%)%]$')
+		local suffixEnd = (argsStart or -1) - 1
 		local suffixStart, suffixOffset = bracket:match('<$()', prefixEnd), 1
 		if(not suffixStart) then
 			suffixStart = suffixEnd + 1
@@ -709,7 +711,7 @@ local function getBracketData(bracket)
 			prefixEnd,
 			suffixStart,
 			suffixEnd,
-			bracket:match('%((.-)%)', suffixOffset + 1),
+			customArgs ~= '' and customArgs or nil,
 		}
 
 		bracketData[bracket] = data

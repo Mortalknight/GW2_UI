@@ -214,12 +214,12 @@ local function BlockLabel(block)
     local def = Blocks()[block.k]
     if not def then
         return block.k
-    elseif def.textInput and block.text and block.text ~= "" then
-        return '"' .. block.text .. '"'
-    elseif def.modes then
-        return def.label .. ": " .. ModeLabel(def, block)
     end
-    return def.label
+    local label = def.textInput and block.text and block.text ~= "" and '"' .. block.text .. '"' or def.label
+    if def.modes and GW.GetTagTextBlockMode(def, block) ~= "ALWAYS" then
+        return label .. ": " .. ModeLabel(def, block)
+    end
+    return label
 end
 
 local function UpdateZone(designer, zone)
@@ -332,6 +332,8 @@ UpdateOptions = function(designer)
     end
     if def.textInput then
         options.text.input:SetText(block.text or "")
+        options.text:ClearAllPoints()
+        options.text:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
         options.text:Show()
         last = options.text
     end
