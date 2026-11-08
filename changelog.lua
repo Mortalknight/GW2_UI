@@ -22,6 +22,7 @@ addChange("12.1.6", {
     {GW.Enum.ChangelogType.change, [=[Party frames: new buffs no longer play an animation]=]},
     {GW.Enum.ChangelogType.bug, [=[Friends list (Forever): the list headers keep their size on hover, name, level and class sit in one row without gaps]=]},
     {GW.Enum.ChangelogType.bug, [=[Communities: the chat input box is back]=]},
+    {GW.Enum.ChangelogType.bug, [=[Battleground score (Forever): Warsong Gulch shows the captured flags instead of 0:0 and which side carries a flag]=]},
     {GW.Enum.ChangelogType.bug, [=[Bank (Forever): opening the bank without a bank tab no longer causes an error, the free first tab is bought again]=]},
     {GW.Enum.ChangelogType.bug, [=[Druid (Forever): the small mana bar also shows in bear form]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest tracker: sorting by level works on Forever and can also sort descending; quest item buttons hide when their quest is scrolled out of view and show their range dot instead of a question mark]=]},

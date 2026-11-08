@@ -229,11 +229,14 @@ local function DisableBlizzardFrames()
             end
         end
 
-        -- retail still keeps the old frames for battleground flag carriers
-        for i = 1, MAX_ARENA_ENEMIES do
-            PutAway("ArenaEnemyMatchFrame" .. i, STAY)
-            PutAway("ArenaEnemyPrepFrame" .. i, STAY)
-        end
+        -- the old frames still show battleground flag carriers; blizzard shows them again, so they move into the
+        -- hidden frame, and forever creates them only when its arena addon loads
+        GW.RegisterLoadHook(function()
+            for i = 1, MAX_ARENA_ENEMIES do
+                PutAway("ArenaEnemyMatchFrame" .. i, MOVE)
+                PutAway("ArenaEnemyPrepFrame" .. i, MOVE)
+            end
+        end, "Blizzard_ArenaUI", ArenaEnemyMatchFrame1)
     end
 
     if ourBossFrames then

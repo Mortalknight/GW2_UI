@@ -102,8 +102,41 @@ local function UpdateMidWidth(self)
     self.MID:SetWidth(36 * math.max((self.poiCount or 0) + (self.flagCount or 0), 1))
 end
 
+-- the side a text score belongs to, its carrier shows in the faction color
+local TEXT_SCORE_COLORS = {scoreLeft = GW.Colors.FactionColors.Horde, scoreRight = GW.Colors.FactionColors.Alliance}
+
+function BattlegroundHudMixin:UpdateTextFlags()
+    self.flagFramePool:ReleaseAll()
+    local counter = 0
+    for _, side in ipairs({"scoreLeft", "scoreRight"}) do
+        if self.flagCarriers[side] then
+            local f = self.flagFramePool:Acquire()
+            f:SetPoint("CENTER", self.MID, "BOTTOMLEFT", 36 * (counter + (self.poiCount or 0)) + 18, self.hasTimer and 32 or 45)
+            f.IconBackground:SetVertexColor(TEXT_SCORE_COLORS[side]:GetRGB())
+            f:Show()
+            counter = counter + 1
+        end
+    end
+    self.flagCount = counter
+    UpdateMidWidth(self)
+end
+
 function BattlegroundHudMixin:GetPoints(widget)
     local widgetID = widget and widget.widgetID
+    local flagScore = self.activeBg and self.activeBg.textScores and self.activeBg.textScores[widgetID]
+    if flagScore then
+        local info = C_UIWidgetManager.GetIconAndTextWidgetVisualizationInfo(widgetID)
+        local score = info and info.text and info.text:match("(%d+)/")
+        if not score then return false end
+        self[flagScore]:SetText(score)
+        -- the extra icon of the widget is the enemy flag this side carries
+        local carries = info.state >= Enum.IconAndTextWidgetState.ShownWithDynamicIconFlashing
+        if self.flagCarriers[flagScore] ~= carries then
+            self.flagCarriers[flagScore] = carries
+            self:UpdateTextFlags()
+        end
+        return true
+    end
     if widgetID then
         local info = C_UIWidgetManager.GetDoubleStatusBarWidgetVisualizationInfo(widgetID)
         if info then
@@ -253,7 +286,7 @@ local function RefreshFromWidgets(hud)
     local setID = C_UIWidgetManager.GetTopCenterWidgetSetID()
     if setID then
         for _, widget in ipairs(C_UIWidgetManager.GetAllWidgetsBySetID(setID)) do
-            if widget.widgetType == Enum.UIWidgetVisualizationType.DoubleStatusBar then
+            if widget.widgetType == Enum.UIWidgetVisualizationType.DoubleStatusBar or widget.widgetType == Enum.UIWidgetVisualizationType.IconAndText then
                 hud:GetPoints(widget)
             end
         end
@@ -276,6 +309,7 @@ local function OnEvent(self, event)
             self.battlegroundHud.poiCount = 0
             self.battlegroundHud.flagCount = 0
             self.battlegroundHud.flagSignature = nil
+            self.battlegroundHud.flagCarriers = {}
             self.battlegroundHud.poiSignature = nil
             self.battlegroundHud:SetScript("OnEvent", nil)
             self.battlegroundHud:SetScript("OnUpdate", nil)
@@ -309,6 +343,7 @@ local function OnEvent(self, event)
         self.battlegroundHud.poiCount = 0
         self.battlegroundHud.flagCount = 0
         self.battlegroundHud.flagSignature = nil
+        self.battlegroundHud.flagCarriers = {}
         self.battlegroundHud.poiSignature = nil
         self.battlegroundHud:UnregisterAllEvents()
         self.battlegroundHud:Hide()
@@ -408,8 +443,9 @@ local function LoadBattlegrounds()
         },
         [489] = { --Warsong Gulch, the classic instance forever uses
             OnEvent = BattlegroundHudMixin.OnlyPointsOnEvent,
-            OnUpdate = BattlegroundHudMixin.TimerFlagOnUpdate,
-            TrackFlag = true
+            -- each side shows its flags as "1/3" text and its carrier as icon instead of a double status bar and
+            -- arena units, forever gives the carriers no pvp classification
+            textScores = {[1891] = "scoreRight", [1892] = "scoreLeft"},
         },
         [2106] = { --Warsong
             OnEvent = BattlegroundHudMixin.OnlyPointsOnEvent,
@@ -462,6 +498,7 @@ local function LoadBattlegrounds()
     hudManager.battlegroundHud.poiCount = 0
     hudManager.battlegroundHud.flagCount = 0
     hudManager.battlegroundHud.activeBgId = 0
+    hudManager.battlegroundHud.flagCarriers = {}
 
     hudManager:RegisterEvent("PLAYER_JOINED_PVP_MATCH")
     hudManager:RegisterEvent("PLAYER_ENTERING_WORLD")

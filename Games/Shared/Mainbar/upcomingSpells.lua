@@ -895,6 +895,7 @@ local function LoadUpcomingSpells()
                         Refresh()
                         ShowTrainableAlert(self, oldLevel, newLevel)
                     end)
+                    return
                 end
             end
             if event == "PLAYER_MONEY" or event == "PLAYER_XP_UPDATE" or event == "UNIT_PET_EXPERIENCE" then
