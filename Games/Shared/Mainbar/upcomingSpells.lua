@@ -182,6 +182,23 @@ local function IsRewardKnown(reward, isPet)
     return reward.known
 end
 
+-- the client does not count every lower rank as known after a new one, a known higher rank covers them
+local highestKnownLevel = {}
+
+local function IsRewardLearned(reward, isPet)
+    local highest = highestKnownLevel[(isPet and "pet:" or "") .. reward.name]
+    return highest and reward.level < highest or IsRewardKnown(reward, isPet)
+end
+
+local function UpdateHighestKnownLevels(rewards, isPet)
+    for _, reward in ipairs(rewards) do
+        local key = (isPet and "pet:" or "") .. reward.name
+        if IsRewardKnown(reward, isPet) and reward.level > (highestKnownLevel[key] or 0) then
+            highestKnownLevel[key] = reward.level
+        end
+    end
+end
+
 local function AddUpcomingSpell(seen, spellID, level)
     if not spellID or seen[spellID] then
         return
@@ -268,12 +285,16 @@ local function UpdateUpcomingSpells()
     end
     petRewards = petRewards or {}
 
+    wipe(highestKnownLevel)
+    UpdateHighestKnownLevels(classRewards)
+    UpdateHighestKnownLevels(petRewards, true)
+
     wipe(rewardPending)
     for _, reward in ipairs(classRewards) do
-        rewardPending[GetRewardKey(reward)] = not IsRewardKnown(reward)
+        rewardPending[GetRewardKey(reward)] = not IsRewardLearned(reward)
     end
     for _, reward in ipairs(petRewards) do
-        rewardPending[GetRewardKey(reward)] = not IsRewardKnown(reward, true)
+        rewardPending[GetRewardKey(reward)] = not IsRewardLearned(reward, true)
     end
 
     ForEachFutureSpell(function(spellID, name, subName)
@@ -293,7 +314,7 @@ local function UpdateUpcomingSpells()
 
     for _, reward in ipairs(classRewards) do
         local key = reward.name .. (reward.subText or "")
-        if not seenNames[key] and not (reward.spellID and seen[reward.spellID]) and not IsRewardKnown(reward) then
+        if not seenNames[key] and not (reward.spellID and seen[reward.spellID]) and not IsRewardLearned(reward) then
             seenNames[key] = true
             if reward.spellID then
                 seen[reward.spellID] = true
@@ -311,7 +332,7 @@ local function UpdateUpcomingSpells()
     wipe(petUpcomingRewards)
     local petLevel = not petPlayerLevels and UnitExists("pet") and UnitLevel("pet") or GW.mylevel
     for _, reward in ipairs(petRewards) do
-        if not IsRewardKnown(reward, true) then
+        if not IsRewardLearned(reward, true) then
             tinsert(IsRewardTrainable(reward, petLevel) and petTrainableRewards or petUpcomingRewards, reward)
         end
     end

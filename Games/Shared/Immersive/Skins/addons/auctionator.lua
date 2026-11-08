@@ -111,15 +111,18 @@ local function SkinAuctionator()
     GW.AddDetailsBackground(AuctionatorConfigFrame)
     AuctionatorConfigFrame.OptionsButton:GwSkinButton(false, true)
     AuctionatorConfigFrame.ScanButton:GwSkinButton(false, true)
-    GW.SkinEditBox(AuctionatorConfigFrame.ContributeLink.InputBox)
-    GW.SkinEditBox(AuctionatorConfigFrame.DiscordLink.InputBox)
-    GW.SkinEditBox(AuctionatorConfigFrame.BugReportLink.InputBox)
-    AuctionatorConfigFrame.AuthorHeading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    AuctionatorConfigFrame.ContributorsHeading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    AuctionatorConfigFrame.ContributeHeading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    AuctionatorConfigFrame.VersionHeading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    AuctionatorConfigFrame.EngageHeading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    AuctionatorConfigFrame.TranslatorsHeading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    for _, key in ipairs({"ContributeLink", "DiscordLink", "BugReportLink"}) do
+        local link = AuctionatorConfigFrame[key]
+        if link then
+            GW.SkinEditBox(link.InputBox)
+        end
+    end
+    for _, key in ipairs({"AuthorHeading", "PastAuthorHeading", "ContributorsHeading", "ContributeHeading", "VersionHeading", "EngageHeading", "TranslatorsHeading"}) do
+        local heading = AuctionatorConfigFrame[key]
+        if heading then
+            heading.HeadingText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        end
+    end
 
     -- AuctionatorCancellingFrame
     AuctionatorCancellingFrame:GwStripTextures()
