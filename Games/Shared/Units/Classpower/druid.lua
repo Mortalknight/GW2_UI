@@ -147,7 +147,7 @@ local function setDruid(f)
     elseif GW.Classic or GW.TBC or GW.Wrath or GW.Forever then
         if form == CAT then                   -- cat
             barType = "combo|little_mana"
-        elseif form == BEAR or form == 8 then --bear
+        elseif form == BEAR or form == 5 or form == 8 then --bear
             barType = "little_mana"
         end
     end
