@@ -729,12 +729,12 @@ local function bag_OnHide(self)
             GW.ClearOwnContainerNewItems(cf)
         end
     end
-    if BagItemSearchBox and BagItemSearchBox:GetText() ~= "" then
+    if self.searchBox:GetText() ~= "" then
         -- blizzard leaves the filter active when the bags close, which then hides items
         -- on the next open with no visible reason; SetText drives the templates
         -- OnTextChanged so the item search is really dropped, not just the display
-        BagItemSearchBox:SetText("")
-        BagItemSearchBox:ClearFocus()
+        self.searchBox:SetText("")
+        self.searchBox:ClearFocus()
     end
     wipe(self.gw_dirtyBags)
     self.gw_need_bag_update = false
@@ -1016,22 +1016,12 @@ local function LoadBag(helpers)
         headerIndex = headerIndex + 1
     end
 
-    -- take the original search box
-    local BagItemSearchBox = CreateFrame("EditBox", "BagItemSearchBox", f, "BagSearchBoxTemplate")
-    inv.reskinSearchBox(BagItemSearchBox)
-    if ContainerFrame_Update then
-        hooksecurefunc(
-            "ContainerFrame_Update",
-            function()
-                inv.relocateSearchBox(BagItemSearchBox, f)
-            end
-        )
-    else
-        hooksecurefunc(ContainerFrame1, "UpdateSearchBox", function()
-            inv.relocateSearchBox(BagItemSearchBox, f)
-        end)
-    end
-    inv.relocateSearchBox(BagItemSearchBox, f)
+    -- an own box without a global name: blizzards BagItemSearchBox stays in its ContainerFrame1, taking it over
+    -- (a new frame under its name or a hook on ContainerFrame1:UpdateSearchBox) tainted blizzards bag code
+    local searchBox = CreateFrame("EditBox", nil, f, "BagSearchBoxTemplate")
+    inv.reskinSearchBox(searchBox)
+    inv.relocateSearchBox(searchBox, f)
+    f.searchBox = searchBox
 
     -- our own item buttons need parent containers with IDs set to the bagId, in order
     -- for all of the inherited ItemButton functionality to work normally

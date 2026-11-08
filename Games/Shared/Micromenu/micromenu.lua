@@ -1196,7 +1196,13 @@ local function setupMicroButtons(mbf)
     bref.newbieText = nil
     bref.textureName = "BagMicroButton"
     reskinMicroButton(bref, "BagMicroButton", mbf)
-    bref:HookScript("OnClick", ToggleAllBags)
+    bref:HookScript("OnClick", function()
+        if GwBagFrame then
+            GwBagFrame:SetShown(not GwBagFrame:IsShown())
+        else
+            ToggleAllBags()
+        end
+    end)
     bref:HookScript("OnEvent", updateBagButton)
     bref:RegisterEvent("PLAYER_ENTERING_WORLD")
     bref:RegisterEvent("BAG_UPDATE_DELAYED")

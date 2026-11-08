@@ -577,10 +577,10 @@ local BAGS_PREVIEW = {
     show = function()
         if not GwBagFrame then return false end
         bagsWereOpen = GwBagFrame:IsShown()
-        if not bagsWereOpen then OpenAllBags() end
+        if not bagsWereOpen then GwBagFrame:Show() end
     end,
     hide = function()
-        if not bagsWereOpen then CloseAllBags() end
+        if not bagsWereOpen then GwBagFrame:Hide() end
     end,
 }
 

@@ -525,10 +525,6 @@ local function LoadCurrency(tabContainer)
         end
     end)
 
-    BackpackTokenFrame.GetMaxTokensWatched = function()
-        return 4
-    end
-
     -- setup transfer history
     local curHistroyWin = curwin_outer.CurrencyTransferHistoryScroll
     curHistroyWin.update = function(self) self:Refresh() end
