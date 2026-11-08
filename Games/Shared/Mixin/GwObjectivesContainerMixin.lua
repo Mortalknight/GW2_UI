@@ -171,11 +171,8 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
         newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         newBlock.actionButton.Icon = newBlock.actionButton.icon
         GW.HandleItemButtonCrop(newBlock.actionButton)
-        newBlock.actionButton.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", 10)
-        newBlock.actionButton.HotKey:SetText("•")
-        newBlock.actionButton.HotKey:SetJustifyH("RIGHT")
-        newBlock.actionButton.HotKey:ClearAllPoints()
-        newBlock.actionButton.HotKey:SetPoint("TOPRIGHT", newBlock.actionButton, "TOPRIGHT", -2, -1)
+        -- the range dot has no range check behind it, and our font shows it as a question mark
+        newBlock.actionButton.HotKey:Hide()
         Mixin(newBlock.actionButton, GwObjectivesItemButtonMixin)
         newBlock.actionButton:SetAttribute("type1", "item")
         newBlock.actionButton:SetAttribute("type2", "stop")
