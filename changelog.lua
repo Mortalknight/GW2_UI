@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.6", {
+    {GW.Enum.ChangelogType.feature, [=[Upcoming level rewards: bigger window with a level path that shows every rank at its level, the money you need now and for the next 5 levels; lower ranks no longer show as trainable once a higher one is known]=]},
     {GW.Enum.ChangelogType.change, [=[Group frames: the party, raid 10 and raid 25 grids start at the top left like the raid 40 grid, the party grid has smaller frames by default]=]},
     {GW.Enum.ChangelogType.change, [=[Target of target: sits right next to the target frame and at the same height by default]=]},
     {GW.Enum.ChangelogType.feature, [=[Installer: new look, a welcome with your own character, a step list on the left and a spotlight on what a step changes; modules are tiles that light their frame, the text style step changes your real frames live; a new layout step chooses between the health globe and player and target frames side by side like in World of Warcraft, a new playstyle step puts the group and raid frames of healers at the bottom in the middle]=]},
@@ -21,6 +22,8 @@ addChange("12.1.6", {
     {GW.Enum.ChangelogType.change, [=[Party frames: new buffs no longer play an animation]=]},
     {GW.Enum.ChangelogType.bug, [=[Friends list (Forever): the list headers keep their size on hover, name, level and class sit in one row without gaps]=]},
     {GW.Enum.ChangelogType.bug, [=[Communities: the chat input box is back]=]},
+    {GW.Enum.ChangelogType.bug, [=[Bank (Forever): opening the bank without a bank tab no longer causes an error, the free first tab is bought again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Druid (Forever): the small mana bar also shows in bear form]=]},
     {GW.Enum.ChangelogType.bug, [=[Quest tracker: sorting by level works on Forever and can also sort descending; quest item buttons hide when their quest is scrolled out of view and show their range dot instead of a question mark]=]},
     {GW.Enum.ChangelogType.bug, [=[Totem bar: Totemic Recall stays in the bar, the bar and its mover grow with your totems]=]},
     {GW.Enum.ChangelogType.feature, [=[Text designer: power can show current - percent in one block like health, the current - percent templates use that one block; separator, space, line break and custom text can hide when the text before or after them is empty, power can hide at zero]=]},

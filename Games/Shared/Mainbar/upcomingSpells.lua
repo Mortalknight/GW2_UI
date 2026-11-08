@@ -6,12 +6,13 @@ local TRAINER_CACHE_KEY = "upcomingTrainerRewards"
 local PET_TRAINER_CACHE_KEY = "upcomingPetTrainerRewards"
 local TRAINER_CACHE_VERSION = 6
 local TRAINER_FILTERS = {"available", "unavailable", "used"}
-local LEVEL_ICON = " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon.png:20:20:0:0|t"
 
 local trainableRewards = {}
 local upcomingLevelRewards = {}
 local petTrainableRewards = {}
 local petUpcomingRewards = {}
+-- the level the pet trainer offer counts with, the one of the pet unless the hunter learns it himself
+local petRewardLevel, petLevelIsOwn = 1, false
 -- "name (rank)" of every trainer reward, the way the trainer names its requirements; true while not learned
 local rewardPending = {}
 -- pets learn at the pet trainer on these clients, wrath pets use their own talent tree
@@ -23,17 +24,19 @@ local dirty = true
 -- same global on both, and the classic binaries have GetTrainerServiceStepIndex too
 local MAINLINE_TRAINER = GW.Forever
 
+-- on forever the pet trainer type is the window that teaches the pet and the pet trainer counts as general,
+-- the classic clients teach the pet in the craft window
 local function IsClassOrPetTrainer()
     if C_Trainer and C_Trainer.GetTrainerType then
         local trainerType = C_Trainer.GetTrainerType()
-        return trainerType == Enum.TrainerType.General or trainerType == Enum.TrainerType.Pet
+        return trainerType == Enum.TrainerType.General or (trainerType == Enum.TrainerType.Pet and not MAINLINE_TRAINER)
     end
     return not IsTradeskillTrainer()
 end
 
 -- for trainers without pet spell flags, needs all services listed; nil while undecidable
 local function IsPetTrainerOffer(rewards)
-    if C_Trainer and C_Trainer.GetTrainerType and C_Trainer.GetTrainerType() == Enum.TrainerType.Pet then
+    if not MAINLINE_TRAINER and C_Trainer and C_Trainer.GetTrainerType and C_Trainer.GetTrainerType() == Enum.TrainerType.Pet then
         return true
     end
 
@@ -330,10 +333,11 @@ local function UpdateUpcomingSpells()
     -- the pet trainer levels are the ones of the pet
     wipe(petTrainableRewards)
     wipe(petUpcomingRewards)
-    local petLevel = not petPlayerLevels and UnitExists("pet") and UnitLevel("pet") or GW.mylevel
+    petLevelIsOwn = not petPlayerLevels and UnitExists("pet")
+    petRewardLevel = petLevelIsOwn and UnitLevel("pet") or GW.mylevel
     for _, reward in ipairs(petRewards) do
         if not IsRewardLearned(reward, true) then
-            tinsert(IsRewardTrainable(reward, petLevel) and petTrainableRewards or petUpcomingRewards, reward)
+            tinsert(IsRewardTrainable(reward, petRewardLevel) and petTrainableRewards or petUpcomingRewards, reward)
         end
     end
     table.sort(petTrainableRewards, SortByLevel)
@@ -361,101 +365,124 @@ function GW.GetUpcomingSpellCounts()
     return #trainableRewards, #upcomingLevelRewards
 end
 
-local function GetRewardDisplay(elementData)
-    local icon, name = elementData.icon, elementData.name
+local function GetRewardDisplay(reward)
+    local icon, name = reward.icon, reward.name
 
-    if elementData.spellID then
-        local spellInfo = C_Spell.GetSpellInfo(elementData.spellID)
+    if reward.spellID then
+        local spellInfo = C_Spell.GetSpellInfo(reward.spellID)
         if spellInfo then
             icon, name = spellInfo.iconID, spellInfo.name
         end
     end
 
-    local subText = elementData.subText ~= "" and elementData.subText or nil
+    local subText = reward.subText ~= "" and reward.subText or nil
     return icon, name, subText
 end
 
--- unmet requirements are red, like at the trainer; the rest keeps the text color
+-- only the unmet requirements, red like at the trainer
 local function GetRequirementText(requirements)
-    if not requirements then
-        return nil
-    end
     local texts = {}
-    for _, requirement in ipairs(requirements) do
-        tinsert(texts, IsRequirementMet(requirement) and requirement.name or RED_FONT_COLOR:WrapTextInColorCode(requirement.name))
+    for _, requirement in ipairs(requirements or {}) do
+        if not IsRequirementMet(requirement) then
+            tinsert(texts, RED_FONT_COLOR:WrapTextInColorCode(requirement.name))
+        end
     end
-    return REQUIRES_LABEL .. " " .. table.concat(texts, ", ")
+    return #texts > 0 and REQUIRES_LABEL .. " " .. table.concat(texts, ", ") or nil
+end
+
+-- levels this far after the own one only show their icons
+local COMPACT_FROM = 3
+-- the right half of the summary counts this many levels ahead
+local SUMMARY_LEVELS = 5
+local STRIP_ICONS = 12
+
+-- "Rank 3/8": the highest rank of the trainer offer, the starting ranks are not in it
+local function GetRankText(entry)
+    local _, _, subText = GetRewardDisplay(entry.reward)
+    local _, _, lastSubText = GetRewardDisplay(entry.ranks[#entry.ranks].reward)
+    local lastRank = lastSubText and lastSubText:match("%d+")
+    if subText and lastRank then
+        return format("%s/%s", subText, lastRank)
+    end
+    return subText or ""
 end
 
 local function Reward_OnEnter(self)
+    local entry = self.elementData
+    local reward = entry.reward
+    local white, grey = GW.Colors.FallbackWhite, GW.Colors.SkinColors.Disabled
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR", 0, 0)
     GameTooltip:ClearLines()
 
-    if self.elementData.spellID then
-        GameTooltip:SetSpellByID(self.elementData.spellID)
+    if reward.spellID then
+        GameTooltip:SetSpellByID(reward.spellID)
     else
-        GameTooltip:AddLine(self.name:GetText(), 1, 1, 1)
-        GameTooltip:AddLine(format(UNIT_LEVEL_TEMPLATE, self.elementData.level), 0.6, 0.6, 0.6)
+        GameTooltip:AddLine(entry.name, white.r, white.g, white.b)
+        GameTooltip:AddLine(format(UNIT_LEVEL_TEMPLATE, reward.level), grey.r, grey.g, grey.b)
     end
 
-    local requirementText = GetRequirementText(self.elementData.requirements)
+    local requirementText = GetRequirementText(reward.requirements)
     if requirementText then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(requirementText, 1, 1, 1, true)
+        GameTooltip:AddLine(requirementText, white.r, white.g, white.b, true)
+    end
+
+    -- the levels of the ranks after this one
+    local addedSpace
+    for _, rank in ipairs(entry.ranks) do
+        if rank.reward.level > reward.level and rank.reward.subText and rank.reward.subText ~= "" then
+            if not addedSpace then
+                GameTooltip:AddLine(" ")
+                addedSpace = true
+            end
+            GameTooltip:AddDoubleLine(rank.reward.subText,
+                format(UNIT_LEVEL_TEMPLATE, rank.reward.level), white.r, white.g, white.b, grey.r, grey.g, grey.b)
+        end
     end
 
     GameTooltip:Show()
 end
 
-local function InitHeader(frame, elementData)
-    if not frame.gwSkinned then
-        frame.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-        frame.gwSkinned = true
+-- the rows show their tooltip only over the icon, the hover of the row stays
+local function Row_OnUpdate(self)
+    local overIcon = self.icon:IsMouseOver()
+    if overIcon ~= self.gwOverIcon then
+        self.gwOverIcon = overIcon
+        if overIcon then
+            Reward_OnEnter(self)
+        else
+            GameTooltip_Hide()
+        end
     end
-
-    frame.Name:SetText(elementData.title)
 end
 
-local function InitReward(button, elementData)
-    if not button.gwSkinned then
-        button.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-        button.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-        button.costString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-        button.costString:SetTextColor(0.6, 0.6, 0.6)
-        button.requirementString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, nil, -1)
-        button.requirementString:SetTextColor(0.6, 0.6, 0.6)
-        button:SetScript("OnEnter", Reward_OnEnter)
-        button:SetScript("OnLeave", GameTooltip_Hide)
-        button.gwSkinned = true
+local function Row_OnEnter(self)
+    self:SetScript("OnUpdate", Row_OnUpdate)
+end
+
+local function Row_OnLeave(self)
+    self:SetScript("OnUpdate", nil)
+    if self.gwOverIcon then
+        self.gwOverIcon = nil
+        GameTooltip_Hide()
     end
+end
 
-    button.elementData = elementData
-
-    -- the rank grey behind the name, like at the trainer
-    local icon, name, subText = GetRewardDisplay(elementData)
-    button.icon:SetTexture(icon)
-    button.name:SetText(subText and format("%s |cff999999(%s)|r", name, subText) or name)
-    button.levelString:SetText(elementData.level > 0 and (elementData.level .. LEVEL_ICON) or "")
-    button.costString:SetText(elementData.cost and elementData.cost > 0 and GW.FormatMoneyForChat(elementData.cost, true) or "")
-    button.requirementString:SetText(GetRequirementText(elementData.requirements) or "")
-
-    if button.mask then
-        button.icon:RemoveMaskTexture(button.mask)
+local function SortRanks(a, b)
+    if a.reward.level ~= b.reward.level then
+        return a.reward.level < b.reward.level
     end
+    return a.now and not b.now
+end
 
-    if elementData.spellID and C_Spell.IsSpellPassive(elementData.spellID) then
-        if not button.mask then
-            button.mask = UIParent:CreateMaskTexture()
-            button.mask:SetPoint("CENTER", button.icon, "CENTER", 0, 0)
-            button.mask:SetTexture(
-                "Interface/AddOns/GW2_UI/textures/talents/passive_border.png",
-                "CLAMPTOBLACKADDITIVE",
-                "CLAMPTOBLACKADDITIVE"
-            )
-            button.mask:SetSize(40, 40)
-        end
-        button.icon:AddMaskTexture(button.mask)
+local function SortEntries(a, b)
+    if a.level ~= b.level then
+        return a.level < b.level
     end
+    if a.name ~= b.name then
+        return a.name < b.name
+    end
+    return a.reward.level < b.reward.level
 end
 
 local function MatchesSearch(reward, search)
@@ -467,31 +494,233 @@ local function MatchesSearch(reward, search)
     return text and text:lower():find(search, 1, true) ~= nil
 end
 
--- a section header only stays when something below it matches the search
-local function InsertSection(dataProvider, title, rewards, search)
-    local header
-    for _, reward in ipairs(rewards) do
+-- every rank stands at its own level, the ranks of a spell share one list for the rank text and the tooltip
+local function BuildEntries(trainable, upcoming, search)
+    local ranksByName, entries = {}, {}
+    local function Add(reward, now)
+        local _, name = GetRewardDisplay(reward)
+        name = name or ""
+        ranksByName[name] = ranksByName[name] or {}
+        local entry = {name = name, reward = reward, now = now, level = reward.level, cost = reward.cost or 0, ranks = ranksByName[name]}
+        tinsert(entry.ranks, entry)
         if MatchesSearch(reward, search) then
-            if not header then
-                header = {isHeader = true, title = title}
-                dataProvider:Insert(header)
-            end
-            dataProvider:Insert(reward)
+            tinsert(entries, entry)
         end
+    end
+    for _, reward in ipairs(trainable) do Add(reward, true) end
+    for _, reward in ipairs(upcoming) do Add(reward, false) end
+
+    for _, ranks in pairs(ranksByName) do
+        table.sort(ranks, SortRanks)
+    end
+    table.sort(entries, SortEntries)
+    return entries
+end
+
+local function InitNode(frame, data)
+    if not frame.gwSkinned then
+        frame.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+        frame.info:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
+        frame.info:SetTextColor(GW.Colors.SkinColors.Disabled:GetRGB())
+        frame.Name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        frame.line:SetColorTexture(GW.Colors.Accent:GetRGB())
+        frame.gwSkinned = true
+    end
+
+    -- only the node shows the state, the costs stand in the rows
+    if data.kind == "here" then
+        frame.node:SetTexture("Interface/COMMON/Indicator-Green")
+        frame.Name:SetText(format(UNIT_LEVEL_TEMPLATE, data.level))
+        frame.info:SetText(data.max > 0 and format("%d%%", data.current / data.max * 100) or "")
+    else
+        frame.node:SetTexture(data.kind == "now" and "Interface/COMMON/Indicator-Yellow" or "Interface/COMMON/Indicator-Gray")
+        frame.Name:SetText(data.kind == "now" and L["Trainable Now:"] or format(UNIT_LEVEL_TEMPLATE, data.level))
+        -- the summary above already counts what is trainable now
+        frame.info:SetText(data.kind == "now" and "" or format("%d %s", #data.entries, SPELLS))
+    end
+
+    -- the progress to the next level sits on the node of the own level
+    if data.kind == "here" and data.max > 0 then
+        if not frame.xp then
+            frame.xp = CreateFrame("StatusBar", nil, frame)
+            frame.xp:SetPoint("LEFT", frame, "LEFT", 130, 0)
+            frame.xp:SetPoint("RIGHT", frame, "RIGHT", -50, 0)
+            frame.xp:SetHeight(6)
+            frame.xp:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+            frame.xp.bg = frame.xp:CreateTexture(nil, "BACKGROUND")
+            frame.xp.bg:SetAllPoints()
+            frame.xp.bg:SetColorTexture(GW.Colors.SkinColors.StatusBarTrack:GetRGBA())
+        end
+        frame.xp:SetStatusBarColor((data.isPet and GW.Colors.StatusBarColors.PetXp or GW.Colors.StatusBarColors.Xp):GetRGB())
+        frame.xp:SetMinMaxValues(0, data.max)
+        frame.xp:SetValue(data.current)
+        frame.xp:Show()
+    elseif frame.xp then
+        frame.xp:Hide()
     end
 end
 
+local function InitReward(button, entry)
+    if not button.gwSkinned then
+        button.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+        button.ranks:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
+        button.ranks:SetTextColor(GW.Colors.SkinColors.Disabled:GetRGB())
+        button.costString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
+        button.requirementString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, nil, -1)
+        button.requirementString:SetTextColor(GW.Colors.SkinColors.Disabled:GetRGB())
+        button.line:SetColorTexture(GW.Colors.Accent:GetRGB())
+        button.hover:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
+        button:SetScript("OnEnter", Row_OnEnter)
+        button:SetScript("OnLeave", Row_OnLeave)
+        button.gwSkinned = true
+    end
+
+    button.elementData = entry
+    -- the scroll box reuses the row under the mouse, the tooltip opens again for the new entry
+    button.gwOverIcon = nil
+
+    local reward = entry.reward
+    local icon, name = GetRewardDisplay(reward)
+    local requirementText = GetRequirementText(reward.requirements)
+    -- rows without a requirement are lower, name, rank and cost center there
+    local offset = requirementText and 8 or 0
+    button.icon:SetTexture(icon)
+    button.name:SetText(name)
+    button.name:SetPoint("LEFT", 80, offset)
+    button.ranks:SetText(GetRankText(entry))
+    button.costString:SetText(entry.cost > 0 and GW.FormatMoneyForChat(entry.cost, true) or "")
+    button.costString:SetPoint("RIGHT", -6, offset)
+    button.requirementString:SetText(requirementText or "")
+
+    if button.mask then
+        button.icon:RemoveMaskTexture(button.mask)
+    end
+
+    if reward.spellID and C_Spell.IsSpellPassive(reward.spellID) then
+        if not button.mask then
+            button.mask = UIParent:CreateMaskTexture()
+            button.mask:SetPoint("CENTER", button.icon, "CENTER", 0, 0)
+            button.mask:SetTexture(
+                "Interface/AddOns/GW2_UI/textures/talents/passive_border.png",
+                "CLAMPTOBLACKADDITIVE",
+                "CLAMPTOBLACKADDITIVE"
+            )
+            button.mask:SetSize(32, 32)
+        end
+        button.icon:AddMaskTexture(button.mask)
+    end
+end
+
+local function InitStrip(frame, data)
+    if not frame.icons then
+        frame.icons = {}
+        frame.line:SetColorTexture(GW.Colors.Accent:GetRGB())
+    end
+    for index, entry in ipairs(data.entries) do
+        local button = frame.icons[index]
+        if not button then
+            button = CreateFrame("Button", nil, frame)
+            button:SetSize(30, 30)
+            button:SetPoint("TOPLEFT", frame, "TOPLEFT", 40 + ((index - 1) % STRIP_ICONS) * 36, -5 - math.floor((index - 1) / STRIP_ICONS) * 36)
+            button.icon = button:CreateTexture(nil, "ARTWORK")
+            button.icon:SetAllPoints()
+            button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            button:SetScript("OnEnter", Reward_OnEnter)
+            button:SetScript("OnLeave", GameTooltip_Hide)
+            frame.icons[index] = button
+        end
+        button.elementData = entry
+        button.icon:SetTexture((GetRewardDisplay(entry.reward)))
+        button:Show()
+    end
+    for index = #data.entries + 1, #frame.icons do
+        frame.icons[index]:Hide()
+    end
+end
+
+-- the money turns red when the own is not enough
+local function SetSummary(text, title, count, cost)
+    local money = ""
+    if cost > 0 then
+        money = GW.FormatMoneyForChat(cost, true)
+        if GetMoney() < cost then
+            money = GW.Colors.SkinColors.Negative:WrapTextInColorCode((money:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")))
+        end
+        money = "  " .. money
+    end
+    text:SetText(GW.Colors.SkinColors.Disabled:WrapTextInColorCode(title) .. " " .. format("%d %s", count, SPELLS) .. money)
+end
+
+local function UpdateSummary(self, trainable, upcoming, level)
+    local nowCost, aheadCount = 0, #trainable
+    for _, reward in ipairs(trainable) do
+        nowCost = nowCost + (reward.cost or 0)
+    end
+    local aheadCost = nowCost
+    for _, reward in ipairs(upcoming) do
+        if reward.level <= level + SUMMARY_LEVELS then
+            aheadCount = aheadCount + 1
+            aheadCost = aheadCost + (reward.cost or 0)
+        end
+    end
+    SetSummary(self.summaryNow, L["Trainable Now:"], #trainable, nowCost)
+    SetSummary(self.summaryAhead, format(L["Up To Level %d"], level + SUMMARY_LEVELS) .. ":", aheadCount, aheadCost)
+end
+
+-- the path: what the trainer has now, the own level with its progress, then the later levels; far levels only
+-- show icons while nothing is searched
 local function RefreshRewardList(self)
     EnsureUpcomingSpells()
 
     local search = strtrim(self.search:GetText()):lower()
-    local dataProvider = CreateDataProvider()
+    local trainable, upcoming, level = trainableRewards, upcomingLevelRewards, GW.mylevel
+    local current, max = UnitXP("player"), UnitXPMax("player")
     if self.showPet then
-        InsertSection(dataProvider, L["Trainable Now:"], petTrainableRewards, search)
-        InsertSection(dataProvider, L["Next Levels:"], petUpcomingRewards, search)
-    else
-        InsertSection(dataProvider, L["Trainable Now:"], trainableRewards, search)
-        InsertSection(dataProvider, L["Next Levels:"], upcomingLevelRewards, search)
+        trainable, upcoming, level = petTrainableRewards, petUpcomingRewards, petRewardLevel
+        if petLevelIsOwn and GetPetExperience then
+            current, max = GetPetExperience()
+        end
+    end
+    UpdateSummary(self, trainable, upcoming, level)
+
+    local entries = BuildEntries(trainable, upcoming, search)
+    local dataProvider = CreateDataProvider()
+    if #entries > 0 then
+        local now, levels, byLevel = {}, {}, {}
+        for _, entry in ipairs(entries) do
+            if entry.now then
+                tinsert(now, entry)
+            else
+                -- reached but blocked by a requirement, it stays at the own level
+                local entryLevel = math.max(entry.level, level)
+                if not byLevel[entryLevel] then
+                    byLevel[entryLevel] = {}
+                    tinsert(levels, entryLevel)
+                end
+                tinsert(byLevel[entryLevel], entry)
+            end
+        end
+
+        if #now > 0 then
+            dataProvider:Insert({kind = "now"})
+            for _, entry in ipairs(now) do
+                dataProvider:Insert(entry)
+            end
+        end
+        dataProvider:Insert({kind = "here", level = level, current = current or 0, max = max or 0, isPet = self.showPet})
+        for _, entryLevel in ipairs(levels) do
+            local list = byLevel[entryLevel]
+            if entryLevel > level then
+                dataProvider:Insert({kind = "level", level = entryLevel, entries = list})
+            end
+            if search == "" and entryLevel >= level + COMPACT_FROM then
+                dataProvider:Insert({kind = "strip", entries = list})
+            else
+                for _, entry in ipairs(list) do
+                    dataProvider:Insert(entry)
+                end
+            end
+        end
     end
 
     self.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
@@ -500,7 +729,7 @@ local function RefreshRewardList(self)
     local visitHint = self.showPet and L["Visit a pet trainer once, then GW2 UI lists everything he teaches your pet."]
         or L["Visit your class trainer once, then GW2 UI lists everything he teaches you."]
     self.hint:SetText(hasCache and L["No matching rewards."] or visitHint)
-    self.hint:SetShown(not hasCache or dataProvider:IsEmpty())
+    self.hint:SetShown(not hasCache or #entries == 0)
 end
 
 local function UpdateTabs(self)
@@ -529,14 +758,23 @@ end
 -- the hunters get a second tab for the pet trainers offer, it shares the row with a shorter search box
 local function CreatePetTabs(self)
     self.tabs = {CreateTab(self, CHARACTER, false), CreateTab(self, PET, true)}
-    self.tabs[2]:SetPoint("BOTTOMRIGHT", self.ScrollBar, "TOPRIGHT", 0, 6)
+    self.tabs[2]:SetPoint("BOTTOMRIGHT", self.ScrollBar, "TOPRIGHT", 0, 8)
     self.tabs[1]:SetPoint("RIGHT", self.tabs[2], "LEFT", -6, 0)
     self.search:SetPoint("BOTTOMRIGHT", self.tabs[1], "BOTTOMLEFT", -10, 0)
     UpdateTabs(self)
 end
 
+local function CreateSummaryText(self, point, x)
+    local text = self:CreateFontString(nil, "OVERLAY")
+    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    text:SetPoint(point, self, point, x, -100)
+    return text
+end
+
 local function UpcomingSpellsFrameOnShow(self)
     RefreshRewardList(self)
+    self.ScrollBox:ScrollToBegin()
 
     PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
     self.animationValue = -400
@@ -579,16 +817,33 @@ local function LoadUpcomingSpells()
 
     tinsert(UISpecialFrames, "GwLevelingRewards")
 
+    upcomingSpellsFrame.summaryNow = CreateSummaryText(upcomingSpellsFrame, "TOPLEFT", 30)
+    upcomingSpellsFrame.summaryAhead = CreateSummaryText(upcomingSpellsFrame, "TOPRIGHT", -28)
+
+    -- an even dark band behind the list, the world must not show through the art
+    local listBackground = upcomingSpellsFrame:CreateTexture(nil, "BORDER")
+    listBackground:SetPoint("TOPLEFT", upcomingSpellsFrame.ScrollBox, "TOPLEFT", -4, 4)
+    listBackground:SetPoint("BOTTOMRIGHT", upcomingSpellsFrame.ScrollBar, "BOTTOMRIGHT", 4, -4)
+    listBackground:SetColorTexture(GW.Colors.SkinColors.ListHeader:GetRGBA())
+
     local view = CreateScrollBoxListLinearView()
     view:SetElementFactory(function(factory, elementData)
-        if elementData.isHeader then
-            factory("GwUpcomingRewardHeader", InitHeader)
+        if elementData.kind == "strip" then
+            factory("GwUpcomingRewardStrip", InitStrip)
+        elseif elementData.kind then
+            factory("GwUpcomingRewardHeader", InitNode)
         else
             factory("GwUpcomingRewardRow", InitReward)
         end
     end)
     view:SetElementExtentCalculator(function(_, elementData)
-        return elementData.isHeader and 28 or 50
+        if elementData.kind == "strip" then
+            return 4 + math.ceil(#elementData.entries / STRIP_ICONS) * 36
+        end
+        if elementData.kind then
+            return 30
+        end
+        return GetRequirementText(elementData.reward.requirements) and 48 or 40
     end)
     ScrollUtil.InitScrollBoxListWithScrollBar(upcomingSpellsFrame.ScrollBox, upcomingSpellsFrame.ScrollBar, view)
     GW.HandleTrimScrollBar(upcomingSpellsFrame.ScrollBar)
@@ -601,11 +856,14 @@ local function LoadUpcomingSpells()
     upcomingSpellsFrame:RegisterEvent(C_EventUtils.IsEventValid("LEARNED_SPELL_IN_SKILL_LINE") and "LEARNED_SPELL_IN_SKILL_LINE" or "LEARNED_SPELL_IN_TAB")
     upcomingSpellsFrame:RegisterEvent("TRAINER_UPDATE")
     upcomingSpellsFrame:RegisterEvent("TRAINER_SERVICE_INFO_NAME_UPDATE")
+    upcomingSpellsFrame:RegisterEvent("PLAYER_MONEY")
+    upcomingSpellsFrame:RegisterEvent("PLAYER_XP_UPDATE")
     if HAS_PET_TRAINERS then
         upcomingSpellsFrame.showPet = false
         CreatePetTabs(upcomingSpellsFrame)
         upcomingSpellsFrame:RegisterUnitEvent("UNIT_PET", "player")
         upcomingSpellsFrame:RegisterUnitEvent("UNIT_LEVEL", "pet")
+        upcomingSpellsFrame:RegisterEvent("UNIT_PET_EXPERIENCE")
     end
 
     local function Refresh()
@@ -619,6 +877,13 @@ local function LoadUpcomingSpells()
     upcomingSpellsFrame:SetScript(
         "OnEvent",
         function(self, event)
+            -- money and progress only change the summary and the own level
+            if event == "PLAYER_MONEY" or event == "PLAYER_XP_UPDATE" or event == "UNIT_PET_EXPERIENCE" then
+                if self:IsShown() then
+                    RefreshRewardList(self)
+                end
+                return
+            end
             -- names, ranks and requirements arrive one by one after the trainer opened, one scan per batch;
             -- the filter switches of our own scan fire these as well, right away or in the next frame
             if event == "TRAINER_UPDATE" or event == "TRAINER_SERVICE_INFO_NAME_UPDATE" then
