@@ -92,12 +92,10 @@ function GwObjectivesContainerMixin:SetCollapsed(collapsed, source)
     end
 
     self.collapsed = collapsed
-    if source ~= "scroll" then
-        if collapsed then
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-        else
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        end
+    if collapsed then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+    else
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
     self:UpdateLayout()
     -- the item buttons hang on the static tracker: hide the own ones when collapsing
@@ -106,7 +104,6 @@ function GwObjectivesContainerMixin:SetCollapsed(collapsed, source)
 end
 
 function GwObjectivesContainerMixin:ToggleCollapsed()
-    self.gwCollapsedByScroll = nil
     local wasSticky = self.header and (self.header.gwStickyOffset or 0) > 0
     self:SetCollapsed(not self.collapsed)
     if wasSticky then

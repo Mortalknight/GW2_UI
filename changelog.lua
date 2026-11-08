@@ -21,6 +21,7 @@ addChange("12.1.6", {
     {GW.Enum.ChangelogType.change, [=[Party frames: new buffs no longer play an animation]=]},
     {GW.Enum.ChangelogType.bug, [=[Friends list (Forever): the list headers keep their size on hover, name, level and class sit in one row without gaps]=]},
     {GW.Enum.ChangelogType.bug, [=[Communities: the chat input box is back]=]},
+    {GW.Enum.ChangelogType.bug, [=[Quest tracker: sorting by level works on Forever and can also sort descending; quest item buttons hide when their quest is scrolled out of view and show their range dot instead of a question mark]=]},
     {GW.Enum.ChangelogType.bug, [=[Totem bar: Totemic Recall stays in the bar, the bar and its mover grow with your totems]=]},
     {GW.Enum.ChangelogType.feature, [=[Text designer: power can show current - percent in one block like health, the current - percent templates use that one block; separator, space, line break and custom text can hide when the text before or after them is empty, power can hide at zero]=]},
     {GW.Enum.ChangelogType.bug, [=[Text designer: fixed Lua errors with the power block and class colors, the previews on the classic clients show health again, the options are no longer cut off; in the settings search the designers show right away and in full, the mouse wheel over a block list scrolls on at its end]=]},
