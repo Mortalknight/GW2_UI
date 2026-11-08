@@ -316,7 +316,9 @@ local function GetStickyBackground(header)
     if not header.gwStickyBackground then
         header:SetFrameLevel(header:GetParent():GetFrameLevel() + 10)
         local bg = header:CreateTexture(nil, "BACKGROUND", nil, -8)
-        bg:SetColorTexture(GW.Colors.Fallback:GetRGBA())
+        -- not fully opaque, a hard black bar does not fit the tracker without a background
+        local r, g, b = GW.Colors.Fallback:GetRGB()
+        bg:SetColorTexture(r, g, b, 0.7)
         bg:SetPoint("TOPLEFT", header, "TOPLEFT", -40, STICKY_HEADER_PADDING)
         bg:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, -STICKY_HEADER_PADDING)
         header.gwStickyBackground = bg
@@ -423,7 +425,9 @@ local function UpdateScrollView()
         if header and top then
             local offset = 0
             if header:IsShown() then
-                offset = math.max(0, math.min(scroll - (childTop - top), container:GetHeight() - header:GetHeight()))
+                -- the background reaches the padding below the header, pushed out it has to end with the container
+                -- or it lies over the top of the next header
+                offset = math.max(0, math.min(scroll - (childTop - top), container:GetHeight() - header:GetHeight() - STICKY_HEADER_PADDING))
             end
             if offset ~= (header.gwStickyOffset or 0) then
                 header.gwStickyOffset = offset
