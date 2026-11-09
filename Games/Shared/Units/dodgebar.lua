@@ -4,6 +4,8 @@ local Debug = GW.Debug
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local FrameFlash = GW.FrameFlash
 local lerp = GW.lerp
+-- retail and forever keep cooldowns secret in combat, there the engine runs the fill from a duration object
+local DURATION_FILL = GW.isModern
 
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
@@ -58,7 +60,7 @@ local RAD_AT_END = -1
 
 GwDodgeBarMixin = {}
 
--- Retail specifgic code
+-- the duration fill of retail and forever
 local function FormatRemaining(seconds)
     if seconds >= 60 then
         return format("%dm", math.ceil(seconds / 60))
@@ -109,7 +111,7 @@ function GwDodgeBarMixin:UpdateBarText(showCharges, chargeCount, showCountdown)
     end
 end
 
--- Retail: hands the cooldown to the engine binding that writes the countdown text
+-- hands the cooldown to the engine binding that writes the countdown text
 function GwDodgeBarMixin:SetCountdownBinding(durationObject)
     local show = durationObject ~= nil and GW.settings.hud.dodgeBar.cooldownText and true or false
 
@@ -334,12 +336,12 @@ function GwDodgeBarMixin:SetupBar()
         return
     end
 
-    if GW.Retail and InCombatLockdown() then
+    if DURATION_FILL and InCombatLockdown() then
         GW.CombatQueue:Queue("Dodgebar Update", self.SetupBar, {self})
         return
     end
 
-    if GW.Retail then
+    if DURATION_FILL then
         self:UpdateRetailFill()
 
         return
@@ -390,7 +392,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         local spellId = select(3, ...)
         if spellId ~= self.spellId then return end
         self.gwNeedDrain = true
-        if GW.Retail then
+        if DURATION_FILL then
             -- charge spells report through SPELL_UPDATE_CHARGES, single charge and
             -- charge free spells only through SPELL_UPDATE_COOLDOWN
             self:RegisterEvent("SPELL_UPDATE_CHARGES")
@@ -406,7 +408,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
     elseif event == "SPELL_UPDATE_COOLDOWN" then
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then return end
-        if GW.Retail and not self.isSkyridingBar then -- skyriding is not secret
+        if DURATION_FILL and not self.isSkyridingBar then -- skyriding is not secret
             -- the engine timer armed at cast runs the whole cooldown on its own, only
             -- charge pools need a refresh here
             self:UpdateRetailFill()
@@ -420,7 +422,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then return end
         local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
-        if GW.Retail and not self.isSkyridingBar then -- skyriding is not secret
+        if DURATION_FILL and not self.isSkyridingBar then -- skyriding is not secret
             self:UpdateRetailFill()
         else
             if spellChargeInfo and spellChargeInfo.cooldownStartTime and spellChargeInfo.cooldownStartTime ~= 0 and spellChargeInfo.cooldownDuration and spellChargeInfo.cooldownDuration ~= 0 then
@@ -444,7 +446,7 @@ end
 function GwDodgeBarMixin:OnEnter(_, override)
     local bar = override and self or self.skyringingBarShown and self.skyridingBar or self
 
-    if not GW.Retail or self.skyringingBarShown then
+    if not DURATION_FILL or self.skyringingBarShown then
         local af = bar.arcfill
         for _, v in ipairs(af.masked) do
             v:AddMaskTexture(af.mask_hover)
@@ -469,7 +471,7 @@ end
 
 function GwDodgeBarMixin:OnLeave(_, override)
     local bar = override and self or self.skyringingBarShown and self.skyridingBar or self
-    if not GW.Retail or self.skyringingBarShown or override then
+    if not DURATION_FILL or self.skyringingBarShown or override then
         local af = bar.arcfill
         for _, v in ipairs(af.masked) do
             v:AddMaskTexture(af.mask_normal)
@@ -663,7 +665,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
     Debug("LoadDodgeBar start")
 
     -- this bar gets a global name for use in key bindings
-    local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, GW.Retail and "GwDodgeBarRetailTmpl" or "GwDodgeBarTmpl")
+    local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, DURATION_FILL and "GwDodgeBarRetailTmpl" or "GwDodgeBarTmpl")
     fmdb.asTargetFrame = asTargetFrame
     fmdb.parent = parent
     fmdb:RegisterForClicks("AnyUp", "AnyDown")
@@ -672,7 +674,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
         fmdb.arcfill:SetSize(80, 72)
         fmdb.arcfill.mask_normal:SetSize(80, 72)
         fmdb.arcfill.maskr_normal:SetSize(80, 72)
-        if not GW.Retail then
+        if not DURATION_FILL then
             fmdb.arcfill.mask_hover:SetSize(80, 72)
             fmdb.arcfill.maskr_hover:SetSize(80, 72)
         end
@@ -708,7 +710,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
         fmdb[key] = text
     end
 
-    if GW.Retail then
+    if DURATION_FILL then
         af.bg:AddMaskTexture(af.mask_normal)
 
         fmdb.statusbar = CreateFrame("StatusBar", nil, fmdb)
@@ -745,7 +747,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
 
     -- setup dodgebar event handling
     fmdb.skyringingBarShown = false
-    fmdb:OnLeave(nil, not GW.Retail)
+    fmdb:OnLeave(nil, not DURATION_FILL)
     fmdb:ToggleDodgeBar()
 
     -- setup hook to hide the dodge bar when in vehicle/override UI
