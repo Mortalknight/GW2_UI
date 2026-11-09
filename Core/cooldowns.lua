@@ -130,6 +130,11 @@ local function ToggleBlizzardCooldownText(self, timer, request)
 end
 
 local function Cooldown_OnSizeChanged(self, width, force)
+    -- the size can be secret while restricted, the last scale stays then
+    if GW.IsSecretValue(width) then
+        if self.fontScale then return end
+        width = nil
+    end
     local scale = width and (floor(width + 0.5) / ICON_SIZE) or 1
     if (not force) and (scale == self.fontScale) then return end
     self.fontScale = scale
