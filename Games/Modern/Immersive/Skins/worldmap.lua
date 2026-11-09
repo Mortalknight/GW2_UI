@@ -124,46 +124,6 @@ local function hook_QuestLogQuests_Update()
 end
 
 
-local function mover_OnDragStart(self)
-    self:GetParent():StartMoving()
-end
-
-
-local function IsMapMaximized(map)
-    return map.IsMaximized and map:IsMaximized()
-end
-
-local function SaveMapPosition(map)
-    if IsMapMaximized(map) then return end
-    local point, _, relativePoint, xOfs, yOfs = map:GetPoint()
-    if not point then return end
-    local pos = GW.settings.worldmap.framePos
-    pos.point, pos.relativePoint, pos.xOfs, pos.yOfs, pos.hasMoved = point, relativePoint, xOfs, yOfs, true
-end
-
-local function RestoreMapPosition(map)
-    local pos = GW.settings.worldmap.framePos
-    if not pos.hasMoved or IsMapMaximized(map) or InCombatLockdown() then return end
-    map:ClearAllPoints()
-    map:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-end
-
-local function mover_OnDragStop(self)
-    local map = self:GetParent()
-    map:StopMovingOrSizing()
-    SaveMapPosition(map)
-end
-
-local function map_OnShow(map)
-    RestoreMapPosition(map)
-    C_Timer.After(0, function()
-        if map:IsShown() then
-            RestoreMapPosition(map)
-        end
-    end)
-end
-
-
 -- the event list of the map: headers like the quest log, events with the hover of our lists
 local function SetEventHover(texture)
     texture:SetTexture(HOVER)
@@ -432,14 +392,11 @@ local function worldMapSkin()
     if not GW.HasDeModal then
         WorldMapFrame.mover = CreateFrame("Frame", nil, WorldMapFrame)
         WorldMapFrame.mover:EnableMouse(true)
-        WorldMapFrame:SetMovable(true)
         WorldMapFrame.mover:SetSize(WorldMapFrame:GetWidth(), 30)
         WorldMapFrame.mover:SetPoint("BOTTOMLEFT", WorldMapFrame, "TOPLEFT", 0, -20)
         WorldMapFrame.mover:SetPoint("BOTTOMRIGHT", WorldMapFrame, "TOPRIGHT", 0, 20)
-        WorldMapFrame.mover:RegisterForDrag("LeftButton")
-        WorldMapFrame.mover:SetScript("OnDragStart", mover_OnDragStart)
-        WorldMapFrame.mover:SetScript("OnDragStop", mover_OnDragStop)
-        WorldMapFrame:HookScript("OnShow", map_OnShow)
+        GW.MakeFrameMovable(WorldMapFrame, nil, "worldmap", true)
+        GW.MakeFrameMovable(WorldMapFrame.mover, WorldMapFrame, "worldmap")
     end
 
     if InCombatLockdown() then
