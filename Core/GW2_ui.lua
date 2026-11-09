@@ -981,6 +981,7 @@ local function evLoadSkins()
         GW.LoadAuctionatorAddonSkin()
         GW.LoadTransmogSkin()
         GW.LoadPVPMatchSkin()
+        GW.LoadSpokenPlacesAddonSkin()
     end
 
     if not (GW.Classic or GW.TBC) then
@@ -988,7 +989,6 @@ local function evLoadSkins()
         GW.LoadLFGSkins()
     end
     GW.LoadMailSkin()
-    GW.LoadSpokenPlacesAddonSkin()
 
     GW.LoadQuestTimersSkin()
     GW.LoadInspectFrameSkin()
