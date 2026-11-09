@@ -1508,9 +1508,13 @@ local function moveFrameToPosition(frame, x, y)
         pos.relativePoint = "TOPLEFT"
         pos.xOfs = x
         pos.yOfs = y
+        pos.hasMoved = true
 
         GW.settings.skins[frame.gwSkin].pos = pos
     end
+
+    -- a frame with hasMoved in its defaults keeps the place blizzard gives it until it is moved
+    if pos.hasMoved == false then return end
 
     frame:ClearAllPoints()
     frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
@@ -1518,9 +1522,8 @@ end
 
 local function MakeFrameMovable(frame, target, skin, moveFrameOnShow)
     if not target then
-        local point = GW.settings.skins[skin].pos
-        frame:ClearAllPoints()
-        frame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point. yOfs)
+        frame.gwSkin = skin
+        moveFrameToPosition(frame)
     end
 
     target = target or frame

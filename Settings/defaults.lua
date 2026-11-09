@@ -1838,7 +1838,6 @@ GW.globalDefault = {
                     relativePoint = "TOPLEFT",
                     xOfs = 16,
                     yOfs = -116,
-                    hasMoved = false,
                 },
             },
             bnToast = {
