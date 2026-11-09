@@ -89,7 +89,11 @@ local function GetExplored(achievementID)
     return explored, numCriteria
 end
 
-local function GetZoneProgress(zoneID, continentName)
+local PROGRESS_CACHE_SECONDS = 10
+local HOVER_CHECK_INTERVAL = 0.05
+local progressCache = {}
+
+local function ComputeZoneProgress(zoneID, continentName)
     if OVERLAY_COUNTS then
         local total = OVERLAY_COUNTS[zoneID]
         if total then
@@ -104,6 +108,17 @@ local function GetZoneProgress(zoneID, continentName)
         local explored, total = GetExplored(achievementID)
         return explored, total, achievementID
     end
+end
+
+local function GetZoneProgress(zoneID, continentName)
+    local now = GetTime()
+    local cached = progressCache[zoneID]
+    if not cached or now - cached.time > PROGRESS_CACHE_SECONDS then
+        cached = {time = now}
+        cached.explored, cached.total, cached.achievementID = ComputeZoneProgress(zoneID, continentName)
+        progressCache[zoneID] = cached
+    end
+    return cached.explored, cached.total, cached.achievementID
 end
 
 -- KAF's own world map button: it knows the achievement objects of the shown map and opens its category
@@ -503,7 +518,11 @@ end
 
 -- the zone under the mouse shows its ring; while the mouse is on that ring it stays, even where
 -- the middle of an odd shaped zone lies in another one
-local function UpdateHoveredZone(watcher)
+local function UpdateHoveredZone(watcher, elapsed)
+    watcher.sinceCheck = (watcher.sinceCheck or 0) + elapsed
+    if watcher.sinceCheck < HOVER_CHECK_INTERVAL then return end
+    watcher.sinceCheck = 0
+
     if watcher.shownPin and watcher.shownPin:IsShown() and watcher.shownPin:IsMouseOver() then return end
 
     local map = WorldMapFrame
