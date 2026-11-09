@@ -1,5 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
+local L = GW.L
 local PDE = GW.PaperDollEquipment
 
 local SLOT_BACKGROUND = "Interface/AddOns/GW2_UI/textures/character/slot-bg-classic.png"
@@ -125,13 +126,31 @@ local function AddStatTile(self, entries, statKey, hideAt, editMode)
     end
 end
 
+-- blizzard keeps the stats secret in combat and restricted content like battlegrounds, a box that was never
+-- filled tells why it is empty
+local function SetStatsHint(self, shown)
+    if shown and not self.statsHint then
+        self.statsHint = self.stats:CreateFontString(nil, "OVERLAY")
+        self.statsHint:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        self.statsHint:SetTextColor(GW.Colors.SkinColors.Disabled:GetRGB())
+        self.statsHint:SetPoint("TOPLEFT", self.stats, "TOPLEFT", 10, -50)
+        self.statsHint:SetPoint("TOPRIGHT", self.stats, "TOPRIGHT", -10, -50)
+        self.statsHint:SetText(L["Your stats can not be read here, they show again after the fight or the match."])
+    end
+    if self.statsHint then
+        self.statsHint:SetShown(shown)
+    end
+end
+
 local function updateStats(self)
     PDE.UpdateItemLevel(self)
 
     if InCombatLockdown() or GW.IsRestrictedAuras() then
+        SetStatsHint(self, self.statsFramePool:GetNumActive() == 0)
         GW.CombatQueue:Queue("update character stats", updateStats, {self})
         return
     end
+    SetStatsHint(self, false)
     self.statsFramePool:ReleaseAll()
 
     local editMode = GW.StatsPicker.IsEditMode(self.stats)

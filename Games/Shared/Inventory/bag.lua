@@ -1144,8 +1144,10 @@ local function LoadBag(helpers)
                  function() GW.settings.bags.items.junkDesaturate = not GW.settings.bags.items.junkDesaturate; GW.UpdateAllOwnBagItemButtons() end, "bags.items.junkDesaturate")
         addCheck(L["Show Junk Icon"], function() return GW.settings.bags.items.junkIcon end,
                  function() GW.settings.bags.items.junkIcon = not GW.settings.bags.items.junkIcon; GW.UpdateAllOwnBagItemButtons() end, "bags.items.junkIcon")
-        addCheck(L["Show Upgrade Icon"], function() return GW.settings.bags.items.upgradeIcon end,
-                 function() GW.settings.bags.items.upgradeIcon = not GW.settings.bags.items.upgradeIcon; GW.UpdateAllOwnBagItemButtons() end, "bags.items.upgradeIcon")
+        if C_AddOns.IsAddOnLoaded("Pawn") then
+            addCheck(L["Show Upgrade Icon"], function() return GW.settings.bags.items.upgradeIcon end,
+                     function() GW.settings.bags.items.upgradeIcon = not GW.settings.bags.items.upgradeIcon; GW.UpdateAllOwnBagItemButtons() end, "bags.items.upgradeIcon")
+        end
         addCheck(L["Show Profession Bag Coloring"], function() return GW.settings.bags.professionBagColor end,
                  function() GW.settings.bags.professionBagColor = not GW.settings.bags.professionBagColor; GW.UpdateAllOwnBagItemButtons() end, "bags.professionBagColor")
         addCheck(L["Show Quality Color for Profession Bags"], function() return GW.settings.bags.professionBagQualityColor end,

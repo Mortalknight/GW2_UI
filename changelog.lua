@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.7", {
+    {GW.Enum.ChangelogType.bug, [=[Cooldown texts (Forever): no Lua error in battlegrounds and other restricted content]=]},
+})
+
 addChange("12.1.6", {
     {GW.Enum.ChangelogType.feature, [=[Upcoming level rewards: bigger window with a level path that shows every rank at its level and the money you need now and for the next 5 levels; open it from the experience bar or the new button in the spell book, on Wrath and Forever a notification after a level up shows the new spells at your trainer]=]},
     {GW.Enum.ChangelogType.change, [=[Group frames: the party, raid 10 and raid 25 grids start at the top left like the raid 40 grid, the party grid has smaller frames by default]=]},

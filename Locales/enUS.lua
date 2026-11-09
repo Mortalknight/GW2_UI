@@ -238,6 +238,7 @@ L["Upcoming Level Rewards"] = true
 L["Trainable Now:"] = true
 L["Next Levels:"] = true
 L["Up To Level %d"] = true
+L["Your stats can not be read here, they show again after the fight or the match."] = true
 L["Click to show the upcoming level rewards"] = true
 L["Shift-click the Reputation bar to show the Faction in your Reputations"] = "Shift-click the Reputation bar to show the Faction in your Reputations."
 L["No matching rewards."] = true
