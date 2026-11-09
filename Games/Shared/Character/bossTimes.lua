@@ -64,7 +64,7 @@ local function GetInstanceArt(instanceMapID)
                     end
                 end
             end
-            if currentTier then
+            if currentTier and currentTier > 0 then
                 EJ_SelectTier(currentTier)
             end
         end
