@@ -119,9 +119,21 @@ local function Create_Tags()
         return color and color:GenerateHexColorMarkup()
     end)
 
-    -- red over yellow to green by the health; retail hands the health out as a secret, it has no such color
+    -- red over yellow to green by the health; retail and forever hand the health out as a secret, there a color
+    -- curve turns it into the color without any math on it
+    local healthColorCurve
+    if GW.isModern then
+        healthColorCurve = C_CurveUtil.CreateColorCurve()
+        healthColorCurve:SetType(Enum.LuaCurveType.Linear)
+        healthColorCurve:AddPoint(0, RED_FONT_COLOR)
+        healthColorCurve:AddPoint(0.5, YELLOW_FONT_COLOR)
+        healthColorCurve:AddPoint(1, GREEN_FONT_COLOR)
+    end
     AddTag("GW2:healthColor", HEALTH_EVENTS .. " UNIT_MAXHEALTH", function(unit, realUnit)
         unit = realUnit or unit
+        if healthColorCurve then
+            return "|c" .. C_ColorUtil.GenerateTextColorCode(UnitHealthPercent(unit, true, healthColorCurve))
+        end
         local healthMax = UnitHealthMax(unit)
         local percent = healthMax > 0 and UnitHealth(unit) / healthMax or 0
         local from, to = RED_FONT_COLOR, YELLOW_FONT_COLOR

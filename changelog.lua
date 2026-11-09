@@ -14,8 +14,10 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.7", {
+    {GW.Enum.ChangelogType.feature, [=[Text designer: the health color (red over yellow to green) also on Retail and Forever]=]},
     {GW.Enum.ChangelogType.bug, [=[Cooldown texts (Forever): no Lua error in battlegrounds and other restricted content]=]},
     {GW.Enum.ChangelogType.bug, [=[Dodge bar (Forever): no Lua error in combat with your own spell, the bar fills like on Retail]=]},
+    {GW.Enum.ChangelogType.bug, [=[Text designer: a profile imported from another client no longer causes Lua errors, texts this client does not have are left out]=]},
 })
 
 addChange("12.1.6", {

@@ -211,7 +211,7 @@ local BLOCKS = {
 
     colorStart = {category = "color", label = L["Color Start"], desc = L["Colors the text up to the next Color End."],
         modes = {{"raidcolor", CLASS}, {"powercolor", L["Power"]}, {"threatcolor", L["Threat"]}, {"difficulty", L["Difficulty"]},
-            {"GW2:reactionColor", L["Reaction"]}, {"GW2:healthColor", HEALTH, hidden = GW.isModern}},
+            {"GW2:reactionColor", L["Reaction"]}, {"GW2:healthColor", HEALTH}},
         tag = ModeTag, preview = function(_, mode) return COLOR_PREVIEWS[mode]() end},
     colorEnd = {category = "color", label = L["Color End"], desc = L["Ends the color, the text after it is no longer colored."],
         text = "|r"},
@@ -304,12 +304,24 @@ local function FindAttachTag(parts, index, step)
     return parts[index] and parts[index].tag and parts[index], colorEnd
 end
 
+-- a profile imported from another client can hold blocks and modes this client does not have
+local function IsHiddenBlock(def, block)
+    if def.hidden then return true end
+    local mode = GW.GetTagTextBlockMode(def, block)
+    for _, entry in ipairs(def.modes or {}) do
+        if entry[1] == mode then return entry.hidden end
+    end
+end
+
 -- a text block that only shows next to a text becomes the suffix of the tag before it or the prefix of the tag after
 -- it, the tag engine leaves both out when that tag gives no text; next to a plain text it always shows
 function GW.BuildTagString(blocks)
     local parts = {}
     for _, block in ipairs(blocks) do
         local def = BLOCKS[block.k]
+        if def and IsHiddenBlock(def, block) then
+            def = nil
+        end
         if def and def.tag then
             tinsert(parts, {tag = Field(def, "tag", block), args = Field(def, "args", block), prefix = "", suffix = "",
                 color = def.category == "color"})
