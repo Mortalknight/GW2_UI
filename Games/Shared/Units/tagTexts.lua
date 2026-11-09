@@ -118,7 +118,7 @@ local BLOCKS = {
         modes = {{"PREC", STATUS_TEXT_PERCENT}, {"HEALTH", REFORGE_CURRENT}, {"MAX", MAXIMUM}, {"LOSTHEALTH", L["Missing"]},
             {"CURMAX", L["Current / Max"]}, {"CURPREC", L["Current - Percent"]}},
         -- retail hands out health and shield as secrets, they can not be added up
-        checks = {SHORT_CHECK, {key = "shield", label = L["With Shield"], hideInMode = "LOSTHEALTH", hidden = GW.isModern}},
+        checks = {SHORT_CHECK, {key = "shield", label = L["With Shield"], hideInMode = "LOSTHEALTH", hidden = GW.isModern or GW.Classic or GW.TBC}},
         tag = "GW2_Grid:healtValue",
         args = function(block, mode) return mode .. "," .. tostring(block.short == true) .. "," .. tostring(block.shield == true) end,
         preview = function(block, mode, unit) return PreviewValue(block, mode, unit.health, unit.maxHealth) end},
@@ -130,7 +130,9 @@ local BLOCKS = {
         args = function(block, mode) return mode .. "," .. tostring(block.short == true) end,
         preview = function(block, mode)
             return mode == "PREC" and "15%" or block.short and GW.ShortValue(12000) or BreakUpLargeNumbers(12000)
-        end},
+        end,
+        -- damage shields only exist from wrath on
+        hidden = GW.Classic or GW.TBC},
     status = {category = "health", label = DEAD .. " / " .. PLAYER_OFFLINE,
         desc = L["Dead, Ghost or Offline, zzz on yourself while resting."],
         modes = {{"status", L["Dead, Ghost or Offline"]}, {"dead", L["Dead or Ghost"]}, {"offline", PLAYER_OFFLINE}},

@@ -1302,7 +1302,7 @@ function GW.GetHealthGlobeTextTarget()
         categories = {health = true, color = true, text = true},
         lines = {
             {key = "healthText", label = HEALTH, presets = "globeHealth"},
-            {key = "absorbText", label = GW.L["Shield"], presets = "absorb"},
+            not (GW.Classic or GW.TBC) and {key = "absorbText", label = GW.L["Shield"], presets = "absorb"} or nil,
         },
         get = function(line) return GW.GetUnitFrameTextBlocks("healthGlobe", line) end,
         getDefault = function(line) return GetDefaultTextBlocks("healthGlobe", line) end,
