@@ -8,7 +8,7 @@ local MAX_TOOLTIP_AREAS = 12
 
 -- era and tbc have no achievements: there the uncovered map overlays count, against the number each
 -- zone has (WorldMapOverlay per uiMap, tbc anniversary; era has two less in Dustwallow Marsh and Silithus)
-local OVERLAY_COUNTS = (GW.Classic or GW.TBC) and {
+local OVERLAY_COUNTS = (GW.Classic or GW.TBC or GW.Forever) and {
     [1411] = 11, [1412] = 14, [1413] = 25, [1416] = 15, [1417] = 16, [1418] = 14, [1419] = 9, [1420] = 16,
     [1421] = 15, [1422] = 13, [1423] = 22, [1424] = 12, [1425] = 14, [1426] = 18, [1427] = 7, [1428] = 10,
     [1429] = 12, [1430] = 3, [1431] = 13, [1432] = 11, [1433] = 11, [1434] = 27, [1435] = 11, [1436] = 14,
