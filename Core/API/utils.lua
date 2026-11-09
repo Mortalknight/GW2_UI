@@ -1494,6 +1494,8 @@ end
 GW.IsSpellTalented = IsSpellTalented
 
 local function moveFrameToPosition(frame, x, y)
+    if frame.IsMaximized and frame:IsMaximized() then return end
+
     local pos = GW.settings.skins[frame.gwSkin].pos
 
     if x and y then

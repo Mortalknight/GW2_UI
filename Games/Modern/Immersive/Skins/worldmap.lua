@@ -124,16 +124,6 @@ local function hook_QuestLogQuests_Update()
 end
 
 
-local function mover_OnDragStart(self)
-    self:GetParent():StartMoving()
-end
-
-
-local function mover_OnDragStop(self)
-    self:GetParent():StopMovingOrSizing()
-end
-
-
 -- the event list of the map: headers like the quest log, events with the hover of our lists
 local function SetEventHover(texture)
     texture:SetTexture(HOVER)
@@ -402,13 +392,11 @@ local function worldMapSkin()
     if not GW.HasDeModal then
         WorldMapFrame.mover = CreateFrame("Frame", nil, WorldMapFrame)
         WorldMapFrame.mover:EnableMouse(true)
-        WorldMapFrame:SetMovable(true)
         WorldMapFrame.mover:SetSize(WorldMapFrame:GetWidth(), 30)
         WorldMapFrame.mover:SetPoint("BOTTOMLEFT", WorldMapFrame, "TOPLEFT", 0, -20)
         WorldMapFrame.mover:SetPoint("BOTTOMRIGHT", WorldMapFrame, "TOPRIGHT", 0, 20)
-        WorldMapFrame.mover:RegisterForDrag("LeftButton")
-        WorldMapFrame.mover:SetScript("OnDragStart", mover_OnDragStart)
-        WorldMapFrame.mover:SetScript("OnDragStop", mover_OnDragStop)
+        GW.MakeFrameMovable(WorldMapFrame, nil, "worldmap", true)
+        GW.MakeFrameMovable(WorldMapFrame.mover, WorldMapFrame, "worldmap")
     end
 
     if InCombatLockdown() then
