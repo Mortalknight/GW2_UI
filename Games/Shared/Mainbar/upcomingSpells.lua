@@ -38,8 +38,19 @@ local function IsClassOrPetTrainer()
     return not IsTradeskillTrainer()
 end
 
--- only the class trainer teaches in the skill lines of the spell book, weapon masters and pet trainers do not;
+local BEAST_TRAINING_SPELL_ID = 5149
+
 -- needs all services listed
+local function TeachesInSkillLines(skillLines)
+    for index = 1, GetNumTrainerServices() do
+        if skillLines[GetTrainerServiceSkillLine(index) or ""] then
+            return true
+        end
+    end
+    return false
+end
+
+-- only the class trainer teaches in the skill lines of the spell book, weapon masters and pet trainers do not
 local function TeachesSpellBookLines()
     local spellBookLines = {}
     if C_SpellBook.GetNumSpellBookSkillLines then
@@ -54,41 +65,17 @@ local function TeachesSpellBookLines()
             spellBookLines[GetSpellTabInfo(tab)] = true
         end
     end
-    for index = 1, GetNumTrainerServices() do
-        if spellBookLines[GetTrainerServiceSkillLine(index) or ""] then
-            return true
-        end
-    end
-    return false
+    return TeachesInSkillLines(spellBookLines)
 end
 
--- for trainers without pet spell flags, needs all services listed; nil while undecidable
-local function IsPetTrainerOffer(rewards, isClassTrainer)
-    -- classic: the pet trainer has a type of its own, it wins over the skill lines
-    if not MAINLINE_TRAINER then
-        if C_Trainer and C_Trainer.GetTrainerType then
-            return C_Trainer.GetTrainerType() == Enum.TrainerType.Pet
-        end
-        return not isClassTrainer
-    end
-    if isClassTrainer then
-        return false
-    end
-
-    -- forever reports its pet trainers as general ones: the player knows the learned services of a class trainer,
-    -- a pet trainer teaches through spells of its own that nobody knows afterwards
-    local hasLearned = false
-    for _, reward in ipairs(rewards) do
-        if reward.known and reward.spellID then
-            if C_SpellBook.IsSpellKnown(reward.spellID, Enum.SpellBookSpellBank.Player) then
-                return false
-            end
-            hasLearned = true
-        end
-    end
-    if hasLearned then
+-- the pet trainer teaches in the beast training line, named like the spell; classic also gives him a type of his own,
+-- forever uses that type for the window that teaches the pet
+local function IsPetTrainerOffer(isClassTrainer)
+    if not MAINLINE_TRAINER and C_Trainer and C_Trainer.GetTrainerType and C_Trainer.GetTrainerType() == Enum.TrainerType.Pet then
         return true
     end
+    local beastTraining = C_Spell.GetSpellInfo(BEAST_TRAINING_SPELL_ID)
+    return not isClassTrainer and beastTraining ~= nil and TeachesInSkillLines({[beastTraining.name] = true})
 end
 
 local function GetTrainerServiceRequirements(index)
@@ -174,7 +161,7 @@ local function CacheTrainerRewards()
     local isClassTrainer = TeachesSpellBookLines()
     local isPetTrainer = false
     if #petRewards == 0 and HAS_PET_TRAINERS then
-        isPetTrainer = IsPetTrainerOffer(rewards, isClassTrainer)
+        isPetTrainer = IsPetTrainerOffer(isClassTrainer)
     end
 
     for filter in pairs(restore) do
@@ -183,9 +170,7 @@ local function CacheTrainerRewards()
 
     scanningTrainer = false
 
-    if isPetTrainer == nil then
-        return
-    elseif isPetTrainer then
+    if isPetTrainer then
         rewards, petRewards = petRewards, rewards
     end
     -- unflagged pet spells on classic are learned by the hunter himself, so their levels are his
