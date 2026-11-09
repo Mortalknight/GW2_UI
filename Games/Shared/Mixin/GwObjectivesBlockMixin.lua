@@ -590,7 +590,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition()
         for _, other in ipairs(GW.QuestTrackerFixedContainer) do
             height = height + other:GetHeight()
         end
-        height = height - GwQuestTracker.ScrollFrame:GetVerticalScroll()
+        height = height - GwQuestTracker.ScrollFrame.gwScroll
     end
 
     self.actionButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)

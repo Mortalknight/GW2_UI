@@ -309,21 +309,14 @@ local function FormatObjectiveNumbers(text)
 end
 GW.FormatObjectiveNumbers = FormatObjectiveNumbers
 
-local STICKY_HEADER_PADDING = 4
+-- whole pixels, the scroll frame top and its scroll round separately and the list would wobble
+local function ToPixels(value)
+    return PixelUtil.GetNearestPixelSize(value, GwQuestTracker.ScrollFrame:GetEffectiveScale())
+end
 
--- covers the end of the quest above, which lies under the sticky header
-local function GetStickyBackground(header)
-    if not header.gwStickyBackground then
-        header:SetFrameLevel(header:GetParent():GetFrameLevel() + 10)
-        local bg = header:CreateTexture(nil, "BACKGROUND", nil, -8)
-        -- not fully opaque, a hard black bar does not fit the tracker without a background
-        local r, g, b = GW.Colors.Fallback:GetRGB()
-        bg:SetColorTexture(r, g, b, 0.7)
-        bg:SetPoint("TOPLEFT", header, "TOPLEFT", -40, STICKY_HEADER_PADDING)
-        bg:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, -STICKY_HEADER_PADDING)
-        header.gwStickyBackground = bg
-    end
-    return header.gwStickyBackground
+-- the first block of a container starts right below its header, a stuck header keeps that spacing
+local function GetHeaderInset(header)
+    return ToPixels(header:GetHeight())
 end
 
 local SCROLL_STEP = 15
@@ -338,7 +331,7 @@ local function GetScrollStops(scrollFrame)
         if top then
             stops[#stops + 1] = childTop - top
             local header = container.header
-            local headerSpace = header and header:IsShown() and (header:GetHeight() + STICKY_HEADER_PADDING) or 0
+            local headerSpace = header and header:IsShown() and GetHeaderInset(header) or 0
             for _, block in ipairs(container.blocks or {}) do
                 local blockTop = block:IsShown() and block:GetTop()
                 if blockTop then
@@ -352,7 +345,7 @@ local function GetScrollStops(scrollFrame)
 end
 
 local function GetNextScroll(scrollFrame, delta)
-    local current = scrollFrame:GetVerticalScroll()
+    local current = scrollFrame.gwScroll
     local stops = GetScrollStops(scrollFrame)
     local target
     if delta < 0 then
@@ -404,48 +397,89 @@ local function UpdateScrollIndicator(scrollFrame, scroll)
         track:Hide()
         return
     end
-    track:SetHeight(visible)
-    local height = math.max(20, visible * visible / (visible + maxScroll))
-    local y = (visible - height) * math.min(1, scroll / maxScroll)
+    local trackHeight = visible - scrollFrame.gwStickyInset
+    if trackHeight <= 0 then
+        track:Hide()
+        return
+    end
+    track:SetHeight(trackHeight)
+    local height = math.max(20, trackHeight * visible / (visible + maxScroll))
+    local y = (trackHeight - height) * math.min(1, scroll / maxScroll)
     track.thumb:SetHeight(height)
     track.thumb:SetPoint("TOPLEFT", 0, -y)
     track.thumb:SetPoint("TOPRIGHT", 0, -y)
     track:Show()
 end
 
+local function Header_OnMouseWheel(_, delta)
+    local scrollFrame = GwQuestTracker.ScrollFrame
+    scrollFrame:GetScript("OnMouseWheel")(scrollFrame, delta)
+end
+
+-- the header of the container at the top of the view moves into a slot above the scroll frame and the scroll frame
+-- starts below it, so nothing scrolls under the header
+local function SetStuckHeader(scrollFrame, stuck)
+    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
+        local header = container.header
+        if header and header.gwStuck and header ~= stuck then
+            header.gwStuck = nil
+            header:SetParent(container)
+            header:ClearAllPoints()
+            header:SetPoint("TOPRIGHT", container, "TOPRIGHT")
+        end
+    end
+
+    local slotTop = GW.QuestTrackerFixedContainer[#GW.QuestTrackerFixedContainer]
+    if stuck and not stuck.gwStuck then
+        stuck.gwStuck = true
+        stuck:SetParent(GwQuestTracker)
+        stuck:ClearAllPoints()
+        stuck:SetPoint("TOPRIGHT", slotTop, "BOTTOMRIGHT")
+        if not stuck:GetScript("OnMouseWheel") then
+            stuck:SetScript("OnMouseWheel", Header_OnMouseWheel)
+        end
+    end
+
+    local inset = stuck and GetHeaderInset(stuck) or 0
+    if inset ~= scrollFrame.gwStickyInset then
+        scrollFrame.gwStickyInset = inset
+        scrollFrame:SetPoint("TOPRIGHT", slotTop, "BOTTOMRIGHT", 0, -inset)
+    end
+end
+
+-- gwScroll is the scroll as if no header was stuck, the scroll frame itself scrolls the inset further because its
+-- top moved down by it
 local function UpdateScrollView()
     local scrollFrame = GwQuestTracker and GwQuestTracker.ScrollFrame
     local childTop = scrollFrame and scrollFrame.Child:GetTop()
     if not childTop then return end
-    local scroll = scrollFrame:GetVerticalScroll()
-    UpdateScrollIndicator(scrollFrame, scroll)
+    -- the item buttons follow gwScroll, rounded they move with the list
+    local scroll = ToPixels(scrollFrame.gwScroll)
+    scrollFrame.gwScroll = scroll
 
+    local stuck
     for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
         local header, top = container.header, container:GetTop()
-        if header and top then
-            local offset = 0
-            if header:IsShown() then
-                -- the background reaches the padding below the header, pushed out it has to end with the container
-                -- or it lies over the top of the next header
-                offset = math.max(0, math.min(scroll - (childTop - top), container:GetHeight() - header:GetHeight() - STICKY_HEADER_PADDING))
-            end
-            if offset ~= (header.gwStickyOffset or 0) then
-                header.gwStickyOffset = offset
-                header:ClearAllPoints()
-                header:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, -offset)
-                GetStickyBackground(header):SetShown(offset > 0)
+        if header and top and container:IsShown() and header:IsShown() then
+            -- the list starts below the stuck header, at the end of the container the next one already shows there
+            local offset = scroll - (childTop - top)
+            if offset > 0 and offset + GetHeaderInset(header) < container:GetHeight() then
+                stuck = header
             end
         end
     end
+    SetStuckHeader(scrollFrame, stuck)
+    scrollFrame:SetVerticalScroll(scroll + scrollFrame.gwStickyInset)
+    UpdateScrollIndicator(scrollFrame, scroll)
 end
 
 function GW.ScrollObjectivesTrackerToContainer(container)
     local scrollFrame = GwQuestTracker.ScrollFrame
     local childTop, top = scrollFrame.Child:GetTop(), container:GetTop()
     if not (childTop and top) then return end
-    scrollFrame:SetVerticalScroll(math.max(0, childTop - top))
-    GwQuestTracker:AdjustItemButtonPositions()
+    scrollFrame.gwScroll = math.max(0, math.min(scrollFrame.maxScroll, childTop - top))
     UpdateScrollView()
+    GwQuestTracker:AdjustItemButtonPositions()
 end
 
 GwObjectivesTrackerMixin = {}
@@ -464,11 +498,14 @@ function GwObjectivesTrackerMixin:LayoutChanged()
     self.ScrollFrame.visibleHeight = visibleHeight
     self.ScrollFrame.maxScroll = scroll
     -- shrunk content, a collapsed section for example, must not leave the view scrolled into nothing
-    if self.ScrollFrame:GetVerticalScroll() > scroll then
-        self.ScrollFrame:SetVerticalScroll(scroll)
-        self:AdjustItemButtonPositions()
+    local clamped = self.ScrollFrame.gwScroll > scroll
+    if clamped then
+        self.ScrollFrame.gwScroll = scroll
     end
     UpdateScrollView()
+    if clamped then
+        self:AdjustItemButtonPositions()
+    end
 
     if InCombatLockdown() then
         GW.CombatQueue:Queue("GwQuestTrackerScrollLayout", self.LayoutChanged, {self})
@@ -483,13 +520,7 @@ function GW.GetObjectivesScrollViewport()
     for _, container in ipairs(GW.QuestTrackerFixedContainer) do
         top = top + container:GetHeight()
     end
-    for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
-        local header = container.header
-        if header and (header.gwStickyOffset or 0) > 0 then
-            top = top + header:GetHeight() + STICKY_HEADER_PADDING
-        end
-    end
-    return top, GwQuestTracker:GetHeight()
+    return top + GwQuestTracker.ScrollFrame.gwStickyInset, GwQuestTracker:GetHeight()
 end
 
 local function RunOrQueue(key, func, args)
@@ -575,13 +606,15 @@ function GwObjectivesTrackerMixin:CreateTrackerScrollFrame(name, height)
     local scrollFrame = CreateFrame("ScrollFrame", name, self, "GwQuestTrackerScroll")
     scrollFrame:SetHeight(height)
     scrollFrame:SetScript("OnMouseWheel", function(frame, delta)
-        frame:SetVerticalScroll(GetNextScroll(frame, delta))
+        frame.gwScroll = GetNextScroll(frame, delta)
         UpdateScrollView()
         -- the item buttons are anchored to the static tracker (never to the scroll
         -- child, see UpdateObjectiveActionButtonPosition) - follow the scroll manually
         GwQuestTracker:AdjustItemButtonPositions()
     end)
     scrollFrame.maxScroll = 0
+    scrollFrame.gwScroll = 0
+    scrollFrame.gwStickyInset = 0
     return scrollFrame
 end
 
