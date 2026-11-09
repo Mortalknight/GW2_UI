@@ -38,24 +38,41 @@ local function IsClassOrPetTrainer()
     return not IsTradeskillTrainer()
 end
 
--- for trainers without pet spell flags, needs all services listed; nil while undecidable
-local function IsPetTrainerOffer(rewards)
-    if not MAINLINE_TRAINER and C_Trainer and C_Trainer.GetTrainerType and C_Trainer.GetTrainerType() == Enum.TrainerType.Pet then
-        return true
-    end
-
-    -- classic: only the class trainer teaches in the skill lines of the spell book
-    if not MAINLINE_TRAINER then
-        local spellBookLines = {}
+-- only the class trainer teaches in the skill lines of the spell book, weapon masters and pet trainers do not;
+-- needs all services listed
+local function TeachesSpellBookLines()
+    local spellBookLines = {}
+    if C_SpellBook.GetNumSpellBookSkillLines then
+        for skillLineIndex = 1, C_SpellBook.GetNumSpellBookSkillLines() do
+            local skillLine = C_SpellBook.GetSpellBookSkillLineInfo(skillLineIndex)
+            if skillLine then
+                spellBookLines[skillLine.name] = true
+            end
+        end
+    else
         for tab = 1, GetNumSpellTabs() do
             spellBookLines[GetSpellTabInfo(tab)] = true
         end
-        for index = 1, GetNumTrainerServices() do
-            if spellBookLines[GetTrainerServiceSkillLine(index) or ""] then
-                return false
-            end
+    end
+    for index = 1, GetNumTrainerServices() do
+        if spellBookLines[GetTrainerServiceSkillLine(index) or ""] then
+            return true
         end
-        return true
+    end
+    return false
+end
+
+-- for trainers without pet spell flags, needs all services listed; nil while undecidable
+local function IsPetTrainerOffer(rewards, isClassTrainer)
+    -- classic: the pet trainer has a type of its own, it wins over the skill lines
+    if not MAINLINE_TRAINER then
+        if C_Trainer and C_Trainer.GetTrainerType then
+            return C_Trainer.GetTrainerType() == Enum.TrainerType.Pet
+        end
+        return not isClassTrainer
+    end
+    if isClassTrainer then
+        return false
     end
 
     -- forever reports its pet trainers as general ones: the player knows the learned services of a class trainer,
@@ -108,6 +125,13 @@ local function GetTrainerServiceSpellID(index)
     return spellID
 end
 
+local function GetTrainerCache(key)
+    local cache = GW.GetStorage(key)
+    if cache and cache.version == TRAINER_CACHE_VERSION then
+        return cache.rewards, cache.playerLevels
+    end
+end
+
 -- classic style clients hand out most spells at the trainer, so we remember his whole offer on the first visit
 local function CacheTrainerRewards()
     if scanningTrainer or not IsClassOrPetTrainer() then
@@ -146,9 +170,11 @@ local function CacheTrainerRewards()
         end
     end
 
+    -- forever reports weapon masters and pet trainers as general ones too, their offer must not replace the class list
+    local isClassTrainer = TeachesSpellBookLines()
     local isPetTrainer = false
     if #petRewards == 0 and HAS_PET_TRAINERS then
-        isPetTrainer = IsPetTrainerOffer(rewards)
+        isPetTrainer = IsPetTrainerOffer(rewards, isClassTrainer)
     end
 
     for filter in pairs(restore) do
@@ -165,18 +191,13 @@ local function CacheTrainerRewards()
     -- unflagged pet spells on classic are learned by the hunter himself, so their levels are his
     local playerLevels = isPetTrainer and not MAINLINE_TRAINER or nil
 
-    if #rewards > 0 then
+    -- a trainer with only a few class spells, like the portal trainer of mages, must not replace the full list
+    local classCache = GetTrainerCache(TRAINER_CACHE_KEY)
+    if #rewards > 0 and isClassTrainer and (not classCache or #rewards * 2 >= #classCache) then
         GW.SetStorage(TRAINER_CACHE_KEY, {version = TRAINER_CACHE_VERSION, rewards = rewards})
     end
     if #petRewards > 0 then
         GW.SetStorage(PET_TRAINER_CACHE_KEY, {version = TRAINER_CACHE_VERSION, rewards = petRewards, playerLevels = playerLevels})
-    end
-end
-
-local function GetTrainerCache(key)
-    local cache = GW.GetStorage(key)
-    if cache and cache.version == TRAINER_CACHE_VERSION then
-        return cache.rewards, cache.playerLevels
     end
 end
 

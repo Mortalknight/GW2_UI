@@ -16,6 +16,7 @@ AddChange(string addonVersion, table changeList)
 addChange("12.1.7", {
     {GW.Enum.ChangelogType.feature, [=[Text designer: the health color (red over yellow to green) also on Retail and Forever]=]},
     {GW.Enum.ChangelogType.change, [=[Objectives tracker: the section header at the top of the scrolled list no longer lies over the quests, the list scrolls below it]=]},
+    {GW.Enum.ChangelogType.bug, [=[Upcoming level rewards: a weapon master or pet trainer no longer replaces the spells of your class trainer]=]},
     {GW.Enum.ChangelogType.bug, [=[Cooldown texts (Forever): no Lua error in battlegrounds and other restricted content]=]},
     {GW.Enum.ChangelogType.bug, [=[Dodge bar (Forever): no Lua error in combat with your own spell, the bar fills like on Retail]=]},
     {GW.Enum.ChangelogType.bug, [=[Text designer: a profile imported from another client no longer causes Lua errors, texts this client does not have are left out]=]},
