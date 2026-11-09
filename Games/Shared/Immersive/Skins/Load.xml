@@ -40,4 +40,5 @@
     <Script file="addons\masqueSkin.lua"/>
     <Script file="addons\postal.lua"/>
     <Script file="addons\tsm.lua"/>
+    <Script file="addons\spokenPlaces.lua"/>
 </Ui>

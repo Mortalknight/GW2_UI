@@ -1907,6 +1907,9 @@ GW.globalDefault = {
             auctionator = {
                 enabled = true,
             },
+            spokenPlaces = {
+                enabled = true,
+            },
             extendedSets = {
                 enabled = true,
             },

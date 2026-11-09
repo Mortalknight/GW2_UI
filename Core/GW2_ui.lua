@@ -988,6 +988,7 @@ local function evLoadSkins()
         GW.LoadLFGSkins()
     end
     GW.LoadMailSkin()
+    GW.LoadSpokenPlacesAddonSkin()
 
     GW.LoadQuestTimersSkin()
     GW.LoadInspectFrameSkin()
