@@ -456,6 +456,13 @@ local function Row_OnUpdate(self)
     end
 end
 
+local function Reward_OnClick(self)
+    local spellID = self.elementData and self.elementData.reward.spellID
+    if spellID and IsModifiedClick("CHATLINK") then
+        ChatFrameUtil.InsertLink(C_Spell.GetSpellLink(spellID))
+    end
+end
+
 local function Row_OnEnter(self)
     self:SetScript("OnUpdate", Row_OnUpdate)
 end
@@ -570,6 +577,7 @@ local function InitReward(button, entry)
         button.hover:SetVertexColor(GW.Colors.SkinColors.ListHover:GetRGBA())
         button:SetScript("OnEnter", Row_OnEnter)
         button:SetScript("OnLeave", Row_OnLeave)
+        button:SetScript("OnClick", Reward_OnClick)
         button.gwSkinned = true
     end
 
@@ -626,6 +634,7 @@ local function InitStrip(frame, data)
             button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             button:SetScript("OnEnter", Reward_OnEnter)
             button:SetScript("OnLeave", GameTooltip_Hide)
+            button:SetScript("OnClick", Reward_OnClick)
             frame.icons[index] = button
         end
         button.elementData = entry
@@ -792,7 +801,8 @@ local function UpcomingSpellsFrameOnShow(self)
     RefreshRewardList(self)
     self.ScrollBox:ScrollToBegin()
 
-    PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
+    -- achievements and their sound only exist from wrath on
+    PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN or SOUNDKIT.IG_SPELLBOOK_OPEN)
     self.animationValue = -400
     local start = GetTime()
     GW.AddToAnimation(

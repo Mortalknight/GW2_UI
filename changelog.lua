@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.7", {
+    {GW.Enum.ChangelogType.change, [=[Upcoming level rewards: Shift-click links a spell in the chat; the window plays its opening sound on TBC too]=]},
     {GW.Enum.ChangelogType.bug, [=[Move HUD: sliders like the tracker height sit on their value and keep a typed value; Shift-click selects the frame that comes up front with all its options]=]},
     {GW.Enum.ChangelogType.bug, [=[Text designer: "Hide At Zero" for power also works on Forever and Retail in every mode with the current value]=]},
     {GW.Enum.ChangelogType.change, [=[Quest log: "Abandon Quest" in red like in the tracker; group finder: the delist button in our look]=]},
