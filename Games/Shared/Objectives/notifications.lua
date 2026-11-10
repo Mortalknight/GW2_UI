@@ -217,6 +217,11 @@ local function getNearestQuestPOIRetail()
                 isFrequent = block.isFrequency
                 break
             end
+            block = GW.ObjectiveTrackerContainer.Dungeon and GW.ObjectiveTrackerContainer.Dungeon.blocks[i]
+            if block and block.questID == closestQuestID then
+                isFrequent = block.isFrequency
+                break
+            end
         end
     end
 

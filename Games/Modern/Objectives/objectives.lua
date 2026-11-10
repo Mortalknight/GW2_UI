@@ -33,40 +33,37 @@ GW.IsTopContainerQuest = IsTopContainerQuest
 local TOP_CONTAINER_TITLE = GW.Forever and GW.myLocalizedClass or TRACKER_HEADER_CAMPAIGN_QUESTS
 GW.QuestTrackerTopContainerTitle = TOP_CONTAINER_TITLE
 
+local zoneContext
 local function GetZoneContext()
     local mapID = GW.Location.GetMapID()
-    local zoneMapID, name
+    if zoneContext and mapID and zoneContext.mapID == mapID then
+        return zoneContext
+    end
+
+    local name
     local searchMapID = mapID
     while searchMapID and searchMapID > 0 do
         local info = C_Map.GetMapInfo(searchMapID)
         if not info then break end
         if info.mapType == Enum.UIMapType.Zone then
-            zoneMapID, name = searchMapID, info.name
+            name = info.name
             break
         end
         searchMapID = info.parentMapID
     end
-    zoneMapID = zoneMapID or mapID
-    name = name or GetRealZoneText()
 
-    local questsOnMap = {}
-    if zoneMapID then
-        for _, info in ipairs(C_QuestLog.GetQuestsOnMap(zoneMapID) or {}) do
-            questsOnMap[info.questID] = true
-        end
+    local context = {mapID = mapID, name = name or GetRealZoneText()}
+    if mapID then
+        zoneContext = context
     end
-    return {name = name, questsOnMap = questsOnMap}
+    return context
 end
 
 local function IsZoneQuest(q, zone)
-    if not zone then
+    if not zone or IsTopContainerQuest(q) then
         return false
     end
-    local headerTitle = GetQuestHeaderTitle(q.questID)
-    if headerTitle and not IsTopContainerQuest(q) then
-        return headerTitle == zone.name
-    end
-    return zone.questsOnMap[q.questID] == true
+    return GetQuestHeaderTitle(q.questID) == zone.name
 end
 
 local function IsDungeonQuest(q)
@@ -85,7 +82,7 @@ local function GetQuestContainerKind(q, zone)
 end
 
 local function GetContainerQuestColorKey(container, q, questID, isFrequency)
-    local isCampaignColor = container.containerKind == "Campaign" or (container.containerKind ~= "Quests" and IsTopContainerQuest(q))
+    local isCampaignColor = container.containerKind == "Campaign" or (container.containerKind == "Dungeon" and IsTopContainerQuest(q))
     return GW.GetQuestColorKey(questID, isCampaignColor, isFrequency)
 end
 
