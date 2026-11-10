@@ -164,38 +164,48 @@ local function getNearestQuestPOIRetail()
         return nil
     end
 
-    local closestQuestID, isWQ, focusedX, focusedY = GetFocusedQuestPOI()
-    if closestQuestID then
-        poiX, poiY = focusedX, focusedY
-    else
-        local minDistSqr = math.huge
-        isWQ = false
+    local closestQuestID, isWQ = nil, false
+    local minDistSqr = math.huge
 
-        for i = 1, numTrackedWQ do
-            local questID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
-            local dist = questID and C_QuestLog.GetDistanceSqToQuest(questID)
-            if dist and dist <= minDistSqr then
-                minDistSqr, closestQuestID, isWQ = dist, questID, true
-            end
+    for i = 1, numTrackedWQ do
+        local questID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
+        local dist = questID and C_QuestLog.GetDistanceSqToQuest(questID)
+        if dist and dist <= minDistSqr then
+            minDistSqr, closestQuestID, isWQ = dist, questID, true
         end
+    end
 
-        if not closestQuestID then
-            for questLogIndex = 1, numQuests do
-                local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
-                local questData = GW.QuestCache:Get(questID)
-                local isOnMap, hasLocalPOI = questData:IsOnMap()
-                if isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
-                    local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
-                    if onContinent and dist and dist <= minDistSqr then
-                        minDistSqr, closestQuestID = dist, questID
-                    end
+    if closestQuestID then
+        poiX, poiY = ResolveQuestPOI(closestQuestID, true)
+        if not poiX then
+            closestQuestID, isWQ = nil, false
+        end
+    end
+
+    if not closestQuestID then
+        local focusedQuestID, focusedIsWQ, focusedX, focusedY = GetFocusedQuestPOI()
+        if focusedQuestID then
+            closestQuestID, isWQ, poiX, poiY = focusedQuestID, focusedIsWQ, focusedX, focusedY
+        end
+    end
+
+    if not closestQuestID then
+        minDistSqr = math.huge
+        for questLogIndex = 1, numQuests do
+            local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
+            local questData = GW.QuestCache:Get(questID)
+            local isOnMap, hasLocalPOI = questData:IsOnMap()
+            if isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
+                local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+                if onContinent and dist and dist <= minDistSqr then
+                    minDistSqr, closestQuestID = dist, questID
                 end
             end
         end
 
         if not closestQuestID then return nil end
 
-        poiX, poiY = ResolveQuestPOI(closestQuestID, isWQ)
+        poiX, poiY = ResolveQuestPOI(closestQuestID, false)
     end
 
     if not poiX then return nil end
