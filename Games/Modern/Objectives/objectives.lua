@@ -33,25 +33,39 @@ GW.IsTopContainerQuest = IsTopContainerQuest
 local TOP_CONTAINER_TITLE = GW.Forever and GW.myLocalizedClass or TRACKER_HEADER_CAMPAIGN_QUESTS
 GW.QuestTrackerTopContainerTitle = TOP_CONTAINER_TITLE
 
-local function GetCurrentZoneName()
+local function GetZoneContext()
     local mapID = GW.Location.GetMapID()
-    while mapID and mapID > 0 do
-        local info = C_Map.GetMapInfo(mapID)
+    local zoneMapID, name
+    local searchMapID = mapID
+    while searchMapID and searchMapID > 0 do
+        local info = C_Map.GetMapInfo(searchMapID)
         if not info then break end
         if info.mapType == Enum.UIMapType.Zone then
-            return info.name
+            zoneMapID, name = searchMapID, info.name
+            break
         end
-        mapID = info.parentMapID
+        searchMapID = info.parentMapID
     end
-    return GetRealZoneText()
+    zoneMapID = zoneMapID or mapID
+    name = name or GetRealZoneText()
+
+    local questsOnMap = {}
+    if zoneMapID then
+        for _, info in ipairs(C_QuestLog.GetQuestsOnMap(zoneMapID) or {}) do
+            questsOnMap[info.questID] = true
+        end
+    end
+    return {name = name, questsOnMap = questsOnMap}
 end
 
-local function IsZoneQuest(q, zoneName)
-    if zoneName and zoneName ~= "" and GetQuestHeaderTitle(q.questID) == zoneName then
+local function IsZoneQuest(q, zone)
+    if not zone then
+        return false
+    end
+    if zone.name and zone.name ~= "" and GetQuestHeaderTitle(q.questID) == zone.name then
         return true
     end
-    local isOnMap, hasLocalPOI = q:IsOnMap()
-    return isOnMap and hasLocalPOI
+    return zone.questsOnMap[q.questID] == true
 end
 
 local function IsDungeonQuest(q)
@@ -59,11 +73,11 @@ local function IsDungeonQuest(q)
     return tagID == Enum.QuestTag.Dungeon or tagID == Enum.QuestTag.Heroic
 end
 
-local function GetQuestContainerKind(q, zoneName)
+local function GetQuestContainerKind(q, zone)
     if GW.settings.objectives.dungeonQuests and IsDungeonQuest(q) then
         return "Dungeon"
     end
-    if GW.settings.objectives.zoneQuests and IsZoneQuest(q, zoneName) then
+    if GW.settings.objectives.zoneQuests and IsZoneQuest(q, zone) then
         return "Zone"
     end
     return IsTopContainerQuest(q) and "Campaign" or "Quests"
@@ -78,12 +92,12 @@ local function GetContainerQuestColorKey(container, q, questID, isFrequency)
     return GW.GetQuestColorKey(questID, container.containerKind == "Campaign", isFrequency)
 end
 
-local function GetContainerHeaderTitle(container, zoneName)
+local function GetContainerHeaderTitle(container, zone)
     if container.containerKind == "Dungeon" then
         return GW.L["Dungeon Quests"]
     end
     if container.containerKind == "Zone" then
-        return zoneName and zoneName ~= "" and zoneName or GW.L["Zone Quests"]
+        return zone and zone.name and zone.name ~= "" and zone.name or GW.L["Zone Quests"]
     end
     return container.containerKind == "Campaign" and TOP_CONTAINER_TITLE or TRACKER_HEADER_QUESTS
 end
@@ -575,7 +589,7 @@ function GwQuestLogMixin:UpdateLayout()
         self.header:Hide()
     end
 
-    local zoneName = GW.settings.objectives.zoneQuests and GetCurrentZoneName() or nil
+    local zone = GW.settings.objectives.zoneQuests and GetZoneContext() or nil
 
     local numQuests = C_QuestLog.GetNumQuestWatches()
     for i = 1, numQuests do
@@ -611,7 +625,7 @@ function GwQuestLogMixin:UpdateLayout()
     for _, curQuestId in ipairs(watchedQuestIDs) do
         if curQuestId then
             local q = GW.QuestCache:Get(curQuestId)
-            local kind = GetQuestContainerKind(q, zoneName)
+            local kind = GetQuestContainerKind(q, zone)
             if kind == self.containerKind then
                 if shouldShowHeader then
                     self.header:Show()
@@ -676,7 +690,7 @@ function GwQuestLogMixin:UpdateLayout()
     self:LayoutBlocks(counterQuest)
 
     local headerCounterText = " (" .. counterQuest .. ")"
-    self.header.title:SetText(GetContainerHeaderTitle(self, zoneName) .. headerCounterText)
+    self.header.title:SetText(GetContainerHeaderTitle(self, zone) .. headerCounterText)
 
     self.isUpdating = false
 end
@@ -696,8 +710,8 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
 
     local questWatchId = self:GetQuestWatchId(questID)
     local q = GW.QuestCache:Get(questID)
-    local zoneName = GW.settings.objectives.zoneQuests and GetCurrentZoneName() or nil
-    if self.collapsed or GetQuestContainerKind(q, zoneName) ~= self.containerKind or questWatchId == nil or not questWatchId then
+    local zone = GW.settings.objectives.zoneQuests and GetZoneContext() or nil
+    if self.collapsed or GetQuestContainerKind(q, zone) ~= self.containerKind or questWatchId == nil or not questWatchId then
         self.isUpdating = false
         return
     end
@@ -731,7 +745,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
     self.numQuests = counterQuest
 
     local headerCounterText = " (" .. counterQuest .. ")"
-    self.header.title:SetText(GetContainerHeaderTitle(self, zoneName) .. headerCounterText)
+    self.header.title:SetText(GetContainerHeaderTitle(self, zone) .. headerCounterText)
 
     if block and block.hasItem then
         GW.CombatQueue:Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
