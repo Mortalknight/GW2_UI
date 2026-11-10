@@ -321,7 +321,9 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, 
         self:GetScript("OnEnter")(self)
     else
         self.Header:SetTextColor(self.color.r, self.color.g, self.color.b)
-        self:GetScript("OnLeave")(self)
+        if not self:IsMouseOver() then
+            self:GetScript("OnLeave")(self)
+        end
     end
 
     self:UpdateSuperTrackButton(isSuperTracked, self.gwColorKey)
