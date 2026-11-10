@@ -105,14 +105,27 @@ local function LoadGeneralGridSettings(panel)
     return general
 end
 
--- NOTE 12.1: the private aura options were removed — the anchor system no longer
--- exists, private auras render as normal secret debuffs through the containers
+-- the party page depends on a virtual condition (PARTY_GRID_ACTIVE), no setting of its own
+local function IsDependenceOn(key)
+    local virtual = GW.SettingsVirtualConditions[key]
+    if virtual then
+        return virtual.get() == true
+    end
+    return GW.GetSetting(key) == true
+end
+
+-- the filters are a multiselect table, the proxy can only set single entries
+local function ResetAuraFilter(db)
+    GW.SetSetting(db, CopyTable(GW.GetSettingDefault(db)))
+    GW.updateSettingsFrameSettingsValue(db, nil, false)
+end
+
 local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showBuffs, showDebuffs, dependence)
     if GW.isModern then
         panel:AddOptionNote(L["Every selected filter narrows the display further - only auras matching all selected filters are shown. No selection shows everything."]
             .. "\n" .. L["Clicking an entry cycles through three states: off (ignored) - check (only auras with this property are shown) - red cross (auras with this property are hidden)."]
             .. "\n" .. L["Important and dispellable debuffs always render through their own scaled groups, no matter what is selected here."], {
-            isVisible = function() return GW.settings.groupFrames.enabled == true and GW.GetSetting(dependence) == true and (GW.GetSetting(showBuffs) == true or GW.GetSetting(showDebuffs) == true) end,
+            isVisible = function() return GW.settings.groupFrames.enabled == true and IsDependenceOn(dependence) and (GW.GetSetting(showBuffs) == true or GW.GetSetting(showDebuffs) == true) end,
             group = "gridAuraFilterNote",
         })
     end
@@ -120,10 +133,12 @@ local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showBuf
     panel:AddGroupHeader(L["Buffs"])
 
     panel:AddOption(SHOW_BUFFS, nil, {getterSetter = showBuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["groupFrames.enabled"] = true, [dependence] = true}, groupHeaderName = L["Buffs"]})
+    panel:AddOptionButton(RESET_TO_DEFAULT, L["Resets the filter to its default: no selection, all auras are shown."], {callback = function() ResetAuraFilter(buffDb) GW.UpdateGridSettings(profile) end, isPassiveButton = true, dependence = {["groupFrames.enabled"] = true, [dependence] = true, [showBuffs] = true}, groupHeaderName = L["Buffs"], hidden = not GW.isModern})
     panel:AddOptionDropdown(L["Buffs"], L["Every selected filter narrows the display further - only auras matching all selected filters are shown. No selection shows everything."], {getterSetter = buffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, triState = true, dependence = {["groupFrames.enabled"] = true, [dependence] = true, [showBuffs] = true}, groupHeaderName = L["Buffs"], hidden = not GW.isModern})
 
     panel:AddGroupHeader(L["Debuffs"])
     panel:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = showDebuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["groupFrames.enabled"] = true, [dependence] = true}, groupHeaderName = L["Debuffs"]})
+    panel:AddOptionButton(RESET_TO_DEFAULT, L["Resets the filter to its default: no selection, all auras are shown."], {callback = function() ResetAuraFilter(debuffDb) GW.UpdateGridSettings(profile) end, isPassiveButton = true, dependence = {["groupFrames.enabled"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.isModern})
     panel:AddOptionDropdown(L["Debuffs"], L["Every selected filter narrows the display further - only auras matching all selected filters are shown. No selection shows everything."], {getterSetter = debuffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, triState = true, dependence = {["groupFrames.enabled"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.isModern})
 end
 

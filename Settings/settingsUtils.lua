@@ -352,6 +352,7 @@ local function CreateOption(optionType, panel, name, desc, values)
         optionUpdateFunc = values.optionUpdateFunc,
         isMasterToggle = values.isMasterToggle,
         isNegativeButton = values.isNegativeButton,
+        isPassiveButton = values.isPassiveButton, -- a small, faint negative button at the end of the cell for side actions like a reset
         previewFunc = values.previewFunc, -- a play button at the right edge of the row runs it
 
         getter = values.getter, --for addons
@@ -619,6 +620,9 @@ local function setDependenciesOption(of, SetEnable, deactivateColor, overrideCol
             of.dropDown.Text:SetTextColor(unpack(inputColor))
         end
     elseif type == "button" then
+        if of.passiveButton then
+            of.passiveButton:SetEnabled(enabled)
+        end
         if enabled then
             of:Enable()
             of.title:SetTextColor(0, 0, 0)
@@ -2144,6 +2148,31 @@ local function SettingsInitOptionWidget(of, v, panel)
         end)
         if v.isNegativeButton then
             of:GwSkinNegativeButton()
+        elseif v.isPassiveButton then
+            -- a small button at the end of its cell, in line with the dropdowns, the cell itself takes no mouse
+            of:GwStripTextures()
+            of:EnableMouse(false)
+            of.title:Hide()
+            local passive = CreateFrame("Button", nil, of, "GwStandardButton")
+            passive:SetText(v.name)
+            passive:SetSize(passive:GetFontString():GetStringWidth() + 24, 22)
+            passive:SetPoint("RIGHT", of, "RIGHT", -10, 0)
+            passive:SetScript("OnClick", function() of:Click() end)
+            passive:SetScript("OnEnter", of:GetScript("OnEnter"))
+            passive:SetScript("OnLeave", GameTooltip_Hide)
+
+            -- only a faint negative tint, it lights up on hover
+            local fill = passive:GetNormalTexture()
+            local negative = GW.Colors.SkinColors.Negative
+            local function SetLit(lit)
+                fill:SetAlpha(lit and 0.35 or 0.12)
+                passive:GetFontString():SetTextColor(negative.r, negative.g, negative.b, lit and 1 or 0.75)
+            end
+            fill:SetVertexColor(negative:GetRGB())
+            SetLit(false)
+            passive:HookScript("OnEnter", function(self) if self:IsEnabled() then SetLit(true) end end)
+            passive:HookScript("OnLeave", function() SetLit(false) end)
+            of.passiveButton = passive
         else
             of.title:SetTextColor(0, 0, 0)
         end
