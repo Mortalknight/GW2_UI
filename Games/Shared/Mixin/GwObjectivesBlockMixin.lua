@@ -79,7 +79,10 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
         self.superTrackButton:Show()
     end
 
-    if not self.isSuperTracked then
+    if self.isSuperTracked then
+        self.hover:SetAlpha(0.7)
+        self.hover:SetTexCoord(0, 1, 0, 1)
+    else
         GW.AddToAnimation(
             (self.animationName or self:GetDebugName()) .. "hover",
             0,
