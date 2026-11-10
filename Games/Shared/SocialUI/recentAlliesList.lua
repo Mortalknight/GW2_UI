@@ -38,6 +38,10 @@ local function UpdateRecentAllyCardContent(card)
         card.Class:SetText(GW.friendsList.delimiter .. GW.StringWithRGB(classInfo.className, classColor))
     end
 
+    -- blizzard sized name and level for its own texts, ours are shorter or longer; the name keeps blizzards limit
+    card.Name:SetWidth(math.min(card.Name:GetUnboundedStringWidth(), card.Name:GetWidth()))
+    card.Level:SetWidth(card.Level:GetUnboundedStringWidth())
+
     card.Level:ClearAllPoints()
     card.Level:SetPoint("BOTTOMLEFT", card.Name, "BOTTOMRIGHT", 2, 1)
     card.Class:ClearAllPoints()

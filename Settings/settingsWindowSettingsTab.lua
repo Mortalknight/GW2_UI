@@ -761,6 +761,22 @@ local function InitOptionPanel(panel)
     panel.gwVisibilitySignature = VisibilitySignature(panel)
 end
 
+-- the text designers among the hits grow once they are built and with the advanced switch
+local function SearchExtentSignature()
+    local parts = {}
+    local dp = searchPanel.scroll.ScrollBox:GetDataProvider()
+    if dp then
+        for _, item in dp:EnumerateEntireRange() do
+            for _, entry in ipairs({item.left or false, item.right or false}) do
+                if entry and entry.opt.optionType == "tagDesigner" then
+                    parts[#parts + 1] = math.floor(GetOptionRowExtent(entry.opt))
+                end
+            end
+        end
+    end
+    return table.concat(parts, ",")
+end
+
 -- Re-evaluates the isVisible predicates and rebuilds only the panels whose visible set
 -- actually changed. Called from CheckDependencies, i.e. after every settings change.
 local function RefreshConditionalOptions()
@@ -784,9 +800,14 @@ local function RefreshConditionalOptions()
             end
         end
     end
-    -- the search measured a text designer before it was built, its rows follow the new height
-    if changed and SEARCH_ACTIVE and searchPanel then
-        searchPanel.scroll.ScrollBox:FullUpdate(ScrollBoxConstants.UpdateQueued)
+    -- the search measured a text designer before it was built, its rows follow the new height; its own
+    -- signature, the page of the designer may already know that height
+    if SEARCH_ACTIVE and searchPanel then
+        local signature = SearchExtentSignature()
+        if changed or signature ~= searchPanel.gwExtentSignature then
+            searchPanel.gwExtentSignature = signature
+            searchPanel.scroll.ScrollBox:FullUpdate(ScrollBoxConstants.UpdateQueued)
+        end
     end
 end
 GW.RefreshConditionalOptions = RefreshConditionalOptions
