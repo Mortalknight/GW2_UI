@@ -62,8 +62,9 @@ local function IsZoneQuest(q, zone)
     if not zone then
         return false
     end
-    if zone.name and zone.name ~= "" and GetQuestHeaderTitle(q.questID) == zone.name then
-        return true
+    local headerTitle = GetQuestHeaderTitle(q.questID)
+    if headerTitle and not IsTopContainerQuest(q) then
+        return headerTitle == zone.name
     end
     return zone.questsOnMap[q.questID] == true
 end
