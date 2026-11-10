@@ -320,6 +320,7 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, 
         self.Header:SetTextColor(r, g, b)
         self:GetScript("OnEnter")(self)
     else
+        self.Header:SetTextColor(self.color.r, self.color.g, self.color.b)
         self:GetScript("OnLeave")(self)
     end
 
