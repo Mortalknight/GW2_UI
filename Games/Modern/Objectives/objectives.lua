@@ -848,22 +848,10 @@ function GwObjectivesQuestContainerMixin:InitModule()
         self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:GetRGB())
         self.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
         self.header.title:SetText(TOP_CONTAINER_TITLE)
-    elseif self.containerKind == "Dungeon" then
-        self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.DungeonQuest]:GetRGB())
-        self.header.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-objective-white.png")
-        self.header.icon:SetTexCoord(0, 1, 0, 1)
-        self.header.icon:SetVertexColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.DungeonQuest]:GetRGB())
-        self.header.title:SetText(GW.L["Dungeon Quests"])
-    elseif self.containerKind == "Zone" then
-        self.header.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        self.header.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-objective-white.png")
-        self.header.icon:SetTexCoord(0, 1, 0, 1)
-        self.header.icon:SetVertexColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        self.header.title:SetText(GW.L["Zone Quests"])
     else
         self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:GetRGB())
         self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
-        self.header.title:SetText(TRACKER_HEADER_QUESTS)
+        self.header.title:SetText(GetContainerHeaderTitle(self))
     end
 
     self:OnEvent("LOAD")

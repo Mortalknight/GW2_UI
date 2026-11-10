@@ -9,8 +9,8 @@ local function GetObjectiveTrackerModuleOrderOptions()
     local modules = {
         {key = "Achievement", label = ACHIEVEMENTS, color = types.Achievement, load = not (GW.Classic or GW.TBC)},
         {key = "NearlyDone", label = L["Nearly Done"], color = types.Achievement, load = not (GW.Classic or GW.TBC)},
-        {key = "Dungeon", label = L["Dungeon Quests"], color = types.DungeonQuest, load = GW.isModern},
-        {key = "Zone", label = L["Zone Quests"], color = types.ZoneQuest, load = GW.isModern},
+        {key = "Dungeon", label = L["Dungeon Quests"], color = types.Quest, load = GW.isModern},
+        {key = "Zone", label = L["Zone Quests"], color = types.Quest, load = GW.isModern},
         {key = "Campaign", label = GW.QuestTrackerTopContainerTitle or GW.myLocalizedClass, color = types.Campaign, load = true},
         {key = "Quests", label = TRACKER_HEADER_QUESTS or QUESTS_LABEL, color = types.Quest, load = true},
         {key = "Bonus", label = EVENTS_LABEL, color = types.Event, load = GW.isModern},
