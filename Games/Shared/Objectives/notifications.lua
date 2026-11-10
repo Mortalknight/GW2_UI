@@ -18,6 +18,8 @@ local sourceEntries = {}
 local icons = {
     [GW.Enum.ObjectivesNotificationType.Quest] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
     [GW.Enum.ObjectivesNotificationType.PvPQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
+    [GW.Enum.ObjectivesNotificationType.ZoneQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
+    [GW.Enum.ObjectivesNotificationType.DungeonQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
     [GW.Enum.ObjectivesNotificationType.LegendaryQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
     [GW.Enum.ObjectivesNotificationType.ImportantQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
     [GW.Enum.ObjectivesNotificationType.Campaign] = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
@@ -117,6 +119,38 @@ local function getQuestPOIText(questLogIndex)
 end
 
 
+local function ResolveQuestPOI(questID, isWQ)
+    local mapID = GW.Location.GetMapID()
+    if isWQ then
+        local x, y = C_TaskQuest.GetQuestLocation(questID, mapID)
+        if x then
+            return x, y
+        end
+    end
+    for _, info in ipairs(C_QuestLog.GetQuestsOnMap(mapID) or {}) do
+        if info.questID == questID then
+            return info.x, info.y
+        end
+    end
+    return C_QuestLog.GetNextWaypointForMap(questID, mapID)
+end
+
+local function GetFocusedQuestPOI()
+    local questID = C_SuperTrack.GetSuperTrackedQuestID()
+    if not questID or questID == 0 then
+        return nil
+    end
+    if not C_QuestLog.GetLogIndexForQuestID(questID) and not C_QuestLog.IsWorldQuest(questID) then
+        return nil
+    end
+    local isWQ = C_QuestLog.IsWorldQuest(questID)
+    local x, y = ResolveQuestPOI(questID, isWQ)
+    if x and y then
+        return questID, isWQ, x, y
+    end
+    return nil
+end
+
 local function getNearestQuestPOIRetail()
     if not GW.Location.GetMapID() then
         return nil
@@ -132,65 +166,38 @@ local function getNearestQuestPOIRetail()
         return nil
     end
 
-
-    local closestQuestID, minDistSqr, isWQ = nil, math.huge, false
-
-    -- first check for nearest tracker WQ
-    for i = 1, numTrackedWQ do
-        local questID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
-        local dist = questID and C_QuestLog.GetDistanceSqToQuest(questID)
-        if dist and dist <= minDistSqr then
-            minDistSqr, closestQuestID, isWQ = dist, questID, true
-        end
-    end
-
-    if not closestQuestID then
-        local questID = C_SuperTrack.GetSuperTrackedQuestID()
-        if questID then
-            local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
-            if onContinent and dist and dist <= minDistSqr then
-                minDistSqr, closestQuestID = dist, questID
-            else
-                poiX, poiY = C_QuestLog.GetNextWaypointForMap(questID, GW.Location.GetMapID())
-                if poiX and poiY then
-                    closestQuestID = questID
-                end
-            end
-        end
-    end
-
-    -- If nothing with POI data is being tracked expand search to quest log
-    if not closestQuestID then
-        for questLogIndex = 1, numQuests do
-            local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
-            local questData = GW.QuestCache:Get(questID)
-            local isOnMap, hasLocalPOI = questData:IsOnMap()
-            if isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
-                local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
-                if onContinent and dist and dist <= minDistSqr then
-                    minDistSqr, closestQuestID = dist, questID
-                end
-            end
-        end
-    end
-
-    if not closestQuestID then return nil end
-
-    if isWQ then
-        poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.Location.GetMapID())
+    local closestQuestID, isWQ, focusedX, focusedY = GetFocusedQuestPOI()
+    if closestQuestID then
+        poiX, poiY = focusedX, focusedY
     else
-        if not poiX then
-            local questsOnMap = C_QuestLog.GetQuestsOnMap(GW.Location.GetMapID())
-            for _, info in ipairs(questsOnMap or {}) do
-                if info.questID == closestQuestID then
-                    poiX, poiY = info.x, info.y
-                    break
-                end
-            end
-            if not poiX then
-                poiX, poiY = C_QuestLog.GetNextWaypointForMap(closestQuestID, GW.Location.GetMapID())
+        local minDistSqr = math.huge
+        isWQ = false
+
+        for i = 1, numTrackedWQ do
+            local questID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
+            local dist = questID and C_QuestLog.GetDistanceSqToQuest(questID)
+            if dist and dist <= minDistSqr then
+                minDistSqr, closestQuestID, isWQ = dist, questID, true
             end
         end
+
+        if not closestQuestID then
+            for questLogIndex = 1, numQuests do
+                local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
+                local questData = GW.QuestCache:Get(questID)
+                local isOnMap, hasLocalPOI = questData:IsOnMap()
+                if isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
+                    local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+                    if onContinent and dist and dist <= minDistSqr then
+                        minDistSqr, closestQuestID = dist, questID
+                    end
+                end
+            end
+        end
+
+        if not closestQuestID then return nil end
+
+        poiX, poiY = ResolveQuestPOI(closestQuestID, isWQ)
     end
 
     if not poiX then return nil end
@@ -208,6 +215,11 @@ local function getNearestQuestPOIRetail()
                 break
             end
             block = GW.ObjectiveTrackerContainer.Quests.blocks[i]
+            if block and block.questID == closestQuestID then
+                isFrequent = block.isFrequency
+                break
+            end
+            block = GW.ObjectiveTrackerContainer.Zone and GW.ObjectiveTrackerContainer.Zone.blocks[i]
             if block and block.questID == closestQuestID then
                 isFrequent = block.isFrequency
                 break

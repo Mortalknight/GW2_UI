@@ -501,7 +501,7 @@ local function RunOrQueue(key, func, args)
 end
 
 function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
-    for _, container in next, { GW.ObjectiveTrackerContainer.Campaign, GW.ObjectiveTrackerContainer.Quests, GW.ObjectiveTrackerContainer.Bonus } do
+    for _, container in next, { GW.ObjectiveTrackerContainer.Dungeon, GW.ObjectiveTrackerContainer.Zone, GW.ObjectiveTrackerContainer.Campaign, GW.ObjectiveTrackerContainer.Quests, GW.ObjectiveTrackerContainer.Bonus } do
         for i = 1, #container.blocks do
             local block = container.blocks[i]
             local counter = container.numQuests or container.numEvents or 0
@@ -682,6 +682,8 @@ local function LoadObjectivesTracker()
         { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enum = GW.Enum.ObjectivesBlockType.Scenario, load = not (GW.Classic or GW.TBC) },
         { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enum = GW.Enum.ObjectivesBlockType.Achievement, load = not (GW.Classic or GW.TBC) },
         { name = "GwQuesttrackerContainerNearlyDone", scrollable = true, mixin = GwObjectivesNearlyDoneContainerMixin, enum = GW.Enum.ObjectivesBlockType.NearlyDone, load = not (GW.Classic or GW.TBC) },
+        { name = "GwQuesttrackerContainerDungeon", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enum = GW.Enum.ObjectivesBlockType.Dungeon, load = GW.isModern },
+        { name = "GwQuesttrackerContainerZone", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enum = GW.Enum.ObjectivesBlockType.Zone, load = GW.isModern },
         { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enum = GW.Enum.ObjectivesBlockType.Campaign, load = true },
         { name = "GwQuesttrackerContainerQuests", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enum = GW.Enum.ObjectivesBlockType.Quests, load = true },
         { name = "GwQuesttrackerContainerBonus", scrollable = true, mixin = GwBonusObjectivesTrackerContainerMixin, enum = GW.Enum.ObjectivesBlockType.Bonus, load = GW.isModern },
@@ -786,7 +788,9 @@ local function LoadObjectivesTracker()
         GW.ObjectiveTrackerContainer.Scenario,
         GW.ObjectiveTrackerContainer.Achievement,
         GW.ObjectiveTrackerContainer.Quests,
-        GW.ObjectiveTrackerContainer.Campaign
+        GW.ObjectiveTrackerContainer.Campaign,
+        GW.ObjectiveTrackerContainer.Zone,
+        GW.ObjectiveTrackerContainer.Dungeon
     } do
         container.oldHeight = GW.RoundInt(container:GetHeight() or 0.1)
 

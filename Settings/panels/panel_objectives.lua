@@ -9,6 +9,8 @@ local function GetObjectiveTrackerModuleOrderOptions()
     local modules = {
         {key = "Achievement", label = ACHIEVEMENTS, color = types.Achievement, load = not (GW.Classic or GW.TBC)},
         {key = "NearlyDone", label = L["Nearly Done"], color = types.Achievement, load = not (GW.Classic or GW.TBC)},
+        {key = "Dungeon", label = L["Dungeon Quests"], color = types.DungeonQuest, load = GW.isModern},
+        {key = "Zone", label = L["Zone Quests"], color = types.ZoneQuest, load = GW.isModern},
         {key = "Campaign", label = GW.QuestTrackerTopContainerTitle or GW.myLocalizedClass, color = types.Campaign, load = true},
         {key = "Quests", label = TRACKER_HEADER_QUESTS or QUESTS_LABEL, color = types.Quest, load = true},
         {key = "Bonus", label = EVENTS_LABEL, color = types.Event, load = GW.isModern},
@@ -37,6 +39,8 @@ local function UpdateObjectiveTrackerStatusBarSettings()
     for _, container in ipairs({
         GwQuesttrackerContainerQuests,
         GwQuesttrackerContainerCampaign,
+        GwQuesttrackerContainerZone,
+        GwQuesttrackerContainerDungeon,
         GwQuesttrackerContainerAchievement,
         GwQuesttrackerContainerNearlyDone,
         GwQuesttrackerContainerBonus,
@@ -59,6 +63,12 @@ end
 local function UpdateQuestContainers()
     GwQuesttrackerContainerQuests:UpdateLayout()
     GwQuesttrackerContainerCampaign:UpdateLayout()
+    if GwQuesttrackerContainerZone then
+        GwQuesttrackerContainerZone:UpdateLayout()
+    end
+    if GwQuesttrackerContainerDungeon then
+        GwQuesttrackerContainerDungeon:UpdateLayout()
+    end
 end
 
 local function LoadObjectivesPanel(sWindow)
@@ -101,6 +111,8 @@ local function LoadObjectivesPanel(sWindow)
         dependence = {["objectives.enabled"] = true}
     })
     p:AddOption(L["Supertracked Quest to Top"], L["Move the currently supertracked quest to the top of the quest tracker list."], {getterSetter = "objectives.superTrackedOnTop", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["objectives.enabled"] = true}, hidden = not GW.Retail})
+    p:AddOption(L["Show zone quests separately"], L["Show the quests of your current zone in a separate module. Its position is set in the module order list."], {getterSetter = "objectives.zoneQuests", callback = UpdateQuestContainers, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
+    p:AddOption(L["Show dungeon quests separately"], L["Show the dungeon quests of your quest log in a separate module. Its position is set in the module order list."], {getterSetter = "objectives.dungeonQuests", callback = UpdateQuestContainers, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
     p:AddOption(L["Show Completed Objectives"], L["Show completed quest objectives instead of hiding them."], {getterSetter = "objectives.showCompleted", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["objectives.enabled"] = true}})
     p:AddOption(L["Compact Mode"], L["Reduce spacing and font sizes across the Objective Tracker."], {getterSetter = "objectives.compactMode", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["objectives.enabled"] = true}})
     p:AddOptionSlider(L["Objective Spacing"], L["Scales the gaps between objective lines and between quest blocks. Lower values pack them tighter."], {getterSetter = "objectives.spacing", callback = GW.RefreshObjectivesTrackerLayout, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.05, dependence = {["objectives.enabled"] = true}})

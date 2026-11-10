@@ -171,6 +171,8 @@ GW.Colors.ObjectivesTypeColors = {
     [GW.Enum.ObjectivesNotificationType.LegendaryQuest] = CreateColor(255 / 255, 128 / 255, 0 / 255),
     [GW.Enum.ObjectivesNotificationType.ImportantQuest] = CreateColor(186 / 255, 96 / 255, 240 / 255),
     [GW.Enum.ObjectivesNotificationType.PvPQuest] = CreateColor(230 / 255, 90 / 255, 75 / 255),
+    [GW.Enum.ObjectivesNotificationType.ZoneQuest] = GW.Colors.TextColors.LightHeader,
+    [GW.Enum.ObjectivesNotificationType.DungeonQuest] = CreateColor(60 / 255, 200 / 255, 190 / 255),
 }
 
 -- experience bar colors, the tooltip marks its lines with them
