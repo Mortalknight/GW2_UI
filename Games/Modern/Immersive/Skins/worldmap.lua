@@ -371,6 +371,14 @@ local function worldMapSkin()
     hooksecurefunc(QuestSessionManager, "NotifyDialogShow", hook_NotifyDialogShow)
     hooksecurefunc("QuestLogQuests_Update", hook_QuestLogQuests_Update)
 
+    Menu.ModifyMenu("MENU_QUEST_MAP_LOG_TITLE", function(_, rootDescription)
+        for _, description in rootDescription:EnumerateElementDescriptions() do
+            if MenuUtil.GetElementText(description) == ABANDON_QUEST then
+                GW.SetMenuEntryNegative(description)
+            end
+        end
+    end)
+
     -- Addons
     if _G["AtlasLootToggleFromWorldMap2"] then
         local button = _G["AtlasLootToggleFromWorldMap2"]

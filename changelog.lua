@@ -14,6 +14,9 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.7", {
+    {GW.Enum.ChangelogType.bug, [=[Move HUD: sliders like the tracker height sit on their value and keep a typed value; Shift-click selects the frame that comes up front with all its options]=]},
+    {GW.Enum.ChangelogType.bug, [=[Text designer: "Hide At Zero" for power also works on Forever and Retail in every mode with the current value]=]},
+    {GW.Enum.ChangelogType.change, [=[Quest log: "Abandon Quest" in red like in the tracker; group finder: the delist button in our look]=]},
     {GW.Enum.ChangelogType.feature, [=[Totem selection bar (shaman): own settings page to turn it off and set button size and spacing; its mover no longer disappears after moving; the class totems settings carry their right name]=]},
     {GW.Enum.ChangelogType.feature, [=[Text designer: the health color (red over yellow to green) also on Retail and Forever]=]},
     {GW.Enum.ChangelogType.change, [=[World map: opens faster and remembers where you moved it]=]},

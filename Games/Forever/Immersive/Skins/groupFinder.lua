@@ -65,6 +65,12 @@ local function SkinListRow(row)
         SkinIconButton(row.InviteButton, row.InviteButton.Icon)
         row.InviteButton.Icon:SetDesaturated(true)
     end
+    local delist = row.DataDisplay and row.DataDisplay.DelistButton
+    if delist then
+        delist:GwStripTextures(nil, true)
+        delist:GwSkinButton(true)
+        delist:SetSize(20, 20)
+    end
     -- the groups and players headers of the browse list: an own background, the zebra helper skips them
     if row.CategoryLabel then
         row.gwSkinned = true

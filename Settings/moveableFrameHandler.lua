@@ -250,8 +250,8 @@ end
 WIDGET_SETUP[MoverOptionType.Slider] = function(widget, option)
     widget.title:SetText(option.label)
     widget.slider:SetMinMaxValues(option.min, option.max)
-    widget.slider:SetValueStep(option.step or 0)
-    widget.slider:SetObeyStepOnDrag(option.step ~= nil)
+    widget.slider:SetValueStep(option.step or (10 ^ -(option.decimals or 0)))
+    widget.slider:SetObeyStepOnDrag(true)
     local value = GW.GetSetting(option.setting)
     widget.slider:SetValue(value)
     widget.input:SetText(GW.RoundDec(value, option.decimals or 0))
@@ -759,16 +759,23 @@ local function showExtraOptions(self)
 end
 
 local function SendMoverBehind(self)
+    local front
     for _, mover in ipairs(GW.MOVABLE_FRAMES) do
         if mover ~= self and mover:IsShown() and mover:IsMouseOver() and mover:GetFrameLevel() <= self:GetFrameLevel() then
             mover:SetFrameLevel(self:GetFrameLevel() + 1)
+            front = front or mover
         end
     end
+    return front
 end
 
 local function mover_options(self)
     if IsShiftKeyDown() then
-        SendMoverBehind(self)
+        -- the mover that came up front is selected right away, with its steps and options
+        local front = SendMoverBehind(self)
+        if front and GW.MoveHudScaleableFrame.moverSettingsFrame.childMover ~= front then
+            showExtraOptions(front)
+        end
         return
     end
     if GW.MoveHudScaleableFrame.moverSettingsFrame.childMover == self then

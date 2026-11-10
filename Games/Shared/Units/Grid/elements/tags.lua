@@ -270,12 +270,16 @@ local function Create_Tags()
             if GW.IsSecretValue(role) or role ~= "HEALER" then return end
         end
         local powerType = stringtoboolean[mana] and Enum.PowerType.Mana or nil
-        -- a secret power can not be compared; blizzard leaves a secret zero out, but only as the plain number
+        -- a secret power can not be compared: blizzard leaves a secret zero out as the plain number (TruncateWhenZero),
+        -- WrapString only adds the rest of the text when that number is there; the current value is not shortened then
+        local zeroGate, gated
         if stringtoboolean[hideZero] then
             local power = UnitPower(unit, powerType)
             if GW.IsSecretValue(power) then
+                gated = true
+                zeroGate = C_StringUtil.TruncateWhenZero(power)
                 if mode == "CUR" then
-                    return C_StringUtil.TruncateWhenZero(power)
+                    return zeroGate
                 end
             elseif power == 0 then
                 return
@@ -284,7 +288,11 @@ local function Create_Tags()
         local percent
         if mode == "PREC" or mode == "CURPREC" then
             if GW.isModern then
-                percent = string.format("%.0f%%", UnitPowerPercent(unit, powerType, true, CurveConstants.ScaleTo100))
+                local percentValue = UnitPowerPercent(unit, powerType, true, CurveConstants.ScaleTo100)
+                if gated and mode == "PREC" then
+                    return C_StringUtil.WrapString(C_StringUtil.TruncateWhenZero(percentValue), nil, "%")
+                end
+                percent = string.format("%.0f%%", percentValue)
             else
                 local powerMax = UnitPowerMax(unit, powerType)
                 percent = GW.RoundDec(powerMax > 0 and UnitPower(unit, powerType) / powerMax * 100 or 0, 0) .. "%"
@@ -296,8 +304,14 @@ local function Create_Tags()
         if mode == "MAX" then
             return formatFunc(UnitPowerMax(unit, powerType))
         elseif mode == "CURMAX" then
+            if gated then
+                return C_StringUtil.WrapString(zeroGate, nil, " / " .. formatFunc(UnitPowerMax(unit, powerType)))
+            end
             return formatFunc(UnitPower(unit, powerType)) .. " / " .. formatFunc(UnitPowerMax(unit, powerType))
         elseif mode == "CURPREC" then
+            if gated then
+                return C_StringUtil.WrapString(zeroGate, nil, " - " .. percent)
+            end
             return formatFunc(UnitPower(unit, powerType)) .. " - " .. percent
         elseif mode == "MISSING" then
             if GW.isModern then
