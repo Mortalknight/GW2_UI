@@ -117,38 +117,6 @@ local function getQuestPOIText(questLogIndex)
 end
 
 
-local function ResolveQuestPOI(questID, isWQ)
-    local mapID = GW.Location.GetMapID()
-    if isWQ then
-        local x, y = C_TaskQuest.GetQuestLocation(questID, mapID)
-        if x then
-            return x, y
-        end
-    end
-    for _, info in ipairs(C_QuestLog.GetQuestsOnMap(mapID) or {}) do
-        if info.questID == questID then
-            return info.x, info.y
-        end
-    end
-    return C_QuestLog.GetNextWaypointForMap(questID, mapID)
-end
-
-local function GetFocusedQuestPOI()
-    local questID = C_SuperTrack.GetSuperTrackedQuestID()
-    if not questID or questID == 0 then
-        return nil
-    end
-    if not C_QuestLog.GetLogIndexForQuestID(questID) and not C_QuestLog.IsWorldQuest(questID) then
-        return nil
-    end
-    local isWQ = C_QuestLog.IsWorldQuest(questID)
-    local x, y = ResolveQuestPOI(questID, isWQ)
-    if x and y then
-        return questID, isWQ, x, y
-    end
-    return nil
-end
-
 local function getNearestQuestPOIRetail()
     if not GW.Location.GetMapID() then
         return nil
@@ -164,9 +132,10 @@ local function getNearestQuestPOIRetail()
         return nil
     end
 
-    local closestQuestID, isWQ = nil, false
-    local minDistSqr = math.huge
 
+    local closestQuestID, minDistSqr, isWQ = nil, math.huge, false
+
+    -- first check for nearest tracker WQ
     for i = 1, numTrackedWQ do
         local questID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
         local dist = questID and C_QuestLog.GetDistanceSqToQuest(questID)
@@ -175,22 +144,23 @@ local function getNearestQuestPOIRetail()
         end
     end
 
-    if closestQuestID then
-        poiX, poiY = ResolveQuestPOI(closestQuestID, true)
-        if not poiX then
-            closestQuestID, isWQ = nil, false
+    if not closestQuestID then
+        local questID = C_SuperTrack.GetSuperTrackedQuestID()
+        if questID then
+            local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+            if onContinent and dist and dist <= minDistSqr then
+                minDistSqr, closestQuestID = dist, questID
+            else
+                poiX, poiY = C_QuestLog.GetNextWaypointForMap(questID, GW.Location.GetMapID())
+                if poiX and poiY then
+                    closestQuestID = questID
+                end
+            end
         end
     end
 
+    -- If nothing with POI data is being tracked expand search to quest log
     if not closestQuestID then
-        local focusedQuestID, focusedIsWQ, focusedX, focusedY = GetFocusedQuestPOI()
-        if focusedQuestID then
-            closestQuestID, isWQ, poiX, poiY = focusedQuestID, focusedIsWQ, focusedX, focusedY
-        end
-    end
-
-    if not closestQuestID then
-        minDistSqr = math.huge
         for questLogIndex = 1, numQuests do
             local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
             local questData = GW.QuestCache:Get(questID)
@@ -202,10 +172,25 @@ local function getNearestQuestPOIRetail()
                 end
             end
         end
+    end
 
-        if not closestQuestID then return nil end
+    if not closestQuestID then return nil end
 
-        poiX, poiY = ResolveQuestPOI(closestQuestID, false)
+    if isWQ then
+        poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.Location.GetMapID())
+    else
+        if not poiX then
+            local questsOnMap = C_QuestLog.GetQuestsOnMap(GW.Location.GetMapID())
+            for _, info in ipairs(questsOnMap or {}) do
+                if info.questID == closestQuestID then
+                    poiX, poiY = info.x, info.y
+                    break
+                end
+            end
+            if not poiX then
+                poiX, poiY = C_QuestLog.GetNextWaypointForMap(closestQuestID, GW.Location.GetMapID())
+            end
+        end
     end
 
     if not poiX then return nil end
