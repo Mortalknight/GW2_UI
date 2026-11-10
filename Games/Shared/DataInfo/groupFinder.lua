@@ -25,34 +25,53 @@ local function SectionHeader(state, title)
     state.open = true
 end
 
-local function AddLfgQueueLines(state, title, categoryNames)
+local function ForEachLfgQueue(categoryNames, func)
     if not (GetLFGMode and GetLFGQueueStats) then return end
     for _, name in ipairs(categoryNames) do
         local category = _G[name]
         if category and GetLFGMode(category) == "queued" then
             local hasData, _, _, _, _, _, _, _, _, _, instanceName, averageWait, _, _, _, myWait, queuedTime = GetLFGQueueStats(category)
-            SectionHeader(state, title)
             local waited = queuedTime and (GetTime() - queuedTime) or 0
-            AddQueueLine(hasData and instanceName or LFG_TITLE, waited, (myWait and myWait > 0) and myWait or averageWait)
+            func(hasData and instanceName or LFG_TITLE, waited, (myWait and myWait > 0) and myWait or averageWait)
         end
     end
 end
 
-local function AddBattlefieldQueueLines(state, title)
+local function ForEachBattlefieldQueue(func)
     if not (GetBattlefieldStatus and GetMaxBattlefieldID) then return end
     for i = 1, GetMaxBattlefieldID() do
         local status, mapName = GetBattlefieldStatus(i)
         if status == "queued" or status == "confirm" then
-            SectionHeader(state, title)
             local waited = GetBattlefieldTimeWaited and (GetBattlefieldTimeWaited(i) or 0) / 1000 or 0
             local estimated = GetBattlefieldEstimatedWaitTime and (GetBattlefieldEstimatedWaitTime(i) or 0) / 1000 or 0
             local name = mapName or BATTLEGROUND
             if status == "confirm" then
                 name = name .. " |cff00ff00(" .. (BATTLEFIELD_QUEUE_CONFIRM or READY) .. ")|r"
             end
-            AddQueueLine(name, waited, estimated)
+            func(name, waited, estimated)
         end
     end
+end
+
+-- every running queue with its name, the waited and the estimated seconds; the afk screen shows them too
+function GW.ForEachGroupQueue(func)
+    ForEachLfgQueue(PVE_CATEGORIES, func)
+    ForEachLfgQueue(PVP_CATEGORIES, func)
+    ForEachBattlefieldQueue(func)
+end
+
+local function AddLfgQueueLines(state, title, categoryNames)
+    ForEachLfgQueue(categoryNames, function(name, waited, estimated)
+        SectionHeader(state, title)
+        AddQueueLine(name, waited, estimated)
+    end)
+end
+
+local function AddBattlefieldQueueLines(state, title)
+    ForEachBattlefieldQueue(function(name, waited, estimated)
+        SectionHeader(state, title)
+        AddQueueLine(name, waited, estimated)
+    end)
 end
 
 local function AddMythicPlusLines(state, title)

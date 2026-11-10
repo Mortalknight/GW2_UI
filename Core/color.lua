@@ -82,6 +82,7 @@ GW.Colors.SkinColors = {
     MapBadge = CreateColor(0, 0, 0, 0.6), -- the dark disc behind a badge on the world map
     RowShade = CreateColor(0, 0, 0, 0.6), -- the dark start of a row background that fades out to the right
     ListHeader = CreateColor(0, 0, 0, 0.5), -- the even band behind a header of a list, the art behind must not show through
+    AfkShade = CreateColor(0, 0, 0, 0.6), -- the dark band behind the chat and the logout bar of the afk screen
 }
 
 -- the coin amounts of our bag money
