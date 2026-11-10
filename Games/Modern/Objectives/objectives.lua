@@ -85,12 +85,8 @@ local function GetQuestContainerKind(q, zone)
 end
 
 local function GetContainerQuestColorKey(container, q, questID, isFrequency)
-    if container.containerKind == "Zone" then
-        return GW.Enum.ObjectivesNotificationType.ZoneQuest
-    elseif container.containerKind == "Dungeon" then
-        return GW.Enum.ObjectivesNotificationType.DungeonQuest
-    end
-    return GW.GetQuestColorKey(questID, container.containerKind == "Campaign", isFrequency)
+    local isCampaignColor = container.containerKind == "Campaign" or (container.containerKind ~= "Quests" and IsTopContainerQuest(q))
+    return GW.GetQuestColorKey(questID, isCampaignColor, isFrequency)
 end
 
 local function GetContainerHeaderTitle(container, zone)

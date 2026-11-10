@@ -18,8 +18,6 @@ local sourceEntries = {}
 local icons = {
     [GW.Enum.ObjectivesNotificationType.Quest] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
     [GW.Enum.ObjectivesNotificationType.PvPQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
-    [GW.Enum.ObjectivesNotificationType.ZoneQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
-    [GW.Enum.ObjectivesNotificationType.DungeonQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
     [GW.Enum.ObjectivesNotificationType.LegendaryQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
     [GW.Enum.ObjectivesNotificationType.ImportantQuest] = {tex = "icon-objective-white", l = 0, r = 1, t = 0, b = 1, tint = true},
     [GW.Enum.ObjectivesNotificationType.Campaign] = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
