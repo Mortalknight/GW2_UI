@@ -110,6 +110,7 @@ local function UpdateZone()
     C_Timer.After(0.1, function()
         state.mapID = C_Map.GetBestMapForUnit("player")
         UpdateCoords()
+        EventRegistry:TriggerEvent("GW2_UI.PlayerLocationChanged", state.mapID)
     end)
     state.instanceMapID = select(8, GetInstanceInfo())
     state.zoneText = GetRealZoneText() or UNKNOWN

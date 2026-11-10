@@ -397,13 +397,6 @@ GwQuestLogMixin = {}
 function GwQuestLogMixin:OnEvent(event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
-    if event == "ZONE_CHANGED_NEW_AREA" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" then
-        if GW.settings.objectives.zoneQuests then
-            self:QueueUpdateLayout()
-        end
-        return
-    end
-
     if event == "QUEST_LOG_UPDATE" then
         self:QueueUpdateLayout()
     elseif event == "QUEST_ACCEPTED" then
@@ -820,9 +813,11 @@ function GwObjectivesQuestContainerMixin:InitModule()
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:RegisterEvent("SUPER_TRACKING_CHANGED")
     self:RegisterEvent("QUEST_POI_UPDATE")
-    self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    self:RegisterEvent("ZONE_CHANGED")
-    self:RegisterEvent("ZONE_CHANGED_INDOORS")
+    EventRegistry:RegisterCallback("GW2_UI.PlayerLocationChanged", function()
+        if GW.settings.objectives.zoneQuests then
+            self:QueueUpdateLayout()
+        end
+    end, self)
     self.watchMoneyReasons = 0
     self.containerKind = self:GetName():match("^GwQuesttrackerContainer(.+)$")
     self.isCampaignContainer = self.containerKind == "Campaign"
