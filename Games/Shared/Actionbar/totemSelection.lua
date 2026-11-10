@@ -98,51 +98,90 @@ end
 
 -- the flyout buttons are created when the flyout opens the first time; blizzard sets their icon coords on every open,
 -- the empty slot entry keeps its own
+-- blizzards flyout is sized for its 30 buttons (24 entries in a 32 wide frame, 4 below, 2 between, the close
+-- button on top), it follows our button size; blizzard sums its height before this runs, so it is set here again
 local function OnToggleFlyout(flyout, flyoutType, parent)
     local color = flyoutType == "slot" and GetElementColor(parent:GetID()) or nil
+    local entrySize = GW.settings.totemSelection.buttonSize - 6
+    local numShown = 0
     for i, button in ipairs(flyout.buttons or {}) do
         SkinButton(button, nil)
         if not (flyoutType == "slot" and i == 1) then
             button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         end
         SetBorderColor(button, color)
+        button:SetSize(entrySize, entrySize)
+        if button:IsShown() then
+            numShown = numShown + 1
+        end
+    end
+    flyout:SetWidth(entrySize + 8)
+    if numShown > 0 then
+        flyout:SetHeight(4 + numShown * entrySize + (numShown - 1) * 2 + 2 + 18)
     end
 end
 
-local SPACING = 8
+-- the bar is secret, its own sizes are not readable as numbers; size and spacing come from our settings
 local function LayoutBar()
     if InCombatLockdown() then
         GW.CombatQueue:Queue("GwTotemSelectionLayout", LayoutBar)
         return
     end
 
+    local size, spacing = GW.settings.totemSelection.buttonSize, GW.settings.totemSelection.spacing
     local summon, recall = MultiCastSummonSpellButton, MultiCastRecallSpellButton
     local numSlots = MultiCastActionBarFrame.numActiveSlots or 0
-    local slotWidth = MultiCastSlotButton1:GetWidth()
+
+    summon:SetSize(size, size)
+    recall:SetSize(size, size)
+    for i = 1, NUM_MULTI_CAST_BUTTONS_PER_PAGE do
+        local slot = _G["MultiCastSlotButton" .. i]
+        slot:SetSize(size, size)
+        if i > 1 then
+            slot:ClearAllPoints()
+            slot:SetPoint("LEFT", _G["MultiCastSlotButton" .. (i - 1)], "RIGHT", spacing, 0)
+        end
+        -- the action buttons of every page lie on their slot
+        for page = 1, NUM_MULTI_CAST_PAGES do
+            local button = _G["MultiCastActionButton" .. ((page - 1) * NUM_MULTI_CAST_BUTTONS_PER_PAGE + i)]
+            button:SetSize(size, size)
+            button:ClearAllPoints()
+            button:SetPoint("CENTER", slot, "CENTER")
+        end
+    end
 
     local x = 3
     summon:ClearAllPoints()
     summon:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", x, 3)
     if summon:IsShown() then
-        x = x + summon:GetWidth() + SPACING
+        x = x + size + spacing
     end
     for _, child in ipairs({MultiCastSlotButton1, MultiCastActionPage1, MultiCastActionPage2, MultiCastActionPage3}) do
         child:ClearAllPoints()
         child:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", x, 3)
     end
     if numSlots > 0 then
-        x = x + numSlots * slotWidth + (numSlots - 1) * SPACING
+        x = x + numSlots * size + (numSlots - 1) * spacing
     end
 
     if numSlots > 0 then
         recall:ClearAllPoints()
-        recall:SetPoint("LEFT", _G["MultiCastSlotButton" .. numSlots], "RIGHT", SPACING, 0)
+        recall:SetPoint("LEFT", _G["MultiCastSlotButton" .. numSlots], "RIGHT", spacing, 0)
         if recall:IsShown() then
-            x = x + SPACING + recall:GetWidth()
+            x = x + spacing + size
         end
     end
 
-    holder:SetSize(math.max(x + 3, slotWidth + 6), MultiCastActionBarFrame:GetHeight())
+    holder:SetSize(math.max(x + 3, size + 6), size + 8)
+end
+
+local function UpdateVisibility()
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("GwTotemSelectionVisibility", UpdateVisibility)
+        return
+    end
+    -- on wrath the bar went with the main menu bar, that hides in vehicles
+    RegisterStateDriver(holder, "visibility", GW.settings.totemSelection.enabled and "[overridebar][vehicleui][petbattle] hide; show" or "hide")
 end
 
 function GW.LoadTotemSelectionBar()
@@ -163,12 +202,13 @@ function GW.LoadTotemSelectionBar()
     end
 
     holder = CreateFrame("Frame", "GwTotemSelectionBar", UIParent)
-    holder:SetSize(bar:GetSize())
-    GW.RegisterMovableFrame(holder, HUD_EDIT_MODE_TOTEM_ACTION_BAR_LABEL or GW.L["Totem Bar"], "totemSelection", BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale})
+    holder:SetSize(GW.settings.totemSelection.buttonSize + 6, GW.settings.totemSelection.buttonSize + 8)
+    holder.UpdateLayout = LayoutBar
+    holder.UpdateVisibility = UpdateVisibility
+    GW.RegisterMovableFrame(holder, GW.L["Totem Selection Bar"], "totemSelection", BINDING_HEADER_ACTIONBAR, nil, {GW.MoverOption.Scale})
     holder:ClearAllPoints()
     holder:SetPoint("TOPLEFT", holder.gwMover)
-    -- on wrath the bar went with the main menu bar, that hides in vehicles
-    RegisterStateDriver(holder, "visibility", "[overridebar][vehicleui][petbattle] hide; show")
+    UpdateVisibility()
 
     -- blizzard moves the bar itself even in combat (bottom bar stack on Forever, the slide on wrath), so like
     -- the multibars only the buttons go into our frame; they anchor to their parent or to each other

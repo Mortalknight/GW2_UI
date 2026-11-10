@@ -66,11 +66,28 @@ local function LoadActionbarPanel(sWindow)
     totemBar.header:SetText(BINDING_HEADER_ACTIONBAR)
     totemBar.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     totemBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    totemBar.sub:SetText(L["Edit the totem bar settings."])
+    totemBar.sub:SetText(L["Edit the class totems settings."])
     totemBar.header:SetWidth(totemBar.header:GetStringWidth())
     totemBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     totemBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    totemBar.breadcrumb:SetText(L["Totem Bar"])
+    totemBar.breadcrumb:SetText(L["Class Totems"])
+
+    -- blizzards totem selection bar, only shamans on the clients that have it
+    local totemSelection
+    if GW.myclass == "SHAMAN" and MultiCastActionBarFrame then
+        totemSelection = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+        totemSelection.panelId = "actionbar_totemselection"
+        totemSelection.header:SetFont(DAMAGE_TEXT_FONT, 20)
+        totemSelection.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        totemSelection.header:SetText(BINDING_HEADER_ACTIONBAR)
+        totemSelection.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        totemSelection.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+        totemSelection.sub:SetText(L["Edit the totem bar settings."])
+        totemSelection.header:SetWidth(totemSelection.header:GetStringWidth())
+        totemSelection.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+        totemSelection.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        totemSelection.breadcrumb:SetText(L["Totem Selection Bar"])
+    end
 
     local barDependence = {["actionbars.enabled"] = true}
     if GW.isModern then
@@ -201,6 +218,17 @@ local function LoadActionbarPanel(sWindow)
         incompatibleAddons = "Actionbars"
     })
 
-    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, L["Edit action bar settings."], {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars},  {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}, {name = L["Totem Bar"], frame = totemBar}})
+    local tabs = {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars},  {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}, {name = L["Class Totems"], frame = totemBar}}
+
+    if totemSelection then
+        -- loaded with our action bars, the automatic bar layout does not matter for it
+        local totemSelectionDependence = {["actionbars.enabled"] = true, ["totemSelection.enabled"] = true}
+        totemSelection:AddOption(ENABLE, nil, {getterSetter = "totemSelection.enabled", isMasterToggle = true, callback = function() if GwTotemSelectionBar then GwTotemSelectionBar:UpdateVisibility() end end, dependence = {["actionbars.enabled"] = true}, incompatibleAddons = "Actionbars"})
+        totemSelection:AddOptionSlider(L["Button Size"], nil, {getterSetter = "totemSelection.buttonSize", callback = function() if GwTotemSelectionBar then GwTotemSelectionBar:UpdateLayout() end end, min = 20, max = 60, decimalNumbers = 0, step = 1, dependence = totemSelectionDependence, incompatibleAddons = "Actionbars"})
+        totemSelection:AddOptionSlider(L["Button Spacing"], nil, {getterSetter = "totemSelection.spacing", callback = function() if GwTotemSelectionBar then GwTotemSelectionBar:UpdateLayout() end end, min = 0, max = 10, decimalNumbers = 0, step = 1, dependence = totemSelectionDependence, incompatibleAddons = "Actionbars"})
+        tabs[#tabs + 1] = {name = L["Totem Selection Bar"], frame = totemSelection}
+    end
+
+    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, L["Edit action bar settings."], tabs)
 end
 GW.LoadActionbarPanel = LoadActionbarPanel

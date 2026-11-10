@@ -598,6 +598,9 @@ GW.globalDefault = {
         },
 
         totemSelection = {
+            enabled = true,
+            buttonSize = 30,
+            spacing = 8,
             pos = {
                 point = "BOTTOMLEFT",
                 relativePoint = "BOTTOM",

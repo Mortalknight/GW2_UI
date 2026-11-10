@@ -14,9 +14,12 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.7", {
+    {GW.Enum.ChangelogType.feature, [=[Totem selection bar (shaman): own settings page to turn it off and set button size and spacing; its mover no longer disappears after moving; the class totems settings carry their right name]=]},
     {GW.Enum.ChangelogType.feature, [=[Text designer: the health color (red over yellow to green) also on Retail and Forever]=]},
     {GW.Enum.ChangelogType.change, [=[World map: opens faster and remembers where you moved it]=]},
+    {GW.Enum.ChangelogType.change, [=[AFK screen: shows your running queues, level, class, specialization and item level, new whispers and mail; the chat only shows once a message came in, on a dark background with the time; time and logout countdown keep running when you press a key in between]=]},
     {GW.Enum.ChangelogType.feature, [=[Skins: Spoken Places story panel]=]},
+    {GW.Enum.ChangelogType.feature, [=[Group frames: the buff and debuff filters of a grid can each be reset to default, the note how the filters work also shows on the party grid page]=]},
     {GW.Enum.ChangelogType.change, [=[Objectives tracker: the section header at the top of the scrolled list no longer lies over the quests, the list scrolls below it]=]},
     {GW.Enum.ChangelogType.bug, [=[Upcoming level rewards: a weapon master or pet trainer no longer replaces the spells of your class trainer]=]},
     {GW.Enum.ChangelogType.bug, [=[Cooldown texts (Forever): no Lua error in battlegrounds and other restricted content]=]},
