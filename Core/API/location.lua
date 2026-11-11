@@ -108,8 +108,13 @@ end
 local function UpdateZone()
     -- right after a zone change the game has no map for the player yet
     C_Timer.After(0.1, function()
-        state.mapID = C_Map.GetBestMapForUnit("player")
+        local mapID = C_Map.GetBestMapForUnit("player")
+        local mapChanged = mapID ~= state.mapID
+        state.mapID = mapID
         UpdateCoords()
+        if mapChanged then
+            EventRegistry:TriggerEvent("GW2_UI.PlayerLocationChanged", mapID)
+        end
     end)
     state.instanceMapID = select(8, GetInstanceInfo())
     state.zoneText = GetRealZoneText() or UNKNOWN
