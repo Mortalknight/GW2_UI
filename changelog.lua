@@ -15,6 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("12.1.8", {
     {GW.Enum.ChangelogType.feature, [=[Objectives tracker: optional own modules for the quests of your current zone and for dungeon quests, their place is set in the module order]=]},
+    {GW.Enum.ChangelogType.bug, [=[Upcoming level rewards (Forever): spells you already learned no longer show as trainable when the spell book hides the lower ranks]=]},
 })
 
 addChange("12.1.7", {

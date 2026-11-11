@@ -186,9 +186,10 @@ local function CacheTrainerRewards()
     end
 end
 
--- pet trainer spells only teach the pet, so their state is the one of the last visit
+-- pet trainer spells only teach the pet, so their state is the one of the last visit; what the trainer already
+-- marked as learned stays learned, with "show all ranks" off forever keeps the lower ranks out of the spell book
 local function IsRewardKnown(reward, isPet)
-    if reward.spellID and not isPet then
+    if reward.spellID and not isPet and not reward.known then
         return C_SpellBook.IsSpellInSpellBook(reward.spellID, Enum.SpellBookSpellBank.Player, false) or C_SpellBook.IsSpellKnown(reward.spellID, Enum.SpellBookSpellBank.Player)
     end
 
