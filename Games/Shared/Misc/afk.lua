@@ -87,6 +87,13 @@ local function UpdateLayout(self)
     self.bottom:SetWidth(GetScreenWidth() + (GW.border * 2))
     self.bottom:SetHeight(GetScreenHeight() * (1.5 / 10))
     self.bottom.model:SetSize(GetScreenWidth() * 2, GetScreenHeight() * 2)
+
+   local b = self.bottom
+    local _, captionSize = b.caption:GetFont()
+    local _, timeSize = b.time:GetFont()
+    local _, messagesSize = b.messages:GetFont()
+    local columnHeight = captionSize + 4 + timeSize + 8 + b.logout:GetHeight() + 8 + messagesSize
+    b.caption:SetPoint("TOP", b, "BOTTOM", 0, max(b.captionY, columnHeight + 15))
 end
 
 local LOGOUT_WARNING_TIME = 5 * 60
@@ -427,7 +434,7 @@ local function LoadAFKAnimation()
     -- the status sits in the middle of the band, its top on the height of the name
     AFKMode.bottom.caption = AFKMode.bottom:CreateFontString(nil, "OVERLAY")
     AFKMode.bottom.caption:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    AFKMode.bottom.caption:SetPoint("TOP", AFKMode.bottom, "BOTTOM", 0, logo.y + logo.size + logo.nameY)
+    AFKMode.bottom.captionY = logo.y + logo.size + logo.nameY
     AFKMode.bottom.caption:SetText(AWAY_TEXT)
     AFKMode.bottom.caption:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
 

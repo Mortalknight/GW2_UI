@@ -16,6 +16,8 @@ AddChange(string addonVersion, table changeList)
 addChange("12.1.8", {
     {GW.Enum.ChangelogType.feature, [=[Objectives tracker: optional own modules for the quests of your current zone and for dungeon quests, their place is set in the module order]=]},
     {GW.Enum.ChangelogType.bug, [=[Upcoming level rewards (Forever): spells you already learned no longer show as trainable when the spell book hides the lower ranks]=]},
+    {GW.Enum.ChangelogType.bug, [=[AFK screen: the line with mail and whispers is no longer cut off at the bottom edge with bigger fonts]=]},
+    {GW.Enum.ChangelogType.bug, [=[Unit frames (Forever): fixed an error when targeting a unit while DBM or BigWigs is loaded]=]},
 })
 
 addChange("12.1.7", {

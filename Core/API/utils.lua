@@ -565,6 +565,7 @@ end
 GW.TimeParts = TimeParts
 
 local function GetCIDFromGUID(guid)
+    if GW.IsSecretValue(guid) then return nil end
     local type, _, playerdbID, _, _, cid = strsplit("-", guid or "")
     if type and (type == "Creature" or type == "Vehicle" or type == "Pet") then
         return tonumber(cid)
