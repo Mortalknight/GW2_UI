@@ -201,24 +201,10 @@ local function getNearestQuestPOIRetail()
     local objectiveText = isWQ and GW.ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
 
     if questData.frequency == nil then
-        for i = 1, 25 do
-            local block = GW.ObjectiveTrackerContainer.Campaign.blocks[i]
-            if block and block.questID == closestQuestID then
-                isFrequent = block.isFrequency
-                break
-            end
-            block = GW.ObjectiveTrackerContainer.Quests.blocks[i]
-            if block and block.questID == closestQuestID then
-                isFrequent = block.isFrequency
-                break
-            end
-            block = GW.ObjectiveTrackerContainer.Zone and GW.ObjectiveTrackerContainer.Zone.blocks[i]
-            if block and block.questID == closestQuestID then
-                isFrequent = block.isFrequency
-                break
-            end
-            block = GW.ObjectiveTrackerContainer.Dungeon and GW.ObjectiveTrackerContainer.Dungeon.blocks[i]
-            if block and block.questID == closestQuestID then
+        local containers = GW.ObjectiveTrackerContainer
+        for _, container in next, {containers.Campaign, containers.Quests, containers.Zone, containers.Dungeon} do
+            local block = container:GetBlockByQuestId(closestQuestID)
+            if block then
                 isFrequent = block.isFrequency
                 break
             end

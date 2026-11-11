@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.8", {
+    {GW.Enum.ChangelogType.feature, [=[Objectives tracker: optional own modules for the quests of your current zone and for dungeon quests, their place is set in the module order]=]},
+})
+
 addChange("12.1.7", {
     {GW.Enum.ChangelogType.change, [=[Upcoming level rewards: Shift-click links a spell in the chat; the window plays its opening sound on TBC too]=]},
     {GW.Enum.ChangelogType.bug, [=[Move HUD: sliders like the tracker height sit on their value and keep a typed value; Shift-click selects the frame that comes up front with all its options]=]},

@@ -9,9 +9,9 @@ local function GetObjectiveTrackerModuleOrderOptions()
     local modules = {
         {key = "Achievement", label = ACHIEVEMENTS, color = types.Achievement, load = not (GW.Classic or GW.TBC)},
         {key = "NearlyDone", label = L["Nearly Done"], color = types.Achievement, load = not (GW.Classic or GW.TBC)},
+        {key = "Campaign", label = GW.QuestTrackerTopContainerTitle or GW.myLocalizedClass, color = types.Campaign, load = true},
         {key = "Dungeon", label = L["Dungeon Quests"], color = types.Quest, load = GW.isModern},
         {key = "Zone", label = L["Zone Quests"], color = types.Quest, load = GW.isModern},
-        {key = "Campaign", label = GW.QuestTrackerTopContainerTitle or GW.myLocalizedClass, color = types.Campaign, load = true},
         {key = "Quests", label = TRACKER_HEADER_QUESTS or QUESTS_LABEL, color = types.Quest, load = true},
         {key = "Bonus", label = EVENTS_LABEL, color = types.Event, load = GW.isModern},
         {key = "Recipe", label = PROFESSIONS_TRACKER_HEADER_PROFESSION, color = types.Recipe, load = GW.isModern},
@@ -60,17 +60,6 @@ local function UpdateObjectiveTrackerStatusBarSettings()
     end
 end
 
-local function UpdateQuestContainers()
-    GwQuesttrackerContainerQuests:UpdateLayout()
-    GwQuesttrackerContainerCampaign:UpdateLayout()
-    if GwQuesttrackerContainerZone then
-        GwQuesttrackerContainerZone:UpdateLayout()
-    end
-    if GwQuesttrackerContainerDungeon then
-        GwQuesttrackerContainerDungeon:UpdateLayout()
-    end
-end
-
 local function LoadObjectivesPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
     p.panelId = "objectives_general"
@@ -111,8 +100,8 @@ local function LoadObjectivesPanel(sWindow)
         dependence = {["objectives.enabled"] = true}
     })
     p:AddOption(L["Supertracked Quest to Top"], L["Move the currently supertracked quest to the top of the quest tracker list."], {getterSetter = "objectives.superTrackedOnTop", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["objectives.enabled"] = true}, hidden = not GW.Retail})
-    p:AddOption(L["Show zone quests separately"], L["Show the quests of your current zone in a separate module. Its position is set in the module order list."], {getterSetter = "objectives.zoneQuests", callback = UpdateQuestContainers, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
-    p:AddOption(L["Show dungeon quests separately"], L["Show the dungeon quests of your quest log in a separate module. Its position is set in the module order list."], {getterSetter = "objectives.dungeonQuests", callback = UpdateQuestContainers, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
+    p:AddOption(L["Show zone quests separately"], L["Show the quests of your current zone in a separate module. Its position is set in the module order list."], {getterSetter = "objectives.zoneQuests", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
+    p:AddOption(L["Show dungeon quests separately"], L["Show the dungeon quests of your quest log in a separate module. Its position is set in the module order list."], {getterSetter = "objectives.dungeonQuests", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["objectives.enabled"] = true}, hidden = not GW.isModern})
     p:AddOption(L["Show Completed Objectives"], L["Show completed quest objectives instead of hiding them."], {getterSetter = "objectives.showCompleted", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["objectives.enabled"] = true}})
     p:AddOption(L["Compact Mode"], L["Reduce spacing and font sizes across the Objective Tracker."], {getterSetter = "objectives.compactMode", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["objectives.enabled"] = true}})
     p:AddOptionSlider(L["Objective Spacing"], L["Scales the gaps between objective lines and between quest blocks. Lower values pack them tighter."], {getterSetter = "objectives.spacing", callback = GW.RefreshObjectivesTrackerLayout, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.05, dependence = {["objectives.enabled"] = true}})
@@ -120,8 +109,8 @@ local function LoadObjectivesPanel(sWindow)
     p:AddOption(L["Nearly Done"], L["Shows the three achievements you are closest to completing in the quest tracker. Right-click opens a menu to track or hide one."], {getterSetter = "objectives.nearlyDone", callback = function() GW.UpdateNearlyDoneAchievements() end, dependence = {["objectives.enabled"] = true}, hidden = GW.Classic or GW.TBC})
     p:AddOption(L["Show Objective Tracker progress bars"], L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."], {getterSetter = "objectives.statusBars", callback = UpdateObjectiveTrackerStatusBarSettings, dependence = {["objectives.enabled"] = true}})
 
-    p:AddOption(L["Show Quest XP in Quest Tracker"], nil, {getterSetter = "objectives.showXp", callback = UpdateQuestContainers, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
-    p:AddOptionDropdown(L["Quest Tracker Sorting"], nil, { getterSetter = "objectives.sorting", callback = UpdateQuestContainers, optionsList = {"DEFAULT", "LEVEL", "LEVEL_DESC", "ZONE"}, optionNames = {DEFAULT, L["Level (ascending)"], L["Level (descending)"], ZONE}, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
+    p:AddOption(L["Show Quest XP in Quest Tracker"], nil, {getterSetter = "objectives.showXp", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
+    p:AddOptionDropdown(L["Quest Tracker Sorting"], nil, { getterSetter = "objectives.sorting", callback = GW.RefreshObjectivesTrackerLayout, optionsList = {"DEFAULT", "LEVEL", "LEVEL_DESC", "ZONE"}, optionNames = {DEFAULT, L["Level (ascending)"], L["Level (descending)"], ZONE}, dependence = {["objectives.enabled"] = true}, hidden = GW.Retail})
 
     local moduleOrderOptions, moduleOrderOptionNames = GetObjectiveTrackerModuleOrderOptions()
     p:AddOptionSortableList(L["Objective Tracker Module Order"], L["Set the order of Objective Tracker modules."], {

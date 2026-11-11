@@ -31,6 +31,7 @@ GW.immersiveQuesting.mapBackgrounds = {
     [50]   = "EK/northern_stranglethorn",
     [51]   = "EK/swamp_of_sorrows",
     [52]   = "EK/westfall",
+    [1436]   = "EK/westfall",
     [56]   = "EK/wetlands",
     [84]   = "EK/stormwind",
     [1453] = "EK/stormwind", -- pre-cata

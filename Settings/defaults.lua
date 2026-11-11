@@ -1626,7 +1626,7 @@ GW.globalDefault = {
             compactMode = false,
             spacing = 1,
             nearlyDone = false,
-            moduleOrder = {"Achievement", "NearlyDone", "Dungeon", "Zone", "Campaign", "Quests", "Bonus", "Recipe", "MonthlyActivity", "Collection", "HousingInitiative", "WQT", "PetTracker", "Todoloo"},
+            moduleOrder = {"Achievement", "NearlyDone", "Campaign", "Dungeon", "Zone", "Quests", "Bonus", "Recipe", "MonthlyActivity", "Collection", "HousingInitiative", "WQT", "PetTracker", "Todoloo"},
             showXp = true,
             sorting = "DEFAULT",
         },

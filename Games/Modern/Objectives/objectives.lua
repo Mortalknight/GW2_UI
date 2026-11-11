@@ -73,27 +73,27 @@ end
 
 local function GetQuestContainerKind(q, zone)
     if GW.settings.objectives.dungeonQuests and IsDungeonQuest(q) then
-        return "Dungeon"
+        return GW.Enum.ObjectivesBlockType.Dungeon
     end
     if GW.settings.objectives.zoneQuests and IsZoneQuest(q, zone) then
-        return "Zone"
+        return GW.Enum.ObjectivesBlockType.Zone
     end
-    return IsTopContainerQuest(q) and "Campaign" or "Quests"
+    return IsTopContainerQuest(q) and GW.Enum.ObjectivesBlockType.Campaign or GW.Enum.ObjectivesBlockType.Quests
 end
 
 local function GetContainerQuestColorKey(container, q, questID, isFrequency)
-    local isCampaignColor = container.containerKind == "Campaign" or (container.containerKind == "Dungeon" and IsTopContainerQuest(q))
+    local isCampaignColor = container.type == GW.Enum.ObjectivesBlockType.Campaign or (container.type == GW.Enum.ObjectivesBlockType.Dungeon and IsTopContainerQuest(q))
     return GW.GetQuestColorKey(questID, isCampaignColor, isFrequency)
 end
 
 local function GetContainerHeaderTitle(container, zone)
-    if container.containerKind == "Dungeon" then
+    if container.type == GW.Enum.ObjectivesBlockType.Dungeon then
         return GW.L["Dungeon Quests"]
     end
-    if container.containerKind == "Zone" then
+    if container.type == GW.Enum.ObjectivesBlockType.Zone then
         return zone and zone.name and zone.name ~= "" and zone.name or GW.L["Zone Quests"]
     end
-    return container.containerKind == "Campaign" and TOP_CONTAINER_TITLE or TRACKER_HEADER_QUESTS
+    return container.type == GW.Enum.ObjectivesBlockType.Campaign and TOP_CONTAINER_TITLE or TRACKER_HEADER_QUESTS
 end
 
 local function BrightenColor(r, g, b, factor)
@@ -582,11 +582,12 @@ function GwQuestLogMixin:UpdateLayout()
 
     if self.collapsed then
         self.header:Show()
-    elseif self.containerKind == "Quests" then
+    elseif self.type == GW.Enum.ObjectivesBlockType.Quests then
         self.header:Hide()
     end
 
     local zone = GW.settings.objectives.zoneQuests and GetZoneContext() or nil
+    self.zoneName = zone and zone.name
 
     local numQuests = C_QuestLog.GetNumQuestWatches()
     for i = 1, numQuests do
@@ -623,7 +624,7 @@ function GwQuestLogMixin:UpdateLayout()
         if curQuestId then
             local q = GW.QuestCache:Get(curQuestId)
             local kind = GetQuestContainerKind(q, zone)
-            if kind == self.containerKind then
+            if kind == self.type then
                 if shouldShowHeader then
                     self.header:Show()
                     counterQuest = counterQuest + 1
@@ -679,7 +680,7 @@ function GwQuestLogMixin:UpdateLayout()
         GW.CombatQueue:Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
     end
 
-    if counterQuest == 0 and self.containerKind ~= "Quests" then
+    if counterQuest == 0 and self.type ~= GW.Enum.ObjectivesBlockType.Quests then
         self.header:Hide()
     end
 
@@ -708,7 +709,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
     local questWatchId = self:GetQuestWatchId(questID)
     local q = GW.QuestCache:Get(questID)
     local zone = GW.settings.objectives.zoneQuests and GetZoneContext() or nil
-    if self.collapsed or GetQuestContainerKind(q, zone) ~= self.containerKind or questWatchId == nil or not questWatchId then
+    if self.collapsed or GetQuestContainerKind(q, zone) ~= self.type or questWatchId == nil or not questWatchId then
         self.isUpdating = false
         return
     end
@@ -824,14 +825,13 @@ function GwObjectivesQuestContainerMixin:InitModule()
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:RegisterEvent("SUPER_TRACKING_CHANGED")
     self:RegisterEvent("QUEST_POI_UPDATE")
+    -- caves and buildings bring their own map, the quests only move when the zone changes
     EventRegistry:RegisterCallback("GW2_UI.PlayerLocationChanged", function()
-        if GW.settings.objectives.zoneQuests then
+        if GW.settings.objectives.zoneQuests and GetZoneContext().name ~= self.zoneName then
             self:QueueUpdateLayout()
         end
     end, self)
     self.watchMoneyReasons = 0
-    self.containerKind = self:GetName():match("^GwQuesttrackerContainer(.+)$")
-    self.isCampaignContainer = self.containerKind == "Campaign"
     self.updateQueueFrame = CreateFrame("Frame", nil, self)
     self.updateQueueFrame.container = self
     self.updateFlushQueued = false
@@ -844,7 +844,7 @@ function GwObjectivesQuestContainerMixin:InitModule()
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function
-    if self.isCampaignContainer then
+    if self.type == GW.Enum.ObjectivesBlockType.Campaign then
         self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:GetRGB())
         self.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
         self.header.title:SetText(TOP_CONTAINER_TITLE)
