@@ -121,14 +121,14 @@ end
 
 local narratorHost
 local narratorHidden = false
+local gossipOpen = false
 
 local function dialogCoversNarrator()
     local immersive = _G.GwImmersiveQuestFrame
     if immersive and immersive:IsShown() then
         return true
     end
-    local gossip = _G.GossipFrame
-    return gossip ~= nil and gossip:IsShown() and GW.settings.skins.gossip.enabled
+    return gossipOpen and GW.settings.skins.gossip.enabled
 end
 
 local function updateNarrator()
@@ -160,26 +160,13 @@ function GwImmersiveQuestFrameMixin:UpdateSpokenNarrator()
     scheduleNarratorUpdate()
 end
 
-local function hookGossipFrame()
-    local gossip = _G.GossipFrame
-    if not gossip or gossip.gwSpokenHooked then
-        return
-    end
-    gossip.gwSpokenHooked = true
-    gossip:HookScript("OnShow", scheduleNarratorUpdate)
-    gossip:HookScript("OnHide", scheduleNarratorUpdate)
-end
-
 function GW.LoadSpokenNarratorHiding()
-    hookGossipFrame()
-    if not _G.GossipFrame then
-        local watcher = CreateFrame("Frame")
-        watcher:RegisterEvent("ADDON_LOADED")
-        watcher:SetScript("OnEvent", function(self)
-            if _G.GossipFrame then
-                hookGossipFrame()
-                self:UnregisterAllEvents()
-            end
-        end)
-    end
+    local watcher = CreateFrame("Frame")
+    watcher:RegisterEvent("GOSSIP_SHOW")
+    watcher:RegisterEvent("GOSSIP_CLOSED")
+    watcher:RegisterEvent("PLAYER_ENTERING_WORLD")
+    watcher:SetScript("OnEvent", function(_, event)
+        gossipOpen = event == "GOSSIP_SHOW"
+        scheduleNarratorUpdate()
+    end)
 end
