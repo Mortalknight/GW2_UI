@@ -625,12 +625,30 @@ function GwImmersiveQuestFrameMixin:OnEvent(event, ...)
     end
 end
 
+function GwImmersiveQuestFrameMixin:OnDragStop()
+    self:StopMovingOrSizing()
+    local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
+    local pos = GW.settings.immersiveQuesting.pos
+    pos.point = point
+    pos.relativePoint = relativePoint
+    pos.xOfs = xOfs
+    pos.yOfs = yOfs
+    pos.hasMoved = true
+end
+
+function GwImmersiveQuestFrameMixin:applySavedPosition()
+    local pos = GW.settings.immersiveQuesting.pos
+    if not pos or not pos.hasMoved then return end
+    self:ClearAllPoints()
+    self:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+end
+
 function GwImmersiveQuestFrameMixin:applyLockFrame()
     local lf = GW.settings.immersiveQuesting.lockFrame
     if not lf then
         self:RegisterForDrag("LeftButton")
         self:SetScript("OnDragStart", self.StartMoving)
-        self:SetScript("OnDragStop", self.StopMovingOrSizing)
+        self:SetScript("OnDragStop", self.OnDragStop)
     else
         self:SetScript("OnDragStart", nil)
         self:SetScript("OnDragStop", nil)
@@ -671,6 +689,7 @@ function GW.LoadImmersiveQuesting()
     frame.container.floaty.inset:SetTextureSliceMode(Enum.UITextureSliceMode.Stretched)
 
     frame:UiScaleChanged()
+    frame:applySavedPosition()
     frame:applyLockFrame()
     frame:applyTitleStyle()
 
