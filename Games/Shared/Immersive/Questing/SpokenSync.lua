@@ -17,6 +17,7 @@ function GwImmersiveQuestFrameMixin:ResetSpokenSync()
     self.spokenMap = nil
     self.spokenPages = nil
     self.spokenFollow = true
+    self.spokenHeard = false
     self.container.replayButton:Hide()
 end
 
@@ -64,9 +65,24 @@ function GwImmersiveQuestFrameMixin:SpokenTick()
     end
     if caption.clip ~= self.spokenClip then
         self.spokenFollow = true
+        self.spokenHeard = false
         alignClip(self, spoken, caption)
     end
-    if not self.spokenMap or not self.spokenFollow or not caption.speaking or not caption.activeWord then
+    if not self.spokenMap or not self.spokenFollow then
+        return
+    end
+    if caption.speaking then
+        self.spokenHeard = true
+    elseif self.spokenHeard and not spoken:IsPlaying(caption.clip) and not spoken:IsPaused() then
+        self.spokenHeard = false
+        local count = #self.questString
+        if self.questStringInt < count then
+            self.questStringInt = count - 1
+            self:nextGossip()
+        end
+        return
+    end
+    if not caption.speaking or not caption.activeWord then
         return
     end
     local page = pageForWord(self, caption.activeWord)
@@ -92,6 +108,7 @@ function GwImmersiveQuestFrameMixin:ReplaySpoken()
     end
     self.spokenClip = nil
     self.spokenFollow = true
+    self.spokenHeard = false
     self.questStringInt = 0
     self:nextGossip()
 end
