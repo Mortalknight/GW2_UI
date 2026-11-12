@@ -18,6 +18,8 @@ addChange("12.1.8", {
     {GW.Enum.ChangelogType.bug, [=[Upcoming level rewards (Forever): spells you already learned no longer show as trainable when the spell book hides the lower ranks]=]},
     {GW.Enum.ChangelogType.bug, [=[AFK screen: the line with mail and whispers is no longer cut off at the bottom edge with bigger fonts]=]},
     {GW.Enum.ChangelogType.bug, [=[Unit frames (Forever): fixed an error when targeting a unit while DBM or BigWigs is loaded]=]},
+    {GW.Enum.ChangelogType.bug, [=[Totem selection bar: shamans without a totem no longer see an empty button on the screen]=]},
+    {GW.Enum.ChangelogType.bug, [=[Chat: quick join notices for group finder listings no longer cause an error, they name the activity]=]},
 })
 
 addChange("12.1.7", {

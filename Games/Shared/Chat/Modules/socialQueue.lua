@@ -27,11 +27,21 @@ local function GetGroupText(guid)
         return
     end
 
-    local queueName = gsub(SocialQueueUtil_GetQueueName(first.queueData), "\n", ", ")
+    local queueData, queueName = first.queueData, nil
+    if queueData.queueType == "lfglist" then
+        -- the listing title is a protected string that breaks blizzards name helper, the activity names the group
+        local info = queueData.lfgListID and C_LFGList.GetSearchResultInfo(queueData.lfgListID)
+        if not info then
+            return
+        end
+        queueName = C_LFGList.GetActivityFullName(info.activityIDs[1])
+    else
+        queueName = gsub(SocialQueueUtil_GetQueueName(queueData), "\n", ", ")
+    end
     if extra > 0 then
         queueName = format(QUICK_JOIN_TOAST_EXTRA_QUEUES, queueName, extra)
     end
-    local message = first.queueData.queueType == "lfglist" and QUICK_JOIN_TOAST_LFGLIST_MESSAGE or QUICK_JOIN_TOAST_MESSAGE
+    local message = queueData.queueType == "lfglist" and QUICK_JOIN_TOAST_LFGLIST_MESSAGE or QUICK_JOIN_TOAST_MESSAGE
     return format(message, SocialQueueUtil_GetHeaderName(guid), queueName)
 end
 
@@ -44,9 +54,9 @@ local function IsRecent(text, now)
     return lastShown[text] ~= nil
 end
 
--- in combat blizzards queue names can be secret and its own name helper breaks on them
+-- in combat and in the chat lockdown (encounters, mythic+) the queue data can be secret, blizzards name helper breaks on it
 local function OnQueueUpdate(_, _, guid, numAddedItems)
-    if InCombatLockdown() or GW.IsSecretValue(guid) or GW.IsSecretValue(numAddedItems) or not GW.settings.chat.socialLink or not guid or numAddedItems == 0 then
+    if InCombatLockdown() or GW.IsChatRestricted() or GW.IsSecretValue(guid) or GW.IsSecretValue(numAddedItems) or not GW.settings.chat.socialLink or not guid or numAddedItems == 0 then
         return
     end
     local text = GetGroupText(guid)
