@@ -122,27 +122,64 @@ end
 local narratorHost
 local narratorHidden = false
 
-function GwImmersiveQuestFrameMixin:HideSpokenNarrator()
-    local spoken = getSpoken()
-    if narratorHidden or not spoken or not spoken.SetPlayerHost or not GW.settings.immersiveQuesting.spokenSync then
-        return
+local function dialogCoversNarrator()
+    local immersive = _G.GwImmersiveQuestFrame
+    if immersive and immersive:IsShown() then
+        return true
     end
-    if C_AddOns.IsAddOnLoaded("DialogueUI") then
-        return
-    end
-    if not narratorHost then
-        narratorHost = CreateFrame("Frame", nil, UIParent)
-        narratorHost:Hide()
-    end
-    spoken:SetPlayerHost(narratorHost)
-    narratorHidden = true
+    local gossip = _G.GossipFrame
+    return gossip ~= nil and gossip:IsShown() and GW.settings.skins.gossip.enabled
 end
 
-function GwImmersiveQuestFrameMixin:RestoreSpokenNarrator()
+local function updateNarrator()
     local spoken = getSpoken()
-    if not narratorHidden or not spoken or not spoken.SetPlayerHost then
+    if not spoken or not spoken.SetPlayerHost then
         return
     end
-    spoken:SetPlayerHost(nil)
-    narratorHidden = false
+    local want = GW.settings.immersiveQuesting.spokenSync
+        and not C_AddOns.IsAddOnLoaded("DialogueUI")
+        and dialogCoversNarrator()
+    if want and not narratorHidden then
+        if not narratorHost then
+            narratorHost = CreateFrame("Frame", nil, UIParent)
+            narratorHost:Hide()
+        end
+        spoken:SetPlayerHost(narratorHost)
+        narratorHidden = true
+    elseif not want and narratorHidden then
+        spoken:SetPlayerHost(nil)
+        narratorHidden = false
+    end
+end
+
+local function scheduleNarratorUpdate()
+    C_Timer.After(0, updateNarrator)
+end
+
+function GwImmersiveQuestFrameMixin:UpdateSpokenNarrator()
+    scheduleNarratorUpdate()
+end
+
+local function hookGossipFrame()
+    local gossip = _G.GossipFrame
+    if not gossip or gossip.gwSpokenHooked then
+        return
+    end
+    gossip.gwSpokenHooked = true
+    gossip:HookScript("OnShow", scheduleNarratorUpdate)
+    gossip:HookScript("OnHide", scheduleNarratorUpdate)
+end
+
+function GW.LoadSpokenNarratorHiding()
+    hookGossipFrame()
+    if not _G.GossipFrame then
+        local watcher = CreateFrame("Frame")
+        watcher:RegisterEvent("ADDON_LOADED")
+        watcher:SetScript("OnEvent", function(self)
+            if _G.GossipFrame then
+                hookGossipFrame()
+                self:UnregisterAllEvents()
+            end
+        end)
+    end
 end

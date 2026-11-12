@@ -682,6 +682,7 @@ local function evPlayerLogin(self)
     end
 
     GW.LoadImmersiveQuesting()
+    GW.LoadSpokenNarratorHiding()
 
     --Create player hud
     if GW.settings.unitframes.healthGlobe.enabled and not GW.settings.unitframes.player.enabled then
