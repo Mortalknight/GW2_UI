@@ -286,13 +286,25 @@ function GwImmersiveQuestFrameMixin:UpdateSpokenButtons()
     end
 end
 
-function GwImmersiveQuestFrameMixin:StopSpokenGreeting()
-    if not self:SpokenEnabled() or not GW.settings.immersiveQuesting.spokenSkipGreeting then
+function GwImmersiveQuestFrameMixin:StopSpokenPrevious()
+    if not self:SpokenEnabled() or not GW.settings.immersiveQuesting.spokenSkipPrevious then
         return
     end
     local spoken = getSpoken()
-    local source = spoken.GetSource and spoken:GetSource("gossip")
-    if source and source.StopAll then
-        source:StopAll()
+    local gossip = spoken.GetSource and spoken:GetSource("gossip")
+    if gossip and gossip.StopAll then
+        gossip:StopAll()
     end
+    C_Timer.After(0, function()
+        local current = currentQuestId()
+        if not current or not spoken.GetQueue then
+            return
+        end
+        for _, clip in ipairs(spoken:GetQueue()) do
+            local source = clip.source
+            if source and source.key == "quests" and clip.questID and clip.questID ~= current and source.Remove then
+                source:Remove(clip)
+            end
+        end
+    end)
 end
