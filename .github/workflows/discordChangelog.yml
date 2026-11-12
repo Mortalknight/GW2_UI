@@ -11,7 +11,7 @@ jobs:
   discord:
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v7
         - name: Generate package changelog
           run: python3 tools/generate_changelog_txt.py changelog.lua CHANGELOG_NEW_VERSION.txt
         - name: Post changelog to Discord
