@@ -165,6 +165,79 @@ function GwImmersiveQuestFrameMixin:UpdateSpokenNarrator()
     scheduleNarratorUpdate()
 end
 
+local gossipFollow = {}
+
+local function resetGossipFollow()
+    gossipFollow.clip = nil
+    gossipFollow.map = nil
+    gossipFollow.pages = nil
+    gossipFollow.lastIndex = nil
+    gossipFollow.active = true
+end
+
+local function alignGossipClip(spoken, caption, pages)
+    gossipFollow.clip = caption.clip
+    gossipFollow.map = false
+    local marks = spoken:WordMarks()
+    local paragraphs, indexes = {}, {}
+    for index, text in ipairs(pages) do
+        local words = spoken:SplitCaption(text)
+        if words and #words > 0 then
+            paragraphs[#paragraphs + 1] = { text = text, words = marks.MarkLinks(text, words) }
+            indexes[#paragraphs] = index
+        end
+    end
+    if #paragraphs == 0 then
+        return
+    end
+    local map = marks.Align(caption.words, paragraphs)
+    if map then
+        gossipFollow.map = map
+        gossipFollow.pages = indexes
+    end
+end
+
+local function gossipTick()
+    if not gossipOpen or not GW.settings.skins.gossip.enabled or not GW.settings.immersiveQuesting.spokenSync then
+        return
+    end
+    local spoken = getSpoken()
+    if not spoken or not GW.GetGossipGreetingPages then
+        return
+    end
+    local pages, current = GW.GetGossipGreetingPages()
+    if not pages or #pages < 2 then
+        return
+    end
+    if gossipFollow.lastIndex and current < gossipFollow.lastIndex then
+        gossipFollow.active = false
+    end
+    gossipFollow.lastIndex = current
+    local caption = spoken:GetCaption()
+    if not caption or not caption.words or caption.clip.textOnly then
+        return
+    end
+    if caption.clip ~= gossipFollow.clip then
+        gossipFollow.active = true
+        alignGossipClip(spoken, caption, pages)
+    end
+    if not gossipFollow.map or not gossipFollow.active or not caption.speaking or not caption.activeWord then
+        return
+    end
+    local page
+    for index = caption.activeWord, 1, -1 do
+        local hit = gossipFollow.map[index]
+        if hit then
+            page = gossipFollow.pages[hit.p]
+            break
+        end
+    end
+    if page and page > current then
+        GW.SetGossipGreetingPage(page)
+        gossipFollow.lastIndex = page
+    end
+end
+
 function GW.LoadSpokenNarratorHiding()
     local watcher = CreateFrame("Frame")
     watcher:RegisterEvent("GOSSIP_SHOW")
@@ -172,7 +245,16 @@ function GW.LoadSpokenNarratorHiding()
     watcher:RegisterEvent("PLAYER_ENTERING_WORLD")
     watcher:SetScript("OnEvent", function(_, event)
         gossipOpen = event == "GOSSIP_SHOW"
+        resetGossipFollow()
         scheduleNarratorUpdate()
+    end)
+    local sinceGossipTick = 0
+    watcher:SetScript("OnUpdate", function(_, elapsed)
+        sinceGossipTick = sinceGossipTick + elapsed
+        if sinceGossipTick >= 0.1 then
+            sinceGossipTick = 0
+            gossipTick()
+        end
     end)
     local greeting = _G.QuestFrameGreetingPanel
     if greeting then
