@@ -698,7 +698,7 @@ function GW.LoadImmersiveQuesting()
     frame:SetScript("OnShow", frame.OnShow)
     frame:SetScript("OnHide", frame.OnHide)
     frame:HookScript("OnShow", function(self) self:UpdateSpokenNarrator() end)
-    frame:HookScript("OnHide", function(self) self:UpdateSpokenNarrator() self:ReleaseSpokenControls() end)
+    frame:HookScript("OnHide", function(self) self:UpdateSpokenNarrator() end)
     frame:SetScript("OnEvent", frame.OnEvent)
 
     frame:RegisterEvent("UI_SCALE_CHANGED")

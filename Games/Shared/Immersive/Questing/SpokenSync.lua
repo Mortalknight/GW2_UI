@@ -71,7 +71,7 @@ function GwImmersiveQuestFrameMixin:SpokenTick()
     if not self:SpokenEnabled() or not self.questString or #self.questString == 0 then
         return
     end
-    self:KeepSpokenControlsInside()
+    self:UpdateSpokenButtons()
     local spoken = getSpoken()
     if not self.spokenCallback and spoken.RegisterCallback then
         self.spokenCallback = spoken:RegisterCallback("CLIP_STOPPED", function(clip, finishedPlaying)
@@ -181,33 +181,107 @@ function GW.LoadSpokenNarratorHiding()
     end
 end
 
-local questFrameMoved = false
-local questFrameHadMouse = true
+local BUTTON_GAP = 4
 
-function GwImmersiveQuestFrameMixin:KeepSpokenControlsInside()
-    local quest = _G.QuestFrame
-    if not quest or not self:IsShown() or not quest:IsShown() then
-        return
-    end
-    local _, relativeTo = quest:GetPoint(1)
-    if questFrameMoved and relativeTo == self.container then
-        return
-    end
-    if not questFrameMoved then
-        questFrameHadMouse = quest:IsMouseEnabled()
-    end
-    quest:ClearAllPoints()
-    quest:SetPoint("TOPRIGHT", self.container, "TOPRIGHT", -8, -8)
-    quest:EnableMouse(false)
-    questFrameMoved = true
+local function spokenQuests()
+    return _G.VoiceOver
 end
 
-function GwImmersiveQuestFrameMixin:ReleaseSpokenControls()
-    if not questFrameMoved then
+local function currentQuestId()
+    local id = GetQuestID and GetQuestID()
+    if id and id ~= 0 then
+        return id
+    end
+end
+
+local function createSpokenButtons(self)
+    local spoken = getSpoken()
+    if not spoken or not spoken.CreateRoundButton then
+        return nil
+    end
+    local row = CreateFrame("Frame", nil, self.container)
+    row:SetAllPoints(self.container)
+    row:SetFrameLevel(self.container:GetFrameLevel() + 20)
+
+    local compendiumIcon = _G.SpokenCompendium and _G.SpokenCompendium.ICON or 5341597
+    local compendium = spoken:CreateRoundButton(row, "icon", nil, compendiumIcon)
+    compendium:SetScript("OnClick", function()
+        local voiceOver = spokenQuests()
+        local tab = voiceOver and voiceOver.QuestsTab
+        local id = currentQuestId()
+        if tab and tab.Open and id then
+            tab:Open(id)
+        end
+    end)
+    compendium:SetScript("OnEnter", function(button)
+        local voiceOver = spokenQuests()
+        GameTooltip:SetOwner(button, "ANCHOR_BOTTOM")
+        GameTooltip:SetText(voiceOver and voiceOver.L and voiceOver.L.OPEN_IN_COMPENDIUM or "Azeroth's Compendium")
+        GameTooltip:Show()
+    end)
+    compendium:SetScript("OnLeave", GameTooltip_Hide)
+
+    local contribute = spoken:CreateRoundButton(row, "report", nil)
+    contribute:SetScript("OnClick", function()
+        local voiceOver = spokenQuests()
+        local module = voiceOver and voiceOver.Contribute
+        if module and module.Show then
+            module:Show()
+        end
+    end)
+    contribute:SetScript("OnEnter", function(button)
+        local voiceOver = spokenQuests()
+        local module = voiceOver and voiceOver.Contribute
+        if module and module.ShowTooltip then
+            module:ShowTooltip(button, false)
+        end
+    end)
+    contribute:SetScript("OnLeave", GameTooltip_Hide)
+
+    self.spokenButtons = { row = row, compendium = compendium, contribute = contribute }
+    return self.spokenButtons
+end
+
+function GwImmersiveQuestFrameMixin:UpdateSpokenButtons()
+    local voiceOver = spokenQuests()
+    if not voiceOver or not self:IsShown() then
         return
     end
-    questFrameMoved = false
-    if _G.QuestFrame then
-        _G.QuestFrame:EnableMouse(questFrameHadMouse)
+    local buttons = self.spokenButtons or createSpokenButtons(self)
+    if not buttons then
+        return
+    end
+    local spoken = getSpoken()
+
+    local id = currentQuestId()
+    local tab = voiceOver.QuestsTab
+    local hasCompendium = false
+    if id and tab and tab.Has then
+        local ok, result = pcall(tab.Has, tab, id)
+        hasCompendium = ok and result and true or false
+    end
+
+    local module = voiceOver.Contribute
+    local hasContribute = false
+    if module and module.HasGap and not (spoken.AreContributeButtonsHidden and spoken:AreContributeButtonsHidden()) then
+        local ok, result = pcall(module.HasGap, module)
+        hasContribute = ok and result and true or false
+    end
+
+    buttons.contribute:ClearAllPoints()
+    buttons.contribute:SetPoint("TOPRIGHT", self.container, "TOPRIGHT", -16, -16)
+    buttons.contribute:SetShown(hasContribute)
+    buttons.compendium:ClearAllPoints()
+    if hasContribute then
+        buttons.compendium:SetPoint("RIGHT", buttons.contribute, "LEFT", -BUTTON_GAP, 0)
+    else
+        buttons.compendium:SetPoint("TOPRIGHT", self.container, "TOPRIGHT", -16, -16)
+    end
+    buttons.compendium:SetShown(hasCompendium)
+
+    local spokenContribute = voiceOver.ContributeButton
+    local bigButton = spokenContribute and spokenContribute.button
+    if bigButton and bigButton:IsShown() then
+        bigButton:Hide()
     end
 end
