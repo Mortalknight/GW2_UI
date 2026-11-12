@@ -124,39 +124,57 @@ end
 -- a thin line below the score fills up to the points a side needs to win, both lines grow towards the middle;
 -- the hover shows the numbers, only the mouse motion is taken so clicks reach the world
 local PROGRESS_WIDTH = 92
--- the estimate takes the points of the last seconds, so it follows a lost or won base after a short while
-local ESTIMATE_WINDOW = 20
-local ESTIMATE_MIN_SPAN = 4
+-- the estimate takes the score changes of the last minute, so it follows a lost or won base after a while
+local ESTIMATE_WINDOW = 60
 -- points that come in steady ticks; single flag captures would give a jumping estimate
 local ESTIMATE_MIN_TICKS = 3
+-- a side without a tick for this long scores no more, its estimate is gone
+local ESTIMATE_STALE = 30
 
-local function ScoreProgress_OnEnter(self)
+local ScoreProgress_OnEnter
+
+local function ScoreProgress_OnUpdate(self, elapsed)
+    self.tooltipElapsed = self.tooltipElapsed + elapsed
+    if self.tooltipElapsed >= 1 then
+        ScoreProgress_OnEnter(self)
+    end
+end
+
+function ScoreProgress_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     GameTooltip:AddLine(self.factionName, self.color:GetRGB())
     GameTooltip:AddLine(self.value .. " / " .. self.max, HIGHLIGHT_FONT_COLOR:GetRGB())
-    if self.rate and self.rate > 0 and self.value < self.max then
-        GameTooltip:AddLine(format(GW.L["Wins in about %s"], SecondsToClock((self.max - self.value) / self.rate)), GW.Colors.SkinColors.SubText:GetRGB())
+    local sinceTick = self.lastTick and GetTime() - self.lastTick
+    if self.rate and self.value < self.max and sinceTick < ESTIMATE_STALE then
+        local remaining = math.max((self.max - self.value) / self.rate - sinceTick, 0)
+        GameTooltip:AddLine(format(GW.L["Wins in about %s"], SecondsToClock(remaining)), GW.Colors.SkinColors.SubText:GetRGB())
     end
     GameTooltip:Show()
+    -- the estimate counts down while the tooltip is open
+    self.tooltipElapsed = 0
+    self:SetScript("OnUpdate", ScoreProgress_OnUpdate)
 end
 
--- points per second over the last seconds; nil until enough time passed, reset when the line hides
+local function ScoreProgress_OnLeave(self)
+    self:SetScript("OnUpdate", nil)
+    GameTooltip_Hide()
+end
+
+-- points per second from the first to the last score change, measured from tick to tick so it stays steady between them
 local function UpdateRate(self, value)
+    local previous = self.value
+    if not previous or value == previous then return end
+    local ticks = self.ticks
+    if value < previous then
+        wipe(ticks)
+    end
     local now = GetTime()
-    self.samples = self.samples or {}
-    local samples = self.samples
-    tinsert(samples, {time = now, value = value})
-    while #samples > 1 and now - samples[1].time > ESTIMATE_WINDOW do
-        tremove(samples, 1)
+    tinsert(ticks, {time = now, value = value})
+    while now - ticks[1].time > ESTIMATE_WINDOW do
+        tremove(ticks, 1)
     end
-    local ticks = 0
-    for i = 2, #samples do
-        if samples[i].value ~= samples[i - 1].value then
-            ticks = ticks + 1
-        end
-    end
-    local span = now - samples[1].time
-    self.rate = span >= ESTIMATE_MIN_SPAN and ticks >= ESTIMATE_MIN_TICKS and (value - samples[1].value) / span or nil
+    self.rate = #ticks >= ESTIMATE_MIN_TICKS and (value - ticks[1].value) / (now - ticks[1].time) or nil
+    self.lastTick = now
 end
 
 local function ScoreProgress_SetProgress(self, value, max)
@@ -165,8 +183,8 @@ local function ScoreProgress_SetProgress(self, value, max)
         self:Hide()
         return
     end
-    self.value, self.max = value, max
     UpdateRate(self, value)
+    self.value, self.max = value, max
     local width = PROGRESS_WIDTH * math.min(value / max, 1)
     if width > 0 then
         self.fill:SetWidth(width)
@@ -178,18 +196,24 @@ local function ScoreProgress_SetProgress(self, value, max)
     end
 end
 
+-- only a new battleground clears the ticks, hiding the ui (alt+z, afk screen) keeps them
+local function ScoreProgress_Reset(self)
+    self:Hide()
+    self.value, self.rate, self.lastTick = nil, nil, nil
+    wipe(self.ticks)
+end
+
 local function CreateScoreProgress(score, fromRight, factionName, color)
     local progress = CreateFrame("Frame", nil, score:GetParent())
     progress:SetAllPoints(score)
     progress:SetMouseMotionEnabled(true)
     progress:Hide()
     progress.factionName, progress.color = factionName, color
+    progress.ticks = {}
     progress.SetProgress = ScoreProgress_SetProgress
+    progress.Reset = ScoreProgress_Reset
     progress:SetScript("OnEnter", ScoreProgress_OnEnter)
-    progress:SetScript("OnLeave", GameTooltip_Hide)
-    progress:SetScript("OnHide", function(self)
-        self.samples, self.rate = nil, nil
-    end)
+    progress:SetScript("OnLeave", ScoreProgress_OnLeave)
 
     local track = progress:CreateTexture(nil, "ARTWORK")
     track:SetColorTexture(1, 1, 1)
@@ -242,7 +266,8 @@ end
 local function GetFlagCarrierFaction()
     for _, unit in ipairs(ARENA_UNITS) do
         if GW.UnitExists(unit) then
-            local faction = PvPClassificationFaction[UnitPvpClassification(unit)]
+            local classification = UnitPvpClassification(unit)
+            local faction = not GW.IsSecretValue(classification) and PvPClassificationFaction[classification]
             if faction == "H" or faction == "A" then
                 return faction
             end
@@ -409,8 +434,8 @@ local function OnEvent(self, event)
         if (self.battlegroundHud.activeBgId > 0 and self.battlegroundHud.activeBgId ~= playerInstanceMapId) or event == "PLAYER_ENTERING_BATTLEGROUND" then
             self.battlegroundHud.scoreRight:SetText(0)
             self.battlegroundHud.scoreLeft:SetText(0)
-            self.battlegroundHud.scoreLeftProgress:Hide()
-            self.battlegroundHud.scoreRightProgress:Hide()
+            self.battlegroundHud.scoreLeftProgress:Reset()
+            self.battlegroundHud.scoreRightProgress:Reset()
             self.battlegroundHud.MID:SetWidth(36)
             self.battlegroundHud.landMarkFramePool:ReleaseAll()
             self.battlegroundHud.flagFramePool:ReleaseAll()
@@ -464,8 +489,8 @@ local function OnEvent(self, event)
         UIWidgetTopCenterContainerFrame:Show()
         self.battlegroundHud.scoreRight:SetText(0)
         self.battlegroundHud.scoreLeft:SetText(0)
-        self.battlegroundHud.scoreLeftProgress:Hide()
-        self.battlegroundHud.scoreRightProgress:Hide()
+        self.battlegroundHud.scoreLeftProgress:Reset()
+        self.battlegroundHud.scoreRightProgress:Reset()
         self.battlegroundHud.MID:SetWidth(36)
     end
 end
