@@ -155,12 +155,3 @@ function GwObjectivesItemButtonMixin:OnEnter()
     GameTooltip:SetHyperlink("item:"..tostring(self.itemID)..":0:0:0:0:0:0:0")
     GameTooltip:Show()
 end
-
-function GwObjectivesItemButtonMixin:FakeHide()
-    self:SetScript("OnEnter", nil)
-    self:SetScript("OnLeave", nil)
-
-    self:ClearNormalTexture()
-    self:ClearPushedTexture()
-    self:ClearHighlightTexture()
-end

@@ -1,7 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file ="Misc\versionApi.lua"/>
     <Script file ="Character\heroPanel.lua"/>
-    <Script file ="Mixin\ObjectivesItemButtonMixin.lua"/>
     <Include file ="Actionbar\Binding.xml"/>
     <Script file ="Actionbar\actionbars.lua"/>
     <Script file ="Actionbar\Binding.lua"/>

@@ -538,7 +538,6 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
             self.hasItem = true
             self:UpdateObjectiveActionButtonPosition()
         else
-            btn:FakeHide()
             btn.itemID, btn.questID, btn.itemName = nil, nil, nil
             btn:Hide()
             btn:SetScript("OnUpdate", nil)

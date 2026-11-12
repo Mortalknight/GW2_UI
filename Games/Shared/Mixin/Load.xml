@@ -5,6 +5,7 @@
     <Script file ="GwObjectivesAnimationMixin.lua"/>
     <Script file ="GwObjectivesBlockMixin.lua"/>
     <Script file ="GwObjectivesContainerMixin.lua"/>
+    <Script file ="ObjectivesItemButtonMixin.lua"/>
     <Script file ="GwQuestTrackerObjectiveMixin.lua"/>
     <Script file ="GwObjectivesUnitFrameMixin.lua"/>
     <Script file ="GwObjectivesGroupfinderButtonMixin.lua"/>

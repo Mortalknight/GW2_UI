@@ -1,5 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file ="ObjectivesItemButtonMixin.lua"/>
     <Script file ="objectives.lua"/>
     <Script file ="collectionTracking.lua"/>
 </Ui>

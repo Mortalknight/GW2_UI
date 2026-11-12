@@ -175,9 +175,6 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
         Mixin(newBlock.actionButton, GwObjectivesItemButtonMixin)
         newBlock.actionButton:SetAttribute("type1", "item")
         newBlock.actionButton:SetAttribute("type2", "stop")
-        if GW.Classic then
-            newBlock.actionButton:FakeHide()
-        end
         newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
         newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
         newBlock.actionButton:SetScript("OnEnter", newBlock.actionButton.OnEnter)
