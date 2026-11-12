@@ -645,11 +645,13 @@ local function SpellBookTabOnClick(self, spellBook)
     for i = 1, #spellBook.tabs do
         spellBook.tabs[i].background:Hide()
     end
+    if spellBook.rewardsTab then
+        spellBook.rewardsTab.background:Hide()
+    end
     self.background:Show()
 end
 
--- one tab: its button in the list and its page container
-local function CreateTab(spellBook, key)
+local function CreateMenuItem(spellBook, key)
     local menu = spellBook.menu
     local menuItem = CreateFrame("Button", "GwspellbookTab" .. key, menu, "GwspellbookTab")
     menuItem:SetWidth(MENU_WIDTH - 10)
@@ -661,6 +663,12 @@ local function CreateTab(spellBook, key)
     menuItem:SetText("")
     menuItem:HookScript("OnClick", function(self) SpellBookTabOnClick(self, spellBook) end)
     menuItem:SetFrameRef("GwSpellbookMenu", menu)
+    return menuItem
+end
+
+-- one tab: its button in the list and its page container
+local function CreateTab(spellBook, key)
+    local menuItem = CreateMenuItem(spellBook, key)
     menuItem.buttons = {}
 
     local container = CreateFrame("Frame", "GwSpellbookContainerTab" .. key, spellBook, "GwSpellbookContainerTab")
@@ -682,6 +690,12 @@ local function CreateTab(spellBook, key)
     container:Hide()
     menuItem.container = container
     return menuItem
+end
+
+-- the rewards tab sits below the pet tab, its row background follows the row it is in
+local function UpdateRewardsTabRow(spellBook)
+    local row = spellBook.numTabs + (spellBook.petTab:IsShown() and 1 or 0)
+    spellBook.rewardsTab.bg:SetVertexColor(1, 1, 1, row % 2)
 end
 
 -- as many spell tabs as the client has, created when they come (the era client sends its tabs late) and only out of
@@ -706,6 +720,9 @@ local function SetUpTabs(self)
     end
     self.numTabs = #self.tabs
     self.menu:SetAttribute("numTabs", self.numTabs)
+    if self.rewardsTab then
+        UpdateRewardsTabRow(self)
+    end
 
     -- new tabs: show the open one again, its index may have moved
     if #self.spellTabs > numSpellTabs and self.menu:GetAttribute("tabopen") then
@@ -840,6 +857,32 @@ local function updateSpellbookTab(self)
     self.updating = false
 end
 
+-- the tab as long as rewards are ahead
+local function UpdateRewardsAccess(spellBook)
+    if InCombatLockdown() then
+        GW.CombatQueue:Queue("spellbook_rewards_tab", UpdateRewardsAccess, {spellBook})
+        return
+    end
+    local show = GW.ShouldShowUpcomingRewards()
+    spellBook.rewardsTab:SetShown(show)
+    if not show and spellBook.menu:GetAttribute("tabopen") == "rewards" then
+        spellBook.menu:SetAttribute("tabopen", 2)
+        SpellBookTabOnClick(spellBook.tabs[2], spellBook)
+    end
+end
+
+-- the tabs are secure, so the rewards open out of combat only
+local function ShowRewardsTab(spellBook)
+    if not spellBook.rewardsTab:IsShown() then return end
+    if InCombatLockdown() then
+        UIErrorsFrame:AddExternalErrorMessage(ERR_NOT_IN_COMBAT)
+        return
+    end
+    GwCharacterWindow:SetAttribute("windowpanelopen", "spellbook")
+    spellBook.menu:SetAttribute("tabopen", "rewards")
+    SpellBookTabOnClick(spellBook.rewardsTab, spellBook)
+end
+
 local function QueuedUpdate(self)
     self:SetScript("OnUpdate", nil)
     updateSpellbookTab(self)
@@ -950,22 +993,6 @@ local function LoadSpellBook(tabContainer)
     end)
     spellBook.buttonSettings = settings
 
-    -- the upcoming level rewards next to the cog until the max level, also before the first trainer visit so new
-    -- characters find the window; it only exists with our exp bar
-    local rewards = CreateFrame("Button", nil, spellBook)
-    rewards:SetSize(24, 24)
-    rewards:SetPoint("RIGHT", settings, "LEFT", -6, 0)
-    rewards:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/levelreward-icon.png")
-    rewards:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/levelreward-icon.png", "ADD")
-    rewards:SetScript("OnClick", function() GwLevelingRewards:SetShown(not GwLevelingRewards:IsShown()) end)
-    rewards:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:SetText(L["Upcoming Level Rewards"])
-        GameTooltip:Show()
-    end)
-    rewards:SetScript("OnLeave", GameTooltip_Hide)
-
-
     menu:SetAttribute("_onattributechanged", [=[
         if name ~= "tabopen" then return end
         for i = 1, self:GetAttribute("numTabs") do
@@ -976,28 +1003,84 @@ local function LoadSpellBook(tabContainer)
                 container:Hide()
             end
         end
+        local rewards = self:GetFrameRef("GwSpellbookRewards")
+        if rewards then
+            if value == "rewards" then
+                rewards:Show()
+            else
+                rewards:Hide()
+            end
+        end
     ]=])
 
-    -- the pet book is the last tab, shown only with a pet
+    -- the upcoming level rewards are the last tab, on the clients with class trainers
+    local rewardsPage = GW.LoadUpcomingSpells(spellBook, function() UpdateRewardsAccess(spellBook) end)
+    local rewardsTab
+    if rewardsPage then
+        rewardsPage:SetPoint("TOPLEFT", spellBook, "TOPLEFT", MENU_WIDTH, -37)
+        rewardsPage:SetPoint("BOTTOMRIGHT", spellBook, "BOTTOMRIGHT", 0, 10)
+        rewardsPage.headerbg:SetPoint("BOTTOMRIGHT", rewardsPage, "TOPRIGHT")
+        menu:SetFrameRef("GwSpellbookRewards", rewardsPage)
+
+        rewardsTab = CreateMenuItem(spellBook, "Rewards")
+        rewardsTab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/levelreward-icon.png")
+        rewardsTab.title:SetText(L["Upcoming Level Rewards"])
+        rewardsTab:SetAttribute("_onclick", [=[self:GetFrameRef("GwSpellbookMenu"):SetAttribute("tabopen", "rewards")]=])
+        spellBook.rewardsTab = rewardsTab
+
+        -- the cog options are about the spell buttons, not this page
+        rewardsPage:HookScript("OnShow", function() settings:Hide() end)
+        rewardsPage:HookScript("OnHide", function() settings:Show() end)
+
+        GW.ShowUpcomingRewards = function() ShowRewardsTab(spellBook) end
+        GW.ToggleUpcomingRewards = function()
+            if InCombatLockdown() then
+                UIErrorsFrame:AddExternalErrorMessage(ERR_NOT_IN_COMBAT)
+            elseif spellBook:IsVisible() and menu:GetAttribute("tabopen") == "rewards" then
+                GwCharacterWindow:SetAttribute("windowpanelopen", nil)
+            else
+                ShowRewardsTab(spellBook)
+            end
+        end
+    end
+
+    -- the pet book is the last spell tab, shown only with a pet; without it the rewards tab moves up into its row
     local petTab = CreateTab(spellBook, "Pet")
-    petTab:HookScript("OnHide", function() SpellBookTabOnClick(spellBook.tabs[2], spellBook) end)
+    petTab:HookScript("OnHide", function()
+        if petTab.background:IsShown() then
+            SpellBookTabOnClick(spellBook.tabs[2], spellBook)
+        end
+    end)
+    if rewardsTab then
+        petTab:SetFrameRef("GwSpellbookRewardsTab", rewardsTab)
+    end
     petTab:SetAttribute("_onstate-petstate", [=[
+        local menu = self:GetFrameRef("GwSpellbookMenu")
         if newstate == "nopet" then
             self:Hide()
-            if self:GetFrameRef("GwSpellbookMenu"):GetAttribute("tabopen") then
-                self:GetFrameRef("GwSpellbookMenu"):SetAttribute("tabopen", 2)
+            local numTabs = menu:GetAttribute("numTabs")
+            if numTabs and menu:GetAttribute("tabopen") == numTabs then
+                menu:SetAttribute("tabopen", 2)
             end
         elseif newstate == "hasPet" then
             self:Show()
+        end
+        local rewardsTab = self:GetFrameRef("GwSpellbookRewardsTab")
+        if rewardsTab then
+            rewardsTab:ClearAllPoints()
+            rewardsTab:SetPoint("TOPLEFT", self, newstate == "hasPet" and "BOTTOMLEFT" or "TOPLEFT")
         end
     ]=])
     RegisterStateDriver(petTab, "petstate", "[target=pet,noexists] nopet; [target=pet,help] hasPet;")
     spellBook.petTab = petTab
     SetUpTabs(spellBook)
+    if rewardsTab then
+        petTab:HookScript("OnShow", function() UpdateRewardsTabRow(spellBook) end)
+        petTab:HookScript("OnHide", function() UpdateRewardsTabRow(spellBook) end)
+    end
 
     menu:SetAttribute("tabopen", 2)
     menu:SetScript("OnShow", function()
-        rewards:SetShown(GwLevelingRewards ~= nil and not GW.IsAtMaxLevel())
         if InCombatLockdown() or spellBook.spellbookDirty == false then return end
         updateSpellbookTab(spellBook)
     end)

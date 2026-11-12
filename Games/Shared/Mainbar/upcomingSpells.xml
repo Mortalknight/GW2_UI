@@ -113,26 +113,21 @@
         </Layers>
     </Frame>
 
-    <Frame name="GwLevelingRewards" hidden="true" virtual="true" frameStrata="DIALOG">
-        <Size x="540" y="518"></Size>
-        <Anchors>
-            <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
-        </Anchors>
+    <!-- the rewards page of the spell book; protected, the secure tab list of the book shows and hides it -->
+    <Frame name="GwSpellbookRewards" inherits="SecureFrameTemplate" hidden="true" virtual="true">
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/hud/levelrewardframe.png">
-                    <Size x="735" y="735"></Size>
+                <Texture parentKey="headerbg" file="Interface\AddOns\GW2_UI\textures\talents\talents_header.png">
+                    <Size x="512" y="32"/>
                     <Anchors>
-                        <Anchor point="CENTER"></Anchor>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
             </Layer>
             <Layer level="BORDER">
-                <FontString parentKey="header" text="Upcoming Level Rewards">
-                    <Size x="540" y="50"></Size>
+                <FontString parentKey="title" justifyH="LEFT" justifyV="MIDDLE">
                     <Anchors>
-                        <!-- the ribbon of the art, scaled up with the window -->
-                        <Anchor point="TOP" relativePoint="TOP" y="-26"></Anchor>
+                        <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.headerbg" x="5" y="0"/>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="hint" justifyH="CENTER" hidden="true">
@@ -146,8 +141,8 @@
         <Frames>
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="24" y="-150"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-40" y="50"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-80"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-36" y="16"></Anchor>
                 </Anchors>
             </Frame>
             <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
@@ -159,16 +154,10 @@
             <EditBox parentKey="search" inherits="GwEditBoxTemplate">
                 <Size y="22"/>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPLEFT" x="3" y="8"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBar" relativePoint="TOPRIGHT" x="-3" y="8"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPLEFT" x="-4" y="8"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBar" relativePoint="TOPRIGHT" x="4" y="8"/>
                 </Anchors>
             </EditBox>
-            <Button parentKey="CloseButton" inherits="GwStandardButton" text="Close">
-                <Size x="70" y="20" />
-                <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="BOTTOM" relativeTo="GwLevelingRewards" x="5" y="12"></Anchor>
-                </Anchors>
-            </Button>
         </Frames>
     </Frame>
 

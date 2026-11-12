@@ -15,6 +15,8 @@ local petUpcomingRewards = {}
 local petRewardLevel, petLevelIsOwn = 1, false
 -- "name (rank)" of every trainer reward, the way the trainer names its requirements; true while not learned
 local rewardPending = {}
+-- the clients with class trainers
+GW.HAS_LEVEL_REWARDS = GW.Classic or GW.TBC or GW.Wrath or GW.Forever
 -- pets learn at the pet trainer on these clients, wrath pets use their own talent tree
 local HAS_PET_TRAINERS = GW.myclass == "HUNTER" and (GW.Classic or GW.TBC or GW.Forever)
 local scanningTrainer = false
@@ -365,7 +367,15 @@ end
 function GW.GetUpcomingSpellCounts()
     EnsureUpcomingSpells()
 
-    return #trainableRewards, #upcomingLevelRewards
+    return #trainableRewards, #upcomingLevelRewards, #petTrainableRewards
+end
+
+-- below the max level, and at the max level while a trainer still has something to learn
+function GW.ShouldShowUpcomingRewards()
+    if not GwSpellbookRewards then return false end
+    if not GW.IsAtMaxLevel() then return true end
+    local trainable, _, petTrainable = GW.GetUpcomingSpellCounts()
+    return trainable + petTrainable > 0
 end
 
 local function GetRewardDisplay(reward)
@@ -774,11 +784,11 @@ local function CreatePetTabs(self)
     UpdateTabs(self)
 end
 
-local function CreateSummaryText(self, point, x)
+local function CreateSummaryText(self, point, relativeTo, x)
     local text = self:CreateFontString(nil, "OVERLAY")
     text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    text:SetPoint(point, self, point, x, -100)
+    text:SetPoint(point, relativeTo, point, x, 64)
     return text
 end
 
@@ -795,36 +805,22 @@ local function ShowTrainableAlert(self, oldLevel, newLevel)
     end
     if count == 0 then return end
     GW.AlertSystem:AddAlert(L["Trainable Now:"] .. " " .. format("%d %s", count, SPELLS), nil, L["Upcoming Level Rewards"],
-        function() self:Show() end, "Interface/AddOns/GW2_UI/textures/icons/levelreward-icon.png", false)
+        GW.ShowUpcomingRewards, "Interface/AddOns/GW2_UI/textures/icons/levelreward-icon.png", false)
 end
 
 local function UpcomingSpellsFrameOnShow(self)
     RefreshRewardList(self)
     self.ScrollBox:ScrollToBegin()
-
-    -- achievements and their sound only exist from wrath on
-    PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN or SOUNDKIT.IG_SPELLBOOK_OPEN)
-    self.animationValue = -400
-    local start = GetTime()
-    GW.AddToAnimation(
-        self:GetDebugName(),
-        self.animationValue,
-        0,
-        start,
-        0.2,
-        function(p)
-            local a = math.min(1, math.max(0, GW.lerp(0, 1, (GetTime() - start) / 0.2)))
-            self:SetAlpha(a)
-            self:SetPoint("CENTER", 0, p)
-        end
-    )
 end
 
-local function LoadUpcomingSpells()
-    local upcomingSpellsFrame = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")
+-- the page of the rewards tab in the spell book; onChange lets the book show or hide its tab
+local function LoadUpcomingSpells(spellBook, onChange)
+    if not GW.HAS_LEVEL_REWARDS then return end
+    local upcomingSpellsFrame = CreateFrame("Frame", "GwSpellbookRewards", spellBook, "GwSpellbookRewards")
 
-    upcomingSpellsFrame.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
-    upcomingSpellsFrame.header:SetText(L["Upcoming Level Rewards"])
+    upcomingSpellsFrame.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE")
+    upcomingSpellsFrame.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    upcomingSpellsFrame.title:SetText(L["Upcoming Level Rewards"])
 
     upcomingSpellsFrame.hint:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     upcomingSpellsFrame.hint:SetTextColor(GW.Colors.SkinColors.Disabled:GetRGB())
@@ -837,15 +833,10 @@ local function LoadUpcomingSpells()
         self.search:SetText("")
     end)
 
-    upcomingSpellsFrame.CloseButton:SetScript("OnClick", GW.Parent_Hide)
-    upcomingSpellsFrame.CloseButton:SetText(CLOSE)
-
     upcomingSpellsFrame:SetScript("OnShow", UpcomingSpellsFrameOnShow)
 
-    tinsert(UISpecialFrames, "GwLevelingRewards")
-
-    upcomingSpellsFrame.summaryNow = CreateSummaryText(upcomingSpellsFrame, "TOPLEFT", 30)
-    upcomingSpellsFrame.summaryAhead = CreateSummaryText(upcomingSpellsFrame, "TOPRIGHT", -28)
+    upcomingSpellsFrame.summaryNow = CreateSummaryText(upcomingSpellsFrame, "TOPLEFT", upcomingSpellsFrame.ScrollBox, -4)
+    upcomingSpellsFrame.summaryAhead = CreateSummaryText(upcomingSpellsFrame, "TOPRIGHT", upcomingSpellsFrame.ScrollBar, 4)
 
     -- an even dark band behind the list, the world must not show through the art
     local listBackground = upcomingSpellsFrame:CreateTexture(nil, "BORDER")
@@ -898,7 +889,10 @@ local function LoadUpcomingSpells()
         if upcomingSpellsFrame:IsShown() then
             RefreshRewardList(upcomingSpellsFrame)
         end
-        GW.UpdateExpBar()
+        onChange()
+        if GW.UpdateExpBar then
+            GW.UpdateExpBar()
+        end
     end
 
     upcomingSpellsFrame:SetScript(
@@ -938,5 +932,7 @@ local function LoadUpcomingSpells()
             Refresh()
         end
     )
+
+    return upcomingSpellsFrame
 end
 GW.LoadUpcomingSpells = LoadUpcomingSpells

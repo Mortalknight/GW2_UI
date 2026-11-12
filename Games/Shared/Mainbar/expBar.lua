@@ -6,8 +6,6 @@ local lerp = GW.lerp
 local Diff = GW.Diff
 
 local FormatNumber = GW.GetLocalizedNumber or CommaValue or tostring
--- clients that teach their spells at the class trainer get the upcoming level rewards
-local HAS_LEVEL_REWARDS = GW.Classic or GW.TBC or GW.Wrath or GW.Forever
 
 -- forward function defs
 local experiencebarAnimation = 0
@@ -90,12 +88,8 @@ local function xpbar_OnEnter(self)
 end
 
 local function xpbar_OnClick()
-    if HAS_LEVEL_REWARDS and not IsAtMaxLevel() then
-        if GwLevelingRewards:IsShown() then
-            GwLevelingRewards:Hide()
-        else
-            GwLevelingRewards:Show()
-        end
+    if GW.ShouldShowUpcomingRewards() then
+        GW.ToggleUpcomingRewards()
     elseif GW.Retail and IsAtMaxLevel() and C_AzeriteEmpoweredItem and C_AzeriteEmpoweredItem.IsHeartOfAzerothEquipped() then
         local heartItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
         if heartItemLocation and heartItemLocation:IsEqualTo(ItemLocation:CreateFromEquipmentSlot(2)) then
@@ -554,7 +548,7 @@ local function UpdateData(self)
     experiencebarAnimation = valPrec
 
     -- also before the first trainer visit, the window then tells to visit one
-    if HAS_LEVEL_REWARDS and not IsAtMaxLevel() then
+    if GW.ShouldShowUpcomingRewards() then
         nextLevel = nextLevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon.png:20:20:0:0|t"
     end
 
@@ -684,11 +678,7 @@ local function LoadXPBar()
         queueUpdate(experiencebar)
     end
 
-    if HAS_LEVEL_REWARDS then
-        GW.LoadUpcomingSpells()
-    end
-
-    if GW.isModern or HAS_LEVEL_REWARDS then
+    if GW.isModern or GW.HAS_LEVEL_REWARDS then
         experiencebar.rightButton:SetScript("OnClick", xpbar_OnClick)
         experiencebar.rightButton:SetScript(
             "OnEnter",
@@ -698,13 +688,13 @@ local function LoadXPBar()
                 p.NextLevel.oldColor.r, p.NextLevel.oldColor.g, p.NextLevel.oldColor.b = p.NextLevel:GetTextColor()
                 p.NextLevel:SetTextColor(p.NextLevel.oldColor.r * 2, p.NextLevel.oldColor.g * 2, p.NextLevel.oldColor.b * 2)
 
-                if HAS_LEVEL_REWARDS and not IsAtMaxLevel() then
-                    local trainable, upcoming = GW.GetUpcomingSpellCounts()
+                if GW.ShouldShowUpcomingRewards() then
+                    local trainable, upcoming, petTrainable = GW.GetUpcomingSpellCounts()
                     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
                     GameTooltip:ClearLines()
                     local label, value = GW.Colors.TextColors.LightHeader, GW.Colors.FallbackWhite
                     GameTooltip:AddLine(L["Upcoming Level Rewards"], value:GetRGB())
-                    GameTooltip:AddDoubleLine(L["Trainable Now:"], trainable, label.r, label.g, label.b, value:GetRGB())
+                    GameTooltip:AddDoubleLine(L["Trainable Now:"], trainable + petTrainable, label.r, label.g, label.b, value:GetRGB())
                     GameTooltip:AddDoubleLine(L["Next Levels:"], upcoming, label.r, label.g, label.b, value:GetRGB())
                     GameTooltip:AddLine(" ")
                     GameTooltip:AddLine(GW.Colors.SkinColors.Disabled:WrapTextInColorCode(L["Click to show the upcoming level rewards"]), nil, nil, nil, true)
