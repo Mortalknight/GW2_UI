@@ -287,7 +287,7 @@ function GwImmersiveQuestFrameMixin:UpdateSpokenButtons()
 end
 
 function GwImmersiveQuestFrameMixin:StopSpokenGreeting()
-    if not self:SpokenEnabled() then
+    if not self:SpokenEnabled() or not GW.settings.immersiveQuesting.spokenSkipGreeting then
         return
     end
     local spoken = getSpoken()
