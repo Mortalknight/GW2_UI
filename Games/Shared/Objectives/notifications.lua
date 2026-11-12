@@ -92,8 +92,23 @@ local function _GetDistanceToClosestObjective(spawn, zone, name)
     return closestDistance
 end
 
+local function isQuestLogEntryComplete(questLogIndex)
+    if not questLogIndex or questLogIndex <= 0 then
+        return false
+    end
+    if C_QuestLog and C_QuestLog.GetInfo then
+        local info = C_QuestLog.GetInfo(questLogIndex)
+        return info ~= nil and info.questID ~= nil and C_QuestLog.IsComplete(info.questID) == true
+    end
+    local _, _, _, _, _, isComplete = GetQuestLogTitle(questLogIndex)
+    return isComplete == 1
+end
+
 local function getQuestPOIText(questLogIndex)
     local finalText, numFinished = "", 0
+    if isQuestLogEntryComplete(questLogIndex) then
+        return GetQuestLogCompletionText(questLogIndex) or QUEST_WATCH_QUEST_READY
+    end
     local numItemDrops = GetNumQuestItemDrops(questLogIndex)
     local numObjectives = numItemDrops > 0 and numItemDrops or GetNumQuestLeaderBoards(questLogIndex)
     local completionText = GetQuestLogCompletionText(questLogIndex) or QUEST_WATCH_QUEST_READY
