@@ -71,6 +71,7 @@ function GwImmersiveQuestFrameMixin:SpokenTick()
     if not self:SpokenEnabled() or not self.questString or #self.questString == 0 then
         return
     end
+    self:KeepSpokenControlsInside()
     local spoken = getSpoken()
     if not self.spokenCallback and spoken.RegisterCallback then
         self.spokenCallback = spoken:RegisterCallback("CLIP_STOPPED", function(clip, finishedPlaying)
@@ -177,5 +178,36 @@ function GW.LoadSpokenNarratorHiding()
     if greeting then
         greeting:HookScript("OnShow", scheduleNarratorUpdate)
         greeting:HookScript("OnHide", scheduleNarratorUpdate)
+    end
+end
+
+local questFrameMoved = false
+local questFrameHadMouse = true
+
+function GwImmersiveQuestFrameMixin:KeepSpokenControlsInside()
+    local quest = _G.QuestFrame
+    if not quest or not self:IsShown() or not quest:IsShown() then
+        return
+    end
+    local _, relativeTo = quest:GetPoint(1)
+    if questFrameMoved and relativeTo == self.container then
+        return
+    end
+    if not questFrameMoved then
+        questFrameHadMouse = quest:IsMouseEnabled()
+    end
+    quest:ClearAllPoints()
+    quest:SetPoint("TOPRIGHT", self.container, "TOPRIGHT", -8, -8)
+    quest:EnableMouse(false)
+    questFrameMoved = true
+end
+
+function GwImmersiveQuestFrameMixin:ReleaseSpokenControls()
+    if not questFrameMoved then
+        return
+    end
+    questFrameMoved = false
+    if _G.QuestFrame then
+        _G.QuestFrame:EnableMouse(questFrameHadMouse)
     end
 end
