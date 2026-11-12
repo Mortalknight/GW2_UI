@@ -171,8 +171,7 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
         newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         newBlock.actionButton.Icon = newBlock.actionButton.icon
         GW.HandleItemButtonCrop(newBlock.actionButton)
-        -- the range dot has no range check behind it, and our font shows it as a question mark
-        newBlock.actionButton.HotKey:Hide()
+        newBlock.actionButton.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", 10)
         Mixin(newBlock.actionButton, GwObjectivesItemButtonMixin)
         newBlock.actionButton:SetAttribute("type1", "item")
         newBlock.actionButton:SetAttribute("type2", "stop")
