@@ -285,3 +285,14 @@ function GwImmersiveQuestFrameMixin:UpdateSpokenButtons()
         bigButton:Hide()
     end
 end
+
+function GwImmersiveQuestFrameMixin:StopSpokenGreeting()
+    if not self:SpokenEnabled() then
+        return
+    end
+    local spoken = getSpoken()
+    local source = spoken.GetSource and spoken:GetSource("gossip")
+    if source and source.StopAll then
+        source:StopAll()
+    end
+end

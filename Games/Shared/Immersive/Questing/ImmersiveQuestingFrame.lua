@@ -361,6 +361,7 @@ local function deferShow(self)
 end
 
 function GwImmersiveQuestFrameMixin:evQuestProgress()
+    self:StopSpokenGreeting()
     self:HideBlizzQuestFrame()
     self:clearQuestReq()
 
@@ -386,6 +387,7 @@ function GwImmersiveQuestFrameMixin:evQuestDetail(questStartItemID)
     if not QuestFrame:IsShown() then
         return
     end
+    self:StopSpokenGreeting()
     -- blizzard writes its hidden quest text out before it shows the rewards, with a sound each frame
     if QuestFrameDetailPanel.fading then
         QuestFrameDetailPanel.fadingProgress = 1024
@@ -413,6 +415,7 @@ function GwImmersiveQuestFrameMixin:evQuestDetail(questStartItemID)
 end
 
 function GwImmersiveQuestFrameMixin:evQuestComplete()
+    self:StopSpokenGreeting()
     if (self.questState ~= "COMPLETING") then
         self:HideBlizzQuestFrame()
         self:clearQuestReq()
