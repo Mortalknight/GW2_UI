@@ -17,7 +17,6 @@ function GwImmersiveQuestFrameMixin:ResetSpokenSync()
     self.spokenMap = nil
     self.spokenPages = nil
     self.spokenFollow = true
-    self.spokenHeard = false
     self.container.replayButton:Hide()
 end
 
@@ -54,35 +53,39 @@ local function pageForWord(self, wordIndex)
     end
 end
 
+function GwImmersiveQuestFrameMixin:OnSpokenClipStopped(clip, finishedPlaying)
+    if not finishedPlaying or clip ~= self.spokenClip or not self.spokenMap or not self.spokenFollow then
+        return
+    end
+    if not self:IsShown() or not self:SpokenEnabled() then
+        return
+    end
+    local count = #self.questString
+    if self.questStringInt < count then
+        self.questStringInt = count - 1
+        self:nextGossip()
+    end
+end
+
 function GwImmersiveQuestFrameMixin:SpokenTick()
     if not self:SpokenEnabled() or not self.questString or #self.questString == 0 then
         return
     end
     local spoken = getSpoken()
+    if not self.spokenCallback and spoken.RegisterCallback then
+        self.spokenCallback = spoken:RegisterCallback("CLIP_STOPPED", function(clip, finishedPlaying)
+            self:OnSpokenClipStopped(clip, finishedPlaying)
+        end)
+    end
     local caption = spoken:GetCaption()
     if not caption or not caption.words or caption.clip.textOnly then
         return
     end
     if caption.clip ~= self.spokenClip then
         self.spokenFollow = true
-        self.spokenHeard = false
         alignClip(self, spoken, caption)
     end
-    if not self.spokenMap or not self.spokenFollow then
-        return
-    end
-    if caption.speaking then
-        self.spokenHeard = true
-    elseif self.spokenHeard and not spoken:IsPlaying(caption.clip) and not spoken:IsPaused() then
-        self.spokenHeard = false
-        local count = #self.questString
-        if self.questStringInt < count then
-            self.questStringInt = count - 1
-            self:nextGossip()
-        end
-        return
-    end
-    if not caption.speaking or not caption.activeWord then
+    if not self.spokenMap or not self.spokenFollow or not caption.speaking or not caption.activeWord then
         return
     end
     local page = pageForWord(self, caption.activeWord)
@@ -108,7 +111,6 @@ function GwImmersiveQuestFrameMixin:ReplaySpoken()
     end
     self.spokenClip = nil
     self.spokenFollow = true
-    self.spokenHeard = false
     self.questStringInt = 0
     self:nextGossip()
 end
