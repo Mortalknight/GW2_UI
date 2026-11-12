@@ -88,7 +88,7 @@ local function UpdateLayout(self)
     self.bottom:SetHeight(GetScreenHeight() * (1.5 / 10))
     self.bottom.model:SetSize(GetScreenWidth() * 2, GetScreenHeight() * 2)
 
-   local b = self.bottom
+    local b = self.bottom
     local _, captionSize = b.caption:GetFont()
     local _, timeSize = b.time:GetFont()
     local _, messagesSize = b.messages:GetFont()

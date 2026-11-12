@@ -13,6 +13,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.9", {
+    {GW.Enum.ChangelogType.feature, [=[Battleground score: a line below each score shows how close a side is to winning, the hover shows the points and an estimate how long it takes]=]},
+    {GW.Enum.ChangelogType.bug, [=[Battleground score: Arathi Basin shows all five bases, not only the ones known when you entered]=]},
+})
+
 addChange("12.1.8", {
     {GW.Enum.ChangelogType.feature, [=[Objectives tracker: optional own modules for the quests of your current zone and for dungeon quests, their place is set in the module order]=]},
     {GW.Enum.ChangelogType.bug, [=[Upcoming level rewards (Forever): spells you already learned no longer show as trainable when the spell book hides the lower ranks]=]},

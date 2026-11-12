@@ -1319,3 +1319,4 @@ L["WoW Style"] = true
 L["Choose where the player and target frames sit."] = true
 L["Health globe in the middle, target and target of target at the top."] = true
 L["Player frame on the left, target on the right above the action bars, like in World of Warcraft."] = true
+L["Wins in about %s"] = true

@@ -121,14 +121,102 @@ function BattlegroundHudMixin:UpdateTextFlags()
     UpdateMidWidth(self)
 end
 
+-- a thin line below the score fills up to the points a side needs to win, both lines grow towards the middle;
+-- the hover shows the numbers, only the mouse motion is taken so clicks reach the world
+local PROGRESS_WIDTH = 92
+-- the estimate takes the points of the last seconds, so it follows a lost or won base after a short while
+local ESTIMATE_WINDOW = 20
+local ESTIMATE_MIN_SPAN = 4
+-- points that come in steady ticks; single flag captures would give a jumping estimate
+local ESTIMATE_MIN_TICKS = 3
+
+local function ScoreProgress_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+    GameTooltip:AddLine(self.factionName, self.color:GetRGB())
+    GameTooltip:AddLine(self.value .. " / " .. self.max, HIGHLIGHT_FONT_COLOR:GetRGB())
+    if self.rate and self.rate > 0 and self.value < self.max then
+        GameTooltip:AddLine(format(GW.L["Wins in about %s"], SecondsToClock((self.max - self.value) / self.rate)), GW.Colors.SkinColors.SubText:GetRGB())
+    end
+    GameTooltip:Show()
+end
+
+-- points per second over the last seconds; nil until enough time passed, reset when the line hides
+local function UpdateRate(self, value)
+    local now = GetTime()
+    self.samples = self.samples or {}
+    local samples = self.samples
+    tinsert(samples, {time = now, value = value})
+    while #samples > 1 and now - samples[1].time > ESTIMATE_WINDOW do
+        tremove(samples, 1)
+    end
+    local ticks = 0
+    for i = 2, #samples do
+        if samples[i].value ~= samples[i - 1].value then
+            ticks = ticks + 1
+        end
+    end
+    local span = now - samples[1].time
+    self.rate = span >= ESTIMATE_MIN_SPAN and ticks >= ESTIMATE_MIN_TICKS and (value - samples[1].value) / span or nil
+end
+
+local function ScoreProgress_SetProgress(self, value, max)
+    -- secret values can only be shown, not computed with
+    if GW.IsSecretValue(value) or GW.IsSecretValue(max) or not value or not max or max <= 0 then
+        self:Hide()
+        return
+    end
+    self.value, self.max = value, max
+    UpdateRate(self, value)
+    local width = PROGRESS_WIDTH * math.min(value / max, 1)
+    if width > 0 then
+        self.fill:SetWidth(width)
+    end
+    self.fill:SetShown(width > 0)
+    self:Show()
+    if GameTooltip:IsOwned(self) then
+        ScoreProgress_OnEnter(self)
+    end
+end
+
+local function CreateScoreProgress(score, fromRight, factionName, color)
+    local progress = CreateFrame("Frame", nil, score:GetParent())
+    progress:SetAllPoints(score)
+    progress:SetMouseMotionEnabled(true)
+    progress:Hide()
+    progress.factionName, progress.color = factionName, color
+    progress.SetProgress = ScoreProgress_SetProgress
+    progress:SetScript("OnEnter", ScoreProgress_OnEnter)
+    progress:SetScript("OnLeave", GameTooltip_Hide)
+    progress:SetScript("OnHide", function(self)
+        self.samples, self.rate = nil, nil
+    end)
+
+    local track = progress:CreateTexture(nil, "ARTWORK")
+    track:SetColorTexture(1, 1, 1)
+    track:SetVertexColor(GW.Colors.SkinColors.StatusBarTrack:GetRGBA())
+    track:SetSize(PROGRESS_WIDTH, 2)
+    track:SetPoint("TOP", score, "BOTTOM", 0, 10)
+
+    progress.fill = progress:CreateTexture(nil, "ARTWORK", nil, 1)
+    progress.fill:SetColorTexture(1, 1, 1)
+    -- the flag below already has the faction color, the line takes the color of the score, a bit muted
+    progress.fill:SetVertexColor(score:GetTextColor())
+    progress.fill:SetAlpha(0.7)
+    progress.fill:SetHeight(2)
+    progress.fill:SetPoint(fromRight and "RIGHT" or "LEFT", track)
+
+    return progress
+end
+
 function BattlegroundHudMixin:GetPoints(widget)
     local widgetID = widget and widget.widgetID
     local flagScore = self.activeBg and self.activeBg.textScores and self.activeBg.textScores[widgetID]
     if flagScore then
         local info = C_UIWidgetManager.GetIconAndTextWidgetVisualizationInfo(widgetID)
-        local score = info and info.text and info.text:match("(%d+)/")
+        local score, goal = info and info.text and info.text:match("(%d+)/%s*(%d+)")
         if not score then return false end
         self[flagScore]:SetText(score)
+        self[flagScore .. "Progress"]:SetProgress(tonumber(score), tonumber(goal))
         -- the extra icon of the widget is the enemy flag this side carries
         local carries = info.state >= Enum.IconAndTextWidgetState.ShownWithDynamicIconFlashing
         if self.flagCarriers[flagScore] ~= carries then
@@ -142,10 +230,24 @@ function BattlegroundHudMixin:GetPoints(widget)
         if info then
             self.scoreRight:SetText(info.leftBarValue or self.scoreRight:GetText())
             self.scoreLeft:SetText(info.rightBarValue or self.scoreLeft:GetText())
+            self.scoreRightProgress:SetProgress(info.leftBarValue, info.leftBarMax)
+            self.scoreLeftProgress:SetProgress(info.rightBarValue, info.rightBarMax)
             return info.rightBarValue ~= nil
         end
     end
     return false
+end
+
+-- the faction whose player carries the flag, "H" or "A"; the first carrier found counts
+local function GetFlagCarrierFaction()
+    for _, unit in ipairs(ARENA_UNITS) do
+        if GW.UnitExists(unit) then
+            local faction = PvPClassificationFaction[UnitPvpClassification(unit)]
+            if faction == "H" or faction == "A" then
+                return faction
+            end
+        end
+    end
 end
 
 function BattlegroundHudMixin:PointsAndPoiOnEvent(event, ...)
@@ -159,17 +261,23 @@ function BattlegroundHudMixin:PointsAndPoiOnEvent(event, ...)
         self.timer:SetText("")
     end
 
-    -- the poi api wants the ui map id, activeBgId is the instance id the battleground is keyed by
+    -- the poi api wants the ui map id, activeBgId is the instance id the battleground is keyed by; not blizzards
+    -- cached list, it keeps the bases known on entering and is only cleared by the world map
     local mapID = C_Map.GetBestMapForUnit("player")
-    self.poiList = mapID and GetAreaPOIsForPlayerByMapIDCached(mapID) or {}
+    self.poiList = mapID and C_AreaPoiInfo.GetAreaPOIForMap(mapID) or {}
 
+    -- the flag (icon 0) takes the color of its carrier, a pickup alone changes no base so it is part of the signature
+    local carrier
     local signature = ""
     local poiInfos = {}
     for i = 1, #self.poiList do
         local poiInfo = C_AreaPoiInfo.GetAreaPOIInfo(mapID, self.poiList[i])
         poiInfos[i] = poiInfo
         if poiInfo then
-            signature = signature .. (poiInfo.atlasName or poiInfo.textureIndex or "") .. ","
+            if poiInfo.textureIndex == 0 then
+                carrier = GetFlagCarrierFaction()
+            end
+            signature = signature .. (poiInfo.atlasName or poiInfo.textureIndex or "") .. (carrier or "") .. ","
         end
     end
     if signature == self.poiSignature then
@@ -179,35 +287,33 @@ function BattlegroundHudMixin:PointsAndPoiOnEvent(event, ...)
 
     self.landMarkFramePool:ReleaseAll()
 
+    -- the frames are rebuilt for every change, each base keeps its last icon so only the one that changed animates
+    local previousIcons = self.poiIcons or {}
+    self.poiIcons = {}
+
     local counter = 0
     for i = 1, #self.poiList do
         local poiInfo = poiInfos[i]
+        local poiID = self.poiList[i]
         if poiInfo and poiInfo.atlasName then
             local atlas = C_Texture.GetAtlasInfo(poiInfo.atlasName)
             local f = self.landMarkFramePool:Acquire()
             f:SetPoint("CENTER", self.MID, "BOTTOMLEFT", 36 * counter + 18, self.hasTimer and 32 or 45)
+            f.savedIconIndex = previousIcons[poiID]
             f:SetIconAtlas(atlas)
+            self.poiIcons[poiID] = f.savedIconIndex
             f:Show()
             counter = counter + 1
         elseif poiInfo and poiInfo.textureIndex then
             local f = self.landMarkFramePool:Acquire()
             f:SetPoint("CENTER", self.MID, "BOTTOMLEFT", 36 * counter + 18, self.hasTimer and 32 or 45)
+            f.savedIconIndex = previousIcons[poiID]
             f:SetIcon(poiInfo.textureIndex)
+            self.poiIcons[poiID] = f.savedIconIndex
             f:Show()
             counter = counter + 1
-            if poiInfo.textureIndex == 0 then
-                for y = 1, 5 do
-                    if GW.UnitExists(ARENA_UNITS[y]) then
-                        local classificationFaction = PvPClassificationFaction[UnitPvpClassification(ARENA_UNITS[y])]
-                        if classificationFaction == "H" then
-                            f.IconBackground:SetVertexColor(GW.Colors.FactionColors.Horde:GetRGB())
-                        elseif classificationFaction == "A" then
-                            f.IconBackground:SetVertexColor(GW.Colors.FactionColors.Alliance:GetRGB())
-                        else
-                            f.IconBackground:SetVertexColor(1, 1, 1)
-                        end
-                    end
-                end
+            if poiInfo.textureIndex == 0 and carrier then
+                f.IconBackground:SetVertexColor((carrier == "H" and GW.Colors.FactionColors.Horde or GW.Colors.FactionColors.Alliance):GetRGB())
             end
         end
     end
@@ -303,6 +409,8 @@ local function OnEvent(self, event)
         if (self.battlegroundHud.activeBgId > 0 and self.battlegroundHud.activeBgId ~= playerInstanceMapId) or event == "PLAYER_ENTERING_BATTLEGROUND" then
             self.battlegroundHud.scoreRight:SetText(0)
             self.battlegroundHud.scoreLeft:SetText(0)
+            self.battlegroundHud.scoreLeftProgress:Hide()
+            self.battlegroundHud.scoreRightProgress:Hide()
             self.battlegroundHud.MID:SetWidth(36)
             self.battlegroundHud.landMarkFramePool:ReleaseAll()
             self.battlegroundHud.flagFramePool:ReleaseAll()
@@ -356,6 +464,8 @@ local function OnEvent(self, event)
         UIWidgetTopCenterContainerFrame:Show()
         self.battlegroundHud.scoreRight:SetText(0)
         self.battlegroundHud.scoreLeft:SetText(0)
+        self.battlegroundHud.scoreLeftProgress:Hide()
+        self.battlegroundHud.scoreRightProgress:Hide()
         self.battlegroundHud.MID:SetWidth(36)
     end
 end
@@ -492,6 +602,8 @@ local function LoadBattlegrounds()
     hudManager.battlegroundHud.scoreRight:SetShadowOffset(1, -1)
 
     hudManager.battlegroundHud.timer:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
+    hudManager.battlegroundHud.scoreLeftProgress = CreateScoreProgress(hudManager.battlegroundHud.scoreLeft, true, FACTION_HORDE, GW.Colors.FactionColors.Horde)
+    hudManager.battlegroundHud.scoreRightProgress = CreateScoreProgress(hudManager.battlegroundHud.scoreRight, false, FACTION_ALLIANCE, GW.Colors.FactionColors.Alliance)
 
     hudManager.battlegroundHud.landMarkFramePool = CreateFramePool("Frame", hudManager.battlegroundHud, "GwBattleLandMarkFrame", ResetLandMark)
     hudManager.battlegroundHud.flagFramePool = CreateFramePool("Frame", hudManager.battlegroundHud, "GwBattleLandMarkFrame", ResetLandMark)
