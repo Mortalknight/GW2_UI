@@ -128,7 +128,11 @@ local function dialogCoversNarrator()
     if immersive and immersive:IsShown() then
         return true
     end
-    return gossipOpen and GW.settings.skins.gossip.enabled
+    if gossipOpen and GW.settings.skins.gossip.enabled then
+        return true
+    end
+    local greeting = _G.QuestFrameGreetingPanel
+    return greeting ~= nil and greeting:IsVisible() and GW.settings.skins.questLog.enabled
 end
 
 local function updateNarrator()
@@ -169,4 +173,9 @@ function GW.LoadSpokenNarratorHiding()
         gossipOpen = event == "GOSSIP_SHOW"
         scheduleNarratorUpdate()
     end)
+    local greeting = _G.QuestFrameGreetingPanel
+    if greeting then
+        greeting:HookScript("OnShow", scheduleNarratorUpdate)
+        greeting:HookScript("OnHide", scheduleNarratorUpdate)
+    end
 end
