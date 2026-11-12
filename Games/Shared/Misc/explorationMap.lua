@@ -2,7 +2,6 @@
 local GW = select(2, ...)
 
 local RING_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/gcd-ring.png"
-local EXPLORATION_CATEGORY = 97
 local CRITERIA_TYPE_EXPLORE_AREA = 43
 local MAX_TOOLTIP_AREAS = 12
 
@@ -27,27 +26,15 @@ local panel
 local explorationAchievements
 local zoneAchievement = {}
 
-local function IsInCategory(categoryID, rootID)
-    while categoryID and categoryID > 0 do
-        if categoryID == rootID then
-            return true
-        end
-        categoryID = select(2, GetCategoryInfo(categoryID))
-    end
-    return false
-end
-
 -- the "explore <zone>" achievements, the treasure and rare ones of the same category have other criteria
 local function CollectExplorationAchievements()
     explorationAchievements = {}
     for _, categoryID in ipairs(GetCategoryList()) do
-        if IsInCategory(categoryID, EXPLORATION_CATEGORY) then
-            local categoryName = GetCategoryInfo(categoryID)
-            for i = 1, GetCategoryNumAchievements(categoryID, true) do
-                local id, name = GetAchievementInfo(categoryID, i)
-                if id and GetAchievementNumCriteria(id) > 0 and select(2, GetAchievementCriteriaInfo(id, 1)) == CRITERIA_TYPE_EXPLORE_AREA then
-                    tinsert(explorationAchievements, {id = id, name = strlower(name), categoryName = categoryName})
-                end
+        local categoryName = GetCategoryInfo(categoryID)
+        for i = 1, GetCategoryNumAchievements(categoryID, true) do
+            local id, name = GetAchievementInfo(categoryID, i)
+            if id and GetAchievementNumCriteria(id) > 0 and select(2, GetAchievementCriteriaInfo(id, 1)) == CRITERIA_TYPE_EXPLORE_AREA then
+                tinsert(explorationAchievements, {id = id, name = strlower(name), categoryName = categoryName})
             end
         end
     end
@@ -94,19 +81,16 @@ local HOVER_CHECK_INTERVAL = 0.05
 local progressCache = {}
 
 local function ComputeZoneProgress(zoneID, continentName)
-    if OVERLAY_COUNTS then
-        local total = OVERLAY_COUNTS[zoneID]
-        if total then
-            local explored = C_MapExplorationInfo.GetExploredMapTextures(zoneID)
-            return math.min(explored and #explored or 0, total), total
-        end
-        return
-    end
-
-    local achievementID = GetZoneAchievement(zoneID, continentName)
+    local achievementID = not (GW.Classic or GW.TBC) and GetZoneAchievement(zoneID, continentName)
     if achievementID then
         local explored, total = GetExplored(achievementID)
         return explored, total, achievementID
+    end
+
+    local total = OVERLAY_COUNTS and OVERLAY_COUNTS[zoneID]
+    if total then
+        local explored = C_MapExplorationInfo.GetExploredMapTextures(zoneID)
+        return math.min(explored and #explored or 0, total), total
     end
 end
 
