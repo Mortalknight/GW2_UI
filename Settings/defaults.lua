@@ -1640,6 +1640,13 @@ GW.globalDefault = {
             weaponMode = "STOW",
             titleStyle = "DEFAULT",
             clickAccept = true,
+            pos = {
+                point = "CENTER",
+                relativePoint = "CENTER",
+                xOfs = 0,
+                yOfs = 0,
+                hasMoved = false,
+            },
         },
         micromenu = {
             enabled = true,
