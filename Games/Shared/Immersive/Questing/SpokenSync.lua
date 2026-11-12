@@ -60,7 +60,7 @@ function GwImmersiveQuestFrameMixin:SpokenTick()
     end
     local spoken = getSpoken()
     local caption = spoken:GetCaption()
-    if not caption or not caption.words then
+    if not caption or not caption.words or caption.clip.textOnly then
         return
     end
     if caption.clip ~= self.spokenClip then
