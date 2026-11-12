@@ -1,7 +1,14 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local ADDON_NAME = "SpokenPlaces"
+local ADDON_NAMES = {"SpokenPlaces", "Spoken_Places"}
+
+local function IsSpokenPlacesLoaded()
+    for _, name in ipairs(ADDON_NAMES) do
+        if C_AddOns.IsAddOnLoaded(name) then return true end
+    end
+    return false
+end
 local WINDOW_ICON = "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png"
 local PAGE_TEXTURE = "Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png"
 local PAGE_COORDS = {0, 0.70703125, 0, 0.580078125}
@@ -106,7 +113,7 @@ end
 
 -- the panel shows beside the world map, at the latest it exists when the map opens
 local function LoadSpokenPlacesAddonSkin()
-    if not (GW.settings.skins.spokenPlaces.enabled and C_AddOns.IsAddOnLoaded(ADDON_NAME)) then return end
+    if not (GW.settings.skins.spokenPlaces.enabled and IsSpokenPlacesLoaded()) then return end
 
     if not TrySkinPanel() then
         GW.RegisterLoadHook(function() WorldMapFrame:HookScript("OnShow", TrySkinPanel) end, "Blizzard_WorldMap", WorldMapFrame)
