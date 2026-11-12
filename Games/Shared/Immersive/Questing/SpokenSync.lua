@@ -118,3 +118,31 @@ end
 function GwImmersiveQuestFrameMixin:StopFollowingSpoken()
     self.spokenFollow = false
 end
+
+local narratorHost
+local narratorHidden = false
+
+function GwImmersiveQuestFrameMixin:HideSpokenNarrator()
+    local spoken = getSpoken()
+    if narratorHidden or not spoken or not spoken.SetPlayerHost or not GW.settings.immersiveQuesting.spokenSync then
+        return
+    end
+    if C_AddOns.IsAddOnLoaded("DialogueUI") then
+        return
+    end
+    if not narratorHost then
+        narratorHost = CreateFrame("Frame", nil, UIParent)
+        narratorHost:Hide()
+    end
+    spoken:SetPlayerHost(narratorHost)
+    narratorHidden = true
+end
+
+function GwImmersiveQuestFrameMixin:RestoreSpokenNarrator()
+    local spoken = getSpoken()
+    if not narratorHidden or not spoken or not spoken.SetPlayerHost then
+        return
+    end
+    spoken:SetPlayerHost(nil)
+    narratorHidden = false
+end
