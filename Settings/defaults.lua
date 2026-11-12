@@ -1647,6 +1647,7 @@ GW.globalDefault = {
                 yOfs = 0,
                 hasMoved = false,
             },
+            spokenSync = true,
         },
         micromenu = {
             enabled = true,

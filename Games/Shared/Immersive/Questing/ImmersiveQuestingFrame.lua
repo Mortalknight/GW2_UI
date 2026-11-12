@@ -159,6 +159,7 @@ function GwImmersiveQuestFrameMixin:prevGossip()
     if self.questStringInt == 1 then
         return
     end
+    self:StopFollowingSpoken()
     self.questStringInt = max(self.questStringInt - 1, 1)
     local qStringInt = self.questStringInt
     local count = #self.questString
@@ -291,6 +292,7 @@ function GwImmersiveQuestFrameMixin:clearQuestReq()
     self.update_map_attempt = 0
     self.update_map_mutex = false
     self:clearDialog()
+    self:ResetSpokenSync()
     self.container.summary:ClearInfo()
     self.container.summary:Hide()
     self.container.acceptButton:SetText(CONTINUE)
@@ -718,6 +720,16 @@ function GW.LoadImmersiveQuesting()
 
     frame.container.dialog:SetScript("OnMouseUp", dialog_OnMouseUp)
     frame.container.cancelButton:SetScript("OnClick", cancel_OnClick)
+    frame.container.replayButton:SetText(GW.L["Replay Voice"])
+    frame.container.replayButton:SetScript("OnClick", function() frame:ReplaySpoken() end)
+    local sinceTick = 0
+    frame:SetScript("OnUpdate", function(self, elapsed)
+        sinceTick = sinceTick + elapsed
+        if sinceTick >= 0.1 then
+            sinceTick = 0
+            self:SpokenTick()
+        end
+    end)
     frame.container.acceptButton:SetScript("OnClick", accept_OnClick)
 
     frame:clearQuestReq()
