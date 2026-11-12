@@ -51,14 +51,34 @@ local function HideTopFadeAtRest(body)
     body:UpdateFade()
 end
 
--- its own thin bar: our thumb over its art, it keeps sizing and moving the thumb
+-- as far as spoken places scrolls with the mouse wheel
+local SCROLL_STEP = 28
+
+-- its own bar as our slim one: a thin thumb over its art and arrows at both ends, it keeps sizing and moving the thumb
 local function SkinScrollBar(body)
-    if not (body.bar and body.thumb) then return end
-    body.bar:DisableDrawLayer("BACKGROUND")
-    body.thumb:DisableDrawLayer("ARTWORK")
-    local tex = body.thumb:CreateTexture(nil, "OVERLAY")
+    local bar, thumb = body.bar, body.thumb
+    if not (bar and thumb and body.ScrollTo) then return end
+    bar:DisableDrawLayer("BACKGROUND")
+    thumb:DisableDrawLayer("ARTWORK")
+    local tex = thumb:CreateTexture(nil, "OVERLAY")
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
-    tex:SetAllPoints()
+    tex:SetPoint("TOP")
+    tex:SetPoint("BOTTOM")
+    tex:SetWidth(4)
+    tex:SetVertexColor(1, 1, 1, 0.45)
+
+    bar:ClearAllPoints()
+    bar:SetPoint("TOPRIGHT", body.frame, "TOPRIGHT", 0, -14)
+    bar:SetPoint("BOTTOMRIGHT", body.frame, "BOTTOMRIGHT", 0, 14)
+    for _, arrow in ipairs({{"up", "BOTTOM", "TOP", 2, -1}, {"down", "TOP", "BOTTOM", -2, 1}}) do
+        local button = CreateFrame("Button", nil, bar)
+        GW.HandleNextPrevButton(button, arrow[1])
+        button:SetSize(12, 12)
+        button:SetPoint(arrow[2], bar, arrow[3], 0, arrow[4])
+        button:SetScript("OnClick", function()
+            body:ScrollTo(body.frame:GetVerticalScroll() + arrow[5] * SCROLL_STEP)
+        end)
+    end
 end
 
 -- the round buttons on the title line (play, report, open in the compendium) as square ones
