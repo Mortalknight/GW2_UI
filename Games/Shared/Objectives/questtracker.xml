@@ -4,10 +4,10 @@
         <Size x="26" y="26"/>
         <Layers>
             <Layer level="ARTWORK">
-                <FontString parentKey="HotKey" inherits="NumberFontNormalSmallGray" justifyH="LEFT" text="RANGE_INDICATOR">
+                <FontString parentKey="HotKey" inherits="NumberFontNormalSmallGray" justifyH="RIGHT" text="•" hidden="true">
                     <Size x="29" y="10"/>
                     <Anchors>
-                        <Anchor point="TOPRIGHT" x="16" y="-2"/>
+                        <Anchor point="TOPRIGHT" x="-1" y="0"/>
                     </Anchors>
                 </FontString>
             </Layer>
