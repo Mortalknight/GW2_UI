@@ -131,6 +131,11 @@ local function LayoutBar()
     local size, spacing = GW.settings.totemSelection.buttonSize, GW.settings.totemSelection.spacing
     local summon, recall = MultiCastSummonSpellButton, MultiCastRecallSpellButton
     local numSlots = MultiCastActionBarFrame.numActiveSlots or 0
+    -- without a totem blizzard hides only its bar and skips the two spell buttons, in our frame they would stay shown
+    if numSlots == 0 then
+        summon:Hide()
+        recall:Hide()
+    end
 
     summon:SetSize(size, size)
     recall:SetSize(size, size)
