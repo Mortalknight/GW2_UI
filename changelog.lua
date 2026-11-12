@@ -16,6 +16,8 @@ AddChange(string addonVersion, table changeList)
 addChange("12.1.9", {
     {GW.Enum.ChangelogType.feature, [=[Battleground score: a line below each score shows how close a side is to winning, the hover shows the points and an estimate how long it takes]=]},
     {GW.Enum.ChangelogType.bug, [=[Battleground score: Arathi Basin shows all five bases, not only the ones known when you entered]=]},
+    {GW.Enum.ChangelogType.feature, [=[Immersive Questing: the window remembers where you moved it, the settings can move it back to the middle]=]},
+    {GW.Enum.ChangelogType.bug, [=[Skins: the Spoken Places skin also loads when the addon folder is named Spoken_Places]=]},
 })
 
 addChange("12.1.8", {

@@ -332,6 +332,7 @@ L["Enable the immersive questing view."] = true
 L["Edit Immersive quest settings."] = true
 L["Lock Frame"] = true
 L["Prevents the Immersive Questing window from being moved from its current position."] = true
+L["Moves the Immersive Questing window back to the middle of the screen."] = true
 L["Adjusts the size of the Immersive Questing window."] = true
 L["Title Style"] = true
 L["Adjusts the style of the title bar."] = true

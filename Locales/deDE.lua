@@ -197,6 +197,7 @@ L["Enable the GW2 style casting bar."] = "Aktiviere die Zauberleiste im GW2-Stil
 L["Enable the health bar replacement."] = "Aktiviere die Gesundheitskugel."
 L["Enable the immersive questing view."] = "Aktiviere die Immersive-Questing-Ansicht."
 L["Prevents the Immersive Questing window from being moved from its current position."] = "Verhindert, dass das Immersive-Questing-Fenster von seiner aktuellen Position verschoben wird."
+L["Moves the Immersive Questing window back to the middle of the screen."] = "Setzt das Immersive-Questing-Fenster zurück in die Bildschirmmitte."
 L["Adjusts the size of the Immersive Questing window."] = "Passt die Größe des Immersive-Questing-Fensters an."
 L["Title Style"] = "Titelleistenstil"
 L["Adjusts the style of the title bar."] = "Passt den Stil der Titelleiste an."

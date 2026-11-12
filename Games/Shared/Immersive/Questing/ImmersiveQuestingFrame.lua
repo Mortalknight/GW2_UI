@@ -9,6 +9,7 @@ GwImmersiveQuestFrameMixin = {}
 function GwImmersiveQuestFrameMixin:UiScaleChanged()
     local sf = GW.settings.immersiveQuesting.scale
     self:SetScale(UIParent:GetScale() * sf)
+    self:applySavedPosition()
     self.container.playerModel:SetupModel()
     self.container.giverModel:SetupModel()
     if self:IsShown() then
@@ -629,18 +630,28 @@ function GwImmersiveQuestFrameMixin:OnDragStop()
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
     local pos = GW.settings.immersiveQuesting.pos
+    local sf = GW.settings.immersiveQuesting.scale
     pos.point = point
     pos.relativePoint = relativePoint
-    pos.xOfs = xOfs
-    pos.yOfs = yOfs
+    pos.xOfs = xOfs * sf
+    pos.yOfs = yOfs * sf
     pos.hasMoved = true
 end
 
 function GwImmersiveQuestFrameMixin:applySavedPosition()
     local pos = GW.settings.immersiveQuesting.pos
-    if not pos or not pos.hasMoved then return end
+    local sf = GW.settings.immersiveQuesting.scale
     self:ClearAllPoints()
-    self:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    if pos.hasMoved then
+        self:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs / sf, pos.yOfs / sf)
+    else
+        self:SetPoint("CENTER", UIParent, "CENTER")
+    end
+end
+
+function GwImmersiveQuestFrameMixin:resetPosition()
+    GW.settings.immersiveQuesting.pos.hasMoved = false
+    self:applySavedPosition()
 end
 
 function GwImmersiveQuestFrameMixin:applyLockFrame()
@@ -689,7 +700,6 @@ function GW.LoadImmersiveQuesting()
     frame.container.floaty.inset:SetTextureSliceMode(Enum.UITextureSliceMode.Stretched)
 
     frame:UiScaleChanged()
-    frame:applySavedPosition()
     frame:applyLockFrame()
     frame:applyTitleStyle()
 
