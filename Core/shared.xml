@@ -299,6 +299,21 @@
         </Layers>
     </Frame>
 
+    <!-- close button of our windows, name it $parentCloseButton: blizzards template closes through HideUIPanel,
+         untainted, and the gamepad B clicks a button whose name ends in CloseButton -->
+    <Button name="GwWindowCloseButtonTemplate" inherits="UIPanelCloseButton" virtual="true">
+        <Size x="20" y="20" />
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png"/>
+        <PushedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png"/>
+        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png" alphaMode="BLEND"/>
+        <Scripts>
+            <OnLoad inherit="append">
+                -- blizzards template has a fixed frame level of 510 on the modern clients
+                self:SetFrameLevel(self:GetParent():GetFrameLevel() + 1)
+            </OnLoad>
+        </Scripts>
+    </Button>
+
     <EditBox name="GwEditBoxTemplate" autoFocus="false" virtual="true">
         <Size x="200" y="26"/>
         <FontString inherits="GameFontHighlight"/>

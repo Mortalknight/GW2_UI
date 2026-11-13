@@ -980,6 +980,140 @@ function GW.IsGamepadInterface()
     return InputUtil and InputUtil.IsGamepadUIEnabled and InputUtil.IsGamepadUIEnabled()
 end
 
+-- forever's gamepad interface: a window joins blizzards window handling one frame after it shows, like
+-- blizzards own windows, its content is laid out by then. Own OnUpdate, no C_Timer: started from hooks on
+-- blizzard functions that taints the gamepad ui. The window closes through a GwWindowCloseButtonTemplate,
+-- hiding it from addon code blocks blizzards gamepad bindings.
+local gamepadStartButtons = {}
+local gamepadReplacedFrames = {}
+-- in show order: the window shown last gets the focus, like blizzards windows
+local gamepadPending = {}
+local gamepadDriver = CreateFrame("Frame")
+gamepadDriver:Hide()
+gamepadDriver:SetScript("OnUpdate", function(self)
+    self:Hide()
+    local pending = gamepadPending
+    gamepadPending = {}
+    for _, frame in ipairs(pending) do
+        if frame:IsShown() then
+            if gamepadReplacedFrames[frame] then
+                GamepadMode.FrameControlsManager:FrameHidden(gamepadReplacedFrames[frame])
+            end
+            GamepadMode.FrameControlsManager:FrameShown(frame)
+            -- blizzard starts top left
+            if gamepadStartButtons[frame] then
+                SmartNavigation:SetTargetButtonForFrame(frame, gamepadStartButtons[frame](frame))
+            end
+        end
+    end
+end)
+
+-- call after the frames own OnShow/OnHide scripts are set. getStartButton is optional, replacedFrame is a
+-- blizzard window ours replaces that blizzard still shows (e.g. moved off screen), it is taken out of the
+-- gamepad window handling so the focus can not land on it
+function GW.RegisterGamepadWindow(frame, getStartButton, replacedFrame)
+    if not GW.loadedWithGamepadInterface then
+        return
+    end
+    gamepadStartButtons[frame] = getStartButton
+    gamepadReplacedFrames[frame] = replacedFrame
+    -- a resize handle only works with a mouse drag
+    if frame.sizer then
+        SmartNavigation_MarkFrameIgnored(frame.sizer)
+    end
+    frame:HookScript("OnShow", function(self)
+        tDeleteItem(gamepadPending, self)
+        tinsert(gamepadPending, self)
+        gamepadDriver:Show()
+    end)
+    frame:HookScript("OnHide", function(self)
+        tDeleteItem(gamepadPending, self)
+        GamepadMode.FrameControlsManager:FrameHidden(self)
+    end)
+end
+
+-- the gamepad navigation keeps the buttons it found on open, call this after the window laid out again
+function GW.RefreshGamepadWindow(frame)
+    if GW.loadedWithGamepadInterface and SmartNavigation:GetActiveFrame() == frame then
+        SmartNavigation:RefreshButtonGroups()
+    end
+end
+
+-- a pad button that only acts while the window has the gamepad focus. Bindings can only change out of
+-- combat: combat start clears them, combat end sets them again while the window still has the focus
+local gamepadFocusBindings = {}
+local gamepadFocusBindingCount = 0
+local function SetGamepadFocusBindings(frame, focused)
+    frame.gwGamepadFocused = focused
+    if InCombatLockdown() then
+        return
+    end
+    for button, key in pairs(gamepadFocusBindings[frame]) do
+        if focused then
+            SetOverrideBindingClick(button, true, key, button:GetName())
+        else
+            ClearOverrideBindings(button)
+        end
+    end
+end
+
+local function GamepadFocusBinding_OnEvent(self, event)
+    if event == "PLAYER_REGEN_DISABLED" then
+        ClearOverrideBindings(self)
+    elseif self.gwWindow.gwGamepadFocused then
+        SetOverrideBindingClick(self, true, gamepadFocusBindings[self.gwWindow][self], self:GetName())
+    end
+end
+
+function GW.AddGamepadFocusBinding(frame, key, onClick)
+    if not GW.loadedWithGamepadInterface then
+        return
+    end
+    if not gamepadFocusBindings[frame] then
+        gamepadFocusBindings[frame] = {}
+        frame.FocusGamepad = function(self) SetGamepadFocusBindings(self, true) end
+        frame.UnfocusGamepad = function(self) SetGamepadFocusBindings(self, false) end
+        -- blizzard skips UnfocusGamepad when a window closes while the game, not the ui, has the gamepad
+        frame:HookScript("OnHide", frame.UnfocusGamepad)
+    end
+    -- override bindings click a button by its global name
+    gamepadFocusBindingCount = gamepadFocusBindingCount + 1
+    local button = CreateFrame("Button", "GwGamepadFocusBinding" .. gamepadFocusBindingCount, UIParent)
+    button.gwWindow = frame
+    button:SetScript("OnClick", onClick)
+    button:RegisterEvent("PLAYER_REGEN_DISABLED")
+    button:RegisterEvent("PLAYER_REGEN_ENABLED")
+    button:SetScript("OnEvent", GamepadFocusBinding_OnEvent)
+    gamepadFocusBindings[frame][button] = key
+end
+
+-- a row of pad buttons and what they do, like blizzards gamepad footers; the icons follow the pad type.
+-- entries: {{"PAD1", ACTION_LABEL_SELECT}, ...}, the caller anchors the returned frame; legend.texts[key]
+-- is the text of a button, for labels that change
+function GW.CreateGamepadLegend(parent, entries)
+    local legend = CreateFrame("Frame", nil, parent)
+    legend:SetSize(1, 24)
+    legend.texts = {}
+    local prev
+    for _, entry in ipairs(entries) do
+        local icon = CreateFrame("Frame", nil, legend, "InputIconTextureFrameTemplate")
+        icon:SetInputKey(entry[1])
+        if prev then
+            icon:SetPoint("LEFT", prev, "RIGHT", 12, 0)
+        else
+            icon:SetPoint("LEFT")
+        end
+        local text = legend:CreateFontString(nil, "OVERLAY")
+        text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+        text:SetText(entry[2])
+        text:SetPoint("LEFT", icon, "RIGHT", 4, 0)
+        legend.texts[entry[1]] = text
+        prev = text
+    end
+    return legend
+end
+
 -- the gamepad focus frame follows blizzards window shapes, around our skins it looks broken. Blizzard applies
 -- its opacity setting only when it changes, never to new frames, so we set it on the frames ourselves
 local function ApplyGamepadFocusOpacity(glow)

@@ -527,7 +527,6 @@ local function LoadBank(helpers)
     -- setup show/hide
     f:SetScript("OnShow", bank_OnShow)
     f:SetScript("OnHide", bank_OnHide)
-    f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
 
     -- make blizzards bank frame inert once, we only use its open/close lifecycle
     inv.disableBlizzardFrame(BankFrame, true)

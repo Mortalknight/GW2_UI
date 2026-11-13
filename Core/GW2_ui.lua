@@ -613,6 +613,7 @@ local function evPlayerLogin(self)
             settingsButton.layoutIndex = lastLayoutIndex + 1
             settingsButton.topPadding = 20
             GW.UpdateGameMenuNewLabel(settingsButton)
+            GW.LinkGameMenuButtonForGamepad(menuFrame, settingsButton)
         end)
     end
 

@@ -332,6 +332,8 @@ local function layoutItems(f)
     if f.ItemFrame:IsShown() then
         layoutBagItems(f.ItemFrame)
     end
+    -- shown or hidden sections change the buttons
+    GW.RefreshGamepadWindow(f)
 end
 
 
@@ -696,6 +698,24 @@ local function hookToggleBag(bag_id)
 end
 
 
+-- the gamepad navigation starts here instead of the bag bar
+local function firstShownItem(f)
+    local numSections = #BAG_SECTIONS
+    local rev = GW.settings.bags.bag.reverseSort
+    for n = 1, numSections do
+        local cf = f.ItemFrame.Containers[BAG_SECTIONS[rev and (numSections - n + 1) or n].id]
+        if cf:IsShown() then
+            -- the layout places a container's slots from the highest index down
+            for i = cf.gw_num_slots, 1, -1 do
+                local item = cf.gw_items[i]
+                if item and item:IsShown() then
+                    return item
+                end
+            end
+        end
+    end
+end
+
 local function bag_OnShow(self)
     PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
     self:RegisterEvent("ITEM_LOCKED")
@@ -970,13 +990,44 @@ local function LoadBag(helpers)
     f.Header:SetWidth(GW.settings.bags.bag.width)
     onBagFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
-    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
+    -- the gamepad legend hangs below the footer
+    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, GW.loadedWithGamepadInterface and -64 or -35)
 
     -- setup show/hide
     f:SetScript("OnShow", bag_OnShow)
     f:SetScript("OnHide", bag_OnHide)
     setupAutoOpenClose(f)
-    f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
+    GW.RegisterGamepadWindow(f, firstShownItem)
+    if GW.loadedWithGamepadInterface then
+        -- back (the touchpad on playstation pads) focuses or leaves the search
+        GW.AddGamepadFocusBinding(f, "PADBACK", function()
+            if f.searchBox:HasFocus() then
+                f.searchBox:ClearFocus()
+            else
+                f.searchBox:SetFocus()
+            end
+        end)
+        local legend = GW.CreateGamepadLegend(f, {
+            {"PAD1", ACTION_LABEL_SELECT},
+            {"PAD3", CONTEXT_ACTION_LABEL_USE},
+            {"PAD4", CONTEXT_ACTION_LABEL_DESTROY_ITEM},
+            {"PADBACK", SEARCH},
+            {"DIRPAD", FRAME_ACTION_NAVIGATE},
+            {"PAD2", FRAME_ACTION_CLOSE},
+        })
+        legend:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, -40)
+        -- a right click puts the item into the open bank or sells it to the open merchant
+        legend:RegisterEvent("BANKFRAME_OPENED")
+        legend:RegisterEvent("BANKFRAME_CLOSED")
+        legend:RegisterEvent("MERCHANT_SHOW")
+        legend:RegisterEvent("MERCHANT_CLOSED")
+        legend:SetScript("OnEvent", function(self, event)
+            self.texts.PAD3:SetText(event == "BANKFRAME_OPENED" and CONTEXT_ACTION_LABEL_MOVE
+                or event == "MERCHANT_SHOW" and CONTEXT_ACTION_LABEL_SELL or CONTEXT_ACTION_LABEL_USE)
+        end)
+        -- the gamepad radial menu toggles the bags through this one, not ToggleBackpack
+        hooksecurefunc("ToggleBackpack_Combined", hookToggleBackpack)
+    end
 
     -- setup movable stuff
     local pos = GW.settings.bags.bag.pos

@@ -158,6 +158,52 @@ local function UpdateOwnContainerItemButton(button, force)
 end
 GW.UpdateOwnContainerItemButton = UpdateOwnContainerItemButton
 
+-- forever's gamepad interface: X uses the selected item, Y destroys it after blizzards confirmation.
+-- Using one is protected, so while a slot is selected X is bound to a secure button that right-clicks
+-- it; bindings can only change out of combat, combat start clears them and combat end sets them again
+local gamepadUse, gamepadDestroy
+
+local function itemButton_OnSmartNavSelect(self)
+    if not InCombatLockdown() then
+        gamepadUse:SetAttribute("clickbutton2", self)
+        gamepadDestroy.slot = self
+        SetOverrideBindingClick(gamepadUse, true, "PAD3", "GwGamepadItemUse", "RightButton")
+        SetOverrideBindingClick(gamepadUse, true, "PAD4", "GwGamepadItemDestroy")
+    end
+end
+
+local function itemButton_OnSmartNavDeselect()
+    if not InCombatLockdown() then
+        ClearOverrideBindings(gamepadUse)
+    end
+end
+
+if GW.IsGamepadInterface() then
+    gamepadUse = CreateFrame("Button", "GwGamepadItemUse", UIParent, "SecureActionButtonTemplate")
+    gamepadUse:SetAttribute("type2", "click")
+    gamepadUse:RegisterForClicks("AnyDown")
+    gamepadUse:RegisterEvent("PLAYER_REGEN_DISABLED")
+    gamepadUse:RegisterEvent("PLAYER_REGEN_ENABLED")
+    gamepadUse:SetScript("OnEvent", function(self, event)
+        if event == "PLAYER_REGEN_DISABLED" then
+            ClearOverrideBindings(self)
+        else
+            local button = SmartNavigation:GetCurrentButton()
+            if button and button.OnSmartNavSelect == itemButton_OnSmartNavSelect then
+                itemButton_OnSmartNavSelect(button)
+            end
+        end
+    end)
+
+    gamepadDestroy = CreateFrame("Button", "GwGamepadItemDestroy", UIParent)
+    gamepadDestroy:SetScript("OnClick", function(self)
+        local item = Item:CreateFromBagAndSlot(self.slot:GetBagID(), self.slot:GetID())
+        if not item:IsItemEmpty() then
+            C_Item.ConfirmDeleteItem(item:GetItemGUID())
+        end
+    end)
+end
+
 local function EnsureItemButton(cf, index, iconSize, opts)
     local button = cf.gw_items[index]
     if button then
@@ -191,6 +237,11 @@ local function EnsureItemButton(cf, index, iconSize, opts)
     if GW.SkinBagItemButton then
         GW.SkinBagItemButton(button, iconSize)
         button.gwSkinned = true
+    end
+
+    if gamepadUse then
+        button.OnSmartNavSelect = itemButton_OnSmartNavSelect
+        button.OnSmartNavDeselect = itemButton_OnSmartNavDeselect
     end
 
     -- No secure overlay for spell-item-targeting: the buttons inherit

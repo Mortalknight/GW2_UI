@@ -8,8 +8,8 @@ local UI_WIDGET_TYPE_DOUBLE_STATUS_BAR = 3
 local UI_WIDGET_TYPE_SCENARIO_CURRENCIES = 11
 
 -- Blizzards ShouldShowMawBuffs reads MAW auras unguarded and throws on secret auras, so the guarded
--- version below replaces it on retail. Only there: the replaced global taints blizzards tracker layout
--- and on forever that reaches the gamepad ui
+-- version below replaces it. Not with forever's gamepad interface: there the replaced global taints
+-- blizzards tracker layout and that reaches the gamepad ui
 if ShouldShowMawBuffs then
     -- our tracker renders its own Maw buff button: mute Blizzards container in
     -- the hidden default tracker — its display loop compares secret aura data
@@ -59,7 +59,7 @@ if ShouldShowMawBuffs then
         return auras
     end
 
-    if GW.isModern then
+    if GW.isModern and not GW.IsGamepadInterface() then
         ShouldShowMawBuffs = GW.ShouldShowMawBuffs
     end
 end

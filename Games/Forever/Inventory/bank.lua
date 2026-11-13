@@ -117,6 +117,32 @@ local function LayoutItems(f)
     if sep then
         SetBankHeaders(f)
     end
+    -- shown or hidden sections change the buttons
+    GW.RefreshGamepadWindow(f)
+end
+
+-- the gamepad navigation starts here instead of the bag bar
+local function FirstShownItem(f)
+    local first, last, step = 1, NUM_TABS, 1
+    if GW.settings.bags.bank.reverseSort then
+        first, last, step = last, first, -1
+    end
+    for tabIndex = first, last, step do
+        local cf = f.ItemFrame.Containers[TabBagID(tabIndex)]
+        if cf:IsShown() then
+            -- the first tab lays its slots out from the lowest index, the others from the highest
+            local from, to, dir = cf.gw_num_slots, 1, -1
+            if tabIndex == 1 then
+                from, to, dir = 1, cf.gw_num_slots, 1
+            end
+            for i = from, to, dir do
+                local item = cf.gw_items[i]
+                if item and item:IsShown() then
+                    return item
+                end
+            end
+        end
+    end
 end
 
 local function SnapFrameSize(f)
@@ -415,11 +441,32 @@ local function LoadBank(helpers)
     f:SetWidth(GW.settings.bags.bank.width)
     OnBankFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
-    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
+    -- the gamepad legend hangs below the footer
+    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, GW.loadedWithGamepadInterface and -64 or -35)
 
     f:SetScript("OnShow", Bank_OnShow)
     f:SetScript("OnHide", Bank_OnHide)
-    f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
+    GW.RegisterGamepadWindow(f, FirstShownItem, BankFrame)
+    if GW.loadedWithGamepadInterface then
+        -- back (the touchpad on playstation pads) focuses or leaves the search
+        GW.AddGamepadFocusBinding(f, "PADBACK", function()
+            if BankItemSearchBox:HasFocus() then
+                BankItemSearchBox:ClearFocus()
+            else
+                BankItemSearchBox:SetFocus()
+            end
+        end)
+        -- a right click in the bank moves the item into the bags
+        local legend = GW.CreateGamepadLegend(f, {
+            {"PAD1", ACTION_LABEL_SELECT},
+            {"PAD3", CONTEXT_ACTION_LABEL_MOVE},
+            {"PAD4", CONTEXT_ACTION_LABEL_DESTROY_ITEM},
+            {"PADBACK", SEARCH},
+            {"DIRPAD", FRAME_ACTION_NAVIGATE},
+            {"PAD2", FRAME_ACTION_CLOSE},
+        })
+        legend:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, -40)
+    end
     hooksecurefunc(BankFrame, "Raise", HideBlizzardBankFrame)
 
     local pos = GW.settings.bags.bank.pos
