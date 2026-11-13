@@ -177,27 +177,55 @@ local function changeIcon_OnClick(btn)
     end
 end
 
+-- AceDB has no rename: move the same table, so the active profile stays live and nothing has to be reapplied
+local function RenameProfileInDb(db, oldName, newName)
+    local profiles = db.sv.profiles
+    if profiles then
+        profiles[newName], profiles[oldName] = profiles[oldName], nil
+    end
+    if db.keys.profile == oldName then
+        db.keys.profile = newName
+    end
+    for _, child in pairs(db.children or {}) do
+        RenameProfileInDb(child, oldName, newName)
+    end
+end
+
+local function RenameProfile(oldName, newName)
+    local db = GW.globalSettings
+    RenameProfileInDb(db, oldName, newName)
+    for charKey, profileName in pairs(db.sv.profileKeys) do
+        if profileName == oldName then
+            db.sv.profileKeys[charKey] = newName
+        end
+    end
+    for _, specs in pairs(db.db and db.db.sv.char or {}) do
+        for spec, profileName in pairs(specs) do
+            if profileName == oldName then
+                specs[spec] = newName
+            end
+        end
+    end
+end
+
 local function rename_OnClick(self)
     local oldName = self:GetParent().profileName
     GW.ShowPopup({
         text = GARRISON_SHIP_RENAME_LABEL,
         hasEditBox = true,
         inputText = oldName,
+        maxLetters = 50,
         notHideOnAccept = true,
         OnAccept = function(popup)
             local newName = popup.input:GetText()
-            if not newName or newName == "" then return end
+            if not newName or newName:find("^ *$") then return end
             if GW.globalSettings.profiles[newName] then
                 GW.Notice(L["Profile with that name already exists"])
                 GW.ShowPopup({ text = L["Profile with that name already exists"] })
                 return
             end
 
-            local currentProfile = GW.globalSettings:GetCurrentProfile()
-            GW.globalSettings:SetProfile(newName)
-            GW.globalSettings:CopyProfile(oldName, true)
-            GW.globalSettings:DeleteProfile(oldName, true)
-            GW.globalSettings:SetProfile(currentProfile == oldName and newName or currentProfile)
+            RenameProfile(oldName, newName)
 
             local oldLayoutName = L["Profiles"] .. " - " .. oldName
             local newLayoutName = L["Profiles"] .. " - " .. newName
@@ -208,19 +236,30 @@ local function rename_OnClick(self)
                 GW.global.layouts[newLayoutName] = layout
                 GW.global.layouts[oldLayoutName] = nil
 
-                -- private Layouts aktualisieren; ein numerischer Lauf würde Einträge hinter einer Lücke verpassen
-                local privateLayoutSettings = GW.GetPrivateLayoutByLayoutName(oldLayoutName)
-                if privateLayoutSettings then
-                    privateLayoutSettings.layoutName = newLayoutName
+                -- every character keeps the profile, so the layout entries of all characters follow
+                for _, private in pairs(GW.charSettings.sv.profiles) do
+                    local layouts = private.Layouts
+                    if layouts then
+                        for _, entry in pairs(layouts) do
+                            if type(entry) == "table" and entry.layoutName == oldLayoutName then
+                                entry.layoutName = newLayoutName
+                            end
+                        end
+                        if layouts.currentSelected == oldLayoutName then
+                            layouts.currentSelected = newLayoutName
+                        end
+                    end
                 end
-                if GW.private.Layouts.currentSelected == oldLayoutName then
-                    GW.private.Layouts.currentSelected = newLayoutName
+                if GwSmallSettingsContainer and GwSmallSettingsContainer.layoutView then
+                    GwSmallSettingsContainer.layoutView.savedLayoutDropDown:GenerateMenu()
                 end
             end
 
             UpdateScrollBox(ProfileWin)
+            for _, dropDown in pairs(ProfileWin:GetParent().profileSpec.dropdown) do
+                dropDown:GenerateMenu()
+            end
             popup:Hide()
-            GW.RefreshSettingsAfterProfileSwitch()
         end
     })
 end
