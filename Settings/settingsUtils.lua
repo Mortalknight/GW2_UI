@@ -718,6 +718,14 @@ local function ColorPickerFrameCallback(restore, frame, buttonBackground)
     end
 end
 
+-- the picker belongs to the row that opened it, another tab or panel hides that row and closes the picker
+local colorPickerOwner, colorPickerHooked
+local function CloseColorPickerWithRow(row)
+    if colorPickerOwner == row and ColorPickerFrame:IsShown() then
+        HideUIPanel(ColorPickerFrame)
+    end
+end
+
 local function ShowColorPicker(frame)
     local color = frame.get()
     local timer
@@ -755,6 +763,16 @@ local function ShowColorPicker(frame)
     })
     ColorPickerFrame:SetFrameStrata("FULLSCREEN_DIALOG")
     ColorPickerFrame:Raise()
+
+    colorPickerOwner = frame
+    if not colorPickerHooked then
+        colorPickerHooked = true
+        ColorPickerFrame:HookScript("OnHide", function() colorPickerOwner = nil end)
+    end
+    if not frame.gwClosesColorPicker then
+        frame.gwClosesColorPicker = true
+        frame:HookScript("OnHide", CloseColorPickerWithRow)
+    end
 end
 
 local function updateSettingsFrameSettingsValue(setting, value, setSetting, toDefault)

@@ -73,7 +73,9 @@ local function LoadLootFrameSkin()
         edgeSize = 1
     })
 
-    RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "skins.lootFrame", "Blizzard", nil, {GW.MoverOption.Scale})
+    -- the frame grows and shrinks with the loot, the mover keeps its full size like blizzards edit mode
+    local maxHeight = LootFrame.GetPanelMaxHeight and LootFrame:GetPanelMaxHeight() or LootFrame:GetHeight()
+    RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "skins.lootFrame", "Blizzard", {LootFrame:GetWidth(), maxHeight}, {GW.MoverOption.Scale})
     if not GetCVarBool("lootUnderMouse") then
         local pos = GW.settings.skins.lootFrame.pos
         LootFrame:ClearAllPoints()

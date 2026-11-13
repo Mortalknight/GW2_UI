@@ -413,6 +413,9 @@ local function Create_Tags()
             return C_StringUtil.TruncateWhenZero(UnitPower("player", powerType))
         end
     end)
+
+    -- oUFs creature tag has no event, a druid or shaman form changes the type with the model
+    GW.oUF.Tags.Events.creature = "UNIT_MODEL_CHANGED"
 end
 -- at load, the target frame tags its texts before the grids are built
 Create_Tags()

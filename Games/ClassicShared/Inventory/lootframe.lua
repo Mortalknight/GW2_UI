@@ -56,8 +56,9 @@ local function LoadLootFrameSkin()
         button:SetPoint(point, relativeTo, relativePoint, x, y - LOOT_BUTTON_SHIFT)
     end
 
-    -- the mover also carries the scale, it is there with loot under the mouse too; its position is unused then
-    RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "skins.lootFrame", "Blizzard", nil, {GW.MoverOption.Scale})
+    -- the mover also carries the scale, it is there with loot under the mouse too; its position is unused then.
+    -- it keeps the size of the frame with all buttons, whatever the frame does later
+    RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "skins.lootFrame", "Blizzard", {LootFrame:GetSize()}, {GW.MoverOption.Scale})
     if GetCVar("lootUnderMouse") == "0" then
         local pos = GW.settings.skins.lootFrame.pos
         LootFrame:ClearAllPoints()

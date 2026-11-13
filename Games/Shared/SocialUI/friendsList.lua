@@ -80,6 +80,16 @@ local function HandleSocialCard(card)
     HandleActionButton(card.PartyButton)
     HandleActionButton(card.RAFSummonButton)
 
+    -- back from the party button onto the card its tooltip comes again, the card gets no new OnEnter there
+    if card.PartyButton then
+        card.PartyButton:HookScript("OnLeave", function()
+            local onEnter = card:GetScript("OnEnter")
+            if onEnter and card:IsMouseOver() then
+                onEnter(card)
+            end
+        end)
+    end
+
     if card.AcceptButton then
         card.AcceptButton:GwSkinButton(false, true)
     end

@@ -113,7 +113,7 @@
             <Button parentKey="button">
                 <Size x="250" y="20"/>
                 <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-15" y="0"/>
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">

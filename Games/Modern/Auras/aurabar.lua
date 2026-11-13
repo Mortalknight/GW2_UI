@@ -238,6 +238,7 @@ local function UpdateAuraHeader(header)
     local minWidth = ((wrapAfter == 1 and 0 or horizontalSpacing) + width) * (isColumnLayout and maxWraps or wrapAfter)
     local minHeight = ((maxWraps == 1 and 0 or verticalSpacing) + height) * (isColumnLayout and wrapAfter or maxWraps)
     header:SetSize(math.max(minWidth, width + 1), math.max(minHeight, height + 1))
+    GW.UpdateAuraGrowArrows(header, grow)
 
     -- anchoring: buffs to the mover, debuffs relative to the buffs (as long as not moved separately)
     if header.filter == "HELPFUL" then

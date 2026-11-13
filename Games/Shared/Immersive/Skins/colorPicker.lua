@@ -196,6 +196,8 @@ end
 -- modern: swatches and tools as a column right of the picker
 local function LayoutModern(frame, tools)
     local content = frame.Content
+    -- the window icon of our header reaches into the top of the window, the wheel moves down out of it
+    content.ColorPicker:AdjustPointsOffset(0, -12)
     content.ColorSwatchCurrent:ClearAllPoints()
     content.ColorSwatchCurrent:SetPoint("TOPRIGHT", content, "TOPRIGHT", -60, -40)
     content.ColorSwatchCurrent:SetSize(48, 24)
@@ -298,6 +300,8 @@ local function SkinAndEnhanceColorPicker()
         parts.ownHex = true
     else
         parts.hexBox:SetScript("OnTabPressed", FocusNext)
+        -- blizzards box only takes the code with enter, a pasted one is applied right away like the channel boxes
+        parts.hexBox:HookScript("OnTextChanged", ApplyHex)
     end
     tinsert(tabOrder, parts.hexBox)
 
@@ -308,7 +312,7 @@ local function SkinAndEnhanceColorPicker()
     else
         LayoutClassic(frame, tools)
     end
-    frame:SetHeight(frame:GetHeight() + (frame.Content and 40 or 70))
+    frame:SetHeight(frame:GetHeight() + (frame.Content and 52 or 70))
 
     parts.select:HookScript("OnColorSelect", RefreshBoxes)
     frame:HookScript("OnShow", function()

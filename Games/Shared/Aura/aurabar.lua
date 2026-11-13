@@ -282,6 +282,7 @@ local function UpdateAuraHeader(header)
         header:SetAttribute("wrapYOffset", stepY)
     end
     header:SetAttribute("initialConfigFunction", INITIAL_CONFIG_SNIPPET)
+    GW.UpdateAuraGrowArrows(header, grow)
 
     -- the header does not hide the buttons beyond a smaller maximum on its own
     local maxButtons = db.MaxWraps * wrapAfter

@@ -630,12 +630,6 @@ end
 GW.ResetMoverFrameToDefaultValues = smallSettings_resetToDefault
 
 
-local function mover_OnDragStart(self)
-    self.IsMoving = true
-    self:StartMoving()
-end
-
-
 local function CheckForDefaultPosition(frame, point, relativePoint, xOfs, yOfs, newPoint)
     if frame.defaultPoint.point == point and frame.defaultPoint.relativePoint == relativePoint and frame.defaultPoint.xOfs == xOfs and frame.defaultPoint.yOfs == yOfs then
         newPoint.hasMoved = false
@@ -756,6 +750,16 @@ local function showExtraOptions(self)
     BuildMoverOptions(self)
 
     GW.FrameFlash(self, 1.5, 0.5, 1, true)
+end
+
+-- dragging another mover while one is selected selects the dragged one
+local function mover_OnDragStart(self)
+    self.IsMoving = true
+    self:StartMoving()
+    local selected = GW.MoveHudScaleableFrame.moverSettingsFrame.childMover
+    if selected and selected ~= self then
+        showExtraOptions(self)
+    end
 end
 
 local function SendMoverBehind(self)
