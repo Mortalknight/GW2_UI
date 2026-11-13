@@ -154,6 +154,9 @@ function GwImmersiveQuestFrameMixin:ReplaySpoken()
     follower.lastIndex = nil
     self.questStringInt = 0
     self:nextGossip()
+    if self.questState ~= "PROGRESS" then
+        self.container.summary:Hide()
+    end
 end
 
 function GwImmersiveQuestFrameMixin:StopSpokenGreeting()
