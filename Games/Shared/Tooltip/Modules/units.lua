@@ -208,6 +208,23 @@ local function OnUnitTooltip(tooltip, data)
     end
 end
 
+local function IsSecretTable(value)
+    return type(value) == "table" and not GW.NotSecretTable(value)
+end
+
+local function HasSecretLine(tooltip)
+    local data = tooltip:GetTooltipData()
+    if type(data) ~= "table" or IsSecretTable(data) or type(data.lines) ~= "table" or IsSecretTable(data.lines) then
+        return true
+    end
+    for _, line in ipairs(data.lines) do
+        if IsSecretTable(line) or IsSecretTable(line.leftColor) or IsSecretTable(line.rightColor) then
+            return true
+        end
+    end
+    return false
+end
+
 -- shift, ctrl and alt change what the unit lines show; the mouseover tooltip is built again
 local function RefreshMouseoverTooltip()
     if GameTooltip:IsForbidden() or not GameTooltip:IsShown() or not GW.UnitExists("mouseover") then
@@ -218,7 +235,7 @@ local function RefreshMouseoverTooltip()
         return
     end
     if GW.isModern then
-        if GW.NotSecretValue(select(2, GameTooltip:GetUnit())) then
+        if GW.NotSecretValue(select(2, GameTooltip:GetUnit())) and not HasSecretLine(GameTooltip) then
             GameTooltip:RefreshData()
         end
     else
