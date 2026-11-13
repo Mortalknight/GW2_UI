@@ -357,11 +357,12 @@ local function deferShow(self)
             self:showQuestFrame()
         end
         self:nextGossip()
+        self:RefreshSpokenFollow()
     end
 end
 
 function GwImmersiveQuestFrameMixin:evQuestProgress()
-    self:StopSpokenPrevious()
+    self:StopSpokenGreeting()
     self:HideBlizzQuestFrame()
     self:clearQuestReq()
 
@@ -387,7 +388,7 @@ function GwImmersiveQuestFrameMixin:evQuestDetail(questStartItemID)
     if not QuestFrame:IsShown() then
         return
     end
-    self:StopSpokenPrevious()
+    self:StopSpokenGreeting()
     -- blizzard writes its hidden quest text out before it shows the rewards, with a sound each frame
     if QuestFrameDetailPanel.fading then
         QuestFrameDetailPanel.fadingProgress = 1024
@@ -415,7 +416,7 @@ function GwImmersiveQuestFrameMixin:evQuestDetail(questStartItemID)
 end
 
 function GwImmersiveQuestFrameMixin:evQuestComplete()
-    self:StopSpokenPrevious()
+    self:StopSpokenGreeting()
     if (self.questState ~= "COMPLETING") then
         self:HideBlizzQuestFrame()
         self:clearQuestReq()
@@ -700,8 +701,6 @@ function GW.LoadImmersiveQuesting()
 
     frame:SetScript("OnShow", frame.OnShow)
     frame:SetScript("OnHide", frame.OnHide)
-    frame:HookScript("OnShow", function(self) self:UpdateSpokenNarrator() end)
-    frame:HookScript("OnHide", function(self) self:UpdateSpokenNarrator() end)
     frame:SetScript("OnEvent", frame.OnEvent)
 
     frame:RegisterEvent("UI_SCALE_CHANGED")
@@ -725,22 +724,13 @@ function GW.LoadImmersiveQuesting()
 
     frame.container.dialog:SetScript("OnMouseUp", dialog_OnMouseUp)
     frame.container.cancelButton:SetScript("OnClick", cancel_OnClick)
-    frame.container.replayButton:SetText(GW.L["Replay Voice"])
-    frame.container.replayButton:SetScript("OnClick", function() frame:ReplaySpoken() end)
-    local sinceTick = 0
-    frame:SetScript("OnUpdate", function(self, elapsed)
-        sinceTick = sinceTick + elapsed
-        if sinceTick >= 0.1 then
-            sinceTick = 0
-            self:SpokenTick()
-        end
-    end)
     frame.container.acceptButton:SetScript("OnClick", accept_OnClick)
 
     frame:clearQuestReq()
     frame:SetClampedToScreen(true)
     frame:SetMovable(true)
     frame.container.playerModel:OnLoad()
+    GW.LoadSpokenSync(frame)
 
     --GW.LoadImmersiveQuestionDebugFrame()
 end

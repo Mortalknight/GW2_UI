@@ -3,373 +3,161 @@ local GW = select(2, ...)
 
 local function getSpoken()
     local spoken = _G.Spoken
-    if spoken and spoken.GetCaption and spoken.SplitCaption and spoken.WordMarks then
+    if spoken and spoken.GetCaption and spoken.SplitCaption and spoken.WordMarks and spoken.RegisterCallback then
         return spoken
     end
 end
 
+local function syncEnabled()
+    return GW.settings.immersiveQuesting.spokenSync
+end
+
+local function createFollower(target)
+    local follower = { follow = true, timers = {} }
+
+    local function cancelTimers()
+        for _, timer in ipairs(follower.timers) do
+            timer:Cancel()
+        end
+        wipe(follower.timers)
+    end
+
+    local function align(spoken, caption)
+        follower.clip = caption.clip
+        follower.map = false
+        follower.firstWord = nil
+        local marks = spoken:WordMarks()
+        local paragraphs, indexes = {}, {}
+        for index, text in ipairs(target.pages()) do
+            local words = spoken:SplitCaption(text)
+            if words and #words > 0 then
+                paragraphs[#paragraphs + 1] = { text = text, words = marks.MarkLinks(text, words) }
+                indexes[#paragraphs] = index
+            end
+        end
+        if #paragraphs == 0 then
+            return
+        end
+        local map = marks.Align(caption.words, paragraphs)
+        if not map then
+            return
+        end
+        local firstWord = {}
+        for wordIndex = 1, #caption.words do
+            local hit = map[wordIndex]
+            local page = hit and indexes[hit.p]
+            if page and not firstWord[page] then
+                firstWord[page] = wordIndex
+            end
+        end
+        follower.map = map
+        follower.firstWord = firstWord
+    end
+
+    local function turnTo(page)
+        local current = target.current()
+        if follower.lastIndex and current < follower.lastIndex then
+            follower.follow = false
+        end
+        if not follower.follow or not target.active() or page <= current then
+            return
+        end
+        target.goTo(page)
+        follower.lastIndex = target.current()
+    end
+
+    function follower.Reset()
+        cancelTimers()
+        follower.clip = nil
+        follower.map = nil
+        follower.firstWord = nil
+        follower.lastIndex = nil
+        follower.follow = true
+    end
+
+    function follower.Refresh()
+        cancelTimers()
+        local spoken = getSpoken()
+        if not spoken or not syncEnabled() or not target.active() then
+            return
+        end
+        local caption = spoken:GetCaption()
+        if not caption or not caption.words or caption.clip.textOnly then
+            return
+        end
+        if caption.clip ~= follower.clip then
+            follower.follow = true
+            follower.lastIndex = nil
+            align(spoken, caption)
+        end
+        if not follower.map or not follower.follow or not caption.speaking then
+            return
+        end
+        local length = tonumber(caption.clip.length)
+        local progress = caption.progress
+        local totalWeight = caption.totalWeight
+        if not length or length <= 0 or not progress or not totalWeight or totalWeight <= 0 then
+            return
+        end
+        follower.lastIndex = follower.lastIndex or target.current()
+        local nextImmediate = 0
+        for page, wordIndex in pairs(follower.firstWord) do
+            local delay = (caption.words[wordIndex].start / totalWeight - progress) * length
+            if delay <= 0 then
+                nextImmediate = math.max(nextImmediate, page)
+            else
+                follower.timers[#follower.timers + 1] = C_Timer.NewTimer(delay, function()
+                    turnTo(page)
+                end)
+            end
+        end
+        if nextImmediate > 0 then
+            turnTo(nextImmediate)
+        end
+    end
+
+    return follower
+end
+
 function GwImmersiveQuestFrameMixin:SpokenEnabled()
-    return GW.settings.immersiveQuesting.spokenSync and getSpoken() ~= nil
+    return syncEnabled() and getSpoken() ~= nil
 end
 
 function GwImmersiveQuestFrameMixin:ResetSpokenSync()
-    self.spokenClip = nil
-    self.spokenMap = nil
-    self.spokenPages = nil
-    self.spokenFollow = true
+    if self.spokenFollower then
+        self.spokenFollower.Reset()
+    end
     self.container.replayButton:Hide()
 end
 
-local function alignClip(self, spoken, caption)
-    self.spokenClip = caption.clip
-    self.spokenMap = false
-    local marks = spoken:WordMarks()
-    local paragraphs, pages = {}, {}
-    for index, sentence in ipairs(self.questString) do
-        local words = spoken:SplitCaption(sentence)
-        if words and #words > 0 then
-            paragraphs[#paragraphs + 1] = { text = sentence, words = marks.MarkLinks(sentence, words) }
-            pages[#paragraphs] = index
-        end
-    end
-    if #paragraphs == 0 then
-        return
-    end
-    local map = marks.Align(caption.words, paragraphs)
-    if map then
-        self.spokenMap = map
-        self.spokenPages = pages
-        self.container.replayButton:Show()
+function GwImmersiveQuestFrameMixin:StopFollowingSpoken()
+    if self.spokenFollower then
+        self.spokenFollower.follow = false
     end
 end
 
-local function pageForWord(self, wordIndex)
-    local map = self.spokenMap
-    for index = wordIndex, 1, -1 do
-        local hit = map[index]
-        if hit then
-            return self.spokenPages[hit.p]
-        end
-    end
-end
-
-function GwImmersiveQuestFrameMixin:OnSpokenClipStopped(clip, finishedPlaying)
-    if not finishedPlaying or clip ~= self.spokenClip or not self.spokenMap or not self.spokenFollow then
-        return
-    end
-    if not self:IsShown() or not self:SpokenEnabled() then
-        return
-    end
-    local count = #self.questString
-    if self.questStringInt < count then
-        self.questStringInt = count - 1
-        self:nextGossip()
-    end
-end
-
-function GwImmersiveQuestFrameMixin:SpokenTick()
-    if not self:SpokenEnabled() or not self.questString or #self.questString == 0 then
-        return
-    end
-    self:UpdateSpokenButtons()
-    local spoken = getSpoken()
-    if not self.spokenCallback and spoken.RegisterCallback then
-        self.spokenCallback = spoken:RegisterCallback("CLIP_STOPPED", function(clip, finishedPlaying)
-            self:OnSpokenClipStopped(clip, finishedPlaying)
-        end)
-    end
-    local caption = spoken:GetCaption()
-    if not caption or not caption.words or caption.clip.textOnly then
-        return
-    end
-    if caption.clip ~= self.spokenClip then
-        self.spokenFollow = true
-        alignClip(self, spoken, caption)
-    end
-    if not self.spokenMap or not self.spokenFollow or not caption.speaking or not caption.activeWord then
-        return
-    end
-    local page = pageForWord(self, caption.activeWord)
-    if not page then
-        return
-    end
-    local count = #self.questString
-    while self.questStringInt < page and self.questStringInt < count do
-        self:nextGossip()
+function GwImmersiveQuestFrameMixin:RefreshSpokenFollow()
+    if self.refreshSpoken then
+        self.refreshSpoken()
     end
 end
 
 function GwImmersiveQuestFrameMixin:ReplaySpoken()
     local spoken = getSpoken()
-    local clip = self.spokenClip
-    if not spoken or not clip or not clip.source then
+    local follower = self.spokenFollower
+    if not spoken or not follower or not follower.clip or spoken:GetCurrent() ~= follower.clip then
         return
     end
-    pcall(clip.source.Remove, clip.source, clip)
-    local ok = pcall(clip.source.Enqueue, clip.source, clip, true)
-    if not ok then
-        return
-    end
-    self.spokenClip = nil
-    self.spokenFollow = true
+    spoken:Pause()
+    spoken:Resume()
+    follower.follow = true
+    follower.lastIndex = nil
     self.questStringInt = 0
     self:nextGossip()
 end
 
-function GwImmersiveQuestFrameMixin:StopFollowingSpoken()
-    self.spokenFollow = false
-end
-
-local narratorHost
-local narratorHidden = false
-local gossipOpen = false
-
-local function dialogCoversNarrator()
-    local immersive = _G.GwImmersiveQuestFrame
-    if immersive and immersive:IsShown() then
-        return true
-    end
-    if gossipOpen and GW.settings.skins.gossip.enabled then
-        return true
-    end
-    local greeting = _G.QuestFrameGreetingPanel
-    return greeting ~= nil and greeting:IsVisible() and GW.settings.skins.questLog.enabled
-end
-
-local function updateNarrator()
-    local spoken = getSpoken()
-    if not spoken or not spoken.SetPlayerHost then
-        return
-    end
-    local want = GW.settings.immersiveQuesting.spokenSync
-        and not C_AddOns.IsAddOnLoaded("DialogueUI")
-        and dialogCoversNarrator()
-    if want and not narratorHidden then
-        if not narratorHost then
-            narratorHost = CreateFrame("Frame", nil, UIParent)
-            narratorHost:Hide()
-        end
-        spoken:SetPlayerHost(narratorHost)
-        narratorHidden = true
-    elseif not want and narratorHidden then
-        spoken:SetPlayerHost(nil)
-        narratorHidden = false
-    end
-end
-
-local function scheduleNarratorUpdate()
-    C_Timer.After(0, updateNarrator)
-end
-
-function GwImmersiveQuestFrameMixin:UpdateSpokenNarrator()
-    scheduleNarratorUpdate()
-end
-
-local gossipFollow = {}
-
-local function resetGossipFollow()
-    gossipFollow.clip = nil
-    gossipFollow.map = nil
-    gossipFollow.pages = nil
-    gossipFollow.lastIndex = nil
-    gossipFollow.active = true
-end
-
-local function alignGossipClip(spoken, caption, pages)
-    gossipFollow.clip = caption.clip
-    gossipFollow.map = false
-    local marks = spoken:WordMarks()
-    local paragraphs, indexes = {}, {}
-    for index, text in ipairs(pages) do
-        local words = spoken:SplitCaption(text)
-        if words and #words > 0 then
-            paragraphs[#paragraphs + 1] = { text = text, words = marks.MarkLinks(text, words) }
-            indexes[#paragraphs] = index
-        end
-    end
-    if #paragraphs == 0 then
-        return
-    end
-    local map = marks.Align(caption.words, paragraphs)
-    if map then
-        gossipFollow.map = map
-        gossipFollow.pages = indexes
-    end
-end
-
-local function gossipTick()
-    if not gossipOpen or not GW.settings.skins.gossip.enabled or not GW.settings.immersiveQuesting.spokenSync then
-        return
-    end
-    local spoken = getSpoken()
-    if not spoken or not GW.GetGossipGreetingPages then
-        return
-    end
-    local pages, current = GW.GetGossipGreetingPages()
-    if not pages or #pages < 2 then
-        return
-    end
-    if gossipFollow.lastIndex and current < gossipFollow.lastIndex then
-        gossipFollow.active = false
-    end
-    gossipFollow.lastIndex = current
-    local caption = spoken:GetCaption()
-    if not caption or not caption.words or caption.clip.textOnly then
-        return
-    end
-    if caption.clip ~= gossipFollow.clip then
-        gossipFollow.active = true
-        alignGossipClip(spoken, caption, pages)
-    end
-    if not gossipFollow.map or not gossipFollow.active or not caption.speaking or not caption.activeWord then
-        return
-    end
-    local page
-    for index = caption.activeWord, 1, -1 do
-        local hit = gossipFollow.map[index]
-        if hit then
-            page = gossipFollow.pages[hit.p]
-            break
-        end
-    end
-    if page and page > current then
-        GW.SetGossipGreetingPage(page)
-        gossipFollow.lastIndex = page
-    end
-end
-
-function GW.LoadSpokenNarratorHiding()
-    local watcher = CreateFrame("Frame")
-    watcher:RegisterEvent("GOSSIP_SHOW")
-    watcher:RegisterEvent("GOSSIP_CLOSED")
-    watcher:RegisterEvent("PLAYER_ENTERING_WORLD")
-    watcher:SetScript("OnEvent", function(_, event)
-        gossipOpen = event == "GOSSIP_SHOW"
-        resetGossipFollow()
-        scheduleNarratorUpdate()
-    end)
-    local sinceGossipTick = 0
-    watcher:SetScript("OnUpdate", function(_, elapsed)
-        sinceGossipTick = sinceGossipTick + elapsed
-        if sinceGossipTick >= 0.1 then
-            sinceGossipTick = 0
-            gossipTick()
-        end
-    end)
-    local greeting = _G.QuestFrameGreetingPanel
-    if greeting then
-        greeting:HookScript("OnShow", scheduleNarratorUpdate)
-        greeting:HookScript("OnHide", scheduleNarratorUpdate)
-    end
-end
-
-local BUTTON_GAP = 4
-
-local function spokenQuests()
-    return _G.VoiceOver
-end
-
-local function currentQuestId()
-    local id = GetQuestID and GetQuestID()
-    if id and id ~= 0 then
-        return id
-    end
-end
-
-local function createSpokenButtons(self)
-    local spoken = getSpoken()
-    if not spoken or not spoken.CreateRoundButton then
-        return nil
-    end
-    local row = CreateFrame("Frame", nil, self.container)
-    row:SetAllPoints(self.container)
-    row:SetFrameLevel(self.container:GetFrameLevel() + 20)
-
-    local compendiumIcon = _G.SpokenCompendium and _G.SpokenCompendium.ICON or 5341597
-    local compendium = spoken:CreateRoundButton(row, "icon", nil, compendiumIcon)
-    compendium:SetScript("OnClick", function()
-        local voiceOver = spokenQuests()
-        local tab = voiceOver and voiceOver.QuestsTab
-        local id = currentQuestId()
-        if tab and tab.Open and id then
-            tab:Open(id)
-        end
-    end)
-    compendium:SetScript("OnEnter", function(button)
-        local voiceOver = spokenQuests()
-        GameTooltip:SetOwner(button, "ANCHOR_BOTTOM")
-        GameTooltip:SetText(voiceOver and voiceOver.L and voiceOver.L.OPEN_IN_COMPENDIUM or "Azeroth's Compendium")
-        GameTooltip:Show()
-    end)
-    compendium:SetScript("OnLeave", GameTooltip_Hide)
-
-    local contribute = spoken:CreateRoundButton(row, "report", nil)
-    contribute:SetScript("OnClick", function()
-        local voiceOver = spokenQuests()
-        local module = voiceOver and voiceOver.Contribute
-        if module and module.Show then
-            module:Show()
-        end
-    end)
-    contribute:SetScript("OnEnter", function(button)
-        local voiceOver = spokenQuests()
-        local module = voiceOver and voiceOver.Contribute
-        if module and module.ShowTooltip then
-            module:ShowTooltip(button, false)
-        end
-    end)
-    contribute:SetScript("OnLeave", GameTooltip_Hide)
-
-    self.spokenButtons = { row = row, compendium = compendium, contribute = contribute }
-    return self.spokenButtons
-end
-
-function GwImmersiveQuestFrameMixin:UpdateSpokenButtons()
-    local voiceOver = spokenQuests()
-    if not voiceOver or not self:IsShown() then
-        return
-    end
-    local buttons = self.spokenButtons or createSpokenButtons(self)
-    if not buttons then
-        return
-    end
-    local spoken = getSpoken()
-
-    local id = currentQuestId()
-    local tab = voiceOver.QuestsTab
-    local hasCompendium = false
-    if id and tab and tab.Has then
-        local ok, result = pcall(tab.Has, tab, id)
-        hasCompendium = ok and result and true or false
-    end
-
-    local module = voiceOver.Contribute
-    local hasContribute = false
-    if module and module.HasGap and not (spoken.AreContributeButtonsHidden and spoken:AreContributeButtonsHidden()) then
-        local ok, result = pcall(module.HasGap, module)
-        hasContribute = ok and result and true or false
-    end
-
-    buttons.contribute:ClearAllPoints()
-    buttons.contribute:SetPoint("TOPRIGHT", self.container, "TOPRIGHT", -16, -16)
-    buttons.contribute:SetShown(hasContribute)
-    buttons.compendium:ClearAllPoints()
-    if hasContribute then
-        buttons.compendium:SetPoint("RIGHT", buttons.contribute, "LEFT", -BUTTON_GAP, 0)
-    else
-        buttons.compendium:SetPoint("TOPRIGHT", self.container, "TOPRIGHT", -16, -16)
-    end
-    buttons.compendium:SetShown(hasCompendium)
-
-    local spokenContribute = voiceOver.ContributeButton
-    local bigButton = spokenContribute and spokenContribute.button
-    if bigButton and bigButton:IsShown() then
-        bigButton:Hide()
-    end
-end
-
-function GwImmersiveQuestFrameMixin:StopSpokenPrevious()
-    if not self:SpokenEnabled() or not GW.settings.immersiveQuesting.spokenSkipPrevious then
+function GwImmersiveQuestFrameMixin:StopSpokenGreeting()
+    if not self:SpokenEnabled() or not GW.settings.immersiveQuesting.spokenSkipGreeting then
         return
     end
     local spoken = getSpoken()
@@ -377,16 +165,97 @@ function GwImmersiveQuestFrameMixin:StopSpokenPrevious()
     if gossip and gossip.StopAll then
         gossip:StopAll()
     end
-    C_Timer.After(0, function()
-        local current = currentQuestId()
-        if not current or not spoken.GetQueue then
+end
+
+function GW.LoadSpokenSync(frame)
+    local spoken = getSpoken()
+    if not spoken or not C_AddOns.IsAddOnLoaded("Spoken") then
+        return
+    end
+
+    local gossipOpen = false
+
+    local questFollower = createFollower({
+        active = function()
+            return frame:IsShown() and frame.questString ~= nil and #frame.questString > 0
+        end,
+        pages = function()
+            return frame.questString
+        end,
+        current = function()
+            return frame.questStringInt
+        end,
+        goTo = function(page)
+            local count = #frame.questString
+            while frame.questStringInt < page and frame.questStringInt < count do
+                frame:nextGossip()
+            end
+        end,
+    })
+    frame.spokenFollower = questFollower
+
+    local gossipFollower = createFollower({
+        active = function()
+            return gossipOpen and GW.settings.skins.gossip.enabled and GW.GetGossipGreetingPages ~= nil
+        end,
+        pages = function()
+            return (GW.GetGossipGreetingPages()) or {}
+        end,
+        current = function()
+            local _, index = GW.GetGossipGreetingPages()
+            return index or 0
+        end,
+        goTo = function(page)
+            GW.SetGossipGreetingPage(page)
+        end,
+    })
+
+    local function updateReplayButton()
+        local show = syncEnabled() and frame:IsShown() and questFollower.map and questFollower.clip ~= nil
+            and spoken:GetCurrent() == questFollower.clip
+        frame.container.replayButton:SetShown(show and true or false)
+    end
+
+    local refreshPending = false
+    local function refresh()
+        if refreshPending then
             return
         end
-        for _, clip in ipairs(spoken:GetQueue()) do
-            local source = clip.source
-            if source and source.key == "quests" and clip.questID and clip.questID ~= current and source.Remove then
-                source:Remove(clip)
+        refreshPending = true
+        C_Timer.After(0, function()
+            refreshPending = false
+            questFollower.Refresh()
+            gossipFollower.Refresh()
+            updateReplayButton()
+        end)
+    end
+    frame.refreshSpoken = refresh
+
+    frame.container.replayButton:SetText(GW.L["Replay Voice"])
+    frame.container.replayButton:SetScript("OnClick", function()
+        frame:ReplaySpoken()
+    end)
+
+    spoken:RegisterCallback("CLIP_STARTED", refresh)
+    spoken:RegisterCallback("AUDIO_CHANGED", refresh)
+    spoken:RegisterCallback("CLIP_STOPPED", function(clip, finishedPlaying)
+        if finishedPlaying and clip == questFollower.clip and questFollower.map and questFollower.follow
+            and frame:IsShown() and syncEnabled() then
+            local count = #frame.questString
+            if frame.questStringInt < count then
+                frame.questStringInt = count - 1
+                frame:nextGossip()
             end
         end
+        refresh()
+    end)
+
+    local watcher = CreateFrame("Frame")
+    watcher:RegisterEvent("GOSSIP_SHOW")
+    watcher:RegisterEvent("GOSSIP_CLOSED")
+    watcher:SetScript("OnEvent", function(_, event)
+        gossipOpen = event == "GOSSIP_SHOW"
+        gossipFollower.Reset()
+        refresh()
     end)
 end
