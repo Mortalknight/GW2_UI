@@ -145,11 +145,20 @@ end
 function GwImmersiveQuestFrameMixin:ReplaySpoken()
     local spoken = getSpoken()
     local follower = self.spokenFollower
-    if not spoken or not follower or not follower.clip or spoken:GetCurrent() ~= follower.clip then
+    local clip = follower and follower.clip
+    if not spoken or not clip then
         return
     end
-    spoken:Pause()
-    spoken:Resume()
+    if spoken:GetCurrent() == clip then
+        spoken:Pause()
+        spoken:Resume()
+    else
+        local source = clip.source or (spoken.GetSource and spoken:GetSource("quests"))
+        if not source or not source.PlayNow then
+            return
+        end
+        source:PlayNow(clip)
+    end
     follower.follow = true
     follower.lastIndex = nil
     self.questStringInt = 0
@@ -215,7 +224,6 @@ function GW.LoadSpokenSync(frame)
 
     local function updateReplayButton()
         local show = syncEnabled() and frame:IsShown() and questFollower.map and questFollower.clip ~= nil
-            and spoken:GetCurrent() == questFollower.clip
         frame.container.replayButton:SetShown(show and true or false)
     end
 
