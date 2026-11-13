@@ -434,6 +434,7 @@ local function setGreetingsTextPaging(dir, forceIndex)
     if greetingsText and #greetingsText > 0 and #greetingsText >= newIndex and newIndex > 0 then
         currentGreetingTextIndex = newIndex
         GossipFrame.customGossipText:SetText(greetingsText[currentGreetingTextIndex])
+        GW.PublicAPI.Fire("GW2_UI.Gossip.PageChanged", newIndex, #greetingsText)
 
         GossipPaginControler.forward:Show()
         GossipPaginControler.back:Show()
@@ -451,6 +452,18 @@ local function setGreetingsText(text)
         currentGreetingTextIndex = 1
     end
     setGreetingsTextPaging(0, 1)
+end
+
+function GW.PublicAPI.Gossip.GetPages()
+    return greetingsText and GW.PublicAPI.CopyList(greetingsText) or {}
+end
+
+function GW.PublicAPI.Gossip.GetPage()
+    return currentGreetingTextIndex
+end
+
+function GW.PublicAPI.Gossip.GoToPage(page)
+    setGreetingsTextPaging(0, page)
 end
 
 local configuredGreetingPanelView

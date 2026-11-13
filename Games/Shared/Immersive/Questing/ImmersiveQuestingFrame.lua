@@ -140,6 +140,7 @@ function GwImmersiveQuestFrameMixin:nextGossip()
     if qStringInt <= count then
         self:setBalancedText(self.questString[qStringInt])
         self.container.giverModel:setQuestGiverAnimation(count, self.questString, qStringInt)
+        GW.PublicAPI.Fire("GW2_UI.ImmersiveQuest.PageChanged", qStringInt, count)
         if qStringInt ~= 1 then
             PlaySound(906)
         end
@@ -166,6 +167,7 @@ function GwImmersiveQuestFrameMixin:prevGossip()
     if qStringInt <= count then
         self:setBalancedText(self.questString[qStringInt])
         self.container.giverModel:setQuestGiverAnimation(count, self.questString, qStringInt)
+        GW.PublicAPI.Fire("GW2_UI.ImmersiveQuest.PageChanged", qStringInt, count)
         if qStringInt ~= 1 then
             PlaySound(906)
         end
@@ -321,6 +323,7 @@ function GwImmersiveQuestFrameMixin:OnShow()
         return
     end
     self.container.FadeIn:Play()
+    GW.PublicAPI.Fire("GW2_UI.ImmersiveQuest.Shown", self)
 end
 
 function GwImmersiveQuestFrameMixin:OnHide()
@@ -335,6 +338,7 @@ function GwImmersiveQuestFrameMixin:OnHide()
     end
     self.container.summary:ReleaseRewards()
     self:UnhideBlizzQuestFrame()
+    GW.PublicAPI.Fire("GW2_UI.ImmersiveQuest.Hidden", self)
 end
 
 local function getQuestIndex(quest_id)

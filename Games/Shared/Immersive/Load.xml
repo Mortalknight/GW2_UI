@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="publicAPI.lua"/>
     <Include file ="Skins\Load.xml"/>
     <Include file ="Questing\!Load.xml"/>
     <Script file ="chatbubbles.lua"/>
