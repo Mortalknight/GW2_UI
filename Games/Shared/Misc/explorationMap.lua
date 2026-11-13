@@ -2,11 +2,12 @@
 local GW = select(2, ...)
 
 local RING_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/gcd-ring.png"
+local EXPLORATION_CATEGORY = 97
 local CRITERIA_TYPE_EXPLORE_AREA = 43
 local MAX_TOOLTIP_AREAS = 12
 
--- era and tbc have no achievements: there the uncovered map overlays count, against the number each
--- zone has (WorldMapOverlay per uiMap, tbc anniversary; era has two less in Dustwallow Marsh and Silithus)
+-- era and tbc have no achievements, forever has none for some zones: there the uncovered map overlays
+-- count, against the number each zone has (WorldMapOverlay per uiMap, tbc anniversary; era has two less in Dustwallow Marsh and Silithus)
 local OVERLAY_COUNTS = (GW.Classic or GW.TBC or GW.Forever) and {
     [1411] = 11, [1412] = 14, [1413] = 25, [1416] = 15, [1417] = 16, [1418] = 14, [1419] = 9, [1420] = 16,
     [1421] = 15, [1422] = 13, [1423] = 22, [1424] = 12, [1425] = 14, [1426] = 18, [1427] = 7, [1428] = 10,
@@ -26,15 +27,28 @@ local panel
 local explorationAchievements
 local zoneAchievement = {}
 
--- the "explore <zone>" achievements, the treasure and rare ones of the same category have other criteria
+local function IsInCategory(categoryID, rootID)
+    while categoryID and categoryID > 0 do
+        if categoryID == rootID then
+            return true
+        end
+        categoryID = select(2, GetCategoryInfo(categoryID))
+    end
+    return false
+end
+
+-- the "explore <zone>" achievements, the treasure and rare ones of the same category have other criteria;
+-- forever files them outside of exploration, elsewhere only that category is scanned to keep it cheap
 local function CollectExplorationAchievements()
     explorationAchievements = {}
     for _, categoryID in ipairs(GetCategoryList()) do
-        local categoryName = GetCategoryInfo(categoryID)
-        for i = 1, GetCategoryNumAchievements(categoryID, true) do
-            local id, name = GetAchievementInfo(categoryID, i)
-            if id and GetAchievementNumCriteria(id) > 0 and select(2, GetAchievementCriteriaInfo(id, 1)) == CRITERIA_TYPE_EXPLORE_AREA then
-                tinsert(explorationAchievements, {id = id, name = strlower(name), categoryName = categoryName})
+        if GW.Forever or IsInCategory(categoryID, EXPLORATION_CATEGORY) then
+            local categoryName = GetCategoryInfo(categoryID)
+            for i = 1, GetCategoryNumAchievements(categoryID, true) do
+                local id, name = GetAchievementInfo(categoryID, i)
+                if id and GetAchievementNumCriteria(id) > 0 and select(2, GetAchievementCriteriaInfo(id, 1)) == CRITERIA_TYPE_EXPLORE_AREA then
+                    tinsert(explorationAchievements, {id = id, name = strlower(name), categoryName = categoryName})
+                end
             end
         end
     end

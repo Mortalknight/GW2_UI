@@ -96,7 +96,7 @@ local function isQuestLogEntryComplete(questLogIndex)
     if not questLogIndex or questLogIndex <= 0 then
         return false
     end
-    if C_QuestLog and C_QuestLog.GetInfo then
+    if C_QuestLog and C_QuestLog.GetInfo and C_QuestLog.IsComplete then
         local info = C_QuestLog.GetInfo(questLogIndex)
         return info ~= nil and info.questID ~= nil and C_QuestLog.IsComplete(info.questID) == true
     end
