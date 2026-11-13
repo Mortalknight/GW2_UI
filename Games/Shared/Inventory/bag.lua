@@ -1016,15 +1016,31 @@ local function LoadBag(helpers)
             {"PAD2", FRAME_ACTION_CLOSE},
         })
         legend:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, -40)
-        -- a right click puts the item into the open bank or sells it to the open merchant
-        legend:RegisterEvent("BANKFRAME_OPENED")
-        legend:RegisterEvent("BANKFRAME_CLOSED")
-        legend:RegisterEvent("MERCHANT_SHOW")
-        legend:RegisterEvent("MERCHANT_CLOSED")
-        legend:SetScript("OnEvent", function(self, event)
-            self.texts.PAD3:SetText(event == "BANKFRAME_OPENED" and CONTEXT_ACTION_LABEL_MOVE
-                or event == "MERCHANT_SHOW" and CONTEXT_ACTION_LABEL_SELL or CONTEXT_ACTION_LABEL_USE)
-        end)
+        -- a right click sells to an open merchant, moves into an open bank and places into mail, trade
+        -- and auction instead of using the item
+        local useLabels = {
+            [Enum.PlayerInteractionType.Merchant] = CONTEXT_ACTION_LABEL_SELL,
+            [Enum.PlayerInteractionType.Banker] = CONTEXT_ACTION_LABEL_MOVE,
+            [Enum.PlayerInteractionType.GuildBanker] = CONTEXT_ACTION_LABEL_MOVE,
+            [Enum.PlayerInteractionType.MailInfo] = CONTEXT_ACTION_LABEL_PLACE,
+            [Enum.PlayerInteractionType.TradePartner] = CONTEXT_ACTION_LABEL_PLACE,
+            [Enum.PlayerInteractionType.Auctioneer] = CONTEXT_ACTION_LABEL_PLACE,
+        }
+        local function updateUseLabel(_, event, interactionType)
+            -- the closing interaction may still count as active while its hide event runs
+            local closed = event == "PLAYER_INTERACTION_MANAGER_FRAME_HIDE" and interactionType
+            local label = CONTEXT_ACTION_LABEL_USE
+            for interaction, text in pairs(useLabels) do
+                if interaction ~= closed and C_PlayerInteractionManager.IsInteractingWithNpcOfType(interaction) then
+                    label = text
+                end
+            end
+            legend.texts.PAD3:SetText(label)
+        end
+        legend:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_SHOW")
+        legend:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE")
+        legend:SetScript("OnEvent", updateUseLabel)
+        legend:SetScript("OnShow", updateUseLabel)
         -- the gamepad radial menu toggles the bags through this one, not ToggleBackpack
         hooksecurefunc("ToggleBackpack_Combined", hookToggleBackpack)
     end
