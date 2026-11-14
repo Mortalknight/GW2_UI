@@ -146,16 +146,10 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     </Anchors>
             </Frame>
-            <Button parentKey="close" text="">
-                <Size x="20" y="20" />
+            <Button name="$parentCloseButton" parentKey="close" inherits="GwWindowCloseButtonTemplate">
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png"/>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png"/>
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png"/>
-                <NormalFont style="ChatBubbleFont"/>
-                <HighlightFont style="ChatBubbleFont"/>
             </Button>
         </Frames>
     </Frame>

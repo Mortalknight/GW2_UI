@@ -980,62 +980,29 @@ function GW.IsGamepadInterface()
     return InputUtil and InputUtil.IsGamepadUIEnabled and InputUtil.IsGamepadUIEnabled()
 end
 
--- forever's gamepad interface: a window joins blizzards window handling one frame after it shows, like
--- blizzards own windows, its content is laid out by then. Own OnUpdate, no C_Timer: started from hooks on
--- blizzard functions that taints the gamepad ui. The window closes through a GwWindowCloseButtonTemplate,
--- hiding it from addon code blocks blizzards gamepad bindings.
-local gamepadStartButtons = {}
-local gamepadReplacedFrames = {}
--- in show order: the window shown last gets the focus, like blizzards windows
-local gamepadPending = {}
-local gamepadDriver = CreateFrame("Frame")
-gamepadDriver:Hide()
-gamepadDriver:SetScript("OnUpdate", function(self)
-    self:Hide()
-    local pending = gamepadPending
-    gamepadPending = {}
-    for _, frame in ipairs(pending) do
-        if frame:IsShown() then
-            if gamepadReplacedFrames[frame] then
-                GamepadMode.FrameControlsManager:FrameHidden(gamepadReplacedFrames[frame])
-            end
-            GamepadMode.FrameControlsManager:FrameShown(frame)
-            -- blizzard starts top left
-            if gamepadStartButtons[frame] then
-                SmartNavigation:SetTargetButtonForFrame(frame, gamepadStartButtons[frame](frame))
+-- Prepares the controls of a window for the gamepad navigation, once per control:
+-- * a blizzard menu built by addon code (our generator runs tainted) can not take the gamepad focus, the
+--   navigation would get stuck in it, so our dropdowns are left out until blizzard fixes that
+-- * a focused edit box keeps the d-pad, so edit boxes are left out too; searches open with the back button
+-- * blizzard looks for the nearest control within 45 degrees, our rows mix small checkboxes with wide
+--   controls whose center is far to the side, so up and down search wider
+local GAMEPAD_UP_DOWN_ANGLE = 75
+local function PrepareGamepadControls(frame)
+    for _, child in ipairs({frame:GetChildren()}) do
+        local leftOut = child:IsObjectType("DropdownButton") or child:IsObjectType("EditBox")
+        if not child.gwGamepadPrepared then
+            child.gwGamepadPrepared = true
+            if leftOut then
+                SmartNavigation_MarkFrameIgnored(child)
+            elseif child:IsObjectType("Button") then
+                SmartNavigation_SetDirectionBufferThreshold(child, SMART_NAV_INPUT_DIRECTION.UP, GAMEPAD_UP_DOWN_ANGLE)
+                SmartNavigation_SetDirectionBufferThreshold(child, SMART_NAV_INPUT_DIRECTION.DOWN, GAMEPAD_UP_DOWN_ANGLE)
             end
         end
-    end
-end)
-
--- call after the frames own OnShow/OnHide scripts are set. getStartButton is optional, replacedFrame is a
--- blizzard window ours replaces that blizzard still shows (e.g. moved off screen), it is taken out of the
--- gamepad window handling so the focus can not land on it
-function GW.RegisterGamepadWindow(frame, getStartButton, replacedFrame)
-    if not GW.loadedWithGamepadInterface then
-        return
-    end
-    gamepadStartButtons[frame] = getStartButton
-    gamepadReplacedFrames[frame] = replacedFrame
-    -- a resize handle only works with a mouse drag
-    if frame.sizer then
-        SmartNavigation_MarkFrameIgnored(frame.sizer)
-    end
-    frame:HookScript("OnShow", function(self)
-        tDeleteItem(gamepadPending, self)
-        tinsert(gamepadPending, self)
-        gamepadDriver:Show()
-    end)
-    frame:HookScript("OnHide", function(self)
-        tDeleteItem(gamepadPending, self)
-        GamepadMode.FrameControlsManager:FrameHidden(self)
-    end)
-end
-
--- the gamepad navigation keeps the buttons it found on open, call this after the window laid out again
-function GW.RefreshGamepadWindow(frame)
-    if GW.loadedWithGamepadInterface and SmartNavigation:GetActiveFrame() == frame then
-        SmartNavigation:RefreshButtonGroups()
+        -- an ignored frame leaves out its children too
+        if not leftOut then
+            PrepareGamepadControls(child)
+        end
     end
 end
 
@@ -1065,10 +1032,7 @@ local function GamepadFocusBinding_OnEvent(self, event)
     end
 end
 
-function GW.AddGamepadFocusBinding(frame, key, onClick)
-    if not GW.loadedWithGamepadInterface then
-        return
-    end
+local function AddGamepadFocusBinding(frame, key, onClick)
     if not gamepadFocusBindings[frame] then
         gamepadFocusBindings[frame] = {}
         frame.FocusGamepad = function(self) SetGamepadFocusBindings(self, true) end
@@ -1087,13 +1051,19 @@ function GW.AddGamepadFocusBinding(frame, key, onClick)
     gamepadFocusBindings[frame][button] = key
 end
 
--- a row of pad buttons and what they do, like blizzards gamepad footers; the icons follow the pad type.
--- entries: {{"PAD1", ACTION_LABEL_SELECT}, ...}, the caller anchors the returned frame; legend.texts[key]
--- is the text of a button, for labels that change
-function GW.CreateGamepadLegend(parent, entries)
+-- a row of pad buttons and what they do, like blizzards gamepad footers; the icons follow the pad type. A
+-- label can be a function(event, ...): it is asked again on show and when an npc window (merchant, bank,
+-- mailbox ...) opens or closes, for buttons that do something else there
+local function GamepadLegend_Update(self, event, ...)
+    for text, getLabel in pairs(self.labelFunctions) do
+        text:SetText(getLabel(event, ...))
+    end
+end
+
+local function CreateGamepadLegend(parent, entries)
     local legend = CreateFrame("Frame", nil, parent)
     legend:SetSize(1, 24)
-    legend.texts = {}
+    legend.labelFunctions = {}
     local prev
     for _, entry in ipairs(entries) do
         local icon = CreateFrame("Frame", nil, legend, "InputIconTextureFrameTemplate")
@@ -1106,12 +1076,100 @@ function GW.CreateGamepadLegend(parent, entries)
         local text = legend:CreateFontString(nil, "OVERLAY")
         text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        text:SetText(entry[2])
+        if type(entry[2]) == "function" then
+            legend.labelFunctions[text] = entry[2]
+        else
+            text:SetText(entry[2])
+        end
         text:SetPoint("LEFT", icon, "RIGHT", 4, 0)
-        legend.texts[entry[1]] = text
         prev = text
     end
+    if next(legend.labelFunctions) then
+        legend:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_SHOW")
+        legend:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE")
+        legend:SetScript("OnEvent", GamepadLegend_Update)
+        legend:SetScript("OnShow", GamepadLegend_Update)
+    end
     return legend
+end
+
+-- forever's gamepad interface: a window joins blizzards window handling one frame after it shows, like
+-- blizzards own windows, its content is laid out by then. Own OnUpdate, no C_Timer: started from hooks on
+-- blizzard functions that taints the gamepad ui. The window closes through a GwWindowCloseButtonTemplate,
+-- hiding it from addon code blocks blizzards gamepad bindings.
+local gamepadStartButtons = {}
+local gamepadReplacedFrames = {}
+local gamepadPopups = {}
+-- in show order: the window shown last gets the focus, like blizzards windows
+local gamepadPending = {}
+local gamepadDriver = CreateFrame("Frame")
+gamepadDriver:Hide()
+gamepadDriver:SetScript("OnUpdate", function(self)
+    self:Hide()
+    local pending = gamepadPending
+    gamepadPending = {}
+    for _, frame in ipairs(pending) do
+        if frame:IsShown() then
+            if gamepadReplacedFrames[frame] then
+                GamepadMode.FrameControlsManager:FrameHidden(gamepadReplacedFrames[frame])
+            end
+            PrepareGamepadControls(frame)
+            GamepadMode.FrameControlsManager:FrameShown(frame, gamepadPopups[frame])
+            -- blizzard starts top left
+            if gamepadStartButtons[frame] then
+                SmartNavigation:SetTargetButtonForFrame(frame, gamepadStartButtons[frame](frame))
+            end
+        end
+    end
+end)
+
+-- call after the frames own OnShow/OnHide scripts are set; does nothing without the gamepad interface.
+-- options, all optional:
+--   startButton = function(frame) returning the button the navigation starts on
+--   replaces = a blizzard window ours replaces that blizzard still shows (e.g. moved off screen), it is
+--              taken out of the gamepad window handling so the focus can not land on it
+--   bindings = {[key] = onClick}, pad buttons that only act while the window has the gamepad focus
+--   legend = {{"PAD1", ACTION_LABEL_SELECT}, ...} shown below the window, legendOffset its distance
+--   popup = true for a dialog that takes the focus over the window it opened from and gives it back
+function GW.RegisterGamepadWindow(frame, options)
+    if not GW.loadedWithGamepadInterface then
+        return
+    end
+    options = options or {}
+    gamepadStartButtons[frame] = options.startButton
+    gamepadReplacedFrames[frame] = options.replaces
+    gamepadPopups[frame] = options.popup
+    -- a resize handle only works with a mouse drag
+    if frame.sizer then
+        SmartNavigation_MarkFrameIgnored(frame.sizer)
+    end
+    frame:HookScript("OnShow", function(self)
+        tDeleteItem(gamepadPending, self)
+        tinsert(gamepadPending, self)
+        gamepadDriver:Show()
+    end)
+    frame:HookScript("OnHide", function(self)
+        tDeleteItem(gamepadPending, self)
+        GamepadMode.FrameControlsManager:FrameHidden(self)
+    end)
+    for key, onClick in pairs(options.bindings or {}) do
+        AddGamepadFocusBinding(frame, key, onClick)
+    end
+    if options.legend then
+        local offset = options.legendOffset or -8
+        CreateGamepadLegend(frame, options.legend):SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, offset)
+        -- the legend stays on screen with the window
+        local left, right, top, bottom = frame:GetClampRectInsets()
+        frame:SetClampRectInsets(left, right, top, math.min(bottom, offset - 24))
+    end
+end
+
+-- the gamepad navigation keeps the buttons it found on open, call this after the window laid out again
+function GW.RefreshGamepadWindow(frame)
+    if GW.loadedWithGamepadInterface and SmartNavigation:GetActiveFrame() == frame then
+        PrepareGamepadControls(frame)
+        SmartNavigation:RefreshButtonGroups()
+    end
 end
 
 -- the gamepad focus frame follows blizzards window shapes, around our skins it looks broken. Blizzard applies

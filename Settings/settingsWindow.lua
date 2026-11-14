@@ -95,8 +95,6 @@ local function BuildSettingsWindow()
     settingsContainer.flavorString:SetText(GW.GetClientFlavorName())
     settingsContainer.headerString:SetText(CHAT_CONFIGURATION)
 
-    settingsContainer.close:SetScript("OnClick", function() settingsContainer:Hide() end)
-
     -- wow opens no links, the popup offers the url to copy
     local anchor = settingsContainer.close
     for _, link in ipairs({

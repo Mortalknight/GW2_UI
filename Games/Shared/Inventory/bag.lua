@@ -698,6 +698,27 @@ local function hookToggleBag(bag_id)
 end
 
 
+-- what X (a right click) does: it sells to an open merchant, moves into an open bank and places into
+-- mail, trade and auction instead of using the item
+local GAMEPAD_USE_LABELS = Enum.PlayerInteractionType and {
+    [Enum.PlayerInteractionType.Merchant] = CONTEXT_ACTION_LABEL_SELL,
+    [Enum.PlayerInteractionType.Banker] = CONTEXT_ACTION_LABEL_MOVE,
+    [Enum.PlayerInteractionType.GuildBanker] = CONTEXT_ACTION_LABEL_MOVE,
+    [Enum.PlayerInteractionType.MailInfo] = CONTEXT_ACTION_LABEL_PLACE,
+    [Enum.PlayerInteractionType.TradePartner] = CONTEXT_ACTION_LABEL_PLACE,
+    [Enum.PlayerInteractionType.Auctioneer] = CONTEXT_ACTION_LABEL_PLACE,
+}
+local function gamepadUseLabel(event, interactionType)
+    -- the closing interaction may still count as active while its hide event runs
+    local closed = event == "PLAYER_INTERACTION_MANAGER_FRAME_HIDE" and interactionType
+    for interaction, label in pairs(GAMEPAD_USE_LABELS) do
+        if interaction ~= closed and C_PlayerInteractionManager.IsInteractingWithNpcOfType(interaction) then
+            return label
+        end
+    end
+    return CONTEXT_ACTION_LABEL_USE
+end
+
 -- the gamepad navigation starts here instead of the bag bar
 local function firstShownItem(f)
     local numSections = #BAG_SECTIONS
@@ -990,57 +1011,33 @@ local function LoadBag(helpers)
     f.Header:SetWidth(GW.settings.bags.bag.width)
     onBagFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
-    -- the gamepad legend hangs below the footer
-    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, GW.loadedWithGamepadInterface and -64 or -35)
+    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
 
     -- setup show/hide
     f:SetScript("OnShow", bag_OnShow)
     f:SetScript("OnHide", bag_OnHide)
     setupAutoOpenClose(f)
-    GW.RegisterGamepadWindow(f, firstShownItem)
-    if GW.loadedWithGamepadInterface then
+    GW.RegisterGamepadWindow(f, {
+        startButton = firstShownItem,
         -- back (the touchpad on playstation pads) focuses or leaves the search
-        GW.AddGamepadFocusBinding(f, "PADBACK", function()
+        bindings = {PADBACK = function()
             if f.searchBox:HasFocus() then
                 f.searchBox:ClearFocus()
             else
                 f.searchBox:SetFocus()
             end
-        end)
-        local legend = GW.CreateGamepadLegend(f, {
+        end},
+        legend = {
             {"PAD1", ACTION_LABEL_SELECT},
-            {"PAD3", CONTEXT_ACTION_LABEL_USE},
+            {"PAD3", gamepadUseLabel},
             {"PAD4", CONTEXT_ACTION_LABEL_DESTROY_ITEM},
             {"PADBACK", SEARCH},
             {"DIRPAD", FRAME_ACTION_NAVIGATE},
             {"PAD2", FRAME_ACTION_CLOSE},
-        })
-        legend:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, -40)
-        -- a right click sells to an open merchant, moves into an open bank and places into mail, trade
-        -- and auction instead of using the item
-        local useLabels = {
-            [Enum.PlayerInteractionType.Merchant] = CONTEXT_ACTION_LABEL_SELL,
-            [Enum.PlayerInteractionType.Banker] = CONTEXT_ACTION_LABEL_MOVE,
-            [Enum.PlayerInteractionType.GuildBanker] = CONTEXT_ACTION_LABEL_MOVE,
-            [Enum.PlayerInteractionType.MailInfo] = CONTEXT_ACTION_LABEL_PLACE,
-            [Enum.PlayerInteractionType.TradePartner] = CONTEXT_ACTION_LABEL_PLACE,
-            [Enum.PlayerInteractionType.Auctioneer] = CONTEXT_ACTION_LABEL_PLACE,
-        }
-        local function updateUseLabel(_, event, interactionType)
-            -- the closing interaction may still count as active while its hide event runs
-            local closed = event == "PLAYER_INTERACTION_MANAGER_FRAME_HIDE" and interactionType
-            local label = CONTEXT_ACTION_LABEL_USE
-            for interaction, text in pairs(useLabels) do
-                if interaction ~= closed and C_PlayerInteractionManager.IsInteractingWithNpcOfType(interaction) then
-                    label = text
-                end
-            end
-            legend.texts.PAD3:SetText(label)
-        end
-        legend:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_SHOW")
-        legend:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE")
-        legend:SetScript("OnEvent", updateUseLabel)
-        legend:SetScript("OnShow", updateUseLabel)
+        },
+        legendOffset = -40,
+    })
+    if GW.loadedWithGamepadInterface then
         -- the gamepad radial menu toggles the bags through this one, not ToggleBackpack
         hooksecurefunc("ToggleBackpack_Combined", hookToggleBackpack)
     end
