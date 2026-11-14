@@ -20,6 +20,9 @@ addChange("12.1.9", {
     {GW.Enum.ChangelogType.bug, [=[Skins: the Spoken Places skin also loads when the addon folder is named Spoken_Places]=]},
     {GW.Enum.ChangelogType.change, [=[Skins: the Spoken Places lore panel is now a part of the world map window, with a side tab to open it again]=]},
     {GW.Enum.ChangelogType.change, [=[Upcoming level rewards: now a tab at the bottom of the spell book instead of an own window; at the max level it stays while a trainer still has something to learn]=]},
+    {GW.Enum.ChangelogType.feature, [=[Immersive Questing: with the Spoken addon the pages follow the voice, a button replays it; optionally picking a quest stops the greeting]=]},
+    {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): bags, bank, hero panel and popups work with the d-pad, a footer shows the buttons; in the bags X uses, sells or moves and Y destroys an item, back opens the search]=]},
+    {GW.Enum.ChangelogType.bug, [=[Gamepad (Forever): the GW2 UI button in the game menu can be reached with the d-pad]=]},
 })
 
 addChange("12.1.8", {

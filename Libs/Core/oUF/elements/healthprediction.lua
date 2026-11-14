@@ -182,7 +182,7 @@ local function Update(self, event, unit)
 		element.healingOther:SetValue(otherHeal)
 	end
 
-	if(element.damageAbsorb and self.showAbsorbBar) then
+	if(element.damageAbsorb) then
 		element.damageAbsorb:SetMinMaxValues(0, maxHealth)
 		element.damageAbsorb:SetValue(damageAbsorbAmount)
 	end
