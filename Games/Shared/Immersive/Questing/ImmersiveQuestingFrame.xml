@@ -161,6 +161,11 @@
                             <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="5" y="10"/>
                         </Anchors>
                     </Button>
+                    <Button parentKey="replayButton" inherits="GwImmersiveQuestingButtonTemplate" frameLevel="10" hidden="true">
+                        <Anchors>
+                            <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="10"/>
+                        </Anchors>
+                    </Button>
                     <Button parentKey="cancelButton" inherits="GwImmersiveQuestingButtonTemplate" frameLevel="10" hidden="true">
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="10"/>

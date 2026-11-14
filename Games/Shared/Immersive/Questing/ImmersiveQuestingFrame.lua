@@ -159,6 +159,7 @@ function GwImmersiveQuestFrameMixin:prevGossip()
     if self.questStringInt == 1 then
         return
     end
+    self:StopFollowingSpoken()
     self.questStringInt = max(self.questStringInt - 1, 1)
     local qStringInt = self.questStringInt
     local count = #self.questString
@@ -291,6 +292,7 @@ function GwImmersiveQuestFrameMixin:clearQuestReq()
     self.update_map_attempt = 0
     self.update_map_mutex = false
     self:clearDialog()
+    self:ResetSpokenSync()
     self.container.summary:ClearInfo()
     self.container.summary:Hide()
     self.container.acceptButton:SetText(CONTINUE)
@@ -355,10 +357,12 @@ local function deferShow(self)
             self:showQuestFrame()
         end
         self:nextGossip()
+        self:RefreshSpokenFollow()
     end
 end
 
 function GwImmersiveQuestFrameMixin:evQuestProgress()
+    self:StopSpokenGreeting()
     self:HideBlizzQuestFrame()
     self:clearQuestReq()
 
@@ -384,6 +388,7 @@ function GwImmersiveQuestFrameMixin:evQuestDetail(questStartItemID)
     if not QuestFrame:IsShown() then
         return
     end
+    self:StopSpokenGreeting()
     -- blizzard writes its hidden quest text out before it shows the rewards, with a sound each frame
     if QuestFrameDetailPanel.fading then
         QuestFrameDetailPanel.fadingProgress = 1024
@@ -411,6 +416,7 @@ function GwImmersiveQuestFrameMixin:evQuestDetail(questStartItemID)
 end
 
 function GwImmersiveQuestFrameMixin:evQuestComplete()
+    self:StopSpokenGreeting()
     if (self.questState ~= "COMPLETING") then
         self:HideBlizzQuestFrame()
         self:clearQuestReq()
@@ -724,6 +730,7 @@ function GW.LoadImmersiveQuesting()
     frame:SetClampedToScreen(true)
     frame:SetMovable(true)
     frame.container.playerModel:OnLoad()
+    GW.LoadSpokenSync(frame)
 
     --GW.LoadImmersiveQuestionDebugFrame()
 end

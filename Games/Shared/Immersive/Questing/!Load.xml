@@ -15,5 +15,6 @@
     <Script file ="QuestReqItems.lua"/>
     <Script file ="QuestSummary.lua"/>
     <Script file ="ImmersiveQuestingFrame.lua"/>
+    <Script file ="SpokenSync.lua"/>
     <Script file ="DebugFrame.lua"/>
 </Ui>
