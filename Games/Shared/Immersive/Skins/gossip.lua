@@ -453,6 +453,14 @@ local function setGreetingsText(text)
     setGreetingsTextPaging(0, 1)
 end
 
+function GW.GetGossipGreetingPages()
+    return greetingsText, currentGreetingTextIndex
+end
+
+function GW.SetGossipGreetingPage(index)
+    setGreetingsTextPaging(0, index)
+end
+
 local configuredGreetingPanelView
 local function setupGreetingPanelView()
     local view = GossipFrame.GreetingPanel.ScrollBox.view
