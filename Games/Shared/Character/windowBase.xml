@@ -191,7 +191,8 @@
                 </Layers>
             </Frame>
 
-            <Button name="$parentClose" parentKey="close" inherits="SecureHandlerClickTemplate" text="" framelevel="10">
+            <!-- named like this the gamepad B clicks it -->
+            <Button name="$parentCloseButton" parentKey="close" inherits="SecureHandlerClickTemplate" text="" framelevel="10">
                 <Size x="20" y="20" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>

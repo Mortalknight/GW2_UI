@@ -984,12 +984,14 @@ end
 -- * a blizzard menu built by addon code (our generator runs tainted) can not take the gamepad focus, the
 --   navigation would get stuck in it, so our dropdowns are left out until blizzard fixes that
 -- * a focused edit box keeps the d-pad, so edit boxes are left out too; searches open with the back button
+-- * blizzard can not select into a scroll box an addon built (its scroll handling runs tainted and the
+--   selection is refused silently), the navigation would stop at the nearest list row, so lists are left out
 -- * blizzard looks for the nearest control within 45 degrees, our rows mix small checkboxes with wide
 --   controls whose center is far to the side, so up and down search wider
 local GAMEPAD_UP_DOWN_ANGLE = 75
 local function PrepareGamepadControls(frame)
     for _, child in ipairs({frame:GetChildren()}) do
-        local leftOut = child:IsObjectType("DropdownButton") or child:IsObjectType("EditBox")
+        local leftOut = child:IsObjectType("DropdownButton") or child:IsObjectType("EditBox") or child.ScrollTarget ~= nil
         if not child.gwGamepadPrepared then
             child.gwGamepadPrepared = true
             if leftOut then
@@ -1139,9 +1141,9 @@ function GW.RegisterGamepadWindow(frame, options)
     gamepadStartButtons[frame] = options.startButton
     gamepadReplacedFrames[frame] = options.replaces
     gamepadPopups[frame] = options.popup
-    -- a resize handle only works with a mouse drag
-    if frame.sizer then
-        SmartNavigation_MarkFrameIgnored(frame.sizer)
+    -- a resize handle and a move bar only work with a mouse drag
+    for _, handle in ipairs({frame.sizer, frame.mover}) do
+        SmartNavigation_MarkFrameIgnored(handle)
     end
     frame:HookScript("OnShow", function(self)
         tDeleteItem(gamepadPending, self)

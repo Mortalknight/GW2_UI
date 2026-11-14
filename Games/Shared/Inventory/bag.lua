@@ -663,6 +663,14 @@ bagShownDriver:SetScript("OnUpdate", function(self)
 end)
 
 local function setBagShown(shown)
+    -- blizzards gamepad radial opens the bags along with the character window through ToggleBackpack (its
+    -- bags entry calls ToggleBackpack_Combined directly), the hero panel opens alone
+    if GW.loadedWithGamepadInterface then
+        local stack = debugstack()
+        if stack:find("GamepadRadial", 1, true) and stack:find("'ToggleBackpack'", 1, true) then
+            return
+        end
+    end
     bagShownDriver.shown = shown
     bagShownDriver:Show()
 end

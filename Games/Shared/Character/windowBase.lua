@@ -262,6 +262,15 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
 
     SetupEscape(frame)
     frame.close:SetAttribute("_onclick", charCloseSecure_OnClick)
+    GW.RegisterGamepadWindow(frame, {
+        -- the gear on forever, blizzards slots hang in our window
+        startButton = function() return CharacterHeadSlot and CharacterHeadSlot:IsVisible() and CharacterHeadSlot or nil end,
+        legend = {
+            {"PAD1", ACTION_LABEL_SELECT},
+            {"DIRPAD", FRAME_ACTION_NAVIGATE},
+            {"PAD2", FRAME_ACTION_CLOSE},
+        },
+    })
 
     local pos = GW.settings.windows.character.pos
     local scale = GW.settings.windows.character.scale
