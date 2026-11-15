@@ -116,10 +116,12 @@ end
 local function SkinRoleIcons(display)
     for _, icon in ipairs(display.Icons) do
         local atlas = icon:GetAtlas()
-        for key, role in pairs(ATLAS_ROLES) do
-            if atlas and atlas:find(key) then
-                icon:SetTexture(GW.nameRoleIconPure[role])
-                icon:SetTexCoord(4 / 64, 60 / 64, 4 / 64, 60 / 64)
+        if GW.NotSecretValue(atlas) and atlas then
+            for key, role in pairs(ATLAS_ROLES) do
+                if atlas:find(key) then
+                    icon:SetTexture(GW.nameRoleIconPure[role])
+                    icon:SetTexCoord(4 / 64, 60 / 64, 4 / 64, 60 / 64)
+                end
             end
         end
     end
