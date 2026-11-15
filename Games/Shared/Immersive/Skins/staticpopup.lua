@@ -70,8 +70,20 @@ function GW.SetPopupButtonScheme(button, schemeName)
     end
     SetButtonFontStringColor(button, scheme.text[1], scheme.text[2], scheme.text[3])
 
-    -- only show the check/cross icon when the button is wide enough for text + icon
     local fontString = button:GetFontString()
+    local padIcon = button.gwGamepadIcon
+    if padIcon and fontString then
+        button.gwPopupIcon:Hide()
+        padIcon:ClearAllPoints()
+        padIcon:SetPoint("LEFT", button, "LEFT", 6, 0)
+        fontString:ClearAllPoints()
+        fontString:SetPoint("LEFT", padIcon, "RIGHT", 4, 0)
+        fontString:SetPoint("RIGHT", button, "RIGHT", -10, 0)
+        fontString:SetJustifyH("CENTER")
+        return
+    end
+
+    -- only show the check/cross icon when the button is wide enough for text + icon
     local icon = button.gwPopupIcon
     local showIcon = scheme.iconTexCoord and fontString and (button:GetWidth() - fontString:GetStringWidth()) >= 44
     if showIcon then

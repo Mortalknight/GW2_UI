@@ -737,6 +737,24 @@ function GW.LoadImmersiveQuesting()
     frame.container.acceptButton:SetScript("OnClick", accept_OnClick)
 
     frame:clearQuestReq()
+    GW.Gamepad.RegisterWindow(frame, {
+        -- blizzards quest frame stays shown behind ours
+        replaces = QuestFrame,
+        startButton = function(f)
+            return f.container.acceptButton:IsShown() and f.container.acceptButton or f.container.dialog
+        end,
+        bindings = {PAD3 = frame.container.acceptButton},
+        icons = {PAD2 = frame.container.cancelButton},
+        legend = {
+            {"PAD1", ACTION_LABEL_SELECT},
+            {"DIRPAD", FRAME_ACTION_NAVIGATE},
+            {"PAD2", FRAME_ACTION_CLOSE},
+        },
+    })
+    frame.SmartNavigationCloseHandler = function()
+        CloseQuest()
+        return true
+    end
     frame:SetClampedToScreen(true)
     frame:SetMovable(true)
     frame.container.playerModel:OnLoad()

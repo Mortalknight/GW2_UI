@@ -844,5 +844,27 @@ local function LoadObjectivesTracker()
     objectivesTracker:SetPoint("TOPLEFT", objectivesTracker.gwMover)
     hooksecurefunc(objectivesTracker, "SetHeight", objectivesTracker.LayoutChanged)
     objectivesTracker:SetHeight(GW.settings.objectives.height)
+
+    -- blizzards d-pad shortcut only enters its own tracker
+    if GW.loadedWithGamepadInterface then
+        GW.Gamepad.RegisterWindow(objectivesTracker, {onDemand = true})
+        objectivesTracker.SmartNavigationCloseHandler = function(self)
+            GamepadMode.FrameControlsManager:FrameHidden(self)
+            return true
+        end
+        local focus = CreateFrame("Button", "GwQuestTrackerGamepadFocus", UIParent)
+        focus:SetScript("OnClick", function()
+            if objectivesTracker:IsVisible() and not InCombatLockdown() then
+                GW.Gamepad.FocusWindow(objectivesTracker)
+            end
+        end)
+        -- blizzard blocks leaving with B in combat
+        focus:RegisterEvent("PLAYER_REGEN_DISABLED")
+        focus:SetScript("OnEvent", function()
+            if SmartNavigation:GetActiveFrame() == objectivesTracker then
+                objectivesTracker:SmartNavigationCloseHandler()
+            end
+        end)
+    end
 end
 GW.LoadObjectivesTracker = LoadObjectivesTracker

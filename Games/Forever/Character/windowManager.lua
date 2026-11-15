@@ -83,7 +83,7 @@ local windowsList = {
 }
 
 -- with the gamepad interface spellbook and talents stay blizzards, our skin on it, they have the gamepad navigation
-if not GW.IsGamepadInterface() then
+if not GW.Gamepad.IsInterface() then
     tinsert(windowsList, 2, {
         OnLoad = "LoadSpellBook",
         FrameName = "GwSpellbookFrame",

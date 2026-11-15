@@ -11,6 +11,8 @@
 
     <Binding category="GW2 UI" name="CLICK GwDodgeBar:LeftButton" header="GW2UI_MOVE_BINDINGS"/>
 
+    <Binding category="GW2 UI" name="CLICK GwQuestTrackerGamepadFocus:LeftButton" header="GW2UI_OBJECTIVES_BINDINGS"/>
+
     <Binding category="GW2 UI" name="BAG_SORT" header="GW2UI_INVENTORY_BINDINGS" runOnUp="true">
         PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
         if GW_SortBags then GW_SortBags() else C_Container.SortBags() end

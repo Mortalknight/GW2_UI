@@ -1759,7 +1759,7 @@ end
 
 
 local function LoadMicroMenu()
-    if checkElvUI() or not GW.settings.micromenu.enabled or GW.IsGamepadInterface() then
+    if checkElvUI() or not GW.settings.micromenu.enabled or GW.Gamepad.IsInterface() then
         return
     end
 

@@ -13,6 +13,14 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.10", {
+    {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): the immersive quest window and the installer work with the d-pad, buttons show their pad button like Blizzard's dialogs (A accept, B decline, X for the main action)]=]},
+    {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): the quest tracker can be entered with the key binding "Objectives - Focus" or a macro with /click GwQuestTrackerGamepadFocus on a pad button, A opens a quest or uses its item, B leaves]=]},
+    {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): dropdowns in GW windows, like the bag settings, open with A as a pad menu, sliders like the item size move with left and right, B goes back]=]},
+    {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): the lists of the hero panel (reputation, titles, boss times, raid locks, skills) can be walked with the d-pad and scroll along, out of combat]=]},
+    {GW.Enum.ChangelogType.change, [=[Gamepad (Forever): the bags no longer open in combat, Blizzard gives them no pad focus there; bags opened before stay usable]=]},
+})
+
 addChange("12.1.9", {
     {GW.Enum.ChangelogType.feature, [=[Battleground score: a line below each score shows how close a side is to winning, the hover shows the points and an estimate how long it takes]=]},
     {GW.Enum.ChangelogType.bug, [=[Battleground score: Arathi Basin shows all five bases, not only the ones known when you entered]=]},

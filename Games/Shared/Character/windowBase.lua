@@ -262,7 +262,7 @@ local function LoadCharacterWindowBase(secureOnClick, secureOnAttributeChanged, 
 
     SetupEscape(frame)
     frame.close:SetAttribute("_onclick", charCloseSecure_OnClick)
-    GW.RegisterGamepadWindow(frame, {
+    GW.Gamepad.RegisterWindow(frame, {
         -- the gear on forever, blizzards slots hang in our window
         startButton = function() return CharacterHeadSlot and CharacterHeadSlot:IsVisible() and CharacterHeadSlot or nil end,
         legend = {

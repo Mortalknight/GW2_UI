@@ -178,7 +178,7 @@ local function itemButton_OnSmartNavDeselect()
     end
 end
 
-if GW.IsGamepadInterface() then
+if GW.Gamepad.IsInterface() then
     gamepadUse = CreateFrame("Button", "GwGamepadItemUse", UIParent, "SecureActionButtonTemplate")
     gamepadUse:SetAttribute("type2", "click")
     gamepadUse:RegisterForClicks("AnyDown")

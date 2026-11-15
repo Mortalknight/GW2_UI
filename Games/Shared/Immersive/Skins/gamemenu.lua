@@ -44,16 +44,6 @@ local function ToggleGw2Settings()
 end
 GW.ToggleGw2Settings = ToggleGw2Settings
 
-local function LinkGameMenuButtonForGamepad(menuFrame, button)
-    local buttons = menuFrame.buttons
-    if not GW.IsGamepadInterface() or not buttons or #buttons == 0 then
-        return
-    end
-    SmartNavigation_AddBidirectionalJumpNavigationOverride(buttons[#buttons], SMART_NAV_INPUT_DIRECTION.DOWN, button)
-    SmartNavigation_AddBidirectionalJumpNavigationOverride(button, SMART_NAV_INPUT_DIRECTION.DOWN, buttons[1])
-end
-GW.LinkGameMenuButtonForGamepad = LinkGameMenuButtonForGamepad
-
 -- one time per frame: pool buttons are reused across InitButtons runs, everything
 -- here survives the pool reset (textures, fonts, anchors)
 local function styleButtonOnce(b)
@@ -159,7 +149,7 @@ local function SkinMainMenu()
         settingsButton.layoutIndex = lastLayoutIndex + 1
         settingsButton.topPadding = 20
         GW.UpdateGameMenuNewLabel(settingsButton)
-        LinkGameMenuButtonForGamepad(self, settingsButton)
+        GW.Gamepad.LinkGameMenuButton(self, settingsButton)
     end)
 
     -- remove elvui transparent bg if ours is enabled

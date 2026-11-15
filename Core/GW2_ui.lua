@@ -530,9 +530,9 @@ local function evPlayerLogin(self)
         return
     end
     GW.LoadFonts()
-    GW.loadedWithGamepadInterface = GW.IsGamepadInterface() or false
+    GW.loadedWithGamepadInterface = GW.Gamepad.IsInterface() or false
     if GW.loadedWithGamepadInterface then
-        GW.HideGamepadFocusFrames()
+        GW.Gamepad.HideFocusFrames()
     end
 
     -- the old LibStrataFix (embedded by Paste and others) raises the level of every new or reparented frame above
@@ -613,7 +613,7 @@ local function evPlayerLogin(self)
             settingsButton.layoutIndex = lastLayoutIndex + 1
             settingsButton.topPadding = 20
             GW.UpdateGameMenuNewLabel(settingsButton)
-            GW.LinkGameMenuButtonForGamepad(menuFrame, settingsButton)
+            GW.Gamepad.LinkGameMenuButton(menuFrame, settingsButton)
         end)
     end
 
@@ -858,7 +858,7 @@ local function evPlayerLoginLate()
     GW.LoadMicroMenu()
 
     -- create action bars; the gamepad interface brings its own
-    if GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") and not GW.IsGamepadInterface() then
+    if GW.settings.actionbars.enabled and not GW.ShouldBlockIncompatibleAddon("Actionbars") and not GW.Gamepad.IsInterface() then
         if GW.isModern then
             if GW.settings.actionbars.barLayout then
                 GW.LoadActionBars(mainbarLM, false)

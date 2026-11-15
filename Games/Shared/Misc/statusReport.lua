@@ -52,7 +52,7 @@ local function ModuleState(path, incompatibleCategory, gamepadReplaces)
                 return format("Blocked (%s)", addonNames), true
             end
         end
-        if gamepadReplaces and GW.IsGamepadInterface() then
+        if gamepadReplaces and GW.Gamepad.IsInterface() then
             return "Off (Gamepad)"
         end
         return "On"
@@ -111,7 +111,7 @@ local SECTIONS = {
             { "Tooltips", ModuleState("tooltip") },
             { "Minimap", ModuleState("minimap", "Minimap") },
             { "Immersive Questing", ModuleState("immersiveQuesting", "ImmersiveQuesting") },
-            { "Gamepad Interface", function() return YesNo(GW.IsGamepadInterface()) end },
+            { "Gamepad Interface", function() return YesNo(GW.Gamepad.IsInterface()) end },
         },
     },
 }

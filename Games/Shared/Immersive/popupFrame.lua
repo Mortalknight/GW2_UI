@@ -237,7 +237,12 @@ local function CreatePopupFrame()
         GW.SkinEditBox(popup.input)
         popup.acceptButton:SetScript("OnClick", OnAccept)
         popup.cancelButton:SetScript("OnClick", OnCancel)
-        GW.RegisterGamepadWindow(popup, {popup = true, startButton = function(p) return p.acceptButton end})
+        GW.Gamepad.RegisterWindow(popup, {
+            popup = true,
+            startButton = function(p) return p.acceptButton end,
+            skip = {popup.cancelButton},
+            icons = {PAD1 = popup.acceptButton, PAD2 = popup.cancelButton},
+        })
 
         tinsert(frames, popup)
     end

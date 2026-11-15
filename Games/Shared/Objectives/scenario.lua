@@ -59,7 +59,7 @@ if ShouldShowMawBuffs then
         return auras
     end
 
-    if GW.isModern and not GW.IsGamepadInterface() then
+    if GW.isModern and not GW.Gamepad.IsInterface() then
         ShouldShowMawBuffs = GW.ShouldShowMawBuffs
     end
 end

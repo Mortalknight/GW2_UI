@@ -342,7 +342,7 @@ local function CreateOption(optionType, panel, name, desc, values)
         incompatibleAddonsType = values.incompatibleAddons,
         isIncompatibleAddonLoaded = false,
         isIncompatibleAddonLoadedButOverride = false,
-        gamepadReplaced = values.gamepadReplaced and GW.IsGamepadInterface(), -- forever's gamepad interface replaces the module
+        gamepadReplaced = values.gamepadReplaced and GW.Gamepad.IsInterface(), -- forever's gamepad interface replaces the module
         missingRequiredAddon = values.requiredAddon and not C_AddOns.IsAddOnLoaded(values.requiredAddon), -- the option only works with that addon
         groupHeaderName = values.groupHeaderName,
         group = values.group, -- groups options visually (extra spacing) without rendering a header

@@ -333,7 +333,7 @@ local function layoutItems(f)
         layoutBagItems(f.ItemFrame)
     end
     -- shown or hidden sections change the buttons
-    GW.RefreshGamepadWindow(f)
+    GW.Gamepad.RefreshWindow(f)
 end
 
 
@@ -668,6 +668,11 @@ local function setBagShown(shown)
     if GW.loadedWithGamepadInterface then
         local stack = debugstack()
         if stack:find("GamepadRadial", 1, true) and stack:find("'ToggleBackpack'", 1, true) then
+            return
+        end
+        -- blizzard gives addon windows no pad focus in combat
+        if shown and InCombatLockdown() and not GwBagFrame:IsShown() then
+            UIErrorsFrame:AddExternalErrorMessage(ERR_NOT_IN_COMBAT)
             return
         end
     end
@@ -1025,7 +1030,7 @@ local function LoadBag(helpers)
     f:SetScript("OnShow", bag_OnShow)
     f:SetScript("OnHide", bag_OnHide)
     setupAutoOpenClose(f)
-    GW.RegisterGamepadWindow(f, {
+    GW.Gamepad.RegisterWindow(f, {
         startButton = firstShownItem,
         -- back (the touchpad on playstation pads) focuses or leaves the search
         bindings = {PADBACK = function()

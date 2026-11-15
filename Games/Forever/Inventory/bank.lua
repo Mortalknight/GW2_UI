@@ -118,7 +118,7 @@ local function LayoutItems(f)
         SetBankHeaders(f)
     end
     -- shown or hidden sections change the buttons
-    GW.RefreshGamepadWindow(f)
+    GW.Gamepad.RefreshWindow(f)
 end
 
 -- the gamepad navigation starts here instead of the bag bar
@@ -445,7 +445,7 @@ local function LoadBank(helpers)
 
     f:SetScript("OnShow", Bank_OnShow)
     f:SetScript("OnHide", Bank_OnHide)
-    GW.RegisterGamepadWindow(f, {
+    GW.Gamepad.RegisterWindow(f, {
         startButton = FirstShownItem,
         replaces = BankFrame,
         -- back (the touchpad on playstation pads) focuses or leaves the search

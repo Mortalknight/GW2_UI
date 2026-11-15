@@ -701,7 +701,7 @@ local MODULES = {
 
 -- the gamepad interface brings its own action bars and micro menu
 local function IsModuleShown(module)
-    return not module.hidden and not (module.gamepadReplaced and GW.IsGamepadInterface())
+    return not module.hidden and not (module.gamepadReplaced and GW.Gamepad.IsInterface())
 end
 
 -- flavor gated steps drop out entirely, the step rail follows #STEPS
@@ -2140,6 +2140,8 @@ local function RenderStep(index)
         step.applied = true
         RenderStep(index + 1)
     end)
+
+    GW.Gamepad.RefreshWindow(wpanel.window, install.action:IsShown() and install.action or install.next:IsShown() and install.next or nil)
 end
 
 local function CreateInstallFrame()
@@ -2353,6 +2355,7 @@ local function CreateLandingFrame()
     start:SetPoint("BOTTOMLEFT", column, "BOTTOMLEFT", 0, 120)
     start:SetText(L["Start installation"])
     start:SetScript("OnClick", StartInstall)
+    landingFrame.start = start
 
     local express = CreateTextLink(column, L["Apply recommended settings"], ApplyExpressInstall)
     express.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
@@ -2427,6 +2430,20 @@ local function createPanel()
     CreateSpotlight()
     CreateInstallFrame()
     CreateLandingFrame()
+
+    GW.Gamepad.RegisterWindow(window, {
+        modal = true,
+        startButton = function()
+            if landingFrame:IsShown() then
+                return landingFrame.start
+            end
+            return installFrame.action:IsShown() and installFrame.action or installFrame.next
+        end,
+        legend = {
+            {"PAD1", ACTION_LABEL_SELECT},
+            {"DIRPAD", FRAME_ACTION_NAVIGATE},
+        },
+    })
 end
 
 local function ShowWelcomePanel()
