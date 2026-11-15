@@ -427,7 +427,7 @@ local function GamepadMenuRow_OnClick(row)
         return
     end
     local _, response = entry:Pick(MenuInputContext.MouseButton, "LeftButton")
-    menu.dropdown:UpdateToMenuSelections(menu.dropdown:GetMenuDescription())
+    menu.dropdown:OnMenuResponse(nil, entry)
     if response == MenuResponse.Refresh or response == MenuResponse.Open then
         -- no new layout, the selected button stays
         for activeRow in menu.rows:EnumerateActive() do
@@ -562,6 +562,11 @@ end
 -- blizzard applies the focus frame opacity only when it changes, never to new frames
 local function ApplyGamepadFocusOpacity(glow)
     glow:SetAlpha(tonumber(C_CVar.GetCVar("GamepadFocusStateOpacity")) or 1)
+end
+
+-- for blizzard dropdowns whose menu was built by addon code
+function Gamepad.UseGamepadMenu(dropdown)
+    dropdown.OnSmartNavClick = OpenGamepadMenu
 end
 
 function Gamepad.HideFocusFrames()

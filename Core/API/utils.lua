@@ -362,6 +362,15 @@ local function Clamp(v, min, max)
 end
 GW.Clamp = Clamp
 
+local function FitTextToWidth(text, maxWidth, minScale)
+    text:SetTextScale(1)
+    local width = text:GetUnboundedStringWidth()
+    if maxWidth > 0 and width and width > maxWidth then
+        text:SetTextScale(math.max(minScale, maxWidth / width))
+    end
+end
+GW.FitTextToWidth = FitTextToWidth
+
 local function GetScaledCursorDistance(left, top, scale)
     local x, y = GetCursorPosition()
     x = x / scale - left

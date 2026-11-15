@@ -129,6 +129,14 @@ local function SkinFilterDropdown(dropdown, anchorTo, rightEdge)
     end
 end
 
+-- blizzard hides the filter with onlyShowCollectedItemsInJournal, a stuck filter could not be reset then
+local function ShowJournalFilter(journal, initFilter)
+    if journal.FilterDropdown:IsShown() then return end
+    initFilter(journal)
+    GW.Gamepad.UseGamepadMenu(journal.FilterDropdown)
+    journal.FilterDropdown:Show()
+end
+
 local function SkinDropdowns(...)
     for i = 1, select("#", ...) do
         local dropdown = select(i, ...)
@@ -605,6 +613,7 @@ local function SkinMountJournal()
     journal.searchBox:ClearAllPoints()
     journal.searchBox:SetPoint("TOPLEFT", journal.LeftInset, "TOPLEFT", 2, -9)
     SkinFilterDropdown(journal.FilterDropdown, journal.searchBox, journal.ScrollBox)
+    ShowJournalFilter(journal, MountJournal_InitFilterButton)
     SkinScrollList(journal)
     journal.MountButton:GwSkinButton(false, true)
 
@@ -744,6 +753,7 @@ local function SkinPetJournal()
     journal.searchBox:ClearAllPoints()
     journal.searchBox:SetPoint("TOPLEFT", journal.LeftInset, "TOPLEFT", 2, -9)
     SkinFilterDropdown(journal.FilterDropdown, journal.searchBox, journal.ScrollBox)
+    ShowJournalFilter(journal, PetJournal_InitFilterDropdown)
     SkinScrollList(journal)
     journal.SummonButton:GwSkinButton(false, true)
     if journal.FindBattleButton then
@@ -827,6 +837,7 @@ local function SkinToyBox()
     box.searchBox:ClearAllPoints()
     box.searchBox:SetPoint("TOPRIGHT", box, "TOPRIGHT", -(FILTER_WIDTH + 16), CONTROL_ROW_Y)
     SkinFilterDropdown(box.FilterDropdown, box.searchBox)
+    ShowJournalFilter(box, ToyBox_InitFilterDropdown)
 
     local details = GW.CreateDetailsBackgroundTexture(box.iconsFrame)
     details:Hide()

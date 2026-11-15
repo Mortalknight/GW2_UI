@@ -239,6 +239,10 @@ local function Layout(stats, entries, rowHeight, minHeight)
         local column, row = (i - 1) % 2, math.floor((i - 1) / 2)
         frame:ClearAllPoints()
         frame:SetPoint("TOPLEFT", tileParent, "TOPLEFT", 5 + column * TILE_WIDTH, -topOffset - row * rowHeight)
+        if stats.gwTileParent then
+            local _, _, _, valueX = frame.Value:GetPoint()
+            GW.FitTextToWidth(frame.Value, tileParent:GetWidth() - 5 - column * TILE_WIDTH - valueX - 2, 0.7)
+        end
         frame:SetAlpha(frame.gwStatVisible and 1 or 0.35)
         frame:Show()
         placed[frame] = true

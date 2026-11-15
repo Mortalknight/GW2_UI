@@ -19,6 +19,7 @@ addChange("12.1.10", {
     {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): dropdowns in GW windows, like the bag settings, open with A as a pad menu, sliders like the item size move with left and right, B goes back]=]},
     {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): the lists of the hero panel (reputation, titles, boss times, raid locks, skills) can be walked with the d-pad and scroll along, out of combat]=]},
     {GW.Enum.ChangelogType.change, [=[Gamepad (Forever): the bags no longer open in combat, Blizzard gives them no pad focus there; bags opened before stay usable]=]},
+    {GW.Enum.ChangelogType.bug, [=[Collections: mounts, pets and toys keep their filter when Blizzard hides it for the only collected items setting, a filter that hid everything can be reset again]=]},
 })
 
 addChange("12.1.9", {

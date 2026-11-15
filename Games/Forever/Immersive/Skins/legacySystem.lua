@@ -217,6 +217,7 @@ end
 
 local function SkinRewardCard(card)
     card.RewardCardBG:SetAlpha(0)
+    card.Highlight:SetAlpha(0)
     card.IconBorder:SetAlpha(0)
     card.LevelSquare:SetAlpha(0)
     GW.AddDetailsBackground(card)

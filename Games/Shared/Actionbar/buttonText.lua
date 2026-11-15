@@ -1,21 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function FitHotKeyText(button)
-    local hotkey = button.HotKey
-    hotkey:SetTextScale(1)
-
-    local maxWidth = button:GetWidth() - 2
-    if maxWidth <= 0 then
-        return
-    end
-
-    local textWidth = hotkey:GetUnboundedStringWidth()
-    if textWidth and textWidth > maxWidth then
-        hotkey:SetTextScale(math.max(0.6, maxWidth / textWidth))
-    end
-end
-
 function GW.UpdateHotkey(self)
     local hotkey = self.HotKey
     local text = hotkey:GetText()
@@ -74,7 +59,7 @@ function GW.UpdateHotkey(self)
         hotkey:SetText("")
     end
 
-    FitHotKeyText(self)
+    GW.FitTextToWidth(self.HotKey, self:GetWidth() - 2, 0.6)
 end
 
 -- per position: the point on the button, the direction of the pet and stance offset, the two points of the main bar
