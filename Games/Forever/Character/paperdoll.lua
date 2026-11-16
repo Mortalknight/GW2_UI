@@ -15,7 +15,7 @@ local function toggleCharacter(tab, onlyShow)
     if InCombatLockdown() then
         return
     end
-    if not onlyShow then
+    if not (onlyShow or SpellIsTargeting()) then
         GwCharacterWindow:SetAttribute("keytoggle", true)
     end
     GwCharacterWindow:SetAttribute("windowpanelopen", BLIZZARD_TAB_PANELS[tab] or "character")
