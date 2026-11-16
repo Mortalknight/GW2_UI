@@ -199,6 +199,12 @@ function GwImmersiveQuestingGiverModelMixin:OnModelLoaded()
     elseif self.idle_anim ~= -1 then
         self:SetAnimation(self.idle_anim)
     end
+    if GwImmersiveQuestFrame and GwImmersiveQuestFrame.isFullscreen then
+        local fit = GW.immersiveQuesting.fullscreenFit
+        sf = sf * fit.giverScale
+        x = x + fit.giverX
+        z = z - fit.giverDrop
+    end
     self:SetModelScale(sf)
     self:SetViewTranslation(x, z)
 

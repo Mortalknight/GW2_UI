@@ -1635,6 +1635,7 @@ GW.globalDefault = {
         immersiveQuesting = {
             enabled = true,
             lockFrame = false,
+            fullscreen = false,
             scale = 1,
             showHelmet = true,
             playerScale = 1,

@@ -12,7 +12,7 @@
                         <Anchor point="center" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture>
+                <Texture parentKey="backdrop">
                     <Color r="0" g="0" b="0"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="48" y="-32"/>
@@ -21,7 +21,7 @@
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="3">
-                <Texture file="Interface/AddOns/GW2_UI/textures/questview/overlay_top.png">
+                <Texture parentKey="overlayTop" file="Interface/AddOns/GW2_UI/textures/questview/overlay_top.png">
                     <Size x="950" y="237"></Size>
                     <Anchors>
                         <Anchor point="center" x="0" y="119"/>
@@ -71,6 +71,57 @@
                     </Layer>
                 </Layers>
                 <Frames>
+                    <Frame parentKey="stripeTop" clipChildren="true" hidden="true">
+                        <Size x="1" y="1"/>
+                        <Layers>
+                            <Layer level="BACKGROUND">
+                                <Texture parentKey="edge" file="Interface/AddOns/GW2_UI/textures/questview/overlay_top.png">
+                                    <Size x="500"/>
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT"/>
+                                        <Anchor point="BOTTOMRIGHT"/>
+                                    </Anchors>
+                                </Texture>
+                                <Texture parentKey="solid">
+                                    <Color r="0" g="0" b="0"/>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT"/>
+                                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.edge" relativePoint="BOTTOMLEFT"/>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                    <Frame parentKey="stripeBottom" clipChildren="true" hidden="true">
+                        <Size x="1" y="1"/>
+                        <Layers>
+                            <Layer level="BACKGROUND">
+                                <Texture parentKey="edge" file="Interface/AddOns/GW2_UI/textures/questview/overlay_top.png">
+                                    <Size x="500"/>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT"/>
+                                        <Anchor point="BOTTOMLEFT"/>
+                                    </Anchors>
+                                </Texture>
+                                <Texture parentKey="solid">
+                                    <Color r="0" g="0" b="0"/>
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT"/>
+                                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.edge" relativePoint="BOTTOMRIGHT"/>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                    <Frame parentKey="bandClip" clipChildren="true" hidden="true">
+                        <Size x="1" y="1"/>
+                    </Frame>
+                    <Frame parentKey="brushClipTop" hidden="true">
+                        <Size x="1" y="1"/>
+                    </Frame>
+                    <Frame parentKey="brushClipBottom" hidden="true">
+                        <Size x="1" y="1"/>
+                    </Frame>
                     <DressUpModel parentKey="playerModel" alpha="0" mixin="GwImmersiveQuestingPlayerModelMixin">
                         <Size x="474" y="474"></Size>
                         <Anchors>
@@ -80,6 +131,7 @@
                             <OnShow method="OnShow"/>
                             <OnHide method="OnHide"/>
                             <OnModelLoaded method="OnModelLoaded"/>
+                            <OnAnimFinished method="OnAnimFinished"/>
                         </Scripts>
                         <Animations>
                             <AnimationGroup parentKey="FadeIn" setToFinalAlpha="true">

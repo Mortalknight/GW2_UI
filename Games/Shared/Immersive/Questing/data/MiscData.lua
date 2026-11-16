@@ -1,6 +1,15 @@
 ---@class GW2
 local GW = select(2, ...)
 
+GW.immersiveQuesting.fullscreenFit = {
+    playerScale = 1.1,
+    giverScale = 1.0,
+    playerDrop = 70,
+    giverDrop = -100,
+    playerX = -50,
+    giverX = -100,
+}
+
 -- emote IDs used for SetAnimation
 GW.immersiveQuesting.emotes = {
     Idle = 0,

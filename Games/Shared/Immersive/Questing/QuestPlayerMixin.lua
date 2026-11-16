@@ -10,7 +10,33 @@ function GwImmersiveQuestingPlayerModelMixin:SetupModel()
     self:ClearAll()
 end
 
+local ONE_SHOT_FALLBACK_SECONDS = 2
+
+local function returnToIdle(self)
+    if self.one_shot_playing then
+        self.one_shot_playing = false
+        self:SetAnimation(emotes.Idle)
+    end
+end
+
+function GwImmersiveQuestingPlayerModelMixin:PlayOneShot(emote)
+    self.one_shot_playing = true
+    self.one_shot_token = (self.one_shot_token or 0) + 1
+    local token = self.one_shot_token
+    self:SetAnimation(emote)
+    C_Timer.After(ONE_SHOT_FALLBACK_SECONDS, function()
+        if self.one_shot_token == token then
+            returnToIdle(self)
+        end
+    end)
+end
+
+function GwImmersiveQuestingPlayerModelMixin:OnAnimFinished()
+    returnToIdle(self)
+end
+
 function GwImmersiveQuestingPlayerModelMixin:ClearAll()
+    self.one_shot_playing = false
     self.is_loaded = false
     self.defer_action = false
     self:SetUnit("none")
@@ -52,6 +78,12 @@ function GwImmersiveQuestingPlayerModelMixin:OnModelLoaded()
     local sf = 1.0
     local f = 0.5
     local ps = ((GW.settings.immersiveQuesting.playerScale - 1.0)/2) + 1.0
+    if GwImmersiveQuestFrame and GwImmersiveQuestFrame.isFullscreen then
+        local fit = GW.immersiveQuesting.fullscreenFit
+        ps = ps * fit.playerScale
+        x = x + fit.playerX
+        z = z - fit.playerDrop
+    end
 
     if p_info then
         if p_info.x then
@@ -139,9 +171,9 @@ function GwImmersiveQuestingPlayerModelMixin:SetAction(action)
     elseif action == "kneel" then
         self:SetAnimation(emotes.IdleKneel)
     elseif action == "no" then
-        self:SetAnimation(emotes.No)
+        self:PlayOneShot(emotes.No)
     elseif action == "yes" then
-        self:SetAnimation(emotes.Yes)
+        self:PlayOneShot(emotes.Yes)
     end
 end
 

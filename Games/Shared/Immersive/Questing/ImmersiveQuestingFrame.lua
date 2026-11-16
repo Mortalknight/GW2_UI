@@ -6,10 +6,456 @@ local object_types = GW.immersiveQuesting.objectTypes
 
 GwImmersiveQuestFrameMixin = {}
 
+local WINDOWED_WIDTH = 1024
+local WINDOWED_HEIGHT = 512
+local ART_ASPECT = 2
+
+local function setCoverTexCoords(texture, aspect)
+    local visibleWidth = 1
+    local visibleHeight = 1
+    if aspect > ART_ASPECT then
+        visibleHeight = ART_ASPECT / aspect
+    else
+        visibleWidth = aspect / ART_ASPECT
+    end
+    local left = (1 - visibleWidth) / 2
+    local top = (1 - visibleHeight) / 2
+    texture:SetTexCoord(left, left + visibleWidth, top, top + visibleHeight)
+    return left, left + visibleWidth, top, top + visibleHeight
+end
+
+local EDGE_WIDTH = 500
+local TRAVEL_EXTRA = 0.6
+local BRUSH_TOP_EDGE_LAG = 0.55
+local BRUSH_SLICES = 32
+local BRUSH_SOFT_RANGE = 0.18
+local BRUSH_TOP_FILE = "Interface/AddOns/GW2_UI/textures/questview/overlay_top.png"
+local BRUSH_BOTTOM_FILE = "Interface/AddOns/GW2_UI/textures/questview/overlay_bottom.png"
+local BRUSH_TOP_EDGE = 0.45
+local BRUSH_BOTTOM_EDGE = 0.39
+local BRUSH_INSET = 0.02
+local INTRO_DURATION = 1.9
+local BLEED_FRAMES = 20
+local BLEED_MASK_PATH = "Interface/AddOns/GW2_UI/textures/questview/bleed/bleed_%02d.png"
+local OUTRO_DURATION = 0.3
+local SUMMARY_FULLSCREEN_SCALE = 1.5
+local SUMMARY_FULLSCREEN_DROP = 0.09
+
+local function easeInOut(t)
+    return t * t * (3 - 2 * t)
+end
+
+local function segment(time, from, to)
+    return easeInOut(min(1, max(0, (time - from) / (to - from))))
+end
+
+local function ensureBleedMasks(self)
+    local bandClip = self.container.bandClip
+    if self.bleedMasks or not bandClip.CreateMaskTexture then
+        return
+    end
+    local masks = {}
+    for index = 1, BLEED_FRAMES do
+        local mask = bandClip:CreateMaskTexture()
+        mask:SetTexture(BLEED_MASK_PATH:format(index), "CLAMPTOEDGE", "CLAMPTOEDGE")
+        mask:SetAllPoints(bandClip)
+        masks[index] = mask
+    end
+    self.bleedLayer = bandClip:CreateTexture(nil, "BACKGROUND", nil, 2)
+    self.bleedLayer:Hide()
+    if self.bleedPath then
+        self.bleedLayer:SetTexture(self.bleedPath)
+    end
+    self.bleedMasks = masks
+end
+
+function GwImmersiveQuestFrameMixin:setBleedTexture(path)
+    self.bleedPath = path
+    if self.bleedLayer then
+        self.bleedLayer:SetTexture(path)
+    end
+end
+
+local function swapMask(texture, masks, current, target)
+    if current == target then
+        return target
+    end
+    if current and current > 0 then
+        texture:RemoveMaskTexture(masks[current])
+    end
+    if target > 0 then
+        texture:AddMaskTexture(masks[target])
+    end
+    return target
+end
+
+local function setBandBleed(self, progress)
+    local mapBG = self.container.mapBG
+    local masks = self.bleedMasks
+    if not masks then
+        mapBG:SetAlpha(progress)
+        return
+    end
+    local layer = self.bleedLayer
+    if progress >= 1 then
+        self.bleedBase = swapMask(mapBG, masks, self.bleedBase, 0)
+        self.bleedOver = swapMask(layer, masks, self.bleedOver, 0)
+        layer:Hide()
+        return
+    end
+    local position = progress * (BLEED_FRAMES - 1)
+    local base = math.floor(position)
+    self.bleedBase = swapMask(mapBG, masks, self.bleedBase, base + 1)
+    self.bleedOver = swapMask(layer, masks, self.bleedOver, base + 2)
+    layer:SetAlpha(position - base)
+    layer:Show()
+end
+
+local function wipeWidth(progress, fullWidth)
+    if progress >= 1 then
+        return fullWidth
+    end
+    return max(1, progress * (fullWidth + EDGE_WIDTH * TRAVEL_EXTRA))
+end
+
+local function buildBrushSlices(frame, file, uFrom, uTo, vFrom, vTo, width, height)
+    local sliceWidth = width / BRUSH_SLICES
+    frame.slices = frame.slices or {}
+    if not frame.full then
+        frame.full = frame:CreateTexture(nil, "BACKGROUND")
+        frame.full:SetTexture(file)
+        frame.full:SetVertexColor(0, 0, 0, 1)
+        frame.full:Hide()
+    end
+    frame.full:ClearAllPoints()
+    frame.full:SetAllPoints(frame)
+    frame.full:SetTexCoord(uFrom, uTo, vFrom, vTo)
+    frame.settled = nil
+    for i = 1, BRUSH_SLICES do
+        local slice = frame.slices[i]
+        if not slice then
+            slice = frame:CreateTexture(nil, "BACKGROUND")
+            slice:SetTexture(file)
+            slice:SetVertexColor(0, 0, 0, 1)
+            frame.slices[i] = slice
+        end
+        slice:ClearAllPoints()
+        slice:SetPoint("TOPLEFT", frame, "TOPLEFT", (i - 1) * sliceWidth, 0)
+        slice:SetSize(sliceWidth + 1, height)
+        slice:SetTexCoord(uFrom + (uTo - uFrom) * (i - 1) / BRUSH_SLICES, uFrom + (uTo - uFrom) * i / BRUSH_SLICES, vFrom, vTo)
+    end
+end
+
+local function setBrushLead(frame, lead, width, fromRight)
+    local settled = lead >= width * (1 + BRUSH_SOFT_RANGE)
+    if settled ~= frame.settled then
+        frame.settled = settled
+        frame.full:SetShown(settled)
+        for _, slice in ipairs(frame.slices) do
+            slice:SetShown(not settled)
+        end
+    end
+    if settled then
+        return
+    end
+    local soft = width * BRUSH_SOFT_RANGE
+    for i, slice in ipairs(frame.slices) do
+        local center = (i - 0.5) * width / BRUSH_SLICES
+        local distance = fromRight and (width - center) or center
+        slice:SetAlpha(easeInOut(min(1, max(0, (lead - distance) / soft))))
+    end
+end
+
+local function setWipe(frame, progress, fullWidth)
+    if progress >= 1 then
+        frame:SetWidth(fullWidth)
+        if frame.solid and not frame.solidFull then
+            frame.solidFull = true
+            frame.solid:ClearAllPoints()
+            frame.solid:SetAllPoints(frame)
+            frame.edge:Hide()
+        end
+        return
+    end
+    frame:SetWidth(max(1, progress * (fullWidth + EDGE_WIDTH * TRAVEL_EXTRA)))
+    if frame.solid and frame.solidFull then
+        frame.solidFull = false
+        frame.edge:Show()
+        frame.solid:ClearAllPoints()
+        if frame.fromRight then
+            frame.solid:SetPoint("TOPRIGHT", frame, "TOPRIGHT")
+            frame.solid:SetPoint("BOTTOMLEFT", frame.edge, "BOTTOMRIGHT")
+        else
+            frame.solid:SetPoint("TOPLEFT", frame, "TOPLEFT")
+            frame.solid:SetPoint("BOTTOMRIGHT", frame.edge, "BOTTOMLEFT")
+        end
+    end
+end
+
+function GwImmersiveQuestFrameMixin:applyIntroProgress(time)
+    local c = self.container
+    local width = self.layoutWidth
+
+    local topProgress = segment(time, 0, 0.75)
+    local bottomProgress = segment(time, 0, 0.75)
+    setWipe(c.stripeTop, topProgress, width)
+    setWipe(c.stripeBottom, bottomProgress, width)
+    local settled = width * (1 + BRUSH_SOFT_RANGE)
+    setBrushLead(c.brushClipTop, topProgress >= 1 and settled or wipeWidth(topProgress, width) - EDGE_WIDTH * BRUSH_TOP_EDGE_LAG, width, false)
+    setBrushLead(c.brushClipBottom, bottomProgress >= 1 and settled or wipeWidth(bottomProgress, width) - EDGE_WIDTH * BRUSH_TOP_EDGE_LAG, width, true)
+    setBandBleed(self, segment(time, 0.35, 1.7))
+
+    local textAlpha = segment(time, 1.3, 1.9)
+    c.dialog:SetAlpha(textAlpha)
+    c.floaty:SetAlpha(textAlpha)
+end
+
+function GwImmersiveQuestFrameMixin:stopAnimation()
+    self.animationDriver:SetScript("OnUpdate", nil)
+    self.fadingOut = false
+    self:SetAlpha(1)
+end
+
+function GwImmersiveQuestFrameMixin:playIntro()
+    local elapsed = 0
+    self:stopAnimation()
+    self:applyIntroProgress(0)
+    self.animationDriver:SetScript("OnUpdate", function(_, delta)
+        elapsed = elapsed + delta
+        self:applyIntroProgress(elapsed)
+        if elapsed >= INTRO_DURATION then
+            self:stopAnimation()
+        end
+    end)
+end
+
+function GwImmersiveQuestFrameMixin:playOutro()
+    local elapsed = 0
+    self:stopAnimation()
+    self.fadingOut = true
+    self.animationDriver:SetScript("OnUpdate", function(_, delta)
+        elapsed = elapsed + delta
+        self:SetAlpha(1 - min(1, elapsed / OUTRO_DURATION))
+        if elapsed >= OUTRO_DURATION then
+            self:stopAnimation()
+            self:HideNow()
+        end
+    end)
+end
+
+function GwImmersiveQuestFrameMixin:HideWithOutro()
+    local canAnimate = self.isFullscreen and self:IsShown() and not self.was_showing and not self.fadingOut and not self.in_load and not self.in_cine
+    if canAnimate then
+        self:playOutro()
+    else
+        self:HideNow()
+    end
+end
+
+local function layoutFullscreen(self, width, height)
+    local c = self.container
+    local bandHeight = height * 0.446
+    local bandCenterY = -height * 0.02
+    local modelHeight = height * 0.92
+    local stripeTopHeight = height / 2 - bandCenterY - bandHeight / 2
+    local stripeBottomHeight = height / 2 + bandCenterY - bandHeight / 2
+
+    self.layoutWidth = width
+    self.maxTextWidth = min(1000, width * 0.55)
+
+    self.border:Hide()
+    self.overlayTop:Hide()
+    self.backdrop:Hide()
+
+    c:SetSize(width, height)
+
+    c.floaty:ClearAllPoints()
+    c.floaty:SetAllPoints(c)
+    c.floaty.inset:Hide()
+
+    c.stripeTop:ClearAllPoints()
+    c.stripeTop:SetPoint("TOPLEFT", c, "TOPLEFT")
+    c.stripeTop:SetHeight(stripeTopHeight)
+    c.stripeTop.fromRight = false
+    c.stripeTop:Show()
+
+    c.stripeBottom:ClearAllPoints()
+    c.stripeBottom:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT")
+    c.stripeBottom:SetHeight(stripeBottomHeight)
+    c.stripeBottom.fromRight = true
+    c.stripeBottom:Show()
+
+    c.stripeTop.edge:SetTexCoord(0, 0, 1, 0, 0, 1, 1, 1)
+    c.stripeBottom.edge:SetTexCoord(0, 1, 1, 1, 0, 0, 1, 0)
+    c.stripeTop.edge:SetWidth(EDGE_WIDTH)
+    c.stripeBottom.edge:SetWidth(EDGE_WIDTH)
+    c.stripeTop.edge:SetVertexColor(0, 0, 0, 1)
+    c.stripeBottom.edge:SetVertexColor(0, 0, 0, 1)
+
+    c.bandClip:ClearAllPoints()
+    c.bandClip:SetPoint("LEFT", c, "LEFT", 0, bandCenterY)
+    c.bandClip:SetSize(width, bandHeight)
+    c.bandClip:Show()
+
+    c.mapBG:SetParent(c.bandClip)
+    c.mapBG:ClearAllPoints()
+    c.mapBG:SetPoint("CENTER", c, "CENTER", 0, bandCenterY)
+    c.mapBG:SetSize(width, bandHeight)
+    local left, right, top, bottom = setCoverTexCoords(c.mapBG, width / bandHeight)
+    ensureBleedMasks(self)
+    if self.bleedLayer then
+        self.bleedLayer:ClearAllPoints()
+        self.bleedLayer:SetAllPoints(c.mapBG)
+        self.bleedLayer:SetTexCoord(left, right, top, bottom)
+    end
+
+    local brushHeight = bandHeight * 0.4
+    c.brushClipTop:ClearAllPoints()
+    c.brushClipTop:SetPoint("TOPLEFT", c.bandClip, "TOPLEFT", 0, BRUSH_TOP_EDGE * brushHeight - BRUSH_INSET * bandHeight)
+    c.brushClipTop:SetSize(width, brushHeight)
+    buildBrushSlices(c.brushClipTop, BRUSH_TOP_FILE, 0, 1, 0, 1, width, brushHeight)
+    c.brushClipTop:Show()
+    c.brushClipBottom:ClearAllPoints()
+    c.brushClipBottom:SetPoint("TOPLEFT", c.bandClip, "BOTTOMLEFT", 0, BRUSH_BOTTOM_EDGE * brushHeight + BRUSH_INSET * bandHeight)
+    c.brushClipBottom:SetSize(width, brushHeight)
+    buildBrushSlices(c.brushClipBottom, BRUSH_BOTTOM_FILE, 0.09, 0.92, 0.62, 1, width, brushHeight)
+    c.brushClipBottom:Show()
+
+    c.blackout_head:ClearAllPoints()
+    c.blackout_head:SetPoint("TOPLEFT", c, "TOPLEFT")
+    c.blackout_head:SetPoint("TOPRIGHT", c, "TOPRIGHT")
+    c.blackout_fade:ClearAllPoints()
+    c.blackout_fade:SetPoint("TOPLEFT", c.blackout_head, "BOTTOMLEFT")
+    c.blackout_fade:SetPoint("TOPRIGHT", c.blackout_head, "BOTTOMRIGHT")
+    c.blackout_fade:SetHeight(32)
+
+    c.playerModel:ClearAllPoints()
+    c.playerModel:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", width * 0.03, 0)
+    c.playerModel:SetSize(min(modelHeight, width * 0.45), modelHeight)
+
+    c.giverModel:ClearAllPoints()
+    c.giverModel:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", width * 0.015, 0)
+    c.giverModel:SetSize(width * 0.85, modelHeight)
+
+    c.dialog:ClearAllPoints()
+    c.dialog:SetAllPoints(c)
+    c.dialog.blackout_feet:Hide()
+    c.dialog.text:ClearAllPoints()
+
+    c.summary:SetScale(SUMMARY_FULLSCREEN_SCALE)
+    c.summary:ClearAllPoints()
+    c.summary:SetPoint("CENTER", c, "CENTER", 0, (bandCenterY - height * SUMMARY_FULLSCREEN_DROP) / SUMMARY_FULLSCREEN_SCALE)
+
+    c.acceptButton:ClearAllPoints()
+    c.acceptButton:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", -48, 40)
+    c.cancelButton:ClearAllPoints()
+    c.cancelButton:SetPoint("BOTTOMRIGHT", c.acceptButton, "BOTTOMLEFT", -12, 0)
+    c.replayButton:ClearAllPoints()
+    c.replayButton:SetPoint("BOTTOM", c, "BOTTOM", 0, 40)
+
+    self:applyIntroProgress(INTRO_DURATION)
+end
+
+local function layoutWindowed(self)
+    local c = self.container
+
+    self:stopAnimation()
+    self.maxTextWidth = nil
+
+    self.border:Show()
+    self.overlayTop:Show()
+    self.backdrop:Show()
+    self.backdrop:ClearAllPoints()
+    self.backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", 48, -32)
+    self.backdrop:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -48, 32)
+
+    c:SetSize(950, 474)
+
+    c.floaty:ClearAllPoints()
+    c.floaty:SetSize(952, 474)
+    c.floaty:SetPoint("TOP", c, "TOP", 0, 0)
+    c.floaty.inset:Show()
+    c.floaty:SetAlpha(1)
+
+    c.stripeTop:Hide()
+    c.stripeBottom:Hide()
+    c.bandClip:Hide()
+    c.brushClipTop:Hide()
+    c.brushClipBottom:Hide()
+    c.bandClip:SetAlpha(1)
+    setBandBleed(self, 1)
+    c.mapBG:SetAlpha(1)
+    c.mapBG:SetParent(c)
+    c.mapBG:ClearAllPoints()
+    c.mapBG:SetSize(950, 475)
+    c.mapBG:SetPoint("TOP", c, "TOP")
+    c.mapBG:SetTexCoord(0, 1, 0, 1)
+
+    c.blackout_head:ClearAllPoints()
+    c.blackout_head:SetWidth(950)
+    c.blackout_head:SetPoint("TOP", c, "TOP")
+    c.blackout_fade:ClearAllPoints()
+    c.blackout_fade:SetSize(950, 8)
+    c.blackout_fade:SetPoint("BOTTOM", c.blackout_head, "BOTTOM", 0, -8)
+
+    c.playerModel:ClearAllPoints()
+    c.playerModel:SetSize(474, 474)
+    c.playerModel:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", 0, 1)
+
+    c.giverModel:ClearAllPoints()
+    c.giverModel:SetSize(700, 474)
+    c.giverModel:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", 0, 1)
+
+    c.dialog:ClearAllPoints()
+    c.dialog:SetSize(950, 374)
+    c.dialog:SetPoint("CENTER", c, "CENTER", 0, -50)
+    c.dialog:SetAlpha(1)
+    c.dialog.blackout_feet:Show()
+    c.dialog.text:ClearAllPoints()
+    c.dialog.text:SetPoint("BOTTOM", c.dialog, "BOTTOM", 0, 10)
+
+    c.summary:SetScale(1)
+    c.summary:ClearAllPoints()
+    c.summary:SetPoint("CENTER", c, "CENTER", 0, -50)
+
+    c.acceptButton:ClearAllPoints()
+    c.acceptButton:SetPoint("TOPLEFT", c, "BOTTOMLEFT", 5, 10)
+    c.cancelButton:ClearAllPoints()
+    c.cancelButton:SetPoint("TOPRIGHT", c, "BOTTOMRIGHT", -5, 10)
+    c.replayButton:ClearAllPoints()
+    c.replayButton:SetPoint("TOP", c, "BOTTOM", 0, 10)
+end
+
+function GwImmersiveQuestFrameMixin:applyLayout()
+    local settings = GW.settings.immersiveQuesting
+    self.isFullscreen = settings.fullscreen and true or false
+
+    if self.isFullscreen then
+        self:SetScale(UIParent:GetScale())
+        self:SetFrameStrata("FULLSCREEN")
+        self:SetSize(UIParent:GetWidth(), UIParent:GetHeight())
+        self:ClearAllPoints()
+        self:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        layoutFullscreen(self, UIParent:GetWidth(), UIParent:GetHeight())
+    else
+        self:SetScale(UIParent:GetScale() * settings.scale)
+        self:SetFrameStrata("HIGH")
+        self:SetSize(WINDOWED_WIDTH, WINDOWED_HEIGHT)
+        self:applySavedPosition()
+        layoutWindowed(self)
+    end
+
+    self:applyTitleStyle()
+    if self.isFullscreen then
+        self.container.blackout_head:SetAlpha(0)
+        self.container.blackout_fade:Hide()
+        self.container.dialog.text:SetPoint("TOP", self.container.dialog, "TOP", 0, -(self.container.blackout_head:GetHeight() + 24))
+    end
+    self:applyLockFrame()
+end
+
 function GwImmersiveQuestFrameMixin:UiScaleChanged()
-    local sf = GW.settings.immersiveQuesting.scale
-    self:SetScale(UIParent:GetScale() * sf)
-    self:applySavedPosition()
+    self:applyLayout()
     self.container.playerModel:SetupModel()
     self.container.giverModel:SetupModel()
     if self:IsShown() then
@@ -117,17 +563,18 @@ end
 local MAX_TEXT_WIDTH = 750
 function GwImmersiveQuestFrameMixin:setBalancedText(text)
     local t = self.container.dialog.text
-    t:SetWidth(MAX_TEXT_WIDTH)
+    local maxWidth = self.maxTextWidth or MAX_TEXT_WIDTH
+    t:SetWidth(maxWidth)
     t:SetText(text)
     local needed = t:GetStringWidth()
-    if needed > (2 * MAX_TEXT_WIDTH) then
+    if needed > (2 * maxWidth) then
         local balanced = math.floor(needed / 3) + 50
-        if balanced < MAX_TEXT_WIDTH then
+        if balanced < maxWidth then
             t:SetWidth(balanced)
         end
-    elseif needed > MAX_TEXT_WIDTH then
+    elseif needed > maxWidth then
         local balanced = math.floor(needed / 2) + 50
-        if balanced < MAX_TEXT_WIDTH then
+        if balanced < maxWidth then
             t:SetWidth(balanced)
         end
     end
@@ -219,7 +666,9 @@ end
 
 function GwImmersiveQuestFrameMixin:showQuestFrame()
     local map_bg = getMapBackground(self)
-    self.container.mapBG:SetTexture("Interface/AddOns/GW2_UI/textures/questview/backgrounds/" .. map_bg .. ".jpg")
+    local bandPath = "Interface/AddOns/GW2_UI/textures/questview/backgrounds/" .. map_bg .. ".jpg"
+    self.container.mapBG:SetTexture(bandPath)
+    self:setBleedTexture(bandPath)
 
     self.container.floaty.title:SetText(GetTitleText())
 
@@ -324,6 +773,9 @@ function GwImmersiveQuestFrameMixin:OnShow()
         return
     end
     self.container.FadeIn:Play()
+    if self.isFullscreen then
+        self:playIntro()
+    end
 end
 
 function GwImmersiveQuestFrameMixin:OnHide()
@@ -354,7 +806,10 @@ local function deferShow(self)
         self.needs_showing = true
     else
         self.needs_showing = false
-        if not self:IsShown() then
+        if self.fadingOut then
+            self:stopAnimation()
+            self:showQuestFrame()
+        elseif not self:IsShown() then
             self:showQuestFrame()
         end
         self:nextGossip()
@@ -590,7 +1045,7 @@ function GwImmersiveQuestFrameMixin:OnEvent(event, ...)
     GW.Debug("event handling", event, ...)
     if event == "ADDON_LOADED" then
         self:evAddonLoaded(...)
-    elseif event == "UI_SCALE_CHANGED" then
+    elseif event == "UI_SCALE_CHANGED" or event == "DISPLAY_SIZE_CHANGED" then
         if not self.defer_ui_change then
             -- pause one frame for cvars but don't queue multiple of these
             self.defer_ui_change = true
@@ -661,7 +1116,7 @@ function GwImmersiveQuestFrameMixin:resetPosition()
 end
 
 function GwImmersiveQuestFrameMixin:applyLockFrame()
-    local lf = GW.settings.immersiveQuesting.lockFrame
+    local lf = GW.settings.immersiveQuesting.lockFrame or GW.settings.immersiveQuesting.fullscreen
     if not lf then
         self:RegisterForDrag("LeftButton")
         self:SetScript("OnDragStart", self.StartMoving)
@@ -699,6 +1154,9 @@ function GW.LoadImmersiveQuesting()
     local frame = CreateFrame("Frame", "GwImmersiveQuestFrame", nil, "GwImmersiveQuestFrameTemplate")
     frame.mapId = 0
     frame.updateAttempts = 0
+    frame.animationDriver = CreateFrame("Frame", nil, frame)
+    frame.HideNow = frame.Hide
+    frame.Hide = frame.HideWithOutro
 
     frame.border:SetTextureSliceMargins(32, 32, 32, 32)
     frame.border:SetTextureSliceMode(Enum.UITextureSliceMode.Stretched)
@@ -714,6 +1172,7 @@ function GW.LoadImmersiveQuesting()
     frame:SetScript("OnEvent", frame.OnEvent)
 
     frame:RegisterEvent("UI_SCALE_CHANGED")
+    frame:RegisterEvent("DISPLAY_SIZE_CHANGED")
     frame:RegisterEvent("LOADING_SCREEN_DISABLED")
     frame:RegisterEvent("LOADING_SCREEN_ENABLED")
     frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
