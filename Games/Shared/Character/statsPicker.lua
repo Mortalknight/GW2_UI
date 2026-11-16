@@ -10,6 +10,33 @@ local L = GW.L
 -- Tiles are children of the stats box; the box carries the edit state and the registered tiles.
 local TILE_WIDTH = 92
 local HEADER_HEIGHT = 35
+local ICON_WIDTH = 35
+local MIN_VALUE_FONT_SIZE = 8
+local TILE_LEFT_MARGIN = 5
+local SCROLLBAR_RESERVE = 14
+local TILES_RIGHT_MARGIN = 5
+
+local function FitValueToTile(frame, valueLeft, rightLimit)
+    local value = frame.Value
+    local font, size, flags = value:GetFont()
+    if not font then
+        return
+    end
+    if frame.gwFittedSize ~= size then
+        frame.gwBaseFontSize = size
+    end
+    local baseSize = frame.gwBaseFontSize
+    local availableWidth = math.min(TILE_WIDTH - ICON_WIDTH - 2, rightLimit - valueLeft)
+    value:SetWordWrap(false)
+    value:SetWidth(availableWidth)
+    local fittedSize = baseSize
+    value:SetFont(font, fittedSize, flags)
+    while fittedSize > MIN_VALUE_FONT_SIZE and value:GetUnboundedStringWidth() > availableWidth do
+        fittedSize = fittedSize - 1
+        value:SetFont(font, fittedSize, flags)
+    end
+    frame.gwFittedSize = fittedSize
+end
 
 local function IsEditMode(stats)
     return stats.gwEditMode == true
@@ -234,13 +261,15 @@ local function Layout(stats, entries, rowHeight, minHeight)
     local tileParent = stats.gwTileParent or stats
     local topOffset = stats.gwTileParent and 4 or HEADER_HEIGHT
 
+    local rightLimit = tileParent:GetWidth() - (stats.gwTileParent and SCROLLBAR_RESERVE or TILES_RIGHT_MARGIN)
     local placed = {}
     for i, frame in ipairs(shown) do
         local column, row = (i - 1) % 2, math.floor((i - 1) / 2)
         frame:ClearAllPoints()
-        frame:SetPoint("TOPLEFT", tileParent, "TOPLEFT", 5 + column * TILE_WIDTH, -topOffset - row * rowHeight)
+        frame:SetPoint("TOPLEFT", tileParent, "TOPLEFT", TILE_LEFT_MARGIN + column * TILE_WIDTH, -topOffset - row * rowHeight)
         frame:SetAlpha(frame.gwStatVisible and 1 or 0.35)
         frame:Show()
+        FitValueToTile(frame, TILE_LEFT_MARGIN + column * TILE_WIDTH + ICON_WIDTH, rightLimit)
         placed[frame] = true
     end
     for _, frame in ipairs(stats.gwTiles or {}) do
