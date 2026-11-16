@@ -38,6 +38,11 @@ function GwImmersiveQuestingGiverModelMixin:setQuestGiverAnimation(count, qStrin
         return
     end
 
+    if self.walking then
+        self.pending_talk = {count, qString, qStringInt}
+        return
+    end
+
     -- determine main emote to play for this line
     local prefix = self.half_kits and "Half" or ""
     local a = "Talk"
@@ -236,6 +241,11 @@ function GwImmersiveQuestingGiverModelMixin:SetWalkState(walking, turn)
         self.anim_next = -1
         self.anim_playing = false
         self:SetAnimation(self.idle_anim)
+        local pending = self.pending_talk
+        self.pending_talk = nil
+        if pending then
+            self:setQuestGiverAnimation(pending[1], pending[2], pending[3])
+        end
     end
 end
 
@@ -278,6 +288,7 @@ end
 
 function GwImmersiveQuestingGiverModelMixin:ClearAll()
     self.walking = false
+    self.pending_talk = nil
     self.creature_id = 0
     self.file_id = nil
     self.do_anims = false
