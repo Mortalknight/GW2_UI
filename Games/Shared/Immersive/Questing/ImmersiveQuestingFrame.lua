@@ -392,6 +392,9 @@ local function layoutFullscreen(self, width, height)
     c.cancelButton:SetPoint("BOTTOMRIGHT", c.acceptButton, "BOTTOMLEFT", -12, 0)
     c.replayButton:ClearAllPoints()
     c.replayButton:SetPoint("BOTTOM", c, "BOTTOM", 0, 40)
+    c.modeButton:ClearAllPoints()
+    c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -24, -24)
+    c.modeButton:SetText(GW.L["Windowed"])
 
     self:applyIntroProgress(INTRO_DURATION)
 end
@@ -468,6 +471,9 @@ local function layoutWindowed(self)
     c.cancelButton:SetPoint("TOPRIGHT", c, "BOTTOMRIGHT", -5, 10)
     c.replayButton:ClearAllPoints()
     c.replayButton:SetPoint("TOP", c, "BOTTOM", 0, 10)
+    c.modeButton:ClearAllPoints()
+    c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -60, -8)
+    c.modeButton:SetText(GW.L["Fullscreen"])
 end
 
 function GwImmersiveQuestFrameMixin:applyLayout()
@@ -1057,6 +1063,19 @@ local function cancel_OnClick()
     CloseQuest()
 end
 
+function GwImmersiveQuestFrameMixin:ToggleFullscreen()
+    local settings = GW.settings.immersiveQuesting
+    settings.fullscreen = not settings.fullscreen
+    self:UiScaleChanged()
+    if self.questString and self.questStringInt >= 1 and self.questString[self.questStringInt] then
+        self:setBalancedText(self.questString[self.questStringInt])
+    end
+end
+
+local function modeButton_OnClick(self)
+    self:GetParent():GetParent():ToggleFullscreen()
+end
+
 local function deferredHide(self)
     if self:IsShown() then
         self.was_showing = true
@@ -1193,6 +1212,8 @@ function GwImmersiveQuestFrameMixin:applyTitleStyle()
 end
 
 function GW.LoadImmersiveQuesting()
+    BINDING_HEADER_GW2UI_IMMERSIVE_QUESTING_BINDINGS = GW.L["Immersive Questing"]
+    BINDING_NAME_IMMERSIVE_QUESTING_FULLSCREEN = GW.L["Toggle fullscreen"]
     if not GW.settings.immersiveQuesting.enabled or GW.ShouldBlockIncompatibleAddon("ImmersiveQuesting") then return end
 
     local frame = CreateFrame("Frame", "GwImmersiveQuestFrame", nil, "GwImmersiveQuestFrameTemplate")
@@ -1237,6 +1258,7 @@ function GW.LoadImmersiveQuesting()
 
     frame.container.dialog:SetScript("OnMouseUp", dialog_OnMouseUp)
     frame.container.cancelButton:SetScript("OnClick", cancel_OnClick)
+    frame.container.modeButton:SetScript("OnClick", modeButton_OnClick)
     frame.container.acceptButton:SetScript("OnClick", accept_OnClick)
 
     frame:clearQuestReq()

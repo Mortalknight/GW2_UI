@@ -223,6 +223,11 @@
                             <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="10"/>
                         </Anchors>
                     </Button>
+                    <Button parentKey="modeButton" inherits="GwImmersiveQuestingButtonTemplate" frameLevel="10">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-60" y="-8"/>
+                        </Anchors>
+                    </Button>
 
                 </Frames>
             </Frame>
