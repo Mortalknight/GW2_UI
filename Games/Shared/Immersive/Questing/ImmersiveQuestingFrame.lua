@@ -35,6 +35,7 @@ local BRUSH_TOP_EDGE = 0.45
 local BRUSH_BOTTOM_EDGE = 0.39
 local BRUSH_INSET = 0.02
 local INTRO_DURATION = 1.9
+local MAX_INTRO_STEP = 0.034
 local BLEED_FRAMES = 20
 local BLEED_MASK_PATH = "Interface/AddOns/GW2_UI/textures/questview/bleed/bleed_%02d.png"
 local OUTRO_DURATION = 0.3
@@ -221,7 +222,7 @@ function GwImmersiveQuestFrameMixin:playIntro()
     self:stopAnimation()
     self:applyIntroProgress(0)
     self.animationDriver:SetScript("OnUpdate", function(_, delta)
-        elapsed = elapsed + delta
+        elapsed = elapsed + min(delta, MAX_INTRO_STEP)
         self:applyIntroProgress(elapsed)
         if elapsed >= INTRO_DURATION then
             self:stopAnimation()
