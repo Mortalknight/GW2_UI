@@ -206,7 +206,7 @@ function GwImmersiveQuestFrameMixin:applyIntroProgress(time)
     setBrushLead(c.brushClipBottom, bottomProgress >= 1 and settled or wipeWidth(bottomProgress, width) - EDGE_WIDTH * BRUSH_TOP_EDGE_LAG, width, true)
     setBandBleed(self, segment(time, 0.35, 1.7))
 
-    local textAlpha = segment(time, 1.3, 1.9)
+    local textAlpha = segment(time, 0.5, 1.0)
     c.dialog:SetAlpha(textAlpha)
     c.floaty:SetAlpha(textAlpha)
 end
