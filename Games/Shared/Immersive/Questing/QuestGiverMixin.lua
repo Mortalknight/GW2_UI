@@ -193,6 +193,7 @@ function GwImmersiveQuestingGiverModelMixin:OnModelLoaded()
 
     self.do_anims = self.idle_anim ~= -1 and true or false
     self:SetPitch(p)
+    self.base_facing = f
     self:SetFacing(f)
     if self.idle_kit ~= -1 then
         self:PlayAnimKit(self.idle_kit, true)
@@ -210,6 +211,32 @@ function GwImmersiveQuestingGiverModelMixin:OnModelLoaded()
 
     self.is_loaded = true
     self.FadeIn:Play()
+    if GwImmersiveQuestFrame then
+        GwImmersiveQuestFrame:ReapplyModelWalk()
+    end
+end
+
+function GwImmersiveQuestingGiverModelMixin:CanWalk()
+    return self.is_loaded and self.base_facing and self.do_anims and self.idle_kit == -1 and not self.half_kits
+end
+
+function GwImmersiveQuestingGiverModelMixin:SetWalkState(walking, turn)
+    if not self.is_loaded or not self.base_facing then
+        return
+    end
+    if walking then
+        if not self.walking then
+            self.walking = true
+            self:SetAnimation(emotes.Walk)
+        end
+        self:SetFacing(self.base_facing + turn)
+    elseif self.walking then
+        self.walking = false
+        self:SetFacing(self.base_facing)
+        self.anim_next = -1
+        self.anim_playing = false
+        self:SetAnimation(self.idle_anim)
+    end
 end
 
 function GwImmersiveQuestingGiverModelMixin:SetBoardUnit(board_type, map_id)
@@ -250,6 +277,7 @@ function GwImmersiveQuestingGiverModelMixin:OnHide()
 end
 
 function GwImmersiveQuestingGiverModelMixin:ClearAll()
+    self.walking = false
     self.creature_id = 0
     self.file_id = nil
     self.do_anims = false

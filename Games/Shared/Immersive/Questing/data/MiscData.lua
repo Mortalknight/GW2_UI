@@ -8,11 +8,14 @@ GW.immersiveQuesting.fullscreenFit = {
     giverDrop = -100,
     playerX = -50,
     giverX = -100,
+    slide = 0.3,
+    walkTurn = 0.9,
 }
 
 -- emote IDs used for SetAnimation
 GW.immersiveQuesting.emotes = {
     Idle = 0,
+    Walk = 4,
     IdleHover = 193,
     IdleDead = 6,
     IdleFloat = 38,

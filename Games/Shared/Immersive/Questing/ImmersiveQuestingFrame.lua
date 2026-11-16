@@ -193,9 +193,39 @@ local function setWipe(frame, progress, fullWidth)
     end
 end
 
+local function walkProgressAt(time)
+    local t = min(1, max(0, (time - 0.1) / 1.1))
+    return 1 - (1 - t) * (1 - t)
+end
+
+function GwImmersiveQuestFrameMixin:applyModelWalk(progress)
+    local c = self.container
+    local width = self.layoutWidth
+    local fit = GW.immersiveQuesting.fullscreenFit
+    local player = c.playerModel
+    local giver = c.giverModel
+    local walking = progress < 1
+    local distance = width * fit.slide * (1 - progress)
+    local turn = fit.walkTurn * (1 - segment(progress, 0.6, 1))
+
+    self.walkProgress = progress
+    c.playerModel:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", width * 0.03 - (player:CanWalk() and distance or 0), 0)
+    c.giverModel:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", width * 0.015 + (giver:CanWalk() and distance or 0), 0)
+    player:SetWalkState(walking and player:CanWalk(), turn)
+    giver:SetWalkState(walking and giver:CanWalk(), -turn)
+end
+
+function GwImmersiveQuestFrameMixin:ReapplyModelWalk()
+    if self.isFullscreen and self.walkProgress and self.layoutWidth then
+        self:applyModelWalk(self.walkProgress)
+    end
+end
+
 function GwImmersiveQuestFrameMixin:applyIntroProgress(time)
     local c = self.container
     local width = self.layoutWidth
+
+    self:applyModelWalk(walkProgressAt(time))
 
     local topProgress = segment(time, 0, 0.75)
     local bottomProgress = segment(time, 0, 0.75)
@@ -213,6 +243,9 @@ end
 
 function GwImmersiveQuestFrameMixin:stopAnimation()
     self.animationDriver:SetScript("OnUpdate", nil)
+    if self.isFullscreen and self.layoutWidth and self.walkProgress and self.walkProgress < 1 then
+        self:applyModelWalk(1)
+    end
     self.fadingOut = false
     self:SetAlpha(1)
 end
@@ -364,6 +397,7 @@ local function layoutWindowed(self)
     local c = self.container
 
     self:stopAnimation()
+    self.walkProgress = nil
     self.maxTextWidth = nil
 
     self.border:Show()
