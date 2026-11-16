@@ -328,7 +328,7 @@ local function ToggleCharacter(panels, tab, onlyShow)
     local panel = panels[tab]
     if panel and _G[panel[1]] and characterPanelOpen ~= tab then
         characterPanelOpen = tab
-        if not (onlyShow or SpellIsTargeting()) then
+        if not onlyShow then
             GwCharacterWindow:SetAttribute("keytoggle", true)
         end
         GwCharacterWindow:SetAttribute("windowpanelopen", panel[2])

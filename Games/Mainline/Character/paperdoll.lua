@@ -13,6 +13,7 @@ local function toggleCharacter(tab, onlyShow)
     if InCombatLockdown() then
         return
     end
+    onlyShow = onlyShow or SpellIsTargeting()
 
     if tab == "ReputationFrame" then
         if not onlyShow then
