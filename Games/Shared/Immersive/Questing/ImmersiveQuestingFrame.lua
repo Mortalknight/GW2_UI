@@ -262,7 +262,7 @@ local function layoutFullscreen(self, width, height)
     local stripeBottomHeight = height / 2 + bandCenterY - bandHeight / 2
 
     self.layoutWidth = width
-    self.maxTextWidth = min(1000, width * 0.55)
+    self.maxTextWidth = min(760, width * 0.38)
 
     self.border:Hide()
     self.overlayTop:Hide()
@@ -342,6 +342,9 @@ local function layoutFullscreen(self, width, height)
     c.dialog:SetAllPoints(c)
     c.dialog.blackout_feet:Hide()
     c.dialog.text:ClearAllPoints()
+    c.dialog.text:SetFontObject(GwImmersiveQuestingDialogFontLarge)
+    c.dialog.text:SetMaxLines(4)
+    c.dialog.text:SetHeight(130)
 
     c.summary:SetScale(SUMMARY_FULLSCREEN_SCALE)
     c.summary:ClearAllPoints()
@@ -413,6 +416,9 @@ local function layoutWindowed(self)
     c.dialog:SetAlpha(1)
     c.dialog.blackout_feet:Show()
     c.dialog.text:ClearAllPoints()
+    c.dialog.text:SetFontObject(GwImmersiveQuestingDialogFont)
+    c.dialog.text:SetMaxLines(3)
+    c.dialog.text:SetHeight(90)
     c.dialog.text:SetPoint("BOTTOM", c.dialog, "BOTTOM", 0, 10)
 
     c.summary:SetScale(1)
