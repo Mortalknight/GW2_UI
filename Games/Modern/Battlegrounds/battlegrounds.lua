@@ -528,6 +528,9 @@ local function LoadBattlegrounds()
     local hudManager = CreateFrame("Frame", nil, UIParent)
     hudManager.battlegroundHud = CreateFrame("Frame", nil, UIParent, "GwBattleGroundScores")
     Mixin(hudManager.battlegroundHud, BattlegroundHudMixin)
+    GW.RegisterMovableFrame(hudManager.battlegroundHud, BATTLEGROUND .. " HUD", "widgets.battlegroundHud", "Widgets", nil, {GW.MoverOption.Scale})
+    hudManager.battlegroundHud:ClearAllPoints()
+    hudManager.battlegroundHud:SetPoint("TOP", hudManager.battlegroundHud.gwMover)
 
     hudManager.bgs = {
         [529] = { --Arathi

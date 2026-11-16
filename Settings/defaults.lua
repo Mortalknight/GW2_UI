@@ -1761,6 +1761,16 @@ GW.globalDefault = {
         },
 
         widgets = {
+            battlegroundHud = {
+                pos = {
+                    point = "TOP",
+                    relativePoint = "TOP",
+                    xOfs = 0,
+                    yOfs = 0,
+                    hasMoved = false,
+                },
+                scale = 1,
+            },
             topCenter = {
                 pos = {
                     point = "TOP",
