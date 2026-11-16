@@ -226,19 +226,10 @@ local function RefreshMouseoverTooltip()
     end
 end
 
--- temp fix until Questie resets its unit state on OnTooltipCleared, remove then
-local questieTooltips
-local function ResetQuestieUnitTooltipState()
-    questieTooltips = questieTooltips or (QuestieLoader and QuestieLoader:ImportModule("QuestieTooltips"))
-    if questieTooltips then
-        questieTooltips.lastGametooltipUnit = nil
-    end
-end
 
 GW.RegisterTooltipModule({
     onLoad = function()
         Tooltip.OnTooltipData("Unit", OnUnitTooltip)
-        GameTooltip:HookScript("OnTooltipCleared", ResetQuestieUnitTooltipState)
         local watcher = CreateFrame("Frame")
         watcher:RegisterEvent("MODIFIER_STATE_CHANGED")
         if C_EventUtils.IsEventValid("PLAYER_ROLES_ASSIGNED") then
