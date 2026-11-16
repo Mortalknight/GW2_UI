@@ -510,6 +510,7 @@ function GwImmersiveQuestFrameMixin:UiScaleChanged()
     self.container.giverModel:SetupModel()
     if self:IsShown() then
         -- reload internal stuff
+        self.container.playerModel:OnShow()
         self:showQuestFrame()
     end
     self.defer_ui_change = false
