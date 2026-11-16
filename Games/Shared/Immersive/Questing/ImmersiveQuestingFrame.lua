@@ -24,6 +24,9 @@ local function setCoverTexCoords(texture, aspect)
     return left, left + visibleWidth, top, top + visibleHeight
 end
 
+local MODE_ICON_MAXIMIZE = "Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png"
+local MODE_ICON_MINIMIZE = "Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png"
+local MODE_ICON_DIM = 0.7
 local EDGE_WIDTH = 500
 local TRAVEL_EXTRA = 0.6
 local BRUSH_TOP_EDGE_LAG = 0.55
@@ -394,7 +397,8 @@ local function layoutFullscreen(self, width, height)
     c.replayButton:SetPoint("BOTTOM", c, "BOTTOM", 0, 40)
     c.modeButton:ClearAllPoints()
     c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -24, -24)
-    c.modeButton:SetText(GW.L["Windowed"])
+    c.modeButton.icon:SetTexture(MODE_ICON_MINIMIZE)
+    c.modeButton.tooltip = GW.L["Windowed"]
 
     self:applyIntroProgress(INTRO_DURATION)
 end
@@ -472,8 +476,9 @@ local function layoutWindowed(self)
     c.replayButton:ClearAllPoints()
     c.replayButton:SetPoint("TOP", c, "BOTTOM", 0, 10)
     c.modeButton:ClearAllPoints()
-    c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -60, -8)
-    c.modeButton:SetText(GW.L["Fullscreen"])
+    c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -12, -12)
+    c.modeButton.icon:SetTexture(MODE_ICON_MAXIMIZE)
+    c.modeButton.tooltip = GW.L["Fullscreen"]
 end
 
 function GwImmersiveQuestFrameMixin:applyLayout()
@@ -1260,6 +1265,16 @@ function GW.LoadImmersiveQuesting()
     frame.container.dialog:SetScript("OnMouseUp", dialog_OnMouseUp)
     frame.container.cancelButton:SetScript("OnClick", cancel_OnClick)
     frame.container.modeButton:SetScript("OnClick", modeButton_OnClick)
+    frame.container.modeButton:SetScript("OnEnter", function(self)
+        self.icon:SetVertexColor(1, 1, 1, 1)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+        GameTooltip:SetText(self.tooltip or "")
+        GameTooltip:Show()
+    end)
+    frame.container.modeButton:SetScript("OnLeave", function(self)
+        self.icon:SetVertexColor(MODE_ICON_DIM, MODE_ICON_DIM, MODE_ICON_DIM, 1)
+        GameTooltip:Hide()
+    end)
     frame.container.acceptButton:SetScript("OnClick", accept_OnClick)
 
     frame:clearQuestReq()

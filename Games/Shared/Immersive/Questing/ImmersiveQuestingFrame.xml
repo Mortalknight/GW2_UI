@@ -223,10 +223,31 @@
                             <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="10"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="modeButton" inherits="GwImmersiveQuestingButtonTemplate" frameLevel="10">
+                    <Button parentKey="modeButton" frameLevel="10">
+                        <Size x="28" y="28"/>
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-60" y="-8"/>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-12"/>
                         </Anchors>
+                        <Layers>
+                            <Layer level="BACKGROUND">
+                                <Texture parentKey="bg">
+                                    <Color r="0" g="0" b="0" a="0.6"/>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT"/>
+                                        <Anchor point="BOTTOMRIGHT"/>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png">
+                                    <Size x="18" y="18"/>
+                                    <Anchors>
+                                        <Anchor point="CENTER"/>
+                                    </Anchors>
+                                    <Color r="0.7" g="0.7" b="0.7"/>
+                                </Texture>
+                            </Layer>
+                        </Layers>
                     </Button>
 
                 </Frames>
