@@ -20,6 +20,8 @@ addChange("12.1.10", {
     {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): the lists of the hero panel (reputation, titles, boss times, raid locks, skills) can be walked with the d-pad and scroll along, out of combat]=]},
     {GW.Enum.ChangelogType.change, [=[Gamepad (Forever): the bags no longer open in combat, Blizzard gives them no pad focus there; bags opened before stay usable]=]},
     {GW.Enum.ChangelogType.bug, [=[Collections: mounts, pets and toys keep their filter when Blizzard hides it for the only collected items setting, a filter that hid everything can be reset again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Trainer: the upcoming spells no longer switch the trainer filters, Blizzard could then block the train button as an action of GW2 UI]=]},
+    {GW.Enum.ChangelogType.feature, [=[Objectives tracker: quests that are ready to turn in show a chest next to their title, it can be turned off in the tracker settings]=]},
 })
 
 addChange("12.1.9", {

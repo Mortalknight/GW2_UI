@@ -292,6 +292,12 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
+                <Texture parentKey="turnInIcon" hidden="true" file="Interface/AddOns/GW2_UI/textures/icons/rewards-icon.png">
+                    <Size x="34" y="34"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="TOPRIGHT" x="-19" y="-12"/>
+                    </Anchors>
+                </Texture>
                 <FontString parentKey="Header" text="Quest name" justifyH="LEFT">
                     <Size x="300" y="30"></Size>
                     <Anchors>

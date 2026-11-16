@@ -19,7 +19,6 @@ local rewardPending = {}
 GW.HAS_LEVEL_REWARDS = GW.Classic or GW.TBC or GW.Wrath or GW.Forever
 -- pets learn at the pet trainer on these clients, wrath pets use their own talent tree
 local HAS_PET_TRAINERS = GW.myclass == "HUNTER" and (GW.Classic or GW.TBC or GW.Forever)
-local scanningTrainer = false
 local dirty = true
 
 -- forever has the mainline GetTrainerServiceInfo (icon and level in it), the classic clients the old one;
@@ -42,7 +41,7 @@ end
 
 local BEAST_TRAINING_SPELL_ID = 5149
 
--- needs all services listed
+-- only the services the trainer filters show
 local function TeachesInSkillLines(skillLines)
     for index = 1, GetNumTrainerServices() do
         if skillLines[GetTrainerServiceSkillLine(index) or ""] then
@@ -121,19 +120,37 @@ local function GetTrainerCache(key)
     end
 end
 
--- classic style clients hand out most spells at the trainer, so we remember his whole offer on the first visit
+local function GetRewardKey(reward)
+    return reward.subText and reward.subText ~= "" and format("%s (%s)", reward.name, reward.subText) or reward.name
+end
+
+-- a scan with hidden services only updates the remembered offer
+local function MergeRewards(old, new)
+    if not old then
+        return new
+    end
+    local merged, positions = {}, {}
+    for _, reward in ipairs(old) do
+        merged[#merged + 1] = reward
+        positions[GetRewardKey(reward)] = #merged
+    end
+    for _, reward in ipairs(new) do
+        merged[positions[GetRewardKey(reward)] or #merged + 1] = reward
+    end
+    return merged
+end
+
+-- classic style clients hand out most spells at the trainer, so we remember his whole offer on the first visit;
+-- the filters stay as the player set them, switching them from here taints blizzards train button
 local function CacheTrainerRewards()
-    if scanningTrainer or not IsClassOrPetTrainer() then
+    if not IsClassOrPetTrainer() then
         return
     end
 
-    scanningTrainer = true
-
-    local restore = {}
+    local fullScan = true
     for _, filter in ipairs(TRAINER_FILTERS) do
         if not GetTrainerServiceTypeFilter(filter) then
-            restore[filter] = true
-            SetTrainerServiceTypeFilter(filter, true)
+            fullScan = false
         end
     end
 
@@ -166,12 +183,6 @@ local function CacheTrainerRewards()
         isPetTrainer = IsPetTrainerOffer(isClassTrainer)
     end
 
-    for filter in pairs(restore) do
-        SetTrainerServiceTypeFilter(filter, false)
-    end
-
-    scanningTrainer = false
-
     if isPetTrainer then
         rewards, petRewards = petRewards, rewards
     end
@@ -180,10 +191,18 @@ local function CacheTrainerRewards()
 
     -- a trainer with only a few class spells, like the portal trainer of mages, must not replace the full list
     local classCache = GetTrainerCache(TRAINER_CACHE_KEY)
-    if #rewards > 0 and isClassTrainer and (not classCache or #rewards * 2 >= #classCache) then
-        GW.SetStorage(TRAINER_CACHE_KEY, {version = TRAINER_CACHE_VERSION, rewards = rewards})
+    if #rewards > 0 and isClassTrainer then
+        if not fullScan then
+            rewards = MergeRewards(classCache, rewards)
+        end
+        if not classCache or #rewards * 2 >= #classCache then
+            GW.SetStorage(TRAINER_CACHE_KEY, {version = TRAINER_CACHE_VERSION, rewards = rewards})
+        end
     end
     if #petRewards > 0 then
+        if not fullScan then
+            petRewards = MergeRewards(GetTrainerCache(PET_TRAINER_CACHE_KEY), petRewards)
+        end
         GW.SetStorage(PET_TRAINER_CACHE_KEY, {version = TRAINER_CACHE_VERSION, rewards = petRewards, playerLevels = playerLevels})
     end
 end
@@ -262,10 +281,6 @@ end
 
 local function SortByLevel(a, b)
     return a.level < b.level
-end
-
-local function GetRewardKey(reward)
-    return reward.subText and reward.subText ~= "" and format("%s (%s)", reward.name, reward.subText) or reward.name
 end
 
 -- requirements outside the trainer offer (talents) keep the state of the last visit
@@ -915,15 +930,13 @@ local function LoadUpcomingSpells(spellBook, onChange)
                 end
                 return
             end
-            -- names, ranks and requirements arrive one by one after the trainer opened, one scan per batch;
-            -- the filter switches of our own scan fire these as well, right away or in the next frame
+            -- names, ranks and requirements arrive one by one after the trainer opened, one scan per batch
             if event == "TRAINER_UPDATE" or event == "TRAINER_SERVICE_INFO_NAME_UPDATE" then
-                if scanningTrainer or self.gwScanQueued or GetTime() < (self.gwScanQuietUntil or 0) then return end
+                if self.gwScanQueued then return end
                 self.gwScanQueued = true
                 C_Timer.After(0.2, function()
                     self.gwScanQueued = false
                     CacheTrainerRewards()
-                    self.gwScanQuietUntil = GetTime() + 0.1
                     Refresh()
                 end)
                 return

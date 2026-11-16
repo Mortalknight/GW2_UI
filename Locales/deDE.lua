@@ -102,6 +102,8 @@ L["Show the dungeon quests of your quest log in a separate module. Its position 
 L["Move the currently supertracked quest to the top of the quest tracker list."] = "Verschiebt die aktuell superverfolgte Quest an den Anfang der Quest-Tracker-Liste."
 L["Show Completed Objectives"] = "Abgeschlossene Ziele anzeigen"
 L["Show completed quest objectives instead of hiding them."] = "Zeigt abgeschlossene Questziele an, anstatt sie auszublenden."
+L["Turn-in Icon"] = "Abgabe-Symbol"
+L["Shows a chest next to the title of quests that are ready to turn in."] = "Zeigt eine Truhe neben dem Titel von Quests, die bereit zur Abgabe sind."
 L["Compact Mode"] = "Kompaktmodus"
 L["Reduce spacing and font sizes across the Objective Tracker."] = "Reduziert Abstände und Schriftgrößen im gesamten Objective Tracker."
 L["Objective Tracker Module Order"] = "Objective-Tracker Modulreihenfolge"

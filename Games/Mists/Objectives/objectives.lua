@@ -179,6 +179,7 @@ local function UpdateBlockInternal(self, parent, quest, signature)
         quest.isComplete = true
     end
     self.isComplete = quest.isComplete
+    self:UpdateTurnInIcon(quest.isComplete)
 
     if not quest.isComplete then
         self:UpdateBlockObjectives(quest.numObjectives)

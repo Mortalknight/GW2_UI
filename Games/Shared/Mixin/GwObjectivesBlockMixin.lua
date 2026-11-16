@@ -145,6 +145,8 @@ end
 
 function GwObjectivesBlockTemplateMixin:OnLoad()
     self:ApplyLayoutStyle()
+    self.superTrackButton:HookScript("OnShow", function() self.turnInIcon:Hide() end)
+    self.superTrackButton:HookScript("OnHide", function() self.turnInIcon:SetShown(self.isTurnInReady == true) end)
 
     self.turnin:SetScript("OnShow", self.turnin.WiggleAnimation)
     self.turnin:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetDebugName()) end)
@@ -284,6 +286,14 @@ function GwObjectivesBlockTemplateMixin:UpdateSuperTrackButton(isSuperTracked, i
 
     -- the inset stays regardless: reserved space keeps titles from reflowing on hover
     SetTitleRightInset(self, SUPER_TRACK_TITLE_INSET)
+end
+
+function GwObjectivesBlockTemplateMixin:UpdateTurnInIcon(isComplete)
+    self.isTurnInReady = isComplete and GW.settings.objectives.turnInIcon
+    self.turnInIcon:SetShown(self.isTurnInReady and not self.superTrackButton:IsShown())
+    if not self.gwHasSuperTrackPin then
+        SetTitleRightInset(self, self.isTurnInReady and SUPER_TRACK_TITLE_INSET or 0)
+    end
 end
 
 function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(type)

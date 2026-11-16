@@ -332,6 +332,7 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex, 
     if numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
         isComplete = true
     end
+    self:UpdateTurnInIcon(isComplete)
 
     if not isComplete then
         self:UpdateBlockObjectives(numObjectives)

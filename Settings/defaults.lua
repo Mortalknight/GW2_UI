@@ -1623,6 +1623,7 @@ GW.globalDefault = {
             zoneQuests = false,
             dungeonQuests = false,
             showCompleted = false,
+            turnInIcon = true,
             compactMode = false,
             spacing = 1,
             nearlyDone = false,

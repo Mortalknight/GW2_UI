@@ -96,6 +96,8 @@ L["Show the dungeon quests of your quest log in a separate module. Its position 
 L["Move the currently supertracked quest to the top of the quest tracker list."] = true
 L["Show Completed Objectives"] = true
 L["Show completed quest objectives instead of hiding them."] = true
+L["Turn-in Icon"] = true
+L["Shows a chest next to the title of quests that are ready to turn in."] = true
 L["Compact Mode"] = true
 L["Reduce spacing and font sizes across the Objective Tracker."] = true
 L["Objective Tracker Module Order"] = true
