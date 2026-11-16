@@ -6,6 +6,7 @@ GW.immersiveQuesting.mapBackgrounds = {
     [14]   = "EK/arathi_highlands",
     [2372] = "EK/arathi_highlands",
     [2451] = "EK/arathi_highlands",
+    [1417] = "EK/arathi_highlands", -- pre-cata
     [15]   = "EK/badlands",
     [17]   = "EK/blasted_lands",
     [18]   = "EK/tirisfal_glades_cata",
