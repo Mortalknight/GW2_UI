@@ -1636,6 +1636,7 @@ GW.globalDefault = {
             enabled = true,
             lockFrame = false,
             fullscreen = false,
+            walkIn = false,
             scale = 1,
             showHelmet = true,
             playerScale = 1,

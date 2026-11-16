@@ -199,6 +199,9 @@ local function walkProgressAt(time)
 end
 
 function GwImmersiveQuestFrameMixin:applyModelWalk(progress)
+    if not GW.settings.immersiveQuesting.walkIn then
+        progress = 1
+    end
     local c = self.container
     local width = self.layoutWidth
     local fit = GW.immersiveQuesting.fullscreenFit
