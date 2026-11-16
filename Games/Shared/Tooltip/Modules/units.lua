@@ -226,8 +226,10 @@ local function RefreshMouseoverTooltip()
     end
 end
 
+-- temp fix until Questie resets its unit state on OnTooltipCleared, remove then
+local questieTooltips
 local function ResetQuestieUnitTooltipState()
-    local questieTooltips = QuestieLoader and QuestieLoader.ImportModule and QuestieLoader:ImportModule("QuestieTooltips")
+    questieTooltips = questieTooltips or (QuestieLoader and QuestieLoader:ImportModule("QuestieTooltips"))
     if questieTooltips then
         questieTooltips.lastGametooltipUnit = nil
     end
