@@ -333,7 +333,7 @@ local function styleDialogButton(button, fullscreen)
         button:SetHeight(28)
     else
         button:SetNormalTexture(STANDARD_BUTTON_TEXTURE)
-        button:SetPushedTexture(nil)
+        button:SetPushedTexture("")
         button:GetNormalTexture():SetVertexColor(1, 1, 1, 1)
         if button.hover then
             button.hover:SetTexture(STANDARD_BUTTON_HOVER)
@@ -1341,11 +1341,11 @@ function GW.LoadImmersiveQuesting()
     frame.container.replayButton.resolveIcon = function()
         return "speaker"
     end
-    hooksecurefunc(frame.container.acceptButton, "SetText", function()
-        if frame.isFullscreen then
-            styleDialogButton(frame.container.acceptButton, true)
-        end
-    end)
+    for _, button in ipairs({frame.container.acceptButton, frame.container.cancelButton, frame.container.replayButton}) do
+        hooksecurefunc(button, "SetText", function()
+            styleDialogButton(button, frame.isFullscreen)
+        end)
+    end
     frame:styleDialogButtons()
     frame.container.modeButton:SetScript("OnClick", modeButton_OnClick)
     frame.container.modeButton:SetScript("OnEnter", function(self)
