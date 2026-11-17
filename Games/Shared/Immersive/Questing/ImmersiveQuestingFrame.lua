@@ -292,6 +292,70 @@ function GwImmersiveQuestFrameMixin:HideWithOutro()
     end
 end
 
+local DIALOG_BUTTON_TEXTURE = "Interface/AddOns/GW2_UI/textures/party/readycheck-button.png"
+local DIALOG_BUTTON_HOVER = "Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover.png"
+local STANDARD_BUTTON_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/button.png"
+local STANDARD_BUTTON_HOVER = "Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png"
+local DIALOG_ICONS = {
+    check = {"Interface/AddOns/GW2_UI/textures/party/readycheck.png", 0, 1, 0.5, 0.75, 0.78, 1, 0.78},
+    cross = {"Interface/AddOns/GW2_UI/textures/party/readycheck.png", 0, 1, 0.25, 0.5, 1, 0.82, 0.82},
+    arrow = {"Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png", 0, 1, 0, 1, 1, 1, 1},
+    speaker = {"Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on.png", 0, 1, 0, 1, 1, 1, 1},
+}
+
+local function styleDialogButton(button, fullscreen)
+    if not button.resolveIcon then
+        return
+    end
+    local fontString = button:GetFontString()
+    if fullscreen then
+        local icon = DIALOG_ICONS[button.resolveIcon(button:GetText() or "")]
+        button:SetNormalTexture(DIALOG_BUTTON_TEXTURE)
+        button:SetPushedTexture(DIALOG_BUTTON_TEXTURE)
+        button:GetNormalTexture():SetVertexColor(icon[6], icon[7], icon[8], 1)
+        button:GetPushedTexture():SetVertexColor(icon[6] * 0.75, icon[7] * 0.75, icon[8] * 0.75, 1)
+        if button.hover then
+            button.hover:SetTexture(DIALOG_BUTTON_HOVER)
+        end
+        if not button.dialogIcon then
+            button.dialogIcon = button:CreateTexture(nil, "OVERLAY")
+            button.dialogIcon:SetSize(16, 16)
+            button.dialogIcon:SetPoint("LEFT", button, "LEFT", 10, 0)
+        end
+        button.dialogIcon:SetTexture(icon[1])
+        button.dialogIcon:SetTexCoord(icon[2], icon[3], icon[4], icon[5])
+        button.dialogIcon:Show()
+        if fontString then
+            fontString:SetTextColor(0.85, 0.84, 0.78, 1)
+            fontString:SetShadowColor(0, 0, 0, 1)
+            fontString:SetShadowOffset(1, -1)
+        end
+        button:SetHeight(28)
+    else
+        button:SetNormalTexture(STANDARD_BUTTON_TEXTURE)
+        button:SetPushedTexture(nil)
+        button:GetNormalTexture():SetVertexColor(1, 1, 1, 1)
+        if button.hover then
+            button.hover:SetTexture(STANDARD_BUTTON_HOVER)
+        end
+        if button.dialogIcon then
+            button.dialogIcon:Hide()
+        end
+        if fontString then
+            fontString:SetTextColor(0, 0, 0, 1)
+            fontString:SetShadowOffset(0, 0)
+        end
+        button:SetHeight(24)
+    end
+end
+
+function GwImmersiveQuestFrameMixin:styleDialogButtons()
+    local c = self.container
+    for _, button in ipairs({c.acceptButton, c.cancelButton, c.replayButton}) do
+        styleDialogButton(button, self.isFullscreen)
+    end
+end
+
 local function layoutFullscreen(self, width, height)
     local c = self.container
     local bandHeight = height * 0.446
@@ -500,6 +564,7 @@ function GwImmersiveQuestFrameMixin:applyLayout()
         layoutWindowed(self)
     end
 
+    self:styleDialogButtons()
     self:applyTitleStyle()
     if self.isFullscreen then
         self.container.blackout_head:SetAlpha(0)
@@ -1264,6 +1329,24 @@ function GW.LoadImmersiveQuesting()
 
     frame.container.dialog:SetScript("OnMouseUp", dialog_OnMouseUp)
     frame.container.cancelButton:SetScript("OnClick", cancel_OnClick)
+    frame.container.acceptButton.resolveIcon = function(text)
+        if text == GW.L["Skip to End"] or text == CONTINUE then
+            return "arrow"
+        end
+        return "check"
+    end
+    frame.container.cancelButton.resolveIcon = function()
+        return "cross"
+    end
+    frame.container.replayButton.resolveIcon = function()
+        return "speaker"
+    end
+    hooksecurefunc(frame.container.acceptButton, "SetText", function()
+        if frame.isFullscreen then
+            styleDialogButton(frame.container.acceptButton, true)
+        end
+    end)
+    frame:styleDialogButtons()
     frame.container.modeButton:SetScript("OnClick", modeButton_OnClick)
     frame.container.modeButton:SetScript("OnEnter", function(self)
         self.icon:SetVertexColor(1, 1, 1, 1)
