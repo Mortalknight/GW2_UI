@@ -43,6 +43,7 @@ local BLEED_FRAMES = 20
 local BLEED_MASK_PATH = "Interface/AddOns/GW2_UI/textures/questview/bleed/bleed_%02d.png"
 local OUTRO_DURATION = 0.3
 local SUMMARY_FULLSCREEN_SCALE = 1.5
+local DIALOG_BUTTON_FULLSCREEN_SCALE = 1.3
 local SUMMARY_FULLSCREEN_DROP = 0.09
 
 local function easeInOut(t)
@@ -422,12 +423,16 @@ local function layoutFullscreen(self, width, height)
     c.summary:SetPoint("CENTER", c, "CENTER", 0, (bandCenterY - height * SUMMARY_FULLSCREEN_DROP) / SUMMARY_FULLSCREEN_SCALE)
 
     local buttonRowY = bandCenterY - bandHeight / 2 - height * 0.035
+    local buttonScale = DIALOG_BUTTON_FULLSCREEN_SCALE
+    for _, button in ipairs({c.acceptButton, c.cancelButton, c.replayButton}) do
+        button:SetScale(buttonScale)
+    end
     c.acceptButton:ClearAllPoints()
-    c.acceptButton:SetPoint("TOPLEFT", c, "CENTER", 8, buttonRowY)
+    c.acceptButton:SetPoint("TOPLEFT", c, "CENTER", 10 / buttonScale, buttonRowY / buttonScale)
     c.cancelButton:ClearAllPoints()
-    c.cancelButton:SetPoint("TOPRIGHT", c, "CENTER", -8, buttonRowY)
+    c.cancelButton:SetPoint("TOPRIGHT", c, "CENTER", -10 / buttonScale, buttonRowY / buttonScale)
     c.replayButton:ClearAllPoints()
-    c.replayButton:SetPoint("TOP", c, "CENTER", 0, buttonRowY - 38)
+    c.replayButton:SetPoint("TOP", c, "CENTER", 0, (buttonRowY - 48) / buttonScale)
     c.modeButton:ClearAllPoints()
     c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -24, -24)
     c.modeButton.icon:SetTexture(MODE_ICON_MINIMIZE)
@@ -502,6 +507,9 @@ local function layoutWindowed(self)
     c.summary:ClearAllPoints()
     c.summary:SetPoint("CENTER", c, "CENTER", 0, -50)
 
+    for _, button in ipairs({c.acceptButton, c.cancelButton, c.replayButton}) do
+        button:SetScale(1)
+    end
     c.acceptButton:ClearAllPoints()
     c.acceptButton:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", 24, 8)
     c.cancelButton:ClearAllPoints()
