@@ -1046,7 +1046,6 @@ local function LoadChat()
         end
         styleChatWindow(frame)
         ApplyChatFrameFading(frame)
-        frame:SetMaxLines(500)
     end
 
     hooksecurefunc("FCF_SetTemporaryWindowType", function(chatFrame)

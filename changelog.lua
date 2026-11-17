@@ -24,6 +24,7 @@ addChange("12.1.10", {
     {GW.Enum.ChangelogType.feature, [=[Objectives tracker: quests that are ready to turn in show a chest next to their title, it can be turned off in the tracker settings]=]},
     {GW.Enum.ChangelogType.feature, [=[Battleground HUD: can be moved and scaled with Move HUD]=]},
     {GW.Enum.ChangelogType.bug, [=[Pet bar and buffs: stay above action bar 2 and 3 when those bars only show on mouse over or in combat, the bars can be hovered again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Chat: the battleground start no longer floods the chat with "players joined the battle" lines and errors; the chat keeps Blizzard's 128 lines again]=]},
 })
 
 addChange("12.1.9", {
