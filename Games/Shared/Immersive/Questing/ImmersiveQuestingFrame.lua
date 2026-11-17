@@ -37,7 +37,8 @@ local BRUSH_BOTTOM_FILE = "Interface/AddOns/GW2_UI/textures/questview/overlay_bo
 local BRUSH_TOP_EDGE = 0.45
 local BRUSH_BOTTOM_EDGE = 0.39
 local BRUSH_INSET = 0.02
-local INTRO_DURATION = 1.9
+local INTRO_DURATION = 2.05
+local INTRO_DIM_ALPHA = 0.8
 local MAX_INTRO_STEP = 0.034
 local BLEED_FRAMES = 20
 local BLEED_MASK_PATH = "Interface/AddOns/GW2_UI/textures/questview/bleed/bleed_%02d.png"
@@ -198,7 +199,7 @@ local function setWipe(frame, progress, fullWidth)
 end
 
 local function walkProgressAt(time)
-    local t = min(1, max(0, (time - 0.1) / 1.1))
+    local t = min(1, max(0, (time - 0.3) / 1.1))
     return 1 - (1 - t) * (1 - t)
 end
 
@@ -234,16 +235,18 @@ function GwImmersiveQuestFrameMixin:applyIntroProgress(time)
 
     self:applyModelWalk(walkProgressAt(time))
 
-    local topProgress = segment(time, 0, 0.75)
-    local bottomProgress = segment(time, 0, 0.75)
+    self.backdrop:SetAlpha(time >= INTRO_DURATION and 1 or INTRO_DIM_ALPHA * segment(time, 0, 0.4))
+
+    local topProgress = segment(time, 0.25, 1.0)
+    local bottomProgress = segment(time, 0.25, 1.0)
     setWipe(c.stripeTop, topProgress, width)
     setWipe(c.stripeBottom, bottomProgress, width)
     local settled = width * (1 + BRUSH_SOFT_RANGE)
     setBrushLead(c.brushClipTop, topProgress >= 1 and settled or wipeWidth(topProgress, width) - EDGE_WIDTH * BRUSH_TOP_EDGE_LAG, width, false)
     setBrushLead(c.brushClipBottom, bottomProgress >= 1 and settled or wipeWidth(bottomProgress, width) - EDGE_WIDTH * BRUSH_TOP_EDGE_LAG, width, true)
-    setBandBleed(self, segment(time, 0.35, 1.7))
+    setBandBleed(self, segment(time, 0.6, 1.95))
 
-    local textAlpha = segment(time, 0.5, 1.0)
+    local textAlpha = segment(time, 0.7, 1.2)
     c.dialog:SetAlpha(textAlpha)
     c.floaty:SetAlpha(textAlpha)
 end
@@ -365,7 +368,9 @@ local function layoutFullscreen(self, width, height)
 
     self.border:Hide()
     self.overlayTop:Hide()
-    self.backdrop:Hide()
+    self.backdrop:ClearAllPoints()
+    self.backdrop:SetAllPoints(self)
+    self.backdrop:Show()
 
     c:SetSize(width, height)
 
