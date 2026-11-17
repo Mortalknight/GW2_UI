@@ -178,7 +178,7 @@ end
 
 -- blizzards class sheet becomes our flat class icons, in the member list and the applicant list
 local function SetFlatClassIcon(texture, classID)
-    local classInfo = classID and C_CreatureInfo.GetClassInfo(classID)
+    local classInfo = GW.NotSecretValue(classID) and classID and C_CreatureInfo.GetClassInfo(classID)
     if classInfo then
         texture:SetTexture("Interface/AddOns/GW2_UI/Textures/classicons/" .. strlower(classInfo.classFile) .. "_flat.png")
         texture:SetTexCoord(0, 1, 0, 1)

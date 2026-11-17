@@ -218,7 +218,9 @@ local function RefreshMouseoverTooltip()
         return
     end
     if GW.isModern then
-        if GW.NotSecretUnit("mouseover") then
+        local info = GameTooltip:GetTooltipData()
+        local nameLine = info and info.lines[1]
+        if GW.NotSecretUnit("mouseover") and nameLine and GW.NotSecretValue(nameLine.unitToken) then
             GameTooltip:RefreshData()
         end
     else
