@@ -293,57 +293,40 @@ function GwImmersiveQuestFrameMixin:HideWithOutro()
 end
 
 local DIALOG_BUTTON_TEXTURE = "Interface/AddOns/GW2_UI/textures/party/readycheck-button.png"
-local DIALOG_BUTTON_HOVER = "Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover.png"
 local STANDARD_BUTTON_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/button.png"
-local STANDARD_BUTTON_HOVER = "Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png"
-local DIALOG_ICONS = {
-    check = {"Interface/AddOns/GW2_UI/textures/party/readycheck.png", 0, 1, 0.5, 0.75, 0.78, 1, 0.78},
-    cross = {"Interface/AddOns/GW2_UI/textures/party/readycheck.png", 0, 1, 0.25, 0.5, 1, 0.82, 0.82},
-    arrow = {"Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png", 0, 1, 0, 1, 1, 1, 1},
-    speaker = {"Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on.png", 0, 1, 0, 1, 1, 1, 1},
-}
 
 local function styleDialogButton(button, fullscreen)
-    if not button.resolveIcon then
+    if not button.resolveScheme or not GW.StylePopupButton then
         return
     end
     local fontString = button:GetFontString()
     if fullscreen then
-        local icon = DIALOG_ICONS[button.resolveIcon(button:GetText() or "")]
-        button:SetNormalTexture(DIALOG_BUTTON_TEXTURE)
-        button:SetPushedTexture(DIALOG_BUTTON_TEXTURE)
-        button:GetNormalTexture():SetVertexColor(icon[6], icon[7], icon[8], 1)
-        button:GetPushedTexture():SetVertexColor(icon[6] * 0.75, icon[7] * 0.75, icon[8] * 0.75, 1)
-        if button.hover then
-            button.hover:SetTexture(DIALOG_BUTTON_HOVER)
+        if button.gwPopupStyled then
+            button:SetNormalTexture(DIALOG_BUTTON_TEXTURE)
+            button:SetPushedTexture(DIALOG_BUTTON_TEXTURE)
+        else
+            GW.StylePopupButton(button)
         end
-        if not button.dialogIcon then
-            button.dialogIcon = button:CreateTexture(nil, "OVERLAY")
-            button.dialogIcon:SetSize(16, 16)
-            button.dialogIcon:SetPoint("LEFT", button, "LEFT", 10, 0)
-        end
-        button.dialogIcon:SetTexture(icon[1])
-        button.dialogIcon:SetTexCoord(icon[2], icon[3], icon[4], icon[5])
-        button.dialogIcon:Show()
-        if fontString then
-            fontString:SetTextColor(0.85, 0.84, 0.78, 1)
-            fontString:SetShadowColor(0, 0, 0, 1)
-            fontString:SetShadowOffset(1, -1)
-        end
-        button:SetHeight(28)
+        GW.SetPopupButtonScheme(button, button.resolveScheme(button:GetText() or ""))
+        button:SetHeight(26)
     else
-        button:SetNormalTexture(STANDARD_BUTTON_TEXTURE)
-        button:SetPushedTexture("")
-        button:GetNormalTexture():SetVertexColor(1, 1, 1, 1)
-        if button.hover then
-            button.hover:SetTexture(STANDARD_BUTTON_HOVER)
-        end
-        if button.dialogIcon then
-            button.dialogIcon:Hide()
-        end
-        if fontString then
-            fontString:SetTextColor(0, 0, 0, 1)
-            fontString:SetShadowOffset(0, 0)
+        if button.gwPopupStyled then
+            button.gwPopupScheme = nil
+            button:SetNormalTexture(STANDARD_BUTTON_TEXTURE)
+            button:SetPushedTexture("")
+            button:GetNormalTexture():SetVertexColor(1, 1, 1, 1)
+            if button.hover then
+                button.hover.r, button.hover.g, button.hover.b = nil, nil, nil
+            end
+            if button.gwPopupIcon then
+                button.gwPopupIcon:Hide()
+            end
+            if fontString then
+                fontString:ClearAllPoints()
+                fontString:SetPoint("CENTER", button, "CENTER", 0, 0)
+                fontString:SetTextColor(0, 0, 0, 1)
+                fontString:SetShadowOffset(0, 0)
+            end
         end
         button:SetHeight(24)
     end
@@ -1329,17 +1312,17 @@ function GW.LoadImmersiveQuesting()
 
     frame.container.dialog:SetScript("OnMouseUp", dialog_OnMouseUp)
     frame.container.cancelButton:SetScript("OnClick", cancel_OnClick)
-    frame.container.acceptButton.resolveIcon = function(text)
+    frame.container.acceptButton.resolveScheme = function(text)
         if text == GW.L["Skip to End"] or text == CONTINUE then
-            return "arrow"
+            return "neutral"
         end
-        return "check"
+        return "confirm"
     end
-    frame.container.cancelButton.resolveIcon = function()
-        return "cross"
+    frame.container.cancelButton.resolveScheme = function()
+        return "cancel"
     end
-    frame.container.replayButton.resolveIcon = function()
-        return "speaker"
+    frame.container.replayButton.resolveScheme = function()
+        return "neutral"
     end
     for _, button in ipairs({frame.container.acceptButton, frame.container.cancelButton, frame.container.replayButton}) do
         hooksecurefunc(button, "SetText", function()
