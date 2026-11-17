@@ -299,10 +299,15 @@ local function styleDialogButton(button)
     end
     GW.StylePopupButton(button)
     GW.SetPopupButtonScheme(button, button.resolveScheme(button:GetText() or ""))
-    local hoverText = button.gwPopupScheme and button.gwPopupScheme.hoverText
+    local scheme = button.gwPopupScheme
     local fontString = button:GetFontString()
-    if hoverText and fontString and button:IsMouseOver() then
-        fontString:SetTextColor(hoverText[1], hoverText[2], hoverText[3], 1)
+    if scheme and button:IsMouseOver() then
+        if fontString then
+            fontString:SetTextColor(scheme.hoverText[1], scheme.hoverText[2], scheme.hoverText[3], 1)
+        end
+        if button.hover and button.hover:GetAlpha() > 0 then
+            button.hover:SetVertexColor(scheme.hover[1], scheme.hover[2], scheme.hover[3], 1)
+        end
     end
     button:SetHeight(26)
 end
