@@ -611,7 +611,7 @@ local function SkinCraftingPage(page)
     -- one baseline for the three controls: create button right, the counter and create all to its left
     local function AnchorControls()
         page.CreateButton:ClearAllPoints()
-        page.CreateButton:SetPoint("BOTTOMRIGHT", page, "BOTTOMRIGHT", -8, 10)
+        page.CreateButton:SetPoint("BOTTOMRIGHT", page, "BOTTOMRIGHT", -36, 10)
         spinner:ClearAllPoints()
         spinner:SetPoint("RIGHT", page.CreateButton, "LEFT", -40, 0)
         page.CreateAllButton:ClearAllPoints()

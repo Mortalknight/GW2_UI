@@ -383,7 +383,7 @@ local function SkinAuctionator()
     GW.HandleIcon(buyingFrame.IconAndName.Icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
     GW.HandleIconBorder(buyingFrame.IconAndName.QualityBorder, buyingFrame.IconAndName.Icon.backdrop)
     buyingFrame.IconAndName.Icon.backdrop:GwSetOutside(buyingFrame.IconAndName.Icon)
-    buyingFrame.IconAndName:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    buyingFrame.IconAndName:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, nil, -5, nil, -5)
 
     GW.HandleTabs(list.ContainerTabs.ListsTab, "top")
     GW.HandleTabs(list.ContainerTabs.RecentsTab, "top")

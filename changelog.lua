@@ -23,6 +23,7 @@ addChange("12.1.10", {
     {GW.Enum.ChangelogType.bug, [=[Trainer: the upcoming spells no longer switch the trainer filters, Blizzard could then block the train button as an action of GW2 UI]=]},
     {GW.Enum.ChangelogType.feature, [=[Objectives tracker: quests that are ready to turn in show a chest next to their title, it can be turned off in the tracker settings]=]},
     {GW.Enum.ChangelogType.feature, [=[Battleground HUD: can be moved and scaled with Move HUD]=]},
+    {GW.Enum.ChangelogType.bug, [=[Pet bar and buffs: stay above action bar 2 and 3 when those bars only show on mouse over or in combat, the bars can be hovered again]=]},
 })
 
 addChange("12.1.9", {

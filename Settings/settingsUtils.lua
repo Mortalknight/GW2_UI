@@ -641,6 +641,14 @@ local function setDependenciesOption(of, SetEnable, deactivateColor, overrideCol
         of:SetListEnabled(enabled, color)
     elseif type == "spellList" then
         of:SetSpellListEnabled(enabled, color)
+    elseif type == "tagDesigner" then
+        if not of.disabledBlocker then
+            of.disabledBlocker = CreateFrame("Frame", nil, of)
+            of.disabledBlocker:SetAllPoints()
+            of.disabledBlocker:SetFrameLevel(of:GetFrameLevel() + 100)
+            of.disabledBlocker:EnableMouse(true)
+        end
+        of.disabledBlocker:SetShown(not enabled)
     end
 end
 
