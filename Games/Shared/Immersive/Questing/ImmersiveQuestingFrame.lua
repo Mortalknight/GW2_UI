@@ -292,49 +292,18 @@ function GwImmersiveQuestFrameMixin:HideWithOutro()
     end
 end
 
-local DIALOG_BUTTON_TEXTURE = "Interface/AddOns/GW2_UI/textures/party/readycheck-button.png"
-local STANDARD_BUTTON_TEXTURE = "Interface/AddOns/GW2_UI/textures/uistuff/button.png"
-
-local function styleDialogButton(button, fullscreen)
+local function styleDialogButton(button)
     if not button.resolveScheme or not GW.StylePopupButton then
         return
     end
+    GW.StylePopupButton(button)
+    GW.SetPopupButtonScheme(button, button.resolveScheme(button:GetText() or ""))
+    local hoverText = button.gwPopupScheme and button.gwPopupScheme.hoverText
     local fontString = button:GetFontString()
-    if fullscreen then
-        if button.gwPopupStyled then
-            button:SetNormalTexture(DIALOG_BUTTON_TEXTURE)
-            button:SetPushedTexture(DIALOG_BUTTON_TEXTURE)
-        else
-            GW.StylePopupButton(button)
-        end
-        GW.SetPopupButtonScheme(button, button.resolveScheme(button:GetText() or ""))
-        local hoverText = button.gwPopupScheme and button.gwPopupScheme.hoverText
-        local currentFontString = button:GetFontString()
-        if hoverText and currentFontString and button:IsMouseOver() then
-            currentFontString:SetTextColor(hoverText[1], hoverText[2], hoverText[3], 1)
-        end
-        button:SetHeight(26)
-    else
-        if button.gwPopupStyled then
-            button.gwPopupScheme = nil
-            button:SetNormalTexture(STANDARD_BUTTON_TEXTURE)
-            button:SetPushedTexture("")
-            button:GetNormalTexture():SetVertexColor(1, 1, 1, 1)
-            if button.hover then
-                button.hover.r, button.hover.g, button.hover.b = nil, nil, nil
-            end
-            if button.gwPopupIcon then
-                button.gwPopupIcon:Hide()
-            end
-            if fontString then
-                fontString:ClearAllPoints()
-                fontString:SetPoint("CENTER", button, "CENTER", 0, 0)
-                fontString:SetTextColor(0, 0, 0, 1)
-                fontString:SetShadowOffset(0, 0)
-            end
-        end
-        button:SetHeight(24)
+    if hoverText and fontString and button:IsMouseOver() then
+        fontString:SetTextColor(hoverText[1], hoverText[2], hoverText[3], 1)
     end
+    button:SetHeight(26)
 end
 
 local function resetDialogButtonHover(button)
@@ -351,7 +320,7 @@ end
 function GwImmersiveQuestFrameMixin:styleDialogButtons()
     local c = self.container
     for _, button in ipairs({c.acceptButton, c.cancelButton, c.replayButton}) do
-        styleDialogButton(button, self.isFullscreen)
+        styleDialogButton(button)
     end
 end
 
@@ -527,18 +496,18 @@ local function layoutWindowed(self)
     c.dialog.text:SetFontObject(GwImmersiveQuestingDialogFont)
     c.dialog.text:SetMaxLines(3)
     c.dialog.text:SetHeight(90)
-    c.dialog.text:SetPoint("BOTTOM", c.dialog, "BOTTOM", 0, 10)
+    c.dialog.text:SetPoint("BOTTOM", c.dialog, "BOTTOM", 0, 30)
 
     c.summary:SetScale(1)
     c.summary:ClearAllPoints()
     c.summary:SetPoint("CENTER", c, "CENTER", 0, -50)
 
     c.acceptButton:ClearAllPoints()
-    c.acceptButton:SetPoint("TOPLEFT", c, "BOTTOMLEFT", 5, 10)
+    c.acceptButton:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", 24, 8)
     c.cancelButton:ClearAllPoints()
-    c.cancelButton:SetPoint("TOPRIGHT", c, "BOTTOMRIGHT", -5, 10)
+    c.cancelButton:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", -24, 8)
     c.replayButton:ClearAllPoints()
-    c.replayButton:SetPoint("TOP", c, "BOTTOM", 0, 10)
+    c.replayButton:SetPoint("BOTTOM", c, "BOTTOM", 0, 8)
     c.modeButton:ClearAllPoints()
     c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -12, -12)
     c.modeButton.icon:SetTexture(MODE_ICON_MAXIMIZE)
@@ -1343,7 +1312,7 @@ function GW.LoadImmersiveQuesting()
     end
     for _, button in ipairs({frame.container.acceptButton, frame.container.cancelButton, frame.container.replayButton}) do
         hooksecurefunc(button, "SetText", function()
-            styleDialogButton(button, frame.isFullscreen)
+            styleDialogButton(button)
         end)
         button:HookScript("OnHide", resetDialogButtonHover)
         button:HookScript("OnShow", resetDialogButtonHover)
