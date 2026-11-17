@@ -38,6 +38,9 @@ local function GetClubMembers()
     for _, club in ipairs(clubs) do
         if club.clubType == Enum.ClubType.Guild then
             local memberIDs = CommunitiesUtil.GetMemberIdsSortedByName(club.clubId)
+            if GW.IsSecretValue(memberIDs) then
+                break
+            end
             for _, info in ipairs(CommunitiesUtil.GetMemberInfo(club.clubId, memberIDs) or {}) do
                 if Plain(info.guid) then
                     clubMembers[info.guid] = info
