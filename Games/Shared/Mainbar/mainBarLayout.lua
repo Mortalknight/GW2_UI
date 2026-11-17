@@ -18,7 +18,7 @@ local GW = select(2, ...)
 local MULTIBAR_X_PLAYER_AS_TARGET = 316 -- bottom bars move inward when the player frame is centered as target frame
 local MULTIBAR_Y_NO_XPBAR = 114         -- bottom bars move down when the XP bar module is disabled
 local PET_X_PLAYER_AS_TARGET_SHIFT = 54 -- pet bar follows the left bottom bar inward
-local PET_Y_RAISED = 212                -- pet bar sits above MultiBarBottomLeft while that bar is visible
+local PET_Y_RAISED = 212                -- pet bar sits above MultiBarBottomLeft while that bar is visible or keeps its space
 
 -- same triggers, but for the insecure one-shot login positioning of the power bar and
 -- the class power bar (they never move mid-session, so they stay outside the secure
@@ -124,30 +124,15 @@ local onstate_Barlayout = [=[
     local mblShown = mbl and (mbl:IsShown() or mbl:GetAttribute("gw_KeepSpace"))
     local mbrShown = mbr and (mbr:IsShown() or mbr:GetAttribute("gw_KeepSpace"))
 
-    if mblShown and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
-        if newstate == "incombat" then
-            petmover:ClearAllPoints()
-            petmover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", petX, petYRaised)
-        else
-            if mblShown then
-                if mbl:GetAttribute("gw_FadeShowing") then
-                    petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", petX, petYRaised)
-                else
-                    petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", petX, petY)
-                end
-            end
-        end
+    -- a hover bar only shows when its own area gets the mouse, the pet must not cover it
+    if mbl and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
+        petmover:ClearAllPoints()
+        petmover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", petX, mblShown and petYRaised or petY)
     end
 
     -- only set the dbarmover frame to the correct position, based on scaling
     if newstate == "outcombat" and dbarmover and bbar and not dbar:GetAttribute("isMoved") and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
-        local buff_action = "none"
-        if mbrShown and mbr:GetAttribute("gw_FadeShowing") then
-            buff_action = "high"
-        end
-        local y_off = (buff_action == "high" and 200 or 100)
+        local y_off = mbrShown and 200 or 100
         dbarmover:ClearAllPoints()
         dbarmover:SetPoint("BOTTOMRIGHT", mbr, "BOTTOMRIGHT", 0, y_off)
     end
@@ -167,16 +152,8 @@ local onstate_Barlayout = [=[
     if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
         local buff_action = "none"
         if newstate == "incombat" or newstate == "outcombat" then
-            buff_action = "low"
-            if mbrShown then
-                if newstate == "outcombat" then
-                    if mbr:GetAttribute("gw_FadeShowing") then
-                        buff_action = "high"
-                    end
-                else
-                    buff_action = "high"
-                end
-            end
+            -- like the pet bar, the buffs must not cover a hover bar
+            buff_action = mbrShown and "high" or "low"
         elseif newstate == "petb" then
             buff_action = "hide"
         elseif newstate == "obar" then

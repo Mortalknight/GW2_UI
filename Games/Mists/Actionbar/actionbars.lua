@@ -535,7 +535,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     multibar:GwKillEditMode()
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
-    fmMultibar.gw_IsGwFrame = true -- our own frame, so it may carry the fade state attribute
+    fmMultibar.gw_IsGwFrame = true -- our own frame, so it may carry the visibility driver attributes
     fmMultibar.gw_HideForOverride = true
     if actionPage ~= nil then
         fmMultibar:SetAttribute("_onstate-actionpage", [[
