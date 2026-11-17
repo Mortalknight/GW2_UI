@@ -325,6 +325,28 @@ function GwImmersiveQuestFrameMixin:styleDialogButtons()
     end
 end
 
+function GwImmersiveQuestFrameMixin:layoutDialogButtons()
+    if not self.isFullscreen or not self.buttonRowY then
+        return
+    end
+    local c = self.container
+    local scale = DIALOG_BUTTON_FULLSCREEN_SCALE
+    local rowY = self.buttonRowY / scale
+    local pair = c.acceptButton:IsShown() and c.cancelButton:IsShown()
+
+    c.acceptButton:ClearAllPoints()
+    c.cancelButton:ClearAllPoints()
+    c.replayButton:ClearAllPoints()
+    if pair then
+        c.acceptButton:SetPoint("TOPLEFT", c, "CENTER", 10 / scale, rowY)
+        c.cancelButton:SetPoint("TOPRIGHT", c, "CENTER", -10 / scale, rowY)
+    else
+        c.acceptButton:SetPoint("TOP", c, "CENTER", 0, rowY)
+        c.cancelButton:SetPoint("TOP", c, "CENTER", 0, rowY)
+    end
+    c.replayButton:SetPoint("TOP", c, "CENTER", 0, (self.buttonRowY - 48) / scale)
+end
+
 local function layoutFullscreen(self, width, height)
     local c = self.container
     local bandHeight = height * 0.446
@@ -423,16 +445,11 @@ local function layoutFullscreen(self, width, height)
     c.summary:SetPoint("CENTER", c, "CENTER", 0, (bandCenterY - height * SUMMARY_FULLSCREEN_DROP) / SUMMARY_FULLSCREEN_SCALE)
 
     local buttonRowY = bandCenterY - bandHeight / 2 - height * 0.035
-    local buttonScale = DIALOG_BUTTON_FULLSCREEN_SCALE
     for _, button in ipairs({c.acceptButton, c.cancelButton, c.replayButton}) do
-        button:SetScale(buttonScale)
+        button:SetScale(DIALOG_BUTTON_FULLSCREEN_SCALE)
     end
-    c.acceptButton:ClearAllPoints()
-    c.acceptButton:SetPoint("TOPLEFT", c, "CENTER", 10 / buttonScale, buttonRowY / buttonScale)
-    c.cancelButton:ClearAllPoints()
-    c.cancelButton:SetPoint("TOPRIGHT", c, "CENTER", -10 / buttonScale, buttonRowY / buttonScale)
-    c.replayButton:ClearAllPoints()
-    c.replayButton:SetPoint("TOP", c, "CENTER", 0, (buttonRowY - 48) / buttonScale)
+    self.buttonRowY = buttonRowY
+    self:layoutDialogButtons()
     c.modeButton:ClearAllPoints()
     c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -24, -24)
     c.modeButton.icon:SetTexture(MODE_ICON_MINIMIZE)
@@ -1324,6 +1341,14 @@ function GW.LoadImmersiveQuesting()
         end)
         button:HookScript("OnHide", resetDialogButtonHover)
         button:HookScript("OnShow", resetDialogButtonHover)
+    end
+    for _, button in ipairs({frame.container.acceptButton, frame.container.cancelButton}) do
+        button:HookScript("OnShow", function()
+            frame:layoutDialogButtons()
+        end)
+        button:HookScript("OnHide", function()
+            frame:layoutDialogButtons()
+        end)
     end
     frame:styleDialogButtons()
     frame.container.modeButton:SetScript("OnClick", modeButton_OnClick)
