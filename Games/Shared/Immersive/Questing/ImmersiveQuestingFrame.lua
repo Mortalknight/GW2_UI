@@ -308,6 +308,11 @@ local function styleDialogButton(button, fullscreen)
             GW.StylePopupButton(button)
         end
         GW.SetPopupButtonScheme(button, button.resolveScheme(button:GetText() or ""))
+        local hoverText = button.gwPopupScheme and button.gwPopupScheme.hoverText
+        local currentFontString = button:GetFontString()
+        if hoverText and currentFontString and button:IsMouseOver() then
+            currentFontString:SetTextColor(hoverText[1], hoverText[2], hoverText[3], 1)
+        end
         button:SetHeight(26)
     else
         if button.gwPopupStyled then
@@ -329,6 +334,17 @@ local function styleDialogButton(button, fullscreen)
             end
         end
         button:SetHeight(24)
+    end
+end
+
+local function resetDialogButtonHover(button)
+    if button.hover then
+        button.hover:SetAlpha(0)
+    end
+    local scheme = button.gwPopupScheme
+    local fontString = button:GetFontString()
+    if scheme and fontString then
+        fontString:SetTextColor(scheme.text[1], scheme.text[2], scheme.text[3], 1)
     end
 end
 
@@ -1329,6 +1345,8 @@ function GW.LoadImmersiveQuesting()
         hooksecurefunc(button, "SetText", function()
             styleDialogButton(button, frame.isFullscreen)
         end)
+        button:HookScript("OnHide", resetDialogButtonHover)
+        button:HookScript("OnShow", resetDialogButtonHover)
     end
     frame:styleDialogButtons()
     frame.container.modeButton:SetScript("OnClick", modeButton_OnClick)
