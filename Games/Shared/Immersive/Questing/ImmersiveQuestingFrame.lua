@@ -26,7 +26,6 @@ end
 
 local MODE_ICON_MAXIMIZE = "Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png"
 local MODE_ICON_MINIMIZE = "Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png"
-local MODE_ICON_DIM = 0.7
 local EDGE_WIDTH = 500
 local TRAVEL_EXTRA = 0.6
 local BRUSH_TOP_EDGE_LAG = 0.55
@@ -129,7 +128,7 @@ local function buildBrushSlices(frame, file, uFrom, uTo, vFrom, vTo, width, heig
     if not frame.full then
         frame.full = frame:CreateTexture(nil, "BACKGROUND")
         frame.full:SetTexture(file)
-        frame.full:SetVertexColor(0, 0, 0, 1)
+        frame.full:SetVertexColor(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
         frame.full:Hide()
     end
     frame.full:ClearAllPoints()
@@ -141,7 +140,7 @@ local function buildBrushSlices(frame, file, uFrom, uTo, vFrom, vTo, width, heig
         if not slice then
             slice = frame:CreateTexture(nil, "BACKGROUND")
             slice:SetTexture(file)
-            slice:SetVertexColor(0, 0, 0, 1)
+            slice:SetVertexColor(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
             frame.slices[i] = slice
         end
         slice:ClearAllPoints()
@@ -250,6 +249,9 @@ end
 
 function GwImmersiveQuestFrameMixin:stopAnimation()
     self.animationDriver:SetScript("OnUpdate", nil)
+    if self.fadingOut then
+        self:RestoreDialogInput()
+    end
     if self.isFullscreen and self.layoutWidth and self.walkProgress and self.walkProgress < 1 then
         self:applyModelWalk(1)
     end
@@ -274,6 +276,9 @@ function GwImmersiveQuestFrameMixin:playOutro()
     local elapsed = 0
     self:stopAnimation()
     self.fadingOut = true
+    self:EnableMouse(false)
+    self.container.dialog:EnableMouse(false)
+    self:EnableKeyboard(false)
     self.animationDriver:SetScript("OnUpdate", function(_, delta)
         elapsed = elapsed + delta
         self:SetAlpha(1 - min(1, elapsed / OUTRO_DURATION))
@@ -389,8 +394,10 @@ local function layoutFullscreen(self, width, height)
     c.stripeBottom.edge:SetTexCoord(0, 1, 1, 1, 0, 0, 1, 0)
     c.stripeTop.edge:SetWidth(EDGE_WIDTH)
     c.stripeBottom.edge:SetWidth(EDGE_WIDTH)
-    c.stripeTop.edge:SetVertexColor(0, 0, 0, 1)
-    c.stripeBottom.edge:SetVertexColor(0, 0, 0, 1)
+    c.stripeTop.edge:SetVertexColor(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
+    c.stripeBottom.edge:SetVertexColor(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
+    c.stripeTop.solid:SetColorTexture(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
+    c.stripeBottom.solid:SetColorTexture(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
 
     c.bandClip:ClearAllPoints()
     c.bandClip:SetPoint("LEFT", c, "LEFT", 0, bandCenterY)
@@ -550,7 +557,8 @@ function GwImmersiveQuestFrameMixin:applyLayout()
 
     if self.isFullscreen then
         self:SetScale(UIParent:GetScale())
-        self:SetFrameStrata("FULLSCREEN")
+        self:SetFrameStrata("HIGH")
+        self:SetClampedToScreen(false)
         self:SetSize(UIParent:GetWidth(), UIParent:GetHeight())
         self:ClearAllPoints()
         self:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
@@ -558,6 +566,7 @@ function GwImmersiveQuestFrameMixin:applyLayout()
     else
         self:SetScale(UIParent:GetScale() * settings.scale)
         self:SetFrameStrata("HIGH")
+        self:SetClampedToScreen(true)
         self:SetSize(WINDOWED_WIDTH, WINDOWED_HEIGHT)
         self:applySavedPosition()
         layoutWindowed(self)
@@ -880,6 +889,14 @@ local function EnableDialogKeys(self, enable)
     end
 end
 
+function GwImmersiveQuestFrameMixin:RestoreDialogInput()
+    self:EnableMouse(true)
+    self.container.dialog:EnableMouse(true)
+    if self:IsShown() and not InCombatLockdown() then
+        EnableDialogKeys(self, true)
+    end
+end
+
 function GwImmersiveQuestFrameMixin:OnShow()
     if _G.GwImmersiveQuestDebugFrame then
         _G.GwImmersiveQuestDebugFrame:Show()
@@ -1147,6 +1164,12 @@ local function modeButton_OnClick(self)
 end
 
 local function deferredHide(self)
+    if self.fadingOut then
+        self.was_showing = false
+        self:stopAnimation()
+        self:HideNow()
+        return
+    end
     if self:IsShown() then
         self.was_showing = true
         self:Hide()
@@ -1356,15 +1379,17 @@ function GW.LoadImmersiveQuesting()
         end)
     end
     frame:styleDialogButtons()
+    frame.container.modeButton.bg:SetColorTexture(GW.Colors.SkinColors.DarkIconButton:GetRGBA())
+    frame.container.modeButton.icon:SetVertexColor(GW.Colors.SkinColors.IconDim:GetRGBA())
     frame.container.modeButton:SetScript("OnClick", modeButton_OnClick)
     frame.container.modeButton:SetScript("OnEnter", function(self)
-        self.icon:SetVertexColor(1, 1, 1, 1)
+        self.icon:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
         GameTooltip:SetText(self.tooltip or "")
         GameTooltip:Show()
     end)
     frame.container.modeButton:SetScript("OnLeave", function(self)
-        self.icon:SetVertexColor(MODE_ICON_DIM, MODE_ICON_DIM, MODE_ICON_DIM, 1)
+        self.icon:SetVertexColor(GW.Colors.SkinColors.IconDim:GetRGBA())
         GameTooltip:Hide()
     end)
     frame.container.acceptButton:SetScript("OnClick", accept_OnClick)
@@ -1388,7 +1413,6 @@ function GW.LoadImmersiveQuesting()
         CloseQuest()
         return true
     end
-    frame:SetClampedToScreen(true)
     frame:SetMovable(true)
     frame.container.playerModel:OnLoad()
     GW.LoadSpokenSync(frame)
