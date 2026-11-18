@@ -13,6 +13,10 @@
 
     <Binding category="GW2 UI" name="CLICK GwQuestTrackerGamepadFocus:LeftButton" header="GW2UI_OBJECTIVES_BINDINGS"/>
 
+    <Binding category="GW2 UI" name="IMMERSIVE_QUESTING_FULLSCREEN" header="GW2UI_IMMERSIVE_QUESTING_BINDINGS">
+        if GwImmersiveQuestFrame then GwImmersiveQuestFrame:ToggleFullscreen() end
+    </Binding>
+
     <Binding category="GW2 UI" name="BAG_SORT" header="GW2UI_INVENTORY_BINDINGS" runOnUp="true">
         PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
         if GW_SortBags then GW_SortBags() else C_Container.SortBags() end

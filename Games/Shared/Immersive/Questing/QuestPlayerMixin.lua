@@ -10,7 +10,71 @@ function GwImmersiveQuestingPlayerModelMixin:SetupModel()
     self:ClearAll()
 end
 
+local ONE_SHOT_FALLBACK_SECONDS = 2
+
+local function returnToIdle(self)
+    if self.one_shot_playing then
+        self.one_shot_playing = false
+        self:SetAnimation(emotes.Idle)
+    end
+end
+
+function GwImmersiveQuestingPlayerModelMixin:PlayOneShot(emote)
+    self.one_shot_playing = true
+    self.one_shot_token = (self.one_shot_token or 0) + 1
+    local token = self.one_shot_token
+    self:SetAnimation(emote)
+    C_Timer.After(ONE_SHOT_FALLBACK_SECONDS, function()
+        if self.one_shot_token == token then
+            returnToIdle(self)
+        end
+    end)
+end
+
+function GwImmersiveQuestingPlayerModelMixin:OnAnimFinished()
+    returnToIdle(self)
+end
+
+local function walkInProgress()
+    local frame = GwImmersiveQuestFrame
+    return frame and frame.isFullscreen and frame.walkProgress and frame.walkProgress < 1
+end
+
+function GwImmersiveQuestingPlayerModelMixin:CanWalk()
+    return self.is_loaded and self.base_facing and not self.pose_locked and not self.one_shot_playing
+end
+
+function GwImmersiveQuestingPlayerModelMixin:FlushPendingEmote()
+    if self.pending_emote then
+        local emote = self.pending_emote
+        self.pending_emote = nil
+        self:PlayOneShot(emote)
+    end
+end
+
+function GwImmersiveQuestingPlayerModelMixin:SetWalkState(walking, turn)
+    if not self.is_loaded or not self.base_facing then
+        return
+    end
+    if walking then
+        if not self.walking then
+            self.walking = true
+            self:SetAnimation(emotes.Walk)
+        end
+        self:SetFacing(self.base_facing + turn)
+    elseif self.walking then
+        self.walking = false
+        self:SetFacing(self.base_facing)
+        self:SetAnimation(emotes.Idle)
+        self:FlushPendingEmote()
+    end
+end
+
 function GwImmersiveQuestingPlayerModelMixin:ClearAll()
+    self.walking = false
+    self.pose_locked = false
+    self.pending_emote = nil
+    self.one_shot_playing = false
     self.is_loaded = false
     self.defer_action = false
     self:SetUnit("none")
@@ -52,6 +116,12 @@ function GwImmersiveQuestingPlayerModelMixin:OnModelLoaded()
     local sf = 1.0
     local f = 0.5
     local ps = ((GW.settings.immersiveQuesting.playerScale - 1.0)/2) + 1.0
+    if GwImmersiveQuestFrame and GwImmersiveQuestFrame.isFullscreen then
+        local fit = GW.immersiveQuesting.fullscreenFit
+        ps = ps * fit.playerScale
+        x = x + fit.playerX
+        z = z - fit.playerDrop
+    end
 
     if p_info then
         if p_info.x then
@@ -72,6 +142,7 @@ function GwImmersiveQuestingPlayerModelMixin:OnModelLoaded()
 
     self:SetModelScale(sf * ps)
     self:SetViewTranslation(x, z)
+    self.base_facing = f
     self:SetFacing(f)
 
     local wm = GW.settings.immersiveQuesting.weaponMode
@@ -94,6 +165,12 @@ function GwImmersiveQuestingPlayerModelMixin:OnModelLoaded()
     self.FadeIn:Play()
     if self.defer_action then
         self:SetAction(self.defer_action)
+    end
+    if GwImmersiveQuestFrame then
+        GwImmersiveQuestFrame:ReapplyModelWalk()
+    end
+    if not walkInProgress() then
+        self:FlushPendingEmote()
     end
 end
 
@@ -121,6 +198,10 @@ function GwImmersiveQuestingPlayerModelMixin:SetAction(action)
     end
     self.defer_action = false
 
+    if action == "read" or action == "kneel" then
+        self.pose_locked = true
+    end
+
     if action == "read" then
         self:SetSheathed(true, false)
         if GW.Retail or GW.Mists then
@@ -138,10 +219,13 @@ function GwImmersiveQuestingPlayerModelMixin:SetAction(action)
         end
     elseif action == "kneel" then
         self:SetAnimation(emotes.IdleKneel)
-    elseif action == "no" then
-        self:SetAnimation(emotes.No)
-    elseif action == "yes" then
-        self:SetAnimation(emotes.Yes)
+    elseif action == "no" or action == "yes" then
+        local emote = action == "no" and emotes.No or emotes.Yes
+        if walkInProgress() then
+            self.pending_emote = emote
+        else
+            self:PlayOneShot(emote)
+        end
     end
 end
 

@@ -6,14 +6,589 @@ local object_types = GW.immersiveQuesting.objectTypes
 
 GwImmersiveQuestFrameMixin = {}
 
+local WINDOWED_WIDTH = 1024
+local WINDOWED_HEIGHT = 512
+local ART_ASPECT = 2
+
+local function setCoverTexCoords(texture, aspect)
+    local visibleWidth = 1
+    local visibleHeight = 1
+    if aspect > ART_ASPECT then
+        visibleHeight = ART_ASPECT / aspect
+    else
+        visibleWidth = aspect / ART_ASPECT
+    end
+    local left = (1 - visibleWidth) / 2
+    local top = (1 - visibleHeight) / 2
+    texture:SetTexCoord(left, left + visibleWidth, top, top + visibleHeight)
+    return left, left + visibleWidth, top, top + visibleHeight
+end
+
+local MODE_ICON_MAXIMIZE = "Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png"
+local MODE_ICON_MINIMIZE = "Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png"
+local EDGE_WIDTH = 500
+local TRAVEL_EXTRA = 0.6
+local BRUSH_TOP_EDGE_LAG = 0.55
+local BRUSH_SLICES = 32
+local BRUSH_SOFT_RANGE = 0.18
+local BRUSH_TOP_FILE = "Interface/AddOns/GW2_UI/textures/questview/overlay_top.png"
+local BRUSH_BOTTOM_FILE = "Interface/AddOns/GW2_UI/textures/questview/overlay_bottom.png"
+local BRUSH_TOP_EDGE = 0.45
+local BRUSH_BOTTOM_EDGE = 0.39
+local BRUSH_INSET = 0.02
+local INTRO_DURATION = 1.9
+local MAX_INTRO_STEP = 0.034
+local BLEED_FRAMES = 20
+local BLEED_MASK_PATH = "Interface/AddOns/GW2_UI/textures/questview/bleed/bleed_%02d.png"
+local OUTRO_DURATION = 0.3
+local SUMMARY_FULLSCREEN_SCALE = 1.5
+local DIALOG_BUTTON_FULLSCREEN_SCALE = 1.3
+local SUMMARY_FULLSCREEN_DROP = 0.09
+
+local function easeInOut(t)
+    return t * t * (3 - 2 * t)
+end
+
+local function segment(time, from, to)
+    return easeInOut(min(1, max(0, (time - from) / (to - from))))
+end
+
+local function ensureBleedMasks(self)
+    local bandClip = self.container.bandClip
+    if self.bleedMasks or not bandClip.CreateMaskTexture then
+        return
+    end
+    local masks = {}
+    for index = 1, BLEED_FRAMES do
+        local mask = bandClip:CreateMaskTexture()
+        mask:SetTexture(BLEED_MASK_PATH:format(index), "CLAMPTOEDGE", "CLAMPTOEDGE")
+        mask:SetAllPoints(bandClip)
+        masks[index] = mask
+    end
+    self.bleedLayer = bandClip:CreateTexture(nil, "BACKGROUND", nil, 2)
+    self.bleedLayer:Hide()
+    if self.bleedPath then
+        self.bleedLayer:SetTexture(self.bleedPath)
+    end
+    self.bleedMasks = masks
+end
+
+function GwImmersiveQuestFrameMixin:setBleedTexture(path)
+    self.bleedPath = path
+    if self.bleedLayer then
+        self.bleedLayer:SetTexture(path)
+    end
+end
+
+local function swapMask(texture, masks, current, target)
+    if current == target then
+        return target
+    end
+    if current and current > 0 then
+        texture:RemoveMaskTexture(masks[current])
+    end
+    if target > 0 then
+        texture:AddMaskTexture(masks[target])
+    end
+    return target
+end
+
+local function setBandBleed(self, progress)
+    local mapBG = self.container.mapBG
+    local masks = self.bleedMasks
+    if not masks then
+        mapBG:SetAlpha(progress)
+        return
+    end
+    local layer = self.bleedLayer
+    if progress >= 1 then
+        self.bleedBase = swapMask(mapBG, masks, self.bleedBase, 0)
+        self.bleedOver = swapMask(layer, masks, self.bleedOver, 0)
+        layer:Hide()
+        return
+    end
+    local position = progress * (BLEED_FRAMES - 1)
+    local base = math.floor(position)
+    self.bleedBase = swapMask(mapBG, masks, self.bleedBase, base + 1)
+    self.bleedOver = swapMask(layer, masks, self.bleedOver, base + 2)
+    layer:SetAlpha(position - base)
+    layer:Show()
+end
+
+local function wipeWidth(progress, fullWidth)
+    if progress >= 1 then
+        return fullWidth
+    end
+    return max(1, progress * (fullWidth + EDGE_WIDTH * TRAVEL_EXTRA))
+end
+
+local function buildBrushSlices(frame, file, uFrom, uTo, vFrom, vTo, width, height)
+    local sliceWidth = width / BRUSH_SLICES
+    frame.slices = frame.slices or {}
+    if not frame.full then
+        frame.full = frame:CreateTexture(nil, "BACKGROUND")
+        frame.full:SetTexture(file)
+        frame.full:SetVertexColor(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
+        frame.full:Hide()
+    end
+    frame.full:ClearAllPoints()
+    frame.full:SetAllPoints(frame)
+    frame.full:SetTexCoord(uFrom, uTo, vFrom, vTo)
+    frame.settled = nil
+    for i = 1, BRUSH_SLICES do
+        local slice = frame.slices[i]
+        if not slice then
+            slice = frame:CreateTexture(nil, "BACKGROUND")
+            slice:SetTexture(file)
+            slice:SetVertexColor(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
+            frame.slices[i] = slice
+        end
+        slice:ClearAllPoints()
+        slice:SetPoint("TOPLEFT", frame, "TOPLEFT", (i - 1) * sliceWidth, 0)
+        slice:SetSize(sliceWidth + 1, height)
+        slice:SetTexCoord(uFrom + (uTo - uFrom) * (i - 1) / BRUSH_SLICES, uFrom + (uTo - uFrom) * i / BRUSH_SLICES, vFrom, vTo)
+    end
+end
+
+local function setBrushLead(frame, lead, width, fromRight)
+    local settled = lead >= width * (1 + BRUSH_SOFT_RANGE)
+    if settled ~= frame.settled then
+        frame.settled = settled
+        frame.full:SetShown(settled)
+        for _, slice in ipairs(frame.slices) do
+            slice:SetShown(not settled)
+        end
+    end
+    if settled then
+        return
+    end
+    local soft = width * BRUSH_SOFT_RANGE
+    for i, slice in ipairs(frame.slices) do
+        local center = (i - 0.5) * width / BRUSH_SLICES
+        local distance = fromRight and (width - center) or center
+        slice:SetAlpha(easeInOut(min(1, max(0, (lead - distance) / soft))))
+    end
+end
+
+local function setWipe(frame, progress, fullWidth)
+    if progress >= 1 then
+        frame:SetWidth(fullWidth)
+        if frame.solid and not frame.solidFull then
+            frame.solidFull = true
+            frame.solid:ClearAllPoints()
+            frame.solid:SetAllPoints(frame)
+            frame.edge:Hide()
+        end
+        return
+    end
+    frame:SetWidth(max(1, progress * (fullWidth + EDGE_WIDTH * TRAVEL_EXTRA)))
+    if frame.solid and frame.solidFull then
+        frame.solidFull = false
+        frame.edge:Show()
+        frame.solid:ClearAllPoints()
+        if frame.fromRight then
+            frame.solid:SetPoint("TOPRIGHT", frame, "TOPRIGHT")
+            frame.solid:SetPoint("BOTTOMLEFT", frame.edge, "BOTTOMRIGHT")
+        else
+            frame.solid:SetPoint("TOPLEFT", frame, "TOPLEFT")
+            frame.solid:SetPoint("BOTTOMRIGHT", frame.edge, "BOTTOMLEFT")
+        end
+    end
+end
+
+local function walkProgressAt(time)
+    local t = min(1, max(0, (time - 0.1) / 1.1))
+    return 1 - (1 - t) * (1 - t)
+end
+
+function GwImmersiveQuestFrameMixin:applyModelWalk(progress)
+    if not GW.settings.immersiveQuesting.walkIn then
+        progress = 1
+    end
+    local c = self.container
+    local width = self.layoutWidth
+    local fit = GW.immersiveQuesting.fullscreenFit
+    local player = c.playerModel
+    local giver = c.giverModel
+    local walking = progress < 1
+    local distance = width * fit.slide * (1 - progress)
+    local turn = fit.walkTurn * (1 - segment(progress, 0.6, 1))
+
+    self.walkProgress = progress
+    c.playerModel:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", width * 0.03 - (player:CanWalk() and distance or 0), 0)
+    c.giverModel:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", width * 0.015 + (giver:CanWalk() and distance or 0), 0)
+    player:SetWalkState(walking and player:CanWalk(), turn)
+    giver:SetWalkState(walking and giver:CanWalk(), -turn)
+end
+
+function GwImmersiveQuestFrameMixin:ReapplyModelWalk()
+    if self.isFullscreen and self.walkProgress and self.layoutWidth then
+        self:applyModelWalk(self.walkProgress)
+    end
+end
+
+function GwImmersiveQuestFrameMixin:applyIntroProgress(time)
+    local c = self.container
+    local width = self.layoutWidth
+
+    self:applyModelWalk(walkProgressAt(time))
+
+    local topProgress = segment(time, 0, 0.75)
+    local bottomProgress = segment(time, 0, 0.75)
+    setWipe(c.stripeTop, topProgress, width)
+    setWipe(c.stripeBottom, bottomProgress, width)
+    local settled = width * (1 + BRUSH_SOFT_RANGE)
+    setBrushLead(c.brushClipTop, topProgress >= 1 and settled or wipeWidth(topProgress, width) - EDGE_WIDTH * BRUSH_TOP_EDGE_LAG, width, false)
+    setBrushLead(c.brushClipBottom, bottomProgress >= 1 and settled or wipeWidth(bottomProgress, width) - EDGE_WIDTH * BRUSH_TOP_EDGE_LAG, width, true)
+    setBandBleed(self, segment(time, 0.35, 1.7))
+
+    local textAlpha = segment(time, 0.5, 1.0)
+    c.dialog:SetAlpha(textAlpha)
+    c.floaty:SetAlpha(textAlpha)
+end
+
+function GwImmersiveQuestFrameMixin:stopAnimation()
+    self.animationDriver:SetScript("OnUpdate", nil)
+    if self.fadingOut then
+        self:RestoreDialogInput()
+    end
+    if self.isFullscreen and self.layoutWidth and self.walkProgress and self.walkProgress < 1 then
+        self:applyModelWalk(1)
+    end
+    self.fadingOut = false
+    self:SetAlpha(1)
+end
+
+function GwImmersiveQuestFrameMixin:playIntro()
+    local elapsed = 0
+    self:stopAnimation()
+    self:applyIntroProgress(0)
+    self.animationDriver:SetScript("OnUpdate", function(_, delta)
+        elapsed = elapsed + min(delta, MAX_INTRO_STEP)
+        self:applyIntroProgress(elapsed)
+        if elapsed >= INTRO_DURATION then
+            self:stopAnimation()
+        end
+    end)
+end
+
+function GwImmersiveQuestFrameMixin:playOutro()
+    local elapsed = 0
+    self:stopAnimation()
+    self.fadingOut = true
+    self:EnableMouse(false)
+    self.container.dialog:EnableMouse(false)
+    self:EnableKeyboard(false)
+    self.animationDriver:SetScript("OnUpdate", function(_, delta)
+        elapsed = elapsed + delta
+        self:SetAlpha(1 - min(1, elapsed / OUTRO_DURATION))
+        if elapsed >= OUTRO_DURATION then
+            self:stopAnimation()
+            self:HideNow()
+        end
+    end)
+end
+
+function GwImmersiveQuestFrameMixin:HideWithOutro()
+    local canAnimate = self.isFullscreen and self:IsShown() and not self.was_showing and not self.fadingOut and not self.in_load and not self.in_cine
+    if canAnimate then
+        self:playOutro()
+    else
+        self:HideNow()
+    end
+end
+
+local function styleDialogButton(button)
+    if not button.resolveScheme or not GW.StylePopupButton then
+        return
+    end
+    GW.StylePopupButton(button)
+    GW.SetPopupButtonScheme(button, button.resolveScheme(button:GetText() or ""))
+    local scheme = button.gwPopupScheme
+    local fontString = button:GetFontString()
+    if scheme and button:IsMouseOver() then
+        if fontString then
+            fontString:SetTextColor(scheme.hoverText[1], scheme.hoverText[2], scheme.hoverText[3], 1)
+        end
+        if button.hover and button.hover:GetAlpha() > 0 then
+            button.hover:SetVertexColor(scheme.hover[1], scheme.hover[2], scheme.hover[3], 1)
+        end
+    end
+    button:SetHeight(26)
+end
+
+local function resetDialogButtonHover(button)
+    if button.hover then
+        button.hover:SetAlpha(0)
+    end
+    local scheme = button.gwPopupScheme
+    local fontString = button:GetFontString()
+    if scheme and fontString then
+        fontString:SetTextColor(scheme.text[1], scheme.text[2], scheme.text[3], 1)
+    end
+end
+
+function GwImmersiveQuestFrameMixin:styleDialogButtons()
+    local c = self.container
+    for _, button in ipairs({c.acceptButton, c.cancelButton, c.replayButton}) do
+        styleDialogButton(button)
+    end
+end
+
+function GwImmersiveQuestFrameMixin:layoutDialogButtons()
+    if not self.isFullscreen or not self.buttonRowY then
+        return
+    end
+    local c = self.container
+    local scale = DIALOG_BUTTON_FULLSCREEN_SCALE
+    local rowY = self.buttonRowY / scale
+    local pair = c.acceptButton:IsShown() and c.cancelButton:IsShown()
+
+    c.acceptButton:ClearAllPoints()
+    c.cancelButton:ClearAllPoints()
+    c.replayButton:ClearAllPoints()
+    if pair then
+        c.acceptButton:SetPoint("TOPLEFT", c, "CENTER", 10 / scale, rowY)
+        c.cancelButton:SetPoint("TOPRIGHT", c, "CENTER", -10 / scale, rowY)
+    else
+        c.acceptButton:SetPoint("TOP", c, "CENTER", 0, rowY)
+        c.cancelButton:SetPoint("TOP", c, "CENTER", 0, rowY)
+    end
+    c.replayButton:SetPoint("TOP", c, "CENTER", 0, (self.buttonRowY - 48) / scale)
+end
+
+local function layoutFullscreen(self, width, height)
+    local c = self.container
+    local bandHeight = height * 0.446
+    local bandCenterY = -height * 0.02
+    local modelHeight = height * 0.92
+    local stripeTopHeight = height / 2 - bandCenterY - bandHeight / 2
+    local stripeBottomHeight = height / 2 + bandCenterY - bandHeight / 2
+
+    self.layoutWidth = width
+    self.maxTextWidth = min(760, width * 0.38)
+
+    self.border:Hide()
+    self.overlayTop:Hide()
+    self.backdrop:Hide()
+
+    c:SetSize(width, height)
+
+    c.floaty:ClearAllPoints()
+    c.floaty:SetAllPoints(c)
+    c.floaty.inset:Hide()
+
+    c.stripeTop:ClearAllPoints()
+    c.stripeTop:SetPoint("TOPLEFT", c, "TOPLEFT")
+    c.stripeTop:SetHeight(stripeTopHeight)
+    c.stripeTop.fromRight = false
+    c.stripeTop:Show()
+
+    c.stripeBottom:ClearAllPoints()
+    c.stripeBottom:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT")
+    c.stripeBottom:SetHeight(stripeBottomHeight)
+    c.stripeBottom.fromRight = true
+    c.stripeBottom:Show()
+
+    c.stripeTop.edge:SetTexCoord(0, 0, 1, 0, 0, 1, 1, 1)
+    c.stripeBottom.edge:SetTexCoord(0, 1, 1, 1, 0, 0, 1, 0)
+    c.stripeTop.edge:SetWidth(EDGE_WIDTH)
+    c.stripeBottom.edge:SetWidth(EDGE_WIDTH)
+    c.stripeTop.edge:SetVertexColor(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
+    c.stripeBottom.edge:SetVertexColor(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
+    c.stripeTop.solid:SetColorTexture(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
+    c.stripeBottom.solid:SetColorTexture(GW.Colors.SkinColors.CinematicBlack:GetRGBA())
+
+    c.bandClip:ClearAllPoints()
+    c.bandClip:SetPoint("LEFT", c, "LEFT", 0, bandCenterY)
+    c.bandClip:SetSize(width, bandHeight)
+    c.bandClip:Show()
+
+    c.mapBG:SetParent(c.bandClip)
+    c.mapBG:ClearAllPoints()
+    c.mapBG:SetPoint("CENTER", c, "CENTER", 0, bandCenterY)
+    c.mapBG:SetSize(width, bandHeight)
+    local left, right, top, bottom = setCoverTexCoords(c.mapBG, width / bandHeight)
+    ensureBleedMasks(self)
+    if self.bleedLayer then
+        self.bleedLayer:ClearAllPoints()
+        self.bleedLayer:SetAllPoints(c.mapBG)
+        self.bleedLayer:SetTexCoord(left, right, top, bottom)
+    end
+
+    local brushHeight = bandHeight * 0.4
+    c.brushClipTop:ClearAllPoints()
+    c.brushClipTop:SetPoint("TOPLEFT", c.bandClip, "TOPLEFT", 0, BRUSH_TOP_EDGE * brushHeight - BRUSH_INSET * bandHeight)
+    c.brushClipTop:SetSize(width, brushHeight)
+    buildBrushSlices(c.brushClipTop, BRUSH_TOP_FILE, 0, 1, 0, 1, width, brushHeight)
+    c.brushClipTop:Show()
+    c.brushClipBottom:ClearAllPoints()
+    c.brushClipBottom:SetPoint("TOPLEFT", c.bandClip, "BOTTOMLEFT", 0, BRUSH_BOTTOM_EDGE * brushHeight + BRUSH_INSET * bandHeight)
+    c.brushClipBottom:SetSize(width, brushHeight)
+    buildBrushSlices(c.brushClipBottom, BRUSH_BOTTOM_FILE, 0.09, 0.92, 0.62, 1, width, brushHeight)
+    c.brushClipBottom:Show()
+
+    c.blackout_head:ClearAllPoints()
+    c.blackout_head:SetPoint("TOPLEFT", c, "TOPLEFT")
+    c.blackout_head:SetPoint("TOPRIGHT", c, "TOPRIGHT")
+    c.blackout_fade:ClearAllPoints()
+    c.blackout_fade:SetPoint("TOPLEFT", c.blackout_head, "BOTTOMLEFT")
+    c.blackout_fade:SetPoint("TOPRIGHT", c.blackout_head, "BOTTOMRIGHT")
+    c.blackout_fade:SetHeight(32)
+
+    c.playerModel:ClearAllPoints()
+    c.playerModel:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", width * 0.03, 0)
+    c.playerModel:SetSize(min(modelHeight, width * 0.45), modelHeight)
+
+    c.giverModel:ClearAllPoints()
+    c.giverModel:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", width * 0.015, 0)
+    c.giverModel:SetSize(width * 0.85, modelHeight)
+
+    c.dialog:ClearAllPoints()
+    c.dialog:SetAllPoints(c)
+    c.dialog.blackout_feet:Hide()
+    c.dialog.text:ClearAllPoints()
+    c.dialog.text:SetFontObject(GwImmersiveQuestingDialogFontLarge)
+    c.dialog.text:SetMaxLines(4)
+    c.dialog.text:SetHeight(130)
+
+    c.summary:SetScale(SUMMARY_FULLSCREEN_SCALE)
+    c.summary:ClearAllPoints()
+    c.summary:SetPoint("CENTER", c, "CENTER", 0, (bandCenterY - height * SUMMARY_FULLSCREEN_DROP) / SUMMARY_FULLSCREEN_SCALE)
+
+    local buttonRowY = bandCenterY - bandHeight / 2 - height * 0.035
+    for _, button in ipairs({c.acceptButton, c.cancelButton, c.replayButton}) do
+        button:SetScale(DIALOG_BUTTON_FULLSCREEN_SCALE)
+    end
+    self.buttonRowY = buttonRowY
+    self:layoutDialogButtons()
+    c.modeButton:ClearAllPoints()
+    c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -24, -24)
+    c.modeButton.icon:SetTexture(MODE_ICON_MINIMIZE)
+    c.modeButton.tooltip = GW.L["Windowed"]
+
+    self:applyIntroProgress(INTRO_DURATION)
+end
+
+local function layoutWindowed(self)
+    local c = self.container
+
+    self:stopAnimation()
+    self.walkProgress = nil
+    self.maxTextWidth = nil
+
+    self.border:Show()
+    self.overlayTop:Show()
+    self.backdrop:Show()
+    self.backdrop:ClearAllPoints()
+    self.backdrop:SetPoint("TOPLEFT", self, "TOPLEFT", 48, -32)
+    self.backdrop:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -48, 32)
+
+    c:SetSize(950, 474)
+
+    c.floaty:ClearAllPoints()
+    c.floaty:SetSize(952, 474)
+    c.floaty:SetPoint("TOP", c, "TOP", 0, 0)
+    c.floaty.inset:Show()
+    c.floaty:SetAlpha(1)
+
+    c.stripeTop:Hide()
+    c.stripeBottom:Hide()
+    c.bandClip:Hide()
+    c.brushClipTop:Hide()
+    c.brushClipBottom:Hide()
+    c.bandClip:SetAlpha(1)
+    setBandBleed(self, 1)
+    c.mapBG:SetAlpha(1)
+    c.mapBG:SetParent(c)
+    c.mapBG:ClearAllPoints()
+    c.mapBG:SetSize(950, 475)
+    c.mapBG:SetPoint("TOP", c, "TOP")
+    c.mapBG:SetTexCoord(0, 1, 0, 1)
+
+    c.blackout_head:ClearAllPoints()
+    c.blackout_head:SetWidth(950)
+    c.blackout_head:SetPoint("TOP", c, "TOP")
+    c.blackout_fade:ClearAllPoints()
+    c.blackout_fade:SetSize(950, 8)
+    c.blackout_fade:SetPoint("BOTTOM", c.blackout_head, "BOTTOM", 0, -8)
+
+    c.playerModel:ClearAllPoints()
+    c.playerModel:SetSize(474, 474)
+    c.playerModel:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", 0, 1)
+
+    c.giverModel:ClearAllPoints()
+    c.giverModel:SetSize(700, 474)
+    c.giverModel:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", 0, 1)
+
+    c.dialog:ClearAllPoints()
+    c.dialog:SetSize(950, 374)
+    c.dialog:SetPoint("CENTER", c, "CENTER", 0, -50)
+    c.dialog:SetAlpha(1)
+    c.dialog.blackout_feet:Show()
+    c.dialog.text:ClearAllPoints()
+    c.dialog.text:SetFontObject(GwImmersiveQuestingDialogFont)
+    c.dialog.text:SetMaxLines(3)
+    c.dialog.text:SetHeight(90)
+    c.dialog.text:SetPoint("BOTTOM", c.dialog, "BOTTOM", 0, 30)
+
+    c.summary:SetScale(1)
+    c.summary:ClearAllPoints()
+    c.summary:SetPoint("CENTER", c, "CENTER", 0, -50)
+
+    for _, button in ipairs({c.acceptButton, c.cancelButton, c.replayButton}) do
+        button:SetScale(1)
+    end
+    c.acceptButton:ClearAllPoints()
+    c.acceptButton:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", 24, 8)
+    c.cancelButton:ClearAllPoints()
+    c.cancelButton:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", -24, 8)
+    c.replayButton:ClearAllPoints()
+    c.replayButton:SetPoint("BOTTOM", c, "BOTTOM", 0, 8)
+    c.modeButton:ClearAllPoints()
+    c.modeButton:SetPoint("TOPRIGHT", c, "TOPRIGHT", -12, -12)
+    c.modeButton.icon:SetTexture(MODE_ICON_MAXIMIZE)
+    c.modeButton.tooltip = GW.L["Fullscreen"]
+end
+
+function GwImmersiveQuestFrameMixin:applyLayout()
+    local settings = GW.settings.immersiveQuesting
+    self.isFullscreen = settings.fullscreen and true or false
+
+    if self.isFullscreen then
+        self:SetScale(UIParent:GetScale())
+        self:SetFrameStrata("HIGH")
+        self:SetClampedToScreen(false)
+        self:SetSize(UIParent:GetWidth(), UIParent:GetHeight())
+        self:ClearAllPoints()
+        self:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        layoutFullscreen(self, UIParent:GetWidth(), UIParent:GetHeight())
+    else
+        self:SetScale(UIParent:GetScale() * settings.scale)
+        self:SetFrameStrata("HIGH")
+        self:SetClampedToScreen(true)
+        self:SetSize(WINDOWED_WIDTH, WINDOWED_HEIGHT)
+        self:applySavedPosition()
+        layoutWindowed(self)
+    end
+
+    self:styleDialogButtons()
+    self:applyTitleStyle()
+    if self.isFullscreen then
+        self.container.blackout_head:SetAlpha(0)
+        self.container.blackout_fade:Hide()
+        self.container.dialog.text:SetPoint("TOP", self.container.dialog, "TOP", 0, -(self.container.blackout_head:GetHeight() + 24))
+    end
+    self:applyLockFrame()
+end
+
 function GwImmersiveQuestFrameMixin:UiScaleChanged()
-    local sf = GW.settings.immersiveQuesting.scale
-    self:SetScale(UIParent:GetScale() * sf)
-    self:applySavedPosition()
+    self:applyLayout()
     self.container.playerModel:SetupModel()
     self.container.giverModel:SetupModel()
     if self:IsShown() then
         -- reload internal stuff
+        self.container.playerModel:OnShow()
         self:showQuestFrame()
     end
     self.defer_ui_change = false
@@ -117,17 +692,18 @@ end
 local MAX_TEXT_WIDTH = 750
 function GwImmersiveQuestFrameMixin:setBalancedText(text)
     local t = self.container.dialog.text
-    t:SetWidth(MAX_TEXT_WIDTH)
+    local maxWidth = self.maxTextWidth or MAX_TEXT_WIDTH
+    t:SetWidth(maxWidth)
     t:SetText(text)
     local needed = t:GetStringWidth()
-    if needed > (2 * MAX_TEXT_WIDTH) then
+    if needed > (2 * maxWidth) then
         local balanced = math.floor(needed / 3) + 50
-        if balanced < MAX_TEXT_WIDTH then
+        if balanced < maxWidth then
             t:SetWidth(balanced)
         end
-    elseif needed > MAX_TEXT_WIDTH then
+    elseif needed > maxWidth then
         local balanced = math.floor(needed / 2) + 50
-        if balanced < MAX_TEXT_WIDTH then
+        if balanced < maxWidth then
             t:SetWidth(balanced)
         end
     end
@@ -219,7 +795,9 @@ end
 
 function GwImmersiveQuestFrameMixin:showQuestFrame()
     local map_bg = getMapBackground(self)
-    self.container.mapBG:SetTexture("Interface/AddOns/GW2_UI/textures/questview/backgrounds/" .. map_bg .. ".jpg")
+    local bandPath = "Interface/AddOns/GW2_UI/textures/questview/backgrounds/" .. map_bg .. ".jpg"
+    self.container.mapBG:SetTexture(bandPath)
+    self:setBleedTexture(bandPath)
 
     self.container.floaty.title:SetText(GetTitleText())
 
@@ -311,6 +889,14 @@ local function EnableDialogKeys(self, enable)
     end
 end
 
+function GwImmersiveQuestFrameMixin:RestoreDialogInput()
+    self:EnableMouse(true)
+    self.container.dialog:EnableMouse(true)
+    if self:IsShown() and not InCombatLockdown() then
+        EnableDialogKeys(self, true)
+    end
+end
+
 function GwImmersiveQuestFrameMixin:OnShow()
     if _G.GwImmersiveQuestDebugFrame then
         _G.GwImmersiveQuestDebugFrame:Show()
@@ -324,6 +910,9 @@ function GwImmersiveQuestFrameMixin:OnShow()
         return
     end
     self.container.FadeIn:Play()
+    if self.isFullscreen then
+        self:playIntro()
+    end
 end
 
 function GwImmersiveQuestFrameMixin:OnHide()
@@ -354,7 +943,10 @@ local function deferShow(self)
         self.needs_showing = true
     else
         self.needs_showing = false
-        if not self:IsShown() then
+        if self.fadingOut then
+            self:stopAnimation()
+            self:showQuestFrame()
+        elseif not self:IsShown() then
             self:showQuestFrame()
         end
         self:nextGossip()
@@ -558,7 +1150,26 @@ local function cancel_OnClick()
     CloseQuest()
 end
 
+function GwImmersiveQuestFrameMixin:ToggleFullscreen()
+    local settings = GW.settings.immersiveQuesting
+    settings.fullscreen = not settings.fullscreen
+    self:UiScaleChanged()
+    if self.questString and self.questStringInt >= 1 and self.questString[self.questStringInt] then
+        self:setBalancedText(self.questString[self.questStringInt])
+    end
+end
+
+local function modeButton_OnClick(self)
+    self:GetParent():GetParent():ToggleFullscreen()
+end
+
 local function deferredHide(self)
+    if self.fadingOut then
+        self.was_showing = false
+        self:stopAnimation()
+        self:HideNow()
+        return
+    end
     if self:IsShown() then
         self.was_showing = true
         self:Hide()
@@ -590,7 +1201,7 @@ function GwImmersiveQuestFrameMixin:OnEvent(event, ...)
     GW.Debug("event handling", event, ...)
     if event == "ADDON_LOADED" then
         self:evAddonLoaded(...)
-    elseif event == "UI_SCALE_CHANGED" then
+    elseif event == "UI_SCALE_CHANGED" or event == "DISPLAY_SIZE_CHANGED" then
         if not self.defer_ui_change then
             -- pause one frame for cvars but don't queue multiple of these
             self.defer_ui_change = true
@@ -661,7 +1272,7 @@ function GwImmersiveQuestFrameMixin:resetPosition()
 end
 
 function GwImmersiveQuestFrameMixin:applyLockFrame()
-    local lf = GW.settings.immersiveQuesting.lockFrame
+    local lf = GW.settings.immersiveQuesting.lockFrame or GW.settings.immersiveQuesting.fullscreen
     if not lf then
         self:RegisterForDrag("LeftButton")
         self:SetScript("OnDragStart", self.StartMoving)
@@ -694,11 +1305,16 @@ function GwImmersiveQuestFrameMixin:applyTitleStyle()
 end
 
 function GW.LoadImmersiveQuesting()
+    BINDING_HEADER_GW2UI_IMMERSIVE_QUESTING_BINDINGS = GW.L["Immersive Questing"]
+    BINDING_NAME_IMMERSIVE_QUESTING_FULLSCREEN = GW.L["Toggle fullscreen"]
     if not GW.settings.immersiveQuesting.enabled or GW.ShouldBlockIncompatibleAddon("ImmersiveQuesting") then return end
 
     local frame = CreateFrame("Frame", "GwImmersiveQuestFrame", nil, "GwImmersiveQuestFrameTemplate")
     frame.mapId = 0
     frame.updateAttempts = 0
+    frame.animationDriver = CreateFrame("Frame", nil, frame)
+    frame.HideNow = frame.Hide
+    frame.Hide = frame.HideWithOutro
 
     frame.border:SetTextureSliceMargins(32, 32, 32, 32)
     frame.border:SetTextureSliceMode(Enum.UITextureSliceMode.Stretched)
@@ -714,6 +1330,7 @@ function GW.LoadImmersiveQuesting()
     frame:SetScript("OnEvent", frame.OnEvent)
 
     frame:RegisterEvent("UI_SCALE_CHANGED")
+    frame:RegisterEvent("DISPLAY_SIZE_CHANGED")
     frame:RegisterEvent("LOADING_SCREEN_DISABLED")
     frame:RegisterEvent("LOADING_SCREEN_ENABLED")
     frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -734,6 +1351,47 @@ function GW.LoadImmersiveQuesting()
 
     frame.container.dialog:SetScript("OnMouseUp", dialog_OnMouseUp)
     frame.container.cancelButton:SetScript("OnClick", cancel_OnClick)
+    frame.container.acceptButton.resolveScheme = function(text)
+        if text == GW.L["Skip to End"] or text == CONTINUE then
+            return "neutral"
+        end
+        return "confirm"
+    end
+    frame.container.cancelButton.resolveScheme = function()
+        return "cancel"
+    end
+    frame.container.replayButton.resolveScheme = function()
+        return "neutral"
+    end
+    for _, button in ipairs({frame.container.acceptButton, frame.container.cancelButton, frame.container.replayButton}) do
+        hooksecurefunc(button, "SetText", function()
+            styleDialogButton(button)
+        end)
+        button:HookScript("OnHide", resetDialogButtonHover)
+        button:HookScript("OnShow", resetDialogButtonHover)
+    end
+    for _, button in ipairs({frame.container.acceptButton, frame.container.cancelButton}) do
+        button:HookScript("OnShow", function()
+            frame:layoutDialogButtons()
+        end)
+        button:HookScript("OnHide", function()
+            frame:layoutDialogButtons()
+        end)
+    end
+    frame:styleDialogButtons()
+    frame.container.modeButton.bg:SetColorTexture(GW.Colors.SkinColors.DarkIconButton:GetRGBA())
+    frame.container.modeButton.icon:SetVertexColor(GW.Colors.SkinColors.IconDim:GetRGBA())
+    frame.container.modeButton:SetScript("OnClick", modeButton_OnClick)
+    frame.container.modeButton:SetScript("OnEnter", function(self)
+        self.icon:SetVertexColor(GW.Colors.FallbackWhite:GetRGBA())
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+        GameTooltip:SetText(self.tooltip or "")
+        GameTooltip:Show()
+    end)
+    frame.container.modeButton:SetScript("OnLeave", function(self)
+        self.icon:SetVertexColor(GW.Colors.SkinColors.IconDim:GetRGBA())
+        GameTooltip:Hide()
+    end)
     frame.container.acceptButton:SetScript("OnClick", accept_OnClick)
 
     frame:clearQuestReq()
@@ -755,7 +1413,6 @@ function GW.LoadImmersiveQuesting()
         CloseQuest()
         return true
     end
-    frame:SetClampedToScreen(true)
     frame:SetMovable(true)
     frame.container.playerModel:OnLoad()
     GW.LoadSpokenSync(frame)

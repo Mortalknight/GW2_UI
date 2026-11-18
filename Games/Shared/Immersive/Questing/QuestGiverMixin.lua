@@ -38,6 +38,11 @@ function GwImmersiveQuestingGiverModelMixin:setQuestGiverAnimation(count, qStrin
         return
     end
 
+    if self.walking then
+        self.pending_talk = {count, qString, qStringInt}
+        return
+    end
+
     -- determine main emote to play for this line
     local prefix = self.half_kits and "Half" or ""
     local a = "Talk"
@@ -193,17 +198,55 @@ function GwImmersiveQuestingGiverModelMixin:OnModelLoaded()
 
     self.do_anims = self.idle_anim ~= -1 and true or false
     self:SetPitch(p)
+    self.base_facing = f
     self:SetFacing(f)
     if self.idle_kit ~= -1 then
         self:PlayAnimKit(self.idle_kit, true)
     elseif self.idle_anim ~= -1 then
         self:SetAnimation(self.idle_anim)
     end
+    if GwImmersiveQuestFrame and GwImmersiveQuestFrame.isFullscreen then
+        local fit = GW.immersiveQuesting.fullscreenFit
+        sf = sf * fit.giverScale
+        x = x + fit.giverX
+        z = z - fit.giverDrop
+    end
     self:SetModelScale(sf)
     self:SetViewTranslation(x, z)
 
     self.is_loaded = true
     self.FadeIn:Play()
+    if GwImmersiveQuestFrame then
+        GwImmersiveQuestFrame:ReapplyModelWalk()
+    end
+end
+
+function GwImmersiveQuestingGiverModelMixin:CanWalk()
+    return self.is_loaded and self.base_facing and self.do_anims and self.idle_kit == -1 and not self.half_kits
+end
+
+function GwImmersiveQuestingGiverModelMixin:SetWalkState(walking, turn)
+    if not self.is_loaded or not self.base_facing then
+        return
+    end
+    if walking then
+        if not self.walking then
+            self.walking = true
+            self:SetAnimation(emotes.Walk)
+        end
+        self:SetFacing(self.base_facing + turn)
+    elseif self.walking then
+        self.walking = false
+        self:SetFacing(self.base_facing)
+        self.anim_next = -1
+        self.anim_playing = false
+        self:SetAnimation(self.idle_anim)
+        local pending = self.pending_talk
+        self.pending_talk = nil
+        if pending then
+            self:setQuestGiverAnimation(pending[1], pending[2], pending[3])
+        end
+    end
 end
 
 function GwImmersiveQuestingGiverModelMixin:SetBoardUnit(board_type, map_id)
@@ -244,6 +287,8 @@ function GwImmersiveQuestingGiverModelMixin:OnHide()
 end
 
 function GwImmersiveQuestingGiverModelMixin:ClearAll()
+    self.walking = false
+    self.pending_talk = nil
     self.creature_id = 0
     self.file_id = nil
     self.do_anims = false
