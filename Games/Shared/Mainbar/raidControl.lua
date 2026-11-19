@@ -243,11 +243,14 @@ local function CreateRaidControlFrame()
         f:SetPoint("TOPLEFT", GwGroupManage.inGroup, "TOPLEFT", x, y)
         f:SetNormalTexture("Interface/TargetingFrame/UI-RaidTargetingIcons")
         SetRaidTargetIconTexture(f:GetNormalTexture(), i)
-        f:SetScript("OnClick", function()
-            PlaySound(1115)
-            -- blizzards SetRaidTargetIcon compares the secret current index, a second click only clears it when readable
-            local current = GetRaidTargetIndex("target")
-            SetRaidTarget("target", GW.NotSecretValue(current) and current == i and 0 or i)
+        -- SetRaidTarget is protected, blizzards secure action sets or clears the marker
+        f:SetAttribute("type", "raidtarget")
+        f:SetAttribute("marker", i)
+        f:RegisterForClicks("AnyUp", "AnyDown")
+        f:HookScript("OnClick", function(_, _, down)
+            if down then
+                PlaySound(1115)
+            end
         end)
 
         x = x + 44

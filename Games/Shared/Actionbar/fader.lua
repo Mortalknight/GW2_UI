@@ -22,6 +22,12 @@ local function actionBarFrameShow(f, instant)
     f.gw_FadeIn:Stop()
 
     f.gw_FadeShowing = true
+    -- mirrored as an attribute because the secure state driver snippet in
+    -- mainBarLayout.lua can only read attributes; never on Blizzard's own bars,
+    -- setting attributes on those taints them
+    if f.gw_IsGwFrame and not InCombatLockdown() then
+        f:SetAttribute("gw_FadeShowing", true)
+    end
     if f.gw_StateTrigger then
         EventRegistry:TriggerEvent("GW2_UI.ActionBarStateChanged")
     end
@@ -46,6 +52,12 @@ local function actionBarFrameHide(f, instant)
     f.gw_FadeIn:Stop()
 
     f.gw_FadeShowing = false
+    -- mirrored as an attribute because the secure state driver snippet in
+    -- mainBarLayout.lua can only read attributes; never on Blizzard's own bars,
+    -- setting attributes on those taints them
+    if f.gw_IsGwFrame and not InCombatLockdown() then
+        f:SetAttribute("gw_FadeShowing", false)
+    end
     for i = 1, 12 do
         f.gw_Buttons[i].cooldown:SetDrawBling(false)
     end

@@ -46,7 +46,7 @@ do
         end
     end
     register("cancel", CANCEL, NO, DECLINE)
-    register("confirm", YES, OKAY, ACCEPT, ACCEPT_ALT, QUIT_NOW)
+    register("confirm", YES, OKAY, ACCEPT, ACCEPT_ALT, QUIT_NOW, SAVE)
 end
 
 local function SetButtonFontStringColor(button, r, g, b, a)

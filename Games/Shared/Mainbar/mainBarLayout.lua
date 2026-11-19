@@ -132,7 +132,7 @@ local onstate_Barlayout = [=[
 
     -- only set the dbarmover frame to the correct position, based on scaling
     if newstate == "outcombat" and dbarmover and bbar and not dbar:GetAttribute("isMoved") and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
-        local y_off = mbrShown and 200 or 100
+        local y_off = (mbrShown and mbr:GetAttribute("gw_FadeShowing")) and 200 or 100
         dbarmover:ClearAllPoints()
         dbarmover:SetPoint("BOTTOMRIGHT", mbr, "BOTTOMRIGHT", 0, y_off)
     end
@@ -152,8 +152,8 @@ local onstate_Barlayout = [=[
     if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
         local buff_action = "none"
         if newstate == "incombat" or newstate == "outcombat" then
-            -- like the pet bar, the buffs must not cover a hover bar
-            buff_action = mbrShown and "high" or "low"
+            -- out of combat the buffs follow the fade of the bar, they only cover a part of its hover area
+            buff_action = mbrShown and (newstate == "incombat" or mbr:GetAttribute("gw_FadeShowing")) and "high" or "low"
         elseif newstate == "petb" then
             buff_action = "hide"
         elseif newstate == "obar" then

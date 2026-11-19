@@ -23,8 +23,10 @@ addChange("12.1.10", {
     {GW.Enum.ChangelogType.bug, [=[Trainer: the upcoming spells no longer switch the trainer filters, Blizzard could then block the train button as an action of GW2 UI]=]},
     {GW.Enum.ChangelogType.feature, [=[Objectives tracker: quests that are ready to turn in show a chest next to their title, it can be turned off in the tracker settings]=]},
     {GW.Enum.ChangelogType.feature, [=[Battleground HUD: can be moved and scaled with Move HUD]=]},
-    {GW.Enum.ChangelogType.bug, [=[Pet bar and buffs: stay above action bar 2 and 3 when those bars only show on mouse over or in combat, the bars can be hovered again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Pet bar: stays above action bar 2 when that bar only shows on mouse over or in combat, the bar can be hovered again]=]},
     {GW.Enum.ChangelogType.bug, [=[Chat: the battleground start no longer floods the chat with "players joined the battle" lines and errors; the chat keeps Blizzard's 128 lines again]=]},
+    {GW.Enum.ChangelogType.feature, [=[Immersive Questing: optional fullscreen layout with an animated intro, a walk-in animation and a toggle button and key binding; the bag closes when the fullscreen view opens]=]},
+    {GW.Enum.ChangelogType.bug, [=[Group manager: the target marker buttons work again, Blizzard blocked them as an action of GW2 UI]=]},
 })
 
 addChange("12.1.9", {

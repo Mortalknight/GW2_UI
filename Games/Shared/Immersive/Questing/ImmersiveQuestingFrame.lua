@@ -911,6 +911,10 @@ function GwImmersiveQuestFrameMixin:OnShow()
     end
     self.container.FadeIn:Play()
     if self.isFullscreen then
+        -- a quest started from an item leaves the bag open on top of the view
+        if GwBagFrame and GwBagFrame:IsShown() and not InCombatLockdown() then
+            GwBagFrame:Hide()
+        end
         self:playIntro()
     end
 end

@@ -181,7 +181,7 @@
         </Frames>
     </Frame>
 
-    <Button name="GwRaidMarkerButton" virtual="true">
+    <Button name="GwRaidMarkerButton" virtual="true" inherits="SecureActionButtonTemplate">
         <Size x="28" y="28" />
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
