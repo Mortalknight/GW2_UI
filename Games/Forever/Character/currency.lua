@@ -461,7 +461,7 @@ local function LoadCurrency(tabContainer)
         end
     end
     GW.HandleTrimScrollBar(TokenFrame.ScrollBar)
-    TokenFrame.ScrollBar:SetHideIfUnscrollable(true)
+    GW.HideScrollBarWhenUnscrollable(TokenFrame.ScrollBar)
     GW.HandleScrollControls(TokenFrame)
     hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
 

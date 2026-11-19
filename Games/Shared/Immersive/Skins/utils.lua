@@ -437,9 +437,19 @@ local function HandleTrimScrollBar(bar)
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
 
+-- blizzards SetHideIfUnscrollable writes a field its scroll bar reads on every update; written by us it taints
+-- each scroll, the scroll box builds its entries from there (guild roster: kick and promote get blocked)
+local function HideScrollBarWhenUnscrollable(scrollBar)
+    hooksecurefunc(scrollBar, "Update", function(self)
+        self:SetShown(self:HasScrollableExtent())
+    end)
+    scrollBar:SetShown(scrollBar:HasScrollableExtent())
+end
+GW.HideScrollBarWhenUnscrollable = HideScrollBarWhenUnscrollable
+
 function GW.SkinSlimScrollBar(scrollBar)
     HandleTrimScrollBar(scrollBar)
-    scrollBar:SetHideIfUnscrollable(true)
+    HideScrollBarWhenUnscrollable(scrollBar)
     scrollBar:SetWidth(6)
     local thumb = scrollBar:GetThumb()
     thumb.gwTex:SetWidth(4)

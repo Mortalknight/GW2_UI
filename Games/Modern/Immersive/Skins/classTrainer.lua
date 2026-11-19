@@ -168,7 +168,7 @@ local function ApplyClassTrainerSkin()
     GW.HandleScrollControls(ClassTrainerFrame)
     hooksecurefunc(ClassTrainerFrame.ScrollBox, "Update", SkinRows)
 
-    ClassTrainerFrame.ScrollBar:SetHideIfUnscrollable(true)
+    GW.HideScrollBarWhenUnscrollable(ClassTrainerFrame.ScrollBar)
 
     SkinSkillRow(ClassTrainerFrame.skillStepButton)
     ClassTrainerFrame.skillStepButton.gwSkinned = true

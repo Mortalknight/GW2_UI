@@ -121,7 +121,7 @@ local function LoadStatistics(tabContainer)
         end
     end
     GW.HandleTrimScrollBar(StatisticsFrame.ScrollBar)
-    StatisticsFrame.ScrollBar:SetHideIfUnscrollable(true)
+    GW.HideScrollBarWhenUnscrollable(StatisticsFrame.ScrollBar)
     GW.HandleScrollControls(StatisticsFrame)
     hooksecurefunc(StatisticsFrame.ScrollBox, "Update", UpdateStatisticsSkins)
 end

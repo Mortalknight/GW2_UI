@@ -467,7 +467,7 @@ local function setupGreetingPanelView()
     if not view or view == configuredGreetingPanelView then return false end
     configuredGreetingPanelView = view
 
-    GossipFrame.GreetingPanel.ScrollBar:SetHideIfUnscrollable(true)
+    GW.HideScrollBarWhenUnscrollable(GossipFrame.GreetingPanel.ScrollBar)
     view:SetPadding(10, 10, 10, 10, 0)
     view:SetPanExtent(32)
     view:SetElementExtentCalculator(function(_, elementData)

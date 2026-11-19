@@ -194,7 +194,7 @@ local function LoadQuestFrameSkin()
         if scrollBar.SetHideIfUnscrollable then
             GW.HandleTrimScrollBar(scrollBar)
             GW.HandleScrollControls(scrollFrame)
-            scrollBar:SetHideIfUnscrollable(true)
+            GW.HideScrollBarWhenUnscrollable(scrollBar)
             scrollBar:Update()
         else
             scrollBar:GwSkinScrollBar()

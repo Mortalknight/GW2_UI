@@ -27,6 +27,7 @@ addChange("12.1.10", {
     {GW.Enum.ChangelogType.bug, [=[Chat: the battleground start no longer floods the chat with "players joined the battle" lines and errors; the chat keeps Blizzard's 128 lines again]=]},
     {GW.Enum.ChangelogType.feature, [=[Immersive Questing: optional fullscreen layout with an animated intro, a walk-in animation and a toggle button and key binding; the bag closes when the fullscreen view opens]=]},
     {GW.Enum.ChangelogType.bug, [=[Group manager: the target marker buttons work again, Blizzard blocked them as an action of GW2 UI]=]},
+    {GW.Enum.ChangelogType.bug, [=[Skins: scrolling the guild roster and other skinned Blizzard lists no longer taints them, removing or promoting guild members was blocked as an action of GW2 UI]=]},
 })
 
 addChange("12.1.9", {

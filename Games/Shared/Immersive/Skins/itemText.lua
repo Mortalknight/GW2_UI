@@ -27,7 +27,7 @@ local function SkinScrollFrame()
     if scrollBar.SetHideIfUnscrollable then
         GW.HandleTrimScrollBar(scrollBar)
         GW.HandleScrollControls(ItemTextScrollFrame)
-        scrollBar:SetHideIfUnscrollable(true)
+        GW.HideScrollBarWhenUnscrollable(scrollBar)
         scrollBar:Update()
     else
         scrollBar:GwSkinScrollBar()

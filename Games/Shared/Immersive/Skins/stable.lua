@@ -283,7 +283,7 @@ local function SkinRetailStable()
     list.ListCounter:SetPoint("LEFT", list.ListName, "RIGHT", 12, 0)
     GW.HandleTrimScrollBar(list.ScrollBar)
     GW.HandleScrollControls(list)
-    list.ScrollBar:SetHideIfUnscrollable(true)
+    GW.HideScrollBarWhenUnscrollable(list.ScrollBar)
     hooksecurefunc(list.ScrollBox, "Update", SkinRows)
 
     local filterBar = list.FilterBar

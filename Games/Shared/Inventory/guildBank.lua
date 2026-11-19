@@ -172,7 +172,7 @@ local function SkinScrollFrames()
     if GuildBankFrame.Log.ScrollBar then
         GW.HandleTrimScrollBar(GuildBankFrame.Log.ScrollBar)
         GW.HandleScrollControls(GuildBankFrame.Log)
-        GuildBankFrame.Log.ScrollBar:SetHideIfUnscrollable(true)
+        GW.HideScrollBarWhenUnscrollable(GuildBankFrame.Log.ScrollBar)
     else
         GuildBankTransactionsScrollFrame:GwStripTextures()
         GuildBankTransactionsScrollFrameScrollBar:GwSkinScrollBar()

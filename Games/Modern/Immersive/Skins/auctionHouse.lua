@@ -207,7 +207,7 @@ end
 -- scrollBarInset {x, y} and smallRefresh for the 22px refresh buttons of the own auctions
 local function SkinList(list, options)
 	GW.HandleTrimScrollBar(list.ScrollBar)
-	list.ScrollBar:SetHideIfUnscrollable(true)
+	GW.HideScrollBarWhenUnscrollable(list.ScrollBar)
 	GW.HandleScrollControls(list)
 	if options.scrollBarInset then
 		local x, y = unpack(options.scrollBarInset)
@@ -504,7 +504,7 @@ local function ApplyAuctionHouseSkin()
 	tokenResults.Buyout:GwSkinButton(false, true)
 	GW.HandleTrimScrollBar(tokenResults.DummyScrollBar)
 	GW.HandleScrollControls(tokenResults, "DummyScrollBar")
-	tokenResults.DummyScrollBar:SetHideIfUnscrollable(true)
+	GW.HideScrollBarWhenUnscrollable(tokenResults.DummyScrollBar)
 	SkinDialog(tokenResults.TokenDisplay)
 	local tokenButton = tokenResults.TokenDisplay.ItemButton
 	GW.HandleIcon(tokenButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)

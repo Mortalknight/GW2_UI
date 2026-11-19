@@ -70,7 +70,7 @@ end
 local function SkinScroll(frame)
     GW.HandleTrimScrollBar(frame.ScrollBar)
     GW.HandleScrollControls(frame)
-    frame.ScrollBar:SetHideIfUnscrollable(true)
+    GW.HideScrollBarWhenUnscrollable(frame.ScrollBar)
 end
 
 -- blizzard re-textures the entries in every initialization
