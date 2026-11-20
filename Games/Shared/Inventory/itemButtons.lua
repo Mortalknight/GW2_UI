@@ -158,48 +158,50 @@ local function UpdateOwnContainerItemButton(button, force)
 end
 GW.UpdateOwnContainerItemButton = UpdateOwnContainerItemButton
 
--- forever's gamepad interface: X uses the selected item, Y destroys it after blizzards confirmation.
--- Using one is protected, so while a slot is selected X is bound to a secure button that right-clicks
--- it; bindings can only change out of combat, combat start clears them and combat end sets them again
-local gamepadUse, gamepadDestroy
+-- forever's gamepad interface: X right-clicks the selected item (use, sell, store), Y destroys it after
+-- blizzards confirmation. Both keys are bound straight to the selected slot; bindings only change out of
+-- combat, so the fight drops them and its end binds the selection again
+local padKeys, padSlot
 
-local function itemButton_OnSmartNavSelect(self)
-    if not InCombatLockdown() then
-        gamepadUse:SetAttribute("clickbutton2", self)
-        gamepadDestroy.slot = self
-        SetOverrideBindingClick(gamepadUse, true, "PAD3", "GwGamepadItemUse", "RightButton")
-        SetOverrideBindingClick(gamepadUse, true, "PAD4", "GwGamepadItemDestroy")
+local function BindPadKeys(slot)
+    padSlot = slot
+    if InCombatLockdown() then
+        return
+    end
+    ClearOverrideBindings(padKeys)
+    local slotName = slot and slot:GetName()
+    if slotName then
+        SetOverrideBindingClick(padKeys, true, "PAD3", slotName, "RightButton")
+        SetOverrideBindingClick(padKeys, true, "PAD4", padKeys:GetName())
     end
 end
 
-local function itemButton_OnSmartNavDeselect()
-    if not InCombatLockdown() then
-        ClearOverrideBindings(gamepadUse)
+local function itemButton_OnSmartNavSelect(self)
+    BindPadKeys(self)
+end
+
+local function itemButton_OnSmartNavDeselect(self)
+    if padSlot == self then
+        BindPadKeys(nil)
     end
 end
 
 if GW.Gamepad.IsInterface() then
-    gamepadUse = CreateFrame("Button", "GwGamepadItemUse", UIParent, "SecureActionButtonTemplate")
-    gamepadUse:SetAttribute("type2", "click")
-    gamepadUse:RegisterForClicks("AnyDown")
-    gamepadUse:RegisterEvent("PLAYER_REGEN_DISABLED")
-    gamepadUse:RegisterEvent("PLAYER_REGEN_ENABLED")
-    gamepadUse:SetScript("OnEvent", function(self, event)
+    padKeys = CreateFrame("Button", "GwGamepadItemDestroy", UIParent)
+    padKeys:SetScript("OnClick", function()
+        local item = padSlot and Item:CreateFromBagAndSlot(padSlot:GetBagID(), padSlot:GetID())
+        if item and not item:IsItemEmpty() then
+            C_Item.ConfirmDeleteItem(item:GetItemGUID())
+        end
+    end)
+    padKeys:RegisterEvent("PLAYER_REGEN_DISABLED")
+    padKeys:RegisterEvent("PLAYER_REGEN_ENABLED")
+    padKeys:SetScript("OnEvent", function(self, event)
         if event == "PLAYER_REGEN_DISABLED" then
             ClearOverrideBindings(self)
         else
-            local button = SmartNavigation:GetCurrentButton()
-            if button and button.OnSmartNavSelect == itemButton_OnSmartNavSelect then
-                itemButton_OnSmartNavSelect(button)
-            end
-        end
-    end)
-
-    gamepadDestroy = CreateFrame("Button", "GwGamepadItemDestroy", UIParent)
-    gamepadDestroy:SetScript("OnClick", function(self)
-        local item = Item:CreateFromBagAndSlot(self.slot:GetBagID(), self.slot:GetID())
-        if not item:IsItemEmpty() then
-            C_Item.ConfirmDeleteItem(item:GetItemGUID())
+            -- the bag may have closed during the fight
+            BindPadKeys(padSlot and padSlot:IsVisible() and padSlot or nil)
         end
     end)
 end
@@ -239,14 +241,14 @@ local function EnsureItemButton(cf, index, iconSize, opts)
         button.gwSkinned = true
     end
 
-    if gamepadUse then
+    if padKeys then
         button.OnSmartNavSelect = itemButton_OnSmartNavSelect
         button.OnSmartNavDeselect = itemButton_OnSmartNavDeselect
     end
 
     -- No secure overlay for spell-item-targeting: the buttons inherit
     -- ContainerFrameItemButtonTemplate, whose OnClick is a secure template script and
-    -- handles the targeting UseContainerItem itself (Baganator relies on exactly this).
+    -- handles the targeting UseContainerItem itself.
     -- An overlay button would also make every ancestor unhideable in combat.
     cf.gw_items[index] = button
     allItemButtons[#allItemButtons + 1] = button

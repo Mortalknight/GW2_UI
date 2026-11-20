@@ -13,6 +13,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.11", {
+    {GW.Enum.ChangelogType.bug, [=[Gamepad (Forever): X uses the selected bag item also when actions are set to fire on key release]=]},
+    {GW.Enum.ChangelogType.change, [=[Bags: unusable items are marked by their level, class and armor or weapon skill]=]},
+})
+
 addChange("12.1.10", {
     {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): the immersive quest window and the installer work with the d-pad, buttons show their pad button like Blizzard's dialogs (A accept, B decline, X for the main action)]=]},
     {GW.Enum.ChangelogType.feature, [=[Gamepad (Forever): the quest tracker can be entered with the key binding "Objectives - Focus" or a macro with /click GwQuestTrackerGamepadFocus on a pad button, A opens a quest or uses its item, B leaves]=]},

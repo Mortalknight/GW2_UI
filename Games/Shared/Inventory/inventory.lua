@@ -364,110 +364,68 @@ GW.SetItemSlotQuality = SetItemSlotQuality
 -- flavor extras can decorate every item button after the shared quality skin ran
 -- (e.g. the equipment set name on mists), registered at file scope from the flavors
 local itemButtonDecorators = {}
--- Unusable detection through the tooltip: a red line means the character cannot use the
--- item, whatever the reason (level, class, proficiency, reputation) - the tooltip encodes
--- them all, in every locale. Three red lines that do NOT mean unusable are excluded, the
--- same set Baganator filters. Cached per item link; level ups and new skills can change
--- usability, so those bump the generation and invalidate every cached verdict at once.
+-- an item the character can not use: the level comes from the item data, class and armor or weapon skill
+-- from CanUseItem. Level ups and new skills change the answer, they start a new round of checks
 local unusableGeneration = 0
+-- UnitLevel still returns the old level while PLAYER_LEVEL_UP runs, the event carries the new one
+local levelUpLevel = 0
 
+-- profession skill ups fire SKILL_LINES_CHANGED often, the bags refresh once per frame
 local unusableWatcher = CreateFrame("Frame")
+unusableWatcher:Hide()
 unusableWatcher:RegisterEvent("PLAYER_LEVEL_UP")
 unusableWatcher:RegisterEvent("SKILL_LINES_CHANGED")
-unusableWatcher:SetScript("OnEvent", function()
+unusableWatcher:SetScript("OnEvent", function(self, event, level)
+    if event == "PLAYER_LEVEL_UP" then
+        levelUpLevel = level
+    end
     unusableGeneration = unusableGeneration + 1
     if GW.settings.bags.items.markUnusable then
-        GW.UpdateAllOwnBagItemButtons()
+        self:Show()
     end
 end)
+unusableWatcher:SetScript("OnUpdate", function(self)
+    self:Hide()
+    GW.UpdateAllOwnBagItemButtons()
+end)
 
-local function IsRedTooltipColor(r, g, b)
-    return r == 1 and g < 0.2 and b < 0.2
+-- nil while the item data is missing
+local function CheckItemUnusable(itemLink)
+    local _, _, _, _, minLevel = C_Item.GetItemInfo(itemLink)
+    if not minLevel then
+        return nil
+    end
+    if minLevel > math.max(levelUpLevel, UnitLevel("player")) then
+        return true
+    end
+    local itemID = C_Item.GetItemInfoInstant(itemLink)
+    return itemID ~= nil and C_PlayerInfo.CanUseItem ~= nil and not C_PlayerInfo.CanUseItem(itemID)
 end
 
--- a red left line means unusable, unless it is one of these three
-local function IsUnusableLeftLine(r, g, b, text)
-    return IsRedTooltipColor(r, g, b)
-        and text ~= ITEM_SCRAPABLE_NOT
-        and text ~= CANNOT_UNEQUIP_COMBAT
-        and text ~= ITEM_DISENCHANT_NOT_DISENCHANTABLE
-end
-
--- C_TooltipInfo carries the line colors directly, but its query functions only exist on
--- retail (the classic clients ship the namespace without them) - there a hidden scanning
--- tooltip provides the same lines through its font strings
-local function ScanBagItemForUnusable(bagID, slot)
-    if C_TooltipInfo and C_TooltipInfo.GetBagItem then
-        local data = C_TooltipInfo.GetBagItem(bagID, slot)
-        if data and data.lines then
-            for _, line in ipairs(data.lines) do
-                local c = line.leftColor
-                if c and IsUnusableLeftLine(c.r, c.g, c.b, line.leftText) then
-                    return true
-                end
-                c = line.rightColor
-                if c and IsRedTooltipColor(c.r, c.g, c.b) then
-                    return true
-                end
-            end
-        end
+local function IsItemUnusable(button, itemInfo)
+    local itemLink = itemInfo and itemInfo.hyperlink
+    if not itemLink then
         return false
     end
-
-
-    -- other scans hide the tooltip, without an owner it stays empty
-    GW.ScanTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-    GW.ScanTooltip:ClearLines()
-    if bagID == BANK_CONTAINER then
-        GW.ScanTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(slot))
-    else
-        GW.ScanTooltip:SetBagItem(bagID, slot)
-    end
-    -- line 1 is the item name, never a restriction
-    for i = 2, GW.ScanTooltip:NumLines() do
-        local left = _G["GW2_UIScanTooltipTextLeft" .. i]
-        if left and left:IsShown() then
-            local r, g, b = left:GetTextColor()
-            if IsUnusableLeftLine(r, g, b, left:GetText()) then
-                return true
-            end
-        end
-        local right = _G["GW2_UIScanTooltipTextRight" .. i]
-        if right and right:IsShown() then
-            local r, g, b = right:GetTextColor()
-            if IsRedTooltipColor(r, g, b) then
-                return true
-            end
-        end
-    end
-    return false
-end
-
-local function IsItemUnusable(bagID, button, itemInfo)
-    if not itemInfo or not itemInfo.hyperlink then
-        return false
-    end
-    if button.gwUnusableLink == itemInfo.hyperlink and button.gwUnusableGeneration == unusableGeneration then
+    if button.gwUnusableLink == itemLink and button.gwUnusableGeneration == unusableGeneration then
         return button.gwUnusable
     end
 
-    local cached = C_Item.GetItemInfo(itemInfo.hyperlink) ~= nil
-    button.gwUnusableLink = cached and itemInfo.hyperlink or nil
+    local unusable = CheckItemUnusable(itemLink)
     button.gwUnusableGeneration = unusableGeneration
-    button.gwUnusable = ScanBagItemForUnusable(bagID, button:GetID())
-
-    -- without item data the tooltip lacks the red lines; after a reload that is the whole bank
-    if not cached then
-        local item = Item:CreateFromItemLink(itemInfo.hyperlink)
-        if not item:IsItemDataCached() then
-            GW.ContinueOnItemLoad(item, function()
-                if button:IsVisible() then
-                    GW.UpdateOwnContainerItemButton(button, true)
-                end
-            end)
-        end
+    button.gwUnusableLink = unusable ~= nil and itemLink or nil
+    button.gwUnusable = unusable == true
+    -- after a reload the whole bank comes without item data
+    local item = unusable == nil and button.gwUnusableWaiting ~= itemLink and Item:CreateFromItemLink(itemLink)
+    if item and not item:IsItemDataCached() then
+        button.gwUnusableWaiting = itemLink
+        GW.ContinueOnItemLoad(item, function()
+            button.gwUnusableWaiting = nil
+            if button:IsVisible() then
+                GW.UpdateOwnContainerItemButton(button, true)
+            end
+        end)
     end
-
     return button.gwUnusable
 end
 
@@ -557,18 +515,11 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
 
         if button.gwOwnItemButton and GetItemButtonIconTexture then
             local icon = GetItemButtonIconTexture(button)
-            if GW.settings.bags.items.markUnusable and IsItemUnusable(bag_id, button, itemInfo) then
+            if GW.settings.bags.items.markUnusable and IsItemUnusable(button, itemInfo) then
                 icon:SetVertexColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
             else
                 icon:SetVertexColor(1, 1, 1)
             end
-        end
-
-        -- Show upgrade icon if active
-        if itemInfo and itemInfo.hyperlink and GW.settings.bags.items.upgradeIcon and button.UpgradeIcon then
-            GW.RegisterPawnUpgradeIcon(button, itemInfo.hyperlink)
-        elseif button.UpgradeIcon then
-            button.UpgradeIcon:Hide()
         end
 
         -- Show ilvl if active
