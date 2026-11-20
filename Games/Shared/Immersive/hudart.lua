@@ -20,6 +20,8 @@ local HUD_BACKGROUND_ARTS = {
     {key = "DEAD", file = "shadow_dead", hidden = true},
     {key = "BEAR", file = "shadow_bear", hidden = true},
     {key = "CAT", file = "shadow_cat", hidden = true},
+    {key = "BEAR_COMBAT", file = "shadow_bearcombat", hidden = true},
+    {key = "CAT_COMBAT", file = "shadow_catcombat", hidden = true},
 }
 local hudBackgroundArtByKey = {}
 for _, art in ipairs(HUD_BACKGROUND_ARTS) do
@@ -106,14 +108,14 @@ end
 -- same ids on every client, blizzards constant names differ (BEAR_FORM, DRUID_BEAR_FORM)
 local CAT_FORM_ID, BEAR_FORM_ID = 1, 5
 
-local function GetDruidFormArt()
+local function GetDruidFormArt(inCombat)
     if GW.myClassID ~= GW.Enum.ClassIndex.Druid then return end
 
     local form = GetShapeshiftFormID()
     if form == BEAR_FORM_ID then
-        return GetArt("BEAR")
+        return GetArt(inCombat and "BEAR_COMBAT" or "BEAR")
     elseif form == CAT_FORM_ID then
-        return GetArt("CAT")
+        return GetArt(inCombat and "CAT_COMBAT" or "CAT")
     end
 end
 
@@ -129,7 +131,8 @@ local function selectBg(self)
         left, right = GetArt("DEAD")
     end
 
-    local formLeft, formRight = GetDruidFormArt()
+    local inCombat = UnitAffectingCombat("player")
+    local formLeft, formRight = GetDruidFormArt(inCombat)
     if formLeft then
         left, right = formLeft, formRight
     end
@@ -138,7 +141,7 @@ local function selectBg(self)
         left, right = GetArt("DRAGON")
     end
 
-    if UnitAffectingCombat("player") then
+    if inCombat then
         left, right = GetArt(GW.settings.hud.backgroundArtCombat, "COMBAT")
 
         if formLeft then
