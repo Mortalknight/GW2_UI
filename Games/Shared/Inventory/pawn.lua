@@ -1,5 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
+local L = GW.L
 
 -- Pawn upgrade arrows through Pawns own throttled check; it answers nil while it is busy or the item has no
 -- data yet, those buttons ask again on the next frames
@@ -98,3 +99,12 @@ GW.RegisterItemButtonDecorator(function(button)
         button.UpgradeIcon:Hide()
     end
 end)
+
+GW.RegisterBagModule({
+    onMenu = function(_, _, addCheck)
+        if C_AddOns.IsAddOnLoaded("Pawn") then
+            addCheck(L["Show Upgrade Icon"], function() return GW.settings.bags.items.upgradeIcon end,
+                     function() GW.settings.bags.items.upgradeIcon = not GW.settings.bags.items.upgradeIcon; GW.UpdateAllOwnBagItemButtons() end, "bags.items.upgradeIcon")
+        end
+    end,
+})
