@@ -16,6 +16,7 @@ AddChange(string addonVersion, table changeList)
 addChange("12.1.11", {
     {GW.Enum.ChangelogType.bug, [=[Gamepad (Forever): X uses the selected bag item also when actions are set to fire on key release]=]},
     {GW.Enum.ChangelogType.change, [=[Bags: unusable items are marked by their level, class and armor or weapon skill]=]},
+    {GW.Enum.ChangelogType.feature, [=[HUD: druids in cat and bear form get a combat version of their form background]=]},
 })
 
 addChange("12.1.10", {
