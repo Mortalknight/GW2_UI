@@ -21,6 +21,8 @@ addChange("12.1.11", {
     {GW.Enum.ChangelogType.bug, [=[Pet bar: moves above action bar 2 while that bar shows, also on mouse over and in combat, and back down after combat or when the bar hides again]=]},
     {GW.Enum.ChangelogType.bug, [=[Gamepad (Forever): X uses the selected bag item also when actions are set to fire on key release]=]},
     {GW.Enum.ChangelogType.change, [=[Bags: unusable items are marked by their level, class and armor or weapon skill]=]},
+    {GW.Enum.ChangelogType.feature, [=[Bags (hunters and warlocks on Classic, TBC, Wrath and Forever): new "Separate class bags" option - in the combined bag view quivers, ammo pouches and soul bags start on their own row behind the other bags, in the compact view each with its own free slot]=]},
+    {GW.Enum.ChangelogType.feature, [=[Bags and bank: hovering a bag in the bag bar highlights the item slots of that bag]=]},
     {GW.Enum.ChangelogType.feature, [=[HUD: druids in cat and bear form get a combat version of their form background]=]},
     {GW.Enum.ChangelogType.change, [=[Talents: with dual spec both specs show as cards with their main tree and points, a click shows a spec, a check marks the active one]=]},
     {GW.Enum.ChangelogType.bug, [=[Talents (Forever): a second spec that was never active shows an empty tree instead of a copy of the active one]=]},

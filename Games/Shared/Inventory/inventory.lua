@@ -652,6 +652,23 @@ local function addItemSizeMenuEntries(rootDescription, prefix)
 end
 
 
+-- hovering a bag slot lights up the item slots of that bag
+local function hookBagHighlight(f, b, bagID)
+    b:HookScript("OnEnter", function()
+        local cf = f.Containers[bagID]
+        for slot = 1, cf and cf.gw_items and cf.gw_num_slots or 0 do
+            cf.gw_items[slot]:LockHighlight()
+        end
+    end)
+    -- all buttons, a bag swapped under the mouse can leave fewer slots than were lit
+    b:HookScript("OnLeave", function()
+        local cf = f.Containers[bagID]
+        for _, button in ipairs(cf and cf.gw_items or {}) do
+            button:UnlockHighlight()
+        end
+    end)
+end
+
 local function reskinBagBar(b, ha)
     local bag_size = 28
     local highlightAlpha = ha and ha or 0
@@ -1083,6 +1100,7 @@ local function LoadInventory()
     helpers.bag_OnMouseDown = function(...) return GW.BagSlotOnMouseDown(...) end
     helpers.addItemSizeMenuEntries = addItemSizeMenuEntries
     helpers.reskinBagBar = reskinBagBar
+    helpers.hookBagHighlight = hookBagHighlight
     helpers.reskinSearchBox = reskinSearchBox
     helpers.relocateSearchBox = relocateSearchBox
     helpers.disableBlizzardFrame = disableBlizzardFrame

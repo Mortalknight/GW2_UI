@@ -13,6 +13,9 @@ local GetInventorySlotInfo = C_PaperDollInfo and C_PaperDollInfo.GetInventorySlo
 local HAS_KEYRING = (C_ActionBar and C_ActionBar.ShouldShowKeyring and C_ActionBar.ShouldShowKeyring()) or (IsKeyRingEnabled and IsKeyRingEnabled()) or false
 local HAS_REAGENT_BAG = (Constants.InventoryConstants and Constants.InventoryConstants.NumReagentBagSlots or 0) > 0
 local KEYRING_CONTAINER = (Enum.BagIndex and Enum.BagIndex.Keyring) or KEYRING_CONTAINER or -2
+-- quivers, ammo pouches and soul bags sit in the normal bag slots, only the flavors with ammo have them
+local HAS_CLASS_BAGS = (GW.Classic or GW.TBC or GW.Wrath or GW.Forever) and (GW.myclass == "HUNTER" or GW.myclass == "WARLOCK")
+local CLASS_BAG_FAMILIES = 7 -- quiver 1, ammo pouch 2, soul bag 4
 local REAGENT_CONTAINER = (Enum.BagIndex and Enum.BagIndex.ReagentBag) or (NUM_BAG_SLOTS + 1)
 -- the last container id of the contiguous held bag range (backpack, bags, reagent bag)
 local LAST_HELD_BAG = HAS_REAGENT_BAG and REAGENT_CONTAINER or NUM_BAG_SLOTS
@@ -42,6 +45,27 @@ end
 local function isKeyringOpen()
     local cf = GwBagFrame and GwBagFrame.ItemFrame.Containers[KEYRING_CONTAINER]
     return cf and cf.shouldShow or false
+end
+
+local function isClassBag(section, cf)
+    return section.id > BACKPACK_CONTAINER and section.id <= NUM_BAG_SLOTS
+        and bit.band(cf.gw_bag_family or 0, CLASS_BAG_FAMILIES) > 0
+end
+
+-- the class bags move behind the other bags, ahead of the reagent bag and the keyring
+local orderedSections = {}
+local function sectionsWithClassBagsBehind(f)
+    wipe(orderedSections)
+    for group = 1, 3 do
+        for _, section in ipairs(BAG_SECTIONS) do
+            local sectionGroup = (section.isReagentBag or section.isKeyring) and 3
+                or isClassBag(section, f.Containers[section.id]) and 2 or 1
+            if sectionGroup == group then
+                orderedSections[#orderedSections + 1] = section
+            end
+        end
+    end
+    return orderedSections
 end
 
 --[[
@@ -126,13 +150,14 @@ end
 -- must never be a drop target, and bag index 5 would be a bank bag on the classic flavors
 -- a free slot that actually accepts what is on the cursor: profession bags and the
 -- reagent bag only take their own item family, family 0 means a plain bag
-local function findFreeSlotForCursor(fromBag, toBag)
+local function findFreeSlotForCursor(fromBag, toBag, skipClassBags)
     local cursorType, cursorItemID = GetCursorInfo()
     local itemFamily = (cursorType == "item" and cursorItemID) and C_Item.GetItemFamily(cursorItemID) or 0
 
     for bag = fromBag, toBag do
         local free, family = C_Container.GetContainerNumFreeSlots(bag)
-        if free and free > 0 and (not family or family == 0 or (itemFamily and itemFamily > 0 and bit.band(itemFamily, family) > 0)) then
+        local skip = skipClassBags and bit.band(family or 0, CLASS_BAG_FAMILIES) > 0
+        if not skip and free and free > 0 and (not family or family == 0 or (itemFamily and itemFamily > 0 and bit.band(itemFamily, family) > 0)) then
             local slots = C_Container.GetContainerFreeSlots(bag)
             if slots and slots[1] then
                 return bag, slots[1]
@@ -141,10 +166,14 @@ local function findFreeSlotForCursor(fromBag, toBag)
     end
 end
 
-local function countFreeSlots(fromBag, toBag)
+-- with the class bags set apart they have their own placeholders, the bag one leaves them out
+local function countFreeSlots(fromBag, toBag, skipClassBags)
     local free = 0
     for bag = fromBag, toBag do
-        free = free + (C_Container.GetContainerNumFreeSlots(bag) or 0)
+        local bagFree, family = C_Container.GetContainerNumFreeSlots(bag)
+        if not (skipClassBags and bit.band(family or 0, CLASS_BAG_FAMILIES) > 0) then
+            free = free + (bagFree or 0)
+        end
     end
     return free
 end
@@ -154,7 +183,7 @@ local function emptySlot_OnClick(self)
     if not GetCursorInfo() then
         return
     end
-    local bag, slot = findFreeSlotForCursor(self.gwFromBag, self.gwToBag)
+    local bag, slot = findFreeSlotForCursor(self.gwFromBag, self.gwToBag, self.gwSkipClassBags)
     if bag then
         C_Container.PickupContainerItem(bag, slot)
     end
@@ -164,7 +193,7 @@ local function emptySlot_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:ClearLines()
     GameTooltip_SetTitle(GameTooltip, L["Free Slots"])
-    GameTooltip:AddLine(tostring(countFreeSlots(self.gwFromBag, self.gwToBag)), 1, 1, 1)
+    GameTooltip:AddLine(tostring(countFreeSlots(self.gwFromBag, self.gwToBag, self.gwSkipClassBags)), 1, 1, 1)
     GameTooltip:Show()
 end
 
@@ -197,7 +226,7 @@ local function getEmptySlot(f, key)
 end
 
 -- closes a section with half a slot of air as separation, returns the new flow position
-local function placeEmptySlot(f, key, fromBag, toBag, col, row, max_col, item_off_x, item_off_y)
+local function placeEmptySlot(f, key, fromBag, toBag, col, row, max_col, item_off_x, item_off_y, skipClassBags)
     local slot = getEmptySlot(f, key)
     local gapX = item_off_x * 0.5
     if col >= max_col then
@@ -206,11 +235,11 @@ local function placeEmptySlot(f, key, fromBag, toBag, col, row, max_col, item_of
         gapX = 0
     end
 
-    slot.gwFromBag, slot.gwToBag = fromBag, toBag
+    slot.gwFromBag, slot.gwToBag, slot.gwSkipClassBags = fromBag, toBag, skipClassBags
     slot:SetSize(GW.settings.bags.bag.itemSize, GW.settings.bags.bag.itemSize)
     slot:ClearAllPoints()
     slot:SetPoint("TOPLEFT", f, "TOPLEFT", col * item_off_x + gapX, -row * item_off_y)
-    slot.count:SetText(countFreeSlots(fromBag, toBag))
+    slot.count:SetText(countFreeSlots(fromBag, toBag, skipClassBags))
     slot:Show()
 
     col = col + 1
@@ -251,10 +280,18 @@ local function layoutBagItems(f)
     local col, row = 0, 0
     local bagSlotPlaced = false
     local reagentSlotPlaced = false
+    local classBagsApart = HAS_CLASS_BAGS and settings.separateClassBags and not sep
+    local prevClassBag = false
 
-    local numSections = #BAG_SECTIONS
+    local sections = classBagsApart and sectionsWithClassBagsBehind(f) or BAG_SECTIONS
+    for id = 1, NUM_BAG_SLOTS do
+        if f["gwEmptyClassSlot" .. id] then
+            f["gwEmptyClassSlot" .. id]:Hide()
+        end
+    end
+    local numSections = #sections
     for n = 1, numSections do
-        local section = BAG_SECTIONS[rev and (numSections - n + 1) or n]
+        local section = sections[rev and (numSections - n + 1) or n]
         local cf = f.Containers[section.id]
         local header = parent["bagHeader" .. section.header]
         local hasSlots = cf.gw_num_slots > 0
@@ -287,16 +324,25 @@ local function layoutBagItems(f)
                 (section.isReagentBag and settings.separateReagentBag)
                 or (section.isKeyring and settings.separateKeyring)
             )
-            if setOff and not rev then
+            -- the class bags are one block, the gap goes on the side facing the other bags
+            local isClass = classBagsApart and isClassBag(section, cf)
+            local classGap = hasSlots and classBagsApart and (rev and prevClassBag and not isClass or not rev and isClass and not prevClassBag)
+            if hasSlots then
+                prevClassBag = isClass
+            end
+            if (setOff and not rev) or classGap then
                 -- close the bag rows with their own placeholder before the gap
-                if compact and not bagSlotPlaced then
-                    col, row = placeEmptySlot(f, "gwEmptySlot", BACKPACK_CONTAINER, NUM_BAG_SLOTS, col, row, max_col, item_off_x, item_off_y)
+                if compact and not rev and not bagSlotPlaced then
+                    col, row = placeEmptySlot(f, "gwEmptySlot", BACKPACK_CONTAINER, NUM_BAG_SLOTS, col, row, max_col, item_off_x, item_off_y, classBagsApart)
                     bagSlotPlaced = true
                 end
                 col, row = closeRow(col, row, 0.5)
             end
             col, row = lcf(cf, max_col, row, col, false, item_off_x, item_off_y)
             cf:Show()
+            if compact and isClass then
+                col, row = placeEmptySlot(f, "gwEmptyClassSlot" .. section.id, section.id, section.id, col, row, max_col, item_off_x, item_off_y)
+            end
             if compact and section.isReagentBag and hasSlots then
                 col, row = placeEmptySlot(f, "gwEmptyReagentSlot", REAGENT_CONTAINER, REAGENT_CONTAINER, col, row, max_col, item_off_x, item_off_y)
                 reagentSlotPlaced = true
@@ -308,7 +354,7 @@ local function layoutBagItems(f)
     end
 
     if compact and not bagSlotPlaced then
-        col, row = placeEmptySlot(f, "gwEmptySlot", BACKPACK_CONTAINER, NUM_BAG_SLOTS, col, row, max_col, item_off_x, item_off_y)
+        col, row = placeEmptySlot(f, "gwEmptySlot", BACKPACK_CONTAINER, NUM_BAG_SLOTS, col, row, max_col, item_off_x, item_off_y, classBagsApart)
     end
     if f.gwEmptySlot and not compact then
         f.gwEmptySlot:Hide()
@@ -556,6 +602,7 @@ local function createBagBar(f)
     bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
     bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
     f.bags[BACKPACK_CONTAINER] = bp
+    inv.hookBagHighlight(f, bp, BACKPACK_CONTAINER)
     -- the count is our free slots display inside the bag frame, keep it visible
     -- regardless of blizzards displayFreeBagSlots cvar handling
     local function updateBackpackFreeSlots()
@@ -582,6 +629,7 @@ local function createBagBar(f)
         b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
 
         inv.reskinBagBar(b)
+        inv.hookBagHighlight(f, b, bag_idx)
 
         f.bags[bag_idx] = b
     end
@@ -597,11 +645,13 @@ local function createBagBar(f)
         b:SetScript("OnClick", bag_OnClick)
         b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
         inv.reskinBagBar(b)
+        inv.hookBagHighlight(f, b, REAGENT_CONTAINER)
         f.bags[REAGENT_CONTAINER] = b
     end
     if HAS_KEYRING then
         -- the keyring is not a bag, its toggle goes behind the bag slots
         f.bags[#f.bags + 1] = createKeyringButton(f)
+        inv.hookBagHighlight(f, f.bags[#f.bags], KEYRING_CONTAINER)
     end
 
     setBagBarOrder(f)
@@ -1293,6 +1343,16 @@ local function LoadBag(helpers)
             keyringCheck:SetEnabled(function() return not GW.settings.bags.bag.separateBags end)
             keyringCheck:SetTooltip(function(tooltip, elementDescription)
                 tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
+                tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
+            end)
+        end
+        if HAS_CLASS_BAGS then
+            local classBagCheck = addCheck(L["Separate class bags"], function() return GW.settings.bags.bag.separateClassBags end,
+                     function() local ns = not GW.settings.bags.bag.separateClassBags; GW.settings.bags.bag.separateClassBags = ns; layoutItems(f); snapFrameSize(f) end, "bags.bag.separateClassBags")
+            classBagCheck:SetEnabled(function() return not GW.settings.bags.bag.separateBags end)
+            classBagCheck:SetTooltip(function(tooltip, elementDescription)
+                tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
+                tooltip:AddLine(L["Quivers, ammo pouches and soul bags start on their own row behind the other bags."], 1, 1, 1, true)
                 tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
             end)
         end

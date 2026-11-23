@@ -517,6 +517,7 @@ GW.globalDefault = {
                 separateBags = false,
                 separateKeyring = false,
                 separateReagentBag = false,
+                separateClassBags = false,
                 -- 0-4 backpack and bags, 5 reagent bag (retail/forever) or keyring (classic),
                 -- 6 keyring on forever, which has both
                 headerNames = {

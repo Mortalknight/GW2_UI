@@ -247,6 +247,7 @@ local function createBagBar(f)
         b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
 
         inv.reskinBagBar(b)
+        inv.hookBagHighlight(f, b, b:GetBagID())
 
         f.bags[bag_idx] = b
     end
@@ -266,6 +267,7 @@ local function createBagBar(f)
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b:RegisterForClicks("LeftButtonUp")
     b:SetScript("OnClick", CloseBankFrame)
+    inv.hookBagHighlight(f, b, BANK_CONTAINER)
     f.bags[0] = b
 
     setBagBarOrder(f)
@@ -277,7 +279,6 @@ local function updateBagBar(f)
     local bank_slots, full = GetNumBankSlots()
     for bag_idx = 1, NUM_BANKBAGSLOTS do
         local b = f.bags[bag_idx]
-        local bag_id = b:GetBagID()
         local inv_id = b:GetInventorySlot()
         local bag_tex = GetInventoryItemTexture("player", inv_id)
         local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)

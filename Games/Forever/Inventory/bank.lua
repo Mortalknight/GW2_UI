@@ -221,6 +221,7 @@ local function CreateBagBar(itemFrame)
     base:GetNormalTexture():SetVertexColor(1, 1, 1, 0.75)
     GW.SetItemButtonQualityForBags(base, 1)
     EnableTooltip(base, BANK, "ANCHOR_RIGHT", 0)
+    inv.hookBagHighlight(itemFrame, base, TabBagID(1))
     itemFrame.bags[1] = base
 
     for tabIndex = 2, NUM_TABS do
@@ -234,6 +235,7 @@ local function CreateBagBar(itemFrame)
         b:SetScript("OnEnter", BagSlot_OnEnter)
         b:SetScript("OnLeave", GameTooltip_Hide)
         inv.reskinBagBar(b)
+        inv.hookBagHighlight(itemFrame, b, TabBagID(tabIndex))
         itemFrame.bags[tabIndex] = b
     end
 
