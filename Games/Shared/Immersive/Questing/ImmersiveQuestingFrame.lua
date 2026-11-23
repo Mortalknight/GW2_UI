@@ -3,6 +3,7 @@ local GW = select(2, ...)
 local mapBGs = GW.immersiveQuesting.mapBackgrounds
 local instanceBGs = GW.immersiveQuesting.instanceBackgrounds
 local object_types = GW.immersiveQuesting.objectTypes
+local board_objects = GW.immersiveQuesting.boardObjects
 
 GwImmersiveQuestFrameMixin = {}
 
@@ -832,13 +833,17 @@ function GwImmersiveQuestFrameMixin:showQuestFrame()
         GW.Debug("attempted set unit:", did_set_unit)
         if not did_set_unit then
             -- could not set the model automatically, try to figure out some common cases
-            -- (TODO: some of these use English localized names, which only works for English clients)
-            if GW.NotSecretValue(npc_name) then
-                if npc_name == "Warchief's Command Board" then
-                    gm:SetBoardUnit("horde")
-                elseif npc_name == "Hero's Call Board" then
-                    gm:SetBoardUnit("alliance")
-                elseif object_types[npc_name] then
+            local guid = UnitGUID("questnpc")
+            local unitType, objectID
+            if GW.NotSecretValue(guid) and guid then
+                local _
+                unitType, _, _, _, _, objectID = strsplit("-", guid)
+            end
+            local board = unitType == "GameObject" and board_objects[tonumber(objectID)]
+            if board then
+                gm:SetBoardUnit(board)
+            elseif GW.NotSecretValue(npc_name) then
+                if object_types[npc_name] then
                     gm:SetModelUnit(object_types[npc_name])
                 else
                     -- if we can't figure out a better option, have the player read a scroll

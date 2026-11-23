@@ -17,7 +17,7 @@ local function HandleSearchBarFrame(Frame)
 	GW.SkinEditBox(Frame.SearchBox, {search = true})
 	Frame.FavoritesSearchButton:GwSkinButton(false, true)
 	Frame.FavoritesSearchButton.Icon:SetDesaturated(true)
-	hooksecurefunc(Frame.FavoritesSearchButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end) --TODO
+	hooksecurefunc(Frame.FavoritesSearchButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
 	Frame.FavoritesSearchButton:SetSize(22, 23)
 	Frame.FavoritesSearchButton:ClearAllPoints()
 	Frame.FavoritesSearchButton:SetPoint("LEFT", 0, 0)

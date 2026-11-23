@@ -87,7 +87,15 @@ GW.immersiveQuesting.boardTypes = {
     --]]
 }
 
--- object name to fileid lookups
+-- quest boards by object id, their names differ per client language
+GW.immersiveQuesting.boardObjects = {
+    [206111] = "alliance", [206294] = "alliance", [207320] = "alliance", [207321] = "alliance", [207322] = "alliance",
+    [208316] = "alliance", [250804] = "alliance", [278574] = "alliance", [278575] = "alliance", [281339] = "alliance",
+    [206109] = "horde", [206116] = "horde", [207279] = "horde", [207323] = "horde", [207324] = "horde",
+    [207325] = "horde", [208317] = "horde", [278347] = "horde", [278457] = "horde", [281340] = "horde",
+}
+
+-- object name to fileid lookups; the names are English, other clients fall back to the reading player
 GW.immersiveQuesting.objectTypes = {
     ["Danger Sign"] = 319484,
     ["Fel Portal"] = 1268729,

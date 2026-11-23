@@ -21,6 +21,7 @@ addChange("12.1.11", {
     {GW.Enum.ChangelogType.change, [=[Talents: with dual spec both specs show as cards with their main tree and points, a click shows a spec, a check marks the active one]=]},
     {GW.Enum.ChangelogType.bug, [=[Talents (Forever): a second spec that was never active shows an empty tree instead of a copy of the active one]=]},
     {GW.Enum.ChangelogType.bug, [=[Immersive Questing: zones without an own background, Kezan, the Darkmoon Faire, the Exile's Reach, the Telogrus Rift and the North Sea show a background again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Immersive Questing: the Hero's Call and Warchief's Command boards show their board on every client language, not only on English ones]=]},
 })
 
 addChange("12.1.10", {

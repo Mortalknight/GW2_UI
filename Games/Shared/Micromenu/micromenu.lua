@@ -396,7 +396,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
     end
     if name == "SpellbookMicroButton" then name = "PlayerSpellsMicroButton" end
     if name == "SocialsMicroButton" then name = "GuildMicroButton" end
-    if name == "LegacyMicroButton" then name = "AchievementMicroButton" end -- temp till we have a own texture (TODO)
+    if name == "LegacyMicroButton" then name = "AchievementMicroButton" end
     local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-up.png"
 
     btn:SetSize(24, 24)
@@ -406,7 +406,6 @@ local function reskinMicroButton(btn, name, mbf, hook)
     btn:SetPushedTexture(tex)
     btn:SetHighlightTexture(tex)
 
-    -- temp till we have a own texture (TODO)
     if name == "HousingMicroButton" then
         btn:GetNormalTexture():SetDesaturated(true)
         btn:GetDisabledTexture():SetDesaturated(true)

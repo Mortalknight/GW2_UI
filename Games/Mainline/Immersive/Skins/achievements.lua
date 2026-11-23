@@ -1,10 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 local L = GW.L
---[[
-TODO
-Background alignment after comparison
-]]
 
 local AchievementBackgroundTextures = {
     blue = "Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg.png",

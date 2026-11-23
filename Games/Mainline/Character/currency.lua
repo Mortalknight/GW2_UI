@@ -3,9 +3,10 @@ local GW = select(2, ...)
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 
 local selectedLongInstanceID = nil
+local CURRENCY_TRANSFER_LOG_EVENTS = {
+    "CURRENCY_TRANSFER_LOG_UPDATE",
+}
 
-
---TODO SKINNING
 local function transferHistorySetup(self)
     self:InitializeFrameVisuals()
     self:InitializeScrollBox()
@@ -14,16 +15,12 @@ local function transferHistorySetup(self)
     self.CloseButton:GwKill()
     self.TitleContainer.TitleText:Hide()
 
-    local CURRENCY_TRANSFER_LOG_EVENTS = {
-        "CURRENCY_TRANSFER_LOG_UPDATE",
-    }
-
     self:SetScript("OnShow", function()
-        FrameUtil.RegisterFrameForEvents(self, CURRENCY_TRANSFER_LOG_EVENTS);
+        FrameUtil.RegisterFrameForEvents(self, CURRENCY_TRANSFER_LOG_EVENTS)
         self:Refresh()
     end)
     self:SetScript("OnHide", function()
-        FrameUtil.UnregisterFrameForEvents(self, CURRENCY_TRANSFER_LOG_EVENTS);
+        FrameUtil.UnregisterFrameForEvents(self, CURRENCY_TRANSFER_LOG_EVENTS)
     end)
 
     self:Hide()
