@@ -596,7 +596,7 @@ elseif GW.Wrath then
             { IC.Navy, 130 }, -- Slow Fall
         }),
         DEATHKNIGHT = Indicators({
-            -- TODO: Hysteria / Unholy Frenzy
+            { IC.Mint, 49016 }, -- Hysteria
         })
     }
 elseif GW.Forever then
@@ -1006,7 +1006,7 @@ elseif GW.Wrath then
         [48155]	= 3, -- Mind Flay (Rank 8)
         [48156]	= 3, -- Mind Flay (Rank 9)
         [64843]	= 4, -- Divine Hymn
-        [64901]	= 4, -- Hymn of Hope -- TODO: Accurate without glyph - with glyph it is 5 ticks
+        [64901]	= 4, -- Hymn of Hope, 5 with its glyph
         [48045]	= 5, -- Mind Sear (Rank 1)
         [53023]	= 5, -- Mind Sear (Rank 2)
         [47540]	= 2, -- Penance (Rank 1) (Dummy)

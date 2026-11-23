@@ -21,7 +21,7 @@ if GW.Retail then
     DODGEBAR_SPELLS.SHAMAN = "2645" -- Spirit Walk if Enhance
     DODGEBAR_SPELLS.MAGE = "[known:212653] 212653; 1953" -- Shimmer if talented, else Blink
     DODGEBAR_SPELLS_ATTR.MAGE = "1953" -- use Blink instead of Shimmer for the button attr
-    DODGEBAR_SPELLS.WARLOCK = "48020" -- Demonic Circle: Teleport; TODO disable when Demonic Circle buff not active
+    DODGEBAR_SPELLS.WARLOCK = "48020" -- Demonic Circle: Teleport, dims without a placed circle
     DODGEBAR_SPELLS.MONK = "[known:115008]115008; 109132" -- Chi Torpedo if talented, else Roll
     DODGEBAR_SPELLS_ATTR.MONK = "109132" -- use Roll instead of Chi Torpedo for the button attr
     DODGEBAR_SPELLS.DRUID = "[known:252216] 252216; [known:16979,form:1] 16979; [known:49376,form:2] 49376; [known:102416,form:3,swimming] 102416; [known:102417,form:3] 102417; [known:102383,form:4] 102383; [known:102401] 102401; 1850" -- Tiger Dash if talented, else Wild Charge if talented (with all its sub-details for different forms), else Dash
@@ -36,7 +36,7 @@ elseif GW.Mists then
     DODGEBAR_SPELLS.MAGE = "1953" -- Shimmer if talented, else Blink
     DODGEBAR_SPELLS.MONK = "[known:115173] 121827; 109132"-- Chi Torpedo if talented, else Roll
     DODGEBAR_SPELLS_ATTR.MONK = "109132"
-    DODGEBAR_SPELLS.WARLOCK = "48020" -- Demonic Circle: Teleport; TODO disable when Demonic Circle buff not active
+    DODGEBAR_SPELLS.WARLOCK = "48020" -- Demonic Circle: Teleport, dims without a placed circle
     DODGEBAR_SPELLS.DRUID = "9821"
     DODGEBAR_SPELLS.DEATHKNIGHT = "444347,48265" -- Death's Advance
     DODGEBAR_SPELLS.SHAMAN = "[spec:2] 58875,2645" -- Spirit Walk if Enhance
@@ -329,9 +329,26 @@ function GwDodgeBarMixin:InitBar(pew)
     end
 end
 
+-- the warlock teleport only works with a placed demonic circle
+local TRACKS_USABLE = GW.myclass == "WARLOCK"
+
+function GwDodgeBarMixin:UpdateUsable()
+    if not self.spellId then
+        self.arcfill:SetAlpha(1)
+        return
+    end
+    local usable = C_Spell.IsSpellUsable(self.spellId)
+    if GW.NotSecretValue(usable) then
+        self.arcfill:SetAlpha(usable and 1 or 0.35)
+    end
+end
+
 function GwDodgeBarMixin:SetupBar()
     -- get additional details about our dodge spell that often aren't available immediately on
     -- PLAYER_ENTERING_WORLD
+    if TRACKS_USABLE then
+        self:UpdateUsable()
+    end
     if not self.spellId or not C_Spell.GetSpellInfo(self.spellId) then
         return
     end
@@ -387,7 +404,9 @@ function GwDodgeBarMixin:SetupBar()
 end
 
 function GwDodgeBarMixin:OnEvent(event, ...)
-    if event == "UNIT_SPELLCAST_SUCCEEDED" then
+    if event == "SPELL_UPDATE_USABLE" then
+        self:UpdateUsable()
+    elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
         -- we don't track anything until we first see our dodge skill cast
         local spellId = select(3, ...)
         if spellId ~= self.spellId then return end
@@ -646,6 +665,9 @@ function GwDodgeBarMixin:ToggleDodgeBar()
         self:RegisterEvent("PLAYER_ENTERING_WORLD")
         self:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
         self:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+        if TRACKS_USABLE then
+            self:RegisterEvent("SPELL_UPDATE_USABLE")
+        end
         self:InitBar(false)
         self:SetupBar()
     else
@@ -657,6 +679,7 @@ function GwDodgeBarMixin:ToggleDodgeBar()
         self:UnregisterEvent("PLAYER_ENTERING_WORLD")
         self:UnregisterEvent("UPDATE_SHAPESHIFT_FORM")
         self:UnregisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+        self:UnregisterEvent("SPELL_UPDATE_USABLE")
         self:Hide()
     end
 end

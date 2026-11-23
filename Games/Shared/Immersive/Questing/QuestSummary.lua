@@ -85,9 +85,8 @@ function GwImmersiveQuestingSummaryFrameMixin:UpdateRewards()
     end
     self.has_rewards = true
 
-    -- restyle and then steal Blizz's quest reward frame
-    -- TODO: not a fan of just stealing the blizz reward panel despite the simplicity
-    -- see Blizzard_UIPanels_Game/Mainline/QuestInfo.xml to clone/mimic this eventually
+    -- restyle and then borrow Blizz's quest reward frame: our reward skin, the most valuable choice marker,
+    -- the Pawn advice and every new reward type of each client come along with it
     local qinfoHeight = 300
     --local qinfoTop = -20
     self.old_height = f_rwd:GetHeight()

@@ -452,8 +452,6 @@ local function evAddonLoaded(self, loadedAddonName)
     Debug("OK~EVENT~In ADDON_LOADED event")
 
     GW.LoadStorage()
-    -- TODO: A lot of what happens in player login should probably happen here instead
-
     -- check for DeModal
     local _, _, _, enabled = C_AddOns.GetAddOnInfo("DeModal")
     GW.HasDeModal = enabled
@@ -809,7 +807,7 @@ local function evPlayerLogin(self)
     end
 
     if GW.settings.groupFrames.enabled then
-        GW.InitializeRaidFrames() --TODO
+        GW.InitializeRaidFrames()
     end
 
     GW.UpdateHudScale()

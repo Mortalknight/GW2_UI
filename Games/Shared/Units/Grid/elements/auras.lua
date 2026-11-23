@@ -404,10 +404,10 @@ end
 --
 -- Group model (one container, everything flows together from the bottom right
 -- like the old element):
---   * importantDispellable / importantOnly: GW.ImportantRaidDebuff via
---     includeSpellIDs, sized by the important/dispel scale priority
+--   * importantDispellable / importantOnly: blizzards boss aura flag (isBossAura),
+--     sized by the important/dispel scale priority
 --   * dispellableDebuffs: RAID_PLAYER_DISPELLABLE token, dispel scale
---   * debuffs: everything else (important ids excluded, so nothing shows twice);
+--   * debuffs: everything else (boss auras excluded, so nothing shows twice);
 --     advanced filter branches replace this group when filters are selected
 --   * buffs: base group, advanced filter branches replace it when selected
 -- ========================================================================

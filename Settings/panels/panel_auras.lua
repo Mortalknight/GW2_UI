@@ -45,14 +45,10 @@ local function LoadGroupAuraPanels(p)
             GW.ImportantRaidDebuff[spellID] = settingstable[spellID] == nil and true or settingstable[spellID]
         end
     end
+    -- modern clients take blizzards boss aura flag, spell id lists are ignored there for debuffs on friendly units
     p_auras:AddOptionDropdown(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], { getterSetter = "groupFrames.raidDebuffs", callback = function(toSet, id)
         GW.ImportantRaidDebuff[id] = toSet
-        -- the AuraContainers hold a securecopy of the includeSpellIDs map — the central
-        -- refresh re-applies every registered container (party, later grids, ...)
-        if GW.RefreshAllAuraContainers then
-            GW.RefreshAllAuraContainers()
-        end
-    end, optionsList = raidDebuffKeys, optionNames = raidDebuffValues, tooltipType = "spell", checkbox = true, group = "importantDebuffs"})
+    end, optionsList = raidDebuffKeys, optionNames = raidDebuffValues, tooltipType = "spell", checkbox = true, group = "importantDebuffs", hidden = GW.isModern})
     p_auras:AddOptionSlider(L["Set important Dungeon & Raid debuff scale"], nil, { getterSetter = "groupFrames.raidDebuffsScale", callback = function()
         GW.UpdateGridSettings("ALL", false)
         if GW.RefreshAllAuraContainers then

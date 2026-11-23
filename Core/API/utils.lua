@@ -931,7 +931,6 @@ end
 
 local function MixinHideDuringPet(f)
     if not f then return end
-    -- TODO: figure out how to do real mixins
     if f:IsProtected() then
         return securePetAndOverride(f, "petbattle")
     else

@@ -14,6 +14,8 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.11", {
+    {GW.Enum.ChangelogType.bug, [=[Party frames (Retail and Forever): the important dungeon and raid debuffs only show Blizzard's boss debuffs, like the raid frames; the debuff list in the aura settings only shows where it is used]=]},
+    {GW.Enum.ChangelogType.change, [=[Dodge bar: the warlock bar dims while no Demonic Circle is placed]=]},
     {GW.Enum.ChangelogType.bug, [=[Pet bar: moves above action bar 2 while that bar shows, also on mouse over and in combat, and back down after combat or when the bar hides again]=]},
     {GW.Enum.ChangelogType.bug, [=[Gamepad (Forever): X uses the selected bag item also when actions are set to fire on key release]=]},
     {GW.Enum.ChangelogType.change, [=[Bags: unusable items are marked by their level, class and armor or weapon skill]=]},

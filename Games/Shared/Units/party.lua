@@ -873,8 +873,8 @@ local function CreatePartyFrame(i, isPlayer)
                 -- pair via maxFrameCount in UpdatePartyAuraContainer)
                 { key = "debuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
                 { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 40, isDebuff = true, hideDuration = true },
-                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { isBossAura = true }, size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { isBossAura = true }, size = GW.settings.unitframes.party.auraIconSize - 6, maxFrameCount = 0, isDebuff = true, hideDuration = true },
             },
         })
     else
@@ -936,8 +936,8 @@ local function CreatePartyFrame(i, isPlayer)
                 -- pair via maxFrameCount in UpdatePartyAuraContainer)
                 { key = "debuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 40, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
                 { key = "debuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 40, isDebuff = true, hideDuration = true },
-                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
-                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { includeSpellIDs = GW.ImportantRaidDebuff }, size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 0, isDebuff = true, hideDuration = true },
+                { key = "importantDebuffsDispellable", filter = "HARMFUL|RAID_PLAYER_DISPELLABLE", candidateFilters = { isBossAura = true }, size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 0, isDebuff = true, hideDuration = true, showDispelIcon = true, dispelIconSize = 10 },
+                { key = "importantDebuffs", filter = "HARMFUL|!RAID_PLAYER_DISPELLABLE", candidateFilters = { isBossAura = true }, size = GW.settings.unitframes.party.auraIconSize, maxFrameCount = 0, isDebuff = true, hideDuration = true },
             },
         })
     else
