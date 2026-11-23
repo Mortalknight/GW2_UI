@@ -45,7 +45,7 @@ local function grid_OnClick(self)
         df.bgTex = 0
     else
         df.bgTex = bg:GetTexture()
-        bg:SetTexture("Interface/AddOns/GW2_UI/textures/questview/backgrounds/misc/grid")
+        bg:SetTexture("Interface/AddOns/GW2_UI/textures/questview/backgrounds/Misc/grid.jpg")
     end
 end
 
