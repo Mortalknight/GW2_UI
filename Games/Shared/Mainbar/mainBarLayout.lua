@@ -38,8 +38,16 @@ GW.GetHudClusterShift = GetHudClusterShift
 
 local lm = {}
 
+-- the pet frame over bar 2 and the auras over bar 3 keep the mouse over auto hide of their bar open
+local function LinkAutoHide(bar, index, f)
+    if bar and f then
+        bar:SetFrameRef("gw_AutoHideWith" .. index, f)
+    end
+end
+
 function lm:RegisterBuffFrame(f)
     local l = self.layoutFrame
+    LinkAutoHide(self.mbrFrame, 1, f)
     l:SetFrameRef("buffs", f)
     l:SetFrameRef("buffs_mover", f.gwMover)
     self.buffFrame = f
@@ -48,6 +56,7 @@ end
 
 function lm:RegisterDebuffFrame(f)
     local l = self.layoutFrame
+    LinkAutoHide(self.mbrFrame, 2, f)
     l:SetFrameRef("debuffs", f)
     l:SetFrameRef("debuffs_mover", f.gwMover)
     self.debuffFrame = f
@@ -56,8 +65,20 @@ function lm:RegisterDebuffFrame(f)
     self:onstate_None()
 end
 
+-- a bar shown or hidden by its own driver or the mouse, also in combat, lays the pet and the buffs out again
+local RELAYOUT_SNIPPET = [=[
+    owner:RunAttribute("gw_Relayout")
+]=]
+
+local function WrapBarRelayout(l, f)
+    SecureHandlerWrapScript(f, "OnShow", l, RELAYOUT_SNIPPET)
+    SecureHandlerWrapScript(f, "OnHide", l, RELAYOUT_SNIPPET)
+end
+
 function lm:RegisterMultiBarLeft(f)
     local l = self.layoutFrame
+    WrapBarRelayout(l, f)
+    LinkAutoHide(f, 1, self.petFrame)
     l:SetFrameRef("mbl", f)
     l:SetFrameRef("mbl_mover", f.gwMover)
     self.mblFrame = f
@@ -68,6 +89,9 @@ end
 
 function lm:RegisterMultiBarRight(f)
     local l = self.layoutFrame
+    WrapBarRelayout(l, f)
+    LinkAutoHide(f, 1, self.buffFrame)
+    LinkAutoHide(f, 2, self.debuffFrame)
     l:SetFrameRef("mbr", f)
     l:SetFrameRef("mbr_mover", f.gwMover)
     self.mbrFrame = f
@@ -76,6 +100,7 @@ end
 
 function lm:RegisterPetFrame(f)
     local l = self.layoutFrame
+    LinkAutoHide(self.mblFrame, 1, f)
     l:SetFrameRef("pet", f)
     l:SetFrameRef("pet_mover", f.gwMover)
     self.petFrame = f
@@ -120,19 +145,18 @@ local onstate_Barlayout = [=[
     local petX = self:GetAttribute("petXOfs")
     local petY = self:GetAttribute("petYOfs")
     local petYRaised = self:GetAttribute("petYRaisedOfs")
-    -- a bar hidden only for the fight or until hovered keeps its space
+    -- a bar hidden only for the fight keeps its space
     local mblShown = mbl and (mbl:IsShown() or mbl:GetAttribute("gw_KeepSpace"))
     local mbrShown = mbr and (mbr:IsShown() or mbr:GetAttribute("gw_KeepSpace"))
 
-    -- a hover bar only shows when its own area gets the mouse, the pet must not cover it
     if mbl and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
         petmover:ClearAllPoints()
         petmover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", petX, mblShown and petYRaised or petY)
     end
 
     -- only set the dbarmover frame to the correct position, based on scaling
-    if newstate == "outcombat" and dbarmover and bbar and not dbar:GetAttribute("isMoved") and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
-        local y_off = (mbrShown and mbr:GetAttribute("gw_FadeShowing")) and 200 or 100
+    if (newstate == "outcombat" or newstate == "incombat") and dbarmover and bbar and not dbar:GetAttribute("isMoved") and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
+        local y_off = mbrShown and 200 or 100
         dbarmover:ClearAllPoints()
         dbarmover:SetPoint("BOTTOMRIGHT", mbr, "BOTTOMRIGHT", 0, y_off)
     end
@@ -152,8 +176,8 @@ local onstate_Barlayout = [=[
     if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
         local buff_action = "none"
         if newstate == "incombat" or newstate == "outcombat" then
-            -- out of combat the buffs follow the fade of the bar, they only cover a part of its hover area
-            buff_action = mbrShown and (newstate == "incombat" or mbr:GetAttribute("gw_FadeShowing")) and "high" or "low"
+            -- set before the hover auto hide of bar 3 takes the aura rects
+            buff_action = mbrShown and "high" or "low"
         elseif newstate == "petb" then
             buff_action = "hide"
         elseif newstate == "obar" then
@@ -193,6 +217,9 @@ local function LoadMainbarLayout()
     l:SetAttribute("petYOfs", defaults.unitframes.pet.pos.yOfs)
     l:SetAttribute("petYRaisedOfs", PET_Y_RAISED)
     l:SetAttribute("_onstate-barlayout", onstate_Barlayout)
+    l:SetAttribute("gw_Relayout", format([=[local newstate = self:GetAttribute('state-barlayout')
+        if not newstate or newstate == 'none' then newstate = 'outcombat' end
+        %s]=], onstate_Barlayout))
     l.oocHandler = function()
         lm:onstate_None()
     end

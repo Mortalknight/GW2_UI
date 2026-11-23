@@ -310,10 +310,10 @@ local function newContainer(filter)
     -- The AuraContainer is a "forbidden frame": SecureHandler frame refs (layout manager)
     -- are not allowed on it. A protected proxy stands in for it in the secure layout —
     -- the snippet only toggles Show/Hide and reads the isMoved attribute on the registered frame,
-    -- only the mover the container is attached to gets moved anyway.
+    -- only the mover the container is attached to gets moved anyway. The proxy covers the
+    -- mover, so the mouse over auto hide of bar 3 can take the aura area in.
     local proxy = CreateFrame("Frame", nil, UIParent, "SecureFrameTemplate")
-    proxy:SetSize(1, 1)
-    proxy:SetPoint("BOTTOM")
+    proxy:SetAllPoints(h.gwMover)
     proxy.gwMover = h.gwMover
     proxy:SetAttribute("isMoved", h.isMoved and true or false)
     proxy:HookScript("OnShow", function() h:Show() end)

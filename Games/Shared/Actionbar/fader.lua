@@ -22,12 +22,6 @@ local function actionBarFrameShow(f, instant)
     f.gw_FadeIn:Stop()
 
     f.gw_FadeShowing = true
-    -- mirrored as an attribute because the secure state driver snippet in
-    -- mainBarLayout.lua can only read attributes; never on Blizzard's own bars,
-    -- setting attributes on those taints them
-    if f.gw_IsGwFrame and not InCombatLockdown() then
-        f:SetAttribute("gw_FadeShowing", true)
-    end
     if f.gw_StateTrigger then
         EventRegistry:TriggerEvent("GW2_UI.ActionBarStateChanged")
     end
@@ -52,12 +46,6 @@ local function actionBarFrameHide(f, instant)
     f.gw_FadeIn:Stop()
 
     f.gw_FadeShowing = false
-    -- mirrored as an attribute because the secure state driver snippet in
-    -- mainBarLayout.lua can only read attributes; never on Blizzard's own bars,
-    -- setting attributes on those taints them
-    if f.gw_IsGwFrame and not InCombatLockdown() then
-        f:SetAttribute("gw_FadeShowing", false)
-    end
     for i = 1, 12 do
         f.gw_Buttons[i].cooldown:SetDrawBling(false)
     end
@@ -83,8 +71,9 @@ end
 
 -- our multibars show and hide through a secure driver: blizzards override, vehicle and pet battle bars where the
 -- client has them, per bar combat and mounts, and "hover" for the mouse over modes. A hidden bar takes no clicks,
--- so a hover bar is shown by a secure detector below it and hidden again by blizzards secure auto hide.
--- "combathide" and "hover" keep the space of the bar in the bar layout
+-- so a hover bar is shown by a secure detector and hidden again by blizzards secure auto hide. The detector takes
+-- no clicks and hides while the bar shows; for bar 2 it lies above the pet frame, which covers that bar while hidden.
+-- "combathide" keeps the space of the bar in the bar layout
 local VISIBILITY_SNIPPET = [=[
     local detector = self:GetFrameRef("gw_HoverDetector")
     if newstate == "show" then
@@ -96,9 +85,10 @@ local VISIBILITY_SNIPPET = [=[
     else
         if self:IsShown() then
             self:SetAttribute("gw_WasShowing", true)
-            self:Hide()
         end
-        self:SetAttribute("gw_KeepSpace", (newstate == "combathide" or newstate == "hover") and self:GetAttribute("gw_WasShowing") == true)
+        -- before the hide, its relayout reads it
+        self:SetAttribute("gw_KeepSpace", newstate == "combathide" and self:GetAttribute("gw_WasShowing") == true)
+        self:Hide()
     end
     if newstate == "hover" and self:GetAttribute("gw_WasShowing") then
         detector:Show()
@@ -112,7 +102,21 @@ local HOVER_SNIPPET = [=[
     if bar:GetAttribute("state-gwvisibility") == "hover" and bar:GetAttribute("gw_WasShowing") then
         bar:Show()
         bar:RegisterAutoHide(0.5)
-        bar:AddToAutoHide(self)
+        -- the pet frame and the auras move up over bars 2 and 3 while those show, reaching them must not hide the bar
+        for i = 1, 2 do
+            local with = bar:GetFrameRef("gw_AutoHideWith" .. i)
+            if with and with:IsVisible() and not with:GetAttribute("isMoved") then
+                bar:AddToAutoHide(with)
+            end
+        end
+        self:Hide()
+    end
+]=]
+
+local BAR_HIDE_SNIPPET = [=[
+    -- not when only a parent hides it (Alt+Z), the bar stays shown then
+    if not self:IsShown() and self:GetAttribute("state-gwvisibility") == "hover" and self:GetAttribute("gw_WasShowing") then
+        self:GetFrameRef("gw_HoverDetector"):Show()
     end
 ]=]
 
@@ -123,7 +127,12 @@ local FLYOUT_SNIPPET = [=[
     local bar = button and button:GetParent()
     if bar and bar:GetAttribute("state-gwvisibility") == "hover" and bar:IsShown() then
         bar:RegisterAutoHide(0.5)
-        bar:AddToAutoHide(bar:GetFrameRef("gw_HoverDetector"))
+        for i = 1, 2 do
+            local with = bar:GetFrameRef("gw_AutoHideWith" .. i)
+            if with and with:IsVisible() and not with:GetAttribute("isMoved") then
+                bar:AddToAutoHide(with)
+            end
+        end
         bar:AddToAutoHide(self)
     end
 ]=]
@@ -170,9 +179,14 @@ function GW.UpdateMultibarVisibility(bar)
         WrapSpellFlyout()
         local detector = CreateFrame("Frame", nil, UIParent, "SecureHandlerEnterLeaveTemplate")
         detector:SetAllPoints(bar)
-        detector:SetFrameStrata(bar:GetFrameStrata())
-        detector:SetFrameLevel(math.max(0, bar:GetFrameLevel() - 1))
+        if bar.originalBarName == "MultiBarBottomLeft" then
+            detector:SetFrameStrata("HIGH")
+        else
+            detector:SetFrameStrata(bar:GetFrameStrata())
+            detector:SetFrameLevel(math.max(0, bar:GetFrameLevel() - 1))
+        end
         detector:EnableMouse(true)
+        detector:SetMouseClickEnabled(false)
         detector:Hide()
         detector:SetFrameRef("gw_Bar", bar)
         detector:SetAttribute("_onenter", HOVER_SNIPPET)
@@ -180,6 +194,7 @@ function GW.UpdateMultibarVisibility(bar)
         bar.gw_HoverDetector = detector
         bar:SetAttribute("gw_WasShowing", bar:IsShown())
         bar:SetAttribute("_onstate-gwvisibility", VISIBILITY_SNIPPET)
+        SecureHandlerWrapScript(bar, "OnHide", bar, BAR_HIDE_SNIPPET)
     end
     RegisterStateDriver(bar, "gwvisibility", conditions)
     RefreshMultibarVisibility(bar)
