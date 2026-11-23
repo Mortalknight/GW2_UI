@@ -133,8 +133,8 @@ local function GetNode(tree, index, group)
     end
 end
 
-local function GetDefinition(configID, nodeInfo)
-    local entryID = nodeInfo.activeEntry and nodeInfo.activeEntry.entryID or nodeInfo.entryIDs[1]
+local function GetDefinition(configID, nodeInfo, firstEntry)
+    local entryID = not firstEntry and nodeInfo.activeEntry and nodeInfo.activeEntry.entryID or nodeInfo.entryIDs[1]
     local entryInfo = entryID and C_Traits.GetEntryInfo(configID, entryID)
     return entryInfo and entryInfo.definitionID and C_Traits.GetDefinitionInfo(entryInfo.definitionID) or {}
 end
@@ -250,7 +250,7 @@ GW.TalentData = {
         if not nodeInfo then return end
 
         local position = layout.position[nodeID]
-        local definitionInfo = GetDefinition(configID, nodeInfo)
+        local definitionInfo = GetDefinition(configID, nodeInfo, isEmpty)
         local spellID = definitionInfo.spellID
         local prereqs = {}
         for _, sourceID in ipairs(layout.prereqs[nodeID] or {}) do
@@ -296,7 +296,7 @@ GW.TalentData = {
         if not nodeInfo then return end
 
         if isEmpty then
-            local definitionInfo = GetDefinition(configID, nodeInfo)
+            local definitionInfo = GetDefinition(configID, nodeInfo, true)
             local entryID = nodeInfo.entryIDs[1]
             GameTooltip_SetTitle(GameTooltip, definitionInfo.overrideName or (definitionInfo.spellID and C_Spell.GetSpellName(definitionInfo.spellID)) or "")
             GameTooltip_AddHighlightLine(GameTooltip, TOOLTIP_TALENT_RANK:format(0, nodeInfo.maxRanks))

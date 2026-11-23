@@ -275,6 +275,15 @@ local function CreateSpecCard(bar, group)
 
     card:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
     card:GetHighlightTexture():SetVertexColor(GW.Colors.SkinColors.CardHover:GetRGBA())
+    -- the tree name alone does not tell which group it is, e.g. for /usetalents
+    card:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+        GameTooltip:SetText(group == 1 and PRIMARY or SECONDARY)
+        GameTooltip:Show()
+    end)
+    card:SetScript("OnLeave", GameTooltip_Hide)
+    -- the first update fills and shows it, it can wait for the talent data or the end of a fight
+    card:Hide()
     return card
 end
 
