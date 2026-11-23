@@ -5,6 +5,17 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetPetHappinessInfo = C_PetInfo and C_PetInfo.GetPetHappiness or GetPetHappiness
 
 local HEALTH_COLOR = GW.globalDefault.profile.unitframes.reactionColors.Hostile
+local MEND_PET, REVIVE_PET, CALL_PET = 136, 982, 883
+
+-- 1 below half health and 0 above, so the secret health of the modern clients never reaches lua
+local lowHealthCurve
+if C_CurveUtil and UnitHealthPercent then
+    lowHealthCurve = C_CurveUtil.CreateCurve()
+    lowHealthCurve:SetType(Enum.LuaCurveType.Step)
+    lowHealthCurve:AddPoint(0, 1)
+    lowHealthCurve:AddPoint(0.5, 0)
+    lowHealthCurve:AddPoint(1, 0)
+end
 
 local petStateSprite = {
     width = 512,
@@ -135,7 +146,24 @@ function GwPlayerPetFrameMixin:UpdateHappiness()
 
     local color = happiness and display == "HEALTHCOLOR" and GW.Colors.PetHappinessColors[happiness] or HEALTH_COLOR
     self.health:SetStatusBarColor(color.r, color.g, color.b)
-    self.happiness:SetShown(happiness and display == "ICON")
+    -- the notification shows the icon only while the pet is not happy, pulsing
+    self.happiness:SetShown(happiness and (display == "ICON" or (display == "NOTIFY" and happiness < 3)))
+    if display == "NOTIFY" and self.happiness:IsShown() then
+        if not self.happiness.pulse then
+            local pulse = self.happiness:CreateAnimationGroup()
+            pulse:SetLooping("BOUNCE")
+            local fade = pulse:CreateAnimation("Alpha")
+            fade:SetFromAlpha(1)
+            fade:SetToAlpha(0.4)
+            fade:SetDuration(0.6)
+            self.happiness.pulse = pulse
+        end
+        if not self.happiness.pulse:IsPlaying() then
+            self.happiness.pulse:Play()
+        end
+    elseif self.happiness.pulse then
+        self.happiness.pulse:Stop()
+    end
     self.happiness.tooltip = happiness and _G["PET_HAPPINESS" .. happiness]
     if not happiness then return end
 
@@ -195,19 +223,67 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
             if GetPetHappinessInfo then
                 self:UpdateHappiness()
             end
+            self:UpdateHints()
         end
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
         self:UpdateHealthBar()
+        self:UpdateHints()
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         self:UpdatePowerBar()
     elseif event == "UNIT_HAPPINESS" then
         self:UpdateHappiness()
+        self:UpdateHints()
     end
 end
 
 -- the buttons start above the bars; protected frames only anchor to frames, so they sit on the pet frame itself
 function GwPlayerPetFrameMixin:GetFirstButtonOffset()
     return GW.settings.unitframes.pet.portraitPosition == "LEFT" and self.portraitBackground:GetWidth() + 3 or 3
+end
+
+-- a small icon on the portrait of a hunter pet: mend it while it is low; it only hints, a button would
+-- have to show and hide in combat. The alpha of the icon carries the visibility, so it pulses in size,
+-- an alpha animation would set the alpha back to 1
+local function CreatePetHint(frame, spellID)
+    local hint = CreateFrame("Frame", nil, frame)
+    hint:SetSize(20, 20)
+    hint:SetFrameLevel(frame.health:GetFrameLevel() + 5)
+
+    local icon = hint:CreateTexture(nil, "OVERLAY")
+    hint.icon = icon
+    icon:SetAllPoints()
+    icon:SetTexture(C_Spell.GetSpellTexture(spellID))
+    local mask = hint:CreateMaskTexture()
+    mask:SetTexture("Interface/AddOns/GW2_UI/textures/globe/mask.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetAllPoints(icon)
+    icon:AddMaskTexture(mask)
+
+    local pulse = hint:CreateAnimationGroup()
+    pulse:SetLooping("BOUNCE")
+    local grow = pulse:CreateAnimation("Scale")
+    grow:SetScaleFrom(1, 1)
+    grow:SetScaleTo(1.25, 1.25)
+    grow:SetDuration(0.6)
+    hint:SetScript("OnShow", function() pulse:Play() end)
+    hint:SetScript("OnHide", function() pulse:Stop() end)
+    hint:Hide()
+    return hint
+end
+
+function GwPlayerPetFrameMixin:UpdateHints()
+    if not self.mendHint then return end
+    local canMend = C_SpellBook.IsSpellKnown(MEND_PET) and not UnitIsDead("pet")
+    self.mendHint:SetShown(canMend)
+    if canMend then
+        local visible
+        if lowHealthCurve then
+            visible = UnitHealthPercent("pet", false, lowHealthCurve)
+        else
+            local healthMax = UnitHealthMax("pet")
+            visible = healthMax > 0 and UnitHealth("pet") / healthMax < 0.5 and 1 or 0
+        end
+        self.mendHint.icon:SetAlpha(visible)
+    end
 end
 
 function GwPlayerPetFrameMixin:TogglePortraitSide()
@@ -246,6 +322,27 @@ function GwPlayerPetFrameMixin:TogglePortraitSide()
     end
 
     self:SetWidth(self.Background:GetWidth() + (position ~= "HIDE" and self.portraitBackground:GetWidth() or GetPetHappinessInfo and 27 or 0))
+
+    -- the call pet button and the hints lie on the portrait; a protected frame only anchors to frames, so the
+    -- spots are worked out from the frame, the portrait sits on its bottom edge
+    local portraitSize = self.portraitBackground:GetWidth()
+    local portraitLeft = position == "LEFT" and 0 or self.Background:GetWidth()
+    if self.mendHint then
+        self.mendHint:ClearAllPoints()
+        self.mendHint:SetPoint("CENTER", self, "BOTTOMLEFT", portraitLeft + portraitSize - 8, portraitSize - 7)
+    end
+    -- its name goes to the side of the bars
+    local callButton = self.callButton
+    if callButton then
+        callButton:ClearAllPoints()
+        callButton:SetPoint("CENTER", self, "BOTTOMLEFT", portraitLeft + portraitSize / 2, 1 + portraitSize / 2)
+        callButton.label:ClearAllPoints()
+        if position == "LEFT" then
+            callButton.label:SetPoint("LEFT", callButton, "RIGHT", 10, 0)
+        else
+            callButton.label:SetPoint("RIGHT", callButton, "LEFT", -10, 0)
+        end
+    end
 end
 
 function GwPlayerPetFrameMixin:ToggleAuraPosition()
@@ -369,6 +466,9 @@ function GwPlayerPetFrameMixin:UpdateSettings()
     self.health:SetStatusBarTexture(texture)
 
     self:SetScale(GW.settings.unitframes.pet.scale)
+    if self.callButton then
+        self.callButton:SetScale(GW.settings.unitframes.pet.scale)
+    end
     self:OnEvent("UNIT_PET", "player")
 end
 
@@ -399,6 +499,64 @@ end
 
 GW.SetUnitFrameTextPreviewBuilder("pet", function() return CreatePetFrame("GwPlayerPetFrameTextPreview") end,
     function(frame) frame:TogglePortraitSide() end)
+
+-- revive or call the pet on its portrait while it is dead or away; the state driver switches the spell, also in combat
+local function LoadPetCallButton(frame)
+    if not C_SpellBook.IsSpellKnown(REVIVE_PET) and not C_SpellBook.IsSpellKnown(CALL_PET) then
+        return false
+    end
+
+    local button = CreateFrame("Button", "GwPetCallButton", UIParent, "SecureActionButtonTemplate, SecureHandlerStateTemplate")
+    button:SetSize(46, 46)
+    button:SetScale(GW.settings.unitframes.pet.scale)
+    button:SetFrameStrata(frame:GetFrameStrata())
+    button:SetFrameLevel(frame:GetFrameLevel() + 10)
+    button:RegisterForClicks("AnyUp", "AnyDown")
+    button:SetAttribute("type", "spell")
+    button:SetAttribute("gw_revive", REVIVE_PET)
+    button:SetAttribute("gw_call", CALL_PET)
+
+    button.icon = button:CreateTexture(nil, "ARTWORK")
+    button.icon:SetAllPoints()
+    local mask = button:CreateMaskTexture()
+    mask:SetTexture("Interface/AddOns/GW2_UI/textures/globe/mask.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetAllPoints()
+    button.icon:AddMaskTexture(mask)
+
+    -- without a pet the frame is hidden and the spot of the bars is free for the spell name
+    button.label = button:CreateFontString(nil, "OVERLAY")
+    button.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
+    button.label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+
+    button:HookScript("OnAttributeChanged", function(self, name, value)
+        if name == "spell" then
+            self.icon:SetTexture(C_Spell.GetSpellTexture(value))
+            self.label:SetText(C_Spell.GetSpellName(value))
+            self.label:SetShown(value == CALL_PET)
+        end
+    end)
+    button:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetSpellByID(self:GetAttribute("spell"))
+        GameTooltip:Show()
+    end)
+    button:SetScript("OnLeave", GameTooltip_Hide)
+
+    button:SetAttribute("_onstate-petstate", [[
+        if newstate == "hide" then
+            self:Hide()
+        else
+            self:SetAttribute("spell", self:GetAttribute(newstate == "revive" and "gw_revive" or "gw_call"))
+            self:Show()
+        end
+    ]])
+    -- marksmanship hunters on retail play without a pet
+    RegisterStateDriver(button, "petstate", "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [mounted] hide; [@pet,dead] revive; "
+        .. (GW.Retail and "[spec:2] hide; " or "") .. "[@pet,noexists] call; hide")
+    frame.callButton = button
+    frame:TogglePortraitSide()
+    return true
+end
 
 local function LoadPetFrame(lm)
     local playerPetFrame = CreatePetFrame("GwPlayerPetFrame")
@@ -549,6 +707,9 @@ local function LoadPetFrame(lm)
             playerPetFrame.buttons[i] = button
         end
     end
+    if GW.myclass == "HUNTER" then
+        playerPetFrame.mendHint = CreatePetHint(playerPetFrame, MEND_PET)
+    end
     playerPetFrame:TogglePortraitSide()
     playerPetFrame:SetActionButtonPositionAndStyle()
 
@@ -590,6 +751,18 @@ local function LoadPetFrame(lm)
     playerPetFrame.feedbackText:Hide()
     playerPetFrame.feedbackFontHeight = 20
     playerPetFrame:ToggleCombatFeedback()
+
+    -- the secure button needs the pet spells and no combat, a reload in combat or a low hunter waits for both
+    if GW.myclass == "HUNTER" and (InCombatLockdown() or not LoadPetCallButton(playerPetFrame)) then
+        local callButtonWatcher = CreateFrame("Frame")
+        callButtonWatcher:RegisterEvent("SPELLS_CHANGED")
+        callButtonWatcher:RegisterEvent("PLAYER_REGEN_ENABLED")
+        callButtonWatcher:SetScript("OnEvent", function(self)
+            if not InCombatLockdown() and LoadPetCallButton(playerPetFrame) then
+                self:UnregisterAllEvents()
+            end
+        end)
+    end
 
     --frame fader init
     playerPetFrame:ToggleFaderOptions()

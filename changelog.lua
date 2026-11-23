@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.11", {
+    {GW.Enum.ChangelogType.feature, [=[Pet frame (hunter): a Mend Pet hint on the portrait below half health, also in combat; the happiness can show as a notification icon that only appears and pulses while the pet is not happy; a click on the portrait revives a dead pet or calls a missing one, also in combat]=]},
     {GW.Enum.ChangelogType.bug, [=[Party frames (Retail and Forever): the important dungeon and raid debuffs only show Blizzard's boss debuffs, like the raid frames; the debuff list in the aura settings only shows where it is used]=]},
     {GW.Enum.ChangelogType.change, [=[Dodge bar: the warlock bar dims while no Demonic Circle is placed]=]},
     {GW.Enum.ChangelogType.bug, [=[Pet bar: moves above action bar 2 while that bar shows, also on mouse over and in combat, and back down after combat or when the bar hides again]=]},

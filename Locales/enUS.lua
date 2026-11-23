@@ -474,6 +474,7 @@ L["Happiness"] = true
 L["How the happiness of your hunter pet is shown."] = true
 L["Icon"] = true
 L["Health bar color"] = true
+L["Notification icon"] = true
 L["Which side of the bars the portrait sits on, or whether it is hidden."] = true
 L["Talking Head"] = true
 L["Skins"] = true
