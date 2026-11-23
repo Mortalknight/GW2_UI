@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 local LoadAuras = GW.LoadAuras
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local GetPetHappinessInfo = C_PetInfo and C_PetInfo.GetPetHappiness or GetPetHappiness
+local GetPetHappinessInfo = not GW.Retail and (C_PetInfo and C_PetInfo.GetPetHappiness or GetPetHappiness) or nil
 
 local HEALTH_COLOR = GW.globalDefault.profile.unitframes.reactionColors.Hostile
 local MEND_PET, REVIVE_PET, CALL_PET = 136, 982, 883

@@ -22,7 +22,6 @@ local OVERLAY_COUNTS = (GW.Classic or GW.TBC or GW.Forever) and {
 local PANEL_WIDTH = 230
 local ROW_GAP = 8
 
-local provider
 local panel
 local explorationAchievements
 local zoneAchievement = {}
@@ -177,55 +176,13 @@ local function OpenKafZoneCategory()
     end
 end
 
-local pinMixin = {}
+-- the rings are our own frames on the map canvas: blizzards pin system (AcquirePin) and SetMapID write the
+-- canvas state, from our code every later map change runs as GW2_UI and the quest pins get blocked in combat.
+-- They take no clicks, those reach the map and blizzard opens the zone itself
+local overlay
+local pins = {}
 
-function pinMixin:OnLoad()
-    self:UseFrameLevelType("PIN_FRAME_LEVEL_AREA_POI")
-    self:SetScalingLimits(1, 1, 1.2)
-
-    self.bg = self:CreateTexture(nil, "BACKGROUND")
-    self.bg:SetPoint("TOPLEFT", 3, -3)
-    self.bg:SetPoint("BOTTOMRIGHT", -3, 3)
-    self.bg:SetColorTexture(GW.Colors.SkinColors.MapBadge:GetRGBA())
-    self.mask = self:CreateMaskTexture()
-    self.mask:SetTexture("Interface/CharacterFrame/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    self.mask:SetAllPoints(self.bg)
-    self.bg:AddMaskTexture(self.mask)
-
-    self.track = self:CreateTexture(nil, "BORDER")
-    self.track:SetAllPoints()
-    self.track:SetTexture(RING_TEXTURE)
-    self.track:SetVertexColor(GW.Colors.SkinColors.StatusBarTrack:GetRGBA())
-
-    self.ring = CreateFrame("Cooldown", nil, self, "CooldownFrameTemplate")
-    self.ring:SetAllPoints()
-    self.ring:SetSwipeTexture(RING_TEXTURE, GW.Colors.Accent:GetRGBA())
-    self.ring:SetUseCircularEdge(true)
-    self.ring:SetDrawEdge(false)
-    self.ring:SetDrawBling(false)
-    self.ring:SetHideCountdownNumbers(true)
-
-    self.text = self:CreateFontString(nil, "OVERLAY")
-    self.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
-    self.text:SetPoint("CENTER", self.ring)
-end
-
-function pinMixin:OnAcquired(zoneID, achievementID, explored, total, x, y)
-    self.zoneID = zoneID
-    self.achievementID = achievementID
-    self.explored, self.total = explored, total
-    self:SetPosition(x, y)
-
-    local progress = explored / total
-    self.text:SetText(math.floor(progress * 100) .. "%")
-    -- the swipe draws what is left of a cooldown, so the remaining time is the explored part
-    self.ring:SetCooldown(GetTime() - (1 - progress) * 100, 100)
-    self.ring:Pause()
-    -- hidden until the mouse is over its zone, so the icons under it stay usable
-    self:Hide()
-end
-
-function pinMixin:OnMouseEnter()
+local function ExplorationPin_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:SetText(C_Map.GetMapInfo(self.zoneID).name, GW.Colors.SkinColors.QuestGold:GetRGB())
     if self.achievementID then
@@ -248,15 +205,67 @@ function pinMixin:OnMouseEnter()
     GameTooltip:Show()
 end
 
-function pinMixin:OnMouseLeave()
-    GameTooltip:Hide()
+local function CreateExplorationPin()
+    local pin = CreateFrame("Frame", nil, overlay)
+    pin:SetSize(40, 40)
+    pin:EnableMouse(true)
+    pin:SetMouseClickEnabled(false)
+    pin:SetScript("OnEnter", ExplorationPin_OnEnter)
+    pin:SetScript("OnLeave", GameTooltip_Hide)
+
+    pin.bg = pin:CreateTexture(nil, "BACKGROUND")
+    pin.bg:SetPoint("TOPLEFT", 3, -3)
+    pin.bg:SetPoint("BOTTOMRIGHT", -3, 3)
+    pin.bg:SetColorTexture(GW.Colors.SkinColors.MapBadge:GetRGBA())
+    pin.mask = pin:CreateMaskTexture()
+    pin.mask:SetTexture("Interface/CharacterFrame/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    pin.mask:SetAllPoints(pin.bg)
+    pin.bg:AddMaskTexture(pin.mask)
+
+    pin.track = pin:CreateTexture(nil, "BORDER")
+    pin.track:SetAllPoints()
+    pin.track:SetTexture(RING_TEXTURE)
+    pin.track:SetVertexColor(GW.Colors.SkinColors.StatusBarTrack:GetRGBA())
+
+    pin.ring = CreateFrame("Cooldown", nil, pin, "CooldownFrameTemplate")
+    pin.ring:SetAllPoints()
+    pin.ring:SetSwipeTexture(RING_TEXTURE, GW.Colors.Accent:GetRGBA())
+    pin.ring:SetUseCircularEdge(true)
+    pin.ring:SetDrawEdge(false)
+    pin.ring:SetDrawBling(false)
+    pin.ring:SetHideCountdownNumbers(true)
+
+    pin.text = pin:CreateFontString(nil, "OVERLAY")
+    pin.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
+    pin.text:SetPoint("CENTER", pin.ring)
+    return pin
 end
 
-function pinMixin:OnClick(button)
-    if button == "LeftButton" then
-        self:GetMap():SetMapID(self.zoneID)
-    else
-        self:GetMap():NavigateToParentMap()
+local function SetupExplorationPin(pin, zoneID, achievementID, explored, total, x, y)
+    pin.zoneID = zoneID
+    pin.achievementID = achievementID
+    pin.explored, pin.total = explored, total
+    pin.x, pin.y = x, y
+
+    local progress = explored / total
+    pin.text:SetText(math.floor(progress * 100) .. "%")
+    -- the swipe draws what is left of a cooldown, so the remaining time is the explored part
+    pin.ring:SetCooldown(GetTime() - (1 - progress) * 100, 100)
+    pin.ring:Pause()
+    -- hidden until the mouse is over its zone, so the icons under it stay usable
+    pin:Hide()
+end
+
+-- the canvas scales with the zoom, the rings keep their size on screen
+local function PlaceExplorationPins()
+    local width, height = overlay:GetSize()
+    local scale = WorldMapFrame.ScrollContainer:GetCanvasScale() or 1
+    for _, pin in ipairs(pins) do
+        if pin.zoneID then
+            pin:SetScale(1 / scale)
+            pin:ClearAllPoints()
+            pin:SetPoint("CENTER", overlay, "TOPLEFT", pin.x * width * scale, -pin.y * height * scale)
+        end
     end
 end
 
@@ -534,57 +543,62 @@ local function UpdateHoveredZone(watcher, elapsed)
 
     watcher.zoneID = zoneID
     watcher.shownPin = nil
-    for pin in map:EnumeratePinsByTemplate("GwExplorationPinTemplate") do
-        pin:SetShown(pin.zoneID == zoneID)
-        if pin.zoneID == zoneID then
+    for _, pin in ipairs(pins) do
+        local hovered = pin.zoneID ~= nil and pin.zoneID == zoneID
+        pin:SetShown(hovered)
+        if hovered then
             watcher.shownPin = pin
         end
     end
 end
 
-local providerMixin = {}
-
-function providerMixin:RemoveAllData()
-    self:GetMap():RemoveAllPinsByTemplate("GwExplorationPinTemplate")
-end
-
-function providerMixin:RefreshAllData()
-    self:RemoveAllData()
-    if not GW.settings.worldmap.explorationProgress then
+local function RefreshExplorationPins()
+    for _, pin in ipairs(pins) do
+        pin.zoneID = nil
+        pin:Hide()
+    end
+    if not GW.settings.worldmap.explorationProgress or not WorldMapFrame:IsShown() then
         if panel then panel:Hide() end
-        self.watcher:SetScript("OnUpdate", nil)
+        overlay.watcher:SetScript("OnUpdate", nil)
         return
     end
 
-    local map = self:GetMap()
-    local mapID = map:GetMapID()
+    local mapID = WorldMapFrame:GetMapID()
     local mapInfo = mapID and C_Map.GetMapInfo(mapID)
     UpdatePanel(mapInfo)
-    self.watcher.zoneID, self.watcher.shownPin = nil, nil
+    overlay.watcher.zoneID, overlay.watcher.shownPin = nil, nil
     local isContinent = mapInfo and mapInfo.mapType == Enum.UIMapType.Continent
-    self.watcher:SetScript("OnUpdate", isContinent and UpdateHoveredZone or nil)
+    overlay.watcher:SetScript("OnUpdate", isContinent and UpdateHoveredZone or nil)
     if not isContinent then return end
 
+    local index = 0
     for _, zone in ipairs(C_Map.GetMapChildrenInfo(mapID, Enum.UIMapType.Zone) or {}) do
         local explored, total, achievementID = GetZoneProgress(zone.mapID, mapInfo.name)
         if explored and explored < total then
             local minX, maxX, minY, maxY = C_Map.GetMapRectOnMap(zone.mapID, mapID)
             if minX then
-                map:AcquirePin("GwExplorationPinTemplate", zone.mapID, achievementID, explored, total, (minX + maxX) / 2, (minY + maxY) / 2)
+                index = index + 1
+                pins[index] = pins[index] or CreateExplorationPin()
+                SetupExplorationPin(pins[index], zone.mapID, achievementID, explored, total, (minX + maxX) / 2, (minY + maxY) / 2)
             end
         end
     end
+    PlaceExplorationPins()
 end
 
 function GW.UpdateExplorationMapPins()
-    if not provider then
+    if not overlay then
         if not GW.settings.worldmap.explorationProgress then return end
-        -- the map canvas mixins exist once the world map is loaded, not yet when this file runs
-        GwExplorationPinMixin = CreateFromMixins(MapCanvasPinMixin, pinMixin)
-        provider = CreateFromMixins(MapCanvasDataProviderMixin, providerMixin)
+        -- the canvas exists once the world map is loaded, not yet when this file runs
+        overlay = CreateFrame("Frame", nil, WorldMapFrame.ScrollContainer.Child)
+        overlay:SetAllPoints()
+        -- above the explored map art and the trail, below blizzards icons
+        overlay:SetFrameLevel(WorldMapFrame:GetPinFrameLevelsManager():GetValidFrameLevel("PIN_FRAME_LEVEL_MAP_HIGHLIGHT") + 2)
         -- a child of the map, so it only runs while the map is open
-        provider.watcher = CreateFrame("Frame", nil, WorldMapFrame)
-        WorldMapFrame:AddDataProvider(provider)
+        overlay.watcher = CreateFrame("Frame", nil, WorldMapFrame)
+        hooksecurefunc(WorldMapFrame, "OnMapChanged", RefreshExplorationPins)
+        hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", PlaceExplorationPins)
+        WorldMapFrame:HookScript("OnShow", RefreshExplorationPins)
     end
-    provider:RefreshAllData()
+    RefreshExplorationPins()
 end

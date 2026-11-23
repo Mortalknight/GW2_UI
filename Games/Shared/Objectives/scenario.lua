@@ -19,6 +19,7 @@ if ShouldShowMawBuffs then
     end
 
     local origShouldShowMawBuffs = ShouldShowMawBuffs
+    local GetMawBuff = C_MawBuffs and C_MawBuffs.GetMawBuff
     local lastKnown = false
     function GW.ShouldShowMawBuffs()
         local ok, result = pcall(origShouldShowMawBuffs)
@@ -40,6 +41,16 @@ if ShouldShowMawBuffs then
     -- Returns nil on a FAILED read (callers keep their last known set then)
     function GW.CollectMawAuras()
         local auras = {}
+        if GetMawBuff then
+            local i = 1
+            local auraData = GetMawBuff(i)
+            while auraData do
+                tinsert(auras, auraData)
+                i = i + 1
+                auraData = GetMawBuff(i)
+            end
+            return auras
+        end
         local ok = pcall(function()
             local continuation
             repeat
@@ -59,7 +70,9 @@ if ShouldShowMawBuffs then
         return auras
     end
 
-    if GW.isModern and not GW.Gamepad.IsInterface() then
+    -- the replaced global taints blizzards tracker layout and through it the panel positions of every later
+    -- ShowUIPanel; clients with C_MawBuffs read the maw buffs without the aura secrecy, there blizzards own works
+    if GW.isModern and not GW.Gamepad.IsInterface() and not C_MawBuffs then
         ShouldShowMawBuffs = GW.ShouldShowMawBuffs
     end
 end
@@ -1391,6 +1404,9 @@ function GwObjectivesScenarioContainerMixin:InitModule()
 
         local lastMawCount = -1
         local function HasMawAura()
+            if C_MawBuffs then
+                return C_MawBuffs.HasAnyMawBuffs()
+            end
             local ok, _, slot = pcall(C_UnitAuras.GetAuraSlots, "player", "MAW", 1)
             return not ok or slot ~= nil
         end
