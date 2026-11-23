@@ -240,6 +240,66 @@ local function UpdatePreviewControls(self, isPreview)
     end
 end
 
+-- one card per spec group: the tree with the most points names it, the viewed card is framed, the active one checked
+local function CreateSpecCard(bar, group)
+    local card = CreateFrame("Button", nil, bar)
+    card:SetSize(190, 40)
+    if group == 1 then
+        card:SetPoint("LEFT", bar.unspentPoints, "RIGHT", 20, 0)
+    else
+        card:SetPoint("LEFT", bar.specCards[1], "RIGHT", 10, 0)
+    end
+    card:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
+
+    card.icon = card:CreateTexture(nil, "ARTWORK")
+    card.icon:SetSize(30, 30)
+    card.icon:SetPoint("LEFT", 5, 0)
+    card.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
+    card.name = card:CreateFontString(nil, "OVERLAY")
+    card.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    card.name:SetPoint("TOPLEFT", card.icon, "TOPRIGHT", 8, -1)
+    card.name:SetPoint("RIGHT", -24, 0)
+    card.name:SetJustifyH("LEFT")
+    card.name:SetWordWrap(false)
+
+    card.points = card:CreateFontString(nil, "OVERLAY")
+    card.points:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    card.points:SetPoint("BOTTOMLEFT", card.icon, "BOTTOMRIGHT", 8, 1)
+    card.points:SetTextColor(GW.Colors.SkinColors.SubText:GetRGB())
+
+    card.active = card:CreateTexture(nil, "OVERLAY")
+    card.active:SetSize(16, 16)
+    card.active:SetPoint("TOPRIGHT", -4, -4)
+    card.active:SetTexture("Interface/RaidFrame/ReadyCheck-Ready")
+
+    card:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
+    card:GetHighlightTexture():SetVertexColor(GW.Colors.SkinColors.CardHover:GetRGBA())
+    return card
+end
+
+local function UpdateSpecCard(card, group, activeTalentGroup)
+    local points, best, total = {}, nil, 0
+    for tree = 1, Data.GetNumTrees(false) do
+        local name, icon, spent = Data.GetTreeInfo(tree, false, group)
+        points[tree] = spent
+        total = total + spent
+        if spent > 0 and (not best or spent > best.spent) then
+            best = {name = name, icon = icon, spent = spent}
+        end
+    end
+
+    card.name:SetText(best and best.name or (group == 1 and PRIMARY or SECONDARY))
+    card.icon:SetTexture(best and best.icon or "Interface/Icons/INV_Misc_QuestionMark")
+    card.icon:SetDesaturated(total == 0)
+    card.points:SetText(table.concat(points, " / "))
+    card.active:SetShown(group == activeTalentGroup)
+
+    local isViewed = group == openSpec
+    card.backdrop:SetBackdropBorderColor((isViewed and GW.Colors.Accent or GW.Colors.SkinColors.CardBorder):GetRGB())
+    card:SetAlpha(isViewed and 1 or 0.6)
+end
+
 local function updateTalentTrees(self)
     if InCombatLockdown() then return end
     if not self.container or not self.container[1] then return end
@@ -255,27 +315,17 @@ local function updateTalentTrees(self)
 
     UpdateActiveSpec(activeTalentGroup)
 
-    if isPetTalents then
-        self.bottomBar.spec1Button:Hide()
-        self.bottomBar.spec2Button:Hide()
-
-        self.bottomBar.dualSpecActiveTalentGroupe:Hide()
-        self.bottomBar.activateSpecGroup:Hide()
-    elseif hasDualSpec then
-        self.bottomBar.spec1Button:Show()
-        self.bottomBar.spec2Button:Show()
-        self.bottomBar.spec1Button:SetEnabled(openSpec == 2 or isPetTalents)
-        self.bottomBar.spec2Button:SetEnabled(openSpec == 1 or isPetTalents)
-
-        self.bottomBar.dualSpecActiveTalentGroupe:SetShown(isActiveTalentGroup)
-        self.bottomBar.activateSpecGroup:SetShown(not isActiveTalentGroup)
-    else
-        self.bottomBar.spec1Button:Hide()
-        self.bottomBar.spec2Button:Hide()
-
-        self.bottomBar.dualSpecActiveTalentGroupe:Hide()
-        self.bottomBar.activateSpecGroup:Hide()
+    local showCards = hasDualSpec and not isPetTalents
+    for group, card in ipairs(self.bottomBar.specCards) do
+        card:SetShown(showCards)
+        if showCards then
+            UpdateSpecCard(card, group, activeTalentGroup)
+        end
     end
+    local activate = self.bottomBar.activateSpecGroup
+    activate:SetShown(showCards and not isActiveTalentGroup)
+    activate:ClearAllPoints()
+    activate:SetPoint("TOP", self.bottomBar.specCards[openSpec], "BOTTOM", 0, -3)
 
     if hasPetTalents then
         self.bottomBar.petTalentsButton:SetText(isPetTalents and PLAYER or PETS)
@@ -436,16 +486,16 @@ local function LoadTalents(tabContainer)
         updateTalentTrees(talentFrame)
     end)
 
-    talentFrame.bottomBar.spec1Button:SetScript("OnClick", function()
-        openSpec = 1
-        isPetTalents = false
-        updateTalentTrees(talentFrame)
-    end)
-    talentFrame.bottomBar.spec2Button:SetScript("OnClick", function()
-        openSpec = 2
-        isPetTalents = false
-        updateTalentTrees(talentFrame)
-    end)
+    talentFrame.bottomBar.specCards = {}
+    for group = 1, 2 do
+        local card = CreateSpecCard(talentFrame.bottomBar, group)
+        card:SetScript("OnClick", function()
+            openSpec = group
+            isPetTalents = false
+            updateTalentTrees(talentFrame)
+        end)
+        talentFrame.bottomBar.specCards[group] = card
+    end
     talentFrame.bottomBar.petTalentsButton:SetScript("OnClick", function()
         openSpec = 1
         isPetTalents = not isPetTalents
@@ -459,11 +509,8 @@ local function LoadTalents(tabContainer)
         end
     end)
 
-    talentFrame.bottomBar.dualSpecActiveTalentGroupe:SetTextColor(63 / 255, 205 / 255, 75 / 255)
     talentFrame.bottomBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     talentFrame.bottomBar.unspentPoints:SetTextColor(0.87, 0.74, 0.29, 1)
-
-    talentFrame.bottomBar.dualSpecActiveTalentGroupe:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
 
     talentFrame.bottomBar.talentPreview:SetShown(Data.HasPreviewOption)
     talentFrame.bottomBar.talentPreview.checkbutton:SetChecked(GetCVarBool("previewTalentsOption"))

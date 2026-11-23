@@ -18,6 +18,8 @@ addChange("12.1.11", {
     {GW.Enum.ChangelogType.bug, [=[Gamepad (Forever): X uses the selected bag item also when actions are set to fire on key release]=]},
     {GW.Enum.ChangelogType.change, [=[Bags: unusable items are marked by their level, class and armor or weapon skill]=]},
     {GW.Enum.ChangelogType.feature, [=[HUD: druids in cat and bear form get a combat version of their form background]=]},
+    {GW.Enum.ChangelogType.change, [=[Talents: with dual spec both specs show as cards with their main tree and points, a click shows a spec, a check marks the active one]=]},
+    {GW.Enum.ChangelogType.bug, [=[Talents (Forever): a second spec that was never active shows an empty tree instead of a copy of the active one]=]},
     {GW.Enum.ChangelogType.bug, [=[Immersive Questing: zones without an own background, Kezan, the Darkmoon Faire, the Exile's Reach, the Telogrus Rift and the North Sea show a background again]=]},
 })
 

@@ -122,10 +122,14 @@ end
 
 local function GetNode(tree, index, group)
     local configID = GetConfigID(group)
+    local isEmpty = not configID
+    if isEmpty then
+        configID = GetConfigID()
+    end
     local data = configID and BuildLayout(configID)
     local nodeID = data and data.trees[tree] and data.trees[tree].nodes[index]
     if nodeID then
-        return configID, nodeID, C_Traits.GetNodeInfo(configID, nodeID)
+        return configID, nodeID, C_Traits.GetNodeInfo(configID, nodeID), isEmpty
     end
 end
 
@@ -186,6 +190,7 @@ GW.TalentData = {
     HasPreviewOption = false,
     Events = {
         "TRAIT_CONFIG_UPDATED",
+        "TRAIT_CONFIG_CREATED",
         "TRAIT_NODE_CHANGED",
         "TRAIT_TREE_CURRENCY_INFO_UPDATED",
         "ACTIVE_TALENT_GROUP_CHANGED",
@@ -228,8 +233,9 @@ GW.TalentData = {
 
     GetTreeInfo = function(tree, _, group)
         local configID = GetConfigID(group)
-        local info = configID and layout and layout.trees[tree]
+        local info = layout and layout.trees[tree]
         if not info then return "", nil, 0, 0 end
+        if not configID then return info.name, info.icon, 0, 0 end
 
         local spent = 0
         local currencyInfo = C_Traits.GetGroupCurrencyInfo(configID, {info.groupID})[1]
@@ -240,7 +246,7 @@ GW.TalentData = {
     end,
 
     GetTalent = function(tree, index, _, group)
-        local configID, nodeID, nodeInfo = GetNode(tree, index, group)
+        local configID, nodeID, nodeInfo, isEmpty = GetNode(tree, index, group)
         if not nodeInfo then return end
 
         local position = layout.position[nodeID]
@@ -249,18 +255,18 @@ GW.TalentData = {
         local prereqs = {}
         for _, sourceID in ipairs(layout.prereqs[nodeID] or {}) do
             local source = layout.position[sourceID]
-            prereqs[#prereqs + 1] = {tier = source.tier, column = source.column, met = nodeInfo.meetsEdgeRequirements}
+            prereqs[#prereqs + 1] = {tier = source.tier, column = source.column, met = not isEmpty and nodeInfo.meetsEdgeRequirements}
         end
 
         return {
             tier = position.tier,
             column = position.column,
-            rank = nodeInfo.currentRank,
+            rank = isEmpty and 0 or nodeInfo.currentRank,
             maxRank = nodeInfo.maxRanks,
             icon = definitionInfo.overrideIcon or (spellID and C_Spell.GetSpellTexture(spellID)),
             spellID = spellID,
             isExceptional = spellID and not C_Spell.IsSpellPassive(spellID),
-            available = nodeInfo.isAvailable and nodeInfo.meetsEdgeRequirements,
+            available = not isEmpty and nodeInfo.isAvailable and nodeInfo.meetsEdgeRequirements,
             prereqs = prereqs,
         }
     end,
@@ -286,8 +292,19 @@ GW.TalentData = {
     end,
 
     SetTooltip = function(tree, index, _, group)
-        local configID, _, nodeInfo = GetNode(tree, index, group)
+        local configID, _, nodeInfo, isEmpty = GetNode(tree, index, group)
         if not nodeInfo then return end
+
+        if isEmpty then
+            local definitionInfo = GetDefinition(configID, nodeInfo)
+            local entryID = nodeInfo.entryIDs[1]
+            GameTooltip_SetTitle(GameTooltip, definitionInfo.overrideName or (definitionInfo.spellID and C_Spell.GetSpellName(definitionInfo.spellID)) or "")
+            GameTooltip_AddHighlightLine(GameTooltip, TOOLTIP_TALENT_RANK:format(0, nodeInfo.maxRanks))
+            if entryID then
+                GameTooltip:AppendInfo("GetTraitEntry", entryID, 1)
+            end
+            return true
+        end
 
         local current, nextEntry = nodeInfo.activeEntry, nodeInfo.nextEntry
         local entry = nodeInfo.ranksPurchased > 0 and current or nextEntry or current
