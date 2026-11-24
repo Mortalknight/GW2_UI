@@ -318,6 +318,7 @@ GW.globalDefault = {
         hud = {
             scale = 1,
             gridSpacing = 64,
+            showGrid = false,
             screenBorder = true,
             dodgeBar = {
                 enabled = true,

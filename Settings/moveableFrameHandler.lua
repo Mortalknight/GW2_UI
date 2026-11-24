@@ -450,7 +450,9 @@ local function SetGridShown(show)
 end
 
 local function GridToggle()
-    SetGridShown(not (grid and grid:IsShown()))
+    local show = not (grid and grid:IsShown())
+    GW.settings.hud.showGrid = show
+    SetGridShown(show)
 end
 GW.GridToggle = GridToggle
 
@@ -533,6 +535,7 @@ local function moveHudObjects(self)
     hideExtraOptions()
     SetSmallSettingsLayoutViewShown(GW.MoveHudScaleableFrame, false)
     GW.MoveHudScaleableFrame:Show()
+    SetGridShown(GW.settings.hud.showGrid)
 
     -- disable main bar layout manager
     SetLayoutManagerMoveHudMode(GW.MoveHudScaleableFrame.layoutManager, true)

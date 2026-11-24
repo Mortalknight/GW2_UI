@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("12.1.12", {
+    {GW.Enum.ChangelogType.change, [=[Move HUD: the grid remembers whether it was shown, per profile]=]},
+})
+
 addChange("12.1.11", {
     {GW.Enum.ChangelogType.bug, [=[World map: the map trail and the exploration rings no longer get the quest pins blocked as an action of GW2 UI when the map opens in combat; a click on an exploration ring opens the zone through the map itself]=]},
     {GW.Enum.ChangelogType.feature, [=[Pet frame (hunter): a Mend Pet hint on the portrait below half health, also in combat; the happiness can show as a notification icon that only appears and pulses while the pet is not happy; a click on the portrait revives a dead pet or calls a missing one, also in combat]=]},
