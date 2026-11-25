@@ -15,6 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("12.1.12", {
     {GW.Enum.ChangelogType.change, [=[Move HUD: the grid remembers whether it was shown, per profile]=]},
+    {GW.Enum.ChangelogType.bug, [=[Professions (Forever): the recipe list, recipe details and buttons use the GW2 UI font sizes instead of being drawn smaller]=]},
 })
 
 addChange("12.1.11", {

@@ -337,6 +337,14 @@ end
 
 local ARROW = "Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png"
 local CONTROL_HEIGHT = 24
+local FONT_SCALE = BLIZZARD_PAGE_WIDTH / PANEL_WIDTH
+
+local function SetPanelFont(text, sizeType, style, frameScale)
+    local r, g, b, a = text:GetTextColor()
+    text.gwTextScale = FONT_SCALE / (frameScale or 1)
+    text:GwSetFontTemplate(UNIT_NAME_FONT, sizeType, style)
+    text:SetTextColor(r, g, b, a)
+end
 
 local function SkinRankBar(rankBar)
     rankBar.Background:Hide()
@@ -349,7 +357,7 @@ local function SkinRankBar(rankBar)
     rankBar:SetSize(453, 18)
     rankBar:SetScale(0.8)
     GW.AddStatusBarFrame(rankBar)
-    rankBar.Rank.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
+    SetPanelFont(rankBar.Rank.Text, GW.Enum.TextSizeType.Normal, "THINOUTLINE", rankBar:GetScale())
 end
 
 local function UpdateLinkButton(button)
@@ -378,7 +386,7 @@ local craftButtonDisabledFont = CreateFont("GwProfessionsCraftButtonDisabledFont
 
 local recipeHeaderFont = CreateFont("GwProfessionsRecipeHeaderFont")
 recipeHeaderFont:SetTextColor(1, 1, 1)
-recipeHeaderFont:SetFont(DAMAGE_TEXT_FONT, 14, "")
+recipeHeaderFont:SetFont(DAMAGE_TEXT_FONT, 14 * FONT_SCALE, "")
 
 local function SkinRecipeHeader(header)
     header:GwStripTextures()
@@ -408,8 +416,11 @@ end
 local function SkinRecipeRow(row)
     KeepHidden(row.SelectedOverlay)
     KeepHidden(row.HighlightOverlay)
-    row.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    row.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    for text, sizeType in pairs({[row.Label] = GW.Enum.TextSizeType.Normal, [row.Count] = GW.Enum.TextSizeType.Small}) do
+        SetPanelFont(text, sizeType)
+        text:SetWordWrap(false)
+        text:SetHeight(0)
+    end
 
     row.gwHoverTexture = row:CreateTexture(nil, "ARTWORK", nil, 0)
     row.gwHoverTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
@@ -489,13 +500,22 @@ local function SkinReagentSlots(form)
             slot.Button.SlotBackground:SetAlpha(0)
             RemoveReagentSlotFrame(slot.Button, slot.Button.showLargeAddIcon)
             hooksecurefunc(slot.Button, "SetModifyingRequired", RemoveReagentSlotFrame)
-            slot.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+            SetPanelFont(slot.Name, GW.Enum.TextSizeType.Normal)
+            slot.Name:SetWidth(slot:GetWidth() - 46)
             slot.gwSkinned = true
         end
     end
 end
 
 local SCHEMATIC_WIDTH = 330
+
+-- blizzard sizes name and description for its 500 wide form on every refresh
+local function FitTextWidth(text, width)
+    if (text:GetText() or "") == "" or text:GetWidth() <= width then return end
+    text:SetWidth(width)
+    text:SetHeight(600)
+    text:SetHeight(text:GetStringHeight() + 1)
+end
 
 local function SkinSchematicForm(form)
     form:GwStripTextures()
@@ -526,14 +546,24 @@ local function SkinSchematicForm(form)
     hooksecurefunc(output.IconBorder, "SetAtlas", function(self)
         self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     end)
-    output.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
+    SetPanelFont(output.Count, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
+    SetPanelFont(form.OutputText, GW.Enum.TextSizeType.Header)
+    hooksecurefunc(form, "UpdateOutputItem", function(self)
+        FitTextWidth(self.OutputText, SCHEMATIC_WIDTH - 120)
+    end)
+    hooksecurefunc(form, "UpdateRecipeDescription", function(self)
+        FitTextWidth(self.Description, SCHEMATIC_WIDTH - 56)
+    end)
+    SetPanelFont(form.OutputSubText, GW.Enum.TextSizeType.Normal)
+    SetPanelFont(form.RequiredTools, GW.Enum.TextSizeType.Small)
+    SetPanelFont(form.Description, GW.Enum.TextSizeType.Small)
     form.TrackRecipeCheckbox:GwSkinCheckButton(false, 15)
-    form.TrackRecipeCheckbox.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    SetPanelFont(form.TrackRecipeCheckbox.Text, GW.Enum.TextSizeType.Normal)
     -- blizzard places it from the right by its text width, measured before our font and form width
     form.TrackRecipeCheckbox:ClearAllPoints()
     form.TrackRecipeCheckbox:SetPoint("BOTTOMLEFT", form, "BOTTOMLEFT", 17, 11)
 
-    form.Reagents.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    SetPanelFont(form.Reagents.Label, GW.Enum.TextSizeType.Normal)
     form.Reagents.Label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     hooksecurefunc(form, "Init", SkinReagentSlots)
 end
@@ -545,6 +575,7 @@ local function SkinCraftingPage(page)
     list.Background:Hide()
     list.BackgroundNineSlice:Hide()
     list.NoResultsText:SetTextColor(1, 1, 1)
+    SetPanelFont(list.NoResultsText, GW.Enum.TextSizeType.Normal)
     list:SetWidth(260)
     list:ClearAllPoints()
     list:SetPoint("TOPLEFT", page, "TOPLEFT", 5, -40)
@@ -573,10 +604,13 @@ local function SkinCraftingPage(page)
     search:ClearAllPoints()
     search:SetPoint("TOPLEFT", list, "TOPLEFT", 4, -2)
     search:SetSize(160, CONTROL_HEIGHT)
+    SetPanelFont(search, GW.Enum.TextSizeType.Normal)
+    SetPanelFont(search.Instructions, GW.Enum.TextSizeType.Normal)
 
     local dropdown = list.FilterDropdown
     dropdown:GwHandleDropDownBox(nil, true, nil, 90)
     dropdown:SetSize(90, CONTROL_HEIGHT)
+    SetPanelFont(dropdown.Text, GW.Enum.TextSizeType.Small)
     dropdown.backdrop:ClearAllPoints()
     dropdown.backdrop:SetPoint("TOPLEFT", dropdown, "TOPLEFT", 0, 0)
     dropdown.backdrop:SetPoint("BOTTOMRIGHT", dropdown, "BOTTOMRIGHT", 0, 0)
@@ -588,10 +622,15 @@ local function SkinCraftingPage(page)
     dropdown:SetPoint("TOPLEFT", search, "TOPRIGHT", 6, 1)
     dropdown:SetPoint("BOTTOMLEFT", search, "BOTTOMRIGHT", 6, 0)
 
-    local buttonFontSize = GW.settings.fonts.size.normal or 12
-    craftButtonFont:SetFont(UNIT_NAME_FONT, buttonFontSize, "")
+    -- font objects are not in the font size refresh, so they follow the setting on every open
+    local function UpdateCraftButtonFonts()
+        local buttonFontSize = (GW.settings.fonts.size.normal or 12) * FONT_SCALE
+        craftButtonFont:SetFont(UNIT_NAME_FONT, buttonFontSize, "")
+        craftButtonDisabledFont:SetFont(UNIT_NAME_FONT, buttonFontSize, "")
+    end
+    UpdateCraftButtonFonts()
+    page:HookScript("OnShow", UpdateCraftButtonFonts)
     craftButtonFont:SetTextColor(0, 0, 0)
-    craftButtonDisabledFont:SetFont(UNIT_NAME_FONT, buttonFontSize, "")
     craftButtonDisabledFont:SetTextColor(0.35, 0.35, 0.35)
 
     for _, button in ipairs({page.CreateButton, page.CreateAllButton, page.ViewGuildCraftersButton}) do
@@ -603,6 +642,7 @@ local function SkinCraftingPage(page)
     local spinner = page.CreateMultipleInputBox
     spinner:GwStripTextures()
     GW.SkinEditBox(spinner, {compact = true})
+    SetPanelFont(spinner, GW.Enum.TextSizeType.Small)
     GW.HandleNextPrevButton(spinner.DecrementButton, "left")
     GW.HandleNextPrevButton(spinner.IncrementButton, "right")
 

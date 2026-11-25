@@ -967,7 +967,7 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
         size = GW.settings.fonts.size.small or 12
     end
     if not size then return end
-    size = size + (textSizeAddition or 0)
+    size = (size + (textSizeAddition or 0)) * (object.gwTextScale or 1)
 
     local shadow = style and strsub(style, 0, 6) == "SHADOW"
     if shadow then
