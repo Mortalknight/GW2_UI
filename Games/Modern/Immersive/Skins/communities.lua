@@ -414,6 +414,13 @@ local function SkinGuildInfo(info)
             zebra:SetTexture(ROW_BACKGROUND)
         end
     end
+    if CommunitiesGuildInfoFrame_HideChallenges then
+        hooksecurefunc("CommunitiesGuildInfoFrame_HideChallenges", function(frame)
+            for _, challenge in ipairs(frame.Challenges) do
+                challenge:Hide()
+            end
+        end)
+    end
 
     GW.SkinSlimScrollFrame(info.MOTDScrollFrame)
     local motdBar = info.MOTDScrollFrame.ScrollBar

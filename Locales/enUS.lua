@@ -268,7 +268,6 @@ L["Keystone"] = true
 L["Best"] = true
 L["Chat notice and flashing icon when a group or guild member runs a newer GW2 UI version. The update icon itself stays visible."] = true
 L["Set the order of the micro bar buttons, uncheck a button to hide it."] = true
-L["Reset micro bar layout"] = "Reset Micro Bar Layout"
 L["Restores the default order and shows all buttons."] = true
 L["Installed version"] = true
 L["Available version"] = true

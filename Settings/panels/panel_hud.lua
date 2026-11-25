@@ -203,7 +203,7 @@ local function LoadHudPanel(sWindow)
         maxVisibleRows = 8,
         dependence = {["micromenu.enabled"] = true}
     })
-    microBar:AddOptionButton(L["Reset micro bar layout"], L["Restores the default order and shows all buttons."], {
+    microBar:AddOptionButton(RESET_TO_DEFAULT, L["Restores the default order and shows all buttons."], {
         callback = function()
             wipe(GW.settings.micromenu.buttonOrder)
             wipe(GW.settings.micromenu.buttonVisibility)
@@ -215,8 +215,7 @@ local function LoadHudPanel(sWindow)
                 GW.LayoutMicroButtons()
             end
         end,
-        isNegativeButton = true,
-        forceNewLine = true,
+        isPassiveButton = true,
         dependence = {["micromenu.enabled"] = true}
     })
     microBar:AddOption(L["Show update notifications"], L["Chat notice and flashing icon when a group or guild member runs a newer GW2 UI version. The update icon itself stays visible."], {

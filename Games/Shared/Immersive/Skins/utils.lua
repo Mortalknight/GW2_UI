@@ -1128,6 +1128,12 @@ local function SkinSmallWindow(frame, title, icon, closeButton)
         closeButton:SetSize(25, 25)
         closeButton:ClearAllPoints()
         closeButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -2)
+
+        local headerText = frame.gwHeader.headerText
+        if headerText then
+            headerText:SetPoint("BOTTOMRIGHT", frame.gwHeader, "BOTTOMRIGHT", -35, 10)
+            headerText:SetWordWrap(false)
+        end
     end
 end
 GW.SkinSmallWindow = SkinSmallWindow
