@@ -240,16 +240,30 @@ local function UpdatePreviewControls(self, isPreview)
     end
 end
 
--- one card per spec group: the tree with the most points names it, the viewed card is framed, the active one checked
+local MENU_BG = "Interface/AddOns/GW2_UI/textures/character/menu-bg.png"
+local MENU_HOVER = "Interface/AddOns/GW2_UI/textures/character/menu-hover.png"
+
+-- one card per spec group in the look of the character menu entries: the tree with the most points
+-- names it, the viewed card is lit with an accent edge, the active one checked
 local function CreateSpecCard(bar, group)
     local card = CreateFrame("Button", nil, bar)
-    card:SetSize(190, 40)
+    card:SetSize(200, 40)
     if group == 1 then
-        card:SetPoint("LEFT", bar.unspentPoints, "RIGHT", 20, 0)
+        card:SetPoint("TOPLEFT", bar, "TOPLEFT", 240, -12)
     else
         card:SetPoint("LEFT", bar.specCards[1], "RIGHT", 10, 0)
     end
-    card:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
+    card.background = card:CreateTexture(nil, "BACKGROUND", nil, 0)
+    card.background:SetTexture(MENU_BG)
+    card.background:SetAllPoints()
+    card.viewed = card:CreateTexture(nil, "BACKGROUND", nil, 1)
+    card.viewed:SetTexture(MENU_HOVER)
+    card.viewed:SetAllPoints()
+    card.accent = card:CreateTexture(nil, "BACKGROUND", nil, 2)
+    card.accent:SetColorTexture(GW.Colors.Accent:GetRGB())
+    card.accent:SetPoint("TOPLEFT")
+    card.accent:SetPoint("BOTTOMLEFT")
+    card.accent:SetWidth(2)
 
     card.icon = card:CreateTexture(nil, "ARTWORK")
     card.icon:SetSize(30, 30)
@@ -273,8 +287,6 @@ local function CreateSpecCard(bar, group)
     card.active:SetPoint("TOPRIGHT", -4, -4)
     card.active:SetTexture("Interface/RaidFrame/ReadyCheck-Ready")
 
-    card:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
-    card:GetHighlightTexture():SetVertexColor(GW.Colors.SkinColors.CardHover:GetRGBA())
     -- the tree name alone does not tell which group it is, e.g. for /usetalents
     card:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
@@ -282,6 +294,9 @@ local function CreateSpecCard(bar, group)
         GameTooltip:Show()
     end)
     card:SetScript("OnLeave", GameTooltip_Hide)
+    card:GwAddHover()
+    card.hover:SetTexture(MENU_HOVER)
+    card.limitHoverStripAmount = 1
     -- the first update fills and shows it, it can wait for the talent data or the end of a fight
     card:Hide()
     return card
@@ -299,14 +314,16 @@ local function UpdateSpecCard(card, group, activeTalentGroup)
     end
 
     card.name:SetText(best and best.name or (group == 1 and PRIMARY or SECONDARY))
+    -- set on every update, a font size refresh brings the font objects white back
+    card.name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     card.icon:SetTexture(best and best.icon or "Interface/Icons/INV_Misc_QuestionMark")
     card.icon:SetDesaturated(total == 0)
     card.points:SetText(table.concat(points, " / "))
     card.active:SetShown(group == activeTalentGroup)
 
     local isViewed = group == openSpec
-    card.backdrop:SetBackdropBorderColor((isViewed and GW.Colors.Accent or GW.Colors.SkinColors.CardBorder):GetRGB())
-    card:SetAlpha(isViewed and 1 or 0.6)
+    card.viewed:SetShown(isViewed)
+    card.accent:SetShown(isViewed)
 end
 
 local function updateTalentTrees(self)
@@ -334,14 +351,19 @@ local function updateTalentTrees(self)
     local activate = self.bottomBar.activateSpecGroup
     activate:SetShown(showCards and not isActiveTalentGroup)
     activate:ClearAllPoints()
-    activate:SetPoint("TOP", self.bottomBar.specCards[openSpec], "BOTTOM", 0, -3)
+    activate:SetPoint("BOTTOMRIGHT", self.bottomBar.specCards[openSpec], "BOTTOMRIGHT", -4, 4)
 
     if hasPetTalents then
         self.bottomBar.petTalentsButton:SetText(isPetTalents and PLAYER or PETS)
+        self.bottomBar.petTalentsButton:SetWidth(self.bottomBar.petTalentsButton:GetFontString():GetStringWidth() + 24)
     end
     self.bottomBar.petTalentsButton:SetShown(hasPetTalents)
 
     self.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
+    -- the cards start behind the points text and the learn and reset buttons
+    local bar = self.bottomBar
+    local buttonsWidth = bar.prevLearn:GetWidth() + 10 + bar.prevCancel:GetWidth()
+    bar.specCards[1]:SetPoint("TOPLEFT", bar, "TOPLEFT", 10 + math.max(bar.unspentPoints:GetStringWidth(), buttonsWidth) + 20, -12)
 
     for f = 1, Data.GetNumTrees(isPetTalents) do
         local container = self.container[f]
@@ -517,6 +539,18 @@ local function LoadTalents(tabContainer)
             updateTalentTrees(talentFrame)
         end
     end)
+    -- small side buttons like the resets in the settings: learn, activate and pets neutral, reset red
+    local bar = talentFrame.bottomBar
+    for _, button in ipairs({bar.prevLearn, bar.activateSpecGroup, bar.petTalentsButton}) do
+        button:GwSkinPassiveButton(GW.Colors.TextColors.LightHeader)
+    end
+    bar.prevCancel:GwSkinPassiveButton()
+    for _, button in ipairs({bar.prevLearn, bar.prevCancel, bar.activateSpecGroup, bar.petTalentsButton}) do
+        button:SetSize(button:GetFontString():GetStringWidth() + 24, 20)
+    end
+    -- sits inside the viewed card, under its name
+    bar.activateSpecGroup:SetFrameLevel(bar.specCards[1]:GetFrameLevel() + 5)
+    bar.activateSpecGroup:SetHeight(18)
 
     talentFrame.bottomBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     talentFrame.bottomBar.unspentPoints:SetTextColor(0.87, 0.74, 0.29, 1)

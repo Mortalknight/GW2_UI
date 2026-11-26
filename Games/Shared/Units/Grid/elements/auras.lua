@@ -30,6 +30,21 @@ end
 
 local DEFAULT_INDICATOR = { color = GW.Colors.FallbackWhite }
 
+-- SWIPE darkens the indicator, RING runs a white swipe behind the icon so only its 1px edge
+-- shows, like on the auras; the icon sits on face, the cooldown goes above or below it
+local function ApplyIndicatorTimerStyle(cooldown, face, anchor, style)
+    local ring = style == "RING"
+    local inset = ring and 0 or 1
+    cooldown:ClearAllPoints()
+    cooldown:SetPoint("TOPLEFT", anchor, "TOPLEFT", inset, -inset)
+    cooldown:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", -inset, inset)
+    cooldown:SetSwipeTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    cooldown:SetSwipeColor((ring and GW.Colors.FallbackWhite or GW.Colors.SkinColors.CooldownSwipe):GetRGBA())
+    cooldown:SetReverse(not ring)
+    cooldown:SetFrameLevel(face:GetFrameLevel() + (ring and -1 or 1))
+    cooldown:SetDrawSwipe(style ~= "NONE")
+end
+
 local function GetIndicatorDataForSpellId(indicators, spellId)
     if indicators then
         local indicator = indicators[spellId]
@@ -72,6 +87,26 @@ function GW.CreateDispelFrameBorder(parent, frame)
     return edges
 end
 
+-- buffs and debuffs differ in size: each button advances by its own width, a row is as high as its
+-- biggest button (oUF would step every button by the buff size, bigger debuffs would overlap)
+local function SetAuraPosition(element, _, to)
+    local spacingX, spacingY = element.spacingX or 0, element.spacingY or 0
+    local maxWidth = element:GetWidth()
+    local x, y, rowHeight = 0, 0, 0
+    for i = 1, to do
+        local button = element[i]
+        if not button then break end
+        local width, height = button:GetSize()
+        if x > 0 and x + width > maxWidth then
+            x, y, rowHeight = 0, y + rowHeight + spacingY, 0
+        end
+        button:ClearAllPoints()
+        button:SetPoint("BOTTOMRIGHT", element, "BOTTOMRIGHT", -x, y)
+        x = x + width + spacingX
+        rowHeight = math.max(rowHeight, height)
+    end
+end
+
 local function Construct_AuraIcon(self, button)
     button.Count:ClearAllPoints()
     button.Count:SetPoint("TOPLEFT")
@@ -110,7 +145,7 @@ local function PostUpdateButton(self, button, unit, data, position)
     local parent = self:GetParent()
 
     if data.isHarmfulAura then
-        local size = 16
+        local size = parent.debuffSize or 16
         local isDispellable = GW.Dispel.CanDispel(data.dispelName)
         local isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
         if isImportant and isDispellable then
@@ -244,7 +279,7 @@ local function UpdateIconIndicator(frame, parent, data)
         frame.cooldown:SetCooldown(0, 0)
     end
 
-    if parent.showRaidIndicatorTimer then
+    if parent.raidIndicatorTimerStyle ~= "NONE" then
         frame.cooldown:Show()
     else
         frame.cooldown:Hide()
@@ -485,27 +520,28 @@ local function CreateGridIndicatorTracker(frame, pos, spellList, indicatorColor)
 
             -- monochrome square (indicator color) and spell icon share the slot,
             -- the settings toggle which of the two is visible
-            local color = button:CreateTexture(nil, "ARTWORK")
+            local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+            cooldown:SetDrawBling(false)
+            cooldown:SetDrawEdge(false)
+            cooldown:SetHideCountdownNumbers(true)
+            button:SetDurationCooldown(cooldown)
+
+            local face = CreateFrame("Frame", nil, button)
+            face:SetAllPoints(holder)
+            face:SetFrameLevel(button:GetFrameLevel() + 2)
+
+            local color = face:CreateTexture(nil, "ARTWORK")
             color:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
             color:SetPoint("TOPLEFT", holder, "TOPLEFT", 1, -1)
             color:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -1, 1)
 
-            local icon = button:CreateTexture(nil, "ARTWORK", nil, 1)
+            local icon = face:CreateTexture(nil, "ARTWORK", nil, 1)
             icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 1, -1)
             icon:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -1, 1)
             button:SetIcon(icon)
 
-            local cooldown = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
-            cooldown:SetPoint("TOPLEFT", holder, "TOPLEFT", 1, -1)
-            cooldown:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -1, 1)
-            cooldown:SetDrawBling(false)
-            cooldown:SetDrawEdge(false)
-            cooldown:SetReverse(true)
-            cooldown:SetHideCountdownNumbers(true)
-            button:SetDurationCooldown(cooldown)
-
-            local stacks = button:CreateFontString(nil, "OVERLAY")
+            local stacks = face:CreateFontString(nil, "OVERLAY")
             stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
             stacks:SetJustifyH("CENTER")
             stacks:SetPoint("CENTER", holder, "CENTER")
@@ -517,10 +553,10 @@ local function CreateGridIndicatorTracker(frame, pos, spellList, indicatorColor)
             color:SetVertexColor(r, g, b)
             color:SetShown(not frame.showRaidIndicatorIcon)
             icon:SetShown(frame.showRaidIndicatorIcon and true or false)
-            cooldown:SetDrawSwipe(frame.showRaidIndicatorTimer and true or false)
+            ApplyIndicatorTimerStyle(cooldown, face, holder, frame.raidIndicatorTimerStyle)
             stacks:SetShown(frame.showRaidIndicatorStacks and true or false)
 
-            widgets.colorTexture, widgets.icon, widgets.cooldown, widgets.stacks = color, icon, cooldown, stacks
+            widgets.colorTexture, widgets.icon, widgets.cooldown, widgets.stacks, widgets.face = color, icon, cooldown, stacks, face
             return {}
         end,
     })
@@ -609,7 +645,7 @@ local function UpdateGridIndicators(frame)
                 -- subtree can be access restricted while auras are secret. New buttons
                 -- apply the current settings themselves in createWidgets.
                 local r, g, b = (tracker.gwIndicatorColor or GW.Colors.FallbackWhite):GetRGB()
-                local modeSig = strjoin(":", tostring(frame.showRaidIndicatorIcon), tostring(frame.showRaidIndicatorTimer),
+                local modeSig = strjoin(":", tostring(frame.showRaidIndicatorIcon), tostring(frame.raidIndicatorTimerStyle),
                     tostring(frame.showRaidIndicatorStacks), r, g, b)
                 if tracker.gwAppliedModeSig ~= modeSig then
                     local w = tracker.gwWidgets
@@ -617,7 +653,7 @@ local function UpdateGridIndicators(frame)
                         w.icon:SetShown(frame.showRaidIndicatorIcon and true or false)
                         w.colorTexture:SetShown(not frame.showRaidIndicatorIcon)
                         w.colorTexture:SetVertexColor(r, g, b)
-                        w.cooldown:SetDrawSwipe(frame.showRaidIndicatorTimer and true or false)
+                        ApplyIndicatorTimerStyle(w.cooldown, w.face, tracker.gwSizer, frame.raidIndicatorTimerStyle)
                         w.stacks:SetShown(frame.showRaidIndicatorStacks and true or false)
                     end)
                     if ok then
@@ -773,6 +809,7 @@ local function UpdateGridAuraContainers(frame)
     cfg.excludeSpellIDs = exclude
 
     local showImportant = frame.raidShowImportantInstanceDebuffs
+    local debuffSize = frame.debuffSize or GRID_DEBUFF_SIZE
     local importantScale = tonumber(frame.raidDebuffScale) or 1
     local dispelScale = tonumber(frame.raidDispelDebuffScale) or 1
     local prioScale = GW.GetDebuffScaleBasedOnPrio and GW.GetDebuffScaleBasedOnPrio() or math.max(importantScale, dispelScale)
@@ -789,26 +826,26 @@ local function UpdateGridAuraContainers(frame)
         group.gwBaseFilter = group.gwBaseFilter or group.filter
         if group.key == "importantDispellable" then
             GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, nil, nil))
-            group.size = GW.RoundInt(GRID_DEBUFF_SIZE * prioScale)
+            group.size = GW.RoundInt(debuffSize * prioScale)
             group.maxFrameCount = (frame.showDebuffs and showImportant) and 12 or 0
         elseif group.key == "importantOnly" then
             GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, nil, nil))
-            group.size = GW.RoundInt(GRID_DEBUFF_SIZE * importantScale)
+            group.size = GW.RoundInt(debuffSize * importantScale)
             group.maxFrameCount = (frame.showDebuffs and showImportant) and 12 or 0
         elseif group.key == "dispellableDebuffs" then
             group.filter = group.gwBaseFilter .. debuffSuffix
             GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, debuffSelection, importantExclude))
-            group.size = GW.RoundInt(GRID_DEBUFF_SIZE * dispelScale)
+            group.size = GW.RoundInt(debuffSize * dispelScale)
             group.maxFrameCount = frame.showDebuffs and 12 or 0
         elseif group.key == "debuffs" then
             group.filter = group.gwBaseFilter .. debuffSuffix
             GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, debuffSelection, importantExclude))
-            group.size = GRID_DEBUFF_SIZE
+            group.size = debuffSize
             group.maxFrameCount = frame.showDebuffs and 12 or 0
         elseif group.key == "buffs" then
             group.filter = group.gwBaseFilter .. buffSuffix
             GW.ApplyStableCandidates(group, GW.ComposeAuraGroupCandidates(group, buffSelection, nil))
-            group.size = GRID_BUFF_SIZE
+            group.size = frame.buffSize or GRID_BUFF_SIZE
             group.maxFrameCount = frame.showBuffs and 12 or 0
         end
     end
@@ -883,6 +920,15 @@ local function CreateAuraIndicator(frame, pos)
 
     indicator:SetPoint(config.point, frame, config.point, config.x, config.y)
     indicator.color = { r = 1, g = 1, b = 1 }
+    indicator.face = CreateFrame("Frame", nil, indicator)
+    indicator.face:SetAllPoints()
+    indicator.face:SetFrameLevel(indicator:GetFrameLevel() + 2)
+    indicator.icon:SetParent(indicator.face)
+    -- a full pixel around the icon, the ring style shows in it
+    indicator.icon:ClearAllPoints()
+    indicator.icon:SetPoint("TOPLEFT", 1, -1)
+    indicator.icon:SetPoint("BOTTOMRIGHT", -1, 1)
+    indicator.textFrame:SetFrameLevel(indicator:GetFrameLevel() + 4)
     indicator.cooldown:HookScript("OnCooldownDone", function()
         ClearIndicatorFrame(indicator)
     end)
@@ -974,6 +1020,7 @@ local function Construct_Auras(frame)
     auras.PreUpdate = PreUpdateAuras
 
     auras.size = 14 -- dynamic
+    auras.SetPosition = SetAuraPosition
 
     frame:RegisterEvent("PLAYER_REGEN_DISABLED", HandleTooltip, true)
     frame:RegisterEvent("PLAYER_REGEN_ENABLED", HandleTooltip, true)
@@ -1026,6 +1073,7 @@ local function UpdateIndicatorSettings(frame)
         if INDICATOR_CONFIG[pos] then
             local indicator = frame.Auras["indicator" .. pos]
             indicator:SetSize(indicatorSize, indicatorSize)
+            ApplyIndicatorTimerStyle(indicator.cooldown, indicator.face, indicator, frame.raidIndicatorTimerStyle)
         end
     end
 
@@ -1047,6 +1095,7 @@ local function UpdateAurasSettings(frame)
     end
 
     frame.Auras:SetSize(frame.unitWidth - 2, frame.unitHeight - 2)
+    frame.Auras.size = frame.buffSize or 14
     frame.Auras.forceShow = frame.forceShowAuras
     UpdateIndicatorSettings(frame)
 

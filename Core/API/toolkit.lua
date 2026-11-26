@@ -523,6 +523,30 @@ local function SetButtonFontStringColor(button, r, g, b, a)
     end
 end
 
+-- a small, faint button for side actions like a reset: tinted in color (negative by default), lit on hover
+local function GwSkinPassiveButton(button, color)
+    color = color or GW.Colors.SkinColors.Negative
+    local fill = button:GetNormalTexture()
+    local function SetState(lit)
+        local enabled = button:IsEnabled()
+        fill:SetAlpha(lit and 0.35 or 0.12)
+        button:GetFontString():SetTextColor(color.r, color.g, color.b, not enabled and 0.35 or lit and 1 or 0.75)
+    end
+    fill:SetVertexColor(color:GetRGB())
+    -- disabled keeps the passive look, only fainter, instead of the grey standard art
+    local disabledFill = button:GetDisabledTexture()
+    if disabledFill then
+        disabledFill:SetTexture(fill:GetTexture())
+        disabledFill:SetVertexColor(color:GetRGB())
+        disabledFill:SetAlpha(0.06)
+    end
+    SetState(false)
+    button:HookScript("OnEnter", function(self) if self:IsEnabled() then SetState(true) end end)
+    button:HookScript("OnLeave", function() SetState(false) end)
+    button:HookScript("OnEnable", function() SetState(false) end)
+    button:HookScript("OnDisable", function() SetState(false) end)
+end
+
 local function GwSkinNegativeButton(button)
     if not button then return end
 
@@ -1036,6 +1060,7 @@ local API = {
     GwCreateBackdrop = GwCreateBackdrop,
     GwSkinButton = GwSkinButton,
     GwSkinNegativeButton = GwSkinNegativeButton,
+    GwSkinPassiveButton = GwSkinPassiveButton,
     GwSkinTab = GwSkinTab,
     GwSkinScrollFrame = GwSkinScrollFrame,
     GwSkinScrollBar = GwSkinScrollBar,

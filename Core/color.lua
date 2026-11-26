@@ -79,6 +79,7 @@ GW.Colors.SkinColors = {
     Chip = CreateColor(0, 0, 0, 0.35), -- a small name plate on a card
     CinematicBlack = CreateColor(0, 0, 0, 1), -- the solid black of the fullscreen quest view: stripes and brush edges
     DarkIconButton = CreateColor(0, 0, 0, 0.6), -- the dark square behind a small icon button
+    CooldownSwipe = CreateColor(0, 0, 0, 0.7), -- the dark swipe over an icon while its time runs
     IconDim = CreateColor(0.7, 0.7, 0.7), -- an icon button at rest, it lights up on hover
     NotificationBadge = CreateColor(1, 0, 0, 1), -- the round count of micro buttons and chat tabs
     TooltipBorder = CreateColor(0.05, 0.05, 0.05, 1), -- the dark frame of our tooltips

@@ -14,9 +14,12 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("12.1.12", {
+    {GW.Enum.ChangelogType.feature, [=[Group frames: buff and debuff size per grid]=]},
+    {GW.Enum.ChangelogType.feature, [=[Aura indicators: the remaining time shows as a dark swipe, as a white ring like on the auras, or not at all]=]},
     {GW.Enum.ChangelogType.change, [=[Move HUD: the grid remembers whether it was shown, per profile]=]},
     {GW.Enum.ChangelogType.bug, [=[Professions (Forever): the recipe list, recipe details and buttons use the GW2 UI font sizes instead of being drawn smaller]=]},
     {GW.Enum.ChangelogType.bug, [=[Guild info (Forever): no empty challenge rows under the message of the day]=]},
+    {GW.Enum.ChangelogType.bug, [=[Talents: the spec cards look like the character menu entries and no longer overlap the learn and reset buttons, those buttons are small and light up on hover, activate sits inside the viewed card]=]},
 })
 
 addChange("12.1.11", {

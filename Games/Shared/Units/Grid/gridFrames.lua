@@ -80,6 +80,8 @@ function GW.UpdateGridFrame(frame, profile, options)
     frame.showDebuffs = settings.showDebuffs
     frame.showOnlyDispelDebuffs = settings.onlyDispellableDebuffs
     frame.showBuffs = settings.showBuffs
+    frame.buffSize = settings.buffSize
+    frame.debuffSize = settings.debuffSize
     frame.showAuraTooltipInCombat = settings.auraTooltipInCombat
     frame.missingAuras = options.missingAuras and GetMissingAuras() or nil
     frame.showAbsorbBar = settings.showAbsorbBar
@@ -89,7 +91,7 @@ function GW.UpdateGridFrame(frame, profile, options)
         frame.raidIndicators[pos] = GW.settings.groupFrames.indicators.positions[pos]
     end
     frame.showRaidIndicatorIcon = GW.settings.groupFrames.indicators.icon
-    frame.showRaidIndicatorTimer = GW.settings.groupFrames.indicators.time
+    frame.raidIndicatorTimerStyle = GW.settings.groupFrames.indicators.timeStyle
     frame.showRaidIndicatorStacks = GW.settings.groupFrames.indicators.stacks
     frame.raidIndicatorSize = GW.settings.groupFrames.indicators.size
     frame.raidIndicatorBarWidth = GW.settings.groupFrames.indicators.barWidth

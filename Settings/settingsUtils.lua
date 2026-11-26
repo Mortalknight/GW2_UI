@@ -2186,18 +2186,7 @@ local function SettingsInitOptionWidget(of, v, panel)
             passive:SetScript("OnClick", function() of:Click() end)
             passive:SetScript("OnEnter", of:GetScript("OnEnter"))
             passive:SetScript("OnLeave", GameTooltip_Hide)
-
-            -- only a faint negative tint, it lights up on hover
-            local fill = passive:GetNormalTexture()
-            local negative = GW.Colors.SkinColors.Negative
-            local function SetLit(lit)
-                fill:SetAlpha(lit and 0.35 or 0.12)
-                passive:GetFontString():SetTextColor(negative.r, negative.g, negative.b, lit and 1 or 0.75)
-            end
-            fill:SetVertexColor(negative:GetRGB())
-            SetLit(false)
-            passive:HookScript("OnEnter", function(self) if self:IsEnabled() then SetLit(true) end end)
-            passive:HookScript("OnLeave", function() SetLit(false) end)
+            passive:GwSkinPassiveButton()
             of.passiveButton = passive
         else
             of.title:SetTextColor(0, 0, 0)

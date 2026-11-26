@@ -349,6 +349,15 @@ local function MigrateProfileSettings(profile)
         profile.Minimap = nil
     end
 
+    -- the indicator timer switch became a style, on was the swipe
+    local indicators = type(profile.groupFrames) == "table" and profile.groupFrames.indicators
+    if type(indicators) == "table" and indicators.time ~= nil then
+        if indicators.time == false then
+            indicators.timeStyle = "NONE"
+        end
+        indicators.time = nil
+    end
+
     for key in pairs(profile) do
         if GW.globalDefault.profile[key] == nil and not TOP_LEVEL_WITHOUT_DEFAULT[key] then
             profile[key] = nil
