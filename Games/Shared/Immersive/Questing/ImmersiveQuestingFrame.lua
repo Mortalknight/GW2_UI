@@ -953,7 +953,7 @@ local function deferShow(self)
     else
         self.needs_showing = false
         if self.fadingOut then
-            self:stopAnimation()
+            self:playIntro()
             self:showQuestFrame()
         elseif not self:IsShown() then
             self:showQuestFrame()
@@ -1047,8 +1047,15 @@ function GwImmersiveQuestFrameMixin:evQuestFinished()
     if self.questState ~= "COMPLETING" then
         self:clearQuestReq()
         self:Hide()
+        return
     end
-    -- else, we expect a QUEST_COMPLETE event to follow shortly
+    -- a QUEST_COMPLETE should follow shortly, an npc busy with someone else never sends it
+    C_Timer.After(1, function()
+        if self.questState == "COMPLETING" and not QuestFrame:IsShown() then
+            self:clearQuestReq()
+            self:Hide()
+        end
+    end)
 end
 
 local function acceptQuest(self)

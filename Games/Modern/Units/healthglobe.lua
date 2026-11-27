@@ -345,11 +345,15 @@ local function LoadHealthGlobe()
     fadeIn:SetDuration(0.1)
 
     pvp.fadeOut = function()
+        pvp.fadedIn = false
         pagIn:Stop()
         pagOut:Stop()
         pagOut:Play()
     end
+    -- the tooltip update calls OnEnter again while hovering
     pvp.fadeIn = function(self)
+        if self.fadedIn then return end
+        self.fadedIn = true
         self:SetAlpha(1)
         pagIn:Stop()
         pagOut:Stop()
