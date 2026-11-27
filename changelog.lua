@@ -20,6 +20,7 @@ addChange("12.1.12", {
     {GW.Enum.ChangelogType.change, [=[Legacy (Forever): the window can be moved by its header and remembers its place, the search results of the legacy tree are skinned]=]},
     {GW.Enum.ChangelogType.bug, [=[Trainer: spell names are no longer cut off until a spell is clicked]=]},
     {GW.Enum.ChangelogType.bug, [=[Upcoming level rewards: a requirement learned from a talent, like Penance, no longer shows as missing until the next trainer visit]=]},
+    {GW.Enum.ChangelogType.bug, [=[Unit frames (Retail and Forever): incoming heals and absorbs on the party, target and focus frames are drawn in the scale of the health bar, the party frames no longer look like they have more health]=]},
     {GW.Enum.ChangelogType.bug, [=[Immersive Questing (fullscreen): talking to the NPC again right after closing no longer leaves the view half drawn, a turn-in interrupted by another player no longer keeps the view open until a reload]=]},
     {GW.Enum.ChangelogType.bug, [=[Professions (Forever): the recipe list, recipe details and buttons use the GW2 UI font sizes instead of being drawn smaller]=]},
     {GW.Enum.ChangelogType.bug, [=[Guild info (Forever): no empty challenge rows under the message of the day]=]},

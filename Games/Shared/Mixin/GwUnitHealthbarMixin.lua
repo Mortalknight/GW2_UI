@@ -46,8 +46,10 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
         local allHeal = self.hpValues:GetIncomingHeals()
         local damageAbsorbAmount, damageAbsorbClamped = self.hpValues:GetDamageAbsorbs()
         local healAbsorbAmount = self.hpValues:GetHealAbsorbs()
+        local width = self.health:GetWidth()
 
         if self.healPrediction then
+            self.healPrediction:SetWidth(width)
             self.healPrediction:SetMinMaxValues(0, healthMax)
             self.healPrediction:SetValue(allHeal, Enum.StatusBarInterpolation.ExponentialEaseOut)
         end
@@ -56,11 +58,13 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
         self.health:SetValue(health, statusBarAnimation)
 
         if self.absorbbg then
+            self.absorbbg:SetWidth(width)
             self.absorbbg:SetMinMaxValues(0, healthMax)
             self.absorbbg:SetValue(damageAbsorbAmount, statusBarAnimation)
         end
         if self.absorbOverlay then self.absorbOverlay:SetAlphaFromBoolean(damageAbsorbClamped, 1, 0) end
         if self.antiHeal then
+            self.antiHeal:SetWidth(width)
             self.antiHeal:SetMinMaxValues(0, healthMax)
             self.antiHeal:SetValue(healAbsorbAmount, statusBarAnimation)
         end
