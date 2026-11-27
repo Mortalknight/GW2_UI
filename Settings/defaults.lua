@@ -1960,6 +1960,13 @@ GW.globalDefault = {
             },
             legacySystem = {
                 enabled = true,
+                pos = {
+                    point = "TOPLEFT",
+                    relativePoint = "TOPLEFT",
+                    xOfs = 70,
+                    yOfs = -150,
+                    hasMoved = false,
+                },
             },
             classTrainer = {
                 enabled = true,

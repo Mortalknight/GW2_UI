@@ -27,6 +27,12 @@ local function SkinCategoryRow(row)
 
     row.Label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     row.Label:GwLockTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    -- blizzards hover scripts swap the font
+    hooksecurefunc(row.Label, "SetFontObject", function(label, font)
+        if font == GameFontHighlight_NoShadow or font == GameFontNormal_NoShadow then
+            label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+        end
+    end)
 
     row.CollapseIconAlphaAdd:SetAlpha(0)
     row.CollapseIcon:SetSize(16, 16)
@@ -82,6 +88,10 @@ local function SkinSkillRow(row)
 
     row.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     row.name:GwLockTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    -- a new font size needs a new name width
+    local function UpdateNameWidth() row:UpdateNameWidth() end
+    hooksecurefunc(row.name, "SetFontObject", UpdateNameWidth)
+    hooksecurefunc(row.name, "SetFont", UpdateNameWidth)
     row.subText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     row.subText:GwLockTextColor(GW.Colors.FallbackWhite:GetRGB())
     if row.nameSubText then
@@ -94,17 +104,16 @@ local function SkinSkillRow(row)
     SkinMoneyFrame(row.money)
 end
 
-local function SkinRows(scrollBox)
-    scrollBox:ForEachFrame(function(row)
-        if not row.gwSkinned then
-            row.gwSkinned = true
-            if row.CollapseIcon then
-                SkinCategoryRow(row)
-            elseif row.icon then
-                SkinSkillRow(row)
-            end
+-- skinned on acquire, before blizzard fits the name to the row with the font it has
+local function SkinRow(_, row)
+    if not row.gwSkinned then
+        row.gwSkinned = true
+        if row.CollapseIcon then
+            SkinCategoryRow(row)
+        elseif row.icon then
+            SkinSkillRow(row)
         end
-    end)
+    end
 end
 
 local function SkinTrainAllButton()
@@ -166,7 +175,7 @@ local function ApplyClassTrainerSkin()
     GW.AddDetailsBackground(ClassTrainerFrame.ScrollBox)
     GW.HandleTrimScrollBar(ClassTrainerFrame.ScrollBar)
     GW.HandleScrollControls(ClassTrainerFrame)
-    hooksecurefunc(ClassTrainerFrame.ScrollBox, "Update", SkinRows)
+    ScrollUtil.AddAcquiredFrameCallback(ClassTrainerFrame.ScrollBox, SkinRow, ClassTrainerFrame)
 
     GW.HideScrollBarWhenUnscrollable(ClassTrainerFrame.ScrollBar)
 

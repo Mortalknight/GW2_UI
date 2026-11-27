@@ -13,7 +13,7 @@ local petTrainableRewards = {}
 local petUpcomingRewards = {}
 -- the level the pet trainer offer counts with, the one of the pet unless the hunter learns it himself
 local petRewardLevel, petLevelIsOwn = 1, false
--- "name (rank)" of every trainer reward, the way the trainer names its requirements; true while not learned
+-- "name (rank)" of every trainer reward and requirement, the way the trainer names them; true while not learned
 local rewardPending = {}
 -- the clients with class trainers
 GW.HAS_LEVEL_REWARDS = GW.Classic or GW.TBC or GW.Wrath or GW.Forever
@@ -283,13 +283,26 @@ local function SortByLevel(a, b)
     return a.level < b.level
 end
 
--- requirements outside the trainer offer (talents) keep the state of the last visit
-local function IsRequirementMet(requirement)
-    local pending = rewardPending[requirement.name]
-    if pending == nil then
-        return requirement.met
+-- requirements outside the trainer offer (talents) come as "name (rank)", the name finds a learned one in the spell book
+local function IsRequirementInSpellBook(requirementName)
+    local name, rankText = requirementName:match("^(.-)%s*%((.-)%)$")
+    local spellInfo = C_Spell.GetSpellInfo(name or requirementName)
+    if not spellInfo or not C_SpellBook.IsSpellKnown(spellInfo.spellID, Enum.SpellBookSpellBank.Player) then
+        return false
     end
-    return not pending
+    local requiredRank = rankText and tonumber(rankText:match("%d+"))
+    if not requiredRank then
+        return true
+    end
+    local knownRank = tonumber((Spell:CreateFromSpellID(spellInfo.spellID):GetSpellSubtext() or ""):match("%d+"))
+    return knownRank ~= nil and knownRank >= requiredRank
+end
+
+local function IsRequirementMet(requirement)
+    if rewardPending[requirement.name] == nil then
+        rewardPending[requirement.name] = not (requirement.met or IsRequirementInSpellBook(requirement.name))
+    end
+    return not rewardPending[requirement.name]
 end
 
 local function IsRewardTrainable(reward, level)

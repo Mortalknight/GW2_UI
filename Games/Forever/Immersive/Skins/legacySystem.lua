@@ -311,6 +311,44 @@ local function SkinIconButton(button)
     button.Icon:SetSize(18, 18)
 end
 
+local function SkinSearchResult(button)
+    button:GetNormalTexture():SetAlpha(0)
+    button:GetPushedTexture():SetAlpha(0)
+    button.HighlightTexture:SetTexture(MENU_HOVER)
+    button.HighlightTexture:SetVertexColor(GW.Colors.SkinColors.HighlightWhite:GetRGBA())
+    button.HighlightTexture:SetBlendMode("BLEND")
+    local text = button.Name or button.Text
+    text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    if button.IconFrame then
+        button.IconFrame:SetAlpha(0)
+        SkinIconTexture(button.Icon)
+    end
+end
+
+local function SkinSearchPreview(container, searchBox)
+    container:GwStripTextures()
+    container:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    container:ClearAllPoints()
+    container:SetPoint("TOPLEFT", searchBox, "BOTTOMLEFT", 0, -2)
+    container:SetPoint("TOPRIGHT", searchBox, "BOTTOMRIGHT", 0, -2)
+    container.OverflowCount.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+
+    ScrollUtil.AddAcquiredFrameCallback(container.ScrollBox, function(_, button)
+        if not button.gwSkinned then
+            SkinSearchResult(button)
+            button.gwSkinned = true
+        end
+    end, container)
+    hooksecurefunc(container, "UpdateResultsDisplay", function(self)
+        for button in self.suggestedResultButtonsPool:EnumerateActive() do
+            if not button.gwSkinned then
+                SkinSearchResult(button)
+                button.gwSkinned = true
+            end
+        end
+    end)
+end
+
 local function SkinTreePage(page)
     page.Background:Hide()
     page.VerticalDivider:Hide()
@@ -329,6 +367,7 @@ local function SkinTreePage(page)
     summary.Shield.Points:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "THINOUTLINE")
     GW.SkinEditBox(panel.SearchBox, {search = true})
     panel.SearchBox:SetHeight(CONTROL_HEIGHT)
+    SkinSearchPreview(panel.SearchPreviewContainer, panel.SearchBox)
     panel.ApplyButton:GwSkinButton(false, true)
     SkinIconButton(panel.ResetButton)
     SkinIconButton(panel.UndoButton)
@@ -426,6 +465,14 @@ local function ApplyLegacySystemSkin()
     LegacySystemFrame:GetTitleText():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
     LegacySystemFrame:SetClampedToScreen(true)
     LegacySystemFrame:SetClampRectInsets(-40, 0, LegacySystemFrame.gwHeader:GetHeight() - 30, 0)
+
+    -- moved by its header like the group finder; the panel manager can not move it back
+    LegacySystemFrame.mover = CreateFrame("Frame", nil, LegacySystemFrame)
+    LegacySystemFrame.mover:SetPoint("BOTTOMLEFT", LegacySystemFrame, "TOPLEFT", 0, 0)
+    LegacySystemFrame.mover:SetPoint("BOTTOMRIGHT", LegacySystemFrame, "TOPRIGHT", -35, 0)
+    LegacySystemFrame.mover:SetHeight(30)
+    GW.MakeFrameMovable(LegacySystemFrame, nil, "legacySystem", true)
+    GW.MakeFrameMovable(LegacySystemFrame.mover, LegacySystemFrame, "legacySystem")
 
     LegacySystemFrame.CloseButton:GwSkinButton(true, false)
     LegacySystemFrame.CloseButton:SetSize(25, 25)
